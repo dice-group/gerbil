@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.aksw</groupId>
+    <artifactId>gerbil</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>General Entity Annotator Benchmark</name>
+    <description>This project is a benchmark for entity annotation and disambiguation tools. It is based on the BAT-Framework of Cornolti et al.</description>
+    
+    <properties>
+        <java.version>1.7</java.version>
+        <slf4j.version>1.7.5</slf4j.version>
+        <junit.version>4.11</junit.version>
+        <jena.version>2.11.1</jena.version>
+    </properties>
+
+    <repositories>
+        <!-- Let's use a local repository for the local libraries of this project -->
+        <repository>
+            <id>local repository</id>
+            <url>file://${project.basedir}/repository</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- BAT-Framework -->
+        <dependency>
+            <groupId>it.unipi.di</groupId>
+            <artifactId>batframework</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <!-- slf4j: Logging API -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <!-- slf4j: Logging Binding -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+    </dependencies>
+</project>
