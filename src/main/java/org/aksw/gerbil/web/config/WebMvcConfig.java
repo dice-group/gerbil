@@ -1,4 +1,4 @@
-package org.aksw.gerbil.web;
+package org.aksw.gerbil.web.config;
 
 
 import org.slf4j.Logger;
@@ -14,7 +14,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages="ch.cherix.f4j.web")
+@ComponentScan(basePackages="org.aksw.gerbil.web")
 public class WebMvcConfig extends WebMvcConfigurerAdapter{
 	
 	private static final transient Logger logger = LoggerFactory.getLogger(WebMvcConfig.class);
