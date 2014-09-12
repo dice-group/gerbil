@@ -36,10 +36,10 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
 
     @Override
     public synchronized int connectCachedResultOrCreateTask(String annotatorName, String datasetName,
-            String experimentType, String metric, String experimentId) {
-        int experimentTaskId = getCachedExperimentTaskId(annotatorName, datasetName, experimentType, metric);
+            String experimentType, String matching, String experimentId) {
+        int experimentTaskId = getCachedExperimentTaskId(annotatorName, datasetName, experimentType, matching);
         if (experimentTaskId == EXPERIMENT_TASK_NOT_CACHED) {
-            experimentTaskId = createTask(annotatorName, datasetName, experimentType, metric, experimentId);
+            experimentTaskId = createTask(annotatorName, datasetName, experimentType, matching, experimentId);
         } else {
             connectExistingTaskWithExperiment(experimentTaskId, experimentId);
         }
@@ -60,15 +60,15 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      *            the name of the dataset
      * @param experimentType
      *            the name of the experiment type
-     * @param metric
-     *            the name of the metric used
+     * @param matching
+     *            the name of the matching used
      * @param experimentId
      *            the id of the experiment
      * @return The id of the experiment task or {@value #EXPERIMENT_TASK_NOT_CACHED} if such an experiment task couldn't
      *         be found.
      */
     protected abstract int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType,
-            String metric);
+            String matching);
 
     /**
      * This method connects an already existing experiment task with an experiment.

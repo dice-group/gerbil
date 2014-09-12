@@ -1,19 +1,23 @@
 package org.aksw.gerbil.datatypes;
 
+import org.aksw.gerbil.annotators.AnnotatorConfiguration;
+import org.aksw.gerbil.datasets.DatasetConfiguration;
+import org.aksw.gerbil.matching.Matching;
+
 public class ExperimentTaskConfiguration {
 
     public AnnotatorConfiguration annotatorConfig;
     public DatasetConfiguration datasetConfig;
     public ExperimentType type; // enum
-    public Metric metric; // enum
+    public Matching matching;
 
     public ExperimentTaskConfiguration(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
-            ExperimentType type, Metric metric) {
+            ExperimentType type, Matching matching) {
         super();
         this.annotatorConfig = annotatorConfig;
         this.datasetConfig = datasetConfig;
         this.type = type;
-        this.metric = metric;
+        this.matching = matching;
     }
 
     public AnnotatorConfiguration getAnnotatorConfig() {
@@ -40,12 +44,17 @@ public class ExperimentTaskConfiguration {
         this.type = type;
     }
 
-    public Metric getMetric() {
-        return metric;
+    public Matching getMatching() {
+        return matching;
     }
 
-    public void setMetric(Metric metric) {
-        this.metric = metric;
+    public void setMatching(Matching matching) {
+        this.matching = matching;
     }
 
+    @Override
+    public String toString() {
+        return "eTConfig(\"" + annotatorConfig.getAnnotatorName() + "\",\"" + datasetConfig.getDatasetName() + "\",\""
+                + type.name() + "\",\"" + matching.name() + "\")";
+    }
 }
