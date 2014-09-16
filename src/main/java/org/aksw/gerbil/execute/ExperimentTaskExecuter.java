@@ -1,12 +1,17 @@
 package org.aksw.gerbil.execute;
 
+import java.util.Vector;
+
 import it.acubelab.batframework.metrics.MatchRelation;
+import it.acubelab.batframework.problems.D2WDataset;
 import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.problems.TopicSystem;
+import it.acubelab.batframework.utils.RunExperiments;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
+import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.matching.MatchingFactory;
 import org.slf4j.Logger;
@@ -30,7 +35,7 @@ public class ExperimentTaskExecuter implements Runnable {
     @Override
     public void run() {
         try {
-            // TODO create dataset
+            // Create dataset
             TopicDataset dataset = configuration.datasetConfig.getDataset(configuration.type);
             if (dataset == null) {
                 throw new GerbilException("dataset=\"" + configuration.datasetConfig.getDatasetName()
@@ -38,7 +43,7 @@ public class ExperimentTaskExecuter implements Runnable {
                         ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
-            // TODO create annotator
+            // Create annotator
             TopicSystem annotator = configuration.annotatorConfig.getAnnotator(configuration.type);
             if (annotator == null) {
                 throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getAnnotatorName()
@@ -51,7 +56,7 @@ public class ExperimentTaskExecuter implements Runnable {
             if (matching == null) {
                 throw new GerbilException("matching=\"" + configuration.matching.name()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
-                        ErrorTypes.MATCHING_DOES_NOT_SUPPORT_EXPERIEMNT);
+                        ErrorTypes.MATCHING_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
             // TODO create experiment

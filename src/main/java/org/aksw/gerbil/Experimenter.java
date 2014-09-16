@@ -25,6 +25,8 @@ public class Experimenter implements Runnable {
             int taskId;
             for (int i = 0; i < configs.length; ++i) {
                 if (couldHaveCachedResult(configs[i])) {
+                    // FIXME If the result in the database contains an error code, wouldn't it be better to handle such
+                    // a case as it wouldn't exist in the database?
                     taskId = experimentDAO.connectCachedResultOrCreateTask(
                             configs[i].annotatorConfig.getAnnotatorName(),
                             configs[i].datasetConfig.getDatasetName(), configs[i].type.name(),

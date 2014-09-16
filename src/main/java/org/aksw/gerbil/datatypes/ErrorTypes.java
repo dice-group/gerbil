@@ -12,8 +12,13 @@ public enum ErrorTypes {
      */
 
     DATASET_DOES_NOT_SUPPORT_EXPERIMENT(-1, "The dataset does not support the experiment type."),
+    DATASET_LOADING_ERROR(-4, "The matching does not support the experiment type"),
+    
     ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT(-2, "The annotator does not support the experiment type."),
-    MATCHING_DOES_NOT_SUPPORT_EXPERIEMNT(-3, "The matching does not support the experiment type")
+    ANNOTATOR_LOADING_ERROR(-5, "The annotator does not support the experiment type."),
+    
+    MATCHING_DOES_NOT_SUPPORT_EXPERIMENT(-3, "The matching does not support the experiment type"),
+    
 
     // FIXME add error types
     ;

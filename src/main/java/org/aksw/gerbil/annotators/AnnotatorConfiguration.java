@@ -3,6 +3,7 @@ package org.aksw.gerbil.annotators;
 import it.acubelab.batframework.problems.TopicSystem;
 
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.exceptions.GerbilException;
 
 public interface AnnotatorConfiguration {
 
@@ -10,15 +11,5 @@ public interface AnnotatorConfiguration {
 
     public boolean couldBeCached();
 
-    public TopicSystem getAnnotator(ExperimentType type);
-
-    // public A2WSystem getA2WAnnotator();
-    //
-    // public C2WSystem getC2WAnnotator();
-    //
-    // public D2WSystem getD2WAnnotator();
-    //
-    // public Sa2WSystem getSa2WAnnotator();
-    //
-    // public Sc2WSystem getSc2WAnnotator();
+    public TopicSystem getAnnotator(ExperimentType type) throws GerbilException;
 }
