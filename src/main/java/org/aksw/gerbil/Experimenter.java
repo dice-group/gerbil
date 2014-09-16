@@ -1,5 +1,12 @@
 package org.aksw.gerbil;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import it.acubelab.batframework.utils.WikipediaApiInterface;
+
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.execute.ExperimentTaskExecuter;
@@ -13,6 +20,8 @@ public class Experimenter implements Runnable {
     private ExperimentTaskConfiguration configs[];
     private String experimentId;
     private ExperimentDAO experimentDAO;
+    private WikipediaApiInterface wikiAPI; // TODO init without cache files, otherwise we could get problems caused by
+                                           // our parallelization
 
     public Experimenter(ExperimentTaskConfiguration configs[], String experimentId) {
         this.configs = configs;
@@ -39,7 +48,8 @@ public class Experimenter implements Runnable {
                 // If there is no experiment task result in the database
                 if (taskId != ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED) {
                     // Create an executer which performs the task
-                    ExperimentTaskExecuter executer = new ExperimentTaskExecuter(taskId, experimentDAO, configs[i]);
+                    ExperimentTaskExecuter executer = new ExperimentTaskExecuter(taskId, experimentDAO, configs[i],
+                            wikiAPI);
                     executer.run();
                 }
             }

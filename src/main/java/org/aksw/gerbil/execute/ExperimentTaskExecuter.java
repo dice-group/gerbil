@@ -1,17 +1,21 @@
 package org.aksw.gerbil.execute;
 
-import java.util.Vector;
-
 import it.acubelab.batframework.metrics.MatchRelation;
+import it.acubelab.batframework.metrics.MetricsResultSet;
 import it.acubelab.batframework.problems.D2WDataset;
+import it.acubelab.batframework.problems.D2WSystem;
 import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.problems.TopicSystem;
+import it.acubelab.batframework.utils.Pair;
 import it.acubelab.batframework.utils.RunExperiments;
+import it.acubelab.batframework.utils.WikipediaApiInterface;
+
+import java.util.HashMap;
+import java.util.Vector;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.matching.MatchingFactory;
 import org.slf4j.Logger;
@@ -24,12 +28,14 @@ public class ExperimentTaskExecuter implements Runnable {
     private ExperimentDAO experimentDAO;
     private ExperimentTaskConfiguration configuration;
     private int experimentTaskId;
+    private WikipediaApiInterface wikiAPI;
 
     public ExperimentTaskExecuter(int experimentTaskId, ExperimentDAO experimentDAO,
-            ExperimentTaskConfiguration configuration) {
+            ExperimentTaskConfiguration configuration, WikipediaApiInterface wikiAPI) {
         this.experimentDAO = experimentDAO;
         this.configuration = configuration;
         this.experimentTaskId = experimentTaskId;
+        this.wikiAPI = wikiAPI;
     }
 
     @Override
@@ -51,7 +57,7 @@ public class ExperimentTaskExecuter implements Runnable {
                         ErrorTypes.ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
-            // TODO create matching
+            // create matching
             MatchRelation<?> matching = MatchingFactory.createMatchRelation(configuration.matching);
             if (matching == null) {
                 throw new GerbilException("matching=\"" + configuration.matching.name()
@@ -59,9 +65,12 @@ public class ExperimentTaskExecuter implements Runnable {
                         ErrorTypes.MATCHING_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
+            double result = runExperiment(dataset, annotator, matching).second.getMicroF1();
+
             // TODO create experiment
 
-            // TODO store result
+            // store result
+            experimentDAO.setExperimentTaskResult(experimentTaskId, result);
         } catch (GerbilException e) {
             // TODO: handle exception
             // TODO store error
@@ -69,5 +78,28 @@ public class ExperimentTaskExecuter implements Runnable {
         } catch (Exception e) {
             LOGGER.error("Error while trying to execute experiment.", e);
         }
+    }
+
+    private Pair<Float, MetricsResultSet> runExperiment(TopicDataset dataset, TopicSystem annotator,
+            MatchRelation<?> matching)
+            throws GerbilException {
+        HashMap<String, HashMap<String, HashMap<String, HashMap<Float, MetricsResultSet>>>> results = null;
+        switch (configuration.type) {
+        case D2W: {
+            Vector<D2WSystem> d2wAnnotator = new Vector<D2WSystem>();
+            d2wAnnotator.add((D2WSystem) annotator);
+            Vector<D2WDataset> d2wDataset = new Vector<D2WDataset>();
+            d2wDataset.add((D2WDataset) dataset);
+            try {
+                results = RunExperiments.performD2WExpVarThreshold(d2wAnnotator, null, d2wDataset, wikiAPI);
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        default:
+            break;
+        }
+        return RunExperiments.getBestRecord(results, matching.getName(), annotator.getName(), dataset.getName());
     }
 }
