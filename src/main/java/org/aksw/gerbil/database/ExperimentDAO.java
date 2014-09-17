@@ -13,6 +13,12 @@ public interface ExperimentDAO {
     public static final int CACHED_EXPERIMENT_TASK_CAN_BE_USED = -1;
 
     /**
+     * Sentinel value stored as results in the database indicating that a task has been started but there weren't stored
+     * any results until now.
+     */
+    public static final int TASK_STARTED_BUT_NOT_FINISHED_YET = -1;
+
+    /**
      * Sets the durability of a experiment task result.
      * 
      * @param milliseconds
@@ -21,6 +27,8 @@ public interface ExperimentDAO {
 
     /**
      * Returns the results of the experiment tasks that are connected to the experiment with the given experiment id.
+     * Note that the experiment results contain {@link #TASK_STARTED_BUT_NOT_FINISHED_YET} instead of real results if
+     * the task of the experiment hasn't finished until now.
      * 
      * @param experimentId
      *            if of the experiment
@@ -33,7 +41,8 @@ public interface ExperimentDAO {
      * there is already such an experiment task inside the database. If such a task exists and if it is not to old
      * regarding the durability of experiment task results, the experiment id is connected to the already existing task
      * and {@link #CACHED_EXPERIMENT_TASK_CAN_BE_USED}={@value #CACHED_EXPERIMENT_TASK_CAN_BE_USED} is returned.
-     * Otherwise, a new experiment task is created, connected to the given experiment and the id of the newly created
+     * Otherwise, a new experiment task is created, set to unfinished by setting its resuts to
+     * {@link #TASK_STARTED_BUT_NOT_FINISHED_YET}, connected to the given experiment and the id of the newly created
      * experiment task is returned.
      * 
      * <b>NOTE:</b> this method MUST be synchronized since it should only be called by a single thread at once.
@@ -56,8 +65,8 @@ public interface ExperimentDAO {
             String matching, String experimentId);
 
     /**
-     * Creates a new experiment task with the given preferences and connects it to the experiment with the given
-     * experiment id.
+     * Creates a new experiment task with the given preferences, set to unfinished by setting its resuts to
+     * {@link #TASK_STARTED_BUT_NOT_FINISHED_YET} and connects it to the experiment with the given experiment id.
      * 
      * @param annotatorName
      *            the name with which the annotator can be identified
@@ -83,5 +92,5 @@ public interface ExperimentDAO {
      * @param result
      *            the result of this experiment task
      */
-    public void setExperimentTaskResult(int experimentTaskId, double result);
+    public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskResult result);
 }

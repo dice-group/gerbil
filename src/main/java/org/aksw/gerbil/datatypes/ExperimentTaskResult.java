@@ -6,20 +6,55 @@ import org.aksw.gerbil.matching.Matching;
 
 public class ExperimentTaskResult extends ExperimentTaskConfiguration {
 
-    public double result;
+    public static final int MICRO_F1_MEASURE_INDEX = 0;
+    public static final int MICRO_PRECISION_INDEX = 1;
+    public static final int MICRO_RECALL_INDEX = 2;
+    public static final int MACRO_F1_MEASURE_INDEX = 3;
+    public static final int MACRO_PRECISION_INDEX = 4;
+    public static final int MACRO_RECALL_INDEX = 5;
+
+    public double results[];
 
     public ExperimentTaskResult(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
-            ExperimentType type, Matching metric, double result) {
-        super(annotatorConfig, datasetConfig, type, metric);
-        this.result = result;
+            ExperimentType type, Matching matching, double results[]) {
+        super(annotatorConfig, datasetConfig, type, matching);
+        this.results = results;
     }
 
-    public double getResult() {
-        return result;
+    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[]) {
+        super(configuration.annotatorConfig, configuration.datasetConfig, configuration.type, configuration.matching);
+        this.results = results;
     }
 
-    public void setResult(double result) {
-        this.result = result;
+    public double[] getResults() {
+        return results;
     }
 
+    public void setResults(double results[]) {
+        this.results = results;
+    }
+
+    public double getMicroF1Measure() {
+        return results[MICRO_F1_MEASURE_INDEX];
+    }
+
+    public double getMicroPrecision() {
+        return results[MICRO_PRECISION_INDEX];
+    }
+
+    public double getMicroRecall() {
+        return results[MICRO_RECALL_INDEX];
+    }
+
+    public double getMacroF1Measure() {
+        return results[MACRO_F1_MEASURE_INDEX];
+    }
+
+    public double getMacroPrecision() {
+        return results[MACRO_PRECISION_INDEX];
+    }
+
+    public double getMacroRecall() {
+        return results[MACRO_RECALL_INDEX];
+    }
 }

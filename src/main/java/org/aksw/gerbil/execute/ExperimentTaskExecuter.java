@@ -10,12 +10,14 @@ import it.acubelab.batframework.utils.Pair;
 import it.acubelab.batframework.utils.RunExperiments;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
+import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.matching.MatchingFactory;
 import org.slf4j.Logger;
@@ -65,16 +67,26 @@ public class ExperimentTaskExecuter implements Runnable {
                         ErrorTypes.MATCHING_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
-            double result = runExperiment(dataset, annotator, matching).second.getMicroF1();
+            // perform experiment
+            MetricsResultSet metrics = runExperiment(dataset, annotator, matching).second;
 
-            // TODO create experiment
+            // create result object
+            double results[] = new double[6];
+            results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = metrics.getMacroF1();
+            results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = metrics.getMacroPrecision();
+            results[ExperimentTaskResult.MACRO_RECALL_INDEX] = metrics.getMacroRecall();
+            results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = metrics.getMicroF1();
+            results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = metrics.getMicroPrecision();
+            results[ExperimentTaskResult.MICRO_RECALL_INDEX] = metrics.getMicroRecall();
+            ExperimentTaskResult result = new ExperimentTaskResult(configuration, results);
 
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, result);
         } catch (GerbilException e) {
-            // TODO: handle exception
-            // TODO store error
-            experimentDAO.setExperimentTaskResult(experimentTaskId, e.getErrorType().getErrorCode());
+            double results[] = new double[6];
+            Arrays.fill(results, e.getErrorType().getErrorCode());
+            // store error
+            experimentDAO.setExperimentTaskResult(experimentTaskId, new ExperimentTaskResult(configuration, results));
         } catch (Exception e) {
             LOGGER.error("Error while trying to execute experiment.", e);
         }

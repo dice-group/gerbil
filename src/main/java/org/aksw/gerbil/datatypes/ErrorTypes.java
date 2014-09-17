@@ -8,20 +8,19 @@ package org.aksw.gerbil.datatypes;
  */
 public enum ErrorTypes {
     /*
-     * ALL ERROR TYPES SHOULD HAVE A _NEGATIVE_ ERROR CODE!
+     * ALL ERROR TYPES SHOULD HAVE A _NEGATIVE_ ERROR CODE STARTING BELOW -100!
      */
 
-    DATASET_DOES_NOT_SUPPORT_EXPERIMENT(-1, "The dataset does not support the experiment type."),
-    DATASET_LOADING_ERROR(-4, "The matching does not support the experiment type"),
+    DATASET_DOES_NOT_SUPPORT_EXPERIMENT(-101, "The dataset does not support the experiment type."),
+    DATASET_LOADING_ERROR(-104, "The matching does not support the experiment type"),
 
-    ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT(-2, "The annotator does not support the experiment type."),
-    ANNOTATOR_LOADING_ERROR(-5, "The annotator does not support the experiment type."),
+    ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT(-102, "The annotator does not support the experiment type."),
+    ANNOTATOR_LOADING_ERROR(-105, "The annotator does not support the experiment type."),
 
-    MATCHING_DOES_NOT_SUPPORT_EXPERIMENT(-3, "The matching does not support the experiment type"),
+    MATCHING_DOES_NOT_SUPPORT_EXPERIMENT(-103, "The matching does not support the experiment type"),
 
-    UNEXPECTED_EXCEPTION(-6, "Got an unexpected exception while running the experiment.")
+    UNEXPECTED_EXCEPTION(-106, "Got an unexpected exception while running the experiment.")
 
-    // FIXME add error types
     ;
 
     private ErrorTypes(int errorCode, String description) {
