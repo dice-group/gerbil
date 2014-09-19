@@ -1,10 +1,5 @@
 package org.aksw.gerbil;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import org.aksw.gerbil.database.ExperimentDAO;
