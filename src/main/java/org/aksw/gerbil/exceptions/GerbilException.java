@@ -31,4 +31,18 @@ public class GerbilException extends Exception {
     public ErrorTypes getErrorType() {
         return errorType;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.getClass().getSimpleName());
+        builder.append(": ");
+        builder.append(getLocalizedMessage());
+        builder.append(" (error type ");
+        builder.append(errorType.getErrorCode());
+        builder.append(": ");
+        builder.append(errorType.getDescription());
+        builder.append(')');
+        return builder.toString();
+    }
 }

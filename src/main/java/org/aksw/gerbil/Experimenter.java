@@ -18,9 +18,12 @@ public class Experimenter implements Runnable {
     private WikipediaApiInterface wikiAPI; // TODO init without cache files, otherwise we could get problems caused by
                                            // our parallelization
 
-    public Experimenter(ExperimentTaskConfiguration configs[], String experimentId) {
+    public Experimenter(WikipediaApiInterface wikiAPI, ExperimentDAO experimentDAO,
+            ExperimentTaskConfiguration configs[], String experimentId) {
         this.configs = configs;
         this.experimentId = experimentId;
+        this.experimentDAO = experimentDAO;
+        this.wikiAPI = wikiAPI;
     }
 
     @Override
@@ -45,7 +48,8 @@ public class Experimenter implements Runnable {
                     // Create an executer which performs the task
                     ExperimentTaskExecuter executer = new ExperimentTaskExecuter(taskId, experimentDAO, configs[i],
                             wikiAPI);
-                    executer.run();
+                    Thread t = new Thread(executer);
+                    t.start();
                 }
             }
             LOGGER.info("Experimenter finished the creation of tasks for experiment \"" + experimentId + "\"");
@@ -54,7 +58,7 @@ public class Experimenter implements Runnable {
         }
     }
 
-    public boolean couldHaveCachedResult(ExperimentTaskConfiguration config) {
+    private boolean couldHaveCachedResult(ExperimentTaskConfiguration config) {
         return config.annotatorConfig.couldBeCached() && config.datasetConfig.couldBeCached();
     }
 }

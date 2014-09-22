@@ -13,7 +13,7 @@ public class SpotlightAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private DBPediaApi dbpApi;
 
     public SpotlightAnnotatorConfig(WikipediaApiInterface wikiApi, DBPediaApi dbpApi) {
-        super("DBpediaSpotlight", true, new ExperimentType[] { ExperimentType.D2W });
+        super("DBpediaSpotlight", true, new ExperimentType[] { ExperimentType.Sa2W });
         this.wikiApi = wikiApi;
         this.dbpApi = dbpApi;
     }

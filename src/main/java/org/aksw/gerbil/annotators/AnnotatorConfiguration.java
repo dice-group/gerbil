@@ -11,5 +11,13 @@ public interface AnnotatorConfiguration {
 
     public boolean couldBeCached();
 
+    /**
+     * Returns the annotator or null if the annotator can't be used for the given {@link ExperimentType}.
+     * 
+     * @param type
+     * @return
+     * @throws GerbilException
+     *             if an error occurs while loading the annotator
+     */
     public TopicSystem getAnnotator(ExperimentType type) throws GerbilException;
 }

@@ -57,4 +57,23 @@ public class ExperimentTaskResult extends ExperimentTaskConfiguration {
     public double getMacroRecall() {
         return results[MACRO_RECALL_INDEX];
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ExperimentTaskResult(micF1=");
+        builder.append(results[MICRO_F1_MEASURE_INDEX]);
+        builder.append(",micPrecision=");
+        builder.append(results[MICRO_PRECISION_INDEX]);
+        builder.append(",micRecall=");
+        builder.append(results[MICRO_RECALL_INDEX]);
+        builder.append(",macF1=");
+        builder.append(results[MACRO_F1_MEASURE_INDEX]);
+        builder.append(",macPrecision=");
+        builder.append(results[MACRO_PRECISION_INDEX]);
+        builder.append(",macRecall=");
+        builder.append(results[MACRO_RECALL_INDEX]);
+        builder.append(")");
+        return builder.toString();
+    }
 }

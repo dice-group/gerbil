@@ -60,7 +60,8 @@ public class ExperimentTaskExecuter implements Runnable {
             }
 
             // create matching
-            MatchRelation<?> matching = MatchingFactory.createMatchRelation(configuration.matching);
+            MatchRelation<?> matching = MatchingFactory.createMatchRelation(wikiAPI, configuration.matching,
+                    configuration.type);
             if (matching == null) {
                 throw new GerbilException("matching=\"" + configuration.matching.name()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
@@ -83,6 +84,7 @@ public class ExperimentTaskExecuter implements Runnable {
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, result);
         } catch (GerbilException e) {
+            LOGGER.error("Got an error while running the task. Storing the error code in the db...", e);
             double results[] = new double[6];
             Arrays.fill(results, e.getErrorType().getErrorCode());
             // store error
