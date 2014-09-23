@@ -55,7 +55,7 @@ public class AIDACoNLLDatasetConfig extends AbstractDatasetConfiguration {
     protected TopicDataset loadDataset() throws Exception {
         String file = GerbilProperties.getPropertyValue(DATASET_FILE_PROPERTY_NAME);
         if (file == null) {
-            throw new IOException("Couldn't get path to AIDA/CoNLL data file from properties.");
+            throw new IOException("Couldn't load needed Property \"" + DATASET_FILE_PROPERTY_NAME + "\".");
         }
         switch (chunk) {
         case TRAINING: {

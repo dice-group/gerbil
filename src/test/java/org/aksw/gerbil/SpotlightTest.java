@@ -8,8 +8,7 @@ import java.io.IOException;
 
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
-import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
-import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig.AIDACoNLLChunk;
+import org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
@@ -26,10 +25,14 @@ public class SpotlightTest {
         // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new IITBDatasetConfig(wikiAPI),
         // ExperimentType.D2W,
         // Matching.STRONG_ANNOTATION_MATCH) };
+        // ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
+        // ExperimentTaskConfiguration(
+        // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new AIDACoNLLDatasetConfig(
+        // AIDACoNLLChunk.COMPLETE,
+        // wikiAPI), ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH) };
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
                 ExperimentTaskConfiguration(
-                        new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new AIDACoNLLDatasetConfig(
-                                AIDACoNLLChunk.COMPLETE,
+                        new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new AQUAINTDatasetConfiguration(
                                 wikiAPI), ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "SPOTLIGHT_TEST");

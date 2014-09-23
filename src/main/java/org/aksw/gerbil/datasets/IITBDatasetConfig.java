@@ -1,5 +1,7 @@
 package org.aksw.gerbil.datasets;
 
+import java.io.IOException;
+
 import it.acubelab.batframework.datasetPlugins.IITBDataset;
 import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
@@ -21,8 +23,15 @@ public class IITBDatasetConfig extends AbstractDatasetConfiguration {
 
     @Override
     protected TopicDataset loadDataset() throws Exception {
-        return new IITBDataset(GerbilProperties.getPropertyValue(IITB_CRAWL_FOLDER_PROPERTY_NAME),
-                GerbilProperties.getPropertyValue(IITB_ANNOTATIONS_FILE_PROPERTY_NAME), wikiAPI);
+        String crawlFolder = GerbilProperties.getPropertyValue(IITB_CRAWL_FOLDER_PROPERTY_NAME);
+        if (crawlFolder == null) {
+            throw new IOException("Couldn't load needed Property \"" + IITB_CRAWL_FOLDER_PROPERTY_NAME + "\".");
+        }
+        String annotationsFile = GerbilProperties.getPropertyValue(IITB_ANNOTATIONS_FILE_PROPERTY_NAME);
+        if (annotationsFile == null) {
+            throw new IOException("Couldn't load needed Property \"" + IITB_ANNOTATIONS_FILE_PROPERTY_NAME + "\".");
+        }
+        return new IITBDataset(crawlFolder, annotationsFile, wikiAPI);
     }
 
 }
