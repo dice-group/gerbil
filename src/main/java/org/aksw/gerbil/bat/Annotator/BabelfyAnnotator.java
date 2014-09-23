@@ -1,4 +1,4 @@
-package org.aksw.gerbil.bat.Annotator;
+package org.aksw.gerbil.bat.annotator;
 
 
 import it.acubelab.batframework.data.Annotation;
