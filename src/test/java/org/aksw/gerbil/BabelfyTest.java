@@ -21,7 +21,7 @@ public class BabelfyTest {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new BabelfyAnnotatorConfig(), new IITBDatasetConfig(wikiAPI), ExperimentType.D2W,
                 Matching.STRONG_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs, "TAGME_TEST");
+        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs, "BABELFY_TEST");
         experimenter.run();
     }
 }

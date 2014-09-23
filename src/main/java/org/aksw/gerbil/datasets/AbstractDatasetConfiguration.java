@@ -8,9 +8,9 @@ import org.aksw.gerbil.exceptions.GerbilException;
 
 public abstract class AbstractDatasetConfiguration implements DatasetConfiguration {
 
-    private String datasetName;
-    private boolean couldBeCached;
-    private ExperimentType applicableForExperiments[];
+    protected String datasetName;
+    protected boolean couldBeCached;
+    protected ExperimentType applicableForExperiments[];
 
     public AbstractDatasetConfiguration(String datasetName, boolean couldBeCached,
             ExperimentType... applicableForExperiment) {
