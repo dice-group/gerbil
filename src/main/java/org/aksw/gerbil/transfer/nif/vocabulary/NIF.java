@@ -29,6 +29,7 @@ public class NIF {
 	public static final Resource String = resource("String");
 	public static final Resource RFC5147String = resource("RFC5147String");
 
+	public static final Property anchorOf = property("anchorOf");
 	public static final Property beginIndex = property("beginIndex");
 	public static final Property isString = property("isString");
 	public static final Property endIndex = property("endIndex");
