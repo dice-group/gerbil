@@ -9,7 +9,7 @@ import it.acubelab.batframework.datasetPlugins.ConllAidaTrainingDataset;
 import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import org.aksw.gerbil.GerbilProperties;
+import org.aksw.gerbil.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class AIDACoNLLDatasetConfig extends AbstractDatasetConfiguration {
@@ -53,7 +53,7 @@ public class AIDACoNLLDatasetConfig extends AbstractDatasetConfiguration {
 
     @Override
     protected TopicDataset loadDataset() throws Exception {
-        String file = GerbilProperties.getPropertyValue(DATASET_FILE_PROPERTY_NAME);
+        String file = GerbilConfiguration.getInstance().getString(DATASET_FILE_PROPERTY_NAME);
         if (file == null) {
             throw new IOException("Couldn't load needed Property \"" + DATASET_FILE_PROPERTY_NAME + "\".");
         }

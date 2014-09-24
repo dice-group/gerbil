@@ -88,7 +88,7 @@
             <groupId>edu.illinois.dc.cogcomp</groupId>
             <artifactId>edison</artifactId>
             <version>0.2.9</version>
-            </dependency>
+        </dependency>
         <dependency>
             <groupId>wikifier</groupId>
             <artifactId>wikifier</artifactId>
@@ -106,7 +106,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
-        </dependency> -->
+            </dependency> -->
 
         <!-- NIF -->
         <dependency>
@@ -155,6 +155,16 @@
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.mit</groupId>
+            <artifactId>jwi</artifactId>
+            <version>2.2.1</version>
         </dependency>
 
         <dependency>

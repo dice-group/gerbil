@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
 import org.aksw.gerbil.transfer.nif.AnnotatedDocument;
 import org.aksw.gerbil.transfer.nif.Annotation;
 import org.aksw.gerbil.transfer.nif.data.AnnotatedDocumentImpl;
@@ -46,6 +47,7 @@ public class BAT2NIF_TranslationHelper {
 		} else if (annotation instanceof DisambiguatedAnnotation) {
 			DisambiguatedAnnotation disAnnotation = (DisambiguatedAnnotation) annotation;
 			// FIXME here we need to retrieve the Wikipedia Id for the DBPedia
+            int id = DBpediaToWikiId.getId(disAnnotation.getUri());
 			// URI (maybe take a look into the spotlight annotator
 		}
 		return null;

@@ -6,7 +6,7 @@ import it.acubelab.batframework.datasetPlugins.AQUAINTDataset;
 import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import org.aksw.gerbil.GerbilProperties;
+import org.aksw.gerbil.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class AQUAINTDatasetConfiguration extends AbstractDatasetConfiguration {
@@ -23,11 +23,11 @@ public class AQUAINTDatasetConfiguration extends AbstractDatasetConfiguration {
 
     @Override
     protected TopicDataset loadDataset() throws Exception {
-        String textsPath = GerbilProperties.getPropertyValue(TEXTS_PATH_PROPERTY_NAME);
+        String textsPath = GerbilConfiguration.getInstance().getString(TEXTS_PATH_PROPERTY_NAME);
         if (textsPath == null) {
             throw new IOException("Couldn't load needed Property \"" + TEXTS_PATH_PROPERTY_NAME + "\".");
         }
-        String annotationsPath = GerbilProperties.getPropertyValue(ANNOTATIONS_PATH_PROPERTY_NAME);
+        String annotationsPath = GerbilConfiguration.getInstance().getString(ANNOTATIONS_PATH_PROPERTY_NAME);
         if (annotationsPath == null) {
             throw new IOException("Couldn't load needed Property \"" + ANNOTATIONS_PATH_PROPERTY_NAME + "\".");
         }

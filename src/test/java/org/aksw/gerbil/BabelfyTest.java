@@ -15,8 +15,6 @@ import org.aksw.gerbil.matching.Matching;
 public class BabelfyTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
-        GerbilProperties.loadProperties();
-
         WikipediaApiInterface wikiAPI = new WikipediaApiInterface("wiki-id-title.cache", "wiki-id-id.cache");
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new BabelfyAnnotatorConfig(), new IITBDatasetConfig(wikiAPI), ExperimentType.D2W,

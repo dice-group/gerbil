@@ -16,15 +16,12 @@ import org.aksw.gerbil.matching.Matching;
 public class SpotlightTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
-        GerbilProperties.loadProperties();
-
         WikipediaApiInterface wikiAPI = new WikipediaApiInterface("wiki-id-title.cache", "wiki-id-id.cache");
         DBPediaApi dbpApi = new DBPediaApi();
         // ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
         // ExperimentTaskConfiguration(
         // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new IITBDatasetConfig(wikiAPI),
-        // ExperimentType.D2W,
-        // Matching.STRONG_ANNOTATION_MATCH) };
+        // ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH) };
         // ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
         // ExperimentTaskConfiguration(
         // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new AIDACoNLLDatasetConfig(

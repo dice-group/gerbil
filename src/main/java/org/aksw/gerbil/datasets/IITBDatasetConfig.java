@@ -6,7 +6,7 @@ import it.acubelab.batframework.datasetPlugins.IITBDataset;
 import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import org.aksw.gerbil.GerbilProperties;
+import org.aksw.gerbil.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class IITBDatasetConfig extends AbstractDatasetConfiguration {
@@ -23,11 +23,11 @@ public class IITBDatasetConfig extends AbstractDatasetConfiguration {
 
     @Override
     protected TopicDataset loadDataset() throws Exception {
-        String crawlFolder = GerbilProperties.getPropertyValue(IITB_CRAWL_FOLDER_PROPERTY_NAME);
+        String crawlFolder = GerbilConfiguration.getInstance().getString(IITB_CRAWL_FOLDER_PROPERTY_NAME);
         if (crawlFolder == null) {
             throw new IOException("Couldn't load needed Property \"" + IITB_CRAWL_FOLDER_PROPERTY_NAME + "\".");
         }
-        String annotationsFile = GerbilProperties.getPropertyValue(IITB_ANNOTATIONS_FILE_PROPERTY_NAME);
+        String annotationsFile = GerbilConfiguration.getInstance().getString(IITB_ANNOTATIONS_FILE_PROPERTY_NAME);
         if (annotationsFile == null) {
             throw new IOException("Couldn't load needed Property \"" + IITB_ANNOTATIONS_FILE_PROPERTY_NAME + "\".");
         }
