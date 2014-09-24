@@ -2,7 +2,7 @@ package org.aksw.gerbil.annotators;
 
 import it.acubelab.batframework.problems.TopicSystem;
 
-import org.aksw.gerbil.bat.Annotator.BabelfyAnnotator;
+import org.aksw.gerbil.bat.annotator.BabelfyAnnotator;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {

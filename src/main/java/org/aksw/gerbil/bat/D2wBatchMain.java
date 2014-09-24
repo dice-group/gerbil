@@ -25,7 +25,7 @@ import it.acubelab.batframework.utils.WikipediaApiInterface;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.aksw.gerbil.bat.Annotator.BabelfyAnnotator;
+import org.aksw.gerbil.bat.annotator.BabelfyAnnotator;
 
 public class D2wBatchMain {
 
