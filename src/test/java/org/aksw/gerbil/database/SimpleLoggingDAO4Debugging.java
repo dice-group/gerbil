@@ -44,4 +44,14 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
         LOGGER.info("Task " + experimentTaskId + " belongs to experiment " + experimentId);
     }
 
+    @Override
+    public void setExperimentState(int experimentTaskId, int state) {
+        LOGGER.info("State of Task " + experimentTaskId + " was set to " + state);
+    }
+
+    @Override
+    public int getExperimentState(int experimentTaskId) {
+        return 0;
+    }
+
 }

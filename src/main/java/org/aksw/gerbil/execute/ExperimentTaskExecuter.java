@@ -13,7 +13,6 @@ import it.acubelab.batframework.utils.Pair;
 import it.acubelab.batframework.utils.RunExperiments;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -88,10 +87,8 @@ public class ExperimentTaskExecuter implements Runnable {
             experimentDAO.setExperimentTaskResult(experimentTaskId, result);
         } catch (GerbilException e) {
             LOGGER.error("Got an error while running the task. Storing the error code in the db...", e);
-            double results[] = new double[6];
-            Arrays.fill(results, e.getErrorType().getErrorCode());
             // store error
-            experimentDAO.setExperimentTaskResult(experimentTaskId, new ExperimentTaskResult(configuration, results));
+            experimentDAO.setExperimentState(experimentTaskId, e.getErrorType().getErrorCode());
         } catch (Exception e) {
             LOGGER.error("Error while trying to execute experiment.", e);
         }
