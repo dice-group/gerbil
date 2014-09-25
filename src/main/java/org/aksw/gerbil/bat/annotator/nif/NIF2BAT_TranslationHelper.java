@@ -17,7 +17,7 @@ public class NIF2BAT_TranslationHelper {
         for (Annotation annotation : annotations) {
             batAnnotations.add(translateAnnotation2BatAnnotation(annotation));
         }
-        return null;
+        return batAnnotations;
     }
 
     public static it.acubelab.batframework.data.Annotation translateAnnotation2BatAnnotation(

@@ -38,7 +38,12 @@ public class NIFTransferTest {
                         { new AnnotatedDocumentImpl("Dies ist ein Testtext.",
                                 "http://www.aksw.org/gerbil/test-document",
                                 Arrays.asList((Annotation) new ScoredDisambigAnnotation(13, 8,
-                                        "http://www.aksw.org/gerbil/testtext", 0.87))) } });
+                                        "http://www.aksw.org/gerbil/testtext", 0.87))) },
+                        { new AnnotatedDocumentImpl("<> dies ?% ist ein TästTöxt!!.",
+                                "http://www.aksw.org/gerbil/test-document",
+                                Arrays.asList((Annotation) new AnnotationImpl(3, 4),
+                                        (Annotation) new ScoredDisambigAnnotation(19, 8,
+                                                "http://www.aksw.org/gerbil/testtext", 0.87))) } });
     }
 
     private AnnotatedDocument document;

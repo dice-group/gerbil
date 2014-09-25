@@ -3,12 +3,15 @@ package org.aksw.gerbil.transfer.nif;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.data.AnnotatedDocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.AnnotationImpl;
 import org.aksw.gerbil.transfer.nif.data.DisambiguatedAnnotation;
+import org.aksw.gerbil.transfer.nif.data.EndPosBasedComparator;
 import org.aksw.gerbil.transfer.nif.data.ScoredDisambigAnnotation;
+import org.aksw.gerbil.transfer.nif.data.StartPosBasedComparator;
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
 import org.slf4j.Logger;
@@ -147,8 +150,40 @@ public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
         return resultDocument;
     }
 
+    /**
+     * The positions in NIF are measured in codepoints, while Java counts in terms of characters. So we have to correct
+     * the positions of the annotations.
+     * 
+     * @param resultDocument
+     */
     protected void correctAnnotationPositions(AnnotatedDocument resultDocument) {
-
+        List<Annotation> annotations = resultDocument.getAnnotations();
+        Collections.sort(annotations, new StartPosBasedComparator());
+        List<Annotation> annotationsSortedByEnd = new ArrayList<Annotation>(annotations);
+        Collections.sort(annotationsSortedByEnd, new EndPosBasedComparator());
+        int startPositions[] = new int[annotations.size()];
+        int endPositions[] = new int[annotations.size()];
+        Annotation currentAnnotation;
+        for (int i = 0; i < annotations.size(); ++i) {
+            startPositions[i] = annotations.get(i).getStartPosition();
+            currentAnnotation = annotationsSortedByEnd.get(i);
+            endPositions[i] = currentAnnotation.getStartPosition() + currentAnnotation.getLength();
+        }
+        String text = resultDocument.getText();
+        int codePointsCount = 0;
+        int posInStart = 0, posInEnd = 0;
+        for (int i = 0; i < text.length(); ++i) {
+            codePointsCount += text.codePointCount(i, i + 1);
+            while ((posInStart < startPositions.length) && (codePointsCount > startPositions[posInStart])) {
+                annotations.get(posInStart).setStartPosition(i);
+                ++posInStart;
+            }
+            while ((posInEnd < endPositions.length) && (codePointsCount > endPositions[posInEnd])) {
+                currentAnnotation = annotationsSortedByEnd.get(posInEnd);
+                currentAnnotation.setLength(i - currentAnnotation.getStartPosition());
+                ++posInEnd;
+            }
+        }
     }
 
     @Override
