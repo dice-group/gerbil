@@ -2,6 +2,4 @@ Gerbil
 ========
 <i>General Entity Annotator Benchmark</i>
 
-This project is a benchmark for entity annotation and disambiguation tools. It is based on the BAT-Framework of Cornolti et al.
-
-<img src="http://139.18.2.164/rusbeck/gerbil/gerbillogo.png">
+This branch is part of the Gerbil project. It contains a very simple Webservice that wraps the DBpedia Spotlight Webservice and implements the NIF communication. We use it to test the NIF based Webservice annotator adapter that is part of Gerbil.

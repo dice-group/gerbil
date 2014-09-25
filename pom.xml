@@ -2,7 +2,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.aksw</groupId>
-    <artifactId>gerbil</artifactId>
+    <artifactId>gerbil-spotWrapNifWS4Test</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>General Entity Annotator Benchmark</name>
     <description>This project is a benchmark for entity annotation and disambiguation tools. It is based on the BAT-Framework of Cornolti et al.</description>
@@ -10,8 +10,6 @@
     <properties>
         <java.version>1.7</java.version>
         <slf4j.version>1.7.5</slf4j.version>
-        <junit.version>4.11</junit.version>
-        <jena.version>2.11.1</jena.version>
     </properties>
 
     <repositories>
@@ -33,66 +31,45 @@
     </repositories>
 
     <dependencies>
-        <!-- BAT-Framework and its dependencies -->
+        <!-- Restlet -->
         <dependency>
-            <groupId>it.unipi.di</groupId>
-            <artifactId>batframework</artifactId>
-            <version>0.1</version>
+            <groupId>org.restlet</groupId>
+            <artifactId>org.restlet</artifactId>
+            <version>2.2.1</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.james</groupId>
-            <artifactId>apache-mime4j</artifactId>
-            <version>0.6</version>
+            <groupId>org.restlet</groupId>
+            <artifactId>org.restlet.ext.servlet</artifactId>
+            <version>2.2.1</version>
         </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>fastutil</artifactId>
-            <version>6.4.1</version>
-        </dependency>
+        <!-- HTTP Client -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.3.5</version>
         </dependency>
+        <!-- Apache Commons IO -->
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>4.3</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <!-- Handling JSon -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2</version>
+        </dependency>
+        <!-- Jena -->
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-core</artifactId>
+            <version>2.11.1</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>dsiutils</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>mpi.rmi</groupId>
-            <artifactId>aida-public</artifactId>
-            <version>20130218</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.illinois.dc.cogcomp</groupId>
-            <artifactId>edison</artifactId>
-            <version>0.2.9</version>
-        </dependency>
-        <dependency>
-            <groupId>wikifier</groupId>
-            <artifactId>wikifier</artifactId>
-            <version>0.0.1</version>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-arq</artifactId>
+            <version>2.11.1</version>
         </dependency>
 
         <!-- slf4j: Logging API -->
@@ -102,75 +79,10 @@
             <version>${slf4j.version}</version>
         </dependency>
         <!-- slf4j: Logging Binding - is already contained in aida -->
-        <!-- <dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
-            </dependency> -->
-
-        <!-- NIF -->
-        <dependency>
-            <groupId>org.nlp2rdf.software</groupId>
-            <artifactId>jena</artifactId>
-            <version>2.0.1-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>log4j</artifactId>
-                    <groupId>log4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>slf4j-log4j12</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.nlp2rdf.ontologies</groupId>
-            <artifactId>persistence.uni-leipzig.org</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- BABELFY -->
-        <dependency>
-            <groupId>org.babelnet</groupId>
-            <artifactId>babelfy</artifactId>
-            <version>0.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.babelnet</groupId>
-            <artifactId>jlt</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.babelnet</groupId>
-            <artifactId>babelnet-api</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>2.9.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <version>1.5</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.mit</groupId>
-            <artifactId>jwi</artifactId>
-            <version>2.2.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
         </dependency>
 
     </dependencies>
@@ -188,4 +100,5 @@
             </plugin>
         </plugins>
     </build>
+    <packaging>war</packaging>
 </project>
