@@ -5,16 +5,17 @@ import it.acubelab.batframework.data.Mention;
 import it.acubelab.batframework.problems.D2WSystem;
 import it.acubelab.batframework.utils.AnnotationException;
 
-import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 
 import org.aksw.gerbil.transfer.nif.AnnotatedDocument;
 import org.aksw.gerbil.transfer.nif.NIFDocumentCreator;
 import org.aksw.gerbil.transfer.nif.NIFDocumentParser;
+import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentCreator;
+import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentParser;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -33,8 +34,8 @@ public class NIFBasedAnnotatorWebservice implements D2WSystem {
     private long lastRequestSend = 0;
     private long lastResponseReceived = 0;
     private int documentCount = 0;
-    private NIFDocumentCreator nifCreator; // FIXME set this
-    private NIFDocumentParser nifParser; // FIXME set this
+    private NIFDocumentCreator nifCreator = new TurtleNIFDocumentCreator();
+    private NIFDocumentParser nifParser = new TurtleNIFDocumentParser();
 
     @Override
     public String getName() {
@@ -66,11 +67,12 @@ public class NIFBasedAnnotatorWebservice implements D2WSystem {
         HttpEntity entity = null;
         try {
             entity = new StringEntity(nifDocument, "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
-            // LOGGER.entity = new StringEntity(nifDocument, "UTF-8");
-            // TODO
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("Exception while creating POST request.", e);
+            throw new AnnotationException("Exception while creating POST request. "
+                    + e.getLocalizedMessage());
         }
-        // TODO send NIF document (start time measure)
+        // send NIF document (start time measure)
         lastRequestSend = System.currentTimeMillis();
         HttpPost request = new HttpPost(url);
         request.setEntity(entity);
@@ -80,21 +82,19 @@ public class NIFBasedAnnotatorWebservice implements D2WSystem {
         HttpResponse response = null;
         try {
             response = client.execute(request);
-        } catch (ClientProtocolException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        entity = response.getEntity();
-        // TODO receive NIF document (end time measure and set time)
-        lastResponseReceived = System.currentTimeMillis();
-        // TODO read response and set nifDocument
-        // TODO parse NIF response
-        try {
-            document = nifParser.getDocumentFromNIFString(nifDocument);
         } catch (Exception e) {
+            LOGGER.error("Exception while sending request.", e);
+            throw new AnnotationException("Exception while sending request. "
+                    + e.getLocalizedMessage());
+        }
+        // receive NIF document (end time measure and set time)
+        entity = response.getEntity();
+        lastResponseReceived = System.currentTimeMillis();
+        // read response and parse NIF
+        try {
+            document = nifParser.getDocumentFromNIFReader(new InputStreamReader(entity.getContent()));
+        } catch (Exception e) {
+            LOGGER.error("Couldn't parse the response.", e);
             throw new AnnotationException("Couldn't parse the response. "
                     + e.getLocalizedMessage());
         }
