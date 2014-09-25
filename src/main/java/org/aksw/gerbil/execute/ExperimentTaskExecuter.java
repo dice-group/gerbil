@@ -1,9 +1,12 @@
 package org.aksw.gerbil.execute;
 
+import it.acubelab.batframework.data.Tag;
 import it.acubelab.batframework.metrics.MatchRelation;
 import it.acubelab.batframework.metrics.MetricsResultSet;
+import it.acubelab.batframework.problems.C2WDataset;
 import it.acubelab.batframework.problems.D2WDataset;
 import it.acubelab.batframework.problems.D2WSystem;
+import it.acubelab.batframework.problems.Sc2WSystem;
 import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.problems.TopicSystem;
 import it.acubelab.batframework.utils.Pair;
@@ -94,15 +97,16 @@ public class ExperimentTaskExecuter implements Runnable {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Pair<Float, MetricsResultSet> runExperiment(TopicDataset dataset, TopicSystem annotator,
             MatchRelation<?> matching)
             throws GerbilException {
         HashMap<String, HashMap<String, HashMap<String, HashMap<Float, MetricsResultSet>>>> results = null;
         switch (configuration.type) {
         case D2W: {
-            Vector<D2WSystem> d2wAnnotator = new Vector<D2WSystem>();
+            Vector<D2WSystem> d2wAnnotator = new Vector<D2WSystem>(1);
             d2wAnnotator.add((D2WSystem) annotator);
-            Vector<D2WDataset> d2wDataset = new Vector<D2WDataset>();
+            Vector<D2WDataset> d2wDataset = new Vector<D2WDataset>(1);
             d2wDataset.add((D2WDataset) dataset);
             try {
                 results = RunExperiments.performD2WExpVarThreshold(d2wAnnotator, null, d2wDataset, wikiAPI);
@@ -111,8 +115,24 @@ public class ExperimentTaskExecuter implements Runnable {
             }
             break;
         }
-        default:
+        case Rc2W: {
+            Vector<Sc2WSystem> rc2wAnnotator = new Vector<Sc2WSystem>(1);
+            rc2wAnnotator.add((Sc2WSystem) annotator);
+            Vector<C2WDataset> rc2wDataset = new Vector<C2WDataset>(1);
+            rc2wDataset.add((C2WDataset) dataset);
+            Vector<MatchRelation<Tag>> matchings = new Vector<MatchRelation<Tag>>(1);
+            matchings.add((MatchRelation<Tag>) matching);
+            try {
+                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null,
+                        rc2wAnnotator, null, rc2wDataset, wikiAPI);
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
             break;
+        }
+        default:
+            throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
+                    ErrorTypes.UNEXPECTED_EXCEPTION);
         }
         return RunExperiments.getBestRecord(results, matching.getName(), annotator.getName(), dataset.getName());
     }

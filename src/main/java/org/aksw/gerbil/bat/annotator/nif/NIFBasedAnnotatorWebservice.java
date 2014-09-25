@@ -5,6 +5,7 @@ import it.acubelab.batframework.data.Mention;
 import it.acubelab.batframework.problems.D2WSystem;
 import it.acubelab.batframework.utils.AnnotationException;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
@@ -15,10 +16,13 @@ import org.aksw.gerbil.transfer.nif.NIFDocumentParser;
 import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentCreator;
 import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentParser;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +34,18 @@ public class NIFBasedAnnotatorWebservice implements D2WSystem {
 
     private String url;
     private String name;
-    private HttpClient client;
+    private CloseableHttpClient client;
     private long lastRequestSend = 0;
     private long lastResponseReceived = 0;
     private int documentCount = 0;
     private NIFDocumentCreator nifCreator = new TurtleNIFDocumentCreator();
     private NIFDocumentParser nifParser = new TurtleNIFDocumentParser();
+
+    public NIFBasedAnnotatorWebservice(String url, String name) {
+        this.url = url;
+        this.name = name;
+        client = HttpClients.createDefault();
+    }
 
     @Override
     public String getName() {
@@ -62,6 +72,7 @@ public class NIFBasedAnnotatorWebservice implements D2WSystem {
                 .createAnnotatedDocument(text, mentions);
         // give the document a URI
         document.setDocumentURI(DOCUMENT_URI + documentCount);
+        ++documentCount;
         // create NIF document
         String nifDocument = nifCreator.getDocumentAsNIFString(document);
         HttpEntity entity = null;
@@ -79,26 +90,55 @@ public class NIFBasedAnnotatorWebservice implements D2WSystem {
         request.addHeader("Content-Type", nifCreator.getHttpContentType());
         request.addHeader("Accept", nifParser.getHttpContentType());
 
-        HttpResponse response = null;
+        entity = null;
+        CloseableHttpResponse response = null;
+        InputStreamReader reader = null;
         try {
-            response = client.execute(request);
-        } catch (Exception e) {
-            LOGGER.error("Exception while sending request.", e);
-            throw new AnnotationException("Exception while sending request. "
-                    + e.getLocalizedMessage());
-        }
-        // receive NIF document (end time measure and set time)
-        entity = response.getEntity();
-        lastResponseReceived = System.currentTimeMillis();
-        // read response and parse NIF
-        try {
-            document = nifParser.getDocumentFromNIFReader(new InputStreamReader(entity.getContent()));
-        } catch (Exception e) {
-            LOGGER.error("Couldn't parse the response.", e);
-            throw new AnnotationException("Couldn't parse the response. "
-                    + e.getLocalizedMessage());
+            try {
+                response = client.execute(request);
+            } catch (Exception e) {
+                LOGGER.error("Exception while sending request.", e);
+                throw new AnnotationException("Exception while sending request. "
+                        + e.getLocalizedMessage());
+            }
+            StatusLine status = response.getStatusLine();
+            if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
+                LOGGER.error("Response has the wrong status: " + status.toString());
+                throw new AnnotationException("Response has the wrong status: " + status.toString());
+            }
+            // receive NIF document (end time measure and set time)
+            entity = response.getEntity();
+            lastResponseReceived = System.currentTimeMillis();
+            // read response and parse NIF
+            try {
+                reader = new InputStreamReader(entity.getContent());
+                document = nifParser.getDocumentFromNIFReader(reader);
+            } catch (Exception e) {
+                LOGGER.error("Couldn't parse the response.", e);
+                throw new AnnotationException("Couldn't parse the response. "
+                        + e.getLocalizedMessage());
+            }
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                }
+            }
+            if (entity != null) {
+                try {
+                    EntityUtils.consume(entity);
+                } catch (IOException e1) {
+                }
+            }
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                }
+            }
         }
         // translate the annotated document into a HashSet of BAT Annotations
-        return BAT2NIF_TranslationHelper.createAnnotations(document);
+        return NIF2BAT_TranslationHelper.createAnnotations(document);
     }
 }

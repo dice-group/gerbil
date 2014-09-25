@@ -12,10 +12,10 @@ public enum ErrorTypes {
      */
 
     DATASET_DOES_NOT_SUPPORT_EXPERIMENT(-101, "The dataset does not support the experiment type."),
-    DATASET_LOADING_ERROR(-104, "The matching does not support the experiment type"),
+    DATASET_LOADING_ERROR(-104, "The dataset couldn't be loaded."),
 
     ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT(-102, "The annotator does not support the experiment type."),
-    ANNOTATOR_LOADING_ERROR(-105, "The annotator does not support the experiment type."),
+    ANNOTATOR_LOADING_ERROR(-105, "The annotator couldn't be loaded."),
 
     MATCHING_DOES_NOT_SUPPORT_EXPERIMENT(-103, "The matching does not support the experiment type"),
 
