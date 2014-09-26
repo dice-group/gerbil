@@ -15,6 +15,7 @@ import it.uniroma1.lcl.jlt.util.Language;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 
@@ -30,9 +31,10 @@ import com.google.common.collect.Sets;
  * <p>
  * <i>Andrea Moro: "I recommend to use the maximum amount of available characters (3500) at each request (i.e., try to
  * put a document all together or split it in chunks of 3500 characters) both for scalability and performance
- * reasons."</i><br>This means, that we have to split up documents longer than 3500 characters. Unfortunately, BabelFy seems
- * to measure the length on the escaped text which means that every text could be three times longer than the unescaped
- * text. Thus, we have to set {@link #BABELFY_MAX_TEXT_LENGTH}={@value #BABELFY_MAX_TEXT_LENGTH}.
+ * reasons."</i><br>
+ * This means, that we have to split up documents longer than 3500 characters. Unfortunately, BabelFy seems to measure
+ * the length on the escaped text which means that every text could be three times longer than the unescaped text. Thus,
+ * we have to set {@link #BABELFY_MAX_TEXT_LENGTH}={@value #BABELFY_MAX_TEXT_LENGTH}.
  * </p>
  */
 public class BabelfyAnnotator implements D2WSystem {
@@ -58,7 +60,6 @@ public class BabelfyAnnotator implements D2WSystem {
     }
 
     public long getLastAnnotationTime() {
-        // FIXME @Didier: How this should work?
         if (calib == -1)
             calib = TimingCalibrator.getOffset(this);
         return lastTime - calib > 0 ? lastTime - calib : 0;
@@ -71,14 +72,27 @@ public class BabelfyAnnotator implements D2WSystem {
         }
         Babelfy bfy = Babelfy.getInstance(AccessType.ONLINE);
         HashSet<Annotation> annotations = Sets.newHashSet();
+        lastTime = Calendar.getInstance().getTimeInMillis();
         try {
             it.uniroma1.lcl.babelfy.data.Annotation babelAnnotations = bfy.babelfy(key, text, Matching.EXACT,
                     Language.EN);
+            int positionInText = 0, posSurfaceFormInText = 0;
+            String surfaceForm;
+            String lowercasedText = text.toLowerCase();
             for (BabelSynsetAnchor anchor : babelAnnotations.getAnnotations()) {
-                List<String> uri = anchor.getBabelSynset().getDBPediaURIs(Language.EN);
-                if ((uri != null) && (uri.size() > 0)) {
-                    int id = DBpediaToWikiId.getId(uri.get(0));
-                    annotations.add(new Annotation(anchor.getStart(), anchor.getEnd() - anchor.getStart(), id));
+                // The positions of BabelSynsetAnchors are measured in tokens --> we have to find the token inside the text
+                surfaceForm = anchor.getAnchorText();
+                posSurfaceFormInText = lowercasedText.indexOf(surfaceForm, positionInText);
+                List<String> uris = anchor.getBabelSynset().getDBPediaURIs(Language.EN);
+                String uri;
+                if ((posSurfaceFormInText >= 0) && (uris != null) && (uris.size() > 0)) {
+                    // DIRTY FIX Babelfy seems to return URIs with "DBpedia.org" instead of "dbpedia.org"
+                    uri = uris.get(0);
+                    uri = uri.replaceAll("DBpedia.org", "dbpedia.org");
+                    int id = DBpediaToWikiId.getId(uri);
+                    annotations.add(new Annotation(posSurfaceFormInText, surfaceForm.length(), id));
+//                    annotations.add(new Annotation(anchor.getStart(), anchor.getEnd() - anchor.getStart(), id));
+                    positionInText = posSurfaceFormInText + surfaceForm.length();
                 }
             }
         } catch (BabelfyKeyNotValidOrLimitReached e) {
@@ -88,6 +102,7 @@ public class BabelfyAnnotator implements D2WSystem {
         } catch (IOException | URISyntaxException e) {
             LOGGER.error("Exception while requesting annotations from BabelFy. Returning empty Annotation set.", e);
         }
+        lastTime = Calendar.getInstance().getTimeInMillis() - lastTime;
         return annotations;
     }
 

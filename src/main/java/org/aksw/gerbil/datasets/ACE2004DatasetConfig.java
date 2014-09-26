@@ -6,10 +6,12 @@ import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.io.IOException;
 
-import org.aksw.gerbil.GerbilConfiguration;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class ACE2004DatasetConfig extends AbstractDatasetConfiguration {
+
+    public static final String DATASET_NAME = "ACE2004";
 
     private static final String ACE2004_TEXTS_FOLDER_PROPERTY_NAME = "org.aksw.gerbil.datasets.ACE2004DatasetConfig.TextsFolder";
     private static final String ACE2004_ANNOTATIONS_FOLDER_PROPERTY_NAME = "org.aksw.gerbil.datasets.ACE2004DatasetConfig.AnnotationsFolder";
@@ -17,7 +19,7 @@ public class ACE2004DatasetConfig extends AbstractDatasetConfiguration {
     private WikipediaApiInterface wikiAPI;
 
     public ACE2004DatasetConfig(WikipediaApiInterface wikiAPI) {
-        super("ACE2004", true, ExperimentType.D2W);
+        super(DATASET_NAME, true, ExperimentType.D2W);
         this.wikiAPI = wikiAPI;
     }
 

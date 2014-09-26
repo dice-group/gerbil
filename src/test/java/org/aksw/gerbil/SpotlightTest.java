@@ -9,17 +9,16 @@ import java.io.IOException;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
-import org.aksw.gerbil.datasets.MeijDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
-import org.nlp2rdf.core.vocab.NIFDatatypeProperties;
+import org.aksw.gerbil.utils.SingletonWikipediaApi;
 
 public class SpotlightTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
-        WikipediaApiInterface wikiAPI = new WikipediaApiInterface("wiki-id-title.cache", "wiki-id-id.cache");
+        WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         DBPediaApi dbpApi = new DBPediaApi();
         // ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
         // ExperimentTaskConfiguration(

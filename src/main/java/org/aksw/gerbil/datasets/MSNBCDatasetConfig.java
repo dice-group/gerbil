@@ -6,10 +6,12 @@ import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.io.IOException;
 
-import org.aksw.gerbil.GerbilConfiguration;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class MSNBCDatasetConfig extends AbstractDatasetConfiguration {
+
+    public static final String DATASET_NAME = "MSNBC";
 
     private static final String MSNBC_TEXTS_FOLDER_PROPERTY_NAME = "org.aksw.gerbil.datasets.MSNBCDatasetConfig.TextsFolder";
     private static final String MSNBC_ANNOTATIONS_FOLDER_PROPERTY_NAME = "org.aksw.gerbil.datasets.MSNBCDatasetConfig.AnnotationsFolder";
@@ -17,7 +19,7 @@ public class MSNBCDatasetConfig extends AbstractDatasetConfiguration {
     private WikipediaApiInterface wikiAPI;
 
     public MSNBCDatasetConfig(WikipediaApiInterface wikiAPI) {
-        super("MSNBC", true, ExperimentType.D2W);
+        super(DATASET_NAME, true, ExperimentType.D2W);
         this.wikiAPI = wikiAPI;
     }
 

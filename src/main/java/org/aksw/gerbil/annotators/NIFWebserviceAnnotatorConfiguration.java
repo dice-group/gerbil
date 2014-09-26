@@ -6,6 +6,8 @@ import org.aksw.gerbil.bat.annotator.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class NIFWebserviceAnnotatorConfiguration extends AbstractAnnotatorConfiguration {
+    
+    public static final String ANNOTATOR_NAME = "NIF-based Web Service";
 
     private String annotaturURL;
 

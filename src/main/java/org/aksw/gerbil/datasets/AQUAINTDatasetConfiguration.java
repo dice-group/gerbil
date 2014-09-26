@@ -6,10 +6,12 @@ import it.acubelab.batframework.datasetPlugins.AQUAINTDataset;
 import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import org.aksw.gerbil.GerbilConfiguration;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class AQUAINTDatasetConfiguration extends AbstractDatasetConfiguration {
+
+    public static final String DATASET_NAME = "AQUAINT";
 
     private static final String TEXTS_PATH_PROPERTY_NAME = "org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration.TextsPath";
     private static final String ANNOTATIONS_PATH_PROPERTY_NAME = "org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration.AnnotationsPath";
@@ -17,7 +19,7 @@ public class AQUAINTDatasetConfiguration extends AbstractDatasetConfiguration {
     private WikipediaApiInterface wikiApi;
 
     public AQUAINTDatasetConfiguration(WikipediaApiInterface wikiApi) {
-        super("AQUAINT", true, ExperimentType.Sa2W);
+        super(DATASET_NAME, true, ExperimentType.Sa2W);
         this.wikiApi = wikiApi;
     }
 

@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import it.acubelab.batframework.problems.TopicDataset;
 
-import org.aksw.gerbil.GerbilConfiguration;
 import org.aksw.gerbil.bat.datasets.FileBasedNIFDataset;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.apache.jena.riot.Lang;
 

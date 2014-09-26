@@ -6,17 +6,19 @@ import java.io.IOException;
 import it.acubelab.batframework.problems.TopicSystem;
 import it.uniroma1.lcl.babelnet.BabelNetConfiguration;
 
-import org.aksw.gerbil.GerbilConfiguration;
 import org.aksw.gerbil.bat.annotator.BabelfyAnnotator;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {
+    
+    public static final String ANNOTATOR_NAME = "BabelFy";
 
     private static final String BABELNET_CONFIG_FILE_PROPERTY_NAME = "org.aksw.gerbil.annotators.BabelfyAnnotatorConfig.ConfigFile";
     private static final String BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.BabelfyAnnotatorConfig.Key";
 
     public BabelfyAnnotatorConfig() {
-        super("BabelFy", true, ExperimentType.D2W);
+        super(ANNOTATOR_NAME, true, ExperimentType.D2W);
     }
 
     @Override

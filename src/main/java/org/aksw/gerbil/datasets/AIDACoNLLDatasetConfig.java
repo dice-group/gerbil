@@ -9,10 +9,12 @@ import it.acubelab.batframework.datasetPlugins.ConllAidaTrainingDataset;
 import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import org.aksw.gerbil.GerbilConfiguration;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class AIDACoNLLDatasetConfig extends AbstractDatasetConfiguration {
+    
+    public static final String DATASET_NAME_START = "AIDA/CoNLL";
 
     private static final String DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig.DatasetFile";
 
@@ -27,7 +29,7 @@ public class AIDACoNLLDatasetConfig extends AbstractDatasetConfiguration {
     private WikipediaApiInterface wikiApi;
 
     public AIDACoNLLDatasetConfig(AIDACoNLLChunk chunk, WikipediaApiInterface wikiApi) {
-        super("AIDA/CoNLL", true, ExperimentType.Sa2W);
+        super(DATASET_NAME_START, true, ExperimentType.Sa2W);
         this.chunk = chunk;
         this.wikiApi = wikiApi;
         // Set the correct name

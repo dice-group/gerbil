@@ -1,4 +1,4 @@
-package org.aksw.gerbil;
+package org.aksw.gerbil.config;
 
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -24,7 +24,7 @@ public class GerbilConfiguration {
 
     private static Configuration instance = null;
 
-    public static Configuration getInstance() {
+    public static synchronized Configuration getInstance() {
         if (instance == null) {
             instance = new CompositeConfiguration();
             loadAdditionalProperties(DEFAULT_GERBIL_PROPERTIES_FILE_NAME);

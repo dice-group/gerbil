@@ -45,4 +45,23 @@ public abstract class AbstractAnnotatorConfiguration implements AnnotatorConfigu
 
     protected abstract TopicSystem loadAnnotator() throws Exception;
 
+    public boolean isCouldBeCached() {
+        return couldBeCached;
+    }
+
+    public void setCouldBeCached(boolean couldBeCached) {
+        this.couldBeCached = couldBeCached;
+    }
+
+    public ExperimentType[] getApplicableForExperiments() {
+        return applicableForExperiments;
+    }
+
+    public void setApplicableForExperiments(ExperimentType[] applicableForExperiments) {
+        this.applicableForExperiments = applicableForExperiments;
+    }
+
+    public void setAnnotatorName(String annotatorName) {
+        this.annotatorName = annotatorName;
+    }
 }
