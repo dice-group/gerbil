@@ -8,15 +8,15 @@ import java.io.IOException;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
-public class MeijDatasetConfig extends AbstractDatasetConfiguration {
+public class CMNSDatasetConfig extends AbstractDatasetConfiguration {
 
-    public static final String DATASET_NAME = "Meij";
+    public static final String DATASET_NAME = "CMNS";
 
-    private static final String MEIJ_TWEETS_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.IITBDatasetConfig.TweetsFile";
-    private static final String MEIJ_ANNOTATIONS_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.IITBDatasetConfig.AnnotationsFile";
-    private static final String MEIJ_RANK_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.IITBDatasetConfig.RankFile";
+    private static final String MEIJ_TWEETS_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.CMNSDatasetConfig.TweetsFile";
+    private static final String MEIJ_ANNOTATIONS_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.CMNSDatasetConfig.AnnotationsFile";
+    private static final String MEIJ_RANK_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.CMNSDatasetConfig.RankFile";
 
-    public MeijDatasetConfig() {
+    public CMNSDatasetConfig() {
         super(DATASET_NAME, true, ExperimentType.Rc2W);
     }
 

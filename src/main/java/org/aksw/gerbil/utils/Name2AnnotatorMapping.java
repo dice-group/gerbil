@@ -2,8 +2,6 @@ package org.aksw.gerbil.utils;
 
 import it.acubelab.batframework.systemPlugins.DBPediaApi;
 
-import java.util.List;
-
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
