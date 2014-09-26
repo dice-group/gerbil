@@ -19,6 +19,8 @@ package org.aksw.gerbil.datatypes;
  * @author m.roeder
  * 
  */
+
+// TODO add to String with better naming and info method
 public enum ExperimentType {
     /**
      * Disambiguate to Wikipedia

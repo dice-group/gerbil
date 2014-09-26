@@ -32,7 +32,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter{
 	
 	@Override
 	  public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		System.out.println("BLUB");
-	    registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/");
+	    registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 	  }
 }
