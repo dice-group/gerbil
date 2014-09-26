@@ -1,191 +1,222 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.aksw</groupId>
-    <artifactId>gerbil</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>General Entity Annotator Benchmark</name>
-    <description>This project is a benchmark for entity annotation and disambiguation tools. It is based on the BAT-Framework of Cornolti et al.</description>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.aksw</groupId>
+	<artifactId>gerbil</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>General Entity Annotator Benchmark</name>
+	<description>This project is a benchmark for entity annotation and disambiguation tools. It is based on the BAT-Framework of Cornolti et al.</description>
 
-    <properties>
-        <java.version>1.7</java.version>
-        <slf4j.version>1.7.5</slf4j.version>
-        <junit.version>4.11</junit.version>
-        <jena.version>2.11.1</jena.version>
-    </properties>
+	<properties>
+		<java.version>1.7</java.version>
+		<slf4j.version>1.7.5</slf4j.version>
+		<junit.version>4.11</junit.version>
+		<jena.version>2.11.1</jena.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring.version>3.2.10.RELEASE</spring.version>
+	</properties>
 
-    <repositories>
-        <!-- Let's use a local repository for the local libraries of this project -->
-        <repository>
-            <id>local repository</id>
-            <url>file://${project.basedir}/repository</url>
-        </repository>
-        <repository>
-            <id>maven.aksw.internal</id>
-            <name>University Leipzig, AKSW Maven2 Repository</name>
-            <url>http://maven.aksw.org/repository/internal</url>
-        </repository>
-        <repository>
-            <id>maven.aksw.snapshots</id>
-            <name>University Leipzig, AKSW Maven2 Repository</name>
-            <url>http://maven.aksw.org/repository/snapshots</url>
-        </repository>
-    </repositories>
+	<repositories>
+		<!-- Let's use a local repository for the local libraries of this project -->
+		<repository>
+			<id>local repository</id>
+			<url>file://${project.basedir}/repository</url>
+		</repository>
+		<repository>
+			<id>maven.aksw.internal</id>
+			<name>University Leipzig, AKSW Maven2 Repository</name>
+			<url>http://maven.aksw.org/repository/internal</url>
+		</repository>
+		<repository>
+			<id>maven.aksw.snapshots</id>
+			<name>University Leipzig, AKSW Maven2 Repository</name>
+			<url>http://maven.aksw.org/repository/snapshots</url>
+		</repository>
+	</repositories>
 
-    <dependencies>
-        <!-- BAT-Framework and its dependencies -->
-        <dependency>
-            <groupId>it.unipi.di</groupId>
-            <artifactId>batframework</artifactId>
-            <version>0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.james</groupId>
-            <artifactId>apache-mime4j</artifactId>
-            <version>0.6</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>fastutil</artifactId>
-            <version>6.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.3.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>4.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>dsiutils</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>mpi.rmi</groupId>
-            <artifactId>aida-public</artifactId>
-            <version>20130218</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.illinois.dc.cogcomp</groupId>
-            <artifactId>edison</artifactId>
-            <version>0.2.9</version>
-        </dependency>
-        <dependency>
-            <groupId>wikifier</groupId>
-            <artifactId>wikifier</artifactId>
-            <version>0.0.1</version>
-        </dependency>
+	<dependencies>
+		<!-- BAT-Framework and its dependencies -->
+		<dependency>
+			<groupId>it.unipi.di</groupId>
+			<artifactId>batframework</artifactId>
+			<version>0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.james</groupId>
+			<artifactId>apache-mime4j</artifactId>
+			<version>0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>it.unimi.dsi</groupId>
+			<artifactId>fastutil</artifactId>
+			<version>6.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>it.unimi.dsi</groupId>
+			<artifactId>dsiutils</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>mpi.rmi</groupId>
+			<artifactId>aida-public</artifactId>
+			<version>20130218</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.illinois.dc.cogcomp</groupId>
+			<artifactId>edison</artifactId>
+			<version>0.2.9</version>
+		</dependency>
+		<dependency>
+			<groupId>wikifier</groupId>
+			<artifactId>wikifier</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 
-        <!-- slf4j: Logging API -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <!-- slf4j: Logging Binding - is already contained in aida -->
-        <!-- <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-            </dependency> -->
+		<!-- slf4j: Logging API -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<!-- slf4j: Logging Binding - is already contained in aida -->
+		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
+			<version>${slf4j.version}</version> </dependency> -->
 
-        <!-- NIF -->
-        <dependency>
-            <groupId>org.nlp2rdf.software</groupId>
-            <artifactId>jena</artifactId>
-            <version>2.0.1-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>log4j</artifactId>
-                    <groupId>log4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>slf4j-log4j12</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.nlp2rdf.ontologies</groupId>
-            <artifactId>persistence.uni-leipzig.org</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-        </dependency>
+		<!-- NIF -->
+		<dependency>
+			<groupId>org.nlp2rdf.software</groupId>
+			<artifactId>jena</artifactId>
+			<version>2.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.nlp2rdf.ontologies</groupId>
+			<artifactId>persistence.uni-leipzig.org</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
+		</dependency>
 
-        <!-- BABELFY -->
-        <dependency>
-            <groupId>org.babelnet</groupId>
-            <artifactId>babelfy</artifactId>
-            <version>0.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.babelnet</groupId>
-            <artifactId>jlt</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.babelnet</groupId>
-            <artifactId>babelnet-api</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>2.9.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <version>1.5</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.mit</groupId>
-            <artifactId>jwi</artifactId>
-            <version>2.2.1</version>
-        </dependency>
+		<!-- BABELFY -->
+		<dependency>
+			<groupId>org.babelnet</groupId>
+			<artifactId>babelfy</artifactId>
+			<version>0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.babelnet</groupId>
+			<artifactId>jlt</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.babelnet</groupId>
+			<artifactId>babelnet-api</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>2.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.mit</groupId>
+			<artifactId>jwi</artifactId>
+			<version>2.2.1</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
 
-    </dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+		</dependency>
+		<!-- Servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<!-- Web bootstrap jquery ... -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>3.2.0</version>
+		</dependency>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+		<!-- SPRING -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<packaging>war</packaging>
+
 </project>
