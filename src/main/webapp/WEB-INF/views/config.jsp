@@ -21,34 +21,33 @@
 	<script type="text/javascript">
 		$(document).ready(
 				function() {
-					$('#type')
-							.change(
-									function() {
-										alert('changed ' + $(this).val());
-										$('#annotator').html('');
-										var dropdownOptionList = [];
-										$.getJSON('${findAnnotator}', {
-											experimentType : $(this).val(),
-											ajax : 'true'
-										}, function(data) {
-											var len = data.length;
-											for (var i = 0; i < len; i++) {
-												dropdownOptionList.push({
-													'label' : data[i],
-													'value' : data[i]
-												});
-												$('#annotator').append(
+					$('#type').change(
+							function() {
+								$('#annotator').html('');
+								$.getJSON('${findAnnotator}', {
+									experimentType : $(this).val(),
+									ajax : 'false'
+								}, function(data) {
+									var len = data.length;
+									for (var i = 0; i < len; i++) {
+										$('#annotator')
+												.append(
 														'<option value="'+data[i]+'">'
 																+ data[i]
 																+ '</option>');
-											}
+									}
 
-										});
-									
-										$('#annotator').multiselect('rebuild');
+								});
 
-									});
+								$('#annotator').multiselect('rebuild');
+
+							});
 				});
+	</script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#annotator').multiselect({disableIfEmpty: true});
+		});
 	</script>
 	<%@include file="navbar.jsp"%>
 	<h1>Gerbil Experiment Configuration</h1>
