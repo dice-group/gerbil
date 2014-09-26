@@ -14,16 +14,19 @@ public class ExperimentTaskResult extends ExperimentTaskConfiguration {
     public static final int MACRO_RECALL_INDEX = 5;
 
     public double results[];
+    public int state;
 
     public ExperimentTaskResult(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
-            ExperimentType type, Matching matching, double results[]) {
+            ExperimentType type, Matching matching, double results[], int state) {
         super(annotatorConfig, datasetConfig, type, matching);
         this.results = results;
+        this.state = state;
     }
 
-    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[]) {
+    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state) {
         super(configuration.annotatorConfig, configuration.datasetConfig, configuration.type, configuration.matching);
         this.results = results;
+        this.state = state;
     }
 
     public double[] getResults() {
@@ -56,6 +59,14 @@ public class ExperimentTaskResult extends ExperimentTaskConfiguration {
 
     public double getMacroRecall() {
         return results[MACRO_RECALL_INDEX];
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    public int getState() {
+        return state;
     }
 
     @Override

@@ -81,7 +81,7 @@ public class ExperimentTaskExecuter implements Runnable {
             results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = metrics.getMicroF1();
             results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = metrics.getMicroPrecision();
             results[ExperimentTaskResult.MICRO_RECALL_INDEX] = metrics.getMicroRecall();
-            ExperimentTaskResult result = new ExperimentTaskResult(configuration, results);
+            ExperimentTaskResult result = new ExperimentTaskResult(configuration, results, ExperimentDAO.TASK_FINISHED);
 
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, result);
