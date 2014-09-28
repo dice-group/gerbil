@@ -24,6 +24,13 @@ public class MainController {
 		return model;
 	}
 
+	@RequestMapping("/about")
+	public ModelAndView about() {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("about");
+		return model;
+	}
+	
 	@RequestMapping("/")
 	public ModelAndView index() {
 		return new ModelAndView("index");

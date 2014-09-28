@@ -2,51 +2,47 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <head>
-<link rel='stylesheet'
-	href='../webjars/bootstrap/3.2.0/css/bootstrap.min.css'>
-
-<link rel="stylesheet"
-	href="../webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css"
-	type="text/css" />
+<link rel="stylesheet"	href="webjars/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet"	href="webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css"/>
 </head>
-<body class="col-md-6">
+<body class="container">
 	<c:url var="findAnnotator" value="/annotators" />
-	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script src="../webjars/jquery/2.1.1/jquery.min.js"></script>
-	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script src="../webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-	<script type="text/javascript"
-		src="../webjars/bootstrap-multiselect/0.9.8/js/bootstrap-multiselect.js"></script>
+	<script src="webjars/jquery/2.1.1/jquery.min.js"></script>
+	<script src="webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="webjars/bootstrap-multiselect/0.9.8/js/bootstrap-multiselect.js"></script>
 
 	<script type="text/javascript">
-		$(document).ready(
-				function() {
-					$('#type').change(
-							function() {
-								$('#annotator').html('');
-								$.getJSON('${findAnnotator}', {
-									experimentType : $(this).val(),
-									ajax : 'false'
-								}, function(data) {
-									var len = data.length;
-									for (var i = 0; i < len; i++) {
-										$('#annotator')
-												.append(
-														'<option value="'+data[i]+'">'
-																+ data[i]
-																+ '</option>');
-									}
+		$(document).ready(function() {
+			$('#type').change(function() {
+				$('#annotator').html('');
+				$.getJSON('${findAnnotator}', {
+					experimentType : $(this).val(),
+					ajax : 'false'
+				}, function(data) {
+					console.log(data)
+					var formattedData = [];
 
-								});
-
-								$('#annotator').multiselect('rebuild');
-
-							});
+					var len = data.length;
+					for (var i = 0; i < len; i++) {
+						var dat = {};
+						dat.label = data[i];
+						dat.value = data[i];
+						console.log(dat);
+						formattedData.push(dat);
+					}
+					console.log(formattedData);
+					$('#annotator').multiselect('dataprovider', formattedData);
+					$('#annotator').multiselect('rebuild');
 				});
+
+			});
+		});
 	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$('#annotator').multiselect({disableIfEmpty: true});
+			$('#annotator').multiselect({
+				disableIfEmpty : true
+			});
 		});
 	</script>
 	<%@include file="navbar.jsp"%>
