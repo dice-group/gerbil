@@ -18,7 +18,7 @@ public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private static final String BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.BabelfyAnnotatorConfig.Key";
 
     public BabelfyAnnotatorConfig() {
-        super(ANNOTATOR_NAME, true, ExperimentType.D2W);
+        super(ANNOTATOR_NAME, true, ExperimentType.Sa2W);
     }
 
     @Override

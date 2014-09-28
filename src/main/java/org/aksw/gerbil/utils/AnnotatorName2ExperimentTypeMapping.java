@@ -3,7 +3,9 @@ package org.aksw.gerbil.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.aksw.gerbil.annotators.AgdistisAnnotatorConfig;
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
+import org.aksw.gerbil.annotators.IllinoisAnnotatorConfig;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.annotators.TagMeAnnotatorConfig;
@@ -20,6 +22,8 @@ public class AnnotatorName2ExperimentTypeMapping {
         mapping.put(SpotlightAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
         mapping.put(TagMeAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
         mapping.put(WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
+        mapping.put(IllinoisAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
+        mapping.put(AgdistisAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
     }
 
     public ExperimentType getExperimentType(String name) {
