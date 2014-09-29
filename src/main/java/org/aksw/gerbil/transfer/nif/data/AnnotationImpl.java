@@ -54,4 +54,9 @@ public class AnnotationImpl implements Annotation {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "(" + startPosition + ", " + length + ")";
+    }
 }

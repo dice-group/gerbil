@@ -25,7 +25,7 @@ public class NIF2BAT_TranslationHelper {
         int wikiId = -1;
         // if this is a disambiguated annotation
         if (annotation instanceof DisambiguatedAnnotation) {
-            DBpediaToWikiId.getId(((DisambiguatedAnnotation) annotation).getUri());
+            wikiId = DBpediaToWikiId.getId(((DisambiguatedAnnotation) annotation).getUri());
         }
         return new it.acubelab.batframework.data.Annotation(annotation.getStartPosition(), annotation.getLength(),
                 wikiId);

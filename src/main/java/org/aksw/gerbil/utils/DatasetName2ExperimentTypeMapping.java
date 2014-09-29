@@ -16,7 +16,7 @@ public class DatasetName2ExperimentTypeMapping {
 
     private final static Map<String, ExperimentType> mapping = new HashMap<String, ExperimentType>();
 
-    {
+    static {
         mapping.put(ACE2004DatasetConfig.DATASET_NAME, ExperimentType.Sa2W);
         mapping.put(AQUAINTDatasetConfiguration.DATASET_NAME, ExperimentType.Sa2W);
         mapping.put(IITBDatasetConfig.DATASET_NAME, ExperimentType.Sa2W);
