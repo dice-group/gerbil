@@ -100,7 +100,8 @@ public interface ExperimentDAO {
 
     /**
      * This method updates the result of the already existing experiment task, identified by the given id. Additionally
-     * it should update the timestamp of the task and set its state to {@link #TASK_FINISHED}={@value #TASK_FINISHED}.
+     * it should update the timestamp of the task and set its state to the state countained inside the given result
+     * object.
      * 
      * @param experimentTaskId
      *            the id of the experiment task to which the result has been calculated

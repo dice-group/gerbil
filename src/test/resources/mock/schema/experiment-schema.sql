@@ -1,17 +1,18 @@
 CREATE TABLE IF NOT EXISTS ExperimentTasks (
 id int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
-experimentType VARCHAR(300),
-matching VARCHAR(300),
-annotatorName VARCHAR(300),
-datasetName VARCHAR(300),
+experimentType VARCHAR(10),
+matching VARCHAR(50),
+annotatorName VARCHAR(100),
+datasetName VARCHAR(100),
 microF1 double,
 microPrecision double,
 microRecall double,
 macroF1 double,
 macroPrecision double,
 macroRecall double,
+errorCount int(10),
 state int(10),
-created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+lastChanged TIMESTAMP,
 
 ) ENGINE=InnoDB;
 
