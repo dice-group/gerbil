@@ -80,7 +80,8 @@ public class BabelfyAnnotator implements D2WSystem {
             String surfaceForm;
             String lowercasedText = text.toLowerCase();
             for (BabelSynsetAnchor anchor : babelAnnotations.getAnnotations()) {
-                // The positions of BabelSynsetAnchors are measured in tokens --> we have to find the token inside the text
+                // The positions of BabelSynsetAnchors are measured in tokens --> we have to find the token inside the
+                // text
                 surfaceForm = anchor.getAnchorText();
                 posSurfaceFormInText = lowercasedText.indexOf(surfaceForm, positionInText);
                 List<String> uris = anchor.getBabelSynset().getDBPediaURIs(Language.EN);
@@ -91,7 +92,7 @@ public class BabelfyAnnotator implements D2WSystem {
                     uri = uri.replaceAll("DBpedia.org", "dbpedia.org");
                     int id = DBpediaToWikiId.getId(uri);
                     annotations.add(new Annotation(posSurfaceFormInText, surfaceForm.length(), id));
-//                    annotations.add(new Annotation(anchor.getStart(), anchor.getEnd() - anchor.getStart(), id));
+                    // annotations.add(new Annotation(anchor.getStart(), anchor.getEnd() - anchor.getStart(), id));
                     positionInText = posSurfaceFormInText + surfaceForm.length();
                 }
             }
@@ -100,7 +101,9 @@ public class BabelfyAnnotator implements D2WSystem {
             throw new AnnotationException("The BabelFy Key is invalid or has reached its limit: "
                     + e.getLocalizedMessage());
         } catch (IOException | URISyntaxException e) {
-            LOGGER.error("Exception while requesting annotations from BabelFy. Returning empty Annotation set.", e);
+            // LOGGER.error("Exception while requesting annotations from BabelFy. Returning empty Annotation set.", e);
+            throw new AnnotationException("Exception while requesting annotations from BabelFy: "
+                    + e.getLocalizedMessage());
         }
         lastTime = Calendar.getInstance().getTimeInMillis() - lastTime;
         return annotations;

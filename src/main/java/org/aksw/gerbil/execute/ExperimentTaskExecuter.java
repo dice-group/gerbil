@@ -1,11 +1,16 @@
 package org.aksw.gerbil.execute;
 
+import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Tag;
 import it.acubelab.batframework.metrics.MatchRelation;
 import it.acubelab.batframework.metrics.MetricsResultSet;
+import it.acubelab.batframework.problems.A2WDataset;
+import it.acubelab.batframework.problems.A2WSystem;
 import it.acubelab.batframework.problems.C2WDataset;
+import it.acubelab.batframework.problems.C2WSystem;
 import it.acubelab.batframework.problems.D2WDataset;
 import it.acubelab.batframework.problems.D2WSystem;
+import it.acubelab.batframework.problems.Sa2WSystem;
 import it.acubelab.batframework.problems.Sc2WSystem;
 import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.problems.TopicSystem;
@@ -16,6 +21,8 @@ import it.acubelab.batframework.utils.WikipediaApiInterface;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.aksw.gerbil.bat.annotator.ErrorCounter;
+import org.aksw.gerbil.bat.annotator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
@@ -55,6 +62,7 @@ public class ExperimentTaskExecuter implements Runnable {
 
             // Create annotator
             TopicSystem annotator = configuration.annotatorConfig.getAnnotator(configuration.type);
+            annotator = ErrorCountingAnnotatorDecorator.createDecorator(annotator);
             if (annotator == null) {
                 throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getAnnotatorName()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
@@ -73,6 +81,10 @@ public class ExperimentTaskExecuter implements Runnable {
             // perform experiment
             MetricsResultSet metrics = runExperiment(dataset, annotator, matching).second;
 
+            int errorCount = 0;
+            if (annotator instanceof ErrorCounter) {
+                errorCount = ((ErrorCounter) annotator).getErrorCount();
+            }
             // create result object
             double results[] = new double[6];
             results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = metrics.getMacroF1();
@@ -81,7 +93,8 @@ public class ExperimentTaskExecuter implements Runnable {
             results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = metrics.getMicroF1();
             results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = metrics.getMicroPrecision();
             results[ExperimentTaskResult.MICRO_RECALL_INDEX] = metrics.getMicroRecall();
-            ExperimentTaskResult result = new ExperimentTaskResult(configuration, results, ExperimentDAO.TASK_FINISHED);
+            ExperimentTaskResult result = new ExperimentTaskResult(configuration, results, ExperimentDAO.TASK_FINISHED,
+                    errorCount);
 
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, result);
@@ -112,6 +125,50 @@ public class ExperimentTaskExecuter implements Runnable {
             }
             break;
         }
+        case A2W: {
+            Vector<A2WSystem> a2wAnnotator = new Vector<A2WSystem>(1);
+            a2wAnnotator.add((A2WSystem) annotator);
+            Vector<A2WDataset> a2wDataset = new Vector<A2WDataset>(1);
+            a2wDataset.add((A2WDataset) dataset);
+            Vector<MatchRelation<Annotation>> matchings = new Vector<MatchRelation<Annotation>>(1);
+            matchings.add((MatchRelation<Annotation>) matching);
+            try {
+                results = RunExperiments.performA2WExpVarThreshold(matchings, a2wAnnotator, null, a2wDataset, wikiAPI);
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case Sa2W: {
+            Vector<Sa2WSystem> sa2wAnnotator = new Vector<Sa2WSystem>(1);
+            sa2wAnnotator.add((Sa2WSystem) annotator);
+            Vector<A2WDataset> a2wDataset = new Vector<A2WDataset>(1);
+            a2wDataset.add((A2WDataset) dataset);
+            Vector<MatchRelation<Annotation>> matchings = new Vector<MatchRelation<Annotation>>(1);
+            matchings.add((MatchRelation<Annotation>) matching);
+            try {
+                results = RunExperiments.performA2WExpVarThreshold(matchings, null, sa2wAnnotator, a2wDataset, wikiAPI);
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case C2W: {
+            Vector<C2WSystem> c2wAnnotator = new Vector<C2WSystem>(1);
+            c2wAnnotator.add((C2WSystem) annotator);
+            Vector<C2WDataset> c2wDataset = new Vector<C2WDataset>(1);
+            c2wDataset.add((C2WDataset) dataset);
+            Vector<MatchRelation<Tag>> matchings = new Vector<MatchRelation<Tag>>(1);
+            matchings.add((MatchRelation<Tag>) matching);
+            try {
+                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null,
+                        null, c2wAnnotator, c2wDataset, wikiAPI);
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case Sc2W: // Falls through
         case Rc2W: {
             Vector<Sc2WSystem> rc2wAnnotator = new Vector<Sc2WSystem>(1);
             rc2wAnnotator.add((Sc2WSystem) annotator);

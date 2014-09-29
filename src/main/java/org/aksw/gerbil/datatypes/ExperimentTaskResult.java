@@ -15,18 +15,21 @@ public class ExperimentTaskResult extends ExperimentTaskConfiguration {
 
     public double results[];
     public int state;
+    public int errorCount;
 
     public ExperimentTaskResult(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
-            ExperimentType type, Matching matching, double results[], int state) {
+            ExperimentType type, Matching matching, double results[], int state, int errorCount) {
         super(annotatorConfig, datasetConfig, type, matching);
         this.results = results;
         this.state = state;
+        this.errorCount = errorCount;
     }
 
-    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state) {
+    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state, int errorCount) {
         super(configuration.annotatorConfig, configuration.datasetConfig, configuration.type, configuration.matching);
         this.results = results;
         this.state = state;
+        this.errorCount = errorCount;
     }
 
     public double[] getResults() {
@@ -72,7 +75,9 @@ public class ExperimentTaskResult extends ExperimentTaskConfiguration {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("ExperimentTaskResult(micF1=");
+        builder.append("ExperimentTaskResult(state=");
+        builder.append(state);
+        builder.append(",micF1=");
         builder.append(results[MICRO_F1_MEASURE_INDEX]);
         builder.append(",micPrecision=");
         builder.append(results[MICRO_PRECISION_INDEX]);
@@ -84,6 +89,8 @@ public class ExperimentTaskResult extends ExperimentTaskConfiguration {
         builder.append(results[MACRO_PRECISION_INDEX]);
         builder.append(",macRecall=");
         builder.append(results[MACRO_RECALL_INDEX]);
+        builder.append(",errors=");
+        builder.append(errorCount);
         builder.append(")");
         return builder.toString();
     }

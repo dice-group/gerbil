@@ -139,7 +139,7 @@ public abstract class AbstractNIFDataset implements A2WDataset {
                         - position;
                 if (id != -1) {
                     annotations.add(new Annotation(position, length, id));
-                    logger.info("Annotation: text:{} begin:{} lenght:{}",
+                    logger.debug("Annotation: text:{} begin:{} lenght:{}",
                             new Object[] {
                                     annSolution.get("entity").asLiteral()
                                             .getString(), position, length });
