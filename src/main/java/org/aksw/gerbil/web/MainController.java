@@ -1,6 +1,7 @@
 package org.aksw.gerbil.web;
 
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Set;
 
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -46,12 +47,13 @@ public class MainController {
 
 	@RequestMapping("/exptypes")
 	public @ResponseBody
-	Set<String> expTypes() {
-		HashSet<String> set = new HashSet<>();
-		for (ExperimentType i : ExperimentType.values()) {
-			set.add(i.name());
+	LinkedList<String> expTypes() {
+		LinkedList<String> list = new LinkedList<>();
+		for (ExperimentType experimentType : ExperimentType.values()) {
+			list.add(experimentType.name());
 		}
-		return set;
+		Collections.sort(list);
+		return list;
 	}
 
 	@RequestMapping("/matchings")

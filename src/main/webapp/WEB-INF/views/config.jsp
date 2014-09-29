@@ -52,8 +52,9 @@
 			
 			$('#type').change(function() {
 				$('#matching').html('');
+				$('#annotator').html('');
 				$.getJSON('${matchings}', {
-					experimentType: $('#type').val()[0],
+					experimentType: $('#type').val(),
 					ajax : 'false',
 					traditional: true
 				}, function(data) {
@@ -72,7 +73,7 @@
 			$('#matching').change(function() {
 				$('#annotator').html('');
 				$.getJSON('${annotators}', {
-					experimentType : $('#type').val()[0],
+					experimentType : $('#type').val(),
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
@@ -113,8 +114,7 @@
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="type">Experiment Type</label>
 				<div class="col-md-4">
-					<form:select id="type"  multiple="multiple" path="type" style="display: none;" >
-						<form:option value="Nothing selected" />
+					<form:select id="type"  multiple="radio" path="type" style="display: none;" >
 					</form:select>
 				</div>
 			</div>
