@@ -116,7 +116,7 @@ public abstract class AbstractNIFDataset implements A2WDataset {
             QuerySolution solution = result.next();
             RDFNode rdfNode = solution.get("context");
             String context = rdfNode.asResource().toString();
-            logger.info("processing text {}", context);
+            logger.debug("processing text {}", context);
             annotationQuery.clearParams();
             annotationQuery.setIri("context", context);
             QueryExecution qAnn = QueryExecutionFactory.create(
@@ -139,10 +139,12 @@ public abstract class AbstractNIFDataset implements A2WDataset {
                         - position;
                 if (id != -1) {
                     annotations.add(new Annotation(position, length, id));
-                    logger.info("Annotation: text:{} begin:{} lenght:{}",
-                            new Object[] {
-                                    annSolution.get("entity").asLiteral()
-                                            .getString(), position, length });
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Annotation: text:{} begin:{} lenght:{}",
+                                new Object[] {
+                                        annSolution.get("entity").asLiteral()
+                                                .getString(), position, length });
+                    }
                 }
             }
         }

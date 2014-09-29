@@ -8,7 +8,7 @@ public class ExperimentTaskConfiguration {
 
     public AnnotatorConfiguration annotatorConfig;
     public DatasetConfiguration datasetConfig;
-    public ExperimentType type; // enum
+    public ExperimentType type;
     public Matching matching;
 
     public ExperimentTaskConfiguration(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
