@@ -5,7 +5,6 @@ import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import org.aksw.gerbil.annotators.AgdistisAnnotatorConfig;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
-import org.aksw.gerbil.annotators.IllinoisAnnotatorConfig;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.annotators.TagMeAnnotatorConfig;
@@ -35,8 +34,6 @@ public class Name2AnnotatorMapping {
 			return new TagMeAnnotatorConfig();
 		case WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME:
 			return new WikipediaMinerAnnotatorConfig();
-		case IllinoisAnnotatorConfig.ANNOTATOR_NAME:
-			return new IllinoisAnnotatorConfig();
 		case AgdistisAnnotatorConfig.ANNOTATOR_NAME:
 			return new AgdistisAnnotatorConfig(
 					SingletonWikipediaApi.getInstance());
