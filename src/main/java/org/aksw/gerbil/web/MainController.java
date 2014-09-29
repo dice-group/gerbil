@@ -1,5 +1,6 @@
 package org.aksw.gerbil.web;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -30,7 +31,7 @@ public class MainController {
 		model.setViewName("about");
 		return model;
 	}
-	
+
 	@RequestMapping("/")
 	public ModelAndView index() {
 		return new ModelAndView("index");
@@ -43,9 +44,42 @@ public class MainController {
 		return m;
 	}
 
+	@RequestMapping("/exptypes")
+	public @ResponseBody
+	Set<String> expTypes() {
+		HashSet<String> set = new HashSet<>();
+		for (ExperimentType i : ExperimentType.values()) {
+			set.add(i.name());
+		}
+		return set;
+	}
+
+	@RequestMapping("/matchings")
+	public @ResponseBody
+	Set<String> matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {
+		ExperimentType type = ExperimentType.valueOf(experimentType);
+		switch (type) {
+		case C2W:
+			return Sets.newLinkedHashSet(Lists.newArrayList("Me - strong entity match"));
+		case D2W:
+			// Mw will not be shown since the positions are always exact and thus it works like Ma
+			return Sets.newLinkedHashSet(Lists.newArrayList("Ma - strong annotation match"));
+		case A2W:
+			return Sets.newLinkedHashSet(Lists.newArrayList("Mw - weak annotation match", "Ma - strong annotation match"));
+		case Rc2W:
+			return Sets.newLinkedHashSet(Lists.newArrayList("Me - strong entity match"));
+		case Sc2W:
+			return Sets.newLinkedHashSet(Lists.newArrayList("Me - strong entity match"));
+		case Sa2W:
+			return Sets.newLinkedHashSet(Lists.newArrayList("Mw - weak annotation match", "Ma - strong annotation match"));
+		default:
+			return Sets.newLinkedHashSet(Lists.newArrayList("None"));
+		}
+	}
+
 	@RequestMapping("/annotators")
-	public @ResponseBody Set<String> annotatorsForExpType(
-			@RequestParam(value = "experimentType") String experimentType) {
+	public @ResponseBody
+	Set<String> annotatorsForExpType(@RequestParam(value = "experimentType") String experimentType) {
 		ExperimentType type = ExperimentType.valueOf(experimentType);
 		switch (type) {
 		case D2W:
@@ -56,6 +90,7 @@ public class MainController {
 			return Sets.newLinkedHashSet(Lists.newArrayList("one", "two"));
 		}
 	}
+
 
 	public static class Command {
 

@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
-      <a class="navbar-brand" style="padding-top: 0px" href="#">
+      <a class="navbar-brand" style="padding-top: 0px" href="/gerbil">
         <img style="height: 50px" src="http://139.18.2.164/rusbeck/gerbil/gerbillogo.png" alt="Logo of Gerbil">
       </a>
     </div>
