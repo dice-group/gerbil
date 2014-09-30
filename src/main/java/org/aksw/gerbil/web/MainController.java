@@ -56,6 +56,12 @@ public class MainController {
 		return list;
 	}
 
+	@RequestMapping("/datasets")
+	public @ResponseBody
+	Set<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
+		return Sets.newLinkedHashSet(Lists.newArrayList("datasets"));
+	}
+
 	@RequestMapping("/matchings")
 	public @ResponseBody
 	Set<String> matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {
@@ -93,11 +99,19 @@ public class MainController {
 		}
 	}
 
-
 	public static class Command {
 
 		private ExperimentType type;
 		private String annotator;
+		private String datasets;
+
+		public String getDatasets() {
+			return datasets;
+		}
+
+		public void setDatasets(String datasets) {
+			this.datasets = datasets;
+		}
 
 		public String getAnnotator() {
 			return annotator;
