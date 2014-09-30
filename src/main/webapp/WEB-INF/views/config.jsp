@@ -41,7 +41,7 @@
 	<h1>GERBIL Experiment Configuration</h1>
 
 
-	<form class="form-horizontal">
+	<form id="configForm" class="form-horizontal">
 		<fieldset>
 			<!-- Form Name -->
 			<legend>New Experiment</legend>
@@ -119,8 +119,8 @@
 			<!-- Button -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="submit"></label>
-				<div class="col-md-4">
-					<input type="submit" id="submit" name="singlebutton" class="btn btn-primary" value="Run Experiment" />
+				<div id="submitField"  class="col-md-4">
+					<input type="button" id="submit" name="singlebutton" class="btn btn-primary" value="Run Experiment" />
 				</div>
 			</div>
 		</fieldset>
@@ -138,7 +138,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for ( var i = 0; i < data.length; i++) {
+					for (var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -156,7 +156,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for ( var i = 0; i < data.length; i++) {
+					for (var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -174,7 +174,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for ( var i = 0; i < data.length; i++) {
+					for (var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -191,7 +191,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for ( var i = 0; i < data.length; i++) {
+					for (var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -269,7 +269,7 @@
 					$('#warningEmptyAnnotator').hide();
 					$('#annotatorList').append("<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp" + name + "(" + uri + ")</li>");
 					var listItems = $('#annotatorList > li > span');
-					for ( var i = 0; i < listItems.length; i++) {
+					for (var i = 0; i < listItems.length; i++) {
 						listItems[i].onclick = function() {
 							this.parentNode.parentNode.removeChild(this.parentNode);
 							checkExperimentConfiguration();
@@ -292,7 +292,7 @@
 					$('#warningEmptyDataset').hide();
 					$('#datasetList').append("<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp" + name + "(" + uri + ")</li>");
 					var listItems = $('#datasetList > li > span');
-					for ( var i = 0; i < listItems.length; i++) {
+					for (var i = 0; i < listItems.length; i++) {
 						listItems[i].onclick = function() {
 							this.parentNode.parentNode.removeChild(this.parentNode);
 							checkExperimentConfiguration();
@@ -328,15 +328,21 @@
 				var type = $('#type').val() ? $('#type').val() : "A2W";
 				var matching = $('#matching').val() ? $('#matching').val() : "A2W";
 				var data = {};
-				data.type=type;
-				data.matching=matching;
-				data.annotator=annotator;
-				data.dataset=dataset;
-				$.getJSON('${execute}', {
-					experimentData : JSON.stringify(data),
-					ajax : 'false'
-				}, function(data) {
-					console.log("asda");
+				data.type = type;
+				data.matching = matching;
+				data.annotator = annotator;
+				data.dataset = dataset;
+				$.ajax('${execute}', {
+					data : {
+						'experimentData' : JSON.stringify(data)
+					}
+				}).done(function(data) {
+					$('#submit').remove();
+					var origin = window.location.origin;
+					var link = "<a href=\"/gerbil/experiment?id="+data+"\">"+origin+"/gerbil/experiment?id="+data+"</a>";
+					var span="<span>Find your experimental data here: </span>";
+					$('#submitField').append(span);
+					$('#submitField').append(link);
 				});
 			});
 		});

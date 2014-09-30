@@ -37,19 +37,55 @@ public class MainController {
 	}
 
 	/**
-	 * expects a string like 
-	 * {"type":"A2W","matching":"Mw - weak annotation match","annotator":["A2w one","A2W two"],"dataset":["datasets"]} 
+	 * expects a string like {"type":"A2W","matching":"Mw - weak annotation match","annotator":["A2w one","A2W two"],"dataset":["datasets"]}
+	 * 
 	 * @param experimentData
 	 * @return
 	 */
 	@RequestMapping("/execute")
-	public ModelAndView execute(@RequestParam(value = "experimentData") String experimentData) {
+	public @ResponseBody
+	int execute(@RequestParam(value = "experimentData") String experimentData) {
 		System.out.println(experimentData);
-		ModelAndView model = new ModelAndView();
-		model.setViewName("execute");
-		return model;
+		return 42;
 	}
 
+	@RequestMapping("/experiment")
+	public ModelAndView experiment(@RequestParam(value = "id") int id) {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("experiment");
+		model.addObject("objects",Lists.newArrayList(new Thing(1, "Name", "zwei"), new Thing(2, "Data", "43")));
+		return model;
+	}
+	public class Thing{
+		public int id;
+		public String name;
+		public String description;
+		public Thing(int id, String name, String description) {
+			super();
+			this.id = id;
+			this.name = name;
+			this.description = description;
+		}
+		public int getId() {
+			return id;
+		}
+		public void setId(int id) {
+			this.id = id;
+		}
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public String getDescription() {
+			return description;
+		}
+		public void setDescription(String description) {
+			this.description = description;
+		}
+	}
+	
 	@RequestMapping("/exptypes")
 	public @ResponseBody
 	LinkedList<String> expTypes() {
@@ -61,6 +97,7 @@ public class MainController {
 		return list;
 	}
 
+	
 	@RequestMapping("/datasets")
 	public @ResponseBody
 	Set<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
