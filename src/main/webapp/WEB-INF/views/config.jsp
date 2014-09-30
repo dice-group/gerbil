@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="webjars/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
 <style type="text/css">
+/* making the buttons wide enough and right-aligned */
 .btn-group>.btn {
 	float: none;
 	width: 100%;
@@ -25,10 +26,12 @@
 </style>
 </head>
 <body class="container">
+	<!-- mappings to URLs in back-end controller -->
 	<c:url var="annotators" value="/annotators" />
 	<c:url var="matchings" value="/matchings" />
 	<c:url var="exptypes" value="/exptypes" />
 	<c:url var="datasets" value="/datasets" />
+	<c:url var="execute" value="/execute" />
 
 	<script src="webjars/jquery/2.1.1/jquery.min.js"></script>
 	<script src="webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -38,13 +41,12 @@
 	<h1>GERBIL Experiment Configuration</h1>
 
 
-	<c:url var="url" value="/execute" />
-	<form:form class="form-horizontal" action="${url}">
+	<form:form class="form-horizontal" action="${execute}">
 		<fieldset>
 
 			<!-- Form Name -->
 			<legend>New Experiment</legend>
-
+			<!-- experiment type dropdown filled by loadexptype() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="type">Experiment Type</label>
 				<div class="col-md-4">
@@ -52,7 +54,7 @@
 					</form:select>
 				</div>
 			</div>
-
+			<!--Matching dropdown filled by loadMatching() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="annotator">Matching</label>
 				<div class="col-md-4">
@@ -60,7 +62,7 @@
 					</form:select>
 				</div>
 			</div>
-
+			<!--Annotator dropdown filled by loadAnnotator() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="annotator">Annotator</label>
 				<div class="col-md-4">
@@ -75,6 +77,7 @@
 							<input class="form-control" type="text" id="URIAnnotator" name="URI" placeholder="Type something" />
 						</div>
 						<div>
+							<!-- list to be filled by button press and javascript function addAnnotator -->
 							<ul id="annotatorList" style="margin-top: 15px; list-style-type: none;">
 							</ul>
 						</div>
@@ -86,7 +89,7 @@
 					</div>
 				</div>
 			</div>
-
+			<!--Dataset dropdown filled by loadDataset() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="datasets">Dataset</label>
 				<div class="col-md-4">
@@ -101,6 +104,7 @@
 							<input class="form-control" type="text" id="URIDataset" name="URI" placeholder="Type something" />
 						</div>
 						<div>
+							<!-- list to be filled by button press and javascript function addDataset -->
 							<ul class="unstyled" id="datasetList" style="margin-top: 15px; list-style-type: none;">
 							</ul>
 						</div>
@@ -124,11 +128,12 @@
 	</form:form>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			//declaration of functions for later use 
 			var loadExperimentTypes;
 			var loadMatching;
 			var loadAnnotator;
 			var loadDataset;
-
+			//declaration of functions for loading experiment types, annotators, matchings and datasets  
 			(loadExperimentTypes = function() {
 				$.getJSON('${exptypes}', {
 					ajax : 'false'
@@ -198,21 +203,26 @@
 				});
 			});
 
+			// load dropdowns when document loaded 
 			loadExperimentTypes();
+			loadMatching();
 			loadAnnotator();
 			loadDataset();
 
+			// listeners for dropdowns 
 			$('#type').change(loadMatching);
 			$('#type').change(loadAnnotator);
-			$('#matching').change(loadAnnotator);
 			$('#type').change(loadDataset);
+			$('#matching').change(loadAnnotator);
 			$('#matching').change(loadDataset);
 
 			//supervise configuration of experiment and let it only run
 			//if everything is ok 
+			//initially it is turned off 
 			$('#submit').attr("disabled", true);
 			var checkExperimentConfiguration;
 			(checkExperimentConfiguration = function() {
+				//fetch list of selected and manually added annotators
 				var annotatorMultiselect = $('#annotator option:selected');
 				var annotator = [];
 				$(annotatorMultiselect).each(function(index, annotatorMultiselect) {
@@ -221,7 +231,7 @@
 				$("#annotatorList li").each(function() {
 					annotator.push($(this).text());
 				});
-
+				//fetch list of selected and manually added datasets
 				var datasetMultiselect = $('#dataset option:selected');
 				var dataset = [];
 				$(datasetMultiselect).each(function(index, datasetMultiselect) {
@@ -237,7 +247,7 @@
 					$('#submit').attr("disabled", true);
 				}
 			});
-
+			//check showing run button if something is changed in dropdown menu
 			$('#annotator').change(function() {
 				checkExperimentConfiguration();
 			});
@@ -245,6 +255,7 @@
 				checkExperimentConfiguration();
 			});
 
+			//if add button is clicked check whether there is a name and a uri 
 			$('#warningEmptyAnnotator').hide();
 			$('#addAnnotator').click(function() {
 				var name = $('#nameAnnotator').val();
@@ -264,9 +275,10 @@
 					$('#nameAnnotator').val('');
 					$('#URIAnnotator').val('');
 				}
+				//check showing run button if something is changed in dropdown menu
 				checkExperimentConfiguration();
 			});
-
+			//if add button is clicked check whether there is a name and a uri 
 			$('#warningEmptyDataset').hide();
 			$('#addDataset').click(function() {
 				var name = $('#nameDataset').val();
@@ -286,6 +298,7 @@
 					$('#nameDataset').val('');
 					$('#URIDataset').val('');
 				}
+				//check showing run button if something is changed in dropdown menu
 				checkExperimentConfiguration();
 			});
 		});
