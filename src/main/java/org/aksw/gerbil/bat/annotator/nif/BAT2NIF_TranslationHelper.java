@@ -13,11 +13,17 @@ import org.aksw.gerbil.transfer.nif.data.AnnotationImpl;
 
 public class BAT2NIF_TranslationHelper {
 
+    public static AnnotatedDocument createAnnotatedDocument(String text) {
+        return createAnnotatedDocument(text, null);
+    }
+
     public static AnnotatedDocument createAnnotatedDocument(String text,
             HashSet<Mention> mentions) {
         List<Annotation> annotations = new ArrayList<Annotation>();
-        for (Mention mention : mentions) {
-            annotations.add(translateMention2Annotation(mention));
+        if (mentions != null) {
+            for (Mention mention : mentions) {
+                annotations.add(translateMention2Annotation(mention));
+            }
         }
         return new AnnotatedDocumentImpl(text, annotations);
     }

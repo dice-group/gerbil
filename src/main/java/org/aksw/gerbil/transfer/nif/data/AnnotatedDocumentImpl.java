@@ -1,7 +1,6 @@
 package org.aksw.gerbil.transfer.nif.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.AnnotatedDocument;

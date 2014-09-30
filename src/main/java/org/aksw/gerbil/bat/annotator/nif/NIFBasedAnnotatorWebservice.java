@@ -2,8 +2,13 @@ package org.aksw.gerbil.bat.annotator.nif;
 
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.problems.D2WSystem;
+import it.acubelab.batframework.data.ScoredAnnotation;
+import it.acubelab.batframework.data.ScoredTag;
+import it.acubelab.batframework.data.Tag;
+import it.acubelab.batframework.problems.Sa2WSystem;
+import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.AnnotationException;
+import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,7 +31,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NIFBasedAnnotatorWebservice implements D2WSystem {
+public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NIFBasedAnnotatorWebservice.class);
 
@@ -40,10 +45,14 @@ public class NIFBasedAnnotatorWebservice implements D2WSystem {
     private int documentCount = 0;
     private NIFDocumentCreator nifCreator = new TurtleNIFDocumentCreator();
     private NIFDocumentParser nifParser = new TurtleNIFDocumentParser();
+    private WikipediaApiInterface wikiApi;
+    private DBPediaApi dbpediaApi;
 
-    public NIFBasedAnnotatorWebservice(String url, String name) {
+    public NIFBasedAnnotatorWebservice(String url, String name, WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi) {
         this.url = url;
         this.name = name;
+        this.wikiApi = wikiApi;
+        this.dbpediaApi = dbpediaApi;
         client = HttpClients.createDefault();
     }
 
@@ -70,6 +79,52 @@ public class NIFBasedAnnotatorWebservice implements D2WSystem {
         // translate the mentions into an AnnotatedDocument object
         AnnotatedDocument document = BAT2NIF_TranslationHelper
                 .createAnnotatedDocument(text, mentions);
+        document = request(document);
+        // translate the annotated document into a HashSet of BAT Annotations
+        return NIF2BAT_TranslationHelper.createAnnotations(wikiApi, dbpediaApi, document);
+    }
+
+    @Override
+    public HashSet<Annotation> solveA2W(String text) throws AnnotationException {
+        // translate the mentions into an AnnotatedDocument object
+        AnnotatedDocument document = BAT2NIF_TranslationHelper
+                .createAnnotatedDocument(text);
+        document = request(document);
+        // translate the annotated document into a HashSet of BAT Annotations
+        return NIF2BAT_TranslationHelper.createAnnotations(wikiApi, dbpediaApi, document);
+    }
+
+    @Override
+    public HashSet<Tag> solveC2W(String text) throws AnnotationException {
+        // translate the mentions into an AnnotatedDocument object
+        AnnotatedDocument document = BAT2NIF_TranslationHelper
+                .createAnnotatedDocument(text);
+        document = request(document);
+        // translate the annotated document into a HashSet of BAT Annotations
+        return NIF2BAT_TranslationHelper.createTags(wikiApi, dbpediaApi, document);
+    }
+
+    @Override
+    public HashSet<ScoredTag> solveSc2W(String text) throws AnnotationException {
+        // translate the mentions into an AnnotatedDocument object
+        AnnotatedDocument document = BAT2NIF_TranslationHelper
+                .createAnnotatedDocument(text);
+        document = request(document);
+        // translate the annotated document into a HashSet of BAT Annotations
+        return NIF2BAT_TranslationHelper.createScoredTags(wikiApi, dbpediaApi, document);
+    }
+
+    @Override
+    public HashSet<ScoredAnnotation> solveSa2W(String text) throws AnnotationException {
+        // translate the mentions into an AnnotatedDocument object
+        AnnotatedDocument document = BAT2NIF_TranslationHelper
+                .createAnnotatedDocument(text);
+        document = request(document);
+        // translate the annotated document into a HashSet of BAT Annotations
+        return NIF2BAT_TranslationHelper.createScoredAnnotations(wikiApi, dbpediaApi, document);
+    }
+
+    protected AnnotatedDocument request(AnnotatedDocument document) {
         // give the document a URI
         document.setDocumentURI(DOCUMENT_URI + documentCount);
         ++documentCount;
@@ -138,7 +193,6 @@ public class NIFBasedAnnotatorWebservice implements D2WSystem {
                 }
             }
         }
-        // translate the annotated document into a HashSet of BAT Annotations
-        return NIF2BAT_TranslationHelper.createAnnotations(document);
+        return document;
     }
 }
