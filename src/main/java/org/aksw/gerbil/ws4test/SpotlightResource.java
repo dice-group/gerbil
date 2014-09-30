@@ -38,7 +38,10 @@ public class SpotlightResource extends ServerResource {
             LOGGER.error("Exception while reading request.", e);
             return "";
         }
+        LOGGER.debug("Request: " + document.toString());
         document.setAnnotations(client.annotate(document.getText()));
-        return creator.getDocumentAsNIFString(document);
+        LOGGER.debug("Result: " + document.toString());
+        String nifDocument = creator.getDocumentAsNIFString(document);
+        return nifDocument;
     }
 }

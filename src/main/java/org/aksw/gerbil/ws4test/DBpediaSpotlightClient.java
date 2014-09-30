@@ -2,7 +2,9 @@ package org.aksw.gerbil.ws4test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,8 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -52,8 +55,13 @@ public class DBpediaSpotlightClient {
     }
 
     protected String request(String text) throws ClientProtocolException, IOException {
-        HttpGet request = new HttpGet("http://" + endpoint + "/rest/annotate?text=" + URLEncoder.encode(text, "utf-8"));
-        request.setHeader("Accept", "application/json");
+        String parameters = "disambiguator=Default&confidence=0&support=0&text=" + URLEncoder.encode(text, "UTF-8");
+        HttpPost request = new HttpPost("http://" + endpoint + "/rest/annotate");
+        request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        request.setEntity(new StringEntity(parameters, "UTF-8"));
+
+        request.addHeader("Accept", "application/json");
 
         CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request);
         InputStream is = null;
@@ -61,7 +69,9 @@ public class DBpediaSpotlightClient {
         try {
             StatusLine status = response.getStatusLine();
             if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
-                LOGGER.error("The response had a wrong status: \"" + status.toString() + "\". Returning null");
+                entity = response.getEntity();
+                LOGGER.error("The response had a wrong status: \"" + status.toString() + "\". Content of response: \""
+                        + IOUtils.toString(entity.getContent()) + "\". Returning null.");
                 return null;
             }
             entity = response.getEntity();
@@ -120,13 +130,18 @@ public class DBpediaSpotlightClient {
             if (responseAsObject.has(NAMED_ENTITIES_ARRAY_KEY)) {
                 JsonArray resources = responseAsObject.get(NAMED_ENTITIES_ARRAY_KEY).getAsJsonArray();
                 JsonObject annotation;
+                String uri;
                 for (JsonElement resource : resources) {
                     annotation = resource.getAsJsonObject();
                     if (annotation.has(NAMED_ENTITY_URI_KEY) && annotation.has(NAMED_ENTITY_OFFSET_KEY)
                             && annotation.has(NAMED_ENTITY_SURFACE_FORM_KEY)) {
+                        uri = annotation.get(NAMED_ENTITY_URI_KEY).getAsString();
+                        try {
+                            uri = URLDecoder.decode(uri, "utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                        }
                         annotations.add(new DisambiguatedAnnotation(annotation.get(NAMED_ENTITY_OFFSET_KEY).getAsInt(),
-                                annotation.get(NAMED_ENTITY_SURFACE_FORM_KEY).getAsString().length(), annotation
-                                        .get(NAMED_ENTITY_URI_KEY).getAsString()));
+                                annotation.get(NAMED_ENTITY_SURFACE_FORM_KEY).getAsString().length(), uri));
                     }
                 }
             }

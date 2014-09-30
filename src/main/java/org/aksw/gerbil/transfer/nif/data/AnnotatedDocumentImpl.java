@@ -110,4 +110,17 @@ public class AnnotatedDocumentImpl implements AnnotatedDocument {
         return true;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("AnnotatedDocumentImpl [uri=");
+        builder.append(uri);
+        builder.append(", text=");
+        builder.append(text);
+        builder.append(", annotations=");
+        builder.append(annotations);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }
