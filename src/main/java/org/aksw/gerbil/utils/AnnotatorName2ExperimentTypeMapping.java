@@ -15,7 +15,7 @@ public class AnnotatorName2ExperimentTypeMapping {
 
     private final static Map<String, ExperimentType> mapping = new HashMap<String, ExperimentType>();
 
-    {
+    static {
         mapping.put(BabelfyAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
         mapping.put(NIFWebserviceAnnotatorConfiguration.ANNOTATOR_NAME, ExperimentType.Sa2W);
         mapping.put(SpotlightAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);

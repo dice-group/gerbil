@@ -41,4 +41,9 @@ public class ScoredDisambigAnnotation extends DisambiguatedAnnotation {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "(" + startPosition + ", " + length + ", " + uri + ", " + confidence + ")";
+    }
+
 }

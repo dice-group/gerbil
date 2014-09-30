@@ -1,6 +1,7 @@
 package org.aksw.gerbil.transfer.nif.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.AnnotatedDocument;
@@ -108,6 +109,19 @@ public class AnnotatedDocumentImpl implements AnnotatedDocument {
         } else if (!uri.equals(other.uri))
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("AnnotatedDocumentImpl [uri=");
+        builder.append(uri);
+        builder.append(", text=");
+        builder.append(text);
+        builder.append(", annotations=");
+        builder.append(annotations);
+        builder.append("]");
+        return builder.toString();
     }
 
 }
