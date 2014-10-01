@@ -2,9 +2,15 @@ package org.aksw.gerbil.web;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
+import org.aksw.gerbil.database.ExperimentDAO;
+import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.matching.Matching;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,39 +59,24 @@ public class MainController {
 	public ModelAndView experiment(@RequestParam(value = "id") int id) {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("experiment");
-		model.addObject("objects",Lists.newArrayList(new Thing(1, "Name", "zwei"), new Thing(2, "Data", "43")));
+		List<ExperimentTaskResult> tasks = Lists.newArrayList();
+		Random random = new Random();
+		for (int i = 0; i < 10; ++i) {
+			if (i < 8) {
+				tasks.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH, new double[] { random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(),
+						random.nextFloat(), random.nextFloat() }, ExperimentDAO.TASK_FINISHED, random.nextInt()));
+			} else {
+				tasks.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH, new double[6], i == 9 ? ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET : ErrorTypes.UNEXPECTED_EXCEPTION
+						.getErrorCode(), 0));
+			}
+		}
+		model.addObject("tasks", tasks);
+		for(ExperimentTaskResult ex: tasks){
+			System.out.println(ex);
+		}
 		return model;
 	}
-	public class Thing{
-		public int id;
-		public String name;
-		public String description;
-		public Thing(int id, String name, String description) {
-			super();
-			this.id = id;
-			this.name = name;
-			this.description = description;
-		}
-		public int getId() {
-			return id;
-		}
-		public void setId(int id) {
-			this.id = id;
-		}
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-		public String getDescription() {
-			return description;
-		}
-		public void setDescription(String description) {
-			this.description = description;
-		}
-	}
-	
+
 	@RequestMapping("/exptypes")
 	public @ResponseBody
 	LinkedList<String> expTypes() {
@@ -97,7 +88,6 @@ public class MainController {
 		return list;
 	}
 
-	
 	@RequestMapping("/datasets")
 	public @ResponseBody
 	Set<String> datasets(@RequestParam(value = "experimentType") String experimentType) {

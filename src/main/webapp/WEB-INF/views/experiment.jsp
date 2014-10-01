@@ -24,6 +24,7 @@
 	text-align: right;
 }
 </style>
+
 </head>
 <body class="container">
 	<!-- mappings to URLs in back-end controller -->
@@ -31,19 +32,47 @@
 
 	<script src="webjars/jquery/2.1.1/jquery.min.js"></script>
 	<script src="webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-	<script src="webjars/bootstrap-multiselect/0.9.8/js/bootstrap-multiselect.js"></script>
+	<script src="webjars/tablesorter/2.15.5/js/jquery.tablesorter.js"></script>
 
 	<%@include file="navbar.jsp"%>
 	<h1>GERBIL Experiment</h1>
-	<c:if test="${not empty objects}">
-		<table class="table  table-hover">
-			<c:forEach var="o" items="${objects}">
+	<c:if test="${not empty tasks}">
+	Type: <c:out value="${tasks[0].type}" />
+		</br>
+	Matching: <c:out value="${tasks[0].matching}" />
+		<table id="resultTable" class="table  table-hover table-condensed tablesorter tableScroll">
+			<thead>
 				<tr>
-					<td>${o.id}</td>
-					<td>${o.name}</td>
-					<td>${o.description}</td>
+					<th>Annotator</th>
+					<th>Dataset</th>
+					<th>Micro F1</th>
+					<th>Micro Precision</th>
+					<th>Micro Recall</th>
+					<th>Macro F1</th>
+					<th>Macro Precision</th>
+					<th>Macro Recall</th>
+					<th>State</th>
+					<th>Error Count</th>
+					<th>Timestamp</th>
 				</tr>
-			</c:forEach>
+			</thead>
+			<tbody>
+				<c:forEach var="task" items="${tasks}">
+					<tr>
+						<td>${task.annotator}</td>
+						<td>${task.dataset}</td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4" value="${task.microF1Measure}" /></td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4" value="${task.microPrecision}" /></td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4" value="${task.microRecall}" /></td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4" value="${task.macroF1Measure}" /></td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4" value="${task.macroPrecision}" /></td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4" value="${task.macroRecall}" /></td>
+						<td>${task.state}</td>
+						<td>${task.errorCount}</td>
+						<td>${task.timestampstring}</td>
+					</tr>
+				</c:forEach>
+			</tbody>
 		</table>
 	</c:if>
 
@@ -51,7 +80,9 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-
+			$("#resultTable").tablesorter({
+				sortList : [ [ 0, 0 ], [ 1, 0 ] ]
+			});
 		});
 	</script>
 </body>
