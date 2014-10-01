@@ -2,6 +2,7 @@ package org.aksw.gerbil.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.aksw.gerbil.annotators.AgdistisAnnotatorConfig;
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
@@ -31,4 +32,9 @@ public class AnnotatorName2ExperimentTypeMapping {
             return null;
         }
     }
+
+	public static Set<String> getAnnotatorsForExperimentType(ExperimentType type) {
+
+		return null;
+	}
 }

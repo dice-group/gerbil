@@ -119,7 +119,7 @@
 			<!-- Button -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="submit"></label>
-				<div id="submitField"  class="col-md-4">
+				<div id="submitField" class="col-md-4">
 					<input type="button" id="submit" name="singlebutton" class="btn btn-primary" value="Run Experiment" />
 				</div>
 			</div>
@@ -138,7 +138,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for (var i = 0; i < data.length; i++) {
+					for ( var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -156,7 +156,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for (var i = 0; i < data.length; i++) {
+					for ( var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -174,7 +174,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for (var i = 0; i < data.length; i++) {
+					for ( var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -191,7 +191,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for (var i = 0; i < data.length; i++) {
+					for ( var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -269,7 +269,7 @@
 					$('#warningEmptyAnnotator').hide();
 					$('#annotatorList').append("<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp" + name + "(" + uri + ")</li>");
 					var listItems = $('#annotatorList > li > span');
-					for (var i = 0; i < listItems.length; i++) {
+					for ( var i = 0; i < listItems.length; i++) {
 						listItems[i].onclick = function() {
 							this.parentNode.parentNode.removeChild(this.parentNode);
 							checkExperimentConfiguration();
@@ -292,7 +292,7 @@
 					$('#warningEmptyDataset').hide();
 					$('#datasetList').append("<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp" + name + "(" + uri + ")</li>");
 					var listItems = $('#datasetList > li > span');
-					for (var i = 0; i < listItems.length; i++) {
+					for ( var i = 0; i < listItems.length; i++) {
 						listItems[i].onclick = function() {
 							this.parentNode.parentNode.removeChild(this.parentNode);
 							checkExperimentConfiguration();
@@ -339,10 +339,12 @@
 				}).done(function(data) {
 					$('#submit').remove();
 					var origin = window.location.origin;
-					var link = "<a href=\"/gerbil/experiment?id="+data+"\">"+origin+"/gerbil/experiment?id="+data+"</a>";
-					var span="<span>Find your experimental data here: </span>";
+					var link = "<a href=\"/gerbil/experiment?id=" + data + "\">" + origin + "/gerbil/experiment?id=" + data + "</a>";
+					var span = "<span>Find your experimental data here: </span>";
 					$('#submitField').append(span);
 					$('#submitField').append(link);
+				}).fail(function() {
+					alert("Error, insufficient parameters.");
 				});
 			});
 		});
