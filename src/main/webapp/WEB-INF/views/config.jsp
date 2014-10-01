@@ -41,33 +41,32 @@
 	<h1>GERBIL Experiment Configuration</h1>
 
 
-	<form:form class="form-horizontal" action="${execute}">
+	<form id="configForm" class="form-horizontal">
 		<fieldset>
-
 			<!-- Form Name -->
 			<legend>New Experiment</legend>
 			<!-- experiment type dropdown filled by loadexptype() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="type">Experiment Type</label>
 				<div class="col-md-4">
-					<form:select id="type" multiple="radio" path="type" style="display: none;">
-					</form:select>
+					<select id="type" style="display: none;">
+					</select>
 				</div>
 			</div>
 			<!--Matching dropdown filled by loadMatching() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="annotator">Matching</label>
 				<div class="col-md-4">
-					<form:select id="matching" multiple="radio" path="annotator" style="display: none;">
-					</form:select>
+					<select id="matching" style="display: none;">
+					</select>
 				</div>
 			</div>
 			<!--Annotator dropdown filled by loadAnnotator() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="annotator">Annotator</label>
 				<div class="col-md-4">
-					<form:select id="annotator" multiple="multiple" path="annotator" style="display: none;">
-					</form:select>
+					<select id="annotator" multiple="multiple" style="display: none;">
+					</select>
 					<div>
 						<span> Or add another webservice via URI:</span>
 						<div>
@@ -93,8 +92,8 @@
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="datasets">Dataset</label>
 				<div class="col-md-4">
-					<form:select id="dataset" multiple="multiple" path="datasets" style="display: none;">
-					</form:select>
+					<select id="dataset" multiple="multiple" style="display: none;">
+					</select>
 					<div>
 						<span> Or add another webservice via URI:</span>
 						<div>
@@ -120,12 +119,12 @@
 			<!-- Button -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="submit"></label>
-				<div class="col-md-4">
-					<input type="submit" id="submit" name="singlebutton" class="btn btn-primary" value="Run Experiment" />
+				<div id="submitField"  class="col-md-4">
+					<input type="button" id="submit" name="singlebutton" class="btn btn-primary" value="Run Experiment" />
 				</div>
 			</div>
 		</fieldset>
-	</form:form>
+	</form>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			//declaration of functions for later use 
@@ -139,7 +138,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for ( var i = 0; i < data.length; i++) {
+					for (var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -157,7 +156,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for ( var i = 0; i < data.length; i++) {
+					for (var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -175,7 +174,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for ( var i = 0; i < data.length; i++) {
+					for (var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -192,7 +191,7 @@
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
-					for ( var i = 0; i < data.length; i++) {
+					for (var i = 0; i < data.length; i++) {
 						var dat = {};
 						dat.label = data[i];
 						dat.value = data[i];
@@ -204,6 +203,10 @@
 			});
 
 			// load dropdowns when document loaded 
+			$('#type').multiselect();
+			$('#matching').multiselect();
+			$('#annotator').multiselect();
+			$('#dataset').multiselect();
 			loadExperimentTypes();
 			loadMatching();
 			loadAnnotator();
@@ -266,7 +269,7 @@
 					$('#warningEmptyAnnotator').hide();
 					$('#annotatorList').append("<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp" + name + "(" + uri + ")</li>");
 					var listItems = $('#annotatorList > li > span');
-					for ( var i = 0; i < listItems.length; i++) {
+					for (var i = 0; i < listItems.length; i++) {
 						listItems[i].onclick = function() {
 							this.parentNode.parentNode.removeChild(this.parentNode);
 							checkExperimentConfiguration();
@@ -289,7 +292,7 @@
 					$('#warningEmptyDataset').hide();
 					$('#datasetList').append("<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp" + name + "(" + uri + ")</li>");
 					var listItems = $('#datasetList > li > span');
-					for ( var i = 0; i < listItems.length; i++) {
+					for (var i = 0; i < listItems.length; i++) {
 						listItems[i].onclick = function() {
 							this.parentNode.parentNode.removeChild(this.parentNode);
 							checkExperimentConfiguration();
@@ -300,6 +303,47 @@
 				}
 				//check showing run button if something is changed in dropdown menu
 				checkExperimentConfiguration();
+			});
+
+			//submit button clicked will collect and sent experiment data to backend
+			$('#submit').click(function() {
+				//fetch list of selected and manually added annotators
+				var annotatorMultiselect = $('#annotator option:selected');
+				var annotator = [];
+				$(annotatorMultiselect).each(function(index, annotatorMultiselect) {
+					annotator.push($(this).val());
+				});
+				$("#annotatorList li").each(function() {
+					annotator.push($(this).text());
+				});
+				//fetch list of selected and manually added datasets
+				var datasetMultiselect = $('#dataset option:selected');
+				var dataset = [];
+				$(datasetMultiselect).each(function(index, datasetMultiselect) {
+					dataset.push($(this).val());
+				});
+				$("#datasetList li").each(function() {
+					dataset.push($(this).text());
+				});
+				var type = $('#type').val() ? $('#type').val() : "A2W";
+				var matching = $('#matching').val() ? $('#matching').val() : "A2W";
+				var data = {};
+				data.type = type;
+				data.matching = matching;
+				data.annotator = annotator;
+				data.dataset = dataset;
+				$.ajax('${execute}', {
+					data : {
+						'experimentData' : JSON.stringify(data)
+					}
+				}).done(function(data) {
+					$('#submit').remove();
+					var origin = window.location.origin;
+					var link = "<a href=\"/gerbil/experiment?id="+data+"\">"+origin+"/gerbil/experiment?id="+data+"</a>";
+					var span="<span>Find your experimental data here: </span>";
+					$('#submitField').append(span);
+					$('#submitField').append(link);
+				});
 			});
 		});
 	</script>

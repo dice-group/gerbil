@@ -2,11 +2,16 @@ package org.aksw.gerbil.web;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
+import org.aksw.gerbil.database.ExperimentDAO;
+import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.matching.Matching;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,7 +27,6 @@ public class MainController {
 	public ModelAndView config() {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("config");
-		model.addObject("command", new Command());
 		return model;
 	}
 
@@ -38,11 +42,39 @@ public class MainController {
 		return new ModelAndView("index");
 	}
 
+	/**
+	 * expects a string like {"type":"A2W","matching":"Mw - weak annotation match","annotator":["A2w one","A2W two"],"dataset":["datasets"]}
+	 * 
+	 * @param experimentData
+	 * @return
+	 */
 	@RequestMapping("/execute")
-	public ModelAndView execute(@ModelAttribute("SpringWeb") Command c) {
-		ModelAndView m = new ModelAndView("execute");
-		m.addObject("command", c);
-		return m;
+	public @ResponseBody
+	int execute(@RequestParam(value = "experimentData") String experimentData) {
+		System.out.println(experimentData);
+		return 42;
+	}
+
+	@RequestMapping("/experiment")
+	public ModelAndView experiment(@RequestParam(value = "id") int id) {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("experiment");
+		List<ExperimentTaskResult> tasks = Lists.newArrayList();
+		Random random = new Random();
+		for (int i = 0; i < 10; ++i) {
+			if (i < 8) {
+				tasks.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH, new double[] { random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(),
+						random.nextFloat(), random.nextFloat() }, ExperimentDAO.TASK_FINISHED, random.nextInt()));
+			} else {
+				tasks.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH, new double[6], i == 9 ? ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET : ErrorTypes.UNEXPECTED_EXCEPTION
+						.getErrorCode(), 0));
+			}
+		}
+		model.addObject("tasks", tasks);
+		for(ExperimentTaskResult ex: tasks){
+			System.out.println(ex);
+		}
+		return model;
 	}
 
 	@RequestMapping("/exptypes")
@@ -98,37 +130,4 @@ public class MainController {
 			return Sets.newLinkedHashSet(Lists.newArrayList("one", "two"));
 		}
 	}
-
-	public static class Command {
-
-		private ExperimentType type;
-		private String annotator;
-		private String datasets;
-
-		public String getDatasets() {
-			return datasets;
-		}
-
-		public void setDatasets(String datasets) {
-			this.datasets = datasets;
-		}
-
-		public String getAnnotator() {
-			return annotator;
-		}
-
-		public void setAnnotator(String annotator) {
-			this.annotator = annotator;
-		}
-
-		public ExperimentType getType() {
-			return type;
-		}
-
-		public void setType(ExperimentType type) {
-			this.type = type;
-		}
-
-	}
-
 }
