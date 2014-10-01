@@ -20,7 +20,9 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.junit.Ignore;
 
+@Ignore
 public class NIFWebserviceTest {
 
     private static final String ANNOTATOR_URL = "http://localhost:8080/gerbil-spotWrapNifWS4Test/spotlight";

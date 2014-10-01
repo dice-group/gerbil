@@ -13,7 +13,7 @@ import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 
 public class Name2DatasetMapping {
 
-    public static DatasetConfiguration getAnnotatorConfig(String name) {
+    public static DatasetConfiguration getDatasetConfig(String name) {
 
         switch (name) {
         case ACE2004DatasetConfig.DATASET_NAME:

@@ -15,8 +15,7 @@ public class Experimenter implements Runnable {
     private ExperimentTaskConfiguration configs[];
     private String experimentId;
     private ExperimentDAO experimentDAO;
-    private WikipediaApiInterface wikiAPI; // TODO init without cache files, otherwise we could get problems caused by
-                                           // our parallelization
+    private WikipediaApiInterface wikiAPI; 
 
     public Experimenter(WikipediaApiInterface wikiAPI, ExperimentDAO experimentDAO,
             ExperimentTaskConfiguration configs[], String experimentId) {

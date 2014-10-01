@@ -14,7 +14,7 @@
     </bean>
 
     <!-- Bean providing connection to database -->
-    <bean id="databaseDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+    <!-- <bean id="databaseDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="${database.jdbc.driverClassName}" />
         <property name="jdbcUrl" value="${database.jdbc.url}" />
         <property name="user" value="${database.jdbc.username}" />
@@ -22,10 +22,10 @@
         <property name="minPoolSize" value="${database.jdbc.minPoolSize}" />
         <property name="maxPoolSize" value="${database.jdbc.maxPoolSize}" />
         <property name="maxIdleTime" value="${database.jdbc.maxIdleTime}" />
-    </bean>
+    </bean> -->
 
-    <!-- Test DataSource using an in-memory Database H2 -->
-    <beans profile="test">
+    <!-- Test DataSource using an in-memory Database H2
+    <beans profile="test"> -->
 
         <bean id="databaseDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
             <property name="driverClassName" value="org.h2.Driver" />
@@ -37,6 +37,6 @@
             <jdbc:script location="classpath:mock/data/experiment-insert-test.sql" />
         </jdbc:initialize-database>
 
-    </beans>
+    <!-- </beans>  -->
 
 </beans>

@@ -21,10 +21,11 @@ import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,9 +34,15 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-@ContextConfiguration(locations = { "file:src/main/resources/spring/database/database-context.xml" })
 @Controller
 public class MainController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
+
+    // "file:src/main/resources/spring/database/database-context.xml"
+    //
+    // ApplicationContext context = new ClassPathXmlApplicationContext("conf/**/*application-context.xml");
+
     @Autowired
     @Qualifier("experimentDAO")
     private ExperimentDAO dao;
@@ -70,7 +77,7 @@ public class MainController {
     @RequestMapping("/execute")
     public @ResponseBody
     String execute(@RequestParam(value = "experimentData") String experimentData) {
-        System.out.println(experimentData);
+        LOGGER.debug("Got request on /execute with experimentData=" + experimentData);
         Object obj = JSONValue.parse(experimentData);
         JSONObject configuration = (JSONObject) obj;
         String type = (String) configuration.get("type");
@@ -81,7 +88,7 @@ public class MainController {
             annotators[i] = (String) jsonAnnotators.get(i);
         }
         JSONArray jsonDataset = (JSONArray) configuration.get("dataset");
-        String[] datasets = new String[jsonAnnotators.size()];
+        String[] datasets = new String[jsonDataset.size()];
         for (int i = 0; i < jsonDataset.size(); i++) {
             datasets[i] = (String) jsonDataset.get(i);
         }
@@ -90,11 +97,12 @@ public class MainController {
         for (String annotator : annotators) {
             for (String dataset : datasets) {
                 configs[count] = new ExperimentTaskConfiguration(Name2AnnotatorMapping.getAnnotatorConfig(annotator),
-                        Name2DatasetMapping.getAnnotatorConfig(dataset), ExperimentType.valueOf(type),
-                        Matching.valueOf(matching));
+                        Name2DatasetMapping.getDatasetConfig(dataset), ExperimentType.valueOf(type),
+                        getMatching(matching));
+                LOGGER.debug("Created config: " + configs[count]);
+                ++count;
             }
         }
-        // TODO Micha gib mir ne ID
         String experimentId = IDCreator.getInstance().createID();
         Experimenter exp = new Experimenter(SingletonWikipediaApi.getInstance(), dao, configs, experimentId);
         exp.run();
@@ -102,29 +110,19 @@ public class MainController {
         return experimentId;
     }
 
+    private Matching getMatching(String matching) {
+        String matchingName = matching.substring(matching.indexOf('-') + 1).trim().toUpperCase().replace(' ', '_');
+        Matching m = Matching.valueOf(matchingName);
+        return m;
+    }
+
     @RequestMapping("/experiment")
-    public ModelAndView experiment(@RequestParam(value = "id") int id) {
+    public ModelAndView experiment(@RequestParam(value = "id") String id) {
+        LOGGER.debug("Got request on /experiment with id=" + id);
+        List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
         ModelAndView model = new ModelAndView();
         model.setViewName("experiment");
-        List<ExperimentTaskResult> tasks = Lists.newArrayList();
-        Random random = new Random();
-        for (int i = 0; i < 10; ++i) {
-            if (i < 8) {
-                tasks.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2W,
-                        Matching.STRONG_ANNOTATION_MATCH, new double[] { random.nextFloat(), random.nextFloat(),
-                                random.nextFloat(), random.nextFloat(), random.nextFloat(),
-                                random.nextFloat() }, ExperimentDAO.TASK_FINISHED, random.nextInt()));
-            } else {
-                tasks.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2W,
-                        Matching.STRONG_ANNOTATION_MATCH, new double[6],
-                        i == 9 ? ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET : ErrorTypes.UNEXPECTED_EXCEPTION
-                                .getErrorCode(), 0));
-            }
-        }
-        model.addObject("tasks", tasks);
-        for (ExperimentTaskResult ex : tasks) {
-            System.out.println(ex);
-        }
+        model.addObject("tasks", results);
         return model;
     }
 

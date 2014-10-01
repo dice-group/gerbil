@@ -14,7 +14,9 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.junit.Ignore;
 
+@Ignore
 public class SpotlightTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {

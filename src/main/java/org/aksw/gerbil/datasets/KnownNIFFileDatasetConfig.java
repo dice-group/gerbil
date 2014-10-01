@@ -15,9 +15,9 @@ public class KnownNIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
     public static enum NIFDatasets {
         KORE50("KORE50"),
-        N3_NEWS_100("N³-News-100"),
-        N3_REUTERS_128("N³-Reuters-128"),
-        N3_RSS_500("N³-RSS-500"),
+        N3_NEWS_100("N3-News-100"),
+        N3_REUTERS_128("N3-Reuters-128"),
+        N3_RSS_500("N3-RSS-500"),
         DBPEDIA_SPOTLIGHT("DBpediaSpotlight");
 
         private String name;

@@ -152,7 +152,7 @@
 				$('#matching').html('');
 				$('#annotator').html('');
 				$.getJSON('${matchings}', {
-					experimentType : $('#type').val() ? $('#type').val() : "A2W",
+					experimentType : $('#type').val() ? $('#type').val() : "D2W",
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
@@ -170,7 +170,7 @@
 			(loadAnnotator = function() {
 				$('#annotator').html('');
 				$.getJSON('${annotators}', {
-					experimentType : $('#type').val() ? $('#type').val() : "A2W",
+					experimentType : $('#type').val() ? $('#type').val() : "D2W",
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
@@ -187,7 +187,7 @@
 			(loadDataset = function() {
 				$('#dataset').html('');
 				$.getJSON('${datasets}', {
-					experimentType : $('#type').val() ? $('#type').val() : "A2W",
+					experimentType : $('#type').val() ? $('#type').val() : "D2W",
 					ajax : 'false'
 				}, function(data) {
 					var formattedData = [];
@@ -325,8 +325,8 @@
 				$("#datasetList li").each(function() {
 					dataset.push($(this).text());
 				});
-				var type = $('#type').val() ? $('#type').val() : "A2W";
-				var matching = $('#matching').val() ? $('#matching').val() : "A2W";
+				var type = $('#type').val() ? $('#type').val() : "D2W";
+				var matching = $('#matching').val() ? $('#matching').val() : "Ma - strong annotation match";
 				var data = {};
 				data.type = type;
 				data.matching = matching;
