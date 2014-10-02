@@ -24,6 +24,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_TASK_STATE = "SELECT state FROM ExperimentTasks WHERE id=:id";
     private final static String GET_EXPERIMENT_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks t, Experiments e WHERE e.id=:id AND e.taskId=t.id";
     private final static String GET_CACHED_TASK = "SELECT id FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND lastChanged>:lastChanged ORDER BY lastChanged DESC LIMIT 1";
+    private final static String GET_HIGHEST_EXPERIMENT_ID = "SELECT id FROM Experiments ORDER BY id DESC LIMIT 1";
 
     private final NamedParameterJdbcTemplate template;
 
@@ -130,6 +131,16 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     @Override
     protected void connectExistingTaskWithExperiment(int experimentTaskId, String experimentId) {
         connectToExperiment(experimentId, experimentTaskId);
+    }
+
+    @Override
+    public String getHighestExperimentId() {
+        List<String> result = this.template.query(GET_HIGHEST_EXPERIMENT_ID, new StringRowMapper());
+        if (result.size() > 0) {
+            return result.get(0);
+        } else {
+            return null;
+        }
     }
 
 }

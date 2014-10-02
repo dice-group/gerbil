@@ -2,7 +2,12 @@ package org.aksw.gerbil.utils;
 
 import java.util.Calendar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class IDCreator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IDCreator.class);
 
     private static final String ID_FORMAT = "%1$tY%1$tm%1$td%2$04d";
     private static final long ONE_DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
@@ -44,6 +49,22 @@ public class IDCreator {
             lastTimeStamp.set(Calendar.YEAR, timestamp.get(Calendar.YEAR));
             count = 1;
             return 0;
+        }
+    }
+
+    public void setLastCreatedID(String id) {
+        try {
+            int year = Integer.parseInt(id.substring(0, 4));
+            int month = Integer.parseInt(id.substring(4, 6));
+            int day = Integer.parseInt(id.substring(6, 8));
+            int count = Integer.parseInt(id.substring(8));
+
+            this.count = count;
+            lastTimeStamp.set(Calendar.YEAR, year);
+            lastTimeStamp.set(Calendar.MONTH, month);
+            lastTimeStamp.set(Calendar.DAY_OF_MONTH, day);
+        } catch (Exception e) {
+            LOGGER.error("Couldn't parse given last ID. Ignoring it.", e);
         }
     }
 }

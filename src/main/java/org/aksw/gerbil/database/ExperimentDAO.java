@@ -129,4 +129,11 @@ public interface ExperimentDAO {
      *         couldn't be found.
      */
     public int getExperimentState(int experimentTaskId);
+
+    /**
+     * Returns the highest experiment ID that is known by the system or null if there are no experiments.
+     * 
+     * @return the highest experiment ID or null if there is no experiment
+     */
+    public String getHighestExperimentId();
 }

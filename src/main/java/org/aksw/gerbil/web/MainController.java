@@ -2,12 +2,12 @@ package org.aksw.gerbil.web;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
 
 import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.database.ExperimentDAO;
-import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -39,9 +39,22 @@ public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
-    // "file:src/main/resources/spring/database/database-context.xml"
-    //
-    // ApplicationContext context = new ClassPathXmlApplicationContext("conf/**/*application-context.xml");
+    private static boolean isInitialized = false;
+
+    private static synchronized void initialize(ExperimentDAO dao) {
+        if (!isInitialized) {
+            String id = dao.getHighestExperimentId();
+            if (id != null) {
+                IDCreator.getInstance().setLastCreatedID(id);
+            }
+            isInitialized = true;
+        }
+    }
+
+    @PostConstruct
+    public void init() {
+        initialize(dao);
+    }
 
     @Autowired
     @Qualifier("experimentDAO")

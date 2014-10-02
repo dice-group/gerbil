@@ -54,4 +54,9 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
         return 0;
     }
 
+    @Override
+    public String getHighestExperimentId() {
+        return null;
+    }
+
 }

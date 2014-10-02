@@ -7,26 +7,33 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- Database Properties -->
-    <context:property-placeholder location="classpath:config/database.properties" />
+    <!-- <context:property-placeholder location="classpath:config/database.properties" /> -->
+    <context:property-placeholder location="classpath:gerbil.properties" />
 
     <bean id="experimentDAO" class="org.aksw.gerbil.database.ExperimentDAOImpl">
         <constructor-arg name="dataSource" ref="databaseDataSource" />
     </bean>
 
     <!-- Bean providing connection to database -->
-    <!-- <bean id="databaseDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass" value="${database.jdbc.driverClassName}" />
-        <property name="jdbcUrl" value="${database.jdbc.url}" />
-        <property name="user" value="${database.jdbc.username}" />
-        <property name="password" value="${databse.jdbc.password}" />
-        <property name="minPoolSize" value="${database.jdbc.minPoolSize}" />
-        <property name="maxPoolSize" value="${database.jdbc.maxPoolSize}" />
-        <property name="maxIdleTime" value="${database.jdbc.maxIdleTime}" />
-    </bean> -->
+    <!-- <bean id="databaseDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close"> -->
+    <bean id="databaseDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${gerbil.jdbc.driverClassName}" />
+        <property name="url" value="jdbc:hsqldb:file:${gerbil.jdbc.file}" />
+        <!-- <property name="driverClass" value="${gerbil.jdbc.driverClassName}" />
+            <property name="jdbcUrl" value="file:${gerbil.jdbc.file}" />
+            <property name="user" value="${gerbil.jdbc.username}" />
+            <property name="password" value="${gerbil.jdbc.password}" />
+            <property name="minPoolSize" value="${gerbil.jdbc.minPoolSize}" />
+            <property name="maxPoolSize" value="${gerbil.jdbc.maxPoolSize}" />
+            <property name="maxIdleTime" value="${gerbil.jdbc.maxIdleTime}" /> -->
+    </bean>
+    <!-- Initialize the database -->
+    <jdbc:initialize-database data-source="databaseDataSource">
+        <jdbc:script location="classpath:spring/database/schema/experiment-schema.sql" />
+    </jdbc:initialize-database>
 
-    <!-- Test DataSource using an in-memory Database H2
-    <beans profile="test"> -->
-
+    <!-- Test DataSource using an in-memory Database H2 -->
+    <beans profile="test">
         <bean id="databaseDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
             <property name="driverClassName" value="org.h2.Driver" />
             <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;MODE=MySQL;" />
@@ -36,7 +43,6 @@
             <jdbc:script location="classpath:mock/schema/experiment-schema.sql" />
             <jdbc:script location="classpath:mock/data/experiment-insert-test.sql" />
         </jdbc:initialize-database>
-
-    <!-- </beans>  -->
+    </beans>
 
 </beans>
