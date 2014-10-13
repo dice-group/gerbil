@@ -46,7 +46,8 @@ public class SpotlightTest {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
                 ExperimentTaskConfiguration(
                         new SpotlightAnnotatorConfig(wikiAPI, dbpApi),
-                        new KnownNIFFileDatasetConfig(NIFDatasets.KORE50), ExperimentType.D2W,
+                        new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi(),
+                                NIFDatasets.KORE50), ExperimentType.D2W,
                         Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "SPOTLIGHT_TEST");

@@ -1,15 +1,17 @@
 package org.aksw.gerbil.utils;
 
+import it.acubelab.batframework.systemPlugins.DBPediaApi;
+
 import org.aksw.gerbil.datasets.ACE2004DatasetConfig;
 import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
-import org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration;
-import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
-import org.aksw.gerbil.datasets.CMNSDatasetConfig;
 import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig.AIDACoNLLChunk;
+import org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration;
+import org.aksw.gerbil.datasets.CMNSDatasetConfig;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datasets.IITBDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
+import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
 
 public class Name2DatasetMapping {
 
@@ -57,7 +59,8 @@ public class Name2DatasetMapping {
         NIFDatasets nifDatasets[] = NIFDatasets.values();
         for (int i = 0; i < nifDatasets.length; ++i) {
             if (nifDatasets[i].getDatasetName().equals(name)) {
-                return new KnownNIFFileDatasetConfig(nifDatasets[i]);
+                return new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi(),
+                        nifDatasets[i]);
             }
         }
 

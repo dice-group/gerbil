@@ -4,15 +4,17 @@ import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
 import it.acubelab.batframework.data.Tag;
 import it.acubelab.batframework.problems.A2WDataset;
+import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.ProblemReduction;
+import it.acubelab.batframework.utils.WikipediaApiInterface;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.slf4j.Logger;
@@ -33,18 +35,22 @@ import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 
 public abstract class AbstractNIFDataset implements A2WDataset {
 
-    private static final transient Logger logger = LoggerFactory
+    private static final transient Logger LOGGER = LoggerFactory
             .getLogger(AbstractNIFDataset.class);
 
     private List<HashSet<Annotation>> annotationsList;
     private List<String> texts;
 
     private String name;
+    private WikipediaApiInterface wikiApi;
+    private DBPediaApi dbpediaApi;
 
-    public AbstractNIFDataset(String name) {
+    public AbstractNIFDataset(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi, String name) {
         texts = new LinkedList<String>();
         annotationsList = new LinkedList<HashSet<Annotation>>();
         this.name = name;
+        this.wikiApi = wikiApi;
+        this.dbpediaApi = dbpediaApi;
     }
 
     /**
@@ -112,11 +118,12 @@ public abstract class AbstractNIFDataset implements A2WDataset {
         // ParameterizedSparqlString dbpediaQuery = new
         // ParameterizedSparqlString(
         // "SELECT ?id WHERE { ?dbpedia dbo:wikiPageID ?id .}", prefixes);
+        int id, position, length;
         while (result.hasNext()) {
             QuerySolution solution = result.next();
             RDFNode rdfNode = solution.get("context");
             String context = rdfNode.asResource().toString();
-            logger.debug("processing text {}", context);
+            LOGGER.debug("processing text {}", context);
             annotationQuery.clearParams();
             annotationQuery.setIri("context", context);
             QueryExecution qAnn = QueryExecutionFactory.create(
@@ -133,14 +140,19 @@ public abstract class AbstractNIFDataset implements A2WDataset {
                 // logger.info("processing annotation {}", page);
                 // dbpediaQuery.setIri("dbpedia", page);
 
-                int id = DBpediaToWikiId.getId(page);
-                int position = annSolution.get("begin").asLiteral().getInt();
-                int length = annSolution.get("end").asLiteral().getInt()
+                try {
+                    id = wikiApi.getIdByTitle(dbpediaApi.dbpediaToWikipedia(extractTitle(page)));
+                } catch (IOException e) {
+                    LOGGER.warn("Couldn't get wiki id for dbpedia URI \"" + page + "\"");
+                    id = -1;
+                }
+                position = annSolution.get("begin").asLiteral().getInt();
+                length = annSolution.get("end").asLiteral().getInt()
                         - position;
                 if (id != -1) {
                     annotations.add(new Annotation(position, length, id));
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Annotation: text:{} begin:{} lenght:{}",
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Annotation: text:{} begin:{} lenght:{}",
                                 new Object[] {
                                         annSolution.get("entity").asLiteral()
                                                 .getString(), position, length });
@@ -148,8 +160,19 @@ public abstract class AbstractNIFDataset implements A2WDataset {
                 }
             }
         }
-        logger.info("{} dataset initialized", name);
-        DBpediaToWikiId.write();
+        LOGGER.info("{} dataset initialized", name);
+    }
+
+    private static String extractTitle(String namedEntityUri) {
+        int posSlash = namedEntityUri.lastIndexOf('/');
+        int posPoints = namedEntityUri.lastIndexOf(':');
+        if (posSlash > posPoints) {
+            return namedEntityUri.substring(posSlash + 1);
+        } else if (posPoints < posSlash) {
+            return namedEntityUri.substring(posPoints + 1);
+        } else {
+            return namedEntityUri;
+        }
     }
 
     public int getTagsCount() {

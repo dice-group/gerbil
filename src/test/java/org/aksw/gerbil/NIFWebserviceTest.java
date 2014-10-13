@@ -41,12 +41,14 @@ public class NIFWebserviceTest {
                 new ExperimentTaskConfiguration(
                         new NIFWebserviceAnnotatorConfiguration(ANNOTATOR_URL, ANNOTATOR_NAME, false,
                                 wikiAPI, dbpApi, ExperimentType.A2W),
-                        new KnownNIFFileDatasetConfig(NIFDatasets.KORE50), ExperimentType.A2W,
+                        new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi(),
+                                NIFDatasets.KORE50), ExperimentType.A2W,
                         Matching.WEAK_ANNOTATION_MATCH),
                 // compare this with the real Spotlight annotator
                 new ExperimentTaskConfiguration(
                         new SpotlightAnnotatorConfig(wikiAPI, dbpApi),
-                        new KnownNIFFileDatasetConfig(NIFDatasets.KORE50),
+                        new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi(),
+                                NIFDatasets.KORE50),
                         ExperimentType.A2W, Matching.WEAK_ANNOTATION_MATCH)
         };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
@@ -60,7 +62,8 @@ public class NIFWebserviceTest {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         DBPediaApi dbpApi = new DBPediaApi();
 
-        A2WDataset dataset = (A2WDataset) (new KnownNIFFileDatasetConfig(NIFDatasets.KORE50))
+        A2WDataset dataset = (A2WDataset) (new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
+                new DBPediaApi(), NIFDatasets.KORE50))
                 .getDataset(experimentType);
         A2WSystem spotlight = (A2WSystem) (new SpotlightAnnotatorConfig(wikiAPI, dbpApi)).getAnnotator(experimentType);
         A2WSystem nifWS = (A2WSystem) (new NIFWebserviceAnnotatorConfiguration(ANNOTATOR_URL, ANNOTATOR_NAME, false,

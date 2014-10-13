@@ -1,5 +1,6 @@
 package org.aksw.gerbil;
 
+import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.io.FileNotFoundException;
@@ -21,7 +22,8 @@ public class BabelfyTest {
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new BabelfyAnnotatorConfig(), new KnownNIFFileDatasetConfig(NIFDatasets.KORE50), ExperimentType.D2W,
+                new BabelfyAnnotatorConfig(), new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
+                        new DBPediaApi(), NIFDatasets.KORE50), ExperimentType.D2W,
                 Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "BABELFY_TEST");
