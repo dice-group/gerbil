@@ -21,7 +21,7 @@ public class AnnotatorName2ExperimentTypeMapping {
         if (instance == null) {
             Map<String, ExperimentType> mapping = new HashMap<String, ExperimentType>();
             mapping.put(BabelfyAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
-            mapping.put(NIFWebserviceAnnotatorConfiguration.ANNOTATOR_NAME, ExperimentType.Sa2W);
+            // mapping.put(NIFWebserviceAnnotatorConfiguration.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(SpotlightAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(TagMeAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);

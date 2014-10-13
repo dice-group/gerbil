@@ -59,7 +59,8 @@ public class IDCreator {
             int day = Integer.parseInt(id.substring(6, 8));
             int count = Integer.parseInt(id.substring(8));
 
-            this.count = count;
+            // the count has to be increased since it should point to the next ID
+            this.count = count + 1;
             lastTimeStamp.set(Calendar.YEAR, year);
             lastTimeStamp.set(Calendar.MONTH, month);
             lastTimeStamp.set(Calendar.DAY_OF_MONTH, day);
