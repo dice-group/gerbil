@@ -5,6 +5,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -29,6 +31,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final NamedParameterJdbcTemplate template;
 
     public ExperimentDAOImpl(DataSource dataSource) {
+        this.template = new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    public ExperimentDAOImpl(DataSource dataSource, long resultDurability) {
+        super(resultDurability);
         this.template = new NamedParameterJdbcTemplate(dataSource);
     }
 

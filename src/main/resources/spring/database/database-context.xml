@@ -12,6 +12,7 @@
 
     <bean id="experimentDAO" class="org.aksw.gerbil.database.ExperimentDAOImpl">
         <constructor-arg name="dataSource" ref="databaseDataSource" />
+        <property name="resultDurability" value="${gerbil.database.resultDurability}"/>
     </bean>
 
     <!-- Bean providing connection to database -->

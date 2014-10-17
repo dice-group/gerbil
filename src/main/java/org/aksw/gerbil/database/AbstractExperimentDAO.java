@@ -1,5 +1,8 @@
 package org.aksw.gerbil.database;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Abstract class implementing the general behavior of an {@link ExperimentDAO}. Note that it is strongly recommended to
  * extend this class instead of implementing the {@link ExperimentDAO} class directly since this class already takes
@@ -10,6 +13,8 @@ package org.aksw.gerbil.database;
  * 
  */
 public abstract class AbstractExperimentDAO implements ExperimentDAO {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentDAOImpl.class);
 
     /**
      * Sentinel value used to indicate that an experiment task with the given preferences couldn't be found.
@@ -37,13 +42,19 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
     @Override
     public synchronized int connectCachedResultOrCreateTask(String annotatorName, String datasetName,
             String experimentType, String matching, String experimentId) {
-        int experimentTaskId = getCachedExperimentTaskId(annotatorName, datasetName, experimentType, matching);
-        if (experimentTaskId == EXPERIMENT_TASK_NOT_CACHED) {
-            experimentTaskId = createTask(annotatorName, datasetName, experimentType, matching, experimentId);
+        int experimentTaskId = EXPERIMENT_TASK_NOT_CACHED;
+        if (resultDurability > 0) {
+            experimentTaskId = getCachedExperimentTaskId(annotatorName, datasetName, experimentType, matching);
         } else {
-            connectExistingTaskWithExperiment(experimentTaskId, experimentId);
+            LOGGER.warn("The durability of results is <= 0. I won't be able to cache results.");
         }
-        return experimentTaskId;
+        if (experimentTaskId == EXPERIMENT_TASK_NOT_CACHED) {
+            return createTask(annotatorName, datasetName, experimentType, matching, experimentId);
+        } else {
+            LOGGER.debug("Could reuse cached task (id=" + experimentTaskId + ").");
+            connectExistingTaskWithExperiment(experimentTaskId, experimentId);
+            return CACHED_EXPERIMENT_TASK_CAN_BE_USED;
+        }
     }
 
     /**
