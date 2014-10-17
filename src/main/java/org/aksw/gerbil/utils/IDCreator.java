@@ -26,7 +26,7 @@ public class IDCreator {
     private IDCreator() {
         count = 0;
         lastTimeStamp = Calendar.getInstance();
-        lastTimeStamp.set(Calendar.HOUR, 0);
+        lastTimeStamp.set(Calendar.HOUR_OF_DAY, 0);
         lastTimeStamp.set(Calendar.MINUTE, 0);
         lastTimeStamp.set(Calendar.SECOND, 0);
         lastTimeStamp.set(Calendar.MILLISECOND, 0);
@@ -41,11 +41,12 @@ public class IDCreator {
     private synchronized int getCount(Calendar timestamp) {
         // Check whether the given time stamp is still from the same day as the last one
         if ((timestamp.get(Calendar.YEAR) == lastTimeStamp.get(Calendar.YEAR))
-                && (timestamp.get(Calendar.DAY_OF_YEAR) == lastTimeStamp.get(Calendar.DAY_OF_YEAR))) {
+                && (timestamp.get(Calendar.MONTH) == lastTimeStamp.get(Calendar.MONTH))
+                && (timestamp.get(Calendar.DAY_OF_MONTH) == lastTimeStamp.get(Calendar.DAY_OF_MONTH))) {
             return count++;
         } else {
-            lastTimeStamp.set(Calendar.DAY_OF_YEAR, timestamp.get(Calendar.DAY_OF_YEAR));
-            lastTimeStamp.set(Calendar.YEAR, timestamp.get(Calendar.YEAR));
+            lastTimeStamp.set(timestamp.get(Calendar.YEAR), timestamp.get(Calendar.MONTH),
+                    timestamp.get(Calendar.DAY_OF_MONTH));
             count = 1;
             return 0;
         }
@@ -60,9 +61,8 @@ public class IDCreator {
 
             // the count has to be increased since it should point to the next ID
             this.count = count + 1;
-            lastTimeStamp.set(Calendar.YEAR, year);
-            lastTimeStamp.set(Calendar.MONTH, month);
-            lastTimeStamp.set(Calendar.DAY_OF_MONTH, day);
+            // Note that the JANUARY could be set to 0, so we have to make this silly calculation
+            lastTimeStamp.set(year, Calendar.JANUARY + (month - 1), day, 0, 0, 0);
         } catch (Exception e) {
             LOGGER.error("Couldn't parse given last ID. Ignoring it.", e);
         }
