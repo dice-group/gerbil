@@ -19,9 +19,8 @@ public enum ErrorTypes {
 
     MATCHING_DOES_NOT_SUPPORT_EXPERIMENT(-103, "The matching does not support the experiment type"),
 
-    UNEXPECTED_EXCEPTION(-106, "Got an unexpected exception while running the experiment.")
-
-    ;
+    UNEXPECTED_EXCEPTION(-106, "Got an unexpected exception while running the experiment."),
+    SERVER_STOPPED_WHILE_PROCESSING(-107, "The GERBIL server has been stopped while the experiment was running");
 
     private ErrorTypes(int errorCode, String description) {
         this.errorCode = errorCode;

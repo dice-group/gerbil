@@ -133,6 +133,7 @@ public class MainController {
     public ModelAndView experiment(@RequestParam(value = "id") String id) {
         LOGGER.debug("Got request on /experiment with id=" + id);
         List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
+        ExperimentTaskStateHelper.setStatusLines(results);
         ModelAndView model = new ModelAndView();
         model.setViewName("experiment");
         model.addObject("tasks", results);
