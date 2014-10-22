@@ -314,7 +314,7 @@
 					annotator.push($(this).val());
 				});
 				$("#annotatorList li").each(function() {
-					annotator.push($(this).text());
+					annotator.push("NIFWS_" + $(this).text());
 				});
 				//fetch list of selected and manually added datasets
 				var datasetMultiselect = $('#dataset option:selected');

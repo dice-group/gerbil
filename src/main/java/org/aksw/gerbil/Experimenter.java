@@ -15,7 +15,7 @@ public class Experimenter implements Runnable {
     private ExperimentTaskConfiguration configs[];
     private String experimentId;
     private ExperimentDAO experimentDAO;
-    private WikipediaApiInterface wikiAPI; 
+    private WikipediaApiInterface wikiAPI;
 
     public Experimenter(WikipediaApiInterface wikiAPI, ExperimentDAO experimentDAO,
             ExperimentTaskConfiguration configs[], String experimentId) {
@@ -58,6 +58,10 @@ public class Experimenter implements Runnable {
     }
 
     private boolean couldHaveCachedResult(ExperimentTaskConfiguration config) {
+        LOGGER.error("Could be cached: " + config.annotatorConfig.getAnnotatorName() + ".couldBeCached()="
+                + config.annotatorConfig.couldBeCached() + " && " + config.datasetConfig.getDatasetName()
+                + ".couldBeCached()=" + config.datasetConfig.couldBeCached() + " --> "
+                + (config.annotatorConfig.couldBeCached() && config.datasetConfig.couldBeCached()));
         return config.annotatorConfig.couldBeCached() && config.datasetConfig.couldBeCached();
     }
 }

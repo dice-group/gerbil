@@ -17,7 +17,7 @@ public class NIFWebserviceAnnotatorConfiguration extends AbstractAnnotatorConfig
 
     public NIFWebserviceAnnotatorConfiguration(String annotaturURL, String annotatorName, boolean couldBeCached,
             WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi, ExperimentType... applicableForExperiment) {
-        super(annotatorName, false, applicableForExperiment);
+        super(annotatorName, couldBeCached, applicableForExperiment);
         this.annotaturURL = annotaturURL;
         this.wikiApi = wikiApi;
         this.dbpediaApi = dbpediaApi;
