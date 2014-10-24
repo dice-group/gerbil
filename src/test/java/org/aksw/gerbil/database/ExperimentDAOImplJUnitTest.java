@@ -59,12 +59,14 @@ public class ExperimentDAOImplJUnitTest {
         int firstTaskId = this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-23456");
         int secondTaskId = this.dao.connectCachedResultOrCreateTask("annotator1", "dataset1", "type1", "matching1",
                 "id-23457");
-        Assert.assertTrue(firstTaskId == secondTaskId);
+        Assert.assertTrue(secondTaskId + " != " + ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED,
+                secondTaskId == ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED);
 
         Thread.sleep(DURABILITY);
 
         int thirdTaskId = this.dao.connectCachedResultOrCreateTask("annotator1", "dataset1", "type1", "matching1",
                 "id-23458");
+        Assert.assertFalse(ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED == thirdTaskId);
         Assert.assertFalse(firstTaskId == thirdTaskId);
     }
 

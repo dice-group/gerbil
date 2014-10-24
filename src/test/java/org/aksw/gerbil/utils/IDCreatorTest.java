@@ -8,6 +8,7 @@ public class IDCreatorTest {
     @Test
     public void test() {
         String id;
+        IDCreator.getInstance().setLastCreatedID("201410100000");
         for (int i = 0; i < 100; ++i) {
             id = IDCreator.getInstance().createID();
             if ((i == 0) || (i == 99)) {
