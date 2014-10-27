@@ -1,13 +1,16 @@
 package org.aksw.gerbil.database;
 
+import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract class implementing the general behavior of an {@link ExperimentDAO}. Note that it is strongly recommended to
- * extend this class instead of implementing the {@link ExperimentDAO} class directly since this class already takes
- * care of the synchronization problem of the
- * {@link ExperimentDAO#connectCachedResultOrCreateTask(String, String, String, String, String)} method.
+ * Abstract class implementing the general behavior of an {@link ExperimentDAO}.
+ * Note that it is strongly recommended to extend this class instead of
+ * implementing the {@link ExperimentDAO} class directly since this class
+ * already takes care of the synchronization problem of the
+ * {@link ExperimentDAO#connectCachedResultOrCreateTask(String, String, String, String, String)}
+ * method.
  * 
  * @author m.roeder
  * 
@@ -17,11 +20,13 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentDAOImpl.class);
 
     /**
-     * Sentinel value used to indicate that an experiment task with the given preferences couldn't be found.
+     * Sentinel value used to indicate that an experiment task with the given
+     * preferences couldn't be found.
      */
     protected static final int EXPERIMENT_TASK_NOT_CACHED = -1;
 
     protected long resultDurability;
+    protected boolean initialized = false;
 
     public AbstractExperimentDAO() {
     }
@@ -29,6 +34,33 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
     public AbstractExperimentDAO(long resultDurability) {
         setResultDurability(resultDurability);
     }
+
+    /**
+     * The {@link AbstractExperimentDAO} class makes sure that an instance is
+     * initialized only once even if this method is called multiple times.
+     */
+    @Override
+    public void initialize() {
+        if (!initialized) {
+            /*
+             * We only have to set back the status of experiments that were
+             * running while the server has been stopped.
+             */
+            setRunningExperimentsToError();
+        }
+    }
+
+    /**
+     * Searches the database for experiment tasks that have been started but not
+     * ended yet (their status equals {@link #TASK_STARTED_BUT_NOT_FINISHED_YET}
+     * ) and set their status to
+     * {@link ErrorTypes#SERVER_STOPPED_WHILE_PROCESSING}. This method should
+     * only be called directly after the initialization of the database. It
+     * makes sure that "old" experiment tasks which have been started but never
+     * finished are set to an error state and can't be used inside the caching
+     * mechanism.
+     */
+    protected abstract void setRunningExperimentsToError();
 
     @Override
     public void setResultDurability(long resultDurability) {
@@ -58,12 +90,14 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
     }
 
     /**
-     * The method checks whether there exists an experiment task with the given preferences inside the database. If such
-     * a task exists and if it is not to old
-     * regarding the durability of experiment task results, its experiment task id is returned. Otherwise
+     * The method checks whether there exists an experiment task with the given
+     * preferences inside the database. If such a task exists, if it is not to
+     * old regarding the durability of experiment task results and if its state
+     * is not an error code, its experiment task id is returned. Otherwise
      * {@link #EXPERIMENT_TASK_NOT_CACHED} is returned.
      * 
-     * <b>NOTE:</b> this method MUST be synchronized since it should only be called by a single thread at once.
+     * <b>NOTE:</b> this method MUST be synchronized since it should only be
+     * called by a single thread at once.
      * 
      * @param annotatorName
      *            the name with which the annotator can be identified
@@ -75,14 +109,16 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      *            the name of the matching used
      * @param experimentId
      *            the id of the experiment
-     * @return The id of the experiment task or {@value #EXPERIMENT_TASK_NOT_CACHED} if such an experiment task couldn't
-     *         be found.
+     * @return The id of the experiment task or
+     *         {@value #EXPERIMENT_TASK_NOT_CACHED} if such an experiment task
+     *         couldn't be found.
      */
     protected abstract int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType,
             String matching);
 
     /**
-     * This method connects an already existing experiment task with an experiment.
+     * This method connects an already existing experiment task with an
+     * experiment.
      * 
      * @param experimentTaskId
      *            the id of the experiment task

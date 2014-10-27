@@ -59,4 +59,9 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
         return null;
     }
 
+    @Override
+    public void setRunningExperimentsToError() {
+        LOGGER.info("Setting the state of all running tasks to an error code.");
+    }
+
 }

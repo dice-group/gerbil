@@ -4,9 +4,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -25,8 +24,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String CONNECT_TASK_EXPERIMENT = "INSERT INTO Experiments (id, taskId) VALUES(:id, :taskId)";
     private final static String GET_TASK_STATE = "SELECT state FROM ExperimentTasks WHERE id=:id";
     private final static String GET_EXPERIMENT_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks t, Experiments e WHERE e.id=:id AND e.taskId=t.id";
-    private final static String GET_CACHED_TASK = "SELECT id FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND lastChanged>:lastChanged ORDER BY lastChanged DESC LIMIT 1";
+    private final static String GET_CACHED_TASK = "SELECT id FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND lastChanged>:lastChanged AND state>:errorState ORDER BY lastChanged DESC LIMIT 1";
     private final static String GET_HIGHEST_EXPERIMENT_ID = "SELECT id FROM Experiments ORDER BY id DESC LIMIT 1";
+    private final static String SET_UNFINISHED_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE state=:unfinishedState";
 
     private final NamedParameterJdbcTemplate template;
 
@@ -81,7 +81,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     @Override
     public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskResult result) {
-        // Note that we have to set the state first if we want to override the automatic timestamp with the one from the
+        // Note that we have to set the state first if we want to override the
+        // automatic timestamp with the one from the
         // result object
         setExperimentState(experimentTaskId, result.state);
 
@@ -127,6 +128,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType, matching);
         java.util.Date today = new java.util.Date();
         params.addValue("lastChanged", new java.sql.Timestamp(today.getTime() - this.resultDurability));
+        params.addValue("errorState", ErrorTypes.HIGHEST_ERROR_CODE);
         List<Integer> result = this.template.query(GET_CACHED_TASK, params, new IntegerRowMapper());
         if (result.size() > 0) {
             return result.get(0);
@@ -148,6 +150,16 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         } else {
             return null;
         }
+    }
+
+    @Override
+    protected void setRunningExperimentsToError() {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
+        parameters.addValue("state", ErrorTypes.SERVER_STOPPED_WHILE_PROCESSING.getErrorCode());
+        java.util.Date today = new java.util.Date();
+        parameters.addValue("lastChanged", new java.sql.Timestamp(today.getTime()));
+        this.template.update(SET_UNFINISHED_TASK_STATE, parameters);
     }
 
 }
