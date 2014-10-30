@@ -5,9 +5,11 @@ import it.acubelab.batframework.systemPlugins.TagmeAnnotator;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TagMeAnnotatorConfig extends AbstractAnnotatorConfiguration {
-    
+
     public static final String ANNOTATOR_NAME = "TagMe 2";
 
     private static final String TAGME_CONFIG_FILE_PROPERTY_NAME = "org.aksw.gerbil.annotators.TagmeAnnotatorConfig.ConfigFile";
@@ -21,5 +23,4 @@ public class TagMeAnnotatorConfig extends AbstractAnnotatorConfiguration {
         return new TagmeAnnotator(GerbilConfiguration.getInstance().getString(TAGME_CONFIG_FILE_PROPERTY_NAME));
     }
 
-    
 }

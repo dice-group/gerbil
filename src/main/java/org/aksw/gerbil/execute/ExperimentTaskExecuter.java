@@ -64,7 +64,7 @@ public class ExperimentTaskExecuter implements Runnable {
             TopicSystem annotator = configuration.annotatorConfig.getAnnotator(configuration.type);
             annotator = ErrorCountingAnnotatorDecorator.createDecorator(annotator);
             if (annotator == null) {
-                throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getAnnotatorName()
+                throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
                         ErrorTypes.ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT);
             }

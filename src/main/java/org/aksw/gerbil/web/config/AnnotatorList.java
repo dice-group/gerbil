@@ -4,13 +4,14 @@ import java.util.List;
 
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 
-public class AnnotatorList {
+@Deprecated
+public class AnnotatorList extends AdapterList<AnnotatorConfiguration> {
 
     private List<AnnotatorConfiguration> configurations;
 
     public AnnotatorList(List<AnnotatorConfiguration> configurations) {
-        super();
+        super(configurations);
         this.configurations = configurations;
     }
-    
+
 }

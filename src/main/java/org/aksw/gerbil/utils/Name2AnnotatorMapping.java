@@ -2,7 +2,6 @@ package org.aksw.gerbil.utils;
 
 import it.acubelab.batframework.systemPlugins.DBPediaApi;
 
-import org.aksw.gerbil.annotators.AgdistisAnnotatorConfig;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
@@ -38,9 +37,9 @@ public class Name2AnnotatorMapping {
             return new TagMeAnnotatorConfig();
         case WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME:
             return new WikipediaMinerAnnotatorConfig();
-        case AgdistisAnnotatorConfig.ANNOTATOR_NAME:
-            return new AgdistisAnnotatorConfig(
-                    SingletonWikipediaApi.getInstance());
+            // case AgdistisAnnotatorConfig.ANNOTATOR_NAME:
+            // return new AgdistisAnnotatorConfig(
+            // SingletonWikipediaApi.getInstance());
         }
         if (name.startsWith("NIFWS_")) {
             // This describes a NIF based web service

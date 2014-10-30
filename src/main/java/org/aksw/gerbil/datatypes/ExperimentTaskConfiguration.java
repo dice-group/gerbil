@@ -54,7 +54,7 @@ public class ExperimentTaskConfiguration {
 
     @Override
     public String toString() {
-        return "eTConfig(\"" + annotatorConfig.getAnnotatorName() + "\",\"" + datasetConfig.getDatasetName() + "\",\""
+        return "eTConfig(\"" + annotatorConfig.getName() + "\",\"" + datasetConfig.getDatasetName() + "\",\""
                 + type.name() + "\",\"" + matching.name() + "\")";
     }
 }

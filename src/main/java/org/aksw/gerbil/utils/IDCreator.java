@@ -4,7 +4,10 @@ import java.util.Calendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IDCreator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IDCreator.class);
@@ -13,6 +16,7 @@ public class IDCreator {
 
     private static IDCreator instance = null;
 
+    @Bean
     public synchronized static IDCreator getInstance() {
         if (instance == null) {
             instance = new IDCreator();

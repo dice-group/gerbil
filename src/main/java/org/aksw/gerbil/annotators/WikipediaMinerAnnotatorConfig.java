@@ -5,9 +5,11 @@ import it.acubelab.batframework.systemPlugins.WikipediaMinerAnnotator;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.springframework.stereotype.Component;
 
+@Component
 public class WikipediaMinerAnnotatorConfig extends AbstractAnnotatorConfiguration {
-    
+
     public static final String ANNOTATOR_NAME = "Wikipedia Miner";
 
     private static final String WIKI_MINER_CONFIG_FILE_PROPERTY_NAME = "org.aksw.gerbil.annotators.WikipediaMinerAnnotatorConfig.ConfigFile";
@@ -18,7 +20,8 @@ public class WikipediaMinerAnnotatorConfig extends AbstractAnnotatorConfiguratio
 
     @Override
     protected TopicSystem loadAnnotator() throws Exception {
-        return new WikipediaMinerAnnotator(GerbilConfiguration.getInstance().getString(WIKI_MINER_CONFIG_FILE_PROPERTY_NAME));
+        return new WikipediaMinerAnnotator(GerbilConfiguration.getInstance().getString(
+                WIKI_MINER_CONFIG_FILE_PROPERTY_NAME));
     }
 
 }

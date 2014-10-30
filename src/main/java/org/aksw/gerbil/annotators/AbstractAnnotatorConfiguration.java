@@ -2,31 +2,17 @@ package org.aksw.gerbil.annotators;
 
 import it.acubelab.batframework.problems.TopicSystem;
 
+import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 
-public abstract class AbstractAnnotatorConfiguration implements AnnotatorConfiguration {
-
-    private String annotatorName;
-    private boolean couldBeCached;
-    private ExperimentType applicableForExperiments[];
+public abstract class AbstractAnnotatorConfiguration extends AbstractAdapterConfiguration implements
+        AnnotatorConfiguration {
 
     public AbstractAnnotatorConfiguration(String annotatorName, boolean couldBeCached,
             ExperimentType... applicableForExperiment) {
-        this.annotatorName = annotatorName;
-        this.couldBeCached = couldBeCached;
-        applicableForExperiments = applicableForExperiment;
-    }
-
-    @Override
-    public String getAnnotatorName() {
-        return annotatorName;
-    }
-
-    @Override
-    public boolean couldBeCached() {
-        return couldBeCached;
+        super(annotatorName, couldBeCached, applicableForExperiment);
     }
 
     @Override
@@ -45,23 +31,11 @@ public abstract class AbstractAnnotatorConfiguration implements AnnotatorConfigu
 
     protected abstract TopicSystem loadAnnotator() throws Exception;
 
-    public boolean isCouldBeCached() {
-        return couldBeCached;
-    }
-
-    public void setCouldBeCached(boolean couldBeCached) {
-        this.couldBeCached = couldBeCached;
-    }
-
     public ExperimentType[] getApplicableForExperiments() {
         return applicableForExperiments;
     }
 
     public void setApplicableForExperiments(ExperimentType[] applicableForExperiments) {
         this.applicableForExperiments = applicableForExperiments;
-    }
-
-    public void setAnnotatorName(String annotatorName) {
-        this.annotatorName = annotatorName;
     }
 }

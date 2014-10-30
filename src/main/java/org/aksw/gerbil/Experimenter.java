@@ -34,11 +34,11 @@ public class Experimenter implements Runnable {
                     // FIXME If the result in the database contains an error code, wouldn't it be better to handle such
                     // a case as it wouldn't exist in the database?
                     taskId = experimentDAO.connectCachedResultOrCreateTask(
-                            configs[i].annotatorConfig.getAnnotatorName(),
+                            configs[i].annotatorConfig.getName(),
                             configs[i].datasetConfig.getDatasetName(), configs[i].type.name(),
                             configs[i].matching.name(), experimentId);
                 } else {
-                    taskId = experimentDAO.createTask(configs[i].annotatorConfig.getAnnotatorName(),
+                    taskId = experimentDAO.createTask(configs[i].annotatorConfig.getName(),
                             configs[i].datasetConfig.getDatasetName(), configs[i].type.name(),
                             configs[i].matching.name(), experimentId);
                 }
@@ -58,7 +58,7 @@ public class Experimenter implements Runnable {
     }
 
     private boolean couldHaveCachedResult(ExperimentTaskConfiguration config) {
-        LOGGER.error("Could be cached: " + config.annotatorConfig.getAnnotatorName() + ".couldBeCached()="
+        LOGGER.error("Could be cached: " + config.annotatorConfig.getName() + ".couldBeCached()="
                 + config.annotatorConfig.couldBeCached() + " && " + config.datasetConfig.getDatasetName()
                 + ".couldBeCached()=" + config.datasetConfig.couldBeCached() + " --> "
                 + (config.annotatorConfig.couldBeCached() && config.datasetConfig.couldBeCached()));

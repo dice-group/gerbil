@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.aksw.gerbil.Experimenter;
+import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -18,6 +19,7 @@ import org.aksw.gerbil.utils.IDCreator;
 import org.aksw.gerbil.utils.Name2AnnotatorMapping;
 import org.aksw.gerbil.utils.Name2DatasetMapping;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.gerbil.web.config.AdapterList;
 import org.aksw.gerbil.web.config.AnnotatorList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -60,9 +62,11 @@ public class MainController {
     @Autowired
     @Qualifier("experimentDAO")
     private ExperimentDAO dao;
-    
+
     @Autowired
-    private AnnotatorList annotatorList;
+    private AdapterList<AnnotatorConfiguration> annotatorList;
+
+    // private AnnotatorList annotatorList;
 
     @RequestMapping("/config")
     public ModelAndView config() {
@@ -85,7 +89,8 @@ public class MainController {
 
     /**
      * expects a string like
-     * {"type":"A2W","matching":"Mw - weak annotation match","annotator":["A2w one","A2W two"],"dataset":["datasets"]}
+     * {"type":"A2W","matching":"Mw - weak annotation match"
+     * ,"annotator":["A2w one","A2W two"],"dataset":["datasets"]}
      * 
      * @param experimentData
      * @return
@@ -158,7 +163,8 @@ public class MainController {
         case C2W:
             return Sets.newLinkedHashSet(Lists.newArrayList("Me - strong entity match"));
         case D2W:
-            // Mw will not be shown since the positions are always exact and thus it works like Ma
+            // Mw will not be shown since the positions are always exact and
+            // thus it works like Ma
             return Sets.newLinkedHashSet(Lists.newArrayList("Ma - strong annotation match"));
         case A2W:
             return Sets.newLinkedHashSet(Lists.newArrayList("Mw - weak annotation match",
@@ -178,8 +184,10 @@ public class MainController {
     @RequestMapping("/annotators")
     public @ResponseBody
     Set<String> annotatorsForExpType(@RequestParam(value = "experimentType") String experimentType) {
-        return AnnotatorName2ExperimentTypeMapping.getAnnotatorsForExperimentType(ExperimentType
-                .valueOf(experimentType));
+        // return
+        // AnnotatorName2ExperimentTypeMapping.getAnnotatorsForExperimentType(ExperimentType
+        // .valueOf(experimentType));
+        return annotatorList.getAdapterNamesForExperiment(ExperimentType.valueOf(experimentType));
     }
 
     @RequestMapping("/datasets")

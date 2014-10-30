@@ -9,7 +9,9 @@ import it.uniroma1.lcl.babelnet.BabelNetConfiguration;
 import org.aksw.gerbil.bat.annotator.BabelfyAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.springframework.stereotype.Component;
 
+@Component
 public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {
     
     public static final String ANNOTATOR_NAME = "BabelFy";
