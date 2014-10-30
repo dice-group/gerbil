@@ -18,6 +18,7 @@ import org.aksw.gerbil.utils.IDCreator;
 import org.aksw.gerbil.utils.Name2AnnotatorMapping;
 import org.aksw.gerbil.utils.Name2DatasetMapping;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.gerbil.web.config.AnnotatorList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -59,6 +60,9 @@ public class MainController {
     @Autowired
     @Qualifier("experimentDAO")
     private ExperimentDAO dao;
+    
+    @Autowired
+    private AnnotatorList annotatorList;
 
     @RequestMapping("/config")
     public ModelAndView config() {
