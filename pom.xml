@@ -101,6 +101,11 @@
             <artifactId>wikifier</artifactId>
             <version>0.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>fr.eurecom.nerd</groupId>
+            <artifactId>client</artifactId>
+            <version>0.0.1</version>
+        </dependency>
 
         <!-- slf4j: Logging API -->
         <dependency>
