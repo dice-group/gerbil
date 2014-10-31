@@ -69,6 +69,8 @@ public class NERDAnnotator implements Sa2WSystem{
 		return ProblemReduction.Sa2WToSc2W(this.solveSa2W(text));
 	}
 
+
+	
 	@Override
 	public HashSet<ScoredAnnotation> solveSa2W(String text)	throws AnnotationException 
 	{
@@ -79,21 +81,23 @@ public class NERDAnnotator implements Sa2WSystem{
 	public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions)
 	throws AnnotationException 
 	{
-		HashSet<ScoredAnnotation> anns = getNERDAnnotations(text);
-		HashSet<Annotation> result = new HashSet<Annotation>();
+		return ProblemReduction.Sa2WToD2W(getNERDAnnotations(text), mentions, 0.1f);
 		
-		//FIXME
-		//naive implementation that iterates through the list of mentions and gets,
-		//if available, the wiki link for that mention 
-		for (Mention m : mentions) {
-			for (ScoredAnnotation a : anns) 
-			{
-				if( m.getPosition() == a.getPosition() )
-					result.add(new Annotation(a.getPosition(), a.getLength(), a.getConcept()));
-			}
-		}
-
-		return result;
+//		HashSet<ScoredAnnotation> anns = getNERDAnnotations(text);
+//		HashSet<Annotation> result = new HashSet<Annotation>();
+//		
+//		//FIXME
+//		//naive implementation that iterates through the list of mentions and gets,
+//		//if available, the wiki link for that mention 
+//		for (Mention m : mentions) {
+//			for (ScoredAnnotation a : anns) 
+//			{
+//				if( m.getPosition() == a.getPosition() )
+//					result.add(new Annotation(a.getPosition(), a.getLength(), a.getConcept()));
+//			}
+//		}
+//
+//		return result;
 	}
 	
 	/**
