@@ -18,4 +18,4 @@ if [ ! -f "$file" ]; then
     fi
 fi
 
-mvn clean tomcat:run -Dmaven.tomcat.port=1234 &
+mvn clean tomcat:run -Dmaven.tomcat.port=1234
