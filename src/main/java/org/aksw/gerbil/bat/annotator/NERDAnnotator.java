@@ -4,6 +4,7 @@ import fr.eurecom.nerd.client.NERD;
 import fr.eurecom.nerd.client.schema.Entity;
 import fr.eurecom.nerd.client.type.DocumentType;
 import fr.eurecom.nerd.client.type.ExtractorType;
+import fr.eurecom.nerd.client.type.GranularityType;
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
 import it.acubelab.batframework.data.ScoredAnnotation;
@@ -17,18 +18,19 @@ import it.acubelab.batframework.utils.ProblemReduction;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+
 import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-public class NERDAnnotator implements Sa2WSystem{
+public class NERDAnnotator implements Sa2WSystem {
 	
     private static final Logger LOGGER = LoggerFactory.getLogger(NERDAnnotator.class);
-
-	//private final String NERD_API = "http://nerd.eurecom.fr/api";
-    private final String NERD_API = "http://localhost:8888/api";
+    private static String NERD_API_PROPERTY_NAME = "org.aksw.gerbil.annotators.nerd.api" ;
+    private final String NERD_API = GerbilConfiguration.getInstance().getString(NERD_API_PROPERTY_NAME);
     
     private String key;
 	private long lastTime = -1;
@@ -111,14 +113,20 @@ public class NERDAnnotator implements Sa2WSystem{
 		HashSet<ScoredAnnotation> annotations = Sets.newHashSet();
 		try{
 			lastTime = Calendar.getInstance().getTimeInMillis();
+
+			LOGGER.info("shipping to NERD the text to annotate");
 			
 			NERD nerd = new NERD(NERD_API, key);
-			List<Entity> entities = nerd.annotate(
-										ExtractorType.COMBINED, 
-										DocumentType.PLAINTEXT, 
-										text
-									);
-
+			List<Entity> entities = nerd.annotate(	ExtractorType.COMBINED,
+													DocumentType.PLAINTEXT,
+													text,
+													GranularityType.OEN, 
+													60L, 
+													true,
+													true );	
+			
+			LOGGER.info("NERD has found %s entities", entities.size());
+			
 			for (Entity e : entities) {
 				int id = DBpediaToWikiId.getId(e.getUri());
 
