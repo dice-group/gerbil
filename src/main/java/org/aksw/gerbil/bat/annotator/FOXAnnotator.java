@@ -38,8 +38,8 @@ public class FOXAnnotator implements A2WSystem {
     private long                  lastTime = -1;
 
     public static void main(String[] a) {
-
-        HashSet<Annotation> set = new FOXAnnotator(SingletonWikipediaApi.getInstance()).solveA2W("The philosopher and mathematician Gottfried Wilhelm Leibniz was born in Leipzig.");
+        String test = "The philosopher and mathematician Gottfried Wilhelm Leibniz was born in Leipzig.";
+        HashSet<Annotation> set = new FOXAnnotator(SingletonWikipediaApi.getInstance()).solveA2W(test);
         LOG.info(set.size());
     }
 
@@ -63,6 +63,7 @@ public class FOXAnnotator implements A2WSystem {
     }
 
     protected Set<Annotation> fox(String text) {
+
         Set<Annotation> set = new HashSet<>();
         lastTime = Calendar.getInstance().getTimeInMillis();
         try {
@@ -81,26 +82,40 @@ public class FOXAnnotator implements A2WSystem {
                     JSONArray graph = outObj.getJSONArray("@graph");
                     for (int i = 0; i < graph.length(); i++) {
                         JSONObject entity = graph.getJSONObject(i);
-                        if (entity != null && entity.has("means") && entity.has("beginIndex") && entity.has("endIndex")) {
+                        if (entity != null && entity.has("means") && entity.has("beginIndex") && entity.has("ann:body")) {
+
                             String uri = entity.getString("means");
-                            int b = entity.getInt("beginIndex");
-                            int e = entity.getInt("endIndex");
+                            String body = entity.getString("ann:body");
+                            Object begin = entity.get("beginIndex");
+
                             // wiki id
                             String urlDecoded = URLDecoder.decode(uri, "UTF-8");
                             String title = extractLabel(urlDecoded);
                             int id = wikiApi.getIdByTitle(title);
-                            // add to set
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(id + ":" + text.substring(b, e) + ":" + uri);
-                            if (id > 0)
-                                set.add(new Annotation(b, e, id));
+
+                            if (id > -1) {
+                                if (begin instanceof JSONArray) {
+                                    // for all occurring indices
+                                    for (int ii = 0; ii < ((JSONArray) begin).length(); ii++) {
+                                        int b = Integer.valueOf(((JSONArray) begin).getString(ii));
+                                        set.add(new Annotation(b, b + body.length(), id));
+                                    }
+                                } else if (begin instanceof String) {
+                                    int b = Integer.valueOf((String) begin);
+                                    set.add(new Annotation(b, b + body.length(), id));
+                                } else if (LOG.isDebugEnabled())
+                                    LOG.debug("Couldn't find index");
+                            } else if (LOG.isDebugEnabled())
+                                LOG.debug("Couldn't find ".concat(uri));
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            LOG.error(e.getLocalizedMessage());
+            LOG.error("\n", e);
         }
+        if (LOG.isDebugEnabled())
+            LOG.debug("Found " + set.size());
         return set;
     }
 
