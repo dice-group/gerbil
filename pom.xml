@@ -256,6 +256,17 @@
             <version>1.3.171</version>
             <scope>test</scope>
         </dependency>
+        <!-- FOX -->
+        <dependency>
+            <groupId>org.aksw</groupId>
+            <artifactId>fox-java</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20140107</version>
+        </dependency>
     </dependencies>
 
     <build>
