@@ -8,10 +8,10 @@ import java.util.Set;
 import org.aksw.gerbil.annotators.AgdistisAnnotatorConfig;
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
 import org.aksw.gerbil.annotators.NERDAnnotatorConfig;
-import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.annotators.TagMeAnnotatorConfig;
 import org.aksw.gerbil.annotators.WikipediaMinerAnnotatorConfig;
+import org.aksw.gerbil.bat.annotator.FOXAnnotator;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class AnnotatorName2ExperimentTypeMapping {
@@ -22,13 +22,15 @@ public class AnnotatorName2ExperimentTypeMapping {
         if (instance == null) {
             Map<String, ExperimentType> mapping = new HashMap<String, ExperimentType>();
             mapping.put(BabelfyAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
-            // mapping.put(NIFWebserviceAnnotatorConfiguration.ANNOTATOR_NAME, ExperimentType.Sa2W);
+            // mapping.put(NIFWebserviceAnnotatorConfiguration.ANNOTATOR_NAME,
+            // ExperimentType.Sa2W);
             mapping.put(SpotlightAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(TagMeAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(AgdistisAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(NERDAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
-            
+            mapping.put(FOXAnnotator.NAME, ExperimentType.A2W);
+
             instance = new AnnotatorName2ExperimentTypeMapping(mapping);
         }
         return instance;

@@ -5,11 +5,13 @@ import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import org.aksw.gerbil.annotators.AgdistisAnnotatorConfig;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
+import org.aksw.gerbil.annotators.FOXAnnotatorConfig;
 import org.aksw.gerbil.annotators.NERDAnnotatorConfig;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.annotators.TagMeAnnotatorConfig;
 import org.aksw.gerbil.annotators.WikipediaMinerAnnotatorConfig;
+import org.aksw.gerbil.bat.annotator.FOXAnnotator;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +32,8 @@ public class Name2AnnotatorMapping {
         case BabelfyAnnotatorConfig.ANNOTATOR_NAME:
             return new BabelfyAnnotatorConfig();
             // case NIFWebserviceAnnotatorConfiguration.ANNOTATOR_NAME:
-            // return new NIFWebserviceAnnotatorConfiguration(null, name, false, SingletonWikipediaApi.getInstance(),
+            // return new NIFWebserviceAnnotatorConfiguration(null, name, false,
+            // SingletonWikipediaApi.getInstance(),
             // new DBPediaApi(), ExperimentType.Sa2W);
         case SpotlightAnnotatorConfig.ANNOTATOR_NAME:
             return new SpotlightAnnotatorConfig(
@@ -43,7 +46,9 @@ public class Name2AnnotatorMapping {
             return new AgdistisAnnotatorConfig(
                     SingletonWikipediaApi.getInstance());
         case NERDAnnotatorConfig.ANNOTATOR_NAME:
-            return new NERDAnnotatorConfig();            
+            return new NERDAnnotatorConfig();
+        case FOXAnnotator.NAME:
+            return new FOXAnnotatorConfig(SingletonWikipediaApi.getInstance());
         }
         if (name.startsWith("NIFWS_")) {
             // This describes a NIF based web service
