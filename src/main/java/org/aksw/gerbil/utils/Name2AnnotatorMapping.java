@@ -26,6 +26,7 @@ public class Name2AnnotatorMapping {
     // WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME };
 
     public static AnnotatorConfiguration getAnnotatorConfig(String name) {
+    	    	
         switch (name) {
         case BabelfyAnnotatorConfig.ANNOTATOR_NAME:
             return new BabelfyAnnotatorConfig();
@@ -40,8 +41,7 @@ public class Name2AnnotatorMapping {
         case WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME:
             return new WikipediaMinerAnnotatorConfig();
         case AgdistisAnnotatorConfig.ANNOTATOR_NAME:
-            return new AgdistisAnnotatorConfig(
-                    SingletonWikipediaApi.getInstance());
+            return new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance());
         case NERDAnnotatorConfig.ANNOTATOR_NAME:
             return new NERDAnnotatorConfig();            
         }

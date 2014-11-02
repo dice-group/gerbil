@@ -42,7 +42,7 @@ public class Experimenter implements Runnable {
                             configs[i].datasetConfig.getDatasetName(), configs[i].type.name(),
                             configs[i].matching.name(), experimentId);
                 }
-                // If there is no experiment task result in the database
+                // If there is no experiment task result in the database                
                 if (taskId != ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED) {
                     // Create an executer which performs the task
                     ExperimentTaskExecuter executer = new ExperimentTaskExecuter(taskId, experimentDAO, configs[i],
