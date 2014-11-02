@@ -24,7 +24,6 @@ public class SpotlightAnnotatorConfig extends AbstractAnnotatorConfiguration {
         super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2W });
     }
 
-    @Deprecated
     public SpotlightAnnotatorConfig(WikipediaApiInterface wikiApi, DBPediaApi dbpApi) {
         this();
         this.wikiApi = wikiApi;

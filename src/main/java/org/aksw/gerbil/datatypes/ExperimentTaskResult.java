@@ -25,7 +25,8 @@ public class ExperimentTaskResult {
     public ExperimentType type;
     public Matching matching;
     /**
-     * Contains the error message if {@link #state} != {@link ExperimentDAO#TASK_FINISHED}, else this should be null.
+     * Contains the error message if {@link #state} !=
+     * {@link ExperimentDAO#TASK_FINISHED}, else this should be null.
      */
     public String stateMsg = null;
 
@@ -47,9 +48,8 @@ public class ExperimentTaskResult {
     }
 
     public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state, int errorCount) {
-        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getDatasetName(),
-                configuration.type, configuration.matching, results, state, errorCount, (new java.util.Date())
-                        .getTime());
+        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
+                configuration.matching, results, state, errorCount, (new java.util.Date()).getTime());
     }
 
     public double[] getResults() {

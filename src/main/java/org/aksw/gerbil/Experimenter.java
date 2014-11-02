@@ -31,16 +31,16 @@ public class Experimenter implements Runnable {
             int taskId;
             for (int i = 0; i < configs.length; ++i) {
                 if (couldHaveCachedResult(configs[i])) {
-                    // FIXME If the result in the database contains an error code, wouldn't it be better to handle such
+                    // FIXME If the result in the database contains an error
+                    // code, wouldn't it be better to handle such
                     // a case as it wouldn't exist in the database?
-                    taskId = experimentDAO.connectCachedResultOrCreateTask(
-                            configs[i].annotatorConfig.getName(),
-                            configs[i].datasetConfig.getDatasetName(), configs[i].type.name(),
-                            configs[i].matching.name(), experimentId);
+                    taskId = experimentDAO.connectCachedResultOrCreateTask(configs[i].annotatorConfig.getName(),
+                            configs[i].datasetConfig.getName(), configs[i].type.name(), configs[i].matching.name(),
+                            experimentId);
                 } else {
                     taskId = experimentDAO.createTask(configs[i].annotatorConfig.getName(),
-                            configs[i].datasetConfig.getDatasetName(), configs[i].type.name(),
-                            configs[i].matching.name(), experimentId);
+                            configs[i].datasetConfig.getName(), configs[i].type.name(), configs[i].matching.name(),
+                            experimentId);
                 }
                 // If there is no experiment task result in the database
                 if (taskId != ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED) {
@@ -59,7 +59,7 @@ public class Experimenter implements Runnable {
 
     private boolean couldHaveCachedResult(ExperimentTaskConfiguration config) {
         LOGGER.error("Could be cached: " + config.annotatorConfig.getName() + ".couldBeCached()="
-                + config.annotatorConfig.couldBeCached() + " && " + config.datasetConfig.getDatasetName()
+                + config.annotatorConfig.couldBeCached() + " && " + config.datasetConfig.getName()
                 + ".couldBeCached()=" + config.datasetConfig.couldBeCached() + " --> "
                 + (config.annotatorConfig.couldBeCached() && config.datasetConfig.couldBeCached()));
         return config.annotatorConfig.couldBeCached() && config.datasetConfig.couldBeCached();

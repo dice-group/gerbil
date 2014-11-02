@@ -8,8 +8,8 @@ import java.io.IOException;
 
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
-import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
-import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
+import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfigs;
+import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfigs.NIFDatasets;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
@@ -22,33 +22,41 @@ public class SpotlightTest {
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         DBPediaApi dbpApi = new DBPediaApi();
-        // ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
+        // ExperimentTaskConfiguration taskConfigs[] = new
+        // ExperimentTaskConfiguration[] { new
         // ExperimentTaskConfiguration(
-        // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new IITBDatasetConfig(wikiAPI),
+        // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new
+        // IITBDatasetConfig(wikiAPI),
         // ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH) };
-        // ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
+        // ExperimentTaskConfiguration taskConfigs[] = new
+        // ExperimentTaskConfiguration[] { new
         // ExperimentTaskConfiguration(
-        // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new AIDACoNLLDatasetConfig(
+        // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new
+        // AIDACoNLLDatasetConfig(
         // AIDACoNLLChunk.COMPLETE,
         // wikiAPI), ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH) };
-        // ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
+        // ExperimentTaskConfiguration taskConfigs[] = new
+        // ExperimentTaskConfiguration[] { new
         // ExperimentTaskConfiguration(
-        // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new AQUAINTDatasetConfiguration(
+        // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new
+        // AQUAINTDatasetConfiguration(
         // wikiAPI), ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH) };
-        // ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
+        // ExperimentTaskConfiguration taskConfigs[] = new
+        // ExperimentTaskConfiguration[] { new
         // ExperimentTaskConfiguration(
-        // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new ACE2004DatasetConfig(
+        // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new
+        // ACE2004DatasetConfig(
         // wikiAPI), ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH) };
-        // ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
+        // ExperimentTaskConfiguration taskConfigs[] = new
+        // ExperimentTaskConfiguration[] { new
         // ExperimentTaskConfiguration(
-        // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new MeijDatasetConfig(), ExperimentType.Rc2W,
+        // new SpotlightAnnotatorConfig(wikiAPI, dbpApi), new
+        // MeijDatasetConfig(), ExperimentType.Rc2W,
         // Matching.STRONG_ENTITY_MATCH) };
-        ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
-                ExperimentTaskConfiguration(
-                        new SpotlightAnnotatorConfig(wikiAPI, dbpApi),
-                        new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi(),
-                                NIFDatasets.KORE50), ExperimentType.D2W,
-                        Matching.STRONG_ANNOTATION_MATCH) };
+        ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
+                new SpotlightAnnotatorConfig(wikiAPI, dbpApi), KnownNIFFileDatasetConfigs.getDatasetConfig(
+                        SingletonWikipediaApi.getInstance(), new DBPediaApi(), NIFDatasets.KORE50), ExperimentType.D2W,
+                Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "SPOTLIGHT_TEST");
         experimenter.run();

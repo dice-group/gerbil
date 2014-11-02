@@ -10,7 +10,7 @@ import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
 import org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration;
 import org.aksw.gerbil.datasets.CMNSDatasetConfig;
 import org.aksw.gerbil.datasets.IITBDatasetConfig;
-import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
+import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfigs.NIFDatasets;
 import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
 import org.aksw.gerbil.datatypes.ExperimentType;
 

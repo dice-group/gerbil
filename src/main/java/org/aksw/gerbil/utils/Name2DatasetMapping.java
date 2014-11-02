@@ -1,7 +1,5 @@
 package org.aksw.gerbil.utils;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-
 import org.aksw.gerbil.datasets.ACE2004DatasetConfig;
 import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
 import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig.AIDACoNLLChunk;
@@ -9,10 +7,9 @@ import org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration;
 import org.aksw.gerbil.datasets.CMNSDatasetConfig;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datasets.IITBDatasetConfig;
-import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
-import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
 
+@Deprecated
 public class Name2DatasetMapping {
 
     public static DatasetConfiguration getDatasetConfig(String name) {
@@ -56,13 +53,15 @@ public class Name2DatasetMapping {
         }
 
         // Got through the known NIF datasets
-        NIFDatasets nifDatasets[] = NIFDatasets.values();
-        for (int i = 0; i < nifDatasets.length; ++i) {
-            if (nifDatasets[i].getDatasetName().equals(name)) {
-                return new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi(),
-                        nifDatasets[i]);
-            }
-        }
+        // NIFDatasets nifDatasets[] = NIFDatasets.values();
+        // for (int i = 0; i < nifDatasets.length; ++i) {
+        // if (nifDatasets[i].getDatasetName().equals(name)) {
+        // return new
+        // KnownNIFFileDatasetConfigs(SingletonWikipediaApi.getInstance(), new
+        // DBPediaApi(),
+        // nifDatasets[i]);
+        // }
+        // }
 
         return null;
     }

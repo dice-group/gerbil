@@ -8,7 +8,6 @@ import it.acubelab.batframework.data.Tag;
 import it.acubelab.batframework.problems.Sa2WSystem;
 import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.AnnotationException;
-import it.acubelab.batframework.utils.ProblemReduction;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.io.IOException;

@@ -55,9 +55,8 @@ public class ExperimentTaskExecuter implements Runnable {
             // Create dataset
             TopicDataset dataset = configuration.datasetConfig.getDataset(configuration.type);
             if (dataset == null) {
-                throw new GerbilException("dataset=\"" + configuration.datasetConfig.getDatasetName()
-                        + "\" experimentType=\"" + configuration.type.name() + "\".",
-                        ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
+                throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
+                        + configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
             // Create annotator
@@ -73,9 +72,8 @@ public class ExperimentTaskExecuter implements Runnable {
             MatchRelation<?> matching = MatchingFactory.createMatchRelation(wikiAPI, configuration.matching,
                     configuration.type);
             if (matching == null) {
-                throw new GerbilException("matching=\"" + configuration.matching.name()
-                        + "\" experimentType=\"" + configuration.type.name() + "\".",
-                        ErrorTypes.MATCHING_DOES_NOT_SUPPORT_EXPERIMENT);
+                throw new GerbilException("matching=\"" + configuration.matching.name() + "\" experimentType=\""
+                        + configuration.type.name() + "\".", ErrorTypes.MATCHING_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
             // perform experiment
@@ -109,8 +107,7 @@ public class ExperimentTaskExecuter implements Runnable {
 
     @SuppressWarnings("unchecked")
     private Pair<Float, MetricsResultSet> runExperiment(TopicDataset dataset, TopicSystem annotator,
-            MatchRelation<?> matching)
-            throws GerbilException {
+            MatchRelation<?> matching) throws GerbilException {
         HashMap<String, HashMap<String, HashMap<String, HashMap<Float, MetricsResultSet>>>> results = null;
         switch (configuration.type) {
         case D2W: {
@@ -161,8 +158,8 @@ public class ExperimentTaskExecuter implements Runnable {
             Vector<MatchRelation<Tag>> matchings = new Vector<MatchRelation<Tag>>(1);
             matchings.add((MatchRelation<Tag>) matching);
             try {
-                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null,
-                        null, c2wAnnotator, c2wDataset, wikiAPI);
+                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null, null, c2wAnnotator,
+                        c2wDataset, wikiAPI);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
@@ -177,8 +174,8 @@ public class ExperimentTaskExecuter implements Runnable {
             Vector<MatchRelation<Tag>> matchings = new Vector<MatchRelation<Tag>>(1);
             matchings.add((MatchRelation<Tag>) matching);
             try {
-                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null,
-                        rc2wAnnotator, null, rc2wDataset, wikiAPI);
+                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null, rc2wAnnotator, null,
+                        rc2wDataset, wikiAPI);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
