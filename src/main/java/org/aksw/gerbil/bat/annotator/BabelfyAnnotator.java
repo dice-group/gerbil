@@ -3,8 +3,8 @@ package org.aksw.gerbil.bat.annotator;
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
 import it.acubelab.batframework.problems.D2WSystem;
-import it.acubelab.batframework.systemPlugins.TimingCalibrator;
 import it.acubelab.batframework.utils.AnnotationException;
+import it.acubelab.batframework.utils.WikipediaApiInterface;
 import it.uniroma1.lcl.babelfy.Babelfy;
 import it.uniroma1.lcl.babelfy.Babelfy.AccessType;
 import it.uniroma1.lcl.babelfy.Babelfy.Matching;
@@ -15,13 +15,13 @@ import it.uniroma1.lcl.jlt.util.Language;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 
 import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Sets;
 
@@ -43,26 +43,41 @@ public class BabelfyAnnotator implements D2WSystem {
 
     private static final int BABELFY_MAX_TEXT_LENGTH = 1000;
 
-    private long calib = -1;
-    private long lastTime = -1;
+    public static final String NAME = "Babelfy";
+
+    // private long calib = -1;
+    // private long lastTime = -1;
     private String key;
+
+    @Autowired
+    private WikipediaApiInterface wikiApi;
 
     public BabelfyAnnotator() {
         this("");
+    }
+
+    public BabelfyAnnotator(WikipediaApiInterface wikiApi) {
+        this("", wikiApi);
     }
 
     public BabelfyAnnotator(String key) {
         this.key = key;
     }
 
+    public BabelfyAnnotator(String key, WikipediaApiInterface wikiApi) {
+        this.key = key;
+        this.wikiApi = wikiApi;
+    }
+
     public String getName() {
-        return "BabelFy";
+        return NAME;
     }
 
     public long getLastAnnotationTime() {
-        if (calib == -1)
-            calib = TimingCalibrator.getOffset(this);
-        return lastTime - calib > 0 ? lastTime - calib : 0;
+        // if (calib == -1)
+        // calib = TimingCalibrator.getOffset(this);
+        // return lastTime - calib > 0 ? lastTime - calib : 0;
+        return -1;
     }
 
     public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions)
@@ -72,7 +87,7 @@ public class BabelfyAnnotator implements D2WSystem {
         }
         Babelfy bfy = Babelfy.getInstance(AccessType.ONLINE);
         HashSet<Annotation> annotations = Sets.newHashSet();
-        lastTime = Calendar.getInstance().getTimeInMillis();
+        // lastTime = Calendar.getInstance().getTimeInMillis();
         try {
             it.uniroma1.lcl.babelfy.data.Annotation babelAnnotations = bfy.babelfy(key, text, Matching.EXACT,
                     Language.EN);
@@ -90,7 +105,7 @@ public class BabelfyAnnotator implements D2WSystem {
                     // DIRTY FIX Babelfy seems to return URIs with "DBpedia.org" instead of "dbpedia.org"
                     uri = uris.get(0);
                     uri = uri.replaceAll("DBpedia.org", "dbpedia.org");
-                    int id = DBpediaToWikiId.getId(uri);
+                    int id = DBpediaToWikiId.getId(wikiApi, uri);
                     annotations.add(new Annotation(posSurfaceFormInText, surfaceForm.length(), id));
                     // annotations.add(new Annotation(anchor.getStart(), anchor.getEnd() - anchor.getStart(), id));
                     positionInText = posSurfaceFormInText + surfaceForm.length();
@@ -105,7 +120,7 @@ public class BabelfyAnnotator implements D2WSystem {
             throw new AnnotationException("Exception while requesting annotations from BabelFy: "
                     + e.getLocalizedMessage());
         }
-        lastTime = Calendar.getInstance().getTimeInMillis() - lastTime;
+        // lastTime = Calendar.getInstance().getTimeInMillis() - lastTime;
         return annotations;
     }
 
