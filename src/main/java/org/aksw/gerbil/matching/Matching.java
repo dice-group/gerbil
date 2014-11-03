@@ -8,7 +8,7 @@ package org.aksw.gerbil.matching;
  */
 public enum Matching {
     /**
-     * The matching returns true iff the disambiguated entity of the annotater equals at least one annotation of the
+     * The matching returns true iff the disambiguated entity of the annotater equals at least one tag/annotation of the
      * text.
      */
     STRONG_ENTITY_MATCH,

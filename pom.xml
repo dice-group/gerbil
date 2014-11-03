@@ -106,11 +106,29 @@
             <artifactId>wikifier</artifactId>
             <version>0.0.1</version>
         </dependency>
+
+        <!-- NERD -->
+        <!-- TODO: package nerd4java including jersey-core, jersey-client, gson -->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.9.1</version>
+        </dependency>        
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-core</artifactId>
+            <version>1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>1.7.1</version>
+        </dependency>
         <dependency>
             <groupId>fr.eurecom.nerd</groupId>
             <artifactId>client</artifactId>
             <version>0.0.1</version>
-        </dependency>
+        </dependency>        
 
         <!-- slf4j: Logging API -->
         <dependency>

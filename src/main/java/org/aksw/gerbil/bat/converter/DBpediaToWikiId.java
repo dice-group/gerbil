@@ -1,10 +1,10 @@
 package org.aksw.gerbil.bat.converter;
 
-import java.io.File;
+import it.acubelab.batframework.utils.WikipediaApiInterface;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
-import org.apache.jena.riot.RDFDataMgr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,36 +14,60 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryParseException;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.impl.StatementImpl;
 import com.hp.hpl.jena.shared.PrefixMapping;
-import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 
-@Deprecated
 public class DBpediaToWikiId {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DBpediaToWikiId.class);
 
+    @Deprecated
     private static String fileName = "dbpediaids.ttl";
 
+    @Deprecated
     private static Model model;
 
+    @Deprecated
     private static PrefixMapping prefixes;
 
-    static {
-        File f = new File(fileName);
-        if (f.exists()) {
+    // static {
+    // File f = new File(fileName);
+    // if (f.exists()) {
+    //
+    // model = RDFDataMgr.loadModel(fileName);
+    // } else {
+    // model = ModelFactory.createDefaultModel();
+    // }
+    // prefixes = new PrefixMappingImpl()
+    // .withDefaultMappings(PrefixMapping.Extended);
+    // prefixes.setNsPrefix("nif",
+    // "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#");
+    // prefixes.setNsPrefix("dbo", "http://dbpedia.org/ontology/");
+    // prefixes.setNsPrefix("itsrdf", "http://www.w3.org/2005/11/its/rdf#");
+    // }
 
-            model = RDFDataMgr.loadModel(fileName);
-        } else {
-            model = ModelFactory.createDefaultModel();
+    /**
+     * The Wikipedia Id or -1 if the Id couldn't be retrieved.
+     * 
+     * @param wikiApi
+     *            The API used to retrieve the id
+     * @param dbpediaUri
+     *            URI for which the id should be retrieved
+     * @return Wikipedia Id or -1
+     */
+    public static int getId(WikipediaApiInterface wikiApi, String dbpediaUri) {
+        if (dbpediaUri != null) {
+            int pos = dbpediaUri.indexOf("/resource/");
+            if (pos >= 0) {
+                String title = dbpediaUri.substring(pos + 10);
+                try {
+                    return wikiApi.getIdByTitle(title);
+                } catch (Exception e) {
+                    LOGGER.error("Error while trying to get the ID for the title {}. Returning -1.", title, e);
+                }
+            }
         }
-        prefixes = new PrefixMappingImpl()
-                .withDefaultMappings(PrefixMapping.Extended);
-        prefixes.setNsPrefix("nif",
-                "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#");
-        prefixes.setNsPrefix("dbo", "http://dbpedia.org/ontology/");
-        prefixes.setNsPrefix("itsrdf", "http://www.w3.org/2005/11/its/rdf#");
+        return -1;
     }
 
     /**
@@ -55,7 +79,8 @@ public class DBpediaToWikiId {
      * @param dbpediaUri
      * @return
      */
-    public static int getId(String dbpediaUri) {
+    @Deprecated
+    public static int getIdFromDBpedia(String dbpediaUri) {
         int id = -1;
         ParameterizedSparqlString query = new ParameterizedSparqlString(
                 "SELECT ?id WHERE { ?dbpedia dbo:wikiPageID ?id .}", prefixes);
@@ -91,6 +116,7 @@ public class DBpediaToWikiId {
         return id;
     }
 
+    @Deprecated
     public static void write() {
         try {
             model.write(new FileOutputStream(fileName), "TTL");

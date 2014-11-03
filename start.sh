@@ -18,4 +18,18 @@ if [ ! -f "$file" ]; then
     fi
 fi
 
+echo "Checking properties files..."
+dir="src/main/resources"
+file="$dir/gerbil_keys.properties"
+
+if [ ! -f "$file" ]; then
+	echo "Creating empty $file file"
+	mkdir -p "$dir";
+	echo "##############################################################################"  > $file
+	echo "# This is the properties file contains our keys for several annotator web    #"  >> $file
+	echo "# services.                                                                  #"  >> $file
+	echo "#                      IT SHOULD NOT BE DISTRIBUTED!!!                       #"  >> $file
+	echo "##############################################################################"  >> $file
+fi
+
 mvn clean tomcat:run -Dmaven.tomcat.port=1234 &
