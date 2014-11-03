@@ -8,7 +8,6 @@ import it.acubelab.batframework.data.Tag;
 import it.acubelab.batframework.problems.Sa2WSystem;
 import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.AnnotationException;
-import it.acubelab.batframework.utils.ProblemReduction;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.io.IOException;
@@ -41,8 +40,8 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     private String url;
     private String name;
     private CloseableHttpClient client;
-    private long lastRequestSend = 0;
-    private long lastResponseReceived = 0;
+    // private long lastRequestSend = 0;
+    // private long lastResponseReceived = 0;
     private int documentCount = 0;
     private NIFDocumentCreator nifCreator = new TurtleNIFDocumentCreator();
     private NIFDocumentParser nifParser = new TurtleNIFDocumentParser();
@@ -67,11 +66,11 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
      */
     @Override
     public long getLastAnnotationTime() {
-        if (lastRequestSend < lastResponseReceived) {
-            return lastResponseReceived - lastRequestSend;
-        } else {
-            return -1L;
-        }
+        // if (lastRequestSend < lastResponseReceived) {
+        // return lastResponseReceived - lastRequestSend;
+        // } else {
+        return -1L;
+        // }
     }
 
     @Override
@@ -140,7 +139,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
                     + e.getLocalizedMessage());
         }
         // send NIF document (start time measure)
-        lastRequestSend = System.currentTimeMillis();
+        // lastRequestSend = System.currentTimeMillis();
         HttpPost request = new HttpPost(url);
         request.setEntity(entity);
         request.addHeader("Content-Type", nifCreator.getHttpContentType());
@@ -164,7 +163,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
             }
             // receive NIF document (end time measure and set time)
             entity = response.getEntity();
-            lastResponseReceived = System.currentTimeMillis();
+            // lastResponseReceived = System.currentTimeMillis();
             // read response and parse NIF
             try {
                 reader = new InputStreamReader(entity.getContent());

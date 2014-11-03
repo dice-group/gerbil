@@ -4,13 +4,11 @@ import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
 import it.acubelab.batframework.data.Tag;
 import it.acubelab.batframework.problems.A2WSystem;
-import it.acubelab.batframework.systemPlugins.TimingCalibrator;
 import it.acubelab.batframework.utils.AnnotationException;
 import it.acubelab.batframework.utils.ProblemReduction;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.net.URLDecoder;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +16,7 @@ import org.aksw.fox.binding.java.FoxApi;
 import org.aksw.fox.binding.java.FoxParameter;
 import org.aksw.fox.binding.java.FoxResponse;
 import org.aksw.fox.binding.java.IFoxApi;
+import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -30,12 +29,13 @@ public class FOXAnnotator implements A2WSystem {
         PropertyConfigurator.configure(FOXAnnotator.class.getResourceAsStream("log4jFOXAnnotator.properties"));
     }
 
-    public static final String    NAME     = "FOX";
-    public static final Logger    LOG      = LogManager.getLogger(FOXAnnotator.class);
-    IFoxApi                       fox      = new FoxApi();
+    public static final String NAME = "FOX";
+    public static final Logger LOG = LogManager.getLogger(FOXAnnotator.class);
+    IFoxApi fox = new FoxApi();
     private WikipediaApiInterface wikiApi;
-    private long                  calib    = -1;
-    private long                  lastTime = -1;
+
+    // private long calib = -1;
+    // private long lastTime = -1;
 
     public static void main(String[] a) {
         String test = "The philosopher and mathematician Gottfried Wilhelm Leibniz was born in Leipzig.";
@@ -65,7 +65,7 @@ public class FOXAnnotator implements A2WSystem {
     protected Set<Annotation> fox(String text) {
 
         Set<Annotation> set = new HashSet<>();
-        lastTime = Calendar.getInstance().getTimeInMillis();
+        // lastTime = Calendar.getInstance().getTimeInMillis();
         try {
             // request FOX
             FoxResponse response = fox
@@ -90,8 +90,9 @@ public class FOXAnnotator implements A2WSystem {
 
                             // wiki id
                             String urlDecoded = URLDecoder.decode(uri, "UTF-8");
-                            String title = extractLabel(urlDecoded);
-                            int id = wikiApi.getIdByTitle(title);
+                            int id = DBpediaToWikiId.getId(wikiApi, urlDecoded);
+                            // String title = extractLabel(urlDecoded);
+                            // int id = wikiApi.getIdByTitle(title);
 
                             if (id > -1) {
                                 if (begin instanceof JSONArray) {
@@ -126,11 +127,14 @@ public class FOXAnnotator implements A2WSystem {
 
     @Override
     public long getLastAnnotationTime() {
-        if (calib == -1)
-            calib = TimingCalibrator.getOffset(this);
-        return lastTime - calib > 0 ? lastTime - calib : 0;
+        // if (calib == -1)
+        // calib = TimingCalibrator.getOffset(this);
+        // return lastTime - calib > 0 ? lastTime - calib : 0;
+        return -1;
     }
 
+    @SuppressWarnings("unused")
+    @Deprecated
     private static String extractLabel(String namedEntityUri) {
         int posSlash = namedEntityUri.lastIndexOf('/');
         int posPoints = namedEntityUri.lastIndexOf(':');

@@ -11,7 +11,7 @@ public class FOXAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private WikipediaApiInterface wikiApi;
 
     public FOXAnnotatorConfig(WikipediaApiInterface wikiApi) {
-        super(FOXAnnotator.NAME, false, ExperimentType.A2W);
+        super(FOXAnnotator.NAME, true, ExperimentType.A2W);
         this.wikiApi = wikiApi;
     }
 
