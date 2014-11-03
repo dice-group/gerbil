@@ -41,6 +41,8 @@ public class Name2AnnotatorMapping {
                     SingletonWikipediaApi.getInstance(), new DBPediaApi());
         case TagMeAnnotatorConfig.ANNOTATOR_NAME:
             return new TagMeAnnotatorConfig();
+        case WATAnnotatorConfig.ANNOTATOR_NAME:
+            return new WATAnnotatorConfig();
         case WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME:
             return new WikipediaMinerAnnotatorConfig();
         case AgdistisAnnotatorConfig.ANNOTATOR_NAME:

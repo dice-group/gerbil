@@ -26,6 +26,7 @@ public class AnnotatorName2ExperimentTypeMapping {
             // ExperimentType.Sa2W);
             mapping.put(SpotlightAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(TagMeAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
+            mapping.put(WATAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(AgdistisAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(NERDAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
