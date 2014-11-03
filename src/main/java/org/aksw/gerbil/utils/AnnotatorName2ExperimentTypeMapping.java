@@ -10,6 +10,7 @@ import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
 import org.aksw.gerbil.annotators.NERDAnnotatorConfig;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.annotators.TagMeAnnotatorConfig;
+import org.aksw.gerbil.annotators.WATAnnotatorConfig;
 import org.aksw.gerbil.annotators.WikipediaMinerAnnotatorConfig;
 import org.aksw.gerbil.bat.annotator.FOXAnnotator;
 import org.aksw.gerbil.datatypes.ExperimentType;

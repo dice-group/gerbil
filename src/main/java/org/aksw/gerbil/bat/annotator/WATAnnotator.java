@@ -150,8 +150,8 @@ public class WATAnnotator implements Sa2WSystem {
                 int id = js_ann.get("id").getAsInt();
                 double rho = js_ann.get("rho").getAsDouble();
 
-                Mention m = new Mention(start, end - start);
-                res.add(new ScoredAnnotation(start, end - start, id, (float)rho));
+                // Mention m = new Mention(start, end - start);
+                res.add(new ScoredAnnotation(start, end - start, id, (float) rho));
             }
         } catch (Exception e) {
             throw new AnnotationException(e.getMessage());
