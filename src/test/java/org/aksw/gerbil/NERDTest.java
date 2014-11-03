@@ -22,7 +22,7 @@ public class NERDTest {
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new NERDAnnotatorConfig(), new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
+                new NERDAnnotatorConfig(wikiAPI), new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
                         new DBPediaApi(), NIFDatasets.KORE50), ExperimentType.D2W,
                 Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,

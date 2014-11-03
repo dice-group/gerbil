@@ -51,8 +51,17 @@ public class NERDAnnotator implements Sa2WSystem {
     @Autowired
     private WikipediaApiInterface wikiApi;
 
+    /**
+     * Shouldn't be used until we have finished porting the project to Spring.
+     */
+    @Deprecated
     public NERDAnnotator(String key) {
         this.key = key;
+    }
+
+    public NERDAnnotator(WikipediaApiInterface wikiApi, String key) {
+        this.key = key;
+        this.wikiApi = wikiApi;
     }
 
     @Override
@@ -128,7 +137,7 @@ public class NERDAnnotator implements Sa2WSystem {
         try {
             // lastTime = Calendar.getInstance().getTimeInMillis();
 
-            LOGGER.info("shipping to NERD the text to annotate");
+            LOGGER.debug("shipping to NERD the text to annotate");
 
             NERD nerd = new NERD(NERD_API, key);
             List<Entity> entities = nerd.annotate(ExtractorType.COMBINED,
@@ -139,7 +148,7 @@ public class NERDAnnotator implements Sa2WSystem {
                     true,
                     true);
 
-            LOGGER.info("NERD has found %s entities", entities.size());
+            LOGGER.debug("NERD has found {} entities", entities.size());
 
             for (Entity e : entities) {
                 int id = DBpediaToWikiId.getId(wikiApi, e.getUri());

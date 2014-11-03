@@ -4,7 +4,6 @@ import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,13 +56,15 @@ public class DBpediaToWikiId {
      * @return Wikipedia Id or -1
      */
     public static int getId(WikipediaApiInterface wikiApi, String dbpediaUri) {
-        int pos = dbpediaUri.indexOf("/resource/");
-        if (pos >= 0) {
-            String title = dbpediaUri.substring(pos + 10);
-            try {
-                return wikiApi.getIdByTitle(title);
-            } catch (IOException e) {
-                LOGGER.error("Error while trying to get the ID for the title {}. Returning -1.", title, e);
+        if (dbpediaUri != null) {
+            int pos = dbpediaUri.indexOf("/resource/");
+            if (pos >= 0) {
+                String title = dbpediaUri.substring(pos + 10);
+                try {
+                    return wikiApi.getIdByTitle(title);
+                } catch (Exception e) {
+                    LOGGER.error("Error while trying to get the ID for the title {}. Returning -1.", title, e);
+                }
             }
         }
         return -1;
