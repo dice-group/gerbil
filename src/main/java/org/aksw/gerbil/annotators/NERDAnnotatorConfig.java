@@ -22,7 +22,7 @@ public class NERDAnnotatorConfig extends AbstractAnnotatorConfiguration {
         // Load and use the key if there is one
         String key = GerbilConfiguration.getInstance().getString(NERD_WEB_SERVICE_KEY_PROPERTY_NAME);
         if (key == null) {
-            throw new GerbilException("Couldn't load the NEWD API key from properties file.",
+            throw new GerbilException("Couldn't load the NERD API key from properties file.",
                     ErrorTypes.ANNOTATOR_LOADING_ERROR);
         } else {
             return new NERDAnnotator(key);
