@@ -8,7 +8,7 @@ mkdir -p "gerbil_data" || exit 1
 
 if [ ! -f "$file" ]; then
     echo "Downloading dependencies ... ($url)"
-    #curl --retry 4 -o "$file" "$url"
+    curl --retry 4 -o "$file" "$url"
 
     if [ ! -f "$file" ]; then
         echo "Couldn't downloading dependency data: $file"
@@ -32,4 +32,4 @@ if [ ! -f "$file" ]; then
 	echo "##############################################################################"  >> $file
 fi
 
-#mvn clean tomcat:run -Dmaven.tomcat.port=1234 &
+mvn clean tomcat:run -Dmaven.tomcat.port=1234 &
