@@ -6,4 +6,4 @@ target
 .settings
 gerbil_keys.properties
 gerbil_data
-log
+*.log

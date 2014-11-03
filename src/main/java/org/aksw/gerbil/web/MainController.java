@@ -181,7 +181,9 @@ public class MainController {
     @RequestMapping("/datasets")
     public @ResponseBody
     Set<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
-        return DatasetName2ExperimentTypeMapping.getDatasetsForExperimentType(ExperimentType.valueOf(experimentType));
+        //TODO - add datahub datasets
+        Set<String> datasets = DatasetName2ExperimentTypeMapping.getDatasetsForExperimentType(ExperimentType.valueOf(experimentType));
+        return datasets;
     }
 
 }
