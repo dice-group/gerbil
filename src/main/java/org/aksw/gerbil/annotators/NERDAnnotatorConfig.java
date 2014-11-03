@@ -1,3 +1,14 @@
+//   NERD Annotator - It triggers queries to the NERD framework 
+// 	 http://nerd.eurecom.fr and it parses the results
+//
+//   Copyright 2014 EURECOM
+//
+//   Authors:
+//      Giuseppe Rizzo <giuse.rizzo@gmail.com>
+//
+//   Licensed under ...
+
+
 package org.aksw.gerbil.annotators;
 
 import it.acubelab.batframework.problems.TopicSystem;
