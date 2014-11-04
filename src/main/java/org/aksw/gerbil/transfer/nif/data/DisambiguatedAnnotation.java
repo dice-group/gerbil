@@ -1,6 +1,8 @@
 package org.aksw.gerbil.transfer.nif.data;
 
-public class DisambiguatedAnnotation extends AnnotationImpl {
+import org.aksw.gerbil.transfer.nif.Meaning;
+
+public class DisambiguatedAnnotation extends AnnotationImpl implements Meaning {
 
     protected String uri;
 
