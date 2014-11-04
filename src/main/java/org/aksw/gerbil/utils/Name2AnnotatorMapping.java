@@ -10,6 +10,7 @@ import org.aksw.gerbil.annotators.NERDAnnotatorConfig;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.annotators.TagMeAnnotatorConfig;
+import org.aksw.gerbil.annotators.WATAnnotatorConfig;
 import org.aksw.gerbil.annotators.WikipediaMinerAnnotatorConfig;
 import org.aksw.gerbil.bat.annotator.FOXAnnotator;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -41,12 +42,14 @@ public class Name2AnnotatorMapping {
                     SingletonWikipediaApi.getInstance(), new DBPediaApi());
         case TagMeAnnotatorConfig.ANNOTATOR_NAME:
             return new TagMeAnnotatorConfig();
+        case WATAnnotatorConfig.ANNOTATOR_NAME:
+            return new WATAnnotatorConfig();
         case WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME:
             return new WikipediaMinerAnnotatorConfig();
         case AgdistisAnnotatorConfig.ANNOTATOR_NAME:
             return new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance());
         case NERDAnnotatorConfig.ANNOTATOR_NAME:
-            return new NERDAnnotatorConfig();
+            return new NERDAnnotatorConfig(SingletonWikipediaApi.getInstance());
         case FOXAnnotator.NAME:
             return new FOXAnnotatorConfig(SingletonWikipediaApi.getInstance());
         }
