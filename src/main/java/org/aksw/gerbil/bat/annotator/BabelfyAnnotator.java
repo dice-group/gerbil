@@ -2,8 +2,10 @@ package org.aksw.gerbil.bat.annotator;
 
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.problems.D2WSystem;
+import it.acubelab.batframework.data.Tag;
+import it.acubelab.batframework.problems.A2WSystem;
 import it.acubelab.batframework.utils.AnnotationException;
+import it.acubelab.batframework.utils.ProblemReduction;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 import it.uniroma1.lcl.babelfy.Babelfy;
 import it.uniroma1.lcl.babelfy.Babelfy.AccessType;
@@ -37,7 +39,7 @@ import com.google.common.collect.Sets;
  * we have to set {@link #BABELFY_MAX_TEXT_LENGTH}={@value #BABELFY_MAX_TEXT_LENGTH}.
  * </p>
  */
-public class BabelfyAnnotator implements D2WSystem {
+public class BabelfyAnnotator implements A2WSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BabelfyAnnotator.class);
 
@@ -48,7 +50,6 @@ public class BabelfyAnnotator implements D2WSystem {
     // private long calib = -1;
     // private long lastTime = -1;
     private String key;
-    private boolean optimizedForShortTexts;
 
     @Autowired
     private WikipediaApiInterface wikiApi;
@@ -57,27 +58,17 @@ public class BabelfyAnnotator implements D2WSystem {
         this("");
     }
 
-    public BabelfyAnnotator(WikipediaApiInterface wikiApi, boolean optimizedForShortTexts) {
-        this("", wikiApi, optimizedForShortTexts);
+    public BabelfyAnnotator(WikipediaApiInterface wikiApi) {
+        this("", wikiApi);
     }
 
     public BabelfyAnnotator(String key) {
-        this(key, false);
-    }
-
-    public BabelfyAnnotator(String key, boolean optimizedForShortTexts) {
         this.key = key;
-        this.optimizedForShortTexts = optimizedForShortTexts;
     }
 
     public BabelfyAnnotator(String key, WikipediaApiInterface wikiApi) {
-        this(key, wikiApi, false);
-    }
-
-    public BabelfyAnnotator(String key, WikipediaApiInterface wikiApi, boolean optimizedForShortTexts) {
         this.key = key;
         this.wikiApi = wikiApi;
-        this.optimizedForShortTexts = optimizedForShortTexts;
     }
 
     public String getName() {
@@ -93,16 +84,30 @@ public class BabelfyAnnotator implements D2WSystem {
 
     public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions)
             throws AnnotationException {
+        return solveA2W(text, true);
+    }
+
+    @Override
+    public HashSet<Tag> solveC2W(String text) throws AnnotationException {
+        return ProblemReduction.A2WToC2W(solveA2W(text));
+    }
+
+    @Override
+    public HashSet<Annotation> solveA2W(String text) throws AnnotationException {
+        return solveA2W(text, true);
+    }
+
+    protected HashSet<Annotation> solveA2W(String text, boolean isShortDocument)
+            throws AnnotationException {
         if (text.length() > BABELFY_MAX_TEXT_LENGTH) {
-            return solveD2WForLongTexts(text, mentions);
+            return solveA2WForLongTexts(text);
         }
         Babelfy bfy = Babelfy.getInstance(AccessType.ONLINE);
         HashSet<Annotation> annotations = Sets.newHashSet();
         // lastTime = Calendar.getInstance().getTimeInMillis();
         try {
             it.uniroma1.lcl.babelfy.data.Annotation babelAnnotations = bfy.babelfy(key, text,
-                    optimizedForShortTexts ? Matching.PARTIAL : Matching.EXACT,
-                    Language.EN);
+                    isShortDocument ? Matching.PARTIAL : Matching.EXACT, Language.EN);
             int positionInText = 0, posSurfaceFormInText = 0;
             String surfaceForm;
             String lowercasedText = text.toLowerCase();
@@ -136,15 +141,16 @@ public class BabelfyAnnotator implements D2WSystem {
         return annotations;
     }
 
-    private HashSet<Annotation> solveD2WForLongTexts(String text, HashSet<Mention> mentions) {
+    protected HashSet<Annotation> solveA2WForLongTexts(String text) {
         List<String> chunks = splitText(text);
         HashSet<Annotation> annotations;
-        annotations = solveD2W(chunks.get(0), mentions);
+        annotations = solveA2W(chunks.get(0), false);
 
         HashSet<Annotation> tempAnnotations;
         int startOfChunk = 0;
         for (int i = 1; i < chunks.size(); ++i) {
-            tempAnnotations = solveD2W(chunks.get(i), mentions);
+            // get annotations. Note that
+            tempAnnotations = solveA2W(chunks.get(i), false);
             // We have to correct the positions of the annotations
             startOfChunk += chunks.get(i - 1).length();
             for (Annotation annotation : tempAnnotations) {
@@ -155,7 +161,7 @@ public class BabelfyAnnotator implements D2WSystem {
         return annotations;
     }
 
-    private List<String> splitText(String text) {
+    protected List<String> splitText(String text) {
         List<String> chunks = new ArrayList<String>();
         int start = 0, end = 0, nextEnd = 0;
         // As long as we have to create chunks
