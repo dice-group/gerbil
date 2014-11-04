@@ -19,15 +19,15 @@ import org.junit.Ignore;
 @Ignore
 public class AgdistisTest {
 
-	public static void main(String[] args) throws FileNotFoundException,
-			IOException, ClassNotFoundException {
-		WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
-		ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-				new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()),
-				new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi(),NIFDatasets.KORE50),
-				ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH) };
-		Experimenter experimenter = new Experimenter(wikiAPI,
-				new SimpleLoggingDAO4Debugging(), taskConfigs, "ILLINOIS_TEST");
-		experimenter.run();
-	}
+    public static void main(String[] args) throws FileNotFoundException,
+            IOException, ClassNotFoundException {
+        WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
+        ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
+                new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()),
+                new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi(), NIFDatasets.KORE50),
+                ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH) };
+        Experimenter experimenter = new Experimenter(wikiAPI,
+                new SimpleLoggingDAO4Debugging(), taskConfigs, "AGDISTIS_TEST");
+        experimenter.run();
+    }
 }
