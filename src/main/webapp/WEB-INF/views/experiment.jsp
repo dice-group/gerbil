@@ -37,9 +37,14 @@
 	<script src="webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script src="webjars/tablesorter/2.15.5/js/jquery.tablesorter.js"></script>
 
+	<script type="application/ld+json">
+	${dataid}
+	</script>
+
 	<%@include file="navbar.jsp"%>
 	<h1>GERBIL Experiment</h1>
 	<c:if test="${not empty tasks}">
+
 	Type: <c:out value="${tasks[0].type}" />
 		</br>
 	Matching: <c:out value="${tasks[0].matching}" />
