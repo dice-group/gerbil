@@ -32,12 +32,12 @@ public class Experimenter implements Runnable {
             for (int i = 0; i < configs.length; ++i) {
                 if (couldHaveCachedResult(configs[i])) {
                     taskId = experimentDAO.connectCachedResultOrCreateTask(
-                            configs[i].annotatorConfig.getAnnotatorName(),
-                            configs[i].datasetConfig.getDatasetName(), configs[i].type.name(),
+                            configs[i].annotatorConfig.getName(),
+                            configs[i].datasetConfig.getName(), configs[i].type.name(),
                             configs[i].matching.name(), experimentId);
                 } else {
-                    taskId = experimentDAO.createTask(configs[i].annotatorConfig.getAnnotatorName(),
-                            configs[i].datasetConfig.getDatasetName(), configs[i].type.name(),
+                    taskId = experimentDAO.createTask(configs[i].annotatorConfig.getName(),
+                            configs[i].datasetConfig.getName(), configs[i].type.name(),
                             configs[i].matching.name(), experimentId);
                 }
                 // If there is no experiment task result in the database
@@ -58,8 +58,8 @@ public class Experimenter implements Runnable {
     private boolean couldHaveCachedResult(ExperimentTaskConfiguration config) {
         boolean couldBeCached = config.annotatorConfig.couldBeCached() && config.datasetConfig.couldBeCached();
         LOGGER.debug("Could be cached: {}.couldBeCached()={} && {}.couldBeCached()={} --> {}",
-                config.annotatorConfig.getAnnotatorName(), config.annotatorConfig.couldBeCached(),
-                config.datasetConfig.getDatasetName(), config.datasetConfig.couldBeCached(), couldBeCached);
+                config.annotatorConfig.getName(), config.annotatorConfig.couldBeCached(),
+                config.datasetConfig.getName(), config.datasetConfig.couldBeCached(), couldBeCached);
         return couldBeCached;
     }
 }

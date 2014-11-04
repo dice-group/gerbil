@@ -22,8 +22,9 @@ public class BabelfyTest {
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new BabelfyAnnotatorConfig(), new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
-                        new DBPediaApi(), NIFDatasets.KORE50), ExperimentType.D2W,
+                new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()), new KnownNIFFileDatasetConfig(
+                        SingletonWikipediaApi.getInstance(),
+                        new DBPediaApi(), NIFDatasets.N3_REUTERS_128), ExperimentType.D2W,
                 Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "BABELFY_TEST");

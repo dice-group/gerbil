@@ -29,13 +29,10 @@ public class FOXAnnotator implements A2WSystem {
         PropertyConfigurator.configure(FOXAnnotator.class.getResourceAsStream("log4jFOXAnnotator.properties"));
     }
 
-    public static final String NAME = "FOX";
-    public static final Logger LOG = LogManager.getLogger(FOXAnnotator.class);
-    IFoxApi fox = new FoxApi();
-    private WikipediaApiInterface wikiApi;
-
-    // private long calib = -1;
-    // private long lastTime = -1;
+    public static final String      NAME = "FOX";
+    public static final Logger      LOG  = LogManager.getLogger(FOXAnnotator.class);
+    protected IFoxApi               fox  = new FoxApi();
+    protected WikipediaApiInterface wikiApi;
 
     public static void main(String[] a) {
         String test = "The philosopher and mathematician Gottfried Wilhelm Leibniz was born in Leipzig.";
@@ -63,9 +60,10 @@ public class FOXAnnotator implements A2WSystem {
     }
 
     protected Set<Annotation> fox(String text) {
+        if (LOG.isTraceEnabled())
+            LOG.trace(text);
 
         Set<Annotation> set = new HashSet<>();
-        // lastTime = Calendar.getInstance().getTimeInMillis();
         try {
             // request FOX
             FoxResponse response = fox
@@ -79,44 +77,57 @@ public class FOXAnnotator implements A2WSystem {
             if (response != null && response.getOutput() != null) {
                 JSONObject outObj = new JSONObject(response.getOutput());
                 if (outObj.has("@graph")) {
+
                     JSONArray graph = outObj.getJSONArray("@graph");
-                    for (int i = 0; i < graph.length(); i++) {
-                        JSONObject entity = graph.getJSONObject(i);
-                        if (entity != null && entity.has("means") && entity.has("beginIndex") && entity.has("ann:body")) {
+                    for (int i = 0; i < graph.length(); i++)
+                        set.addAll(add(graph.getJSONObject(i)));
 
-                            String uri = entity.getString("means");
-                            String body = entity.getString("ann:body");
-                            Object begin = entity.get("beginIndex");
-
-                            // wiki id
-                            String urlDecoded = URLDecoder.decode(uri, "UTF-8");
-                            int id = DBpediaToWikiId.getId(wikiApi, urlDecoded);
-                            // String title = extractLabel(urlDecoded);
-                            // int id = wikiApi.getIdByTitle(title);
-
-                            if (id > -1) {
-                                if (begin instanceof JSONArray) {
-                                    // for all occurring indices
-                                    for (int ii = 0; ii < ((JSONArray) begin).length(); ii++) {
-                                        int b = Integer.valueOf(((JSONArray) begin).getString(ii));
-                                        set.add(new Annotation(b, b + body.length(), id));
-                                    }
-                                } else if (begin instanceof String) {
-                                    int b = Integer.valueOf((String) begin);
-                                    set.add(new Annotation(b, b + body.length(), id));
-                                } else if (LOG.isDebugEnabled())
-                                    LOG.debug("Couldn't find index");
-                            } else if (LOG.isDebugEnabled())
-                                LOG.debug("Couldn't find ".concat(uri));
-                        }
-                    }
-                }
+                } else
+                    set.addAll(add(outObj));
             }
         } catch (Exception e) {
             LOG.error("\n", e);
         }
-        if (LOG.isDebugEnabled())
-            LOG.debug("Found " + set.size());
+        if (LOG.isTraceEnabled())
+            LOG.trace("Found " + set.size());
+        return set;
+    }
+
+    protected Set<Annotation> add(JSONObject entity) {
+        Set<Annotation> set = new HashSet<>();
+        try {
+
+            if (entity != null && entity.has("means") && entity.has("beginIndex") && entity.has("ann:body")) {
+
+                String uri = entity.getString("means");
+                String body = entity.getString("ann:body");
+                Object begin = entity.get("beginIndex");
+
+                int wikiID = DBpediaToWikiId.getId(wikiApi, URLDecoder.decode(uri, "UTF-8"));
+                if (wikiID > -1) {
+                    if (begin instanceof JSONArray) {
+                        // for all indices
+                        for (int ii = 0; ii < ((JSONArray) begin).length(); ii++) {
+                            int b = Integer.valueOf(((JSONArray) begin).getString(ii));
+                            set.add(new Annotation(b, b + body.length(), wikiID));
+                            if (LOG.isDebugEnabled())
+                                LOG.debug("[begin=" + b + ", body=" + body + ", id=" + wikiID + "]");
+                        }
+                    } else if (begin instanceof String) {
+                        // just one index
+                        int b = Integer.valueOf((String) begin);
+                        set.add(new Annotation(b, b + body.length(), wikiID));
+                        if (LOG.isDebugEnabled())
+                            LOG.debug("[begin=" + b + ", body=" + body + ", id=" + wikiID + "]");
+
+                    } else if (LOG.isDebugEnabled())
+                        LOG.debug("Couldn't find index");
+                } else if (LOG.isDebugEnabled())
+                    LOG.debug("Couldn't find ".concat(uri));
+            }
+        } catch (Exception e) {
+            LOG.error("\n", e);
+        }
         return set;
     }
 
@@ -127,23 +138,6 @@ public class FOXAnnotator implements A2WSystem {
 
     @Override
     public long getLastAnnotationTime() {
-        // if (calib == -1)
-        // calib = TimingCalibrator.getOffset(this);
-        // return lastTime - calib > 0 ? lastTime - calib : 0;
         return -1;
-    }
-
-    @SuppressWarnings("unused")
-    @Deprecated
-    private static String extractLabel(String namedEntityUri) {
-        int posSlash = namedEntityUri.lastIndexOf('/');
-        int posPoints = namedEntityUri.lastIndexOf(':');
-        if (posSlash > posPoints) {
-            return namedEntityUri.substring(posSlash + 1);
-        } else if (posPoints < posSlash) {
-            return namedEntityUri.substring(posPoints + 1);
-        } else {
-            return namedEntityUri;
-        }
     }
 }

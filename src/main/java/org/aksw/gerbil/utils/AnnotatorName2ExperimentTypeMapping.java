@@ -10,10 +10,12 @@ import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
 import org.aksw.gerbil.annotators.NERDAnnotatorConfig;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.annotators.TagMeAnnotatorConfig;
+import org.aksw.gerbil.annotators.WATAnnotatorConfig;
 import org.aksw.gerbil.annotators.WikipediaMinerAnnotatorConfig;
 import org.aksw.gerbil.bat.annotator.FOXAnnotator;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
+@Deprecated
 public class AnnotatorName2ExperimentTypeMapping {
 
     private static AnnotatorName2ExperimentTypeMapping instance = null;
@@ -26,6 +28,7 @@ public class AnnotatorName2ExperimentTypeMapping {
             // ExperimentType.Sa2W);
             mapping.put(SpotlightAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(TagMeAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
+            mapping.put(WATAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(AgdistisAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(NERDAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);

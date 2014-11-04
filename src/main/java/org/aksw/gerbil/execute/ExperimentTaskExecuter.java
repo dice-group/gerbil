@@ -55,7 +55,7 @@ public class ExperimentTaskExecuter implements Runnable {
             // Create dataset
             TopicDataset dataset = configuration.datasetConfig.getDataset(configuration.type);
             if (dataset == null) {
-                throw new GerbilException("dataset=\"" + configuration.datasetConfig.getDatasetName()
+                throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
                         ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
             }
@@ -64,7 +64,7 @@ public class ExperimentTaskExecuter implements Runnable {
             TopicSystem annotator = configuration.annotatorConfig.getAnnotator(configuration.type);
             annotator = ErrorCountingAnnotatorDecorator.createDecorator(annotator);
             if (annotator == null) {
-                throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getAnnotatorName()
+                throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
                         ErrorTypes.ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT);
             }

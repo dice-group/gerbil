@@ -26,7 +26,7 @@ public class FOXTest {
                         new DBPediaApi(), NIFDatasets.KORE50), ExperimentType.A2W,
                 Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
-                "NERD_TEST");
+                "FOX_TEST");
         experimenter.run();
     }
 }

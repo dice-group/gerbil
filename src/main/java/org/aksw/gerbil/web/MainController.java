@@ -13,11 +13,9 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
-import org.aksw.gerbil.utils.AnnotatorName2ExperimentTypeMapping;
-import org.aksw.gerbil.utils.DatasetName2ExperimentTypeMapping;
+import org.aksw.gerbil.utils.AnnotatorMapping;
+import org.aksw.gerbil.utils.DatasetMapping;
 import org.aksw.gerbil.utils.IDCreator;
-import org.aksw.gerbil.utils.Name2AnnotatorMapping;
-import org.aksw.gerbil.utils.Name2DatasetMapping;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -50,6 +48,8 @@ public class MainController {
             }
             isInitialized = true;
         }
+        // Simply call the dataset mapping so that it has to be instantiated
+        DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2W);
     }
 
     @PostConstruct
@@ -110,8 +110,8 @@ public class MainController {
         int count = 0;
         for (String annotator : annotators) {
             for (String dataset : datasets) {
-                configs[count] = new ExperimentTaskConfiguration(Name2AnnotatorMapping.getAnnotatorConfig(annotator),
-                        Name2DatasetMapping.getDatasetConfig(dataset), ExperimentType.valueOf(type),
+                configs[count] = new ExperimentTaskConfiguration(AnnotatorMapping.getAnnotatorConfig(annotator),
+                        DatasetMapping.getDatasetConfig(dataset), ExperimentType.valueOf(type),
                         getMatching(matching));
                 LOGGER.debug("Created config: " + configs[count]);
                 ++count;
@@ -176,14 +176,16 @@ public class MainController {
     @RequestMapping("/annotators")
     public @ResponseBody
     Set<String> annotatorsForExpType(@RequestParam(value = "experimentType") String experimentType) {
-        return AnnotatorName2ExperimentTypeMapping.getAnnotatorsForExperimentType(ExperimentType
+        return AnnotatorMapping.getAnnotatorsForExperimentType(ExperimentType
                 .valueOf(experimentType));
     }
 
     @RequestMapping("/datasets")
     public @ResponseBody
     Set<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
-        return DatasetName2ExperimentTypeMapping.getDatasetsForExperimentType(ExperimentType.valueOf(experimentType));
+        Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(ExperimentType
+                .valueOf(experimentType));
+        return datasets;
     }
 
 }

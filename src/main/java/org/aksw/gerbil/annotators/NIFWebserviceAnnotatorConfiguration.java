@@ -24,8 +24,8 @@ public class NIFWebserviceAnnotatorConfiguration extends AbstractAnnotatorConfig
     }
 
     @Override
-    protected TopicSystem loadAnnotator() throws Exception {
-        return new NIFBasedAnnotatorWebservice(annotaturURL, this.getAnnotatorName(), wikiApi, dbpediaApi);
+    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
+        return new NIFBasedAnnotatorWebservice(annotaturURL, this.getName(), wikiApi, dbpediaApi);
     }
 
 }
