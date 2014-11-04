@@ -138,9 +138,9 @@ public class NERDAnnotator implements Sa2WSystem {
             // lastTime = Calendar.getInstance().getTimeInMillis();
 
             LOGGER.debug("shipping to NERD the text to annotate");
-
+            
             NERD nerd = new NERD(NERD_API, key);
-            List<Entity> entities = nerd.annotate(ExtractorType.COMBINED,
+            List<Entity> entities = nerd.annotate(ExtractorType.NERDML,
                     DocumentType.PLAINTEXT,
                     text,
                     GranularityType.OEN,
