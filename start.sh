@@ -32,4 +32,4 @@ if [ ! -f "$file" ]; then
 	echo "##############################################################################"  >> $file
 fi
 
-mvn clean tomcat:run -Dmaven.tomcat.port=1234 &
+mvn clean tomcat:run -Dmaven.tomcat.port=1234

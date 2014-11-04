@@ -13,16 +13,13 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class AIDACoNLLDatasetConfig extends AbstractDatasetConfiguration {
-    
+
     public static final String DATASET_NAME_START = "AIDA/CoNLL";
 
     private static final String DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig.DatasetFile";
 
     public static enum AIDACoNLLChunk {
-        TRAINING,
-        TEST_A,
-        TEST_B,
-        COMPLETE
+        TRAINING, TEST_A, TEST_B, COMPLETE
     }
 
     private AIDACoNLLChunk chunk;
@@ -35,19 +32,19 @@ public class AIDACoNLLDatasetConfig extends AbstractDatasetConfiguration {
         // Set the correct name
         switch (chunk) {
         case TRAINING: {
-            this.datasetName = this.datasetName + "-Training";
+            setName(getName() + "-Training");
             break;
         }
         case TEST_A: {
-            this.datasetName = this.datasetName + "-Test A";
+            setName(getName() + "-Test A");
             break;
         }
         case TEST_B: {
-            this.datasetName = this.datasetName + "-Test B";
+            setName(getName() + "-Test B");
             break;
         }
         case COMPLETE: {
-            this.datasetName = this.datasetName + "-Complete";
+            setName(getName() + "-Complete");
             break;
         }
         }

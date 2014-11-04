@@ -12,8 +12,10 @@ import org.aksw.gerbil.datasets.CMNSDatasetConfig;
 import org.aksw.gerbil.datasets.IITBDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
+import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
+@Deprecated
 public class DatasetName2ExperimentTypeMapping {
 
     private static DatasetName2ExperimentTypeMapping instance = null;
@@ -37,6 +39,12 @@ public class DatasetName2ExperimentTypeMapping {
             NIFDatasets nifDatasets[] = NIFDatasets.values();
             for (int i = 0; i < nifDatasets.length; ++i) {
                 mapping.put(nifDatasets[i].getDatasetName(), ExperimentType.Sa2W);
+            }
+
+            // put Datahub data in it too
+            DatahubNIFLoader datahub = new DatahubNIFLoader();
+            for (String s : datahub.getDataSets().keySet()) {
+                mapping.put(s, ExperimentType.Sa2W);
             }
 
             instance = new DatasetName2ExperimentTypeMapping(mapping);

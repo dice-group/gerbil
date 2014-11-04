@@ -228,11 +228,12 @@
             <artifactId>tablesorter</artifactId>
             <version>2.15.5</version>
         </dependency>
-        <dependency>
+        <!-- Removed because of a conflict with a newer fasterXML jackson dependency -->
+        <!-- <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.13</version>
-        </dependency>
+            </dependency> -->
 
 
 
