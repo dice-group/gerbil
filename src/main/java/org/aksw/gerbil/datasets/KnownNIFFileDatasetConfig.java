@@ -51,6 +51,6 @@ public class KnownNIFFileDatasetConfig extends AbstractDatasetConfiguration {
         if (nifFile == null) {
             throw new IOException("Couldn't load needed Property \"" + propertyKey + "\".");
         }
-        return new FileBasedNIFDataset(wikiApi, dbpediaApi, nifFile, getDatasetName(), Lang.TTL);
+        return new FileBasedNIFDataset(wikiApi, dbpediaApi, nifFile, getName(), Lang.TTL);
     }
 }

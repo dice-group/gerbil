@@ -2,31 +2,16 @@ package org.aksw.gerbil.datasets;
 
 import it.acubelab.batframework.problems.TopicDataset;
 
+import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 
-public abstract class AbstractDatasetConfiguration implements DatasetConfiguration {
-
-    protected String datasetName;
-    protected boolean couldBeCached;
-    protected ExperimentType applicableForExperiments[];
+public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfiguration implements DatasetConfiguration {
 
     public AbstractDatasetConfiguration(String datasetName, boolean couldBeCached,
             ExperimentType... applicableForExperiment) {
-        this.datasetName = datasetName;
-        this.couldBeCached = couldBeCached;
-        applicableForExperiments = applicableForExperiment;
-    }
-
-    @Override
-    public String getDatasetName() {
-        return datasetName;
-    }
-
-    @Override
-    public boolean couldBeCached() {
-        return couldBeCached;
+        super(datasetName, couldBeCached, applicableForExperiment);
     }
 
     @Override

@@ -17,6 +17,7 @@ import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
 
+@Deprecated
 public class Name2DatasetMapping {
 
     public static DatasetConfiguration getDatasetConfig(String name) {
@@ -71,7 +72,6 @@ public class Name2DatasetMapping {
         DatahubNIFLoader dh = new DatahubNIFLoader();
         for (Entry<String, String> d : dh.getDataSets().entrySet()) {
             if (d.getKey().equals(name)) {
-                // FIXME - last boolean is cachable. oculd it really be cached?
                 return new DatahubNIFConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi(), d.getKey(),
                         d.getValue(), true);
             }

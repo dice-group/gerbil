@@ -15,6 +15,7 @@ import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
 import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
+@Deprecated
 public class DatasetName2ExperimentTypeMapping {
 
     private static DatasetName2ExperimentTypeMapping instance = null;

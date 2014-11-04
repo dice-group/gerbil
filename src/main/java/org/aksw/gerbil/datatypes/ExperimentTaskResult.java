@@ -47,7 +47,7 @@ public class ExperimentTaskResult {
     }
 
     public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state, int errorCount) {
-        this(configuration.annotatorConfig.getAnnotatorName(), configuration.datasetConfig.getDatasetName(),
+        this(configuration.annotatorConfig.getAnnotatorName(), configuration.datasetConfig.getName(),
                 configuration.type, configuration.matching, results, state, errorCount, (new java.util.Date())
                         .getTime());
     }

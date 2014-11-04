@@ -2,7 +2,6 @@ package org.aksw.gerbil;
 
 import java.util.Map;
 
-import org.aksw.gerbil.datasets.DatahubNIFConfig;
 import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.junit.Ignore;
 
