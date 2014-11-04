@@ -41,13 +41,14 @@ public class BabelfyAnnotator implements D2WSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BabelfyAnnotator.class);
 
-    private static final int BABELFY_MAX_TEXT_LENGTH = 1000;
+    private static final int BABELFY_MAX_TEXT_LENGTH = 1500;
 
     public static final String NAME = "Babelfy";
 
     // private long calib = -1;
     // private long lastTime = -1;
     private String key;
+    private boolean optimizedForShortTexts;
 
     @Autowired
     private WikipediaApiInterface wikiApi;
@@ -64,9 +65,20 @@ public class BabelfyAnnotator implements D2WSystem {
         this.key = key;
     }
 
+    public BabelfyAnnotator(String key, boolean optimizedForShortTexts) {
+        this.key = key;
+        this.optimizedForShortTexts = optimizedForShortTexts;
+    }
+
     public BabelfyAnnotator(String key, WikipediaApiInterface wikiApi) {
         this.key = key;
         this.wikiApi = wikiApi;
+    }
+
+    public BabelfyAnnotator(String key, WikipediaApiInterface wikiApi, boolean optimizedForShortTexts) {
+        this.key = key;
+        this.wikiApi = wikiApi;
+        this.optimizedForShortTexts = optimizedForShortTexts;
     }
 
     public String getName() {
@@ -89,7 +101,8 @@ public class BabelfyAnnotator implements D2WSystem {
         HashSet<Annotation> annotations = Sets.newHashSet();
         // lastTime = Calendar.getInstance().getTimeInMillis();
         try {
-            it.uniroma1.lcl.babelfy.data.Annotation babelAnnotations = bfy.babelfy(key, text, Matching.EXACT,
+            it.uniroma1.lcl.babelfy.data.Annotation babelAnnotations = bfy.babelfy(key, text,
+                    optimizedForShortTexts ? Matching.PARTIAL : Matching.EXACT,
                     Language.EN);
             int positionInText = 0, posSurfaceFormInText = 0;
             String surfaceForm;

@@ -15,6 +15,7 @@ import org.aksw.gerbil.annotators.WikipediaMinerAnnotatorConfig;
 import org.aksw.gerbil.bat.annotator.FOXAnnotator;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
+@Deprecated
 public class AnnotatorName2ExperimentTypeMapping {
 
     private static AnnotatorName2ExperimentTypeMapping instance = null;

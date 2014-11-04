@@ -40,7 +40,7 @@ public class NERDAnnotatorConfig extends AbstractAnnotatorConfiguration {
     }
 
     @Override
-    protected TopicSystem loadAnnotator() throws Exception {
+    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
         // Load and use the key if there is one
         String key = GerbilConfiguration.getInstance().getString(NERD_WEB_SERVICE_KEY_PROPERTY_NAME);
         if (key == null) {

@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 public class DatahubNIFConfig extends AbstractDatasetConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(DatahubNIFConfig.class);
-    private static final String NIF_DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.Datahub";
+    private static final String DATAHUB_DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.Datahub";
 
     private DBPediaApi dbpediaApi;
     private WikipediaApiInterface wikiApi;
@@ -43,7 +43,7 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
      */
     @Override
     protected synchronized TopicDataset loadDataset() throws Exception {
-        String nifFile = GerbilConfiguration.getInstance().getString(NIF_DATASET_FILE_PROPERTY_NAME) + getName();
+        String nifFile = GerbilConfiguration.getInstance().getString(DATAHUB_DATASET_FILE_PROPERTY_NAME) + getName();
         logger.debug("FILE {}", nifFile);
         File f = new File(nifFile);
         if (!f.exists()) {

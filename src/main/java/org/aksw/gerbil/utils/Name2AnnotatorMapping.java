@@ -17,6 +17,7 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class Name2AnnotatorMapping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Name2AnnotatorMapping.class);
@@ -32,7 +33,7 @@ public class Name2AnnotatorMapping {
     	    	
         switch (name) {
         case BabelfyAnnotatorConfig.ANNOTATOR_NAME:
-            return new BabelfyAnnotatorConfig();
+            return new BabelfyAnnotatorConfig( SingletonWikipediaApi.getInstance());
             // case NIFWebserviceAnnotatorConfiguration.ANNOTATOR_NAME:
             // return new NIFWebserviceAnnotatorConfiguration(null, name, false,
             // SingletonWikipediaApi.getInstance(),

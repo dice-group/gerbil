@@ -21,7 +21,7 @@ public class SpotlightAnnotatorConfig extends AbstractAnnotatorConfiguration {
     }
 
     @Override
-    protected TopicSystem loadAnnotator() throws Exception {
+    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
         return new SpotlightAnnotator(dbpApi, wikiApi);
     }
 

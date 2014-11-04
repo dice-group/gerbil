@@ -13,12 +13,12 @@ public class AgdistisAnnotatorConfig extends AbstractAnnotatorConfiguration {
 	private WikipediaApiInterface wikiApi;
 
 	public AgdistisAnnotatorConfig(WikipediaApiInterface wikiApi) {
-		super(ANNOTATOR_NAME, true, ExperimentType.Sa2W);
+		super(ANNOTATOR_NAME, true, ExperimentType.D2W);
 		this.wikiApi = wikiApi;
 	}
 
 	@Override
-	protected TopicSystem loadAnnotator() throws Exception {
+	protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
 		return new AgdistisAnnotator(wikiApi);
 	}
 }

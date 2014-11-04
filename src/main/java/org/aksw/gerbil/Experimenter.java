@@ -32,11 +32,11 @@ public class Experimenter implements Runnable {
             for (int i = 0; i < configs.length; ++i) {
                 if (couldHaveCachedResult(configs[i])) {
                     taskId = experimentDAO.connectCachedResultOrCreateTask(
-                            configs[i].annotatorConfig.getAnnotatorName(),
+                            configs[i].annotatorConfig.getName(),
                             configs[i].datasetConfig.getName(), configs[i].type.name(),
                             configs[i].matching.name(), experimentId);
                 } else {
-                    taskId = experimentDAO.createTask(configs[i].annotatorConfig.getAnnotatorName(),
+                    taskId = experimentDAO.createTask(configs[i].annotatorConfig.getName(),
                             configs[i].datasetConfig.getName(), configs[i].type.name(),
                             configs[i].matching.name(), experimentId);
                 }
@@ -58,7 +58,7 @@ public class Experimenter implements Runnable {
     private boolean couldHaveCachedResult(ExperimentTaskConfiguration config) {
         boolean couldBeCached = config.annotatorConfig.couldBeCached() && config.datasetConfig.couldBeCached();
         LOGGER.debug("Could be cached: {}.couldBeCached()={} && {}.couldBeCached()={} --> {}",
-                config.annotatorConfig.getAnnotatorName(), config.annotatorConfig.couldBeCached(),
+                config.annotatorConfig.getName(), config.annotatorConfig.couldBeCached(),
                 config.datasetConfig.getName(), config.datasetConfig.couldBeCached(), couldBeCached);
         return couldBeCached;
     }

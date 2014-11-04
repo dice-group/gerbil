@@ -12,11 +12,11 @@ public class WATAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private static final String WAT_CONFIG_FILE_PROPERTY_PARAMETERS = "org.aksw.gerbil.annotators.wat.parameters";
 
     public WATAnnotatorConfig() {
-        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.D2W});
+        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2W});
     }
 
     @Override
-    protected TopicSystem loadAnnotator() throws Exception {
+    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
         String endpoint = GerbilConfiguration.getInstance().getString(WAT_CONFIG_FILE_PROPERTY_ENDPOINT);
         String urlParameters = GerbilConfiguration.getInstance().getString(WAT_CONFIG_FILE_PROPERTY_PARAMETERS);
 
