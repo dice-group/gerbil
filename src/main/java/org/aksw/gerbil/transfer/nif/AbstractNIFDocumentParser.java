@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.aksw.gerbil.transfer.nif.data.AnnotatedDocumentImpl;
-import org.aksw.gerbil.transfer.nif.data.AnnotationImpl;
-import org.aksw.gerbil.transfer.nif.data.DisambiguatedAnnotation;
+import org.aksw.gerbil.transfer.nif.data.Annotation;
+import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
+import org.aksw.gerbil.transfer.nif.data.SpanImpl;
+import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.EndPosBasedComparator;
-import org.aksw.gerbil.transfer.nif.data.ScoredDisambigAnnotation;
+import org.aksw.gerbil.transfer.nif.data.ScoredAnnotation;
+import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
 import org.aksw.gerbil.transfer.nif.data.StartPosBasedComparator;
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
@@ -26,8 +28,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(AbstractNIFDocumentParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractNIFDocumentParser.class);
 
     private String httpContentType;
 
@@ -36,33 +37,28 @@ public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
     }
 
     @Override
-    public AnnotatedDocument getDocumentFromNIFString(String nifString)
-            throws Exception {
+    public Document getDocumentFromNIFString(String nifString) throws Exception {
         return getDocumentFromNIFReader(new StringReader(nifString));
     }
 
     @Override
-    public AnnotatedDocument getDocumentFromNIFReader(Reader reader)
-            throws Exception {
+    public Document getDocumentFromNIFReader(Reader reader) throws Exception {
         Model nifModel = parseNIFModelFromReader(reader);
         return createAnnotatedDocument(nifModel);
     }
 
     protected abstract Model parseNIFModelFromReader(Reader reader) throws Exception;
 
-    protected AnnotatedDocument createAnnotatedDocument(Model nifModel)
-            throws Exception {
+    protected Document createAnnotatedDocument(Model nifModel) throws Exception {
         // Try to get the resource describing the document
-        ResIterator resIter = nifModel.listResourcesWithProperty(RDF.type,
-                NIF.Context);
+        ResIterator resIter = nifModel.listResourcesWithProperty(RDF.type, NIF.Context);
         List<Resource> resources = new ArrayList<Resource>();
         while (resIter.hasNext()) {
             resources.add(resIter.next());
         }
         if (resources.size() == 0) {
             LOGGER.error("Couldn't find the document resource inside the parsed NIF model.");
-            throw new Exception(
-                    "Couldn't find the document resource inside the parsed NIF model.");
+            throw new Exception("Couldn't find the document resource inside the parsed NIF model.");
         }
         if (resources.size() > 1) {
             LOGGER.warn("Got a NIF model with more than one resource of the type nif:Context. Only the first one will be used.");
@@ -71,8 +67,7 @@ public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
         Resource document = resources.get(0);
 
         // Get the text of the document
-        NodeIterator nodeIter = nifModel.listObjectsOfProperty(document,
-                NIF.isString);
+        NodeIterator nodeIter = nifModel.listObjectsOfProperty(document, NIF.isString);
         Literal tempLiteral = null;
         while (nodeIter.hasNext()) {
             if (tempLiteral != null) {
@@ -84,8 +79,7 @@ public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
             LOGGER.error("Got a document node without a text.");
             throw new Exception("Got a document node without a text.");
         }
-        AnnotatedDocument resultDocument = new AnnotatedDocumentImpl(
-                tempLiteral.getString());
+        Document resultDocument = new DocumentImpl(tempLiteral.getString());
         String documentURI = document.getURI();
         int pos = documentURI.lastIndexOf('#');
         if (pos > 0) {
@@ -99,9 +93,8 @@ public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
         }
 
         // get the annotations from the model
-        List<Annotation> annotations = resultDocument.getAnnotations();
-        resIter = nifModel.listSubjectsWithProperty(NIF.referenceContext,
-                document);
+        List<Marking> markings = resultDocument.getMarkings();
+        resIter = nifModel.listSubjectsWithProperty(NIF.referenceContext, document);
         Resource annotationResource;
         int start, end;
         String entityUri;
@@ -109,40 +102,49 @@ public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
         while (resIter.hasNext()) {
             annotationResource = resIter.next();
             start = end = -1;
-            nodeIter = nifModel.listObjectsOfProperty(annotationResource,
-                    NIF.beginIndex);
+            nodeIter = nifModel.listObjectsOfProperty(annotationResource, NIF.beginIndex);
             if (nodeIter.hasNext()) {
                 start = nodeIter.next().asLiteral().getInt();
             }
-            nodeIter = nifModel.listObjectsOfProperty(annotationResource,
-                    NIF.endIndex);
+            nodeIter = nifModel.listObjectsOfProperty(annotationResource, NIF.endIndex);
             if (nodeIter.hasNext()) {
                 end = nodeIter.next().asLiteral().getInt();
             }
             if ((start >= 0) && (end >= 0)) {
-                nodeIter = nifModel.listObjectsOfProperty(annotationResource,
-                        ITSRDF.taIdentRef);
+                nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taIdentRef);
                 if (nodeIter.hasNext()) {
                     entityUri = nodeIter.next().toString();
-                    nodeIter = nifModel.listObjectsOfProperty(
-                            annotationResource, ITSRDF.taConfidence);
+                    nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
                     if (nodeIter.hasNext()) {
                         confidence = nodeIter.next().asLiteral().getDouble();
-                        annotations.add(new ScoredDisambigAnnotation(start, end
-                                - start, entityUri, confidence));
+                        markings.add(new ScoredNamedEntity(start, end - start, entityUri, confidence));
                     } else {
                         // It has been disambiguated without a confidence
-                        annotations.add(new DisambiguatedAnnotation(start, end
-                                - start, entityUri));
+                        markings.add(new NamedEntity(start, end - start, entityUri));
                     }
                 } else {
                     // It is a named entity that hasn't been disambiguated
-                    annotations.add(new AnnotationImpl(start, end - start));
+                    markings.add(new SpanImpl(start, end - start));
                 }
             } else {
-                LOGGER.warn("Found an annotation resource (\""
-                        + annotationResource.getURI()
+                LOGGER.warn("Found an annotation resource (\"" + annotationResource.getURI()
                         + "\") without a start or end index. This annotation will be ignored.");
+            }
+        }
+
+        NodeIterator annotationIter = nifModel.listObjectsOfProperty(document, NIF.topic);
+        while (annotationIter.hasNext()) {
+            annotationResource = annotationIter.next().asResource();
+            nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taIdentRef);
+            if (nodeIter.hasNext()) {
+                entityUri = nodeIter.next().toString();
+                nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
+                if (nodeIter.hasNext()) {
+                    confidence = nodeIter.next().asLiteral().getDouble();
+                    markings.add(new ScoredAnnotation(entityUri, confidence));
+                } else {
+                    markings.add(new Annotation(entityUri));
+                }
             }
         }
 
@@ -151,21 +153,22 @@ public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
     }
 
     /**
-     * The positions in NIF are measured in codepoints, while Java counts in terms of characters. So we have to correct
-     * the positions of the annotations.
+     * The positions in NIF are measured in codepoints, while Java counts in
+     * terms of characters. So we have to correct the positions of the
+     * annotations.
      * 
      * @param resultDocument
      */
-    protected void correctAnnotationPositions(AnnotatedDocument resultDocument) {
-        List<Annotation> annotations = resultDocument.getAnnotations();
-        Collections.sort(annotations, new StartPosBasedComparator());
-        List<Annotation> annotationsSortedByEnd = new ArrayList<Annotation>(annotations);
+    protected void correctAnnotationPositions(Document resultDocument) {
+        List<Span> spans = resultDocument.getMarkings(Span.class);
+        Collections.sort(spans, new StartPosBasedComparator());
+        List<Span> annotationsSortedByEnd = new ArrayList<Span>(spans);
         Collections.sort(annotationsSortedByEnd, new EndPosBasedComparator());
-        int startPositions[] = new int[annotations.size()];
-        int endPositions[] = new int[annotations.size()];
-        Annotation currentAnnotation;
-        for (int i = 0; i < annotations.size(); ++i) {
-            startPositions[i] = annotations.get(i).getStartPosition();
+        int startPositions[] = new int[spans.size()];
+        int endPositions[] = new int[spans.size()];
+        Span currentAnnotation;
+        for (int i = 0; i < spans.size(); ++i) {
+            startPositions[i] = spans.get(i).getStartPosition();
             currentAnnotation = annotationsSortedByEnd.get(i);
             endPositions[i] = currentAnnotation.getStartPosition() + currentAnnotation.getLength();
         }
@@ -175,7 +178,7 @@ public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
         for (int i = 0; i < text.length(); ++i) {
             codePointsCount += text.codePointCount(i, i + 1);
             while ((posInStart < startPositions.length) && (codePointsCount > startPositions[posInStart])) {
-                annotations.get(posInStart).setStartPosition(i);
+                spans.get(posInStart).setStartPosition(i);
                 ++posInStart;
             }
             while ((posInEnd < endPositions.length) && (codePointsCount > endPositions[posInEnd])) {
