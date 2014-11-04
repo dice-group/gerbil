@@ -34,8 +34,6 @@ public class AnnotatorMapping {
             Map<String, AnnotatorConfiguration> mapping = new HashMap<String, AnnotatorConfiguration>();
             mapping.put(BabelfyAnnotatorConfig.ANNOTATOR_NAME,
                     new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()));
-            mapping.put(BabelfyAnnotatorConfig.ANNOTATOR_NAME_OPT_FOR_SHORT_TEXTS,
-                    new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance(), true));
             mapping.put(SpotlightAnnotatorConfig.ANNOTATOR_NAME, new SpotlightAnnotatorConfig(
                     SingletonWikipediaApi.getInstance(), new DBPediaApi()));
             mapping.put(TagMeAnnotatorConfig.ANNOTATOR_NAME, new TagMeAnnotatorConfig());
