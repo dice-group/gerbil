@@ -57,12 +57,12 @@ public class BabelfyAnnotator implements D2WSystem {
         this("");
     }
 
-    public BabelfyAnnotator(WikipediaApiInterface wikiApi) {
-        this("", wikiApi);
+    public BabelfyAnnotator(WikipediaApiInterface wikiApi, boolean optimizedForShortTexts) {
+        this("", wikiApi, optimizedForShortTexts);
     }
 
     public BabelfyAnnotator(String key) {
-        this.key = key;
+        this(key, false);
     }
 
     public BabelfyAnnotator(String key, boolean optimizedForShortTexts) {
@@ -71,8 +71,7 @@ public class BabelfyAnnotator implements D2WSystem {
     }
 
     public BabelfyAnnotator(String key, WikipediaApiInterface wikiApi) {
-        this.key = key;
-        this.wikiApi = wikiApi;
+        this(key, wikiApi, false);
     }
 
     public BabelfyAnnotator(String key, WikipediaApiInterface wikiApi, boolean optimizedForShortTexts) {

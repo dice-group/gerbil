@@ -173,8 +173,9 @@ public class ErrorCountingAnnotatorDecorator {
 
     protected static HashSet<Tag> solveC2W(AbstractErrorCounter errorCounter,
             String text) throws AnnotationException {
+        HashSet<Tag> result = null;
         try {
-            return ((C2WSystem) errorCounter.getDecoratedAnnotator())
+            result = ((C2WSystem) errorCounter.getDecoratedAnnotator())
                     .solveC2W(text);
         } catch (Exception e) {
             if (errorCounter.getErrorCount() == 0) {
@@ -190,6 +191,26 @@ public class ErrorCountingAnnotatorDecorator {
             errorCounter.increaseErrorCount();
             return new HashSet<Tag>(0);
         }
+        if (LOGGER.isDebugEnabled()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append('[');
+            builder.append(errorCounter.getName());
+            builder.append("] result=[");
+            boolean first = true;
+            for (Tag a : result) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(',');
+                }
+                builder.append("Tag(wId=");
+                builder.append(a.getConcept());
+                builder.append(')');
+            }
+            builder.append(']');
+            LOGGER.debug(builder.toString());
+        }
+        return result;
     }
 
     protected static HashSet<Annotation> solveD2W(
@@ -211,6 +232,7 @@ public class ErrorCountingAnnotatorDecorator {
                         + e.getLocalizedMessage());
             }
             errorCounter.increaseErrorCount();
+            return new HashSet<Annotation>(0);
         }
         if (LOGGER.isDebugEnabled()) {
             StringBuilder builder = new StringBuilder();

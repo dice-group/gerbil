@@ -1,11 +1,11 @@
 package org.aksw.gerbil.annotators;
 
-import java.io.File;
-import java.io.IOException;
-
 import it.acubelab.batframework.problems.TopicSystem;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 import it.uniroma1.lcl.babelnet.BabelNetConfiguration;
+
+import java.io.File;
+import java.io.IOException;
 
 import org.aksw.gerbil.bat.annotator.BabelfyAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
@@ -44,9 +44,9 @@ public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {
         // Load and use the key if there is one
         String key = GerbilConfiguration.getInstance().getString(BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME);
         if (key == null) {
-            return new BabelfyAnnotator(wikiApi);
+            return new BabelfyAnnotator(wikiApi, optimizedForShortTexts);
         } else {
-            return new BabelfyAnnotator(key, wikiApi);
+            return new BabelfyAnnotator(key, wikiApi, optimizedForShortTexts);
         }
     }
 }
