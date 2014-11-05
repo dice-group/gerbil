@@ -18,7 +18,6 @@ import org.aksw.fox.binding.java.FoxResponse;
 import org.aksw.fox.binding.java.IFoxApi;
 import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
-import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -28,9 +27,9 @@ public class FOXAnnotator implements A2WSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FOXAnnotator.class);
 
-    static {
-        PropertyConfigurator.configure(FOXAnnotator.class.getResourceAsStream("log4jFOXAnnotator.properties"));
-    }
+    // static {
+    // PropertyConfigurator.configure(FOXAnnotator.class.getResourceAsStream("log4jFOXAnnotator.properties"));
+    // }
 
     public static final String NAME = "FOX";
     protected IFoxApi fox = new FoxApi();
