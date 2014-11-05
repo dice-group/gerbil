@@ -154,4 +154,28 @@ public class ExperimentDAOImplJUnitTest {
                     + AbstractExperimentDAO.class.getName());
         }
     }
+
+    @Test
+    public void testGetLatestResultsOfExperiments() {
+        // Only the first task should be retrieved, the second is not finished, the third has the wrong matching and the
+        // fourth has the wrong type
+        String tasks[][] = new String[][] {
+                { "annotator1", "dataset1", ExperimentType.A2W.name(), Matching.WEAK_ANNOTATION_MATCH.name() },
+                { "annotator1", "dataset2", ExperimentType.A2W.name(), Matching.WEAK_ANNOTATION_MATCH.name() },
+                { "annotator1", "dataset1", ExperimentType.A2W.name(), Matching.STRONG_ANNOTATION_MATCH.name() },
+                { "annotator2", "dataset1", ExperimentType.D2W.name(), Matching.WEAK_ANNOTATION_MATCH.name() } };
+        int taskId;
+        for (int i = 0; i < tasks.length; ++i) {
+            taskId = this.dao.createTask(tasks[i][0], tasks[i][1], tasks[i][2], tasks[i][3], "id-" + i);
+            if (i != 1) {
+                this.dao.setExperimentState(taskId, ExperimentDAO.TASK_FINISHED);
+            }
+        }
+        List<ExperimentTaskResult> results = this.dao.getLatestResultsOfExperiments(ExperimentType.A2W.name(),
+                Matching.WEAK_ANNOTATION_MATCH.name());
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals("annotator1", results.get(0).annotator);
+        Assert.assertEquals("dataset1", results.get(0).dataset);
+        Assert.assertEquals(0, results.get(0).state);
+    }
 }
