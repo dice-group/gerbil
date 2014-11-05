@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.slf4j.Logger;
@@ -140,12 +141,7 @@ public abstract class AbstractNIFDataset implements A2WDataset {
                 // logger.info("processing annotation {}", page);
                 // dbpediaQuery.setIri("dbpedia", page);
 
-                try {
-                    id = wikiApi.getIdByTitle(dbpediaApi.dbpediaToWikipedia(extractTitle(page)));
-                } catch (IOException e) {
-                    LOGGER.warn("Couldn't get wiki id for dbpedia URI \"" + page + "\"");
-                    id = -1;
-                }
+                id = DBpediaToWikiId.getId(wikiApi, page);
                 position = annSolution.get("begin").asLiteral().getInt();
                 length = annSolution.get("end").asLiteral().getInt()
                         - position;
@@ -161,18 +157,6 @@ public abstract class AbstractNIFDataset implements A2WDataset {
             }
         }
         LOGGER.info("{} dataset initialized", name);
-    }
-
-    private static String extractTitle(String namedEntityUri) {
-        int posSlash = namedEntityUri.lastIndexOf('/');
-        int posPoints = namedEntityUri.lastIndexOf(':');
-        if (posSlash > posPoints) {
-            return namedEntityUri.substring(posSlash + 1);
-        } else if (posPoints < posSlash) {
-            return namedEntityUri.substring(posPoints + 1);
-        } else {
-            return namedEntityUri;
-        }
     }
 
     public int getTagsCount() {
