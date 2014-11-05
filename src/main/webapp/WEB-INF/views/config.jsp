@@ -115,7 +115,13 @@
 					</div>
 				</div>
 			</div>
-
+			<div class="form-group">
+				<label class="col-md-4 control-label" for="datasets">Disclaimer</label>
+				<div class="checkbox">
+					<label> <input id="disclaimerCheckbox" type="checkbox"> I have read and understand the <a href="https://github.com/AKSW/gerbil/wiki/Disclaimer">disclaimer</a>.
+					</label>
+				</div>
+			</div>
 			<!-- Button -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="submit"></label>
@@ -218,7 +224,7 @@
 			$('#type').change(loadDataset);
 			$('#matching').change(loadAnnotator);
 			$('#matching').change(loadDataset);
-
+			
 			//supervise configuration of experiment and let it only run
 			//if everything is ok 
 			//initially it is turned off 
@@ -244,7 +250,9 @@
 					dataset.push($(this).text());
 				});
 
-				if (dataset.length > 0 && annotator.length > 0) {
+				//check whether there is at least one dataset and at least one annotator 
+				//and the disclaimer checkbox should be clicked
+				if (dataset.length > 0 && annotator.length > 0 && $('#disclaimerCheckbox:checked').length==1) {
 					$('#submit').attr("disabled", false);
 				} else {
 					$('#submit').attr("disabled", true);
@@ -255,6 +263,9 @@
 				checkExperimentConfiguration();
 			});
 			$('#dataset').change(function() {
+				checkExperimentConfiguration();
+			});
+			$('#disclaimerCheckbox').change(function() {
 				checkExperimentConfiguration();
 			});
 
