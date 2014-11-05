@@ -1,12 +1,14 @@
 package org.aksw.gerbil.transfer.nif.data;
 
+import org.aksw.gerbil.transfer.nif.ScoredMeaning;
+
 /**
  * A scored tag is a {@link Annotation} with a confidence score.
  * 
  * @author Michael Röder
  * 
  */
-public class ScoredAnnotation extends Annotation {
+public class ScoredAnnotation extends Annotation implements ScoredMeaning {
 
     private double confidence;
 

@@ -1,6 +1,8 @@
 package org.aksw.gerbil.transfer.nif.data;
 
-public class ScoredNamedEntity extends NamedEntity {
+import org.aksw.gerbil.transfer.nif.ScoredMeaning;
+
+public class ScoredNamedEntity extends NamedEntity implements ScoredMeaning {
 
     private double confidence;
 
