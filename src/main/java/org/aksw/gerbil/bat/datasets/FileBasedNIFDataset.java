@@ -22,7 +22,6 @@ public class FileBasedNIFDataset extends AbstractNIFDataset {
         super(wikiApi, name);
         this.filePath = filePath;
         this.language = language;
-        init();
     }
 
     @Override

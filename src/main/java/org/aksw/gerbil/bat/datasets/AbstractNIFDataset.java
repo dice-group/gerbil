@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
+import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.exceptions.GerbilException;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.slf4j.Logger;
@@ -42,6 +44,7 @@ public abstract class AbstractNIFDataset implements A2WDataset {
 
     private String name;
     private WikipediaApiInterface wikiApi;
+    private boolean hasBeenInitialized = false;
 
     public AbstractNIFDataset(WikipediaApiInterface wikiApi, String name) {
         texts = new LinkedList<String>();
@@ -82,13 +85,15 @@ public abstract class AbstractNIFDataset implements A2WDataset {
         }
     }
 
-    protected void init() {
+    public synchronized void init() throws GerbilException {
+        if (hasBeenInitialized) {
+            return;
+        }
         Model dataset = ModelFactory.createDefaultModel();
         // dataset = RDFDataMgr.loadModel(rdfpath);
         InputStream inputStream = getDataAsInputStream();
         if (inputStream == null) {
-            // FIXME better error handling
-            return;
+            throw new GerbilException("Couldn't get InputStream.", ErrorTypes.DATASET_LOADING_ERROR);
         }
         RDFDataMgr.read(dataset, inputStream, getDataLanguage());
         closeInputStream(inputStream);
@@ -152,10 +157,15 @@ public abstract class AbstractNIFDataset implements A2WDataset {
                 }
             }
         }
+        hasBeenInitialized = true;
         LOGGER.info("{} dataset initialized", name);
     }
 
     public int getTagsCount() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         int count = 0;
         for (Set<Annotation> s : annotationsList)
             count += s.size();
@@ -163,31 +173,59 @@ public abstract class AbstractNIFDataset implements A2WDataset {
     }
 
     public List<HashSet<Tag>> getC2WGoldStandardList() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return ProblemReduction.A2WToC2WList(this.getA2WGoldStandardList());
     }
 
     public int getSize() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return this.texts.size();
     }
 
     public String getName() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return name;
     }
 
     public List<String> getTextInstanceList() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return texts;
     }
 
     public List<HashSet<Mention>> getMentionsInstanceList() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return ProblemReduction
                 .A2WToD2WMentionsInstance(getA2WGoldStandardList());
     }
 
     public List<HashSet<Annotation>> getD2WGoldStandardList() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return this.annotationsList;
     }
 
     public List<HashSet<Annotation>> getA2WGoldStandardList() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return this.getD2WGoldStandardList();
     }
 
