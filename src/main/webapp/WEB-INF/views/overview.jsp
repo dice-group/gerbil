@@ -42,7 +42,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="outputTable" class="handsontable col-md-12"></div>
+	<div id="outputTable" class="handsontable"></div>
 	<script type="text/javascript">
 		$(document).ready(
 				function() {
@@ -55,7 +55,7 @@
 					});
 
 					$container.handsontable('render'); //refresh the grid to display the new value
-
+					var handsontable = $container.data('handsontable');
 					var loadTable;
 					//declaration of functions for loading experiment types, annotators, matchings and datasets  
 					(loadTable = function() {
@@ -66,13 +66,13 @@
 									matching : 	 $('#matching input:checked')==[] ? $('#matching input:checked') : "Ma",
 									ajax : 'false'
 								}, function(data) {
-									handsontable.loadData(data.data);
+									handsontable.loadData(data);
 									$container.handsontable('render');
 
 								}).fail(function() {
 							console.log("error");
 						});
-					})();
+					});
 
 					//++++++++++++
 					//creating the radioboxes
