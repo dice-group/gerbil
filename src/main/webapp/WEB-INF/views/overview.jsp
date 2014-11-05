@@ -4,98 +4,117 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <head>
 <link rel="stylesheet" href="webjars/bootstrap/3.2.0/css/bootstrap.min.css">
-<link rel="stylesheet"href="webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
-<style type="text/css">
-/* making the buttons wide enough and right-aligned */
-.btn-group>.btn {
-	float: none;
-	width: 100%;
-	text-align: right;
-}
-
-.btn-group {
-	width: 100%;
-}
-
-#type {
-	text-align: right;
-}
-
-#type>option {
-	text-align: right;
-}
-</style>
-
+<link rel="stylesheet" href="webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
+<link rel="stylesheet" href="webResources/jquery.handsontable.css" />
 </head>
 <body class="container">
 	<!-- mappings to URLs in back-end controller -->
-	<c:url var="experiment" value="/experimentoverview" />
-
 	<script src="webjars/jquery/2.1.1/jquery.min.js"></script>
 	<script src="webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script src="webjars/tablesorter/2.15.5/js/jquery.tablesorter.js"></script>
-
+	<script src="webResources/jquery.handsontable.js"></script>
+	<c:url var="experimentoverview" value="/experimentoverview" />
+	<c:url var="matchings" value="/matchings" />
+	<c:url var="exptypes" value="/exptypes" />
+	
 	<%@include file="navbar.jsp"%>
 	<h1>GERBIL Experiment Overview</h1>
-	<c:if test="${not empty tasks}">
-	Type: <c:out value="${tasks[0].type}" />
-		</br>
-	Matching: <c:out value="${tasks[0].matching}" />
-		<table id="resultTable"
-			class="table  table-hover table-condensed tablesorter tableScroll">
-			<thead>
-				<tr>
-					<th>Annotator</th>
-					<th>Dataset</th>
-					<th>Micro F1</th>
-					<th>Micro Precision</th>
-					<th>Micro Recall</th>
-					<th>Macro F1</th>
-					<th>Macro Precision</th>
-					<th>Macro Recall</th>
-					<!-- <th>State</th> -->
-					<th>Error Count</th>
-					<th>Timestamp</th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="task" items="${tasks}">
-					<tr>
-						<td>${task.annotator}</td>
-						<td>${task.dataset}</td>
-						<c:if test="${empty task.stateMsg}">
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.microF1Measure}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.microPrecision}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.microRecall}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.macroF1Measure}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.macroPrecision}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.macroRecall}" /></td>
-							<!-- <td>${task.state}</td> -->
-							<td>${task.errorCount}</td>
-						</c:if>
-						<c:if test="${not empty task.stateMsg}">
-							<td colspan="7" style="text-align:center">${task.stateMsg}</td>
-						</c:if>
-						<td>${task.timestampstring}</td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-	</c:if>
-
-
-
+	<div class="form-horizontal">
+		<div class="col-md-12">
+			<div class="control-group">
+				<label class="col-md-4 control-label">Experiment Type</label>
+				<div id="expTypes" class="col-md-8"></div>
+			</div>
+		</div>
+		
+		<div class="col-md-12">
+				<div class="control-group">
+				<label class="col-md-4 control-label">Matching</label>
+				<div id="matching" class="col-md-8"></div>
+			</div>
+		</div>
+		<div class="col-md-12">
+				<div class="control-group">
+				<label class="col-md-4 control-label"></label>
+				<div  class="col-md-8">
+					 <button id="show" type="button" class="btn btn-default">Show table!</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="outputTable" class="handsontable col-md-12"></div>
 	<script type="text/javascript">
-		$(document).ready(function() {
-	        $("#resultTable").tablesorter({
-		        sortList : [ [ 0, 0 ], [ 1, 0 ] ]
-	        });
-        });
+		$(document).ready(
+				function() {
+					//++++++++++++
+					//creating the table
+					//++++++++++++
+					var $container = $("#outputTable");
+					$container.handsontable({
+						data : []
+					});
+
+					$container.handsontable('render'); //refresh the grid to display the new value
+
+					var loadTable;
+					//declaration of functions for loading experiment types, annotators, matchings and datasets  
+					(loadTable = function() {
+						$.getJSON(
+								'${experimentoverview}',
+								{
+									experimentType : $('#expTypes input:checked')==[] ? $('#expTypes input:checked') : "D2W",
+									matching : 	 $('#matching input:checked')==[] ? $('#matching input:checked') : "Ma",
+									ajax : 'false'
+								}, function(data) {
+									handsontable.loadData(data.data);
+									$container.handsontable('render');
+
+								}).fail(function() {
+							console.log("error");
+						});
+					})();
+
+					//++++++++++++
+					//creating the radioboxes
+					//++++++++++++
+					var loadExperimentTypes;
+					(loadExperimentTypes = function() {
+						$.getJSON('${exptypes}', {
+							ajax : 'false'
+						}, function(data) {
+							var htmlExperimentTypes = "";
+							for ( var i = 0; i < data.length; i++) {
+								htmlExperimentTypes += "<label class=\"btn btn-primary\" >";
+								htmlExperimentTypes +=" <input class=\"toggle\" type=\"radio\" name=\"experimentType\" id=\""+ data[i] +"\" value=\""+ data[i]+"\" >"+ data[i];
+								htmlExperimentTypes +="</label>";
+							}
+							$('#expTypes').html(htmlExperimentTypes);
+							$('#expTypes input')[0].checked=true;
+						});
+					})();
+					//++++++++++++
+					//creating the radioboxes
+					//++++++++++++
+					var loadMatching;
+					(loadMatching = function() {
+						$.getJSON('${matchings}', {
+						experimentType : $('#expTypes input:checked')==[] ? $('#expTypes input:checked') : "D2W",
+						ajax : 'false'
+						}, function(data) {
+							var htmlMatchings = "";
+							for ( var i = 0; i < data.length; i++) {
+								htmlMatchings += "<label class=\"btn btn-primary\" >";
+								htmlMatchings +=" <input class=\"toggle\" type=\"radio\" name=\"matchingType\" id=\""+ data[i] +"\" value=\""+ data[i]+"\" >"+ data[i];
+								htmlMatchings +="</label>";
+							}
+							$('#matching').html(htmlMatchings);
+							$('#matching input')[0].checked=true;
+						});
+					})();
+					
+					$("#show").click(function(e){
+						loadTable();
+					});
+				});
 	</script>
 </body>
