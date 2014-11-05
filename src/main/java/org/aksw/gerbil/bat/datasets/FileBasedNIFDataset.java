@@ -1,6 +1,5 @@
 package org.aksw.gerbil.bat.datasets;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.io.FileInputStream;
@@ -18,9 +17,9 @@ public class FileBasedNIFDataset extends AbstractNIFDataset {
     private String filePath;
     private Lang language;
 
-    public FileBasedNIFDataset(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi, String filePath, String name,
+    public FileBasedNIFDataset(WikipediaApiInterface wikiApi, String filePath, String name,
             Lang language) {
-        super(wikiApi, dbpediaApi, name);
+        super(wikiApi, name);
         this.filePath = filePath;
         this.language = language;
         init();

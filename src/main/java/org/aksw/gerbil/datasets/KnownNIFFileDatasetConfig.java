@@ -1,10 +1,9 @@
 package org.aksw.gerbil.datasets;
 
-import java.io.IOException;
-
 import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
+
+import java.io.IOException;
 
 import org.aksw.gerbil.bat.datasets.FileBasedNIFDataset;
 import org.aksw.gerbil.config.GerbilConfiguration;
@@ -35,13 +34,11 @@ public class KnownNIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
     private NIFDatasets dataset;
     private WikipediaApiInterface wikiApi;
-    private DBPediaApi dbpediaApi;
 
-    public KnownNIFFileDatasetConfig(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi, NIFDatasets dataset) {
+    public KnownNIFFileDatasetConfig(WikipediaApiInterface wikiApi, NIFDatasets dataset) {
         super(dataset.getDatasetName(), true, ExperimentType.Sa2W);
         this.dataset = dataset;
         this.wikiApi = wikiApi;
-        this.dbpediaApi = dbpediaApi;
     }
 
     @Override
@@ -51,6 +48,6 @@ public class KnownNIFFileDatasetConfig extends AbstractDatasetConfiguration {
         if (nifFile == null) {
             throw new IOException("Couldn't load needed Property \"" + propertyKey + "\".");
         }
-        return new FileBasedNIFDataset(wikiApi, dbpediaApi, nifFile, getName(), Lang.TTL);
+        return new FileBasedNIFDataset(wikiApi, nifFile, getName(), Lang.TTL);
     }
 }

@@ -4,11 +4,9 @@ import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
 import it.acubelab.batframework.data.Tag;
 import it.acubelab.batframework.problems.A2WDataset;
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.ProblemReduction;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -44,14 +42,12 @@ public abstract class AbstractNIFDataset implements A2WDataset {
 
     private String name;
     private WikipediaApiInterface wikiApi;
-    private DBPediaApi dbpediaApi;
 
-    public AbstractNIFDataset(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi, String name) {
+    public AbstractNIFDataset(WikipediaApiInterface wikiApi, String name) {
         texts = new LinkedList<String>();
         annotationsList = new LinkedList<HashSet<Annotation>>();
         this.name = name;
         this.wikiApi = wikiApi;
-        this.dbpediaApi = dbpediaApi;
     }
 
     /**
