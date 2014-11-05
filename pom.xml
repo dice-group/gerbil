@@ -40,6 +40,13 @@
     </repositories>
 
     <dependencies>
+        <!-- NIF transfer lib -->
+        <dependency>
+            <groupId>org.aksw</groupId>
+            <artifactId>gerbil.nif.transfer</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
         <!-- BAT-Framework and its dependencies -->
         <dependency>
             <groupId>it.unipi.di</groupId>
@@ -112,7 +119,7 @@
             <groupId>fr.eurecom.nerd</groupId>
             <artifactId>client</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-        </dependency>        
+        </dependency>
 
         <!-- slf4j: Logging API -->
         <dependency>
