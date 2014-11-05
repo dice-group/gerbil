@@ -62,8 +62,8 @@
 						$.getJSON(
 								'${experimentoverview}',
 								{
-									experimentType : $('#expTypes input:checked')==[] ? $('#expTypes input:checked') : "D2W",
-									matching : 	 $('#matching input:checked')==[] ? $('#matching input:checked') : "Ma",
+									experimentType : $('#expTypes input:checked').val(),
+									matching : 	 $('#matching input:checked').val(),
 									ajax : 'false'
 								}, function(data) {
 									handsontable.loadData(data);
@@ -98,7 +98,7 @@
 					var loadMatching;
 					(loadMatching = function() {
 						$.getJSON('${matchings}', {
-						experimentType : $('#expTypes input:checked')==[] ? $('#expTypes input:checked') : "D2W",
+						experimentType : $('#expTypes input').length!=0 ? $('#expTypes input:checked').val() : "D2W",
 						ajax : 'false'
 						}, function(data) {
 							var htmlMatchings = "";

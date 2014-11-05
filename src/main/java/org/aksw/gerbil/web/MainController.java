@@ -79,8 +79,10 @@ public class MainController {
     @RequestMapping("/experimentoverview")
     public @ResponseBody
     String experimentoverview(@RequestParam(value = "experimentType") String experimentType,
-            @RequestParam(value = "matching") String matching) {
-        LOGGER.debug("Got request on /experimentoverview");
+            @RequestParam(value = "matching") String matchingString) {
+        LOGGER.debug("Got request on /experimentoverview(experimentType={}, matching={}", experimentType,
+                matchingString);
+        Matching matching = getMatching(matchingString);
         ExperimentType eType = ExperimentType.valueOf(experimentType);
         Set<String> annotators = AnnotatorMapping
                 .getAnnotatorsForExperimentType(eType);
@@ -102,9 +104,11 @@ public class MainController {
             ++count;
         }
 
-        List<ExperimentTaskResult> expResults = dao.getLatestResultsOfExperiments(experimentType, matching);
+        List<ExperimentTaskResult> expResults = dao.getLatestResultsOfExperiments(experimentType, matching.name());
+        System.out.println("Found " + expResults.size() + " results");
         int row, col;
         for (ExperimentTaskResult result : expResults) {
+            System.out.println("processing result " + result.toString());
             if (annotator2Index.containsKey(result.annotator) && dataset2Index.containsKey(result.dataset)) {
                 row = annotator2Index.get(result.annotator);
                 col = dataset2Index.get(result.dataset);
