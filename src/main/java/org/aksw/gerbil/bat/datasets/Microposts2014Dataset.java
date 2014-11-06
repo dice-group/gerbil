@@ -38,11 +38,11 @@ public class Microposts2014Dataset implements A2WDataset {
     private Pattern recordPattern = Pattern.compile("([0-9]+)(\t\".+\")(\t)*(.*)");
     private Pattern textPattern = Pattern.compile("^\"(.+)\"$");
     
-	public Microposts2014Dataset(String file, WikipediaApiInterface wikiApi) 
-	throws	IOException, 
-			XPathExpressionException, 
-			ParserConfigurationException, 
-			SAXException 
+    public Microposts2014Dataset(String file, WikipediaApiInterface wikiApi) 
+    		throws	IOException, 
+    				XPathExpressionException, 
+    				ParserConfigurationException, 
+    				SAXException 
 	{
 		List<HashSet<Microposts2014Annotation>> mAnns = new Vector<HashSet<Microposts2014Annotation>>();
 		List<String> titlesToPrefetch = new Vector<String>();
