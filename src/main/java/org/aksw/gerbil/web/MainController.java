@@ -3,6 +3,7 @@ package org.aksw.gerbil.web;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -105,15 +106,13 @@ public class MainController {
         }
 
         List<ExperimentTaskResult> expResults = dao.getLatestResultsOfExperiments(experimentType, matching.name());
-        System.out.println("Found " + expResults.size() + " results");
         int row, col;
         for (ExperimentTaskResult result : expResults) {
-            System.out.println("processing result " + result.toString());
             if (annotator2Index.containsKey(result.annotator) && dataset2Index.containsKey(result.dataset)) {
                 row = annotator2Index.get(result.annotator);
                 col = dataset2Index.get(result.dataset);
                 if (result.state == ExperimentDAO.TASK_FINISHED) {
-                    results[row][col] = Double.toString(result.getMicroF1Measure());
+                    results[row][col] = String.format(Locale.US, "%.3f", result.getMicroF1Measure());
                 } else {
                     results[row][col] = "error (" + result.state + ")";
                 }
@@ -254,4 +253,22 @@ public class MainController {
         return datasets;
     }
 
+    @RequestMapping("/running")
+    public @ResponseBody
+    String running() {
+        List<ExperimentTaskResult> runningTasks = dao.getAllRunningExperimentTasks();
+        StringBuilder resultBuilder = new StringBuilder();
+        for (ExperimentTaskResult runningTask : runningTasks) {
+            resultBuilder.append("<p>");
+            resultBuilder.append(runningTask.type);
+            resultBuilder.append(' ');
+            resultBuilder.append(runningTask.matching);
+            resultBuilder.append(' ');
+            resultBuilder.append(runningTask.annotator);
+            resultBuilder.append(' ');
+            resultBuilder.append(runningTask.dataset);
+            resultBuilder.append("</p>\n");
+        }
+        return resultBuilder.toString();
+    }
 }

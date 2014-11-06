@@ -31,6 +31,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String SET_UNFINISHED_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE state=:unfinishedState";
     private final static String GET_LATEST_EXPERIMENT_TASKS = "SELECT DISTINCT annotatorName, datasetName FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching";
     private final static String GET_LATEST_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState ORDER BY lastChanged DESC LIMIT 1";
+    private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
 
     private final NamedParameterJdbcTemplate template;
 
@@ -188,4 +189,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         }
     }
 
+    @Override
+    public List<ExperimentTaskResult> getAllRunningExperimentTasks() {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
+        return this.template.query(GET_RUNNING_EXPERIMENT_TASKS, params, new ExperimentTaskResultRowMapper());
+    }
+    
 }

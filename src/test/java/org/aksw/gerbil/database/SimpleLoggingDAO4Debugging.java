@@ -76,4 +76,9 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
         return null;
     }
 
+    @Override
+    public List<ExperimentTaskResult> getAllRunningExperimentTasks() {
+        return new ArrayList<ExperimentTaskResult>(0);
+    }
+
 }
