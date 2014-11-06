@@ -33,8 +33,8 @@ public class NIFWebserviceTest {
             GerbilException {
         // runDirectComprarisonD2W();
         // runDirectComprarisonA2W();
-        runCompleteExperimentD2W();
-        // runCompleteExperimentA2W();
+        // runCompleteExperimentD2W();
+        runCompleteExperimentA2W();
     }
 
     public static void runCompleteExperimentA2W() {
