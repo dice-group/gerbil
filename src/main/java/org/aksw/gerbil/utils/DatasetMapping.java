@@ -17,9 +17,16 @@ import org.aksw.gerbil.datasets.IITBDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
+import org.aksw.gerbil.datasets.Microposts2014Config;
 import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
+/**
+ * ...
+ *
+ * @authors ..... 
+ *          Giuseppe Rizzo <giuse.rizzo@gmail.com>
+ */
 public class DatasetMapping {
 
     private static DatasetMapping instance = null;
@@ -44,6 +51,11 @@ public class DatasetMapping {
             nameDatasetMapping.put(AIDACoNLLDatasetConfig.DATASET_NAME_START + "-Complete", new AIDACoNLLDatasetConfig(
                     AIDACoNLLDatasetConfig.AIDACoNLLChunk.COMPLETE, wikiApi));
 
+            nameDatasetMapping.put(Microposts2014Config.DATASET_NAME_START + "-Train", new Microposts2014Config(
+            		Microposts2014Config.Microposts2014Chunk.TRAIN, wikiApi));
+            nameDatasetMapping.put(Microposts2014Config.DATASET_NAME_START + "-Test", new Microposts2014Config(
+            		Microposts2014Config.Microposts2014Chunk.TEST, wikiApi));
+            
             // Got through the known NIF datasets
             NIFDatasets nifDatasets[] = NIFDatasets.values();
             for (int i = 0; i < nifDatasets.length; ++i) {
