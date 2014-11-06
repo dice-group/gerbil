@@ -32,7 +32,7 @@ public class AnnotatorName2ExperimentTypeMapping {
             mapping.put(WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(AgdistisAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
             mapping.put(NERDAnnotatorConfig.ANNOTATOR_NAME, ExperimentType.Sa2W);
-            mapping.put(FOXAnnotator.NAME, ExperimentType.A2W);
+            mapping.put(FOXAnnotator.NAME, ExperimentType.Sa2W);
 
             instance = new AnnotatorName2ExperimentTypeMapping(mapping);
         }
