@@ -2,22 +2,18 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.aksw</groupId>
-    <artifactId>gerbil-spotWrapNifWS4Test</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>General Entity Annotator Benchmark</name>
-    <description>This project is a benchmark for entity annotation and disambiguation tools. It is based on the BAT-Framework of Cornolti et al.</description>
+    <artifactId>gerbil.nif.transfer</artifactId>
+    <version>0.0.1</version>
+    <name>NIF transfer library for the General Entity Annotator Benchmark</name>
+    <description>This project contains classes for transferring documents using NIF.</description>
 
     <properties>
         <java.version>1.7</java.version>
         <slf4j.version>1.7.5</slf4j.version>
+        <junit.version>4.11</junit.version>
     </properties>
 
     <repositories>
-        <!-- Let's use a local repository for the local libraries of this project -->
-        <repository>
-            <id>local repository</id>
-            <url>file://${project.basedir}/repository</url>
-        </repository>
         <repository>
             <id>maven.aksw.internal</id>
             <name>University Leipzig, AKSW Maven2 Repository</name>
@@ -31,42 +27,6 @@
     </repositories>
 
     <dependencies>
-        <!-- GERBIL's NIF transfer lib -->
-        <dependency>
-            <groupId>org.aksw</groupId>
-            <artifactId>gerbil.nif.transfer</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-
-        <!-- Restlet -->
-        <dependency>
-            <groupId>org.restlet</groupId>
-            <artifactId>org.restlet</artifactId>
-            <version>2.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.restlet</groupId>
-            <artifactId>org.restlet.ext.servlet</artifactId>
-            <version>2.2.1</version>
-        </dependency>
-        <!-- HTTP Client -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.3.5</version>
-        </dependency>
-        <!-- Apache Commons IO -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <!-- Handling JSon -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.2</version>
-        </dependency>
         <!-- Jena -->
         <dependency>
             <groupId>org.apache.jena</groupId>
@@ -92,6 +52,13 @@
             <version>${slf4j.version}</version>
         </dependency>
 
+        <!-- JUnit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -105,7 +72,37 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+            <!-- Javadoc plugin for generating documentation -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.1</version>
+                <configuration>
+                    <show>private</show>
+                    <nohelp>true</nohelp>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Source plugin for creating source file jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-    <packaging>war</packaging>
 </project>
