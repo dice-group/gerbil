@@ -27,7 +27,9 @@ width:250px;
 position:relative;
 top: -10;
 left:-100;
-
+}
+.col-md-12 {
+padding: 5px 0px;
 }
 </style>
 
