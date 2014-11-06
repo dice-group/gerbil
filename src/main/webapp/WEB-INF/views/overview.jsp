@@ -5,6 +5,7 @@
 
 <head>
     <link rel="stylesheet" href="webjars/bootstrap/3.2.0/css/bootstrap.min.css">
+    <title>Overview</title>
 </head>
 <style>
 table{
@@ -14,7 +15,7 @@ table-layout: fixed;
 .table > thead > tr > th{
 vertical-align:middle !important;
 height:280px;
-width: 30px !important;
+width: 20px !important;
 } 
 .rotated_cell div {
 display:block;
@@ -31,6 +32,19 @@ left:-100;
 .col-md-12 {
 padding: 5px 0px;
 }
+#chart {
+   /*position: absolute;*/
+   top: 50px;
+   left: 100px;
+   vertical-align: center;
+ } 
+#body {
+   overflow: hidden;
+   margin: 0;
+   font-size: 14px;
+   font-family: "Helvetica Neue", Helvetica;
+ }
+ 
 </style>
 
 <body >
@@ -38,6 +52,9 @@ padding: 5px 0px;
     <!-- mappings to URLs in back-end controller -->
     <script src="webjars/jquery/2.1.1/jquery.min.js"></script>
     <script src="webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="webResources/RadarChart.js"></script>
+    
     <c:url var="experimentoverview" value="/experimentoverview" />
     <c:url var="matchings" value="/matchings" />
     <c:url var="exptypes" value="/exptypes" />
@@ -66,18 +83,21 @@ padding: 5px 0px;
                     </div>
                 </div>
             </div>
-         
+            <div class="container-fluid">
+                   <div id="body">
+                        <div id="chart"></div>
+                   </div>
+             </div>  
         </div>
-        
-        </div>
-        
+	    </div>
         <div class="container-fluid">
              <table id="outputTable" class="table table-hover table-condensed" >
                 <thead></thead>
                 <tbody></tbody>
              </table>
         </div>
-        
+   
+        <script type="text/javascript" src="webResources/script_radar_overview.js"></script>
         <script type="text/javascript">
             $(document)
                 .ready(
@@ -114,7 +134,38 @@ padding: 5px 0px;
                                     });
                                     $("#outputTable thead").html(tbl_hd);
                                     $("#outputTable tbody").html(tbl_body);
+                                    //draw spider chart
+                                    var chartData=[];
+                                    //Legend titles  ['Smartphone','Tablet'];
+                                    var LegendOptions = []; 
+                                    $.each(data, function(i) {
+                                    	//iterate over rows
+                                        if(i>0){
+                                        	var annotatorResults = [];
+                                             $.each(this, function(k, v) {
+                                            	 if(k == 0){
+                                            		 //annotator
+                                            		 LegendOptions.push(v);
+                                            	 }else{
+                                            		 //results like {axis:"Email",value:0.71},
+                                            		 var tmp = {};
+                                            		 tmp.axis = data[0][k];
+                                            		 if(v =="n.a." || v.indexOf("error")>-1){
+                                            		 	tmp.value = 0;                                     			 
+                                            		 }else{
+                                           		 	 	tmp.value = v;
+                                            		 }
+                                            		 annotatorResults.push(tmp);
+                                            	 }
+                                             });
+                                             chartData.push(annotatorResults);
+                                        } 
+                                    });
+                                    console.log(LegendOptions);
+                                    console.log(chartData);
 
+                                    //[[{axis:"Email",value:0.71},{axis:"aa",value:0}],[{axis:"Email",value:0.71},{axis:"aa",value:0.1},]];
+                                    drawChart(chartData,LegendOptions);
                                 }).fail(function() {
                                 console.log("error");
                             });
