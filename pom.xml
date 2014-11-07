@@ -11,7 +11,7 @@
         <java.version>1.7</java.version>
         <slf4j.version>1.7.5</slf4j.version>
         <junit.version>4.11</junit.version>
-        <jena.version>2.11.1</jena.version>
+        <jena.version>2.12.1</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>3.2.10.RELEASE</spring.version>
     </properties>

@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 
 import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.database.ExperimentDAO;
+import org.aksw.gerbil.dataid.DataIDGenerator;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -51,7 +52,7 @@ public class MainController {
             isInitialized = true;
         }
         // Simply call the dataset mapping so that it has to be instantiated
-        DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2W);
+        DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2W); 
     }
 
     @PostConstruct
@@ -202,12 +203,13 @@ public class MainController {
         LOGGER.debug("Got request on /experiment with id=" + id);
         List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
         ExperimentTaskStateHelper.setStatusLines(results);
-        ModelAndView model = new ModelAndView();
+        ModelAndView model = new ModelAndView(); 
         model.setViewName("experiment");
         model.addObject("tasks", results);
+        model.addObject("dataid", DataIDGenerator.createDataIDModel(results, id));
         return model;
     }
-
+ 
     @RequestMapping("/exptypes")
     public @ResponseBody
     List<ExperimentType> expTypes() {
