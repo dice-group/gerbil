@@ -10,21 +10,21 @@ import java.util.Set;
 import org.aksw.gerbil.datasets.ACE2004DatasetConfig;
 import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
 import org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration;
-import org.aksw.gerbil.datasets.CMNSDatasetConfig;
 import org.aksw.gerbil.datasets.DatahubNIFConfig;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datasets.IITBDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
+import org.aksw.gerbil.datasets.MeijDatasetConfig;
 import org.aksw.gerbil.datasets.Microposts2014Config;
 import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 /**
  * ...
- *
- * @authors ..... 
+ * 
+ * @authors .....
  *          Giuseppe Rizzo <giuse.rizzo@gmail.com>
  */
 public class DatasetMapping {
@@ -39,7 +39,7 @@ public class DatasetMapping {
             nameDatasetMapping.put(ACE2004DatasetConfig.DATASET_NAME, new ACE2004DatasetConfig(wikiApi));
             nameDatasetMapping.put(AQUAINTDatasetConfiguration.DATASET_NAME, new AQUAINTDatasetConfiguration(wikiApi));
             nameDatasetMapping.put(IITBDatasetConfig.DATASET_NAME, new IITBDatasetConfig(wikiApi));
-            nameDatasetMapping.put(CMNSDatasetConfig.DATASET_NAME, new CMNSDatasetConfig());
+            nameDatasetMapping.put(MeijDatasetConfig.DATASET_NAME, new MeijDatasetConfig());
             nameDatasetMapping.put(MSNBCDatasetConfig.DATASET_NAME, new MSNBCDatasetConfig(wikiApi));
 
             nameDatasetMapping.put(AIDACoNLLDatasetConfig.DATASET_NAME_START + "-Training", new AIDACoNLLDatasetConfig(
@@ -52,10 +52,10 @@ public class DatasetMapping {
                     AIDACoNLLDatasetConfig.AIDACoNLLChunk.COMPLETE, wikiApi));
 
             nameDatasetMapping.put(Microposts2014Config.DATASET_NAME_START + "-Train", new Microposts2014Config(
-            		Microposts2014Config.Microposts2014Chunk.TRAIN, wikiApi));
+                    Microposts2014Config.Microposts2014Chunk.TRAIN, wikiApi));
             nameDatasetMapping.put(Microposts2014Config.DATASET_NAME_START + "-Test", new Microposts2014Config(
-            		Microposts2014Config.Microposts2014Chunk.TEST, wikiApi));
-            
+                    Microposts2014Config.Microposts2014Chunk.TEST, wikiApi));
+
             // Got through the known NIF datasets
             NIFDatasets nifDatasets[] = NIFDatasets.values();
             for (int i = 0; i < nifDatasets.length; ++i) {

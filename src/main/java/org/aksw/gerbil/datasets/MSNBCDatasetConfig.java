@@ -19,7 +19,7 @@ public class MSNBCDatasetConfig extends AbstractDatasetConfiguration {
     private WikipediaApiInterface wikiAPI;
 
     public MSNBCDatasetConfig(WikipediaApiInterface wikiAPI) {
-        super(DATASET_NAME, true, ExperimentType.D2W);
+        super(DATASET_NAME, true, ExperimentType.Sa2W);
         this.wikiAPI = wikiAPI;
     }
 

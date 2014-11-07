@@ -19,7 +19,7 @@ public class IITBDatasetConfig extends AbstractDatasetConfiguration {
     private WikipediaApiInterface wikiAPI;
 
     public IITBDatasetConfig(WikipediaApiInterface wikiAPI) {
-        super(DATASET_NAME, true, ExperimentType.D2W);
+        super(DATASET_NAME, true, ExperimentType.Sa2W);
         this.wikiAPI = wikiAPI;
     }
 
