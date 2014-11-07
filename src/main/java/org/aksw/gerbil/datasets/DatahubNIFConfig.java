@@ -20,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 public class DatahubNIFConfig extends AbstractDatasetConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(DatahubNIFConfig.class);
-    private static final String DATAHUB_DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.Datahub";
+    private static final String DATAHUB_DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.DatahubNIFConfig.datasetFiles";
 
     private WikipediaApiInterface wikiApi;
     private String datasetUrl;
@@ -50,6 +50,8 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
             Path file = Files.createFile(path);
             Files.write(file, data.getBytes(), StandardOpenOption.WRITE);
         }
-        return new FileBasedNIFDataset(wikiApi, nifFile, getName(), Lang.TTL);
+        FileBasedNIFDataset dataset = new FileBasedNIFDataset(wikiApi, nifFile, getName(), Lang.TTL);
+        dataset.init();
+        return dataset;
     }
 }

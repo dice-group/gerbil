@@ -32,28 +32,7 @@ public class GerbilConfiguration {
         return instance;
     }
 
-    // private Properties gerbilProperties = new Properties();
-
-    // private GerbilConfiguration() {
-    // }
-
     public static synchronized void loadAdditionalProperties(String fileName) {
-        // try {
-        // InputStream stream = Experimenter.class.getClassLoader()
-        // .getResourceAsStream(fileName);
-        // if (stream == null) {
-        // LOGGER.error("Couldnt load Properties from the properties file (\"" + fileName
-        // + "\"). This GERBIL instance won't work as expected.");
-        // return;
-        // }
-        // BufferedInputStream bStream = new BufferedInputStream(stream);
-        // gerbilProperties.load(bStream);
-        // bStream.close();
-        // } catch (IOException e) {
-        // LOGGER.error("Couldnt load Properties from the properties file (\"" + fileName
-        // + "\"). This GERBIL instance won't work as expected.", e);
-        // gerbilProperties = null;
-        // }
         try {
             ((CompositeConfiguration) getInstance()).addConfiguration(new PropertiesConfiguration(fileName));
         } catch (ConfigurationException e) {
@@ -61,16 +40,4 @@ public class GerbilConfiguration {
                     + "\"). This GERBIL instance won't work as expected.", e);
         }
     }
-
-    // public String getPropertyValue(String propertyName) {
-    // String value = null;
-    // if (gerbilProperties != null) {
-    // value = gerbilProperties.getProperty(propertyName);
-    // if (value.contains("{0}")) {
-    // String gerbilDataPath = gerbilProperties.getProperty(GERBIL_DATAPATH_PROPERTY_NAME);
-    // value = MessageFormat.format(value, gerbilDataPath);
-    // }
-    // }
-    // return value;
-    // }
 }

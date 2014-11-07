@@ -10,7 +10,6 @@ import java.util.Set;
 import org.aksw.gerbil.annotators.AgdistisAnnotatorConfig;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
-import org.aksw.gerbil.annotators.FOXAnnotatorConfig;
 import org.aksw.gerbil.annotators.KeaAnnotatorConfig;
 import org.aksw.gerbil.annotators.NERDAnnotatorConfig;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
@@ -18,14 +17,13 @@ import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.annotators.TagMeAnnotatorConfig;
 import org.aksw.gerbil.annotators.WATAnnotatorConfig;
 import org.aksw.gerbil.annotators.WikipediaMinerAnnotatorConfig;
-import org.aksw.gerbil.bat.annotator.FOXAnnotator;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AnnotatorMapping {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatorMapping.class);
+    private static final Logger     LOGGER   = LoggerFactory.getLogger(AnnotatorMapping.class);
 
     private static AnnotatorMapping instance = null;
 
