@@ -3,9 +3,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <head>
 <link rel="stylesheet"
-	href="webjars/bootstrap/3.2.0/css/bootstrap.min.css">
+	href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet"
-	href="webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
+	href="/gerbil/webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
 <style type="text/css">
 /* making the buttons wide enough and right-aligned */
 .btn-group>.btn {
@@ -35,10 +35,10 @@
 	<c:url var="datasets" value="/datasets" />
 	<c:url var="execute" value="/execute" />
 
-	<script src="webjars/jquery/2.1.1/jquery.min.js"></script>
-	<script src="webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
+	<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script
-		src="webjars/bootstrap-multiselect/0.9.8/js/bootstrap-multiselect.js"></script>
+		src="/gerbil/webjars/bootstrap-multiselect/0.9.8/js/bootstrap-multiselect.js"></script>
 
 	<%@include file="navbar.jsp"%>
 	<h1>GERBIL Experiment Configuration</h1>
