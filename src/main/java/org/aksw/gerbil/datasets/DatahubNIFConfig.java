@@ -50,8 +50,6 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
             Path file = Files.createFile(path);
             Files.write(file, data.getBytes(), StandardOpenOption.WRITE);
         }
-        FileBasedNIFDataset dataset = new FileBasedNIFDataset(wikiApi, nifFile, getName(), Lang.TTL);
-        dataset.init();
-        return dataset;
+        return new FileBasedNIFDataset(wikiApi, nifFile, getName(), Lang.TTL);
     }
 }
