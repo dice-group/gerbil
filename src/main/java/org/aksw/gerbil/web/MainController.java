@@ -49,7 +49,7 @@ public class MainController {
             isInitialized = true;
         }
         // Simply call the dataset mapping so that it has to be instantiated
-        DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2W);
+        DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2W); 
     }
 
     @PostConstruct
