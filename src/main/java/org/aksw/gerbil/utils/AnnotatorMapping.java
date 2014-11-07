@@ -43,7 +43,7 @@ public class AnnotatorMapping {
                     new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()));
             mapping.put(NERDAnnotatorConfig.ANNOTATOR_NAME,
                     new NERDAnnotatorConfig(SingletonWikipediaApi.getInstance()));
-            mapping.put(FOXAnnotator.NAME, new FOXAnnotatorConfig(SingletonWikipediaApi.getInstance()));
+            // mapping.put(FOXAnnotator.NAME, new FOXAnnotatorConfig(SingletonWikipediaApi.getInstance()));
             mapping.put(KeaAnnotatorConfig.ANNOTATOR_NAME, new KeaAnnotatorConfig(SingletonWikipediaApi.getInstance(),
                     new DBPediaApi()));
 
