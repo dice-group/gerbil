@@ -1,5 +1,6 @@
 package org.aksw.gerbil.utils;
 
+import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
 import org.aksw.gerbil.datasets.ACE2004DatasetConfig;
 import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
 import org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration;
@@ -18,8 +20,11 @@ import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
 import org.aksw.gerbil.datasets.MeijDatasetConfig;
 import org.aksw.gerbil.datasets.Microposts2014Config;
+import org.aksw.gerbil.datasets.NIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ...
@@ -28,6 +33,8 @@ import org.aksw.gerbil.datatypes.ExperimentType;
  *          Giuseppe Rizzo <giuse.rizzo@gmail.com>
  */
 public class DatasetMapping {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasetMapping.class);
 
     private static DatasetMapping instance = null;
 
@@ -92,6 +99,22 @@ public class DatasetMapping {
         if (datasets.mapping.containsKey(name)) {
             return datasets.mapping.get(name);
         } else {
+            if (name.startsWith("NIFDS_")) {
+                // This describes a NIF based web service
+                // The name should have the form "NIFDS_name(uri)"
+                int pos = name.indexOf('(');
+                if (pos < 0) {
+                    LOGGER.error("Couldn't parse the definition of this NIF based web service \"" + name
+                            + "\". Returning null.");
+                    return null;
+                }
+                String uri = name.substring(pos + 1, name.length() - 1);
+                // remove "NIFDS_" from the name
+                name = name.substring(6, pos);
+                return new NIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), name, uri, false,
+                        ExperimentType.Sa2W);
+            }
+            LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
             return null;
         }
     }
