@@ -89,6 +89,10 @@ table {
 					</div>
 				</div>
 			</div>
+			<div class="col-md-12">
+				<p>The table as well as the diagram contain the micro
+					F1-measure.</p>
+			</div>
 			<div class="container-fluid">
 				<div id="body">
 					<div id="chart"></div>

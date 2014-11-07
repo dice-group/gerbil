@@ -89,7 +89,7 @@ public class MainController {
                 .getAnnotatorsForExperimentType(eType);
         Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(eType);
         String results[][] = new String[annotators.size() + 1][datasets.size() + 1];
-        results[0][0] = "";
+        results[0][0] = "Micro F1-measure";
         Map<String, Integer> annotator2Index = new HashMap<String, Integer>();
         int count = 1;
         for (String annotator : annotators) {
