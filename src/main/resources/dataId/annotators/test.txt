@@ -1,0 +1,1 @@
+This file should be accessible through http://gerbil.aksw.org/gerbil/dataId/annotators/test.txt
