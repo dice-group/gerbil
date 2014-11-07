@@ -1,7 +1,10 @@
 package org.aksw.gerbil.web;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -68,6 +71,71 @@ public class MainController {
         return model;
     }
 
+    @RequestMapping("/overview")
+    public ModelAndView overview() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("overview");
+        return model;
+    }
+
+    @RequestMapping("/experimentoverview")
+    public @ResponseBody
+    String experimentoverview(@RequestParam(value = "experimentType") String experimentType,
+            @RequestParam(value = "matching") String matchingString) {
+        LOGGER.debug("Got request on /experimentoverview(experimentType={}, matching={}", experimentType,
+                matchingString);
+        Matching matching = getMatching(matchingString);
+        ExperimentType eType = ExperimentType.valueOf(experimentType);
+        Set<String> annotators = AnnotatorMapping
+                .getAnnotatorsForExperimentType(eType);
+        Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(eType);
+        String results[][] = new String[annotators.size() + 1][datasets.size() + 1];
+        results[0][0] = "";
+        Map<String, Integer> annotator2Index = new HashMap<String, Integer>();
+        int count = 1;
+        for (String annotator : annotators) {
+            annotator2Index.put(annotator, count);
+            results[count][0] = annotator;
+            ++count;
+        }
+        Map<String, Integer> dataset2Index = new HashMap<String, Integer>();
+        count = 1;
+        for (String dataset : datasets) {
+            dataset2Index.put(dataset, count);
+            results[0][count] = dataset;
+            ++count;
+        }
+
+        List<ExperimentTaskResult> expResults = dao.getLatestResultsOfExperiments(experimentType, matching.name());
+        int row, col;
+        for (ExperimentTaskResult result : expResults) {
+            if (annotator2Index.containsKey(result.annotator) && dataset2Index.containsKey(result.dataset)) {
+                row = annotator2Index.get(result.annotator);
+                col = dataset2Index.get(result.dataset);
+                if (result.state == ExperimentDAO.TASK_FINISHED) {
+                    results[row][col] = String.format(Locale.US, "%.3f", result.getMicroF1Measure());
+                } else {
+                    results[row][col] = "error (" + result.state + ")";
+                }
+            }
+        }
+        StringBuilder dataBuilder = new StringBuilder();
+        for (int i = 0; i < results.length; ++i) {
+            dataBuilder.append(i == 0 ? '[' : ',');
+            for (int j = 0; j < results[i].length; ++j) {
+                dataBuilder.append(j == 0 ? "[\"" : "\",\"");
+                if (results[i][j] != null) {
+                    dataBuilder.append(results[i][j]);
+                } else {
+                    dataBuilder.append("n.a.");
+                }
+            }
+            dataBuilder.append("\"]");
+        }
+        dataBuilder.append(']');
+        return dataBuilder.toString();
+    }
+
     @RequestMapping("/about")
     public ModelAndView about() {
         ModelAndView model = new ModelAndView();
@@ -82,7 +150,8 @@ public class MainController {
 
     /**
      * expects a string like
-     * {"type":"A2W","matching":"Mw - weak annotation match","annotator":["A2w one","A2W two"],"dataset":["datasets"]}
+     * {"type":"A2W","matching":"Mw - weak annotation match"
+     * ,"annotator":["A2w one","A2W two"],"dataset":["datasets"]}
      * 
      * @param experimentData
      * @return
@@ -111,8 +180,7 @@ public class MainController {
         for (String annotator : annotators) {
             for (String dataset : datasets) {
                 configs[count] = new ExperimentTaskConfiguration(AnnotatorMapping.getAnnotatorConfig(annotator),
-                        DatasetMapping.getDatasetConfig(dataset), ExperimentType.valueOf(type),
-                        getMatching(matching));
+                        DatasetMapping.getDatasetConfig(dataset), ExperimentType.valueOf(type), getMatching(matching));
                 LOGGER.debug("Created config: " + configs[count]);
                 ++count;
             }
@@ -156,7 +224,8 @@ public class MainController {
         case C2W:
             return Sets.newLinkedHashSet(Lists.newArrayList("Me - strong entity match"));
         case D2W:
-            // Mw will not be shown since the positions are always exact and thus it works like Ma
+            // Mw will not be shown since the positions are always exact and
+            // thus it works like Ma
             return Sets.newLinkedHashSet(Lists.newArrayList("Ma - strong annotation match"));
         case A2W:
             return Sets.newLinkedHashSet(Lists.newArrayList("Mw - weak annotation match",
@@ -176,16 +245,32 @@ public class MainController {
     @RequestMapping("/annotators")
     public @ResponseBody
     Set<String> annotatorsForExpType(@RequestParam(value = "experimentType") String experimentType) {
-        return AnnotatorMapping.getAnnotatorsForExperimentType(ExperimentType
-                .valueOf(experimentType));
+        return AnnotatorMapping.getAnnotatorsForExperimentType(ExperimentType.valueOf(experimentType));
     }
 
     @RequestMapping("/datasets")
     public @ResponseBody
     Set<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
-        Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(ExperimentType
-                .valueOf(experimentType));
+        Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(ExperimentType.valueOf(experimentType));
         return datasets;
     }
 
+    @RequestMapping("/running")
+    public @ResponseBody
+    String running() {
+        List<ExperimentTaskResult> runningTasks = dao.getAllRunningExperimentTasks();
+        StringBuilder resultBuilder = new StringBuilder();
+        for (ExperimentTaskResult runningTask : runningTasks) {
+            resultBuilder.append("<p>");
+            resultBuilder.append(runningTask.type);
+            resultBuilder.append(' ');
+            resultBuilder.append(runningTask.matching);
+            resultBuilder.append(' ');
+            resultBuilder.append(runningTask.annotator);
+            resultBuilder.append(' ');
+            resultBuilder.append(runningTask.dataset);
+            resultBuilder.append("</p>\n");
+        }
+        return resultBuilder.toString();
+    }
 }

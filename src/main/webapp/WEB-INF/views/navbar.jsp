@@ -9,6 +9,7 @@
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="/gerbil">Home</a></li>
 				<li><a href="config">Configure Experiment</a></li>
+				<li><a href="overview">Experiment Overview</a></li>
 				<li><a href="about">About Us</a></li>
 			</ul>
 		</div>

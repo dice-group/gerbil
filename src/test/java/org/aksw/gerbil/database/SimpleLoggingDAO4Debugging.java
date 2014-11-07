@@ -1,5 +1,6 @@
 package org.aksw.gerbil.database;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -62,6 +63,22 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     @Override
     public void setRunningExperimentsToError() {
         LOGGER.info("Setting the state of all running tasks to an error code.");
+    }
+
+    @Override
+    protected List<String[]> getAnnotatorDatasetCombinations(String experimentType, String matching) {
+        return new ArrayList<String[]>(0);
+    }
+
+    @Override
+    protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
+            String annotatorName, String datasetName) {
+        return null;
+    }
+
+    @Override
+    public List<ExperimentTaskResult> getAllRunningExperimentTasks() {
+        return new ArrayList<ExperimentTaskResult>(0);
     }
 
 }

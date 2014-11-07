@@ -1,6 +1,5 @@
 package org.aksw.gerbil.utils;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.util.HashMap;
@@ -18,9 +17,16 @@ import org.aksw.gerbil.datasets.IITBDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
+import org.aksw.gerbil.datasets.Microposts2014Config;
 import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
+/**
+ * ...
+ *
+ * @authors ..... 
+ *          Giuseppe Rizzo <giuse.rizzo@gmail.com>
+ */
 public class DatasetMapping {
 
     private static DatasetMapping instance = null;
@@ -29,7 +35,6 @@ public class DatasetMapping {
         if (instance == null) {
             Map<String, DatasetConfiguration> nameDatasetMapping = new HashMap<String, DatasetConfiguration>();
             WikipediaApiInterface wikiApi = SingletonWikipediaApi.getInstance();
-            DBPediaApi dbpediaApi = new DBPediaApi();
 
             nameDatasetMapping.put(ACE2004DatasetConfig.DATASET_NAME, new ACE2004DatasetConfig(wikiApi));
             nameDatasetMapping.put(AQUAINTDatasetConfiguration.DATASET_NAME, new AQUAINTDatasetConfiguration(wikiApi));
@@ -46,19 +51,24 @@ public class DatasetMapping {
             nameDatasetMapping.put(AIDACoNLLDatasetConfig.DATASET_NAME_START + "-Complete", new AIDACoNLLDatasetConfig(
                     AIDACoNLLDatasetConfig.AIDACoNLLChunk.COMPLETE, wikiApi));
 
+            nameDatasetMapping.put(Microposts2014Config.DATASET_NAME_START + "-Train", new Microposts2014Config(
+            		Microposts2014Config.Microposts2014Chunk.TRAIN, wikiApi));
+            nameDatasetMapping.put(Microposts2014Config.DATASET_NAME_START + "-Test", new Microposts2014Config(
+            		Microposts2014Config.Microposts2014Chunk.TEST, wikiApi));
+            
             // Got through the known NIF datasets
             NIFDatasets nifDatasets[] = NIFDatasets.values();
             for (int i = 0; i < nifDatasets.length; ++i) {
                 nameDatasetMapping.put(nifDatasets[i].getDatasetName(), new KnownNIFFileDatasetConfig(wikiApi,
-                        dbpediaApi, nifDatasets[i]));
+                        nifDatasets[i]));
             }
 
             // load Datahub data
             DatahubNIFLoader datahub = new DatahubNIFLoader();
             Map<String, String> datasets = datahub.getDataSets();
             for (String datasetName : datasets.keySet()) {
-                nameDatasetMapping.put(datasetName, new DatahubNIFConfig(wikiApi, dbpediaApi, datasetName,
-                        datasets.get(datasetName), true));
+                nameDatasetMapping.put(datasetName,
+                        new DatahubNIFConfig(wikiApi, datasetName, datasets.get(datasetName), true));
             }
 
             instance = new DatasetMapping(nameDatasetMapping);

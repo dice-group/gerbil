@@ -12,8 +12,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 /**
+ * SQL database based implementation of the {@link AbstractExperimentDAO} class.
  * 
  * @author b.eickmann
+ * @author m.roeder
  * 
  */
 public class ExperimentDAOImpl extends AbstractExperimentDAO {
@@ -27,6 +29,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_CACHED_TASK = "SELECT id FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND lastChanged>:lastChanged AND state>:errorState ORDER BY lastChanged DESC LIMIT 1";
     private final static String GET_HIGHEST_EXPERIMENT_ID = "SELECT id FROM Experiments ORDER BY id DESC LIMIT 1";
     private final static String SET_UNFINISHED_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE state=:unfinishedState";
+    private final static String GET_LATEST_EXPERIMENT_TASKS = "SELECT DISTINCT annotatorName, datasetName FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching";
+    private final static String GET_LATEST_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState ORDER BY lastChanged DESC LIMIT 1";
+    private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
 
     private final NamedParameterJdbcTemplate template;
 
@@ -162,4 +167,33 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         this.template.update(SET_UNFINISHED_TASK_STATE, parameters);
     }
 
+    @Override
+    protected List<String[]> getAnnotatorDatasetCombinations(String experimentType, String matching) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("experimentType", experimentType);
+        params.addValue("matching", matching);
+        return this.template.query(GET_LATEST_EXPERIMENT_TASKS, params, new StringArrayRowMapper(new int[] { 1, 2 }));
+    }
+
+    @Override
+    protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
+            String annotatorName, String datasetName) {
+        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType, matching);
+        params.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
+        List<ExperimentTaskResult> result = this.template.query(GET_LATEST_EXPERIMENT_TASK_RESULT, params,
+                new ExperimentTaskResultRowMapper());
+        if (result.size() > 0) {
+            return result.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ExperimentTaskResult> getAllRunningExperimentTasks() {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
+        return this.template.query(GET_RUNNING_EXPERIMENT_TASKS, params, new ExperimentTaskResultRowMapper());
+    }
+    
 }

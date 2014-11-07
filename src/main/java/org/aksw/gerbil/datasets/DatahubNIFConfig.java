@@ -1,7 +1,6 @@
 package org.aksw.gerbil.datasets;
 
 import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.io.File;
@@ -23,16 +22,13 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(DatahubNIFConfig.class);
     private static final String DATAHUB_DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.Datahub";
 
-    private DBPediaApi dbpediaApi;
     private WikipediaApiInterface wikiApi;
     private String datasetUrl;
     private RestTemplate rt;
 
-    public DatahubNIFConfig(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi, String datasetName,
-            String datasetUrl, boolean couldBeCached) {
+    public DatahubNIFConfig(WikipediaApiInterface wikiApi, String datasetName, String datasetUrl, boolean couldBeCached) {
         super(datasetName, couldBeCached, ExperimentType.Sa2W);
         this.wikiApi = wikiApi;
-        this.dbpediaApi = dbpediaApi;
         this.datasetUrl = datasetUrl;
         rt = new RestTemplate();
     }
@@ -54,6 +50,8 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
             Path file = Files.createFile(path);
             Files.write(file, data.getBytes(), StandardOpenOption.WRITE);
         }
-        return new FileBasedNIFDataset(wikiApi, dbpediaApi, nifFile, getName(), Lang.TTL);
+        FileBasedNIFDataset dataset = new FileBasedNIFDataset(wikiApi, nifFile, getName(), Lang.TTL);
+        dataset.init();
+        return dataset;
     }
 }

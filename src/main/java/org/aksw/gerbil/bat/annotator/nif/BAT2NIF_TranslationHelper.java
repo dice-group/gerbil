@@ -3,32 +3,32 @@ package org.aksw.gerbil.bat.annotator.nif;
 import it.acubelab.batframework.data.Mention;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.aksw.gerbil.transfer.nif.AnnotatedDocument;
-import org.aksw.gerbil.transfer.nif.Annotation;
-import org.aksw.gerbil.transfer.nif.data.AnnotatedDocumentImpl;
-import org.aksw.gerbil.transfer.nif.data.AnnotationImpl;
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
+import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 
 public class BAT2NIF_TranslationHelper {
 
-    public static AnnotatedDocument createAnnotatedDocument(String text) {
+    public static Document createAnnotatedDocument(String text) {
         return createAnnotatedDocument(text, null);
     }
 
-    public static AnnotatedDocument createAnnotatedDocument(String text,
-            HashSet<Mention> mentions) {
-        List<Annotation> annotations = new ArrayList<Annotation>();
+    public static Document createAnnotatedDocument(String text,
+            Set<Mention> mentions) {
+        List<Marking> markings = new ArrayList<Marking>();
         if (mentions != null) {
             for (Mention mention : mentions) {
-                annotations.add(translateMention2Annotation(mention));
+                markings.add(translateMention2Annotation(mention));
             }
         }
-        return new AnnotatedDocumentImpl(text, annotations);
+        return new DocumentImpl(text, markings);
     }
 
-    public static Annotation translateMention2Annotation(Mention mention) {
-        return new AnnotationImpl(mention.getPosition(), mention.getLength());
+    public static Marking translateMention2Annotation(Mention mention) {
+        return new SpanImpl(mention.getPosition(), mention.getLength());
     }
 }

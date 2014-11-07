@@ -2,8 +2,10 @@ package org.aksw.gerbil.bat.annotator;
 
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
+import it.acubelab.batframework.data.ScoredAnnotation;
+import it.acubelab.batframework.data.ScoredTag;
 import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.A2WSystem;
+import it.acubelab.batframework.problems.Sa2WSystem;
 import it.acubelab.batframework.utils.AnnotationException;
 import it.acubelab.batframework.utils.ProblemReduction;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
@@ -18,26 +20,27 @@ import org.aksw.fox.binding.java.FoxResponse;
 import org.aksw.fox.binding.java.IFoxApi;
 import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class FOXAnnotator implements A2WSystem {
-    static {
-        PropertyConfigurator.configure(FOXAnnotator.class.getResourceAsStream("log4jFOXAnnotator.properties"));
-    }
+public class FOXAnnotator implements Sa2WSystem {
 
-    public static final String      NAME = "FOX";
-    public static final Logger      LOG  = LogManager.getLogger(FOXAnnotator.class);
-    protected IFoxApi               fox  = new FoxApi();
+    private static final Logger     LOGGER = LoggerFactory.getLogger(FOXAnnotator.class);
+
+    /*    static {
+            PropertyConfigurator.configure(FOXAnnotator.class.getResourceAsStream("log4jFOXAnnotator.properties"));
+        }*/
+
+    public static final String      NAME   = "FOX";
+    protected IFoxApi               fox    = new FoxApi();
     protected WikipediaApiInterface wikiApi;
 
     public static void main(String[] a) {
         String test = "The philosopher and mathematician Gottfried Wilhelm Leibniz was born in Leipzig.";
         HashSet<Annotation> set = new FOXAnnotator(SingletonWikipediaApi.getInstance()).solveA2W(test);
-        LOG.info(set.size());
+        LOGGER.info("Got {} annotations.", set.size());
     }
 
     public FOXAnnotator(WikipediaApiInterface wikiApi) {
@@ -45,13 +48,24 @@ public class FOXAnnotator implements A2WSystem {
     }
 
     @Override
+    public HashSet<ScoredTag> solveSc2W(String text) throws AnnotationException {
+        return ProblemReduction.Sa2WToSc2W(solveSa2W(text));
+    }
+
+    @Override
+    public HashSet<ScoredAnnotation> solveSa2W(String text) throws AnnotationException {
+        return (HashSet<ScoredAnnotation>) fox(text);
+    }
+
+    @Override
     public HashSet<Annotation> solveA2W(String text) throws AnnotationException {
-        return (HashSet<Annotation>) fox(text);
+        return ProblemReduction.Sa2WToA2W(solveSa2W(text), Float.MIN_VALUE);
     }
 
     @Override
     public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions) throws AnnotationException {
-        return solveA2W(text);
+        return ProblemReduction.Sa2WToD2W(solveSa2W(text), mentions, Float.MIN_VALUE);
+
     }
 
     @Override
@@ -59,11 +73,11 @@ public class FOXAnnotator implements A2WSystem {
         return ProblemReduction.A2WToC2W(solveA2W(text));
     }
 
-    protected Set<Annotation> fox(String text) {
-        if (LOG.isTraceEnabled())
-            LOG.trace(text);
+    protected Set<ScoredAnnotation> fox(String text) throws AnnotationException {
+        if (LOGGER.isTraceEnabled())
+            LOGGER.trace("Got text \"{}\".", text);
 
-        Set<Annotation> set = new HashSet<>();
+        Set<ScoredAnnotation> set = new HashSet<>();
         try {
             // request FOX
             FoxResponse response = fox
@@ -86,15 +100,17 @@ public class FOXAnnotator implements A2WSystem {
                     set.addAll(add(outObj));
             }
         } catch (Exception e) {
-            LOG.error("\n", e);
+            LOGGER.error("Got an exception while communicating with the FOX web service.", e);
+            throw new AnnotationException("Got an exception while communicating with the FOX web service: "
+                    + e.getLocalizedMessage());
         }
-        if (LOG.isTraceEnabled())
-            LOG.trace("Found " + set.size());
+        if (LOGGER.isTraceEnabled())
+            LOGGER.trace("Found {} annotations.", set.size());
         return set;
     }
 
-    protected Set<Annotation> add(JSONObject entity) {
-        Set<Annotation> set = new HashSet<>();
+    protected Set<ScoredAnnotation> add(JSONObject entity) throws Exception {
+        Set<ScoredAnnotation> set = new HashSet<>();
         try {
 
             if (entity != null && entity.has("means") && entity.has("beginIndex") && entity.has("ann:body")) {
@@ -109,24 +125,25 @@ public class FOXAnnotator implements A2WSystem {
                         // for all indices
                         for (int ii = 0; ii < ((JSONArray) begin).length(); ii++) {
                             int b = Integer.valueOf(((JSONArray) begin).getString(ii));
-                            set.add(new Annotation(b, b + body.length(), wikiID));
-                            if (LOG.isDebugEnabled())
-                                LOG.debug("[begin=" + b + ", body=" + body + ", id=" + wikiID + "]");
+                            set.add(new ScoredAnnotation(b, b + body.length(), wikiID, 1f));
+                            if (LOGGER.isDebugEnabled())
+                                LOGGER.debug("[begin={}, body={}, id={}]", b, body, wikiID);
                         }
                     } else if (begin instanceof String) {
                         // just one index
                         int b = Integer.valueOf((String) begin);
-                        set.add(new Annotation(b, b + body.length(), wikiID));
-                        if (LOG.isDebugEnabled())
-                            LOG.debug("[begin=" + b + ", body=" + body + ", id=" + wikiID + "]");
+                        set.add(new ScoredAnnotation(b, b + body.length(), wikiID, 1f));
+                        if (LOGGER.isDebugEnabled())
+                            LOGGER.debug("[begin={}, body={}, id={}]", b, body, wikiID);
 
-                    } else if (LOG.isDebugEnabled())
-                        LOG.debug("Couldn't find index");
-                } else if (LOG.isDebugEnabled())
-                    LOG.debug("Couldn't find ".concat(uri));
+                    } else if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("Couldn't find index");
+                } else if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Couldn't find ".concat(uri));
             }
         } catch (Exception e) {
-            LOG.error("\n", e);
+            LOGGER.error("Got an Exception while parsing the response of FOX.", e);
+            throw new Exception("Got an Exception while parsing the response of FOX.", e);
         }
         return set;
     }

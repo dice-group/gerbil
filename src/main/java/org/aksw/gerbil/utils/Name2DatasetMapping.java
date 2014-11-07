@@ -2,8 +2,6 @@ package org.aksw.gerbil.utils;
 
 import java.util.Map.Entry;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-
 import org.aksw.gerbil.datasets.ACE2004DatasetConfig;
 import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
 import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig.AIDACoNLLChunk;
@@ -14,8 +12,8 @@ import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datasets.IITBDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
-import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
+import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 
 @Deprecated
 public class Name2DatasetMapping {
@@ -64,16 +62,14 @@ public class Name2DatasetMapping {
         NIFDatasets nifDatasets[] = NIFDatasets.values();
         for (int i = 0; i < nifDatasets.length; ++i) {
             if (nifDatasets[i].getDatasetName().equals(name)) {
-                return new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi(),
-                        nifDatasets[i]);
+                return new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), nifDatasets[i]);
             }
         }
 
         DatahubNIFLoader dh = new DatahubNIFLoader();
         for (Entry<String, String> d : dh.getDataSets().entrySet()) {
             if (d.getKey().equals(name)) {
-                return new DatahubNIFConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi(), d.getKey(),
-                        d.getValue(), true);
+                return new DatahubNIFConfig(SingletonWikipediaApi.getInstance(), d.getKey(), d.getValue(), true);
             }
         }
 

@@ -51,6 +51,7 @@ public class ExperimentTaskExecuter implements Runnable {
 
     @Override
     public void run() {
+        LOGGER.info("Task started " + configuration.toString());
         try {
             // Create dataset
             TopicDataset dataset = configuration.datasetConfig.getDataset(configuration.type);

@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 
-import org.aksw.gerbil.transfer.nif.AnnotatedDocument;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.NIFDocumentCreator;
 import org.aksw.gerbil.transfer.nif.NIFDocumentParser;
 import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentCreator;
@@ -77,7 +77,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions)
             throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        AnnotatedDocument document = BAT2NIF_TranslationHelper
+        Document document = BAT2NIF_TranslationHelper
                 .createAnnotatedDocument(text, mentions);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
@@ -87,7 +87,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<Annotation> solveA2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        AnnotatedDocument document = BAT2NIF_TranslationHelper
+        Document document = BAT2NIF_TranslationHelper
                 .createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
@@ -97,7 +97,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<Tag> solveC2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        AnnotatedDocument document = BAT2NIF_TranslationHelper
+        Document document = BAT2NIF_TranslationHelper
                 .createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
@@ -107,7 +107,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<ScoredTag> solveSc2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        AnnotatedDocument document = BAT2NIF_TranslationHelper
+        Document document = BAT2NIF_TranslationHelper
                 .createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
@@ -117,14 +117,14 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<ScoredAnnotation> solveSa2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        AnnotatedDocument document = BAT2NIF_TranslationHelper
+        Document document = BAT2NIF_TranslationHelper
                 .createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
         return NIF2BAT_TranslationHelper.createScoredAnnotations(wikiApi, dbpediaApi, document);
     }
 
-    protected AnnotatedDocument request(AnnotatedDocument document) {
+    protected Document request(Document document) {
         // give the document a URI
         document.setDocumentURI(DOCUMENT_URI + documentCount);
         ++documentCount;
