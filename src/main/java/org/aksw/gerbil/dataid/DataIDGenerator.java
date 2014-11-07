@@ -3,243 +3,125 @@ package org.aksw.gerbil.dataid;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.aksw.gerbil.dataid.vocabs.CUBE;
+import org.aksw.gerbil.dataid.vocabs.GERBIL;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.web.ExperimentTaskStateHelper;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 public class DataIDGenerator {
 
-	public static String createDataIDModel(List<ExperimentTaskResult> list,
-			String eID) {
+    private static final String EXPERIMENT_PREFIX = "experiment_";
+    private static final String DATASET_DATAID = "dataId/corpora/";
+    private static final String ANNOTATOR_DATAID = "dataId/annotators/";
+    private static final String DATAID_FILE = "/dataid.ttl";
 
-		// test with dataset 201411060000 
-		
-		// definitions of ns
-		String gerbilURI = "http://gerbil.aksw.org/ns#";
-		String rdfURI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-		String rdfsURI = "http://www.w3.org/2000/01/rdf-schema#";
-		String xsdURI = "http://www.w3.org/2001/XMLSchema#";
-		String qbURI = "http://purl.org/linked-data/cube#";		
-		
-		String localURI = "http://139.18.2.164:1234/gerbil/";
+    private String gerbilURL;
 
-		String gerbilType = "experimentType";
-		String gerbilMatching = "matching";
-		String gerbilDSD = "dsd";
-		String gerbilD2W = "D2W";
-		String gerbilA2W = "A2W";
-		String gerbilSa2W = "Sa2W";
-		String gerbilSc2W = "Sc2W";
-		String gerbilRc2W = "Rc2W";
-		
+    public DataIDGenerator(String gerbilURL) {
+        this.gerbilURL = gerbilURL;
+    }
 
-		// definiton of the gerbil experiments properties
-		String gerbilExpetimentDatasetUsed = "evalDataset";
-		String gerbilExperimentAnnotator = "annotator";
-		String gerbilExperimentMicroF1 = "microF1";
-		String gerbilExperimentMacroF1 = "macroF1";
-		String gerbilExperimentMicroPrecision = "microPrecision";
-		String gerbilExperimentMacroPrecision = "macroPrecision";
-		String gerbilExperimentMicroRecall = "microRecall";
-		String gerbilExperimentMacroRecall = "macroRecall";
-		String gerbilExperimentTimestamp = "timestamp";
-		String gerbilExperimentErrorCount = "errorCount";
-		String gerbilExperimentStrongAnnoMatch = "StrongAnnoMatch";
-		String gerbilExperimentWeakAnnotationMatch= "WeakAnnoMatch";
-		
+    public String createDataIDModel(List<ExperimentTaskResult> results, String eID) {
 
-		
-		// definition of the qb props
-		String qbDataset = "Dataset";
-		String qbStructure = "structure";
-		String qbObservation = "observation";
-		
+        // test with dataset 201411060000
 
-		// create an empty JENA Model
-		Model model = ModelFactory.createDefaultModel();
+        // create an empty JENA Model
+        Model model = ModelFactory.createDefaultModel();
 
-		// setting namespaces
-		model.setNsPrefix("gerbil", gerbilURI);
-		model.setNsPrefix("rdf", rdfURI);
-		model.setNsPrefix("rdfs", rdfsURI);
-		model.setNsPrefix("xsd", xsdURI);
-		model.setNsPrefix("qb", qbURI);
-		
-		
-		// model.setNsPrefix("owl", "http://www.w3.org/2002/07/owl#");
+        // setting namespaces
+        model.setNsPrefix("gerbil", GERBIL.getURI());
+        model.setNsPrefix("rdf", RDF.getURI());
+        model.setNsPrefix("rdfs", RDFS.getURI());
+        model.setNsPrefix("xsd", XSD.getURI());
+        model.setNsPrefix("qb", CUBE.getURI());
 
-		// creating JENA properties for gerbil experiments service
-		Property type = model.createProperty(gerbilURI + gerbilType);
-		Property matching = model.createProperty(gerbilURI + gerbilMatching);
-		Property dsdP = model.createProperty(gerbilURI
-				+ gerbilDSD);
+        // If the experiment is not existing (== there are no results), return
+        // an empty String
+        if (results.size() == 0) {
+            return "";
+        }
 
-		// creating JENA properties for experiments
-		Property dataset = model.createProperty(gerbilURI
-				+ gerbilExpetimentDatasetUsed);
-		Property qbDatasetP = model.createProperty(qbURI
-				+ qbDataset);
-		Property qbStructureP = model.createProperty(qbURI
-				+ qbStructure);
-		Property qbObservationP = model.createProperty(qbURI
-				+ qbObservation);
-		
-		Property annotator = model.createProperty(gerbilURI
-				+ gerbilExperimentAnnotator);
-		Property experimentMicroF1 = model.createProperty(gerbilURI
-				+ gerbilExperimentMicroF1);
-		Property experimentMacroF1 = model.createProperty(gerbilURI
-				+ gerbilExperimentMacroF1);
-		Property experimentMicroPrecision = model.createProperty(gerbilURI
-				+ gerbilExperimentMicroPrecision);
-		Property experimentMacroPrecision = model.createProperty(gerbilURI
-				+ gerbilExperimentMacroPrecision);
-		Property experimentMicroRecall = model.createProperty(gerbilURI
-				+ gerbilExperimentMicroRecall);
-		Property experimentMacroRecall = model.createProperty(gerbilURI
-				+ gerbilExperimentMacroRecall);
-		Property experimentTimestamp = model.createProperty(gerbilURI
-				+ gerbilExperimentTimestamp);
-		Property experimentErrorCount = model.createProperty(gerbilURI
-				+ gerbilExperimentErrorCount);
-		
-		Property gerbilD2WP = model.createProperty(gerbilURI
-				+ gerbilD2W);
-		Property gerbilA2WP = model.createProperty(gerbilURI
-				+ gerbilA2W);
-		Property gerbilSa2WP = model.createProperty(gerbilURI
-				+ gerbilSa2W);
-		Property gerbilSc2WP = model.createProperty(gerbilURI
-				+ gerbilSc2W);
-		Property gerbilRc2WP = model.createProperty(gerbilURI
-				+ gerbilRc2W);						
+        Resource experiment = createExperimentResource(model, eID);
 
-		// creating gerbil service resource
-		Resource gerbilExp1 = model.createResource(localURI+"exp_1");
+        int experimentNumber = 0;
+        Iterator<ExperimentTaskResult> resultIterator = results.iterator();
+        ExperimentTaskResult result;
+        // iterating over the experiments
+        while (resultIterator.hasNext()) {
+            result = resultIterator.next();
+            // If this is the first experiment result, use it to get further
+            // properties of the experiment (matching, ...)
+            if (experimentNumber == 0) {
+                experiment.addProperty(GERBIL.experimentType, GERBIL.getExperimentTypeResource(result.type));
+                experiment.addProperty(GERBIL.matching, GERBIL.getMatchingResource(result.matching));
+            }
+            // create experiment task
+            addExperimentTask(model, result, experiment, experimentNumber);
 
-		gerbilExp1.addProperty(RDF.type, qbDatasetP);
+            ++experimentNumber;
+        }
 
-		// setting literals for the service resource 
-		Iterator<ExperimentTaskResult> e = list.iterator();
-		ExperimentTaskResult first = e.next();
-		
-		String typeString = first.getType()
-				.toString();
-		String datasetString = first.getDataset();
+        // writing dataid result to output (this should be removed)
+        // RDFDataMgr.write(System.out, model, RDFFormat.TURTLE);
 
-		Property matchingP; 
-		if(first.getMatching().toString().equals("WEAK_ANNOTATION_MATCH")){
-			matchingP  = model.createProperty(gerbilURI
-					+ gerbilExperimentWeakAnnotationMatch);						
-		}
-		else{
-			matchingP  = model.createProperty(gerbilURI
-					+ gerbilExperimentStrongAnnoMatch);	
-		}
-		
-		model.add(gerbilExp1, RDFS.label, "Example dataset");
-		model.add(gerbilExp1, qbStructureP, dsdP);
+        OutputStream o = new ByteArrayOutputStream();
 
-		int experimentNumber = 0;
-		e = list.iterator();
-		
-		//iterating over the experiments
-		while (e.hasNext()) {
+        // creating json-ld output format
+        RDFDataMgr.write(o, model, RDFFormat.JSONLD);
 
-			// increase expetiment number
-			experimentNumber++;
+        return o.toString();
+    }
 
-			// get next experiment from the list
-			ExperimentTaskResult i = e.next(); 
+    private Resource createExperimentResource(Model model, String eID) {
+        // create experiment resource
+        Resource experiment = model.createResource(gerbilURL + EXPERIMENT_PREFIX + eID);
+        experiment.addProperty(RDF.type, CUBE.Dataset);
+        experiment.addProperty(RDF.type, GERBIL.Experiment);
 
-			// create experiment
-			Resource exp_ann = model.createResource(localURI
-					+ "ann_" + experimentNumber);
+        model.add(experiment, RDFS.label, "Experiment " + eID);
+        model.add(experiment, CUBE.structure, GERBIL.DSD);
 
-			exp_ann.addProperty(RDF.type, qbObservationP);
-			exp_ann.addProperty(qbDatasetP,gerbilExp1); 
-			
-			// TODO make here a method,
-			switch (typeString) {
-			case "D2W":
-				exp_ann.addProperty(type,gerbilD2WP);
-				break;
-			case "A2W":
-				exp_ann.addProperty(type,gerbilA2WP);
-				break;
-			case "Sa2W":
-				exp_ann.addProperty(type,gerbilSa2WP);
-				break;				
-			case "Sc2W":
-				exp_ann.addProperty(type,gerbilSc2WP);
-				break;
-			case "Rc2W":
-				exp_ann.addProperty(type,gerbilRc2WP);
-				break;				
-				
-			default:
-				break;
-			}
-			
-			
-			exp_ann.addProperty(annotator,gerbilURI+annotator+"/dataid.ttl");
-			exp_ann.addProperty(dataset,gerbilURI+datasetString+"/dataid.ttl");
-			
-			exp_ann.addProperty(matching,matchingP);
+        return experiment;
+    }
 
-			// creating and setting literals for the current experiment
-			Literal literalMicroF1Measure = model.createTypedLiteral(i
-					.getMicroF1Measure());
-			Literal literalMacroF1Measure = model.createTypedLiteral(i
-					.getMacroF1Measure());
-			Literal literalMicroPrecision = model.createTypedLiteral(i
-					.getMicroPrecision());
-			Literal literalMacroPrecision = model.createTypedLiteral(i
-					.getMacroPrecision());
-			Literal literalMicroRecall = model.createTypedLiteral(i
-					.getMicroRecall());
-			Literal literalMacroRecall = model.createTypedLiteral(i
-					.getMacroRecall());
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(new Date(i.getTimestamp()));
-			
-			Literal literalTimestamp = model.createTypedLiteral(cal);
-			Literal literalErrorCount = model.createTypedLiteral(i
-					.getErrorCount());
+    private void addExperimentTask(Model model, ExperimentTaskResult result, Resource experiment, int experimentNumber) {
+        // create Resource
+        Resource experimentTask = model.createResource(experiment.getURI() + "_task_" + experimentNumber);
+        experimentTask.addProperty(RDF.type, CUBE.Observation);
 
-			model.add(exp_ann, experimentMicroF1, literalMicroF1Measure);
-			model.add(exp_ann, experimentMacroF1, literalMacroF1Measure);
-			model.add(exp_ann, experimentMicroPrecision,
-					literalMicroPrecision);
-			model.add(exp_ann, experimentMacroPrecision,
-					literalMacroPrecision);
-			model.add(exp_ann, experimentMicroRecall, literalMicroRecall);
-			model.add(exp_ann, experimentMacroRecall, literalMacroRecall);
-			model.add(exp_ann, experimentTimestamp, literalTimestamp);
-			model.add(exp_ann, experimentErrorCount, literalErrorCount);
+        // add annotator and dataset
+        experimentTask.addProperty(GERBIL.annotator, gerbilURL + DATASET_DATAID + result.annotator + DATAID_FILE);
+        experimentTask.addProperty(GERBIL.dataset, gerbilURL + ANNOTATOR_DATAID + result.dataset + DATAID_FILE);
 
-		}
+        // set the status of this task
+        model.add(experimentTask, GERBIL.statusCode, model.createTypedLiteral(result.state));
 
-		//writing dataid result to output (this should be removed)
-//		RDFDataMgr.write(System.out, model, RDFFormat.TURTLE);
+        // If this task has been finished
+        if (ExperimentTaskStateHelper.taskFinished(result)) {
+            // creating and setting literals for the current experiment
+            model.add(experimentTask, GERBIL.microF1, model.createTypedLiteral(result.getMicroF1Measure()));
+            model.add(experimentTask, GERBIL.microPrecision, model.createTypedLiteral(result.getMicroPrecision()));
+            model.add(experimentTask, GERBIL.microRecall, model.createTypedLiteral(result.getMicroRecall()));
+            model.add(experimentTask, GERBIL.macroF1, model.createTypedLiteral(result.getMacroF1Measure()));
+            model.add(experimentTask, GERBIL.macroPrecision, model.createTypedLiteral(result.getMacroPrecision()));
+            model.add(experimentTask, GERBIL.macroRecall, model.createTypedLiteral(result.getMacroRecall()));
+            model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(result.errorCount));
+        }
 
-		OutputStream o = new ByteArrayOutputStream();
-
-		// creating json-ld output format
-		RDFDataMgr.write(o, model, RDFFormat.JSONLD);
-
-		return o.toString();
-	}
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(result.timestamp);
+        model.add(experimentTask, GERBIL.timestamp, model.createTypedLiteral(cal));
+    }
 }

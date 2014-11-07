@@ -52,7 +52,7 @@ public class MainController {
             isInitialized = true;
         }
         // Simply call the dataset mapping so that it has to be instantiated
-        DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2W); 
+        DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2W);
     }
 
     @PostConstruct
@@ -63,6 +63,9 @@ public class MainController {
     @Autowired
     @Qualifier("experimentDAO")
     private ExperimentDAO dao;
+
+    // FIXME could the URL be set automatically?
+    private DataIDGenerator dataIdGenerator = new DataIDGenerator("http://gerbil.aksw.org/gerbil/");
 
     @RequestMapping("/config")
     public ModelAndView config() {
@@ -86,8 +89,7 @@ public class MainController {
                 matchingString);
         Matching matching = getMatching(matchingString);
         ExperimentType eType = ExperimentType.valueOf(experimentType);
-        Set<String> annotators = AnnotatorMapping
-                .getAnnotatorsForExperimentType(eType);
+        Set<String> annotators = AnnotatorMapping.getAnnotatorsForExperimentType(eType);
         Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(eType);
         String results[][] = new String[annotators.size() + 1][datasets.size() + 1];
         results[0][0] = "Micro F1-measure";
@@ -203,13 +205,13 @@ public class MainController {
         LOGGER.debug("Got request on /experiment with id=" + id);
         List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
         ExperimentTaskStateHelper.setStatusLines(results);
-        ModelAndView model = new ModelAndView(); 
+        ModelAndView model = new ModelAndView();
         model.setViewName("experiment");
         model.addObject("tasks", results);
-        model.addObject("dataid", DataIDGenerator.createDataIDModel(results, id));
+        model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
         return model;
     }
- 
+
     @RequestMapping("/exptypes")
     public @ResponseBody
     List<ExperimentType> expTypes() {

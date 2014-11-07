@@ -36,7 +36,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/webResources/**").addResourceLocations("classpath:webResources/");
         registry.addResourceHandler("/dataId/corpora/**").addResourceLocations("classpath:dataId/corpora/");
         registry.addResourceHandler("/dataId/annotators/**").addResourceLocations("classpath:dataId/annotators/");
-        registry.addResourceHandler("/vocab/**").addResourceLocations("classpath:vocab/");
     }
 
 }
