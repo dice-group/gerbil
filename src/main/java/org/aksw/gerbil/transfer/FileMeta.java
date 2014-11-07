@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  *
  */
 @JsonIgnoreProperties({"bytes"})
-public class FileContainer {
+public class FileMeta {
     private String name;
     private String size;
     private String url;
