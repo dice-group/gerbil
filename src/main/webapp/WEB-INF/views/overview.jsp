@@ -104,129 +104,120 @@ table {
 	</div>
 
 	<script type="text/javascript">
-		$(document)
-                .ready(
-                        function() {
-	                        //++++++++++++
-	                        //creating the table
-	                        //++++++++++++
-	                        var loadTable;
-	                        //declaration of functions for loading experiment types, annotators, matchings and datasets  
-	                        (loadTable = function() {
-		                        $.getJSON('${experimentoverview}', {
-		                            experimentType : $('#expTypes input:checked').val(),
-		                            matching : $('#matching input:checked').val(),
-		                            ajax : 'false'
-		                        }, function(data) {
-			                        //http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
-			                        var tbl_body = "";
-			                        var tbl_hd = "";
-
-			                        $.each(data, function(i) {
-				                        var tbl_row = "";
-				                        if (i > 0) {
-					                        $.each(this, function(k, v) {
-						                        tbl_row += "<td>" + v + "</td>";
-					                        });
-					                        tbl_body += "<tr>" + tbl_row + "</tr>";
-				                        } else {
-					                        $.each(this, function(k, v) {
-						                        tbl_row += "<th class=\"rotated_cell\"><div >" + v + "</div></th>";
-					                        });
-					                        tbl_hd += "<tr>" + tbl_row + "</tr>";
-				                        }
-			                        });
-			                        $("#outputTable thead").html(tbl_hd);
-			                        $("#outputTable tbody").html(tbl_body);
-			                        //draw spider chart
-			                        var chartData = [];
-			                        //Legend titles  ['Smartphone','Tablet'];
-			                        var LegendOptions = [];
-			                        $.each(data, function(i) {
-				                        //iterate over rows
-				                        if (i > 0) {
-					                        var annotatorResults = [];
-					                        $.each(this, function(k, v) {
-						                        if (k == 0) {
-							                        //annotator
-							                        LegendOptions.push(v);
-						                        } else {
-							                        //results like {axis:"Email",value:0.71},
-							                        var tmp = {};
-							                        tmp.axis = data[0][k];
-							                        if (v == "n.a." || v.indexOf("error") > -1) {
-								                        tmp.value = 0;
-							                        } else {
-								                        tmp.value = v;
-							                        }
-							                        annotatorResults.push(tmp);
-						                        }
-					                        });
-					                        chartData.push(annotatorResults);
-				                        }
-			                        });
-			                        console.log(LegendOptions);
-			                        console.log(chartData);
-
-			                        //[[{axis:"Email",value:0.71},{axis:"aa",value:0}],[{axis:"Email",value:0.71},{axis:"aa",value:0.1},]];
-			                        drawChart(chartData, LegendOptions);
-		                        }).fail(function() {
-			                        console.log("error");
-		                        });
+		function loadMatchings() {
+	        $
+	                .getJSON(
+	                        '${matchings}',
+	                        {
+	                            experimentType : $('#expTypes input').length != 0 ? $('#expTypes input:checked').val()
+	                                    : "D2W",
+	                            ajax : 'false'
+	                        },
+	                        function(data) {
+		                        var htmlMatchings = "";
+		                        for ( var i = 0; i < data.length; i++) {
+			                        htmlMatchings += "<label class=\"btn btn-primary\" >";
+			                        htmlMatchings += " <input class=\"toggle\" type=\"radio\" name=\"matchingType\" id=\"" + data[i] + "\" value=\"" + data[i] + "\" >"
+			                                + data[i];
+			                        htmlMatchings += "</label>";
+		                        }
+		                        $('#matching').html(htmlMatchings);
+		                        $('#matching input')[0].checked = true;
 	                        });
+        };
 
-	                        //++++++++++++
-	                        //creating the radioboxes
-	                        //++++++++++++
-	                        var loadExperimentTypes;
-	                        (loadExperimentTypes = function() {
-		                        $
-		                                .getJSON(
-		                                        '${exptypes}',
-		                                        {
-			                                        ajax : 'false'
-		                                        },
-		                                        function(data) {
-			                                        var htmlExperimentTypes = "";
-			                                        for ( var i = 0; i < data.length; i++) {
-				                                        htmlExperimentTypes += "<label class=\"btn btn-primary\" >";
-				                                        htmlExperimentTypes += " <input class=\"toggle\" type=\"radio\" name=\"experimentType\" id=\"" + data[i] + "\" value=\"" + data[i] + "\" >"
-				                                                + data[i];
-				                                        htmlExperimentTypes += "</label>";
-			                                        }
-			                                        $('#expTypes').html(htmlExperimentTypes);
-			                                        $('#expTypes input')[0].checked = true;
-		                                        });
-	                        })();
-	                        //++++++++++++
-	                        //creating the radioboxes
-	                        //++++++++++++
-	                        var loadMatching;
-	                        (loadMatching = function() {
-		                        $
-		                                .getJSON(
-		                                        '${matchings}',
-		                                        {
-		                                            experimentType : $('#expTypes input').length != 0 ? $(
-		                                                    '#expTypes input:checked').val() : "D2W",
-		                                            ajax : 'false'
-		                                        },
-		                                        function(data) {
-			                                        var htmlMatchings = "";
-			                                        for ( var i = 0; i < data.length; i++) {
-				                                        htmlMatchings += "<label class=\"btn btn-primary\" >";
-				                                        htmlMatchings += " <input class=\"toggle\" type=\"radio\" name=\"matchingType\" id=\"" + data[i] + "\" value=\"" + data[i] + "\" >"
-				                                                + data[i];
-				                                        htmlMatchings += "</label>";
-			                                        }
-			                                        $('#matching').html(htmlMatchings);
-			                                        $('#matching input')[0].checked = true;
-		                                        });
-	                        })();
-
-	                        $("#show").click(function(e) {
-		                        loadTable();
+        function loadExperimentTypes() {
+	        $
+	                .getJSON(
+	                        '${exptypes}',
+	                        {
+		                        ajax : 'false'
+	                        },
+	                        function(data) {
+		                        var htmlExperimentTypes = "";
+		                        for ( var i = 0; i < data.length; i++) {
+			                        htmlExperimentTypes += "<label class=\"btn btn-primary\" >";
+			                        htmlExperimentTypes += " <input class=\"toggle\" type=\"radio\" name=\"experimentType\" id=\"" + data[i] + "\" value=\"" + data[i] + "\" >"
+			                                + data[i];
+			                        htmlExperimentTypes += "</label>";
+		                        }
+		                        $('#expTypes').html(htmlExperimentTypes);
+		                        $('#expTypes input')[0].checked = true;
+		                        // Add the listener for loading the matchings
+		                        $("#expTypes input").change(loadMatchings);
 	                        });
-                        });
+        };
+
+        function loadTable() {
+	        $.getJSON('${experimentoverview}', {
+	            experimentType : $('#expTypes input:checked').val(),
+	            matching : $('#matching input:checked').val(),
+	            ajax : 'false'
+	        }, function(data) {
+		        //http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
+		        var tbl_body = "";
+		        var tbl_hd = "";
+
+		        $.each(data, function(i) {
+			        var tbl_row = "";
+			        if (i > 0) {
+				        $.each(this, function(k, v) {
+					        tbl_row += "<td>" + v + "</td>";
+				        });
+				        tbl_body += "<tr>" + tbl_row + "</tr>";
+			        } else {
+				        $.each(this, function(k, v) {
+					        tbl_row += "<th class=\"rotated_cell\"><div >" + v + "</div></th>";
+				        });
+				        tbl_hd += "<tr>" + tbl_row + "</tr>";
+			        }
+		        });
+		        $("#outputTable thead").html(tbl_hd);
+		        $("#outputTable tbody").html(tbl_body);
+		        //draw spider chart
+		        var chartData = [];
+		        //Legend titles  ['Smartphone','Tablet'];
+		        var LegendOptions = [];
+		        $.each(data, function(i) {
+			        //iterate over rows
+			        if (i > 0) {
+				        var annotatorResults = [];
+				        $.each(this, function(k, v) {
+					        if (k == 0) {
+						        //annotator
+						        LegendOptions.push(v);
+					        } else {
+						        //results like {axis:"Email",value:0.71},
+						        var tmp = {};
+						        tmp.axis = data[0][k];
+						        if (v == "n.a." || v.indexOf("error") > -1) {
+							        tmp.value = 0;
+						        } else {
+							        tmp.value = v;
+						        }
+						        annotatorResults.push(tmp);
+					        }
+				        });
+				        chartData.push(annotatorResults);
+			        }
+		        });
+		        //[[{axis:"Email",value:0.71},{axis:"aa",value:0}],[{axis:"Email",value:0.71},{axis:"aa",value:0.1},]];
+		        drawChart(chartData, LegendOptions);
+	        }).fail(function() {
+		        console.log("error loading data for table");
+	        });
+        };
+
+        $(document).ready(function() {
+	        //++++++++++++
+	        //creating the radioboxes
+	        //++++++++++++
+	        loadExperimentTypes();
+	        loadMatchings();
+
+	        $("#show").click(function(e) {
+		        loadTable();
+	        });
+        });
 	</script>
 </body>
