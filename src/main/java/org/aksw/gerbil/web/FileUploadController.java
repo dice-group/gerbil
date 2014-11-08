@@ -11,6 +11,7 @@ import org.aksw.gerbil.transfer.FileMeta;
 import org.aksw.gerbil.transfer.UploadFileContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,57 +30,56 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @RequestMapping("/file")
 public class FileUploadController {
 
-    private static final transient Logger logger = LoggerFactory.getLogger(FileUploadController.class);
+	private static final transient Logger logger = LoggerFactory
+			.getLogger(FileUploadController.class);
+	@Value("org.aksw.gerbil.UploadPath")
+	private String path;
 
-    private String path = "/data/d.cherix/tmp/";
+	public FileUploadController() {
 
-    public FileUploadController() {
+	}
 
-    }
+	@RequestMapping(value = "upload", method = RequestMethod.GET)
+	public ModelAndView upload() {
+		return new ModelAndView("fileupload");
+	}
 
-    public FileUploadController(String path) {
-        this.path = path;
-    }
+	@RequestMapping(value = "upload", method = RequestMethod.POST)
+	public @ResponseBody ResponseEntity<UploadFileContainer> upload(
+			MultipartHttpServletRequest request, HttpServletResponse response){
+		
+		if (path == null){
+			logger.error("Path must be not null");
+			return new ResponseEntity<UploadFileContainer>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		LinkedList<FileMeta> files = new LinkedList<FileMeta>();
+		MultipartFile mpf = null;
 
-    @RequestMapping(value = "upload", method = RequestMethod.GET)
-    public ModelAndView upload() {
-        return new ModelAndView("fileupload");
-    }
+		for (Iterator<String> it = request.getFileNames(); it.hasNext();) {
+			mpf = request.getFile(it.next());
+			logger.debug("{} uploaded", mpf.getOriginalFilename());
 
-    @RequestMapping(value = "upload", method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<UploadFileContainer> upload(MultipartHttpServletRequest request,
-            HttpServletResponse response) throws JsonGenerationException, JsonMappingException, IOException {
-        LinkedList<FileMeta> files = new LinkedList<FileMeta>();
-        MultipartFile mpf = null;
+			FileMeta fileContainer = new FileMeta();
+			fileContainer.setName(mpf.getOriginalFilename());
+			fileContainer.setSize(mpf.getSize() / 1024 + "Kb");
+			fileContainer.setFileType(mpf.getContentType());
 
-        for (Iterator<String> it = request.getFileNames(); it.hasNext();) {
-            mpf = request.getFile(it.next());
-            logger.debug("{} uploaded", mpf.getOriginalFilename());
+			try {
+				fileContainer.setBytes(mpf.getBytes());
+				FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(path
+						+ mpf.getOriginalFilename()));
 
-            FileMeta fileContainer = new FileMeta();
-            fileContainer.setName(mpf.getOriginalFilename());
-            fileContainer.setSize(mpf.getSize() / 1024 + "Kb");
-            fileContainer.setFileType(mpf.getContentType());
-            if (mpf.getOriginalFilename().endsWith("rdf") || mpf.getOriginalFilename().endsWith("ttl")
-                    || mpf.getOriginalFilename().endsWith("n3") || mpf.getOriginalFilename().endsWith("owl")) {
-                try {
-                    fileContainer.setBytes(mpf.getBytes());
-                    FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(path + mpf.getOriginalFilename()));
+			} catch (IOException e) {
+				logger.error("Error during file upload", e);
+				fileContainer.setError(e.getMessage());
+			}
+			files.add(fileContainer);
+		}
 
-                } catch (IOException e) {
-                    logger.error("Error during file upload", e);
-                    fileContainer.setError(e.getMessage());
-                }
-            } else {
-                fileContainer.setError("Only files with follwing extensions are possible: rdf, ttl, n3, owl");
-                files.add(fileContainer);
-                return new ResponseEntity<>(new UploadFileContainer(files),HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            files.add(fileContainer);
-
-        }
-        UploadFileContainer uploadFileContainer = new UploadFileContainer(files);
-        return new ResponseEntity<UploadFileContainer>(uploadFileContainer, HttpStatus.OK);
-    }
+		UploadFileContainer uploadFileContainer = new UploadFileContainer(files);
+		return new ResponseEntity<UploadFileContainer>(uploadFileContainer,
+				HttpStatus.OK);
+	}
 
 }

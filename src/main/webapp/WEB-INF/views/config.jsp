@@ -375,6 +375,15 @@
 											});
 							//if add button is clicked check whether there is a name and a uri 
 							$('#warningEmptyDataset').hide();
+							$('#fileupload').click( function(){
+								var name = $('#nameDataset')
+								.val();
+								if(name == ''){
+									$('#fileupload').fileupload('disable');
+								} else {
+									$('#fileupload').fileupload('enable');
+								}
+							});
 
 							//submit button clicked will collect and sent experiment data to backend
 							$('#submit')
