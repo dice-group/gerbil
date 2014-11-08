@@ -1,0 +1,83 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Silviu-Petru Cucerzan",
+    "homepage" : "http://research.microsoft.com/en-us/people/silviu/",
+    "mbox" : "silviu(at)microsoft.com",
+    "name" : "Silviu-Petru Cucerzan"
+  }, {
+    "@id" : "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip",
+    "@type" : [ "dcat:Distribution", "dataid:Distribution" ],
+    "description" : "Contains multiple datasets. MSNBC corpus in MSNBC subfolder",
+    "rights" : "All rights reserved by owner of original dataset",
+    "title" : "ACL2011WikificationData.zip",
+    "accessURL" : "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip",
+    "mediaType" : "application/zip"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/MSNBC",
+    "@type" : "void:DatasetDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/corpora/MSNBC#dataset"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/MSNBC#dataset",
+    "@type" : [ "void:Dataset", "dcat:Dataset", "prov:Entity", "dataid:Dataset" ],
+    "description" : "Top two stories in the ten MSNBC news categories (Business, U.S. Politics, Entertainment, Health, Sports, Tech & Science, Travel, TV News, U.S. News, and World News) as of January 2, 2007 as input. Post-hoc evaluation of the disambiguations hypothesized for the surface forms correctly identified by the system (i.e. if the boundaries of a surface form were not identified correctly then we disregarded it). Disambiguation defined to be correct if it represented the best possible Wikipedia article that would satisfy a user�s need for information and incorrect otherwise.",
+    "issued" : "06-28-2009",
+    "language" : "english",
+    "license" : "http://purl.org/NET/rdflicense/allrightsreserved",
+    "rights" : "Please cite: Silviu Cucerzan. Large Scale Named Entity Disambiguation Based on Wikipedia Data. In The EMNLP-CoNLL Joint Conference, Prague, 2007.",
+    "title" : "MSNBC",
+    "label" : "MSNBC",
+    "contactPoint" : "_:b0",
+    "distribution" : "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip",
+    "keyword" : [ "linguistics", "news", "corpus", "ner" ],
+    "landingPage" : "http://cogcomp.cs.illinois.edu/page/resource_view/4"
+  } ],
+  "@context" : {
+    "homepage" : "http://xmlns.com/foaf/0.1/homepage",
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "mediaType" : "http://www.w3.org/ns/dcat#mediaType",
+    "accessURL" : "http://www.w3.org/ns/dcat#accessURL",
+    "rights" : "http://purl.org/dc/terms/rights",
+    "description" : "http://purl.org/dc/terms/description",
+    "title" : "http://purl.org/dc/terms/title",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "language" : "http://purl.org/dc/terms/language",
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

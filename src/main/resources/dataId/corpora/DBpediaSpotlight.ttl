@@ -1,0 +1,68 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight>
+  a void:DatasetDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight#dataset>.
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight#dataset>
+  a dataid:Dataset, dcat:Dataset, void:Dataset, sd:Dataset, prov:Entity ;
+  dc:title "DBpedia Spotlight NIF NER Corpus" ;
+  rdfs:label "DBpedia Spotlight NIF NER Corpus" ;
+  dc:description "It contains 60 natural language sentences from ten different New York Times articles with overall 249 annotated DBpedia entities, i. e. the entities are not explicitely bound to mentions within the texts, which causes a certain lack of clarity. Therefore, we (in all conscience) retroactively have allocated the entities to their positions within the texts. The entities dbp:Markup_Language and dbp:PBC_CSKA_Moscow could not be linked in the texts, since there was also a more specific entity enlisted occupying their solely possible location, e. g. hypertext markup language has been annotated with dbp:HTML rather than dbp:Markup_language." ;
+  dc:issued "07-17-2014"^^xsd:date ;
+  dc:rights """Please cite: P. N. Mendes, M. Jakob, A. García-Silva, and C. Bizer. DBpedia Spotlight: shedding light on the web of documents. In Proc. of the 7th Int. Conf. on Semantic Systems, 2011 AND N. Steinmetz, M. Knuth, and H. Sack. Statistical Analyses of Named Entity
+Disambiguation Benchmarks in Proceedings of NLP-DBPEDIA@ISWC 2013""" ;
+  void:rootResource <http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl> ;
+  void:exampleResource <http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl> ;
+  void:subset <http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight#links> ;
+  dc:language "english" ;
+  void:vocabulary <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> ;
+  dcat:landingPage <http://www.yovisto.com/labs/ner-benchmarks/> ;
+  dcat:keyword "nif","ner","corpus","evaluation","linguistics" ;
+  dataid:licenseName "Creative Commons Attribution-ShareAlike 4.0 International" ;
+  dc:license <http://purl.oclc.org/NET/rdflicense/cc-by-sa> ;
+  dcat:distribution <http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl> ;
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Magnus Knuth" ;
+    foaf:name "Magnus Knuth" ;
+    foaf:mbox "magnus.knuth(at)hpi.uni-potsdam.de"
+  ] ;
+  prov:wasDerivedFrom [
+    a dataid:Entity ;
+    dc:title "DBpedia Spotlight Evaluation Corpus" ;
+    dcat:landingPage <http://wiki.dbpedia.org/spotlight/isemantics2011/evaluation> ;
+    dc:creator [
+      a dataid:Agent ;
+      rdfs:label "Pablo N. Mendes" ;
+      foaf:name "Pablo N. Mendes" ;
+      foaf:mbox "pablo(at)pablomendes.com"
+    ]
+  ] ;
+  void:triples "3425" .
+
+<http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl>
+  a dataid:Distribution ;
+  dc:title "Complete DBpedia Spotlight corpus" ;
+  dc:description "Complete Corpus in turtle format" ;
+  dcat:accessURL "http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl" ;
+  dc:format "text/turtle" ;
+  void:triples "3425" .
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight#links>
+  a dataid:Linkset ;
+  dc:issued "10-28-2014" ;
+  dc:modified "10-28-2014" ;
+  void:linkPredicate <http://www.w3.org/2005/11/its/rdf#taIdentRef> ;
+  void:triples "325" ;
+  void:target <http://dbpedia.org> .
+

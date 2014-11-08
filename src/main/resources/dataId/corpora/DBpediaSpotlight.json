@@ -1,0 +1,143 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Magnus Knuth",
+    "mbox" : "magnus.knuth(at)hpi.uni-potsdam.de",
+    "name" : "Magnus Knuth"
+  }, {
+    "@id" : "_:b1",
+    "@type" : "dataid:Entity",
+    "creator" : "_:b2",
+    "title" : "DBpedia Spotlight Evaluation Corpus",
+    "landingPage" : "http://wiki.dbpedia.org/spotlight/isemantics2011/evaluation"
+  }, {
+    "@id" : "_:b2",
+    "@type" : "dataid:Agent",
+    "label" : "Pablo N. Mendes",
+    "mbox" : "pablo(at)pablomendes.com",
+    "name" : "Pablo N. Mendes"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight",
+    "@type" : "void:DatasetDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight#dataset"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight#dataset",
+    "@type" : [ "dataid:Dataset", "dcat:Dataset", "void:Dataset", "prov:Entity", "sd:Dataset" ],
+    "licenseName" : "Creative Commons Attribution-ShareAlike 4.0 International",
+    "description" : "It contains 60 natural language sentences from ten different New York Times articles with overall 249 annotated DBpedia entities, i. e. the entities are not explicitely bound to mentions within the texts, which causes a certain lack of clarity. Therefore, we (in all conscience) retroactively have allocated the entities to their positions within the texts. The entities dbp:Markup_Language and dbp:PBC_CSKA_Moscow could not be linked in the texts, since there was also a more specific entity enlisted occupying their solely possible location, e. g. hypertext markup language has been annotated with dbp:HTML rather than dbp:Markup_language.",
+    "issued" : {
+      "@type" : "xsd:date",
+      "@value" : "07-17-2014"
+    },
+    "language" : "english",
+    "license" : "http://purl.oclc.org/NET/rdflicense/cc-by-sa",
+    "rights" : "Please cite: P. N. Mendes, M. Jakob, A. García-Silva, and C. Bizer. DBpedia Spotlight: shedding light on the web of documents. In Proc. of the 7th Int. Conf. on Semantic Systems, 2011 AND N. Steinmetz, M. Knuth, and H. Sack. Statistical Analyses of Named Entity\nDisambiguation Benchmarks in Proceedings of NLP-DBPEDIA@ISWC 2013",
+    "title" : "DBpedia Spotlight NIF NER Corpus",
+    "exampleResource" : "http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl",
+    "rootResource" : "http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl",
+    "subset" : "http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight#links",
+    "triples" : "3425",
+    "vocabulary" : "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#",
+    "label" : "DBpedia Spotlight NIF NER Corpus",
+    "contactPoint" : "_:b0",
+    "distribution" : "http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl",
+    "keyword" : [ "nif", "corpus", "evaluation", "linguistics", "ner" ],
+    "landingPage" : "http://www.yovisto.com/labs/ner-benchmarks/",
+    "wasDerivedFrom" : "_:b1"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight#links",
+    "@type" : "dataid:Linkset",
+    "issued" : "10-28-2014",
+    "modified" : "10-28-2014",
+    "linkPredicate" : "http://www.w3.org/2005/11/its/rdf#taIdentRef",
+    "target" : "http://dbpedia.org",
+    "triples" : "325"
+  }, {
+    "@id" : "http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl",
+    "@type" : "dataid:Distribution",
+    "description" : "Complete Corpus in turtle format",
+    "format" : "text/turtle",
+    "title" : "Complete DBpedia Spotlight corpus",
+    "triples" : "3425",
+    "accessURL" : "http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl"
+  } ],
+  "@context" : {
+    "target" : {
+      "@id" : "http://rdfs.org/ns/void#target",
+      "@type" : "@id"
+    },
+    "triples" : "http://rdfs.org/ns/void#triples",
+    "linkPredicate" : {
+      "@id" : "http://rdfs.org/ns/void#linkPredicate",
+      "@type" : "@id"
+    },
+    "modified" : "http://purl.org/dc/terms/modified",
+    "issued" : "http://purl.org/dc/terms/issued",
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "format" : "http://purl.org/dc/terms/format",
+    "accessURL" : "http://www.w3.org/ns/dcat#accessURL",
+    "description" : "http://purl.org/dc/terms/description",
+    "title" : "http://purl.org/dc/terms/title",
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "language" : "http://purl.org/dc/terms/language",
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "rights" : "http://purl.org/dc/terms/rights",
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "wasDerivedFrom" : {
+      "@id" : "http://www.w3.org/ns/prov#wasDerivedFrom",
+      "@type" : "@id"
+    },
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "exampleResource" : {
+      "@id" : "http://rdfs.org/ns/void#exampleResource",
+      "@type" : "@id"
+    },
+    "vocabulary" : {
+      "@id" : "http://rdfs.org/ns/void#vocabulary",
+      "@type" : "@id"
+    },
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "subset" : {
+      "@id" : "http://rdfs.org/ns/void#subset",
+      "@type" : "@id"
+    },
+    "rootResource" : {
+      "@id" : "http://rdfs.org/ns/void#rootResource",
+      "@type" : "@id"
+    },
+    "creator" : {
+      "@id" : "http://purl.org/dc/terms/creator",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

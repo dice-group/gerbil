@@ -1,0 +1,115 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Ricardo Usbeck",
+    "mbox" : "ricardo.usbeck(at)googlemail.com",
+    "name" : "Ricardo Usbeck"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500",
+    "@type" : "void:DatasetDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500#dataset"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500#dataset",
+    "@type" : [ "void:Dataset", "dataid:Dataset", "sd:Dataset", "dcat:Dataset", "prov:Entity" ],
+    "licenseName" : "Creative Commons Attribution 4.0 International",
+    "description" : "This corpus has been created using a dataset comprising a list of 1,457 RSS feeds as compiled in (Goldhahn et al. 2012). The list includes all major worldwide newspapers and a wide range of topics, e.g., World , U.S. , Business , Sci- ence etc. The RSS list has been compiled using a 76-hour crawl, which resulted in a corpus of about 11.7 million sen- tences. A subset of this corpus has been created by ran- domly selecting 1% of the contained sentences. Finally, one researcher annotated 500 randomly chosen sentences manually. These sentences were a subset of those which contained a natural language representation of a formal relation, like “. . . , who was born in. . . ” for dpo:birthPlace (see (Gerber and Ngomo, 2012)). The relations had to occur more than 5 times in the 1% corpus. In case the mentioned entity is not contained in a new URI has been generated. This corpus has been used for evaluation purposes in (Gerber et al., 2013) ",
+    "issued" : "02-04-2014",
+    "language" : "english",
+    "license" : "http://purl.org/NET/rdflicense/cc-by4.0",
+    "rights" : "Please cite: Michael Röder, Ricardo Usbeck, Sebastian Hellmann, Daniel Gerber und Andreas Both. N3 - A Collection of Datasets for Named Entity Recognition and Disambiguation in the NLP Interchange Format. In The 9th edition of the Language Resources and Evaluation Conference, 26-31 May, Reykjavik, Iceland ",
+    "title" : "RSS-500 NIF NER CORPUS",
+    "exampleResource" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/RSS-500.ttl",
+    "subset" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500#links",
+    "vocabulary" : "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#",
+    "label" : "RSS-500 NIF NER CORPUS",
+    "contactPoint" : "_:b0",
+    "distribution" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/RSS-500.ttl",
+    "keyword" : [ "corpus", "linguistics", "nif", "ner", "evaluation" ],
+    "landingPage" : "http://aksw.org/Projects/N3NERNEDNIF.html"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500#links",
+    "@type" : "dataid:Linkset",
+    "issued" : "02-04-2014",
+    "linkPredicate" : "http://www.w3.org/2005/11/its/rdf#taIdentRef",
+    "target" : "http://dbpedia.org",
+    "triples" : "524"
+  }, {
+    "@id" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/RSS-500.ttl",
+    "@type" : "dataid:Distribution",
+    "description" : "Complete corpus file in turtle format",
+    "format" : "text/turtle",
+    "issued" : "02-04-2014",
+    "title" : "Complete corpus",
+    "triples" : "10038",
+    "accessURL" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/RSS-500.ttl"
+  } ],
+  "@context" : {
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "title" : "http://purl.org/dc/terms/title",
+    "vocabulary" : {
+      "@id" : "http://rdfs.org/ns/void#vocabulary",
+      "@type" : "@id"
+    },
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "exampleResource" : {
+      "@id" : "http://rdfs.org/ns/void#exampleResource",
+      "@type" : "@id"
+    },
+    "subset" : {
+      "@id" : "http://rdfs.org/ns/void#subset",
+      "@type" : "@id"
+    },
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "description" : "http://purl.org/dc/terms/description",
+    "rights" : "http://purl.org/dc/terms/rights",
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "language" : "http://purl.org/dc/terms/language",
+    "triples" : "http://rdfs.org/ns/void#triples",
+    "format" : "http://purl.org/dc/terms/format",
+    "accessURL" : "http://www.w3.org/ns/dcat#accessURL",
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "target" : {
+      "@id" : "http://rdfs.org/ns/void#target",
+      "@type" : "@id"
+    },
+    "linkPredicate" : {
+      "@id" : "http://rdfs.org/ns/void#linkPredicate",
+      "@type" : "@id"
+    },
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

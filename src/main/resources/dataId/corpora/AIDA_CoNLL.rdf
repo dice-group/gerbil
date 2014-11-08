@@ -1,0 +1,55 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <void:DatasetDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/AIDA_CoNLL">
+    <foaf:primaryTopic>
+      <prov:Entity rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/AIDA_CoNLL#dataset">
+        <dc:language>english</dc:language>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>jhoffart(at)mpi-inf.mpg.de</foaf:mbox>
+            <foaf:name>Johannes Hoffart</foaf:name>
+            <rdfs:label>Johannes Hoffart</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <dcat:keyword>reuters</dcat:keyword>
+        <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+        <dcat:keyword>linguistics</dcat:keyword>
+        <dc:title>AIDA CoNLL-YAGO Dataset</dc:title>
+        <dcat:landingPage rdf:resource="http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/aida/downloads/"/>
+        <rdfs:label>AIDA CoNLL-YAGO Dataset</rdfs:label>
+        <dc:rights>Please cite: Johannes Hoffart, Mohamed Amir Yosef, Ilaria Bordino, Hagen F�rstenau, Manfred Pinkal, Marc Spaniol, Bilyana Taneva, Stefan Thater, Gerhard Weikum. Robust Disambiguation of Named Entities in Text. In: Conference on Empirical Methods in Natural Language Processing, p. 782�792, Edinburgh, Scotland, 2011</dc:rights>
+        <rdf:type rdf:resource="http://rdfs.org/ns/void#Dataset"/>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >11-21-2013</dc:issued>
+        <dc:license rdf:resource="http://purl.oclc.org/NET/rdflicenses/cc-by-sa3.0de"/>
+        <dataid:licenseName>Creative Commons CC-BY-SA 3.0 Germany</dataid:licenseName>
+        <dc:description>Dataset contains assignments of entities to the mentions of named entities annotated for the original CoNLL 2003 entity recognition task. The entities are identified by YAGO2 entity name, by Wikipedia URL, or by Freebase mid (Thanks to Massimiliano Ciaramita from Google Z�rich for creating the Wikipedia/Freebase mapping and making it available to us). The zip contains a README.txt with details about the format, as well as instructions how to create it from the original CoNLL 2003 dataset (this is required). </dc:description>
+        <dcat:keyword>ner</dcat:keyword>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Dataset"/>
+        <dcat:distribution>
+          <dcat:Distribution rdf:about="http://resources.mpi-inf.mpg.de/yago-naga/aida/download/aida-yago2-dataset.zip">
+            <dcat:mediaType>application/zip</dcat:mediaType>
+            <dcat:accessURL>http://resources.mpi-inf.mpg.de/yago-naga/aida/download/aida-yago2-dataset.zip</dcat:accessURL>
+            <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+            >11-21-2013</dc:issued>
+            <dc:description>Complete dataset</dc:description>
+            <dc:title>aida-yago2-dataset.zip</dc:title>
+            <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Distribution"/>
+          </dcat:Distribution>
+        </dcat:distribution>
+        <dcat:keyword>corpus</dcat:keyword>
+        <dcat:keyword>newswire</dcat:keyword>
+      </prov:Entity>
+    </foaf:primaryTopic>
+  </void:DatasetDescription>
+</rdf:RDF>

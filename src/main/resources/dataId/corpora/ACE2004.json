@@ -1,0 +1,83 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Alexis Mitchell",
+    "mbox" : "amitche0(at)ldc.upenn.edu",
+    "name" : "Alexis Mitchell"
+  }, {
+    "@id" : "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip",
+    "@type" : [ "dcat:Distribution", "dataid:Distribution" ],
+    "description" : "Contains multiple datasets. ACE2004 corpus in ACE2004_Coref_Turking subfolder",
+    "rights" : "All rights reserved by owner of original dataset",
+    "title" : "ACL2011WikificationData.zip",
+    "accessURL" : "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip",
+    "mediaType" : "application/zip"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/ACE2004",
+    "@type" : "void:DatasetDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/corpora/ACE2004#dataset"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/ACE2004#dataset",
+    "@type" : [ "void:Dataset", "dcat:Dataset", "dataid:Dataset", "prov:Entity" ],
+    "licenseName" : "LDC Non-Member agreement",
+    "description" : "The objective of the ACE program is to develop automatic content extraction technology to support automatic processing of human language in text form. In September 2004, sites were evaluated on system performance in six areas: Entity Detection and Recognition (EDR), Entity Mention Detection (EMD), EDR Co-reference, Relation Detection and Recognition (RDR), Relation Mention Detection (RMD), and RDR given reference entities. All tasks were evaluated in three languages: English, Chinese and Arabic.\nThe current publication consists of the official training data for these evaluation tasks. Full task description here: https://www.ldc.upenn.edu/sites/www.ldc.upenn.edu/files/lrec2004-ace-program.pdf",
+    "issued" : "03-15-2005",
+    "language" : "english",
+    "license" : "http://purl.org/NET/rdflicense/allrightsreserved",
+    "rights" : "Please cite: Mitchell, Alexis, et al. ACE 2004 Multilingual Training Corpus LDC2005T09. Web Download. Philadelphia: Linguistic Data Consortium, 2005.",
+    "title" : "ACE 2004 Multilingual Training Corpus",
+    "label" : "ACE 2004 Multilingual Training Corpus",
+    "contactPoint" : "_:b0",
+    "distribution" : "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip",
+    "keyword" : [ "newswire", "broadcast news", "ner", "linguistics", "corpus" ],
+    "landingPage" : [ "https://catalog.ldc.upenn.edu/LDC2005T09", "http://www.itl.nist.gov/iad/mig/tests/ace/2004/" ]
+  } ],
+  "@context" : {
+    "mediaType" : "http://www.w3.org/ns/dcat#mediaType",
+    "accessURL" : "http://www.w3.org/ns/dcat#accessURL",
+    "rights" : "http://purl.org/dc/terms/rights",
+    "description" : "http://purl.org/dc/terms/description",
+    "title" : "http://purl.org/dc/terms/title",
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "language" : "http://purl.org/dc/terms/language",
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

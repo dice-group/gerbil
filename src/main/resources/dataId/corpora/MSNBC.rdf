@@ -1,0 +1,53 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <void:DatasetDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/MSNBC">
+    <foaf:primaryTopic>
+      <void:Dataset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/MSNBC#dataset">
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/allrightsreserved"/>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:homepage>http://research.microsoft.com/en-us/people/silviu/</foaf:homepage>
+            <foaf:mbox>silviu(at)microsoft.com</foaf:mbox>
+            <foaf:name>Silviu-Petru Cucerzan</foaf:name>
+            <rdfs:label>Silviu-Petru Cucerzan</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >06-28-2009</dc:issued>
+        <dcat:keyword>linguistics</dcat:keyword>
+        <dc:rights>Please cite: Silviu Cucerzan. Large Scale Named Entity Disambiguation Based on Wikipedia Data. In The EMNLP-CoNLL Joint Conference, Prague, 2007.</dc:rights>
+        <rdfs:label>MSNBC</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+        <dc:language>english</dc:language>
+        <dc:title>MSNBC</dc:title>
+        <dc:description>Top two stories in the ten MSNBC news categories (Business, U.S. Politics, Entertainment, Health, Sports, Tech &amp; Science, Travel, TV News, U.S. News, and World News) as of January 2, 2007 as input. Post-hoc evaluation of the disambiguations hypothesized for the surface forms correctly identified by the system (i.e. if the boundaries of a surface form were not identified correctly then we disregarded it). Disambiguation defined to be correct if it represented the best possible Wikipedia article that would satisfy a user�s need for information and incorrect otherwise.</dc:description>
+        <dcat:distribution>
+          <dcat:Distribution rdf:about="http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip">
+            <dcat:mediaType>application/zip</dcat:mediaType>
+            <dcat:accessURL>http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip</dcat:accessURL>
+            <dc:rights>All rights reserved by owner of original dataset</dc:rights>
+            <dc:description>Contains multiple datasets. MSNBC corpus in MSNBC subfolder</dc:description>
+            <dc:title>ACL2011WikificationData.zip</dc:title>
+            <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Distribution"/>
+          </dcat:Distribution>
+        </dcat:distribution>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Dataset"/>
+        <dcat:landingPage rdf:resource="http://cogcomp.cs.illinois.edu/page/resource_view/4"/>
+        <dcat:keyword>news</dcat:keyword>
+        <dcat:keyword>corpus</dcat:keyword>
+        <dcat:keyword>ner</dcat:keyword>
+      </void:Dataset>
+    </foaf:primaryTopic>
+  </void:DatasetDescription>
+</rdf:RDF>
