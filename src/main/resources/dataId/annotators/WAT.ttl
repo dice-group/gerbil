@@ -1,0 +1,31 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/annotators/WAT>
+  a dataid:ServiceDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/annotators/WAT#annotator>.
+
+<http://gerbil.aksw.org/gerbil/dataId/annotators/WAT#annotator>
+  a dataid:Service, prov:Entity ;
+  rdfs:label "WAT" ;
+  dc:issued "11-03-2014"^^xsd:date ;
+  dcat:landingPage <http://acube.di.unipi.it/tagme/> ;
+  dcat:keyword "ner","Sa2W" ;
+  dataid:licenseName "APACHE LICENSE 2.0" ;
+  dc:license <http://purl.org/NET/rdflicense/licAPACHE> ;
+  dc:rights """Please cite: F. Piccinno and P. Ferragina. From tagme to wat: a new entity annotator. In Proceedings of the first international workshop on Entity recognition & disambiguation, pages 55-62. ACM, 2014.""";
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Francesco Piccinno" ;
+    foaf:name "Francesco Piccinno" ;
+    foaf:mbox "stack.box(at)gmail.com"
+  ] ;
+  dc:title "WAT" .

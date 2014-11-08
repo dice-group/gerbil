@@ -1,0 +1,115 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Ricardo Usbeck",
+    "mbox" : "ricardo.usbeck(at)googlemail.com",
+    "name" : "Ricardo Usbeck"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-News-100",
+    "@type" : "void:DatasetDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-News-100#dataset"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-News-100#dataset",
+    "@type" : [ "prov:Entity", "dataid:Dataset", "void:Dataset", "sd:Dataset", "dcat:Dataset" ],
+    "licenseName" : "Creative Commons Attribution 4.0 International",
+    "description" : "This corpus comprises 100 German news articles from the online news platform news.de. All of the articles were published in the year of 2010 and contain the word Golf. This word is a homonym that can have the following meanings: * A gulf like the Gulf of Mexico or the Persian Gulf, the ball sport or a car model produced by the German manufacturer Volkswagen.\n\nOne researcher annotated the documents manually. Another researcher resolved occurring conflicts after supervising the corpus. Although the sport golf as well as the car are not within the class range of NER, they are kept for evaluation purposes",
+    "issued" : "02-04-2014",
+    "language" : "english",
+    "license" : "http://purl.org/NET/rdflicense/cc-by4.0",
+    "rights" : "Please cite: Michael Röder, Ricardo Usbeck, Sebastian Hellmann, Daniel Gerber und Andreas Both. N3 - A Collection of Datasets for Named Entity Recognition and Disambiguation in the NLP Interchange Format. In The 9th edition of the Language Resources and Evaluation Conference, 26-31 May, Reykjavik, Iceland ",
+    "title" : "News-100 NIF NER Corpus",
+    "exampleResource" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/News-100.ttl",
+    "subset" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-News-100#links",
+    "vocabulary" : "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#",
+    "label" : "News-100 NIF NER Corpus",
+    "contactPoint" : "_:b0",
+    "distribution" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/News-100.ttl",
+    "keyword" : [ "corpus", "ner", "evaluation", "linguistics", "nif" ],
+    "landingPage" : "http://aksw.org/Projects/N3NERNEDNIF.html"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-News-100#links",
+    "@type" : "dataid:Linkset",
+    "issued" : "02-04-2014",
+    "linkPredicate" : "http://www.w3.org/2005/11/its/rdf#taIdentRef",
+    "target" : "http://dbpedia.org",
+    "triples" : "1547"
+  }, {
+    "@id" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/News-100.ttl",
+    "@type" : "dataid:Distribution",
+    "description" : "Complete corpus file in turtle format",
+    "format" : "text/turtle",
+    "issued" : "02-04-2014",
+    "title" : "Complete corpus",
+    "triples" : "12289",
+    "accessURL" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/News-100.ttl"
+  } ],
+  "@context" : {
+    "target" : {
+      "@id" : "http://rdfs.org/ns/void#target",
+      "@type" : "@id"
+    },
+    "triples" : "http://rdfs.org/ns/void#triples",
+    "linkPredicate" : {
+      "@id" : "http://rdfs.org/ns/void#linkPredicate",
+      "@type" : "@id"
+    },
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "vocabulary" : {
+      "@id" : "http://rdfs.org/ns/void#vocabulary",
+      "@type" : "@id"
+    },
+    "description" : "http://purl.org/dc/terms/description",
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "rights" : "http://purl.org/dc/terms/rights",
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "title" : "http://purl.org/dc/terms/title",
+    "subset" : {
+      "@id" : "http://rdfs.org/ns/void#subset",
+      "@type" : "@id"
+    },
+    "exampleResource" : {
+      "@id" : "http://rdfs.org/ns/void#exampleResource",
+      "@type" : "@id"
+    },
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "language" : "http://purl.org/dc/terms/language",
+    "format" : "http://purl.org/dc/terms/format",
+    "accessURL" : "http://www.w3.org/ns/dcat#accessURL",
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

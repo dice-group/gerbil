@@ -1,0 +1,67 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <void:DatasetDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500">
+    <foaf:primaryTopic>
+      <void:Dataset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500#dataset">
+        <dcat:landingPage rdf:resource="http://aksw.org/Projects/N3NERNEDNIF.html"/>
+        <rdfs:label>RSS-500 NIF NER CORPUS</rdfs:label>
+        <dcat:keyword>corpus</dcat:keyword>
+        <dcat:keyword>linguistics</dcat:keyword>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Dataset"/>
+        <dcat:keyword>nif</dcat:keyword>
+        <dcat:keyword>ner</dcat:keyword>
+        <rdf:type rdf:resource="http://www.w3.org/ns/sparql-service-description#Dataset"/>
+        <dc:title>RSS-500 NIF NER CORPUS</dc:title>
+        <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+        <void:vocabulary rdf:resource="http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#"/>
+        <dcat:distribution>
+          <dataid:Distribution rdf:about="https://raw.githubusercontent.com/AKSW/n3-collection/master/RSS-500.ttl">
+            <void:triples>10038</void:triples>
+            <dc:format>text/turtle</dc:format>
+            <dcat:accessURL>https://raw.githubusercontent.com/AKSW/n3-collection/master/RSS-500.ttl</dcat:accessURL>
+            <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+            >02-04-2014</dc:issued>
+            <dc:description>Complete corpus file in turtle format</dc:description>
+            <dc:title>Complete corpus</dc:title>
+          </dataid:Distribution>
+        </dcat:distribution>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >02-04-2014</dc:issued>
+        <void:exampleResource rdf:resource="https://raw.githubusercontent.com/AKSW/n3-collection/master/RSS-500.ttl"/>
+        <void:subset>
+          <dataid:Linkset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500#links">
+            <void:target rdf:resource="http://dbpedia.org"/>
+            <void:triples>524</void:triples>
+            <void:linkPredicate rdf:resource="http://www.w3.org/2005/11/its/rdf#taIdentRef"/>
+            <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+            >02-04-2014</dc:issued>
+          </dataid:Linkset>
+        </void:subset>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>ricardo.usbeck(at)googlemail.com</foaf:mbox>
+            <foaf:name>Ricardo Usbeck</foaf:name>
+            <rdfs:label>Ricardo Usbeck</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/cc-by4.0"/>
+        <dcat:keyword>evaluation</dcat:keyword>
+        <dc:description>This corpus has been created using a dataset comprising a list of 1,457 RSS feeds as compiled in (Goldhahn et al. 2012). The list includes all major worldwide newspapers and a wide range of topics, e.g., World , U.S. , Business , Sci- ence etc. The RSS list has been compiled using a 76-hour crawl, which resulted in a corpus of about 11.7 million sen- tences. A subset of this corpus has been created by ran- domly selecting 1% of the contained sentences. Finally, one researcher annotated 500 randomly chosen sentences manually. These sentences were a subset of those which contained a natural language representation of a formal relation, like “. . . , who was born in. . . ” for dpo:birthPlace (see (Gerber and Ngomo, 2012)). The relations had to occur more than 5 times in the 1% corpus. In case the mentioned entity is not contained in a new URI has been generated. This corpus has been used for evaluation purposes in (Gerber et al., 2013) </dc:description>
+        <dc:rights>Please cite: Michael Röder, Ricardo Usbeck, Sebastian Hellmann, Daniel Gerber und Andreas Both. N3 - A Collection of Datasets for Named Entity Recognition and Disambiguation in the NLP Interchange Format. In The 9th edition of the Language Resources and Evaluation Conference, 26-31 May, Reykjavik, Iceland </dc:rights>
+        <dataid:licenseName>Creative Commons Attribution 4.0 International</dataid:licenseName>
+        <dc:language>english</dc:language>
+      </void:Dataset>
+    </foaf:primaryTopic>
+  </void:DatasetDescription>
+</rdf:RDF>

@@ -1,0 +1,82 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Amparo Elizabeth Cano Basave",
+    "mbox" : "amparo.cano(at)open.ac.uk",
+    "name" : "Amparo Elizabeth Cano Basave"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/Microposts2014",
+    "@type" : "void:DatasetDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/corpora/Microposts2014#dataset"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/Microposts2014#dataset",
+    "@type" : [ "void:Dataset", "dataid:Dataset", "prov:Entity", "dcat:Dataset" ],
+    "licenseName" : "Twitter license",
+    "description" : "The dataset comprises of 3.5K tweets extracted from a much larger collection of over 18 million tweets. This collection, provided by the Redites project, covers event-annotated tweets collected for the period of 15th July 2011 to 15th August 2011 (31 days). It extends over multiple noteworthy events including the death of Amy Winhehouse, the London Riots and the Oslo bombing. Since the task of this challenge is to automatically extract and link entities, we have built our dataset considering both event and non-event tweets. While event tweets are more likely to contain entities, non-event tweets enable us to evaluate the performance of the system in avoiding false positives in the entity extraction phase.\r\nThe dataset has been split into a training (70%) and testing (30%) sets. Following the Twitter TOS we will only provide tweet IDs and annotations for the training set; and tweet IDs for the test set. We will also provide a common framework to mine these datasets from Twitter.",
+    "issued" : "04-07-2014",
+    "language" : "english",
+    "license" : "https://twitter.com/tos",
+    "rights" : "Please cite Making Sense of Microposts (#Microposts2014) Named Entity Extraction & Linking Challenge. Amparo Elizabeth Cano Basave and Giuseppe Rizzo and Andrea Varga and Matthew Rowe and Milan Stankovic and Aba-Sah Dadzie. In 4th Workshop on Making Sense of Microposts (#Microposts2014)}, 2014",
+    "title" : "Microposts 2014 Named Entity Extraction and Linking Challenge (NEEL) dataset",
+    "label" : "Microposts 2014 Named Entity Extraction and Linking Challenge (NEEL) dataset",
+    "contactPoint" : "_:b0",
+    "distribution" : "http://www.scc.lancs.ac.uk/microposts2014/challenge/dataset/microposts2014-neel_challenge_gs.zip",
+    "keyword" : [ "twitter", "ner", "linguistics", "corpus", "tweets" ],
+    "landingPage" : "http://www.scc.lancs.ac.uk/microposts2014/challenge/index.html"
+  }, {
+    "@id" : "http://www.scc.lancs.ac.uk/microposts2014/challenge/dataset/microposts2014-neel_challenge_gs.zip",
+    "@type" : [ "dcat:Distribution", "dataid:Distribution" ],
+    "description" : "Full microposts dataset download file",
+    "title" : "microposts2014-neel_challenge_gs.zip",
+    "accessURL" : "http://www.scc.lancs.ac.uk/microposts2014/challenge/dataset/microposts2014-neel_challenge_gs.zip",
+    "mediaType" : "application/zip"
+  } ],
+  "@context" : {
+    "mediaType" : "http://www.w3.org/ns/dcat#mediaType",
+    "accessURL" : "http://www.w3.org/ns/dcat#accessURL",
+    "description" : "http://purl.org/dc/terms/description",
+    "title" : "http://purl.org/dc/terms/title",
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "rights" : "http://purl.org/dc/terms/rights",
+    "language" : "http://purl.org/dc/terms/language",
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

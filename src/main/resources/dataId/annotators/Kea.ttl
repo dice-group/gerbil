@@ -1,0 +1,24 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/annotators/Kea>
+  a dataid:ServiceDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/annotators/Kea#annotator>.
+
+<http://gerbil.aksw.org/gerbil/dataId/annotators/Kea#annotator>
+  a dataid:Service, prov:Entity ;
+  rdfs:label "Kea" ;
+  dc:issued "11-03-2014"^^xsd:date ;
+  dcat:keyword "ner","Sa2W" ;
+  dataid:licenseName "All rights reserved" ;
+  dc:license <http://purl.org/NET/rdflicense/allrightsreserved> ;
+  dc:rights """Please cite: N. Steinmetz and H. Sack. Semantic multimedia information retrieval based on contextual descriptions. In P. Cimiano, O. Corcho, V. Presutti, L. Hollink, and S. Rudolph, editors, The Semantic Web: Semantics and Big Data, volume 7882 of Lecture Notes in Computer Science, pages 382{396. Springer Berlin Heidelberg, 2013.""";
+  dc:title "Kea" .

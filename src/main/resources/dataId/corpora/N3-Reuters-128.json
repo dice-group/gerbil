@@ -1,0 +1,115 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Ricardo Usbeck",
+    "mbox" : "ricardo.usbeck(at)googlemail.com",
+    "name" : "Ricardo Usbeck"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128",
+    "@type" : "void:DatasetDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128#dataset"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128#dataset",
+    "@type" : [ "void:Dataset", "dcat:Dataset", "prov:Entity", "dataid:Dataset", "sd:Dataset" ],
+    "licenseName" : "Creative Commons Attribution 4.0 International",
+    "description" : "This English corpus is based on the well known Reuters-21578 corpus which contains economic news articles. In particular, we chose 128 articles containing at least one NE. Compared to the News-100 corpus the documents of Reuters-128 are significantly shorter and thus carry a smaller context.\n\nTo create the annotation of NEs with URIs, we implemented a supporting judgement tool. The input for the tool was a subset of more than 150 Reuters-21578 news articles sampled randomly. First, FOX (Ngonga Ngomo et al., 2011) was used for recognizing a first set of NEs. This reduced the amount of work to a feasible portion regarding the size of this dataset. Afterwards, the domain experts corrected the mistakes of FOX manually using the annotation tool. Therefore, the tool highlighted the entities in the texts and added initial URI candidates via simple string matching algorithms. Two scientists determined the correct URI for each named entity manually with an initial voter agreement of 74%. This low initial agreement rate hints towards the difficulty of the disambiguation task. In some cases judges did not agree initially, but came to an agreement shortly after reviewing the cases. While annotating, we left out ticker symbols of companies (e.g., GOOG for Google Inc.), abbreviations and job descriptions because those are always preceded by the full company name respectively a person’s name.",
+    "issued" : "02-04-2014",
+    "language" : "english",
+    "license" : "http://purl.org/NET/rdflicense/cc-by4.0",
+    "rights" : "Please cite: Michael Röder, Ricardo Usbeck, Sebastian Hellmann, Daniel Gerber und Andreas Both. N3 - A Collection of Datasets for Named Entity Recognition and Disambiguation in the NLP Interchange Format. In The 9th edition of the Language Resources and Evaluation Conference, 26-31 May, Reykjavik, Iceland ",
+    "title" : "Reuters-128 NIF NER Corpus ",
+    "exampleResource" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/Reuters-128.ttl",
+    "subset" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128#links",
+    "vocabulary" : "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#",
+    "label" : "Reuters-128 NIF NER Corpus ",
+    "contactPoint" : "_:b0",
+    "distribution" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/Reuters-128.ttl",
+    "keyword" : [ "ner", "corpus", "evaluation", "linguistics", "nif" ],
+    "landingPage" : "http://aksw.org/Projects/N3NERNEDNIF.html"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128#links",
+    "@type" : "dataid:Linkset",
+    "issued" : "02-04-2014",
+    "linkPredicate" : "http://www.w3.org/2005/11/its/rdf#taIdentRef",
+    "target" : "http://dbpedia.org",
+    "triples" : "650"
+  }, {
+    "@id" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/Reuters-128.ttl",
+    "@type" : "dataid:Distribution",
+    "description" : "Complete corpus file in turtle format",
+    "format" : "text/turtle",
+    "issued" : "02-04-2014",
+    "title" : "Complete corpus",
+    "triples" : "6967",
+    "accessURL" : "https://raw.githubusercontent.com/AKSW/n3-collection/master/Reuters-128.ttl"
+  } ],
+  "@context" : {
+    "target" : {
+      "@id" : "http://rdfs.org/ns/void#target",
+      "@type" : "@id"
+    },
+    "triples" : "http://rdfs.org/ns/void#triples",
+    "linkPredicate" : {
+      "@id" : "http://rdfs.org/ns/void#linkPredicate",
+      "@type" : "@id"
+    },
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "format" : "http://purl.org/dc/terms/format",
+    "accessURL" : "http://www.w3.org/ns/dcat#accessURL",
+    "description" : "http://purl.org/dc/terms/description",
+    "title" : "http://purl.org/dc/terms/title",
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "subset" : {
+      "@id" : "http://rdfs.org/ns/void#subset",
+      "@type" : "@id"
+    },
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "rights" : "http://purl.org/dc/terms/rights",
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "exampleResource" : {
+      "@id" : "http://rdfs.org/ns/void#exampleResource",
+      "@type" : "@id"
+    },
+    "language" : "http://purl.org/dc/terms/language",
+    "vocabulary" : {
+      "@id" : "http://rdfs.org/ns/void#vocabulary",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

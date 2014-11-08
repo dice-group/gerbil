@@ -1,0 +1,43 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/Microposts2014>
+  a void:DatasetDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/corpora/Microposts2014#dataset>.
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/Microposts2014#dataset>
+  a dataid:Dataset, dcat:Dataset, void:Dataset, prov:Entity ;
+  rdfs:label "Microposts 2014 Named Entity Extraction and Linking Challenge (NEEL) dataset" ;
+  dc:issued "04-07-2014"^^xsd:date ;
+  dc:language "english" ;
+  dcat:landingPage <http://www.scc.lancs.ac.uk/microposts2014/challenge/index.html> ;
+  dcat:keyword "tweets","ner","corpus","linguistics","twitter" ;
+  dcat:distribution <http://www.scc.lancs.ac.uk/microposts2014/challenge/dataset/microposts2014-neel_challenge_gs.zip> ;
+  dataid:licenseName "Twitter license" ;
+  dc:license <https://twitter.com/tos> ;
+  dc:rights """Please cite Making Sense of Microposts (#Microposts2014) Named Entity Extraction & Linking Challenge. Amparo Elizabeth Cano Basave and Giuseppe Rizzo and Andrea Varga and Matthew Rowe and Milan Stankovic and Aba-Sah Dadzie. In 4th Workshop on Making Sense of Microposts (#Microposts2014)}, 2014""";
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Amparo Elizabeth Cano Basave" ;
+    foaf:name "Amparo Elizabeth Cano Basave" ;
+    foaf:mbox "amparo.cano(at)open.ac.uk"
+  ] ;
+  dc:title "Microposts 2014 Named Entity Extraction and Linking Challenge (NEEL) dataset" ;
+  dc:description """The dataset comprises of 3.5K tweets extracted from a much larger collection of over 18 million tweets. This collection, provided by the Redites project, covers event-annotated tweets collected for the period of 15th July 2011 to 15th August 2011 (31 days). It extends over multiple noteworthy events including the death of Amy Winhehouse, the London Riots and the Oslo bombing. Since the task of this challenge is to automatically extract and link entities, we have built our dataset considering both event and non-event tweets. While event tweets are more likely to contain entities, non-event tweets enable us to evaluate the performance of the system in avoiding false positives in the entity extraction phase.
+The dataset has been split into a training (70%) and testing (30%) sets. Following the Twitter TOS we will only provide tweet IDs and annotations for the training set; and tweet IDs for the test set. We will also provide a common framework to mine these datasets from Twitter.""" .
+
+<http://www.scc.lancs.ac.uk/microposts2014/challenge/dataset/microposts2014-neel_challenge_gs.zip>
+  a dataid:Distribution, dcat:Distribution ;
+  dc:title "microposts2014-neel_challenge_gs.zip" ;
+  dc:description "Full microposts dataset download file" ;
+  dcat:accessURL "http://www.scc.lancs.ac.uk/microposts2014/challenge/dataset/microposts2014-neel_challenge_gs.zip" ;
+  dcat:mediaType "application/zip" .
+

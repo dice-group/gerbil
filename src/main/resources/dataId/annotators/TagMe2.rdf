@@ -1,0 +1,38 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <dataid:ServiceDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/TagMe2">
+    <foaf:primaryTopic>
+      <dataid:Service rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/TagMe2#annotator">
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>ferragina(at)di.unipi.it</foaf:mbox>
+            <foaf:name>Paolo Ferragina</foaf:name>
+            <rdfs:label>Paolo Ferragina</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <dc:rights>Please cite: P. Ferragina and U. Scaiella. Fast and accurate annotation of short texts with wikipedia pages. IEEE software, 29(1), 2012.</dc:rights>
+        <dcat:landingPage rdf:resource="http://acube.di.unipi.it/tagme/"/>
+        <dc:description>TAGME is a topic annotator that is able to identify meaningful sequences of words in a short text and link them to a pertinent Wikipedia page.</dc:description>
+        <dcat:keyword>Sa2W</dcat:keyword>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >02-01-2014</dc:issued>
+        <dc:title>TagMe 2</dc:title>
+        <dcat:keyword>ner</dcat:keyword>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/licAPACHE"/>
+        <dataid:licenseName>APACHE LICENSE 2.0</dataid:licenseName>
+        <rdfs:label>TagMe 2</rdfs:label>
+      </dataid:Service>
+    </foaf:primaryTopic>
+  </dataid:ServiceDescription>
+</rdf:RDF>
