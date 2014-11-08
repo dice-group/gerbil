@@ -12,6 +12,7 @@ import org.aksw.gerbil.transfer.UploadFileContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,16 +24,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 @Controller
 @RequestMapping("/file")
+@PropertySource("gerbil.properties")
 public class FileUploadController {
 
 	private static final transient Logger logger = LoggerFactory
 			.getLogger(FileUploadController.class);
-	@Value("org.aksw.gerbil.UploadPath")
+	@Value("${org.aksw.gerbil.UploadPath}")
 	private String path;
 
 	public FileUploadController() {
