@@ -1,0 +1,32 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/annotators/Babelfy>
+  a dataid:ServiceDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/annotators/Babelfy#annotator>.
+
+<http://gerbil.aksw.org/gerbil/dataId/annotators/Babelfy#annotator>
+  a dataid:Service, prov:Entity ;
+  rdfs:label "Babelfy" ;
+  dc:issued "06-01-2014"^^xsd:date ;
+  dcat:landingPage <http://http://babelfy.org/> ;
+  dcat:keyword "ner","Sa2W" ;
+  dataid:licenseName "Creative Commons Attribution-Noncommercial-Share Alike 3.0" ;
+  dc:license <http://creativecommons.org/licenses/by-nc-sa/3.0/rdf> ;
+  dc:rights """Please cite: Andrea Moro, Alessandro Raganato and Roberto Navigli. Entity Linking meets Word Sense Disambiguation: A Unified Approach. Transactions of the Association for Computational Linguistics (TACL), 2, 2014.""";
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Andrea Moro" ;
+    foaf:name "Andrea Moro" ;
+    foaf:mbox "moro(at)di.uniroma1.it"
+  ] ;
+  dc:title "Babelfy - Word sense disambiguation and entity linking together!" ;
+  dc:description """Babelfy is a unified, multilingual, graph-based approach to Entity Linking and Word Sense Disambiguation based on a loose identification of candidate meanings coupled with a densest subgraph heuristic which selects high-coherence semantic interpretations. """ .

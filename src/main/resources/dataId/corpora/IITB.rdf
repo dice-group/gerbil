@@ -1,0 +1,71 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <void:DatasetDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/IITB">
+    <foaf:primaryTopic>
+      <dcat:Dataset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/IITB#dataset">
+        <dcat:distribution>
+          <dcat:Distribution rdf:about="http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_crawledDocs.tar.gz">
+            <dcat:mediaType>application/zip</dcat:mediaType>
+            <dcat:accessURL>http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_crawledDocs.tar.gz</dcat:accessURL>
+            <dc:license rdf:resource="http://purl.org/NET/rdflicense/allrightsreserved"/>
+            <dc:rights>All rights reserved by owners of original web documents</dc:rights>
+            <dc:description>Web documents crawled for SIGKDD 2009 evaluation</dc:description>
+            <dc:title>CSAW_crawledDocs.tar.gz</dc:title>
+            <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Distribution"/>
+          </dcat:Distribution>
+        </dcat:distribution>
+        <dcat:keyword>documents</dcat:keyword>
+        <dc:description>Documents for manual annotation were collected from the links within homepages of popular sites belonging to a handful of domains that included sports, entertainment, science and technology, and health (sources: http://news.google.com/ and http://www.espnstar.com/).</dc:description>
+        <dcat:landingPage rdf:resource="http://www.cse.iitb.ac.in/soumen/doc/CSAW/Annot/"/>
+        <rdfs:label>IITB</rdfs:label>
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/cc-by4.0"/>
+        <dcat:keyword>technology</dcat:keyword>
+        <dcat:keyword>linguistics</dcat:keyword>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >06-28-2009</dc:issued>
+        <dc:language>english</dc:language>
+        <dc:rights>Please cite: Sayali Kulkarni, Amit Singh, Ganesh Ramakrishnan, and Soumen Chakrabarti. Collective Annotation of Wikipedia Entities in Web Text. in SIGKDD 2009.</dc:rights>
+        <dcat:distribution>
+          <dcat:Distribution rdf:about="http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_Annotations.xml">
+            <dcat:mediaType>application/xml</dcat:mediaType>
+            <dcat:accessURL>http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_Annotations.xml</dcat:accessURL>
+            <dc:license rdf:resource="http://purl.org/NET/rdflicense/cc-zero1.0"/>
+            <dc:description>Ground truth annotations on the web documents documents collected from volunteers.</dc:description>
+            <dc:title>CSAW_Annotations.xml</dc:title>
+            <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Distribution"/>
+          </dcat:Distribution>
+        </dcat:distribution>
+        <dcat:keyword>corpus</dcat:keyword>
+        <dcat:keyword>entertainment</dcat:keyword>
+        <dc:title>IITB</dc:title>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:homepage>http://www.cse.iitb.ac.in/soumen/</foaf:homepage>
+            <foaf:mbox>soumen(at)cse.iitb.ac.in</foaf:mbox>
+            <foaf:name>Soumen Chakrabarti</foaf:name>
+            <rdfs:label>Soumen Chakrabarti</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <dcat:keyword>science</dcat:keyword>
+        <rdf:type rdf:resource="http://rdfs.org/ns/void#Dataset"/>
+        <dcat:keyword>health</dcat:keyword>
+        <dcat:keyword>sports</dcat:keyword>
+        <dcat:keyword>ner</dcat:keyword>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Dataset"/>
+        <dataid:licenseName>Creative Commons Attribution 4.0 International</dataid:licenseName>
+        <dcat:keyword>web</dcat:keyword>
+      </dcat:Dataset>
+    </foaf:primaryTopic>
+  </void:DatasetDescription>
+</rdf:RDF>

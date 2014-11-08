@@ -1,0 +1,69 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <void:DatasetDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128">
+    <foaf:primaryTopic>
+      <void:Dataset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128#dataset">
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >02-04-2014</dc:issued>
+        <dc:title>Reuters-128 NIF NER Corpus </dc:title>
+        <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/cc-by4.0"/>
+        <void:subset>
+          <dataid:Linkset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128#links">
+            <void:target rdf:resource="http://dbpedia.org"/>
+            <void:triples>650</void:triples>
+            <void:linkPredicate rdf:resource="http://www.w3.org/2005/11/its/rdf#taIdentRef"/>
+            <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+            >02-04-2014</dc:issued>
+          </dataid:Linkset>
+        </void:subset>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>ricardo.usbeck(at)googlemail.com</foaf:mbox>
+            <foaf:name>Ricardo Usbeck</foaf:name>
+            <rdfs:label>Ricardo Usbeck</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <dataid:licenseName>Creative Commons Attribution 4.0 International</dataid:licenseName>
+        <dcat:landingPage rdf:resource="http://aksw.org/Projects/N3NERNEDNIF.html"/>
+        <dc:rights>Please cite: Michael Röder, Ricardo Usbeck, Sebastian Hellmann, Daniel Gerber und Andreas Both. N3 - A Collection of Datasets for Named Entity Recognition and Disambiguation in the NLP Interchange Format. In The 9th edition of the Language Resources and Evaluation Conference, 26-31 May, Reykjavik, Iceland </dc:rights>
+        <rdfs:label>Reuters-128 NIF NER Corpus </rdfs:label>
+        <dcat:keyword>ner</dcat:keyword>
+        <dcat:keyword>corpus</dcat:keyword>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+        <dcat:distribution>
+          <dataid:Distribution rdf:about="https://raw.githubusercontent.com/AKSW/n3-collection/master/Reuters-128.ttl">
+            <void:triples>6967</void:triples>
+            <dc:format>text/turtle</dc:format>
+            <dcat:accessURL>https://raw.githubusercontent.com/AKSW/n3-collection/master/Reuters-128.ttl</dcat:accessURL>
+            <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+            >02-04-2014</dc:issued>
+            <dc:description>Complete corpus file in turtle format</dc:description>
+            <dc:title>Complete corpus</dc:title>
+          </dataid:Distribution>
+        </dcat:distribution>
+        <dcat:keyword>evaluation</dcat:keyword>
+        <void:exampleResource rdf:resource="https://raw.githubusercontent.com/AKSW/n3-collection/master/Reuters-128.ttl"/>
+        <dc:description>This English corpus is based on the well known Reuters-21578 corpus which contains economic news articles. In particular, we chose 128 articles containing at least one NE. Compared to the News-100 corpus the documents of Reuters-128 are significantly shorter and thus carry a smaller context.
+
+To create the annotation of NEs with URIs, we implemented a supporting judgement tool. The input for the tool was a subset of more than 150 Reuters-21578 news articles sampled randomly. First, FOX (Ngonga Ngomo et al., 2011) was used for recognizing a first set of NEs. This reduced the amount of work to a feasible portion regarding the size of this dataset. Afterwards, the domain experts corrected the mistakes of FOX manually using the annotation tool. Therefore, the tool highlighted the entities in the texts and added initial URI candidates via simple string matching algorithms. Two scientists determined the correct URI for each named entity manually with an initial voter agreement of 74%. This low initial agreement rate hints towards the difficulty of the disambiguation task. In some cases judges did not agree initially, but came to an agreement shortly after reviewing the cases. While annotating, we left out ticker symbols of companies (e.g., GOOG for Google Inc.), abbreviations and job descriptions because those are always preceded by the full company name respectively a person’s name.</dc:description>
+        <dcat:keyword>linguistics</dcat:keyword>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Dataset"/>
+        <dc:language>english</dc:language>
+        <dcat:keyword>nif</dcat:keyword>
+        <rdf:type rdf:resource="http://www.w3.org/ns/sparql-service-description#Dataset"/>
+        <void:vocabulary rdf:resource="http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#"/>
+      </void:Dataset>
+    </foaf:primaryTopic>
+  </void:DatasetDescription>
+</rdf:RDF>

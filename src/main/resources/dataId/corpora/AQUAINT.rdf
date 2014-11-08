@@ -1,0 +1,54 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <void:DatasetDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/AQUAINT">
+    <foaf:primaryTopic>
+      <void:Dataset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/AQUAINT#dataset">
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox> graff(at)ldc.upenn.edu </foaf:mbox>
+            <foaf:name>David Graff</foaf:name>
+            <rdfs:label>David Graff</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <rdfs:label>The AQUAINT Corpus of English News Text</rdfs:label>
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/allrightsreserved"/>
+        <dcat:keyword>ner</dcat:keyword>
+        <dc:title>The  AQUAINT Corpus of English News Text</dc:title>
+        <dcat:landingPage rdf:resource="http://www.itl.nist.gov/iad/mig/tests/ace/2004/"/>
+        <dataid:licenseName>LDC Non-Member agreement</dataid:licenseName>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >09-26-2002</dc:issued>
+        <dc:description>The AQUAINT Corpus, Linguistic Data Consortium (LDC) catalog number LDC2002T31 and ISBN 1-58563-240-6 consists of newswire text data in English, drawn from three sources: the Xinhua News Service (People's Republic of China), the New York Times News Service, and the Associated Press Worldstream News Service. It was prepared by the LDC for the AQUAINT Project, and will be used in official benchmark evaluations conducted by National Institute of Standards and Technology (NIST). </dc:description>
+        <dcat:keyword>corpus</dcat:keyword>
+        <dcat:keyword>linguistics</dcat:keyword>
+        <dc:language>english</dc:language>
+        <dc:rights>Please cite: Graff, David. The AQUAINT Corpus of English News Text LDC2002T31. Web Download. Philadelphia: Linguistic Data Consortium, 2002.</dc:rights>
+        <dcat:distribution>
+          <dcat:Distribution rdf:about="http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip">
+            <dcat:mediaType>application/zip</dcat:mediaType>
+            <dcat:accessURL>http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip</dcat:accessURL>
+            <dc:rights>All rights reserved by owner of original dataset</dc:rights>
+            <dc:description>Contains multiple datasets. AQUAINT corpus in AQUAINT subfolder</dc:description>
+            <dc:title>ACL2011WikificationData.zip</dc:title>
+            <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Distribution"/>
+          </dcat:Distribution>
+        </dcat:distribution>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+        <dcat:keyword>newswire</dcat:keyword>
+        <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Dataset"/>
+        <dcat:landingPage rdf:resource="https://catalog.ldc.upenn.edu/LDC2002T31"/>
+      </void:Dataset>
+    </foaf:primaryTopic>
+  </void:DatasetDescription>
+</rdf:RDF>

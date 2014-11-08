@@ -1,0 +1,32 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/annotators/AGDISTIS>
+  a dataid:ServiceDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/annotators/AGDISTIS#annotator>.
+
+<http://gerbil.aksw.org/gerbil/dataId/annotators/AGDISTIS#annotator>
+  a dataid:Service, prov:Entity ;
+  rdfs:label "AGDISTIS" ;
+  dc:issued "10-19-2014"^^xsd:date ;
+  dcat:landingPage <http://aksw.org/Projects/AGDISTIS.html> ;
+  dcat:keyword "ner","D2W" ;
+  dataid:licenseName "MIT license" ;
+  dc:license <http://purl.org/NET/rdflicense/licMIT> ;
+  dc:rights """Please cite: Ricardo Usbeck, Axel-Cyrille Ngonga Ngomo, Sören Auer, Daniel Gerber und Andreas Both. AGDISTIS - Graph-Based Disambiguation of Named Entities using Linked Data. In Proceedings of International Semantic Web Conference (ISWC), 2014.""";
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Ricardo Usbeck" ;
+    foaf:name "Ricardo Usbeck" ;
+    foaf:mbox "ricardo.usbeck(at)googlemail.com"
+  ] ;
+  dc:title "Agnostic Disambiguation of Named Entities Using Linked Open Data" ;
+  dc:description """AGDISTIS is an Open Source Named Entity Disambiguation Framework able to link entities against every Linked Data Knowledge Base.""" .

@@ -1,0 +1,46 @@
+{
+  "@graph" : [ {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/Kea",
+    "@type" : "dataid:ServiceDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/annotators/Kea#annotator"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/Kea#annotator",
+    "@type" : [ "prov:Entity", "dataid:Service" ],
+    "licenseName" : "All rights reserved",
+    "issued" : "11-03-2014",
+    "license" : "http://purl.org/NET/rdflicense/allrightsreserved",
+    "rights" : "Please cite: N. Steinmetz and H. Sack. Semantic multimedia information retrieval based on contextual descriptions. In P. Cimiano, O. Corcho, V. Presutti, L. Hollink, and S. Rudolph, editors, The Semantic Web: Semantics and Big Data, volume 7882 of Lecture Notes in Computer Science, pages 382{396. Springer Berlin Heidelberg, 2013.",
+    "title" : "Kea",
+    "label" : "Kea",
+    "keyword" : [ "ner", "Sa2W" ]
+  } ],
+  "@context" : {
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "rights" : "http://purl.org/dc/terms/rights",
+    "title" : "http://purl.org/dc/terms/title",
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

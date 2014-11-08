@@ -1,0 +1,32 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/annotators/NERD>
+  a dataid:ServiceDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/annotators/NERD#annotator>.
+
+<http://gerbil.aksw.org/gerbil/dataId/annotators/NERD#annotator>
+  a dataid:Service, prov:Entity ;
+  rdfs:label "NERD" ;
+  dc:issued "05-31-2014"^^xsd:date ;
+  dcat:landingPage <http://nerd.eurecom.fr> ;
+  dcat:keyword "ner","Sa2W" ;
+  dataid:licenseName "GNU public license 3.0" ;
+  dc:license <http://purl.org/NET/rdflicense/gpl3.0> ;
+  dc:rights """Please cite: Giuseppe Rizzo and Marieke Van Erp and Raphaël Troncy. Benchmarking the Extraction and Disambiguation of Named Entities on the Semantic Web. In Proceedings of the Ninth International Conference on Language Resources and Evaluation (LREC'14), 2014.""";
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Giuseppe Rizzo" ;
+    foaf:name "Giuseppe Rizzo" ;
+    foaf:mbox "giuseppe.rizzo(at)eurecom.fr"
+  ] ;
+  dc:title "NERD" ;
+  dc:description """Named Entity Recognition and Disambiguation.""" .

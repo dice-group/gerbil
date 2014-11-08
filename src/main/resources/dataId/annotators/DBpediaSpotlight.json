@@ -1,0 +1,66 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "DBpedia Spotlight Mailing List",
+    "mbox" : "dbp-spotlight-users(at)lists.sourceforge.net",
+    "name" : "DBpedia Spotlight Mailing List"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/DBpediaSpotlight",
+    "@type" : "dataid:ServiceDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/annotators/DBpediaSpotlight#annotator"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/DBpediaSpotlight#annotator",
+    "@type" : [ "dataid:Service", "prov:Entity" ],
+    "licenseName" : "Apache License 2.0",
+    "description" : "DBpedia Spotlight is a tool for automatically annotating mentions of DBpedia resources in text.",
+    "issued" : "09-04-2013",
+    "license" : "http://purl.org/NET/rdflicense/licAPACHE",
+    "rights" : "Please cite: Joachim Daiber and Max Jakob and Chris Hokamp and Pablo N. Mendes. Improving Efficiency and Accuracy in Multilingual Entity Extraction. In Proceedings of the 9th International Conference on Semantic Systems (I-Semantics), 2013.",
+    "title" : "DBpedia Spotlight - Shedding Light on the Web of Documents",
+    "label" : "DBpedia Spotlight",
+    "contactPoint" : "_:b0",
+    "keyword" : [ "ner", "Sa2W" ],
+    "landingPage" : "http://spotlight.dbpedia.org/"
+  } ],
+  "@context" : {
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "rights" : "http://purl.org/dc/terms/rights",
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "description" : "http://purl.org/dc/terms/description",
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "title" : "http://purl.org/dc/terms/title",
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

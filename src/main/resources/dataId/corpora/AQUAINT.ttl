@@ -1,0 +1,44 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/AQUAINT>
+  a void:DatasetDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/corpora/AQUAINT#dataset>.
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/AQUAINT#dataset>
+  a dataid:Dataset, dcat:Dataset, void:Dataset, prov:Entity ;
+  rdfs:label "The AQUAINT Corpus of English News Text" ;
+  dc:issued "09-26-2002"^^xsd:date ;
+  dc:language "english" ;
+  dcat:landingPage <http://www.itl.nist.gov/iad/mig/tests/ace/2004/> ;
+  dcat:landingPage <https://catalog.ldc.upenn.edu/LDC2002T31> ;
+  dcat:keyword "newswire","ner","corpus","linguistics" ;
+  dcat:distribution <http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip> ;
+  dataid:licenseName "LDC Non-Member agreement" ;
+  dc:license <http://purl.org/NET/rdflicense/allrightsreserved> ;
+  dc:rights """Please cite: Graff, David. The AQUAINT Corpus of English News Text LDC2002T31. Web Download. Philadelphia: Linguistic Data Consortium, 2002.""";
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "David Graff" ;
+    foaf:name "David Graff" ;
+    foaf:mbox " graff(at)ldc.upenn.edu "
+  ] ;
+  dc:title "The  AQUAINT Corpus of English News Text" ;
+  dc:description """The AQUAINT Corpus, Linguistic Data Consortium (LDC) catalog number LDC2002T31 and ISBN 1-58563-240-6 consists of newswire text data in English, drawn from three sources: the Xinhua News Service (People's Republic of China), the New York Times News Service, and the Associated Press Worldstream News Service. It was prepared by the LDC for the AQUAINT Project, and will be used in official benchmark evaluations conducted by National Institute of Standards and Technology (NIST). """ .
+
+<http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip>
+  a dataid:Distribution, dcat:Distribution ;
+  dc:title "ACL2011WikificationData.zip" ;
+  dc:description "Contains multiple datasets. AQUAINT corpus in AQUAINT subfolder" ;
+  dc:rights "All rights reserved by owner of original dataset" ;
+  dcat:accessURL "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip" ;
+  dcat:mediaType "application/zip" .
+
