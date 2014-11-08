@@ -30,7 +30,7 @@
         <skos:prefLabel xml:lang="en">Code list for GERBIL Matching - codelist scheme</skos:prefLabel>
       </skos:ConceptScheme>
     </rdfs:seeAlso>
-    <rdfs:comment xml:lang="en">This code list provides the matching types of GERBIL.</rdfs:comment>
+    <rdfs:comment xml:lang="en">This code list provides the matching types of GERBIL. Types as defined in Cornolti at al. A Framework for Benchmarking Entity-Annotation Systems. 22nd WWW, 2013</rdfs:comment>
     <rdfs:label xml:lang="en">Code list for GERBIL Matching - codelist class</rdfs:label>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
@@ -99,30 +99,34 @@
         </skos:hasTopConcept>
       </skos:ConceptScheme>
     </rdfs:seeAlso>
-    <rdfs:comment xml:lang="en">This code list provides the experiment types of named entity annotators.</rdfs:comment>
+    <rdfs:comment xml:lang="en">This code list provides the experiment types of named entity annotators. Types as defined in Cornolti at al. A Framework for Benchmarking Entity-Annotation Systems. 22nd WWW, 2013</rdfs:comment>
     <rdfs:label xml:lang="en">Code list for GERBIL Experiment Types - codelist class</rdfs:label>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
     <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
   </owl:Class>
+  <gerbil:Matching rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#StrongEntMatch">
+    <skos:inScheme rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#matchingScheme"/>
+    <skos:notation>StrongEntMatch</skos:notation>
+    <skos:prefLabel xml:lang="en">Strong Entity Match</skos:prefLabel>
+    <skos:topConceptOf rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#matchingScheme"/>
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+  </gerbil:Matching>
+  <gerbil:Matching rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#WeakAnnoMatch">
+    <skos:inScheme rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#matchingScheme"/>
+    <skos:notation>WeakAnnoMatch</skos:notation>
+    <skos:prefLabel xml:lang="en">Weak Annotation Match</skos:prefLabel>
+    <skos:topConceptOf rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#matchingScheme"/>
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+  </gerbil:Matching>
   <qb:DataStructureDefinition rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#dsd">
     <qb:component rdf:parseType="Resource">
       <qb:dimension>
-        <qb:DimensionProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#evalDataset">
-          <rdfs:range rdf:resource="http://rdfs.org/ns/void#DatasetDescription"/>
-          <rdfs:label xml:lang="en">Evaluation dataset</rdfs:label>
+        <qb:DimensionProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#annotator">
+          <rdfs:range rdf:resource="http://dataid.dbpedia.org/ns/core#ServiceDescription"/>
+          <rdfs:label xml:lang="en">Annotator</rdfs:label>
           <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
         </qb:DimensionProperty>
       </qb:dimension>
-    </qb:component>
-    <qb:component rdf:parseType="Resource">
-      <qb:measure>
-        <qb:MeasureProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#errorCount">
-          <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
-          <rdfs:subPropertyOf rdf:resource="http://purl.org/linked-data/sdmx/2009/measure#obsValue"/>
-          <rdfs:label xml:lang="en">Error count</rdfs:label>
-          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-        </qb:MeasureProperty>
-      </qb:measure>
     </qb:component>
     <qb:component rdf:parseType="Resource">
       <qb:measure>
@@ -133,67 +137,6 @@
           <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
         </qb:MeasureProperty>
       </qb:measure>
-    </qb:component>
-    <qb:component rdf:parseType="Resource">
-      <qb:measure>
-        <qb:MeasureProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#microRecall">
-          <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
-          <rdfs:subPropertyOf rdf:resource="http://purl.org/linked-data/sdmx/2009/measure#obsValue"/>
-          <rdfs:label xml:lang="en">Micro Recall</rdfs:label>
-          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-        </qb:MeasureProperty>
-      </qb:measure>
-    </qb:component>
-    <qb:component rdf:parseType="Resource">
-      <qb:measure>
-        <qb:MeasureProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#macroRecall">
-          <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
-          <rdfs:subPropertyOf rdf:resource="http://purl.org/linked-data/sdmx/2009/measure#obsValue"/>
-          <rdfs:label xml:lang="en">Macro Recall</rdfs:label>
-          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-        </qb:MeasureProperty>
-      </qb:measure>
-    </qb:component>
-    <qb:component rdf:parseType="Resource">
-      <qb:dimension>
-        <qb:DimensionProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#timestamp">
-          <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
-          <qb:concept rdf:resource="http://purl.org/linked-data/sdmx/2009/concept#refPeriod"/>
-          <rdfs:subPropertyOf rdf:resource="http://purl.org/linked-data/sdmx/2009/dimension#refPeriod"/>
-          <rdfs:label xml:lang="en">DateTime of experiment</rdfs:label>
-          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-        </qb:DimensionProperty>
-      </qb:dimension>
-    </qb:component>
-    <qb:component rdf:parseType="Resource">
-      <qb:measure>
-        <qb:MeasureProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#macroPrecision">
-          <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
-          <rdfs:subPropertyOf rdf:resource="http://purl.org/linked-data/sdmx/2009/measure#obsValue"/>
-          <rdfs:label xml:lang="en">Macro Precision</rdfs:label>
-          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-        </qb:MeasureProperty>
-      </qb:measure>
-    </qb:component>
-    <qb:component rdf:parseType="Resource">
-      <qb:dimension>
-        <qb:DimensionProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#matching">
-          <rdfs:range rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#Matching"/>
-          <qb:codeList rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#matchingScheme"/>
-          <rdfs:label xml:lang="en">Matching</rdfs:label>
-          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-        </qb:DimensionProperty>
-      </qb:dimension>
-    </qb:component>
-    <qb:component rdf:parseType="Resource">
-      <qb:dimension>
-        <qb:DimensionProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#experimentType">
-          <rdfs:range rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#Type"/>
-          <qb:codeList rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
-          <rdfs:label xml:lang="en">Type of experiment</rdfs:label>
-          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-        </qb:DimensionProperty>
-      </qb:dimension>
     </qb:component>
     <qb:component rdf:parseType="Resource">
       <qb:measure>
@@ -216,13 +159,120 @@
       </qb:measure>
     </qb:component>
     <qb:component rdf:parseType="Resource">
+      <qb:measure>
+        <qb:MeasureProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#macroPrecision">
+          <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+          <rdfs:subPropertyOf rdf:resource="http://purl.org/linked-data/sdmx/2009/measure#obsValue"/>
+          <rdfs:label xml:lang="en">Macro Precision</rdfs:label>
+          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </qb:MeasureProperty>
+      </qb:measure>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
       <qb:dimension>
-        <qb:DimensionProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#annotator">
-          <rdfs:range rdf:resource="http://dataid.dbpedia.org/ns/core#ServiceDescription"/>
-          <rdfs:label xml:lang="en">Annotator</rdfs:label>
+        <qb:DimensionProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#evalDataset">
+          <rdfs:range rdf:resource="http://rdfs.org/ns/void#DatasetDescription"/>
+          <rdfs:label xml:lang="en">Evaluation dataset</rdfs:label>
           <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
         </qb:DimensionProperty>
       </qb:dimension>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:dimension>
+        <qb:DimensionProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#experimentType">
+          <rdfs:range rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#Type"/>
+          <qb:codeList rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
+          <rdfs:label xml:lang="en">Type of experiment</rdfs:label>
+          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </qb:DimensionProperty>
+      </qb:dimension>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:measure rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#macroPrecision"/>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:measure>
+        <qb:MeasureProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#macroRecall">
+          <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+          <rdfs:subPropertyOf rdf:resource="http://purl.org/linked-data/sdmx/2009/measure#obsValue"/>
+          <rdfs:label xml:lang="en">Macro Recall</rdfs:label>
+          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </qb:MeasureProperty>
+      </qb:measure>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:measure>
+        <qb:MeasureProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#errorCount">
+          <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+          <rdfs:subPropertyOf rdf:resource="http://purl.org/linked-data/sdmx/2009/measure#obsValue"/>
+          <rdfs:label xml:lang="en">Error count</rdfs:label>
+          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </qb:MeasureProperty>
+      </qb:measure>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:measure>
+        <qb:MeasureProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#microRecall">
+          <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+          <rdfs:subPropertyOf rdf:resource="http://purl.org/linked-data/sdmx/2009/measure#obsValue"/>
+          <rdfs:label xml:lang="en">Micro Recall</rdfs:label>
+          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </qb:MeasureProperty>
+      </qb:measure>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:dimension>
+        <qb:DimensionProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#matching">
+          <rdfs:range rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#Matching"/>
+          <qb:codeList rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#matchingScheme"/>
+          <rdfs:label xml:lang="en">Matching</rdfs:label>
+          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </qb:DimensionProperty>
+      </qb:dimension>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:measure rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#microF1"/>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:dimension rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#annotator"/>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:measure rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#microRecall"/>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:dimension>
+        <qb:DimensionProperty rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#timestamp">
+          <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+          <qb:concept rdf:resource="http://purl.org/linked-data/sdmx/2009/concept#refPeriod"/>
+          <rdfs:subPropertyOf rdf:resource="http://purl.org/linked-data/sdmx/2009/dimension#refPeriod"/>
+          <rdfs:label xml:lang="en">DateTime of experiment</rdfs:label>
+          <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        </qb:DimensionProperty>
+      </qb:dimension>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:measure rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#microPrecision"/>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:measure rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#macroF1"/>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:dimension rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#matching"/>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:dimension rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#evalDataset"/>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:measure rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#macroRecall"/>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:measure rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#errorCount"/>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:dimension rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#experimentType"/>
+    </qb:component>
+    <qb:component rdf:parseType="Resource">
+      <qb:dimension rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#timestamp"/>
     </qb:component>
   </qb:DataStructureDefinition>
 </rdf:RDF>

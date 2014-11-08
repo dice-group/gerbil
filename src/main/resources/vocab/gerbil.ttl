@@ -107,7 +107,7 @@ gerbil:type a skos:ConceptScheme;
 gerbil:Type a rdfs:Class, owl:Class;
     rdfs:subClassOf skos:Concept ;
     rdfs:label "Code list for GERBIL Experiment Types - codelist class"@en;
-    rdfs:comment "This code list provides the experiment types of named entity annotators."@en;
+    rdfs:comment "This code list provides the experiment types of named entity annotators. Types as defined in Cornolti at al. A Framework for Benchmarking Entity-Annotation Systems. 22nd WWW, 2013"@en;
 	rdfs:seeAlso gerbil:type .
 
 gerbil:D2W a skos:Concept, gerbil:Type;
@@ -159,13 +159,25 @@ gerbil:matchingScheme a skos:ConceptScheme;
 gerbil:Matching a rdfs:Class, owl:Class;
     rdfs:subClassOf skos:Concept ;
     rdfs:label "Code list for GERBIL Matching - codelist class"@en;
-    rdfs:comment "This code list provides the matching types of GERBIL."@en;
+    rdfs:comment "This code list provides the matching types of GERBIL. Types as defined in Cornolti at al. A Framework for Benchmarking Entity-Annotation Systems. 22nd WWW, 2013"@en;
 	rdfs:seeAlso gerbil:matchingScheme .
 
 gerbil:StrongAnnoMatch a skos:Concept, gerbil:Matching;
     skos:topConceptOf gerbil:matchingScheme;
     skos:prefLabel "Strong Annotation Match"@en ;
     skos:notation "StrongAnnoMatch" ;
+    skos:inScheme gerbil:matchingScheme .
+
+gerbil:WeakAnnoMatch a skos:Concept, gerbil:Matching;
+    skos:topConceptOf gerbil:matchingScheme;
+    skos:prefLabel "Weak Annotation Match"@en ;
+    skos:notation "WeakAnnoMatch" ;
+    skos:inScheme gerbil:matchingScheme .
+
+gerbil:StrongEntMatch a skos:Concept, gerbil:Matching;
+    skos:topConceptOf gerbil:matchingScheme;
+    skos:prefLabel "Strong Entity Match"@en ;
+    skos:notation "StrongEntMatch" ;
     skos:inScheme gerbil:matchingScheme .
 	
 ### DSD
