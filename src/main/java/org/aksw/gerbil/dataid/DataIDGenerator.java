@@ -22,20 +22,20 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 public class DataIDGenerator {
 
-    private static final String EXPERIMENT_PREFIX = "experiment_";
+    private static final String EXPERIMENT_PREFIX = "#experiment_";
     private static final String DATASET_DATAID = "dataId/corpora/";
     private static final String ANNOTATOR_DATAID = "dataId/annotators/";
-    private static final String DATAID_FILE = "/dataid.ttl";
+    private static final String DATAID_EXTENSION = ".ttl";
 
     private String gerbilURL;
+    private String gerbilFullURL;
 
-    public DataIDGenerator(String gerbilURL) {
+    public DataIDGenerator(String gerbilURL, String gerbilFullURL) {
         this.gerbilURL = gerbilURL;
+        this.gerbilFullURL = gerbilFullURL;
     }
 
     public String createDataIDModel(List<ExperimentTaskResult> results, String eID) {
-
-        // test with dataset 201411060000
 
         // create an empty JENA Model
         Model model = ModelFactory.createDefaultModel();
@@ -74,7 +74,7 @@ public class DataIDGenerator {
         }
 
         // writing dataid result to output (this should be removed)
-        // RDFDataMgr.write(System.out, model, RDFFormat.TURTLE);
+         RDFDataMgr.write(System.out, model, RDFFormat.TURTLE);
 
         OutputStream o = new ByteArrayOutputStream();
 
@@ -86,7 +86,7 @@ public class DataIDGenerator {
 
     private Resource createExperimentResource(Model model, String eID) {
         // create experiment resource
-        Resource experiment = model.createResource(gerbilURL + EXPERIMENT_PREFIX + eID);
+        Resource experiment = model.createResource(gerbilFullURL + EXPERIMENT_PREFIX + eID);
         experiment.addProperty(RDF.type, CUBE.Dataset);
         experiment.addProperty(RDF.type, GERBIL.Experiment);
 
@@ -102,8 +102,8 @@ public class DataIDGenerator {
         experimentTask.addProperty(RDF.type, CUBE.Observation);
 
         // add annotator and dataset
-        experimentTask.addProperty(GERBIL.annotator, gerbilURL + DATASET_DATAID + result.annotator + DATAID_FILE);
-        experimentTask.addProperty(GERBIL.dataset, gerbilURL + ANNOTATOR_DATAID + result.dataset + DATAID_FILE);
+        experimentTask.addProperty(GERBIL.annotator, gerbilURL + DATASET_DATAID + removeSlash(result.annotator) + DATAID_EXTENSION);
+        experimentTask.addProperty(GERBIL.dataset, gerbilURL + ANNOTATOR_DATAID + removeSlash(result.dataset) + DATAID_EXTENSION);
 
         // set the status of this task
         model.add(experimentTask, GERBIL.statusCode, model.createTypedLiteral(result.state));
@@ -123,5 +123,9 @@ public class DataIDGenerator {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(result.timestamp);
         model.add(experimentTask, GERBIL.timestamp, model.createTypedLiteral(cal));
+    }
+    
+    private String removeSlash(String str){
+    	return str.replace("/", "_");
     }
 }
