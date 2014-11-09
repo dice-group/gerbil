@@ -2,8 +2,10 @@ package org.aksw.gerbil.utils;
 
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,8 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * ...
  * 
- * @authors .....
- *          Giuseppe Rizzo <giuse.rizzo@gmail.com>
+ * @authors ..... Giuseppe Rizzo <giuse.rizzo@gmail.com>
  */
 public class DatasetMapping {
 
@@ -117,9 +118,17 @@ public class DatasetMapping {
         }
     }
 
+    public static List<DatasetConfiguration> getDatasetConfigurations() {
+        return getInstance().getDatasetConfigs();
+    }
+
     private final Map<String, DatasetConfiguration> mapping;
 
     private DatasetMapping(Map<String, DatasetConfiguration> mapping) {
         this.mapping = mapping;
+    }
+
+    protected List<DatasetConfiguration> getDatasetConfigs() {
+        return new ArrayList<DatasetConfiguration>(this.mapping.values());
     }
 }
