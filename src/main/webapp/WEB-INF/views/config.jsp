@@ -153,9 +153,12 @@
 							<div id="progress" class="progress">
 								<div class="progress-bar progress-bar-success"></div>
 							</div>
-							<!-- The container for the uploaded files -->
-							<div id="files" class="files"></div>
-							<br>
+							<div>
+								<!-- list to be filled by button press and javascript function addDataset -->
+								<ul class="unstyled" id="datasetList"
+									style="margin-top: 15px; list-style-type: none;">
+								</ul>
+							</div>
 							<div id="warningEmptyDataset" class="alert alert-warning"
 								role="alert">
 								<button type="button" class="close" data-dismiss="alert"></button>
@@ -375,13 +378,14 @@
 											});
 							//if add button is clicked check whether there is a name and a uri 
 							$('#warningEmptyDataset').hide();
-							$('#fileupload').click( function(){
-								var name = $('#nameDataset')
-								.val();
-								if(name == ''){
+							$('#fileupload').click(function() {
+								var name = $('#nameDataset').val();
+								if (name == '') {
 									$('#fileupload').fileupload('disable');
+									$('#warningEmptyDataset').show();
 								} else {
 									$('#fileupload').fileupload('enable');
+									$('#warningEmptyDataset').hide();
 								}
 							});
 
@@ -489,28 +493,50 @@
 			'use strict';
 			// Change this to the location of your server-side upload handler:
 			var url = '${upload}';
-				$('#fileupload').fileupload(
-						{
-							url : url,
-							dataType : 'json',
-							done : function(e, data) {
-								$.each(data.result.files,
-										function(index, file) {
-											$('<p/>').text(file.name).appendTo(
-													'#files');
-										});
-							},
-							progressall : function(e, data) {
-								var progress = parseInt(data.loaded
-										/ data.total * 100, 10);
-								$('#progress .progress-bar').css('width',
-										progress + '%');
-							},
-						    processfail: function (e, data) {
-						        alert(data.files[data.index].name + "\n" + data.files[data.index].error);
-						    }
-						}).prop('disabled', !$.support.fileInput).parent()
-						.addClass($.support.fileInput ? undefined : 'disabled');
+			var name = $('#nameDataset').val();
+			$('#fileupload')
+					.fileupload(
+							{
+								url : url,
+								dataType : 'json',
+								done : function(e, data) {
+									$
+											.each(
+													data.result.files,
+													function(index, file) {
+														$('#datasetList')
+																.append(
+																		"<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
+																				+ name
+																				+ "("
+																				+ file.name
+																				+ ")</span></li>");
+														var listItems = $('#datasetList > li > span');
+														for (var i = 0; i < listItems.length; i++) {
+															listItems[i].onclick = function() {
+																this.parentNode.parentNode
+																		.removeChild(this.parentNode);
+																checkExperimentConfiguration();
+															};
+														}
+														$('#nameDataset').val(
+																'');
+														$('#URIDataset')
+																.val('');
+													});
+								},
+								progressall : function(e, data) {
+									var progress = parseInt(data.loaded
+											/ data.total * 100, 10);
+									$('#progress .progress-bar').css('width',
+											progress + '%');
+								},
+								processfail : function(e, data) {
+									alert(data.files[data.index].name + "\n"
+											+ data.files[data.index].error);
+								}
+							}).prop('disabled', !$.support.fileInput).parent()
+					.addClass($.support.fileInput ? undefined : 'disabled');
 		});
 	</script>
 </body>
