@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datasets.ACE2004DatasetConfig;
 import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
 import org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration;
@@ -34,6 +35,8 @@ import org.slf4j.LoggerFactory;
 public class DatasetMapping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetMapping.class);
+
+    private static final String UPLOADED_FILES_PATH_PROPERTY_KEY = "org.aksw.gerbil.UploadPath";
 
     private static DatasetMapping instance = null;
 
@@ -99,6 +102,12 @@ public class DatasetMapping {
             return datasets.mapping.get(name);
         } else {
             if (name.startsWith("NIFDS_")) {
+                String uploadedFilesPath = GerbilConfiguration.getInstance()
+                        .getString(UPLOADED_FILES_PATH_PROPERTY_KEY);
+                if (uploadedFilesPath == null) {
+                    LOGGER.error("Couldn't process uploaded file request, because the upload path is not set (\"{}\"",
+                            UPLOADED_FILES_PATH_PROPERTY_KEY);
+                }
                 // This describes a NIF based web service
                 // The name should have the form "NIFDS_name(uri)"
                 int pos = name.indexOf('(');
@@ -107,11 +116,12 @@ public class DatasetMapping {
                             + "\". Returning null.");
                     return null;
                 }
-                String uri = name.substring(pos + 1, name.length() - 1);
+                String uri = uploadedFilesPath + name.substring(pos + 1, name.length() - 1);
                 // remove "NIFDS_" from the name
                 name = name.substring(6, pos);
-                return new NIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), name, uri, false,
-                        ExperimentType.Sa2W);
+                LOGGER.error("name={}, uri={}", name, uri);
+                return new NIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), name, uri,
+                        false, ExperimentType.Sa2W);
             }
             LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
             return null;

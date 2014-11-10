@@ -28,7 +28,7 @@ public class FileBasedNIFDataset extends AbstractNIFDataset {
     protected InputStream getDataAsInputStream() {
         FileInputStream fin = null;
         try {
-            LOGGER.debug("LOAD FROM {}", filePath);
+            LOGGER.debug("Loading NIF dataset from {}", filePath);
             fin = new FileInputStream(filePath);
         } catch (FileNotFoundException e) {
             LOGGER.error("Couldn't load NIF dataset from file.", e);

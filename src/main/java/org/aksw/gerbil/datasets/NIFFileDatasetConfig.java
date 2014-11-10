@@ -16,6 +16,7 @@ public class NIFFileDatasetConfig extends AbstractDatasetConfiguration {
             ExperimentType... applicableForExperiment) {
         super(name, couldBeCached, applicableForExperiment);
         this.wikiApi = wikiApi;
+        this.file = file;
     }
 
     @Override

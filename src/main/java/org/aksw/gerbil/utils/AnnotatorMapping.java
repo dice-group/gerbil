@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class AnnotatorMapping {
 
-    private static final Logger     LOGGER   = LoggerFactory.getLogger(AnnotatorMapping.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatorMapping.class);
 
     private static AnnotatorMapping instance = null;
 

@@ -1,5 +1,6 @@
 package org.aksw.gerbil.web;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -29,56 +30,65 @@ import org.springframework.web.servlet.ModelAndView;
 @PropertySource("gerbil.properties")
 public class FileUploadController {
 
-	private static final transient Logger logger = LoggerFactory
-			.getLogger(FileUploadController.class);
-	@Value("${org.aksw.gerbil.UploadPath}")
-	private String path;
+    private static final transient Logger logger = LoggerFactory
+            .getLogger(FileUploadController.class);
+    @Value("${org.aksw.gerbil.UploadPath}")
+    private String path;
 
-	public FileUploadController() {
+    public FileUploadController() {
+    }
 
-	}
+    @RequestMapping(value = "upload", method = RequestMethod.GET)
+    public ModelAndView upload() {
+        return new ModelAndView("fileupload");
+    }
 
-	@RequestMapping(value = "upload", method = RequestMethod.GET)
-	public ModelAndView upload() {
-		return new ModelAndView("fileupload");
-	}
+    @RequestMapping(value = "upload", method = RequestMethod.POST)
+    public @ResponseBody
+    ResponseEntity<UploadFileContainer> upload(
+            MultipartHttpServletRequest request, HttpServletResponse response) {
 
-	@RequestMapping(value = "upload", method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity<UploadFileContainer> upload(
-			MultipartHttpServletRequest request, HttpServletResponse response){
-		
-		if (path == null){
-			logger.error("Path must be not null");
-			return new ResponseEntity<UploadFileContainer>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
-		LinkedList<FileMeta> files = new LinkedList<FileMeta>();
-		MultipartFile mpf = null;
+        if (path == null) {
+            logger.error("Path must be not null");
+            return new ResponseEntity<UploadFileContainer>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-		for (Iterator<String> it = request.getFileNames(); it.hasNext();) {
-			mpf = request.getFile(it.next());
-			logger.debug("{} uploaded", mpf.getOriginalFilename());
+        LinkedList<FileMeta> files = new LinkedList<FileMeta>();
+        MultipartFile mpf = null;
 
-			FileMeta fileContainer = new FileMeta();
-			fileContainer.setName(mpf.getOriginalFilename());
-			fileContainer.setSize(mpf.getSize() / 1024 + "Kb");
-			fileContainer.setFileType(mpf.getContentType());
+        for (Iterator<String> it = request.getFileNames(); it.hasNext();) {
+            mpf = request.getFile(it.next());
+            logger.debug("{} uploaded", mpf.getOriginalFilename());
 
-			try {
-				fileContainer.setBytes(mpf.getBytes());
-				FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(path
-						+ mpf.getOriginalFilename()));
+            FileMeta fileContainer = new FileMeta();
+            fileContainer.setName(mpf.getOriginalFilename());
+            fileContainer.setSize(mpf.getSize() / 1024 + "Kb");
+            fileContainer.setFileType(mpf.getContentType());
 
-			} catch (IOException e) {
-				logger.error("Error during file upload", e);
-				fileContainer.setError(e.getMessage());
-			}
-			files.add(fileContainer);
-		}
+            try {
+                fileContainer.setBytes(mpf.getBytes());
+                createFolderIfNotExists();
+                FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(path
+                        + mpf.getOriginalFilename()));
 
-		UploadFileContainer uploadFileContainer = new UploadFileContainer(files);
-		return new ResponseEntity<UploadFileContainer>(uploadFileContainer,
-				HttpStatus.OK);
-	}
+            } catch (IOException e) {
+                logger.error("Error during file upload", e);
+                fileContainer.setError(e.getMessage());
+            }
+            files.add(fileContainer);
+        }
+
+        UploadFileContainer uploadFileContainer = new UploadFileContainer(files);
+        return new ResponseEntity<UploadFileContainer>(uploadFileContainer,
+                HttpStatus.OK);
+    }
+
+    private void createFolderIfNotExists() {
+        // create the upload folder if it does not exist
+        File folder = new File(path);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+    }
 
 }

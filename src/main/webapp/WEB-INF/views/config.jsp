@@ -46,7 +46,7 @@
 /* Fixes for IE < 8 */
 @media screen\9  {
 	.fileinput-button input {
-		filter: alpha(opacity =   0);
+		filter: alpha(opacity =                   0);
 		font-size: 100%;
 		height: 100%;
 	}
@@ -132,7 +132,7 @@
 					</div>
 				</div>
 			</div>
-			<!--Dataset dropdown filled by loadDataset() function -->
+			<!--Dataset dropdown filled by loadDatasets() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="datasets">Dataset</label>
 				<div class="col-md-4">
@@ -188,247 +188,238 @@
 		</fieldset>
 	</form>
 	<script type="text/javascript">
-		$(document)
-                .ready(
-                        function() {
-	                        //declaration of functions for later use 
-	                        var loadExperimentTypes;
-	                        var loadMatching;
-	                        var loadAnnotator;
-	                        var loadDataset;
-	                        //declaration of functions for loading experiment types, annotators, matchings and datasets  
-	                        (loadExperimentTypes = function() {
-		                        $.getJSON('${exptypes}', {
-			                        ajax : 'false'
-		                        }, function(data) {
-			                        var formattedData = [];
-			                        for ( var i = 0; i < data.length; i++) {
-				                        var dat = {};
-				                        dat.label = data[i];
-				                        dat.value = data[i];
-				                        formattedData.push(dat);
-			                        }
-			                        $('#type').multiselect('dataprovider', formattedData);
-			                        $('#type').multiselect('rebuild');
-		                        });
-	                        })();
-	                        (loadMatching = function() {
-		                        $('#matching').html('');
-		                        $('#annotator').html('');
-		                        $.getJSON('${matchings}', {
-		                            experimentType : $('#type').val() ? $('#type').val() : "D2W",
-		                            ajax : 'false'
-		                        }, function(data) {
-			                        var formattedData = [];
-			                        for ( var i = 0; i < data.length; i++) {
-				                        var dat = {};
-				                        dat.label = data[i];
-				                        dat.value = data[i];
-				                        formattedData.push(dat);
-			                        }
-			                        $('#matching').multiselect('dataprovider', formattedData);
-			                        $('#matching').multiselect('rebuild');
+		// PLEASE DECLARE FUNCTION _OUTSIDE_ OF THE $(document).ready(function() {...}) !!!
 
-		                        });
-	                        })();
-	                        (loadAnnotator = function() {
-		                        $('#annotator').html('');
-		                        $.getJSON('${annotators}', {
-		                            experimentType : $('#type').val() ? $('#type').val() : "D2W",
-		                            ajax : 'false'
-		                        }, function(data) {
-			                        var formattedData = [];
-			                        for ( var i = 0; i < data.length; i++) {
-				                        var dat = {};
-				                        dat.label = data[i];
-				                        dat.value = data[i];
-				                        formattedData.push(dat);
+        //declaration of functions for loading experiment types, annotators, matchings and datasets
+        function loadExperimentTypes() {
+	        $.getJSON('${exptypes}', {
+		        ajax : 'false'
+	        }, function(data) {
+		        var formattedData = [];
+		        for ( var i = 0; i < data.length; i++) {
+			        var dat = {};
+			        dat.label = data[i];
+			        dat.value = data[i];
+			        formattedData.push(dat);
+		        }
+		        $('#type').multiselect('dataprovider', formattedData);
+		        $('#type').multiselect('rebuild');
+	        });
+        }
+        function loadMatching() {
+	        $('#matching').html('');
+	        $('#annotator').html('');
+	        $.getJSON('${matchings}', {
+	            experimentType : $('#type').val() ? $('#type').val() : "D2W",
+	            ajax : 'false'
+	        }, function(data) {
+		        var formattedData = [];
+		        for ( var i = 0; i < data.length; i++) {
+			        var dat = {};
+			        dat.label = data[i];
+			        dat.value = data[i];
+			        formattedData.push(dat);
+		        }
+		        $('#matching').multiselect('dataprovider', formattedData);
+		        $('#matching').multiselect('rebuild');
+	        });
+        }
+        function loadAnnotator() {
+	        $('#annotator').html('');
+	        $.getJSON('${annotators}', {
+	            experimentType : $('#type').val() ? $('#type').val() : "D2W",
+	            ajax : 'false'
+	        }, function(data) {
+		        var formattedData = [];
+		        for ( var i = 0; i < data.length; i++) {
+			        var dat = {};
+			        dat.label = data[i];
+			        dat.value = data[i];
+			        formattedData.push(dat);
+		        }
+		        $('#annotator').multiselect('dataprovider', formattedData);
+		        <c:url value="/file/upload" var="upload"/>
+		        $('#annotator').multiselect('rebuild');
+	        });
+        }
+        function loadDatasets() {
+	        $('#dataset').html('');
+	        $.getJSON('${datasets}', {
+	            experimentType : $('#type').val() ? $('#type').val() : "D2W",
+	            ajax : 'false'
+	        }, function(data) {
+		        var formattedData = [];
+		        for ( var i = 0; i < data.length; i++) {
+			        var dat = {};
+			        dat.label = data[i];
+			        dat.value = data[i];
+			        formattedData.push(dat);
+		        }
+		        $('#dataset').multiselect('dataprovider', formattedData);
+		        $('#dataset').multiselect('rebuild');
+	        });
+        }
+        function checkExperimentConfiguration() {
+	        //fetch list of selected and manually added annotators
+	        var annotatorMultiselect = $('#annotator option:selected');
+	        var annotator = [];
+	        $(annotatorMultiselect).each(function(index, annotatorMultiselect) {
+		        annotator.push([ $(this).val() ]);
+	        });
+	        $("#annotatorList li span.li_content").each(function() {
+		        annotator.push($(this).text());
+	        });
+	        //fetch list of selected and manually added datasets
+	        var datasetMultiselect = $('#dataset option:selected');
+	        var dataset = [];
+	        $(datasetMultiselect).each(function(index, datasetMultiselect) {
+		        dataset.push([ $(this).val() ]);
+	        });
+	        $("#datasetList li span.li_content").each(function() {
+		        dataset.push($(this).text());
+	        });
+
+	        //check whether there is at least one dataset and at least one annotator 
+	        //and the disclaimer checkbox should be clicked
+	        if (dataset.length > 0 && annotator.length > 0 && $('#disclaimerCheckbox:checked').length == 1) {
+		        $('#submit').attr("disabled", false);
+	        } else {
+		        $('#submit').attr("disabled", true);
+	        }
+        }
+
+        $(document).ready(
+                function() {
+	                // load dropdowns when document loaded 
+	                $('#type').multiselect();
+	                $('#matching').multiselect();
+	                $('#annotator').multiselect();
+	                $('#dataset').multiselect();
+	                loadExperimentTypes();
+	                loadMatching();
+	                loadAnnotator();
+	                loadDatasets();
+
+	                // listeners for dropdowns 
+	                $('#type').change(loadMatching);
+	                $('#type').change(loadAnnotator);
+	                $('#type').change(loadDatasets);
+	                $('#matching').change(loadAnnotator);
+	                $('#matching').change(loadDatasets);
+
+	                //supervise configuration of experiment and let it only run
+	                //if everything is ok 
+	                //initially it is turned off 
+	                $('#submit').attr("disabled", true);
+	                //check showing run button if something is changed in dropdown menu
+	                $('#annotator').change(function() {
+		                checkExperimentConfiguration();
+	                });
+	                $('#dataset').change(function() {
+		                checkExperimentConfiguration();
+	                });
+	                $('#disclaimerCheckbox').change(function() {
+		                checkExperimentConfiguration();
+	                });
+
+	                //if add button is clicked check whether there is a name and a uri 
+	                $('#warningEmptyAnnotator').hide();
+	                $('#addAnnotator').click(
+	                        function() {
+		                        var name = $('#nameAnnotator').val();
+		                        var uri = $('#URIAnnotator').val();
+		                        if (name === '' || uri === '') {
+			                        $('#warningEmptyAnnotator').show();
+		                        } else {
+			                        $('#warningEmptyAnnotator').hide();
+			                        $('#annotatorList').append(
+			                                "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
+			                                        + name + "(" + uri + ")</span></li>");
+			                        var listItems = $('#annotatorList > li > span');
+			                        for ( var i = 0; i < listItems.length; i++) {
+				                        listItems[i].onclick = function() {
+					                        this.parentNode.parentNode.removeChild(this.parentNode);
+					                        checkExperimentConfiguration();
+				                        };
 			                        }
-			                        $('#annotator').multiselect('dataprovider', formattedData);
-			                        <c:url value="/file/upload" var="upload"/>
-			                        $('#annotator').multiselect('rebuild');
-		                        });
-	                        })();
-	                        (loadDataset = function() {
-		                        $('#dataset').html('');
-		                        $.getJSON('${datasets}', {
-		                            experimentType : $('#type').val() ? $('#type').val() : "D2W",
-		                            ajax : 'false'
-		                        }, function(data) {
-			                        var formattedData = [];
-			                        for ( var i = 0; i < data.length; i++) {
-				                        var dat = {};
-				                        dat.label = data[i];
-				                        dat.value = data[i];
-				                        formattedData.push(dat);
-			                        }
-			                        $('#dataset').multiselect('dataprovider', formattedData);
-			                        $('#dataset').multiselect('rebuild');
-		                        });
+			                        $('#nameAnnotator').val('');
+			                        $('#URIAnnotator').val('');
+		                        }
+		                        //check showing run button if something is changed in dropdown menu
+		                        checkExperimentConfiguration();
 	                        });
+	                //if add button is clicked check whether there is a name and a uri 
+	                $('#warningEmptyDataset').hide();
+	                $('#fileupload').click(function() {
+		                var name = $('#nameDataset').val();
+		                if (name == '') {
+			                $('#fileupload').fileupload('disable');
+			                $('#warningEmptyDataset').show();
+		                } else {
+			                $('#fileupload').fileupload('enable');
+			                $('#warningEmptyDataset').hide();
+		                }
+	                });
 
-	                        // load dropdowns when document loaded 
-	                        $('#type').multiselect();
-	                        $('#matching').multiselect();
-	                        $('#annotator').multiselect();
-	                        $('#dataset').multiselect();
-	                        loadExperimentTypes();
-	                        loadMatching();
-	                        loadAnnotator();
-	                        loadDataset();
-
-	                        // listeners for dropdowns 
-	                        $('#type').change(loadMatching);
-	                        $('#type').change(loadAnnotator);
-	                        $('#type').change(loadDataset);
-	                        $('#matching').change(loadAnnotator);
-	                        $('#matching').change(loadDataset);
-
-	                        //supervise configuration of experiment and let it only run
-	                        //if everything is ok 
-	                        //initially it is turned off 
-	                        $('#submit').attr("disabled", true);
-	                        var checkExperimentConfiguration;
-	                        (checkExperimentConfiguration = function() {
+	                //submit button clicked will collect and sent experiment data to backend
+	                $('#submit').click(
+	                        function() {
 		                        //fetch list of selected and manually added annotators
 		                        var annotatorMultiselect = $('#annotator option:selected');
 		                        var annotator = [];
 		                        $(annotatorMultiselect).each(function(index, annotatorMultiselect) {
-			                        annotator.push([ $(this).val() ]);
+			                        annotator.push($(this).val());
 		                        });
 		                        $("#annotatorList li span.li_content").each(function() {
-			                        annotator.push($(this).text());
+			                        annotator.push("NIFWS_" + $(this).text());
 		                        });
 		                        //fetch list of selected and manually added datasets
 		                        var datasetMultiselect = $('#dataset option:selected');
 		                        var dataset = [];
 		                        $(datasetMultiselect).each(function(index, datasetMultiselect) {
-			                        dataset.push([ $(this).val() ]);
+			                        dataset.push($(this).val());
 		                        });
 		                        $("#datasetList li span.li_content").each(function() {
-			                        dataset.push($(this).text());
+			                        dataset.push("NIFDS_" + $(this).text());
 		                        });
-
-		                        //check whether there is at least one dataset and at least one annotator 
-		                        //and the disclaimer checkbox should be clicked
-		                        if (dataset.length > 0 && annotator.length > 0
-		                                && $('#disclaimerCheckbox:checked').length == 1) {
-			                        $('#submit').attr("disabled", false);
-		                        } else {
-			                        $('#submit').attr("disabled", true);
-		                        }
+		                        var type = $('#type').val() ? $('#type').val() : "D2W";
+		                        var matching = $('#matching').val() ? $('#matching').val()
+		                                : "Ma - strong annotation match";
+		                        var data = {};
+		                        data.type = type;
+		                        data.matching = matching;
+		                        data.annotator = annotator;
+		                        data.dataset = dataset;
+		                        $.ajax('${execute}', {
+			                        data : {
+				                        'experimentData' : JSON.stringify(data)
+			                        }
+		                        }).done(
+		                                function(data) {
+			                                $('#submit').remove();
+			                                var origin = window.location.origin;
+			                                var link = "<a href=\"/gerbil/experiment?id=" + data + "\">" + origin
+			                                        + "/gerbil/experiment?id=" + data + "</a>";
+			                                var span = "<span>Find your experimental data here: </span>";
+			                                $('#submitField').append(span);
+			                                $('#submitField').append(link);
+		                                }).fail(function() {
+			                        alert("Error, insufficient parameters.");
+		                        });
 	                        });
-	                        //check showing run button if something is changed in dropdown menu
-	                        $('#annotator').change(function() {
-		                        checkExperimentConfiguration();
-	                        });
-	                        $('#dataset').change(function() {
-		                        checkExperimentConfiguration();
-	                        });
-	                        $('#disclaimerCheckbox').change(function() {
-		                        checkExperimentConfiguration();
-	                        });
-
-	                        //if add button is clicked check whether there is a name and a uri 
-	                        $('#warningEmptyAnnotator').hide();
-	                        $('#addAnnotator').click(
-	                                function() {
-		                                var name = $('#nameAnnotator').val();
-		                                var uri = $('#URIAnnotator').val();
-		                                if (name === '' || uri === '') {
-			                                $('#warningEmptyAnnotator').show();
-		                                } else {
-			                                $('#warningEmptyAnnotator').hide();
-			                                $('#annotatorList').append(
-			                                        "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
-			                                                + name + "(" + uri + ")</span></li>");
-			                                var listItems = $('#annotatorList > li > span');
-			                                for ( var i = 0; i < listItems.length; i++) {
-				                                listItems[i].onclick = function() {
-					                                this.parentNode.parentNode.removeChild(this.parentNode);
-					                                checkExperimentConfiguration();
-				                                };
-			                                }
-			                                $('#nameAnnotator').val('');
-			                                $('#URIAnnotator').val('');
-		                                }
-		                                //check showing run button if something is changed in dropdown menu
-		                                checkExperimentConfiguration();
-	                                });
-	                        //if add button is clicked check whether there is a name and a uri 
-	                        $('#warningEmptyDataset').hide();
-	                        $('#fileupload').click(function() {
-		                        var name = $('#nameDataset').val();
-		                        if (name == '') {
-			                        $('#fileupload').fileupload('disable');
-			                        $('#warningEmptyDataset').show();
-		                        } else {
-			                        $('#fileupload').fileupload('enable');
-			                        $('#warningEmptyDataset').hide();
-		                        }
-	                        });
-
-	                        //submit button clicked will collect and sent experiment data to backend
-	                        $('#submit').click(
-	                                function() {
-		                                //fetch list of selected and manually added annotators
-		                                var annotatorMultiselect = $('#annotator option:selected');
-		                                var annotator = [];
-		                                $(annotatorMultiselect).each(function(index, annotatorMultiselect) {
-			                                annotator.push($(this).val());
-		                                });
-		                                $("#annotatorList li span.li_content").each(function() {
-			                                annotator.push("NIFWS_" + $(this).text());
-		                                });
-		                                //fetch list of selected and manually added datasets
-		                                var datasetMultiselect = $('#dataset option:selected');
-		                                var dataset = [];
-		                                $(datasetMultiselect).each(function(index, datasetMultiselect) {
-			                                dataset.push($(this).val());
-		                                });
-		                                $("#datasetList li span.li_content").each(function() {
-			                                dataset.push("NIFDS_" + $(this).text());
-		                                });
-		                                var type = $('#type').val() ? $('#type').val() : "D2W";
-		                                var matching = $('#matching').val() ? $('#matching').val()
-		                                        : "Ma - strong annotation match";
-		                                var data = {};
-		                                data.type = type;
-		                                data.matching = matching;
-		                                data.annotator = annotator;
-		                                data.dataset = dataset;
-		                                $.ajax('${execute}', {
-			                                data : {
-				                                'experimentData' : JSON.stringify(data)
-			                                }
-		                                }).done(
-		                                        function(data) {
-			                                        $('#submit').remove();
-			                                        var origin = window.location.origin;
-			                                        var link = "<a href=\"/gerbil/experiment?id=" + data + "\">"
-			                                                + origin + "/gerbil/experiment?id=" + data + "</a>";
-			                                        var span = "<span>Find your experimental data here: </span>";
-			                                        $('#submitField').append(span);
-			                                        $('#submitField').append(link);
-		                                        }).fail(function() {
-			                                alert("Error, insufficient parameters.");
-		                                });
-	                                });
-                        });
-	</script>
-	<script type="text/javascript">
-		/*jslint unparam: true */
-        /*global window, $ */
+                });
+        
+        // define file upload
         $(function() {
 	        'use strict';
 	        // Change this to the location of your server-side upload handler:
 	        var url = '${upload}';
-	        var name = $('#nameDataset').val();
 	        $('#fileupload').fileupload(
 	                {
 	                    url : url,
 	                    dataType : 'json',
 	                    done : function(e, data) {
+		                    var name = $('#nameDataset').val();
 		                    $.each(data.result.files, function(index, file) {
 			                    $('#datasetList').append(
 			                            "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"

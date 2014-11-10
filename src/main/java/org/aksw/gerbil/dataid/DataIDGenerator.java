@@ -74,7 +74,7 @@ public class DataIDGenerator {
         }
 
         // writing dataid result to output (this should be removed)
-         RDFDataMgr.write(System.out, model, RDFFormat.TURTLE);
+        // RDFDataMgr.write(System.out, model, RDFFormat.TURTLE);
 
         OutputStream o = new ByteArrayOutputStream();
 
@@ -102,8 +102,10 @@ public class DataIDGenerator {
         experimentTask.addProperty(RDF.type, CUBE.Observation);
 
         // add annotator and dataset
-        experimentTask.addProperty(GERBIL.annotator, gerbilURL + DATASET_DATAID + removeSlash(result.annotator) + DATAID_EXTENSION);
-        experimentTask.addProperty(GERBIL.dataset, gerbilURL + ANNOTATOR_DATAID + removeSlash(result.dataset) + DATAID_EXTENSION);
+        experimentTask.addProperty(GERBIL.annotator, gerbilURL + DATASET_DATAID + removeSlash(result.annotator)
+                + DATAID_EXTENSION);
+        experimentTask.addProperty(GERBIL.dataset, gerbilURL + ANNOTATOR_DATAID + removeSlash(result.dataset)
+                + DATAID_EXTENSION);
 
         // set the status of this task
         model.add(experimentTask, GERBIL.statusCode, model.createTypedLiteral(result.state));
@@ -124,8 +126,8 @@ public class DataIDGenerator {
         cal.setTimeInMillis(result.timestamp);
         model.add(experimentTask, GERBIL.timestamp, model.createTypedLiteral(cal));
     }
-    
-    private String removeSlash(String str){
-    	return str.replace("/", "_");
+
+    private String removeSlash(String str) {
+        return str.replace("/", "_");
     }
 }
