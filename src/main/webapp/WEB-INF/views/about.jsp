@@ -7,5 +7,32 @@
 </head>
 <body class="container">
 	<%@include file="navbar.jsp"%>
-	about
+GERBIL is a community effort. Join us!
+
+For more information visit <a href="http://gerbil.aksw.org">http://gerbil.aksw.org</a>.
+<h5>Contributors</h5>
+<ul>
+	<li>Ricardo Usbeck(University Leipzig and Unister R&D, Germany)
+	<li>Ciro Baron (University Leipzig, Germany)
+	<li>Andreas Both (R&D, Unister GmbH, Germany)
+	<li>Martin Br&uuml;mmer (University Leipzig, Germany)
+	<li>Diego Ceccarelli (Unversity Pisa, Italy)
+	<li>Marco Cornolti (University of Pisa, Italy)
+	<li>Didier Cherix (R&D, Unister GmbH, Germany)
+	<li>Bernd Eickmann (R&D, Unister GmbH, Germany)
+	<li>Paolo Ferragina (University of Pisa, Italy)
+	<li>Christiane Lemke (R&D, Unister GmbH, Germany)
+	<li>Andrea Moro (Sapienza University of Rome, Italy)
+	<li>Roberto Navigli (Sapienza University of Rome, Italy)
+	<li>Axel-Cyrille Ngonga-Ngomo (University Leipzig, Germany)
+	<li>Francesco Piccinno (University of Pisa, Italy)
+	<li>Giuseppe Rizzo (EURECOM, France)
+	<li>Michael R&ouml;der (University Leipzig and Unister R&D, Germany)
+	<li>Harald Sack (HPI Potsdam, Germany)
+	<li>Ren&eacute; Speck (Institute for Applied Informatics, Germany)
+	<li>Rapha&euml;l Troncy (EURECOM, France)
+	<li>Ricardo Usbeck(University Leipzig and Unister R&D, Germany)
+	<li>J&ouml;rg Waitelonis (HPI Potsdam, Germany)
+	<li>Lars Wesemann (R&D, Unister GmbH, Germany)
+<ul>
 </body>
