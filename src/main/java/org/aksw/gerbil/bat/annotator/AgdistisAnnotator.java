@@ -1,5 +1,8 @@
 package org.aksw.gerbil.bat.annotator;
 
+import it.acubelab.batframework.data.Annotation;
+import it.acubelab.batframework.utils.WikipediaApiInterface;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +19,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
 public class AgdistisAnnotator extends it.acubelab.batframework.systemPlugins.AgdistisAnnotator {
 
     protected String host;
@@ -32,7 +32,7 @@ public class AgdistisAnnotator extends it.acubelab.batframework.systemPlugins.Ag
         this.host = host;
         this.port = port;
     }
-    
+
     @Override
     public long getLastAnnotationTime() {
         return -1;

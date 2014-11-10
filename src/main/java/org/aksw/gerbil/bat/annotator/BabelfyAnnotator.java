@@ -47,8 +47,6 @@ public class BabelfyAnnotator implements A2WSystem {
 
     public static final String NAME = "Babelfy";
 
-    // private long calib = -1;
-    // private long lastTime = -1;
     private String key;
 
     @Autowired
@@ -76,9 +74,6 @@ public class BabelfyAnnotator implements A2WSystem {
     }
 
     public long getLastAnnotationTime() {
-        // if (calib == -1)
-        // calib = TimingCalibrator.getOffset(this);
-        // return lastTime - calib > 0 ? lastTime - calib : 0;
         return -1;
     }
 
@@ -104,7 +99,6 @@ public class BabelfyAnnotator implements A2WSystem {
         }
         Babelfy bfy = Babelfy.getInstance(AccessType.ONLINE);
         HashSet<Annotation> annotations = Sets.newHashSet();
-        // lastTime = Calendar.getInstance().getTimeInMillis();
         try {
             it.uniroma1.lcl.babelfy.data.Annotation babelAnnotations = bfy.babelfy(key, text,
                     isShortDocument ? Matching.PARTIAL : Matching.EXACT, Language.EN);
@@ -137,7 +131,6 @@ public class BabelfyAnnotator implements A2WSystem {
             throw new AnnotationException("Exception while requesting annotations from BabelFy: "
                     + e.getLocalizedMessage());
         }
-        // lastTime = Calendar.getInstance().getTimeInMillis() - lastTime;
         return annotations;
     }
 

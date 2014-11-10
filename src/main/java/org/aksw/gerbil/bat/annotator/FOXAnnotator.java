@@ -27,14 +27,16 @@ import org.slf4j.LoggerFactory;
 
 public class FOXAnnotator implements Sa2WSystem {
 
-    private static final Logger     LOGGER = LoggerFactory.getLogger(FOXAnnotator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FOXAnnotator.class);
 
-    /*    static {
-            PropertyConfigurator.configure(FOXAnnotator.class.getResourceAsStream("log4jFOXAnnotator.properties"));
-        }*/
+    /*
+     * static {
+     * PropertyConfigurator.configure(FOXAnnotator.class.getResourceAsStream("log4jFOXAnnotator.properties"));
+     * }
+     */
 
-    public static final String      NAME   = "FOX";
-    protected IFoxApi               fox    = new FoxApi();
+    public static final String NAME = "FOX";
+    protected IFoxApi fox = new FoxApi();
     protected WikipediaApiInterface wikiApi;
 
     public static void main(String[] a) {
