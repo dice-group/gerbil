@@ -53,7 +53,6 @@ public class Microposts2014Dataset implements A2WDataset {
 
         HashSet<Microposts2014Annotation> currentAnns = null;
         String currentTitle = null;
-        URLDecoder decoder;
         while ((line = r.readLine()) != null)
         {
             int currentPos = 1;

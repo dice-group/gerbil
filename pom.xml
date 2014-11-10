@@ -303,6 +303,29 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+            <!-- License management plugin -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <header>src/main/resources/license_template.txt</header>
+                    <properties>
+                        <owner>Agile Knowledge Engineering and Semantic Web (AKSW)</owner>
+                        <year>${project.inceptionYear}</year>
+                        <email>usbeck@informatik.uni-leipzig.de</email>
+                    </properties>
+                    <excludes>
+                        <exclude>**/README</exclude>
+                        <exclude>**/LICENSE</exclude>
+                        <exclude>diagrams/**</exclude>
+                        <exclude>repository/**</exclude>
+                        <exclude>gerbil_data/**</exclude>
+                        <exclude>src/test/resources/**</exclude>
+                        <exclude>src/main/resources/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <packaging>war</packaging>

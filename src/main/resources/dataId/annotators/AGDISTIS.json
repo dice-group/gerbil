@@ -1,0 +1,66 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Ricardo Usbeck",
+    "mbox" : "ricardo.usbeck(at)googlemail.com",
+    "name" : "Ricardo Usbeck"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/AGDISTIS",
+    "@type" : "dataid:ServiceDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/annotators/AGDISTIS#annotator"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/AGDISTIS#annotator",
+    "@type" : [ "prov:Entity", "dataid:Service" ],
+    "licenseName" : "MIT license",
+    "description" : "AGDISTIS is an Open Source Named Entity Disambiguation Framework able to link entities against every Linked Data Knowledge Base.",
+    "issued" : "10-19-2014",
+    "license" : "http://purl.org/NET/rdflicense/licMIT",
+    "rights" : "Please cite: Ricardo Usbeck, Axel-Cyrille Ngonga Ngomo, S�ren Auer, Daniel Gerber und Andreas Both. AGDISTIS - Graph-Based Disambiguation of Named Entities using Linked Data. In Proceedings of International Semantic Web Conference (ISWC), 2014.",
+    "title" : "Agnostic Disambiguation of Named Entities Using Linked Open Data",
+    "label" : "AGDISTIS",
+    "contactPoint" : "_:b0",
+    "keyword" : [ "D2W", "ner" ],
+    "landingPage" : "http://aksw.org/Projects/AGDISTIS.html"
+  } ],
+  "@context" : {
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "rights" : "http://purl.org/dc/terms/rights",
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "title" : "http://purl.org/dc/terms/title",
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "description" : "http://purl.org/dc/terms/description",
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

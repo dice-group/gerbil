@@ -1,0 +1,369 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "measure" : "gerbil:macroPrecision"
+  }, {
+    "@id" : "_:b1",
+    "measure" : "gerbil:macroRecall"
+  }, {
+    "@id" : "_:b10",
+    "dimension" : "gerbil:evalDataset"
+  }, {
+    "@id" : "_:b11",
+    "dimension" : "gerbil:experimentType"
+  }, {
+    "@id" : "_:b2",
+    "dimension" : "gerbil:matching"
+  }, {
+    "@id" : "_:b3",
+    "dimension" : "gerbil:annotator"
+  }, {
+    "@id" : "_:b4",
+    "measure" : "gerbil:microRecall"
+  }, {
+    "@id" : "_:b5",
+    "measure" : "gerbil:microF1"
+  }, {
+    "@id" : "_:b6",
+    "measure" : "gerbil:errorCount"
+  }, {
+    "@id" : "_:b7",
+    "measure" : "gerbil:microPrecision"
+  }, {
+    "@id" : "_:b8",
+    "measure" : "gerbil:macroF1"
+  }, {
+    "@id" : "_:b9",
+    "dimension" : "gerbil:timestamp"
+  }, {
+    "@id" : "gerbil:A2W",
+    "@type" : [ "gerbil:Type", "skos:Concept" ],
+    "inScheme" : "gerbil:type",
+    "notation" : "A2W",
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Annotate to Wikipedia"
+    },
+    "topConceptOf" : "gerbil:type"
+  }, {
+    "@id" : "gerbil:C2W",
+    "@type" : [ "gerbil:Type", "skos:Concept" ],
+    "inScheme" : "gerbil:type",
+    "notation" : "C2W",
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Concepts to Wikipedia"
+    },
+    "topConceptOf" : "gerbil:type"
+  }, {
+    "@id" : "gerbil:D2W",
+    "@type" : [ "gerbil:Type", "skos:Concept" ],
+    "inScheme" : "gerbil:type",
+    "notation" : "D2W",
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Disambiguate to Wikipedia"
+    },
+    "topConceptOf" : "gerbil:type"
+  }, {
+    "@id" : "gerbil:Matching",
+    "@type" : [ "owl:Class", "rdfs:Class" ],
+    "comment" : {
+      "@language" : "en",
+      "@value" : "This code list provides the matching types of GERBIL. Types as defined in Cornolti at al. A Framework for Benchmarking Entity-Annotation Systems. 22nd WWW, 2013"
+    },
+    "label" : {
+      "@language" : "en",
+      "@value" : "Code list for GERBIL Matching - codelist class"
+    },
+    "seeAlso" : "gerbil:matchingScheme",
+    "subClassOf" : "skos:Concept"
+  }, {
+    "@id" : "gerbil:Rc2W",
+    "@type" : [ "gerbil:Type", "skos:Concept" ],
+    "inScheme" : "gerbil:type",
+    "notation" : "Rc2W",
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Ranked-concepts to Wikipedia"
+    },
+    "topConceptOf" : "gerbil:type"
+  }, {
+    "@id" : "gerbil:Sa2W",
+    "@type" : [ "gerbil:Type", "skos:Concept" ],
+    "inScheme" : "gerbil:type",
+    "notation" : "Sa2W",
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Scored-annotate to Wikipedia"
+    },
+    "topConceptOf" : "gerbil:type"
+  }, {
+    "@id" : "gerbil:Sc2W",
+    "@type" : [ "gerbil:Type", "skos:Concept" ],
+    "inScheme" : "gerbil:type",
+    "notation" : "Scored concepts to Wikipedia",
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Female"
+    },
+    "topConceptOf" : "gerbil:type"
+  }, {
+    "@id" : "gerbil:StrongAnnoMatch",
+    "@type" : [ "gerbil:Matching", "skos:Concept" ],
+    "inScheme" : "gerbil:matchingScheme",
+    "notation" : "StrongAnnoMatch",
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Strong Annotation Match"
+    },
+    "topConceptOf" : "gerbil:matchingScheme"
+  }, {
+    "@id" : "gerbil:StrongEntMatch",
+    "@type" : [ "gerbil:Matching", "skos:Concept" ],
+    "inScheme" : "gerbil:matchingScheme",
+    "notation" : "StrongEntMatch",
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Strong Entity Match"
+    },
+    "topConceptOf" : "gerbil:matchingScheme"
+  }, {
+    "@id" : "gerbil:Type",
+    "@type" : [ "owl:Class", "rdfs:Class" ],
+    "comment" : {
+      "@language" : "en",
+      "@value" : "This code list provides the experiment types of named entity annotators. Types as defined in Cornolti at al. A Framework for Benchmarking Entity-Annotation Systems. 22nd WWW, 2013"
+    },
+    "label" : {
+      "@language" : "en",
+      "@value" : "Code list for GERBIL Experiment Types - codelist class"
+    },
+    "seeAlso" : "gerbil:type",
+    "subClassOf" : "skos:Concept"
+  }, {
+    "@id" : "gerbil:WeakAnnoMatch",
+    "@type" : [ "gerbil:Matching", "skos:Concept" ],
+    "inScheme" : "gerbil:matchingScheme",
+    "notation" : "WeakAnnoMatch",
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Weak Annotation Match"
+    },
+    "topConceptOf" : "gerbil:matchingScheme"
+  }, {
+    "@id" : "gerbil:annotator",
+    "@type" : [ "qb:DimensionProperty", "rdf:Property" ],
+    "label" : {
+      "@language" : "en",
+      "@value" : "Annotator"
+    },
+    "range" : "dataid:ServiceDescription"
+  }, {
+    "@id" : "gerbil:dsd",
+    "@type" : "qb:DataStructureDefinition",
+    "component" : [ "_:b5", "_:b7", "_:b8", "_:b0", "_:b6", "_:b3", "_:b4", "_:b9", "_:b2", "_:b10", "_:b1", "_:b11" ]
+  }, {
+    "@id" : "gerbil:errorCount",
+    "@type" : [ "qb:MeasureProperty", "rdf:Property" ],
+    "label" : {
+      "@language" : "en",
+      "@value" : "Error count"
+    },
+    "range" : "xsd:integer",
+    "subPropertyOf" : "sdmx-measure:obsValue"
+  }, {
+    "@id" : "gerbil:evalDataset",
+    "@type" : [ "qb:DimensionProperty", "rdf:Property" ],
+    "label" : {
+      "@language" : "en",
+      "@value" : "Evaluation dataset"
+    },
+    "range" : "void:DatasetDescription"
+  }, {
+    "@id" : "gerbil:experimentType",
+    "@type" : [ "qb:DimensionProperty", "rdf:Property" ],
+    "codeList" : "gerbil:type",
+    "label" : {
+      "@language" : "en",
+      "@value" : "Type of experiment"
+    },
+    "range" : "gerbil:Type"
+  }, {
+    "@id" : "gerbil:macroF1",
+    "@type" : [ "qb:MeasureProperty", "rdf:Property" ],
+    "label" : {
+      "@language" : "en",
+      "@value" : "Macro F1"
+    },
+    "range" : "xsd:decimal",
+    "subPropertyOf" : "sdmx-measure:obsValue"
+  }, {
+    "@id" : "gerbil:macroPrecision",
+    "@type" : [ "qb:MeasureProperty", "rdf:Property" ],
+    "label" : {
+      "@language" : "en",
+      "@value" : "Macro Precision"
+    },
+    "range" : "xsd:decimal",
+    "subPropertyOf" : "sdmx-measure:obsValue"
+  }, {
+    "@id" : "gerbil:macroRecall",
+    "@type" : [ "qb:MeasureProperty", "rdf:Property" ],
+    "label" : {
+      "@language" : "en",
+      "@value" : "Macro Recall"
+    },
+    "range" : "xsd:decimal",
+    "subPropertyOf" : "sdmx-measure:obsValue"
+  }, {
+    "@id" : "gerbil:matching",
+    "@type" : [ "qb:DimensionProperty", "rdf:Property" ],
+    "codeList" : "gerbil:matchingScheme",
+    "label" : {
+      "@language" : "en",
+      "@value" : "Matching"
+    },
+    "range" : "gerbil:Matching"
+  }, {
+    "@id" : "gerbil:matchingScheme",
+    "@type" : "skos:ConceptScheme",
+    "label" : {
+      "@language" : "en",
+      "@value" : "Code list for GERBIL Matching - codelist scheme"
+    },
+    "seeAlso" : "gerbil:Matching",
+    "hasTopConcept" : "gerbil:StrongAnnoMatch",
+    "notation" : "Matching",
+    "note" : {
+      "@language" : "en",
+      "@value" : "This code list provides the matching types of GERBIL."
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Code list for GERBIL Matching - codelist scheme"
+    }
+  }, {
+    "@id" : "gerbil:microF1",
+    "@type" : [ "qb:MeasureProperty", "rdf:Property" ],
+    "label" : {
+      "@language" : "en",
+      "@value" : "Micro F1"
+    },
+    "range" : "xsd:decimal",
+    "subPropertyOf" : "sdmx-measure:obsValue"
+  }, {
+    "@id" : "gerbil:microPrecision",
+    "@type" : [ "qb:MeasureProperty", "rdf:Property" ],
+    "label" : {
+      "@language" : "en",
+      "@value" : "Micro Precision"
+    },
+    "range" : "xsd:decimal",
+    "subPropertyOf" : "sdmx-measure:obsValue"
+  }, {
+    "@id" : "gerbil:microRecall",
+    "@type" : [ "qb:MeasureProperty", "rdf:Property" ],
+    "label" : {
+      "@language" : "en",
+      "@value" : "Micro Recall"
+    },
+    "range" : "xsd:decimal",
+    "subPropertyOf" : "sdmx-measure:obsValue"
+  }, {
+    "@id" : "gerbil:timestamp",
+    "@type" : [ "qb:DimensionProperty", "rdf:Property" ],
+    "concept" : "sdmx-concept:refPeriod",
+    "label" : {
+      "@language" : "en",
+      "@value" : "DateTime of experiment"
+    },
+    "range" : "xsd:dateTime",
+    "subPropertyOf" : "sdmx-dimension:refPeriod"
+  }, {
+    "@id" : "gerbil:type",
+    "@type" : "skos:ConceptScheme",
+    "label" : {
+      "@language" : "en",
+      "@value" : "Code list for GERBIL Experiment Types - codelist scheme"
+    },
+    "seeAlso" : "gerbil:Type",
+    "hasTopConcept" : [ "gerbil:A2W", "gerbil:Sa2W", "gerbil:C2W", "gerbil:D2W", "gerbil:Sc2W", "gerbil:Rc2W" ],
+    "notation" : "type",
+    "note" : {
+      "@language" : "en",
+      "@value" : "This code list provides the experiment types of named entity annotators."
+    },
+    "prefLabel" : {
+      "@language" : "en",
+      "@value" : "Code list for GERBIL Experiment Types - codelist scheme"
+    }
+  } ],
+  "@context" : {
+    "inScheme" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#inScheme",
+      "@type" : "@id"
+    },
+    "notation" : "http://www.w3.org/2004/02/skos/core#notation",
+    "prefLabel" : "http://www.w3.org/2004/02/skos/core#prefLabel",
+    "topConceptOf" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#topConceptOf",
+      "@type" : "@id"
+    },
+    "hasTopConcept" : {
+      "@id" : "http://www.w3.org/2004/02/skos/core#hasTopConcept",
+      "@type" : "@id"
+    },
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "note" : "http://www.w3.org/2004/02/skos/core#note",
+    "seeAlso" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "@type" : "@id"
+    },
+    "measure" : {
+      "@id" : "http://purl.org/linked-data/cube#measure",
+      "@type" : "@id"
+    },
+    "dimension" : {
+      "@id" : "http://purl.org/linked-data/cube#dimension",
+      "@type" : "@id"
+    },
+    "range" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#range",
+      "@type" : "@id"
+    },
+    "subPropertyOf" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#subPropertyOf",
+      "@type" : "@id"
+    },
+    "concept" : {
+      "@id" : "http://purl.org/linked-data/cube#concept",
+      "@type" : "@id"
+    },
+    "component" : {
+      "@id" : "http://purl.org/linked-data/cube#component",
+      "@type" : "@id"
+    },
+    "codeList" : {
+      "@id" : "http://purl.org/linked-data/cube#codeList",
+      "@type" : "@id"
+    },
+    "comment" : "http://www.w3.org/2000/01/rdf-schema#comment",
+    "subClassOf" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+      "@type" : "@id"
+    },
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "sdmx-measure" : "http://purl.org/linked-data/sdmx/2009/measure#",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "sdmx-concept" : "http://purl.org/linked-data/sdmx/2009/concept#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "qb" : "http://purl.org/linked-data/cube#",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "sdmx-dimension" : "http://purl.org/linked-data/sdmx/2009/dimension#",
+    "gerbil" : "http://gerbil.aksw.org/gerbil/vocab/gerbil#"
+  }
+}

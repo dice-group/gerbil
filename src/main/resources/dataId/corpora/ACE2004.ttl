@@ -1,0 +1,45 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/ACE2004>
+  a void:DatasetDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/corpora/ACE2004#dataset>.
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/ACE2004#dataset>
+  a dataid:Dataset, dcat:Dataset, void:Dataset, prov:Entity ;
+  rdfs:label "ACE 2004 Multilingual Training Corpus" ;
+  dc:issued "03-15-2005"^^xsd:date ;
+  dc:language "english" ;
+  dcat:landingPage <http://www.itl.nist.gov/iad/mig/tests/ace/2004/> ;
+  dcat:landingPage <https://catalog.ldc.upenn.edu/LDC2005T09> ;
+  dcat:keyword "newswire","ner","corpus","broadcast news","linguistics" ;
+  dcat:distribution <http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip> ;
+  dataid:licenseName "LDC Non-Member agreement" ;
+  dc:license <http://purl.org/NET/rdflicense/allrightsreserved> ;
+  dc:rights """Please cite: Mitchell, Alexis, et al. ACE 2004 Multilingual Training Corpus LDC2005T09. Web Download. Philadelphia: Linguistic Data Consortium, 2005.""";
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Alexis Mitchell" ;
+    foaf:name "Alexis Mitchell" ;
+    foaf:mbox "amitche0(at)ldc.upenn.edu"
+  ] ;
+  dc:title "ACE 2004 Multilingual Training Corpus" ;
+  dc:description """The objective of the ACE program is to develop automatic content extraction technology to support automatic processing of human language in text form. In September 2004, sites were evaluated on system performance in six areas: Entity Detection and Recognition (EDR), Entity Mention Detection (EMD), EDR Co-reference, Relation Detection and Recognition (RDR), Relation Mention Detection (RMD), and RDR given reference entities. All tasks were evaluated in three languages: English, Chinese and Arabic.
+The current publication consists of the official training data for these evaluation tasks. Full task description here: https://www.ldc.upenn.edu/sites/www.ldc.upenn.edu/files/lrec2004-ace-program.pdf""" .
+
+<http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip>
+  a dataid:Distribution, dcat:Distribution ;
+  dc:title "ACL2011WikificationData.zip" ;
+  dc:description "Contains multiple datasets. ACE2004 corpus in ACE2004_Coref_Turking subfolder" ;
+  dc:rights "All rights reserved by owner of original dataset" ;
+  dcat:accessURL "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip" ;
+  dcat:mediaType "application/zip" .
+

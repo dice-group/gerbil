@@ -41,7 +41,7 @@ public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
         } else {
             propertyKey = ANNOTATION_URL_PROPERTY_KEY;
         }
-        String annotatorURL = GerbilConfiguration.getInstance().getString(ANNOTATION_URL_PROPERTY_KEY);
+        String annotatorURL = GerbilConfiguration.getInstance().getString(propertyKey);
         if (annotatorURL == null) {
             throw new GerbilException("Couldn't load property \"" + propertyKey
                     + "\" containing the URL for the experiment type " + type, ErrorTypes.ANNOTATOR_LOADING_ERROR);

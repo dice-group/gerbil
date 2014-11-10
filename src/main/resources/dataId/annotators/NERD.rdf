@@ -1,0 +1,38 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <dataid:ServiceDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/NERD">
+    <foaf:primaryTopic>
+      <prov:Entity rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/NERD#annotator">
+        <dcat:landingPage rdf:resource="http://nerd.eurecom.fr"/>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>giuseppe.rizzo(at)eurecom.fr</foaf:mbox>
+            <foaf:name>Giuseppe Rizzo</foaf:name>
+            <rdfs:label>Giuseppe Rizzo</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <dcat:keyword>Sa2W</dcat:keyword>
+        <dcat:keyword>ner</dcat:keyword>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >05-31-2014</dc:issued>
+        <dataid:licenseName>GNU public license 3.0</dataid:licenseName>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Service"/>
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/gpl3.0"/>
+        <dc:rights>Please cite: Giuseppe Rizzo and Marieke Van Erp and Rapha�l Troncy. Benchmarking the Extraction and Disambiguation of Named Entities on the Semantic Web. In Proceedings of the Ninth International Conference on Language Resources and Evaluation (LREC'14), 2014.</dc:rights>
+        <dc:description>Named Entity Recognition and Disambiguation.</dc:description>
+        <dc:title>NERD</dc:title>
+        <rdfs:label>NERD</rdfs:label>
+      </prov:Entity>
+    </foaf:primaryTopic>
+  </dataid:ServiceDescription>
+</rdf:RDF>

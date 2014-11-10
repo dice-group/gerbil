@@ -1,0 +1,66 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Paolo Ferragina",
+    "mbox" : "ferragina(at)di.unipi.it",
+    "name" : "Paolo Ferragina"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/TagMe2",
+    "@type" : "dataid:ServiceDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/annotators/TagMe2#annotator"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/TagMe2#annotator",
+    "@type" : [ "dataid:Service", "prov:Entity" ],
+    "licenseName" : "APACHE LICENSE 2.0",
+    "description" : "TAGME is a topic annotator that is able to identify meaningful sequences of words in a short text and link them to a pertinent Wikipedia page.",
+    "issued" : "02-01-2014",
+    "license" : "http://purl.org/NET/rdflicense/licAPACHE",
+    "rights" : "Please cite: P. Ferragina and U. Scaiella. Fast and accurate annotation of short texts with wikipedia pages. IEEE software, 29(1), 2012.",
+    "title" : "TagMe 2",
+    "label" : "TagMe 2",
+    "contactPoint" : "_:b0",
+    "keyword" : [ "Sa2W", "ner" ],
+    "landingPage" : "http://acube.di.unipi.it/tagme/"
+  } ],
+  "@context" : {
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "rights" : "http://purl.org/dc/terms/rights",
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "description" : "http://purl.org/dc/terms/description",
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "title" : "http://purl.org/dc/terms/title",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

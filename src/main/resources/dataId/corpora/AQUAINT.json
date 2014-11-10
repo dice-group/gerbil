@@ -1,0 +1,83 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "David Graff",
+    "mbox" : " graff(at)ldc.upenn.edu ",
+    "name" : "David Graff"
+  }, {
+    "@id" : "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip",
+    "@type" : [ "dcat:Distribution", "dataid:Distribution" ],
+    "description" : "Contains multiple datasets. AQUAINT corpus in AQUAINT subfolder",
+    "rights" : "All rights reserved by owner of original dataset",
+    "title" : "ACL2011WikificationData.zip",
+    "accessURL" : "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip",
+    "mediaType" : "application/zip"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/AQUAINT",
+    "@type" : "void:DatasetDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/corpora/AQUAINT#dataset"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/AQUAINT#dataset",
+    "@type" : [ "void:Dataset", "prov:Entity", "dcat:Dataset", "dataid:Dataset" ],
+    "licenseName" : "LDC Non-Member agreement",
+    "description" : "The AQUAINT Corpus, Linguistic Data Consortium (LDC) catalog number LDC2002T31 and ISBN 1-58563-240-6 consists of newswire text data in English, drawn from three sources: the Xinhua News Service (People's Republic of China), the New York Times News Service, and the Associated Press Worldstream News Service. It was prepared by the LDC for the AQUAINT Project, and will be used in official benchmark evaluations conducted by National Institute of Standards and Technology (NIST). ",
+    "issued" : "09-26-2002",
+    "language" : "english",
+    "license" : "http://purl.org/NET/rdflicense/allrightsreserved",
+    "rights" : "Please cite: Graff, David. The AQUAINT Corpus of English News Text LDC2002T31. Web Download. Philadelphia: Linguistic Data Consortium, 2002.",
+    "title" : "The  AQUAINT Corpus of English News Text",
+    "label" : "The AQUAINT Corpus of English News Text",
+    "contactPoint" : "_:b0",
+    "distribution" : "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip",
+    "keyword" : [ "ner", "corpus", "linguistics", "newswire" ],
+    "landingPage" : [ "http://www.itl.nist.gov/iad/mig/tests/ace/2004/", "https://catalog.ldc.upenn.edu/LDC2002T31" ]
+  } ],
+  "@context" : {
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "mediaType" : "http://www.w3.org/ns/dcat#mediaType",
+    "accessURL" : "http://www.w3.org/ns/dcat#accessURL",
+    "rights" : "http://purl.org/dc/terms/rights",
+    "description" : "http://purl.org/dc/terms/description",
+    "title" : "http://purl.org/dc/terms/title",
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "language" : "http://purl.org/dc/terms/language",
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

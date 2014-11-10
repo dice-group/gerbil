@@ -1,0 +1,83 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <void:DatasetDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/KORE50">
+    <foaf:primaryTopic>
+      <sd:Dataset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/KORE50#dataset">
+        <dc:title>KORE 50 NIF NER Corpus</dc:title>
+        <void:subset>
+          <dataid:Linkset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/KORE50#links">
+            <void:target rdf:resource="http://dbpedia.org"/>
+            <void:triples>144</void:triples>
+            <void:linkPredicate rdf:resource="http://www.w3.org/2005/11/its/rdf#taIdentRef"/>
+            <dc:modified>03-11-2014</dc:modified>
+            <dc:issued>03-11-2014</dc:issued>
+          </dataid:Linkset>
+        </void:subset>
+        <dc:description>KORE 50 is a subset of the larger AIDA corpus, which is based on the dataset of the CoNLL 2003 NER task. The dataset aims to capture hard to disambiguate mentions of entities and it contains a large number of first names referring to persons, whose identity needs to be deduced from the given context. It comprises 50 sentences from different domains, such as music, celebrities, and business and is provided in a clear TSV format. The corpus was converted to NLP Interchange Format (NIF). </dc:description>
+        <dcat:landingPage rdf:resource="http://www.yovisto.com/labs/ner-benchmarks/"/>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >03-11-2014</dc:issued>
+        <dcat:keyword>linguistics</dcat:keyword>
+        <void:vocabulary rdf:resource="http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#"/>
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/cc-by-sa4.0"/>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Dataset"/>
+        <dc:rights>Please cite: J. Hoffart, S. Seufert, D. B. Nguyen, M. Theobald, and G. Weikum. KORE: Keyphrase overlap relatedness for entity disambiguation. In Proc. of the 21st ACM international conference on Information and knowledge management AND N. Steinmetz, M. Knuth, and H. Sack. Statistical Analyses of Named Entity
+Disambiguation Benchmarks in Proceedings of NLP-DBPEDIA@ISWC 2013</dc:rights>
+        <dataid:licenseName>Creative Commons Attribution-ShareAlike 4.0 International</dataid:licenseName>
+        <rdfs:label>KORE 50 NIF NER Corpus</rdfs:label>
+        <dcat:distribution>
+          <dcat:Distribution rdf:about="http://www.yovisto.com/labs/ner-benchmarks/data/kore50-nif-2014-11-03.ttl">
+            <dcat:mediaType>text/turtle</dcat:mediaType>
+            <dcat:accessURL>http://www.yovisto.com/labs/ner-benchmarks/data/kore50-nif-2014-11-03.ttl</dcat:accessURL>
+            <void:triples>1410</void:triples>
+            <dc:issued>03-11-2014</dc:issued>
+            <dc:description>Complete KORE50 NIF corpus</dc:description>
+            <dc:title>kore50-nif-2014-11-03.ttl</dc:title>
+            <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Distribution"/>
+          </dcat:Distribution>
+        </dcat:distribution>
+        <dcat:keyword>corpus</dcat:keyword>
+        <dcat:keyword>ner</dcat:keyword>
+        <dc:language>english</dc:language>
+        <void:exampleResource rdf:resource="http://www.yovisto.com/labs/ner-benchmarks/data/kore50-nif-2014-11-03.ttl"/>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>magnus.knuth(at)hpi.uni-potsdam.de</foaf:mbox>
+            <foaf:name>Magnus Knuth</foaf:name>
+            <rdfs:label>Magnus Knuth</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <void:rootResource rdf:resource="http://www.yovisto.com/labs/ner-benchmarks/data/kore50-nif-2014-11-03.ttl"/>
+        <dcat:keyword>evaluation</dcat:keyword>
+        <prov:wasDerivedFrom>
+          <dataid:Entity>
+            <dc:creator>
+              <dataid:Agent>
+                <foaf:mbox>jhoffart(at)mpi-inf.mpg.de</foaf:mbox>
+                <foaf:name>Johannes Hoffart, Stephan Seufert, Dat Ba Nguyen, Martin Theobald, and Gerhard Weikum</foaf:name>
+                <rdfs:label>Johannes Hoffart, Stephan Seufert, Dat Ba Nguyen, Martin Theobald, and Gerhard Weikum</rdfs:label>
+              </dataid:Agent>
+            </dc:creator>
+            <dcat:landingPage rdf:resource="http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/aida/downloads/"/>
+            <dc:title>KORE50 dataset</dc:title>
+          </dataid:Entity>
+        </prov:wasDerivedFrom>
+        <dcat:keyword>nif</dcat:keyword>
+        <rdf:type rdf:resource="http://rdfs.org/ns/void#Dataset"/>
+        <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+        <void:triples>1410</void:triples>
+      </sd:Dataset>
+    </foaf:primaryTopic>
+  </void:DatasetDescription>
+</rdf:RDF>

@@ -1,5 +1,7 @@
 package org.aksw.gerbil.web;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,7 @@ import org.aksw.gerbil.utils.AnnotatorMapping;
 import org.aksw.gerbil.utils.DatasetMapping;
 import org.aksw.gerbil.utils.IDCreator;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -41,6 +44,10 @@ public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
+    private static final String GERBIL_VOCABULARY_JSON_FILE = "vocab/gerbil.json";
+    private static final String GERBIL_VOCABULARY_RDF_FILE = "vocab/gerbil.rdf";
+    private static final String GERBIL_VOCABULARY_TTL_FILE = "vocab/gerbil.ttl";
+
     private static boolean isInitialized = false;
 
     private static synchronized void initialize(ExperimentDAO dao) {
@@ -52,7 +59,7 @@ public class MainController {
             isInitialized = true;
         }
         // Simply call the dataset mapping so that it has to be instantiated
-        DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2W); 
+        DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2W);
     }
 
     @PostConstruct
@@ -63,6 +70,9 @@ public class MainController {
     @Autowired
     @Qualifier("experimentDAO")
     private ExperimentDAO dao;
+
+    // FIXME could the URL be set automatically?
+    private DataIDGenerator dataIdGenerator = new DataIDGenerator("http://gerbil.aksw.org/gerbil/");
 
     @RequestMapping("/config")
     public ModelAndView config() {
@@ -86,8 +96,7 @@ public class MainController {
                 matchingString);
         Matching matching = getMatching(matchingString);
         ExperimentType eType = ExperimentType.valueOf(experimentType);
-        Set<String> annotators = AnnotatorMapping
-                .getAnnotatorsForExperimentType(eType);
+        Set<String> annotators = AnnotatorMapping.getAnnotatorsForExperimentType(eType);
         Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(eType);
         String results[][] = new String[annotators.size() + 1][datasets.size() + 1];
         results[0][0] = "Micro F1-measure";
@@ -203,13 +212,13 @@ public class MainController {
         LOGGER.debug("Got request on /experiment with id=" + id);
         List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
         ExperimentTaskStateHelper.setStatusLines(results);
-        ModelAndView model = new ModelAndView(); 
+        ModelAndView model = new ModelAndView();
         model.setViewName("experiment");
         model.addObject("tasks", results);
-        model.addObject("dataid", DataIDGenerator.createDataIDModel(results, id));
+        model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
         return model;
     }
- 
+
     @RequestMapping("/exptypes")
     public @ResponseBody
     List<ExperimentType> expTypes() {
@@ -272,5 +281,37 @@ public class MainController {
             resultBuilder.append("</p>\n");
         }
         return resultBuilder.toString();
+    }
+
+    @RequestMapping(value = "/vocab*", produces = { "application/json+ld", "application/json" })
+    public @ResponseBody
+    String vocabularyAsJSON() {
+        return getResourceAsString(GERBIL_VOCABULARY_JSON_FILE);
+    }
+
+    @RequestMapping(value = "/vocab*", produces = "application/rdf+xml")
+    public @ResponseBody
+    String vocabularyAsRDFXML() {
+        return getResourceAsString(GERBIL_VOCABULARY_RDF_FILE);
+    }
+
+    @RequestMapping(value = "/vocab*", produces = { "text/turtle", "text/plain" })
+    public @ResponseBody
+    String vocabularyAsTTL() {
+        return getResourceAsString(GERBIL_VOCABULARY_TTL_FILE);
+    }
+
+    private String getResourceAsString(String resource) {
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream(resource);
+        if (is != null) {
+            try {
+                return IOUtils.toString(is, "utf-8");
+            } catch (IOException e) {
+                LOGGER.error("Exception while loading vocabulary resource. Returning null.", e);
+            } finally {
+                IOUtils.closeQuietly(is);
+            }
+        }
+        return null;
     }
 }

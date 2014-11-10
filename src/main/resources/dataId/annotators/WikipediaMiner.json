@@ -1,0 +1,66 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "David Milne",
+    "mbox" : "dnk2(at)cs.waikato.ac.nz",
+    "name" : "David Milne"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/WikipediaMiner",
+    "@type" : "dataid:ServiceDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/annotators/WikipediaMiner#annotator"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/WikipediaMiner#annotator",
+    "@type" : [ "prov:Entity", "dataid:Service" ],
+    "licenseName" : "GNU General Public License 2.0",
+    "description" : "WikipediaMiner is a toolkit for tapping the rich semantics encoded within Wikipedia. It makes it easy to integrate Wikipedia's knowledge into your own applications",
+    "issued" : "10-26-2008",
+    "license" : "http://purl.org/NET/rdflicense/gpl2.0",
+    "rights" : "Please cite: D. Milne and I. H. Witten. Learning to link with wikipedia. In 17th ACM CIKM, pages 509-518, 2008.",
+    "title" : "Wikipedia Miner",
+    "label" : "Wikipedia Miner",
+    "contactPoint" : "_:b0",
+    "keyword" : [ "Sa2W", "ner" ],
+    "landingPage" : "http://acube.di.unipi.it/tagme/"
+  } ],
+  "@context" : {
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "rights" : "http://purl.org/dc/terms/rights",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "title" : "http://purl.org/dc/terms/title",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "description" : "http://purl.org/dc/terms/description",
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

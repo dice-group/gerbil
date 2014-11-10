@@ -1,0 +1,54 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <void:DatasetDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/Microposts2014">
+    <foaf:primaryTopic>
+      <void:Dataset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/Microposts2014#dataset">
+        <dataid:licenseName>Twitter license</dataid:licenseName>
+        <dc:license rdf:resource="https://twitter.com/tos"/>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >04-07-2014</dc:issued>
+        <dcat:keyword>twitter</dcat:keyword>
+        <dcat:keyword>ner</dcat:keyword>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>amparo.cano(at)open.ac.uk</foaf:mbox>
+            <foaf:name>Amparo Elizabeth Cano Basave</foaf:name>
+            <rdfs:label>Amparo Elizabeth Cano Basave</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <dcat:keyword>linguistics</dcat:keyword>
+        <dc:title>Microposts 2014 Named Entity Extraction and Linking Challenge (NEEL) dataset</dc:title>
+        <dc:rights>Please cite Making Sense of Microposts (#Microposts2014) Named Entity Extraction &amp; Linking Challenge. Amparo Elizabeth Cano Basave and Giuseppe Rizzo and Andrea Varga and Matthew Rowe and Milan Stankovic and Aba-Sah Dadzie. In 4th Workshop on Making Sense of Microposts (#Microposts2014)}, 2014</dc:rights>
+        <dcat:keyword>corpus</dcat:keyword>
+        <dc:language>english</dc:language>
+        <dcat:keyword>tweets</dcat:keyword>
+        <dcat:landingPage rdf:resource="http://www.scc.lancs.ac.uk/microposts2014/challenge/index.html"/>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Dataset"/>
+        <dc:description>The dataset comprises of 3.5K tweets extracted from a much larger collection of over 18 million tweets. This collection, provided by the Redites project, covers event-annotated tweets collected for the period of 15th July 2011 to 15th August 2011 (31 days). It extends over multiple noteworthy events including the death of Amy Winhehouse, the London Riots and the Oslo bombing. Since the task of this challenge is to automatically extract and link entities, we have built our dataset considering both event and non-event tweets. While event tweets are more likely to contain entities, non-event tweets enable us to evaluate the performance of the system in avoiding false positives in the entity extraction phase.&#xD;
+The dataset has been split into a training (70%) and testing (30%) sets. Following the Twitter TOS we will only provide tweet IDs and annotations for the training set; and tweet IDs for the test set. We will also provide a common framework to mine these datasets from Twitter.</dc:description>
+        <rdfs:label>Microposts 2014 Named Entity Extraction and Linking Challenge (NEEL) dataset</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+        <dcat:distribution>
+          <dcat:Distribution rdf:about="http://www.scc.lancs.ac.uk/microposts2014/challenge/dataset/microposts2014-neel_challenge_gs.zip">
+            <dcat:mediaType>application/zip</dcat:mediaType>
+            <dcat:accessURL>http://www.scc.lancs.ac.uk/microposts2014/challenge/dataset/microposts2014-neel_challenge_gs.zip</dcat:accessURL>
+            <dc:description>Full microposts dataset download file</dc:description>
+            <dc:title>microposts2014-neel_challenge_gs.zip</dc:title>
+            <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Distribution"/>
+          </dcat:Distribution>
+        </dcat:distribution>
+        <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+      </void:Dataset>
+    </foaf:primaryTopic>
+  </void:DatasetDescription>
+</rdf:RDF>

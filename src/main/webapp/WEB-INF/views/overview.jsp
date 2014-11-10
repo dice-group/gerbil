@@ -206,6 +206,7 @@ table {
 			        }
 		        });
 		        //[[{axis:"Email",value:0.71},{axis:"aa",value:0}],[{axis:"Email",value:0.71},{axis:"aa",value:0.1},]];
+                        console.log(chartData);
 		        drawChart(chartData, LegendOptions);
 	        }).fail(function() {
 		        console.log("error loading data for table");

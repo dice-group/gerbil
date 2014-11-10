@@ -1,0 +1,199 @@
+@prefix gerbil: <http://gerbil.aksw.org/gerbil/vocab/gerbil#>.
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sdmx-concept: <http://purl.org/linked-data/sdmx/2009/concept#> .
+@prefix sdmx-dimension: <http://purl.org/linked-data/sdmx/2009/dimension#> .
+@prefix sdmx-measure: <http://purl.org/linked-data/sdmx/2009/measure#> .
+@prefix qb: <http://purl.org/linked-data/cube#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+### Dimensions
+
+gerbil:timestamp
+	a rdf:Property, qb:DimensionProperty;
+	rdfs:label "DateTime of experiment"@en;
+	rdfs:subPropertyOf sdmx-dimension:refPeriod;
+	qb:concept sdmx-concept:refPeriod ;
+	rdfs:range xsd:dateTime .
+
+gerbil:experimentType
+	a rdf:Property, qb:DimensionProperty;
+	rdfs:label "Type of experiment"@en;
+	qb:codeList gerbil:type ;
+	rdfs:range gerbil:Type .
+	
+gerbil:matching
+	a rdf:Property, qb:DimensionProperty;
+	rdfs:label "Matching"@en ;
+	qb:codeList gerbil:matchingScheme ;
+	rdfs:range gerbil:Matching .
+
+gerbil:annotator
+	a rdf:Property, qb:DimensionProperty;
+	rdfs:label "Annotator"@en;
+	rdfs:range dataid:ServiceDescription .
+	
+gerbil:evalDataset
+	a rdf:Property, qb:DimensionProperty ;
+	rdfs:label "Evaluation dataset"@en ;
+	rdfs:range void:DatasetDescription .
+
+### Measures
+# We might want to define attributes but I'm not sure how to do that properly for every measure
+
+gerbil:microPrecision
+	a rdf:Property, qb:MeasureProperty;
+	rdfs:label "Micro Precision"@en;
+	rdfs:subPropertyOf sdmx-measure:obsValue;
+	rdfs:range xsd:decimal .
+
+gerbil:microRecall
+	a rdf:Property, qb:MeasureProperty;
+	rdfs:label "Micro Recall"@en;
+	rdfs:subPropertyOf sdmx-measure:obsValue;
+	rdfs:range xsd:decimal .
+
+gerbil:microF1
+	a rdf:Property, qb:MeasureProperty;
+	rdfs:label "Micro F1"@en;
+	rdfs:subPropertyOf sdmx-measure:obsValue;
+	rdfs:range xsd:decimal .
+
+gerbil:macroPrecision
+	a rdf:Property, qb:MeasureProperty;
+	rdfs:label "Macro Precision"@en;
+	rdfs:subPropertyOf sdmx-measure:obsValue;
+	rdfs:range xsd:decimal .
+
+gerbil:macroRecall
+	a rdf:Property, qb:MeasureProperty;
+	rdfs:label "Macro Recall"@en;
+	rdfs:subPropertyOf sdmx-measure:obsValue;
+	rdfs:range xsd:decimal .
+
+gerbil:macroF1
+	a rdf:Property, qb:MeasureProperty;
+	rdfs:label "Macro F1"@en;
+	rdfs:subPropertyOf sdmx-measure:obsValue;
+	rdfs:range xsd:decimal .
+
+gerbil:errorCount
+	a rdf:Property, qb:MeasureProperty;
+	rdfs:label "Error count"@en;
+	rdfs:subPropertyOf sdmx-measure:obsValue;
+	rdfs:range xsd:integer .
+
+### Concept definitions
+
+#### Experiment type
+
+gerbil:type a skos:ConceptScheme;
+    skos:prefLabel "Code list for GERBIL Experiment Types - codelist scheme"@en;
+    rdfs:label "Code list for GERBIL Experiment Types - codelist scheme"@en;
+    skos:notation "type";
+    skos:note "This code list provides the experiment types of named entity annotators."@en;
+    skos:hasTopConcept gerbil:D2W ;
+	skos:hasTopConcept gerbil:A2W ;
+	skos:hasTopConcept gerbil:Sa2W ;
+	skos:hasTopConcept gerbil:C2W ;
+	skos:hasTopConcept gerbil:Sc2W ;
+	skos:hasTopConcept gerbil:Rc2W ;
+	rdfs:seeAlso gerbil:Type .
+
+gerbil:Type a rdfs:Class, owl:Class;
+    rdfs:subClassOf skos:Concept ;
+    rdfs:label "Code list for GERBIL Experiment Types - codelist class"@en;
+    rdfs:comment "This code list provides the experiment types of named entity annotators. Types as defined in Cornolti at al. A Framework for Benchmarking Entity-Annotation Systems. 22nd WWW, 2013"@en;
+	rdfs:seeAlso gerbil:type .
+
+gerbil:D2W a skos:Concept, gerbil:Type;
+    skos:topConceptOf gerbil:type;
+    skos:prefLabel "Disambiguate to Wikipedia"@en ;
+    skos:notation "D2W" ;
+    skos:inScheme gerbil:type .
+
+gerbil:A2W a skos:Concept, gerbil:Type;
+    skos:topConceptOf gerbil:type;
+    skos:prefLabel "Annotate to Wikipedia"@en ;
+    skos:notation "A2W" ;
+    skos:inScheme gerbil:type .
+	
+gerbil:Sa2W a skos:Concept, gerbil:Type;
+    skos:topConceptOf gerbil:type;
+    skos:prefLabel "Scored-annotate to Wikipedia"@en ;
+    skos:notation "Sa2W" ;
+    skos:inScheme gerbil:type .
+	
+gerbil:C2W a skos:Concept, gerbil:Type;
+    skos:topConceptOf gerbil:type;
+    skos:prefLabel "Concepts to Wikipedia"@en ;
+    skos:notation "C2W" ;
+    skos:inScheme gerbil:type .
+	
+gerbil:Sc2W a skos:Concept, gerbil:Type;
+    skos:topConceptOf gerbil:type;
+    skos:prefLabel "Female"@en ;
+    skos:notation "Scored concepts to Wikipedia" ;
+    skos:inScheme gerbil:type .
+	
+gerbil:Rc2W a skos:Concept, gerbil:Type;
+    skos:topConceptOf gerbil:type;
+    skos:prefLabel "Ranked-concepts to Wikipedia"@en ;
+    skos:notation "Rc2W" ;
+    skos:inScheme gerbil:type .
+	
+#### Matching
+
+gerbil:matchingScheme a skos:ConceptScheme;
+    skos:prefLabel "Code list for GERBIL Matching - codelist scheme"@en;
+    rdfs:label "Code list for GERBIL Matching - codelist scheme"@en;
+    skos:notation "Matching";
+    skos:note "This code list provides the matching types of GERBIL."@en;
+    skos:hasTopConcept gerbil:StrongAnnoMatch ;
+	rdfs:seeAlso gerbil:Matching .
+
+gerbil:Matching a rdfs:Class, owl:Class;
+    rdfs:subClassOf skos:Concept ;
+    rdfs:label "Code list for GERBIL Matching - codelist class"@en;
+    rdfs:comment "This code list provides the matching types of GERBIL. Types as defined in Cornolti at al. A Framework for Benchmarking Entity-Annotation Systems. 22nd WWW, 2013"@en;
+	rdfs:seeAlso gerbil:matchingScheme .
+
+gerbil:StrongAnnoMatch a skos:Concept, gerbil:Matching;
+    skos:topConceptOf gerbil:matchingScheme;
+    skos:prefLabel "Strong Annotation Match"@en ;
+    skos:notation "StrongAnnoMatch" ;
+    skos:inScheme gerbil:matchingScheme .
+
+gerbil:WeakAnnoMatch a skos:Concept, gerbil:Matching;
+    skos:topConceptOf gerbil:matchingScheme;
+    skos:prefLabel "Weak Annotation Match"@en ;
+    skos:notation "WeakAnnoMatch" ;
+    skos:inScheme gerbil:matchingScheme .
+
+gerbil:StrongEntMatch a skos:Concept, gerbil:Matching;
+    skos:topConceptOf gerbil:matchingScheme;
+    skos:prefLabel "Strong Entity Match"@en ;
+    skos:notation "StrongEntMatch" ;
+    skos:inScheme gerbil:matchingScheme .
+	
+### DSD
+
+gerbil:dsd a qb:DataStructureDefinition;
+    # The dimensions
+    qb:component [ qb:dimension gerbil:experimentType; ];
+    qb:component [ qb:dimension gerbil:annotator; ];
+    qb:component [ qb:dimension gerbil:evalDataset; ];
+    qb:component [ qb:dimension gerbil:matching; ];
+    qb:component [ qb:dimension gerbil:timestamp; ];
+    # The measure(s)
+	qb:component [ qb:measure gerbil:microF1; ] ;
+    qb:component [ qb:measure gerbil:microPrecision; ] ;
+	qb:component [ qb:measure gerbil:microRecall; ] ;
+	qb:component [ qb:measure gerbil:macroF1; ] ;
+    qb:component [ qb:measure gerbil:macroPrecision; ] ;
+	qb:component [ qb:measure gerbil:macroRecall; ] ;
+	qb:component [ qb:measure gerbil:errorCount; ] .

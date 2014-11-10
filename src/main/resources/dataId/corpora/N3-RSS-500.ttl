@@ -1,0 +1,53 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500>
+  a void:DatasetDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500#dataset>.
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500#dataset>
+  a dataid:Dataset, dcat:Dataset, void:Dataset, sd:Dataset, prov:Entity ;
+  dc:title "RSS-500 NIF NER CORPUS" ;
+  rdfs:label "RSS-500 NIF NER CORPUS" ;
+  dc:description """This corpus has been created using a dataset comprising a list of 1,457 RSS feeds as compiled in (Goldhahn et al. 2012). The list includes all major worldwide newspapers and a wide range of topics, e.g., World , U.S. , Business , Sci- ence etc. The RSS list has been compiled using a 76-hour crawl, which resulted in a corpus of about 11.7 million sen- tences. A subset of this corpus has been created by ran- domly selecting 1% of the contained sentences. Finally, one researcher annotated 500 randomly chosen sentences manually. These sentences were a subset of those which contained a natural language representation of a formal relation, like “. . . , who was born in. . . ” for dpo:birthPlace (see (Gerber and Ngomo, 2012)). The relations had to occur more than 5 times in the 1% corpus. In case the mentioned entity is not contained in a new URI has been generated. This corpus has been used for evaluation purposes in (Gerber et al., 2013) """ ;
+  dc:issued "02-04-2014"^^xsd:date ;
+  void:exampleResource <https://raw.githubusercontent.com/AKSW/n3-collection/master/RSS-500.ttl> ;
+  dc:language "english" ;
+  void:vocabulary <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> ;
+  dcat:landingPage <http://aksw.org/Projects/N3NERNEDNIF.html> ;
+  dcat:keyword "nif","ner","linguistics","corpus","evaluation" ;
+  dataid:licenseName "Creative Commons Attribution 4.0 International" ;
+  dc:license <http://purl.org/NET/rdflicense/cc-by4.0> ;
+  dc:rights """Please cite: Michael Röder, Ricardo Usbeck, Sebastian Hellmann, Daniel Gerber und Andreas Both. N3 - A Collection of Datasets for Named Entity Recognition and Disambiguation in the NLP Interchange Format. In The 9th edition of the Language Resources and Evaluation Conference, 26-31 May, Reykjavik, Iceland """ ;
+  void:subset <http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500#links> ;
+  dcat:distribution <https://raw.githubusercontent.com/AKSW/n3-collection/master/RSS-500.ttl> ;
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Ricardo Usbeck" ;
+    foaf:name "Ricardo Usbeck" ;
+    foaf:mbox "ricardo.usbeck(at)googlemail.com"
+  ] .
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/N3-RSS-500#links>
+  a dataid:Linkset ;
+  dc:issued "02-04-2014"^^xsd:date ;
+  void:linkPredicate <http://www.w3.org/2005/11/its/rdf#taIdentRef> ;
+  void:triples "524" ;
+  void:target <http://dbpedia.org> .
+
+<https://raw.githubusercontent.com/AKSW/n3-collection/master/RSS-500.ttl>
+  a dataid:Distribution ;
+  dc:title "Complete corpus" ;
+  dc:description "Complete corpus file in turtle format" ;
+  dc:issued "02-04-2014"^^xsd:date ;
+  dcat:accessURL "https://raw.githubusercontent.com/AKSW/n3-collection/master/RSS-500.ttl" ;
+  dc:format "text/turtle" ;
+  void:triples "10038" .

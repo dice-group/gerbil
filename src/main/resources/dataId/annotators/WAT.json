@@ -1,0 +1,64 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Francesco Piccinno",
+    "mbox" : "stack.box(at)gmail.com",
+    "name" : "Francesco Piccinno"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/WAT",
+    "@type" : "dataid:ServiceDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/annotators/WAT#annotator"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/WAT#annotator",
+    "@type" : [ "prov:Entity", "dataid:Service" ],
+    "licenseName" : "APACHE LICENSE 2.0",
+    "issued" : "11-03-2014",
+    "license" : "http://purl.org/NET/rdflicense/licAPACHE",
+    "rights" : "Please cite: F. Piccinno and P. Ferragina. From tagme to wat: a new entity annotator. In Proceedings of the first international workshop on Entity recognition & disambiguation, pages 55-62. ACM, 2014.",
+    "title" : "WAT",
+    "label" : "WAT",
+    "contactPoint" : "_:b0",
+    "keyword" : [ "Sa2W", "ner" ],
+    "landingPage" : "http://acube.di.unipi.it/tagme/"
+  } ],
+  "@context" : {
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "rights" : "http://purl.org/dc/terms/rights",
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "title" : "http://purl.org/dc/terms/title",
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

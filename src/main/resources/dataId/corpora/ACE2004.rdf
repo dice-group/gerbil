@@ -1,0 +1,56 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <void:DatasetDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/ACE2004">
+    <foaf:primaryTopic>
+      <void:Dataset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/ACE2004#dataset">
+        <dc:description>The objective of the ACE program is to develop automatic content extraction technology to support automatic processing of human language in text form. In September 2004, sites were evaluated on system performance in six areas: Entity Detection and Recognition (EDR), Entity Mention Detection (EMD), EDR Co-reference, Relation Detection and Recognition (RDR), Relation Mention Detection (RMD), and RDR given reference entities. All tasks were evaluated in three languages: English, Chinese and Arabic.
+The current publication consists of the official training data for these evaluation tasks. Full task description here: https://www.ldc.upenn.edu/sites/www.ldc.upenn.edu/files/lrec2004-ace-program.pdf</dc:description>
+        <dcat:landingPage rdf:resource="https://catalog.ldc.upenn.edu/LDC2005T09"/>
+        <dcat:keyword>newswire</dcat:keyword>
+        <rdfs:label>ACE 2004 Multilingual Training Corpus</rdfs:label>
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/allrightsreserved"/>
+        <dcat:keyword>broadcast news</dcat:keyword>
+        <dcat:keyword>ner</dcat:keyword>
+        <dcat:landingPage rdf:resource="http://www.itl.nist.gov/iad/mig/tests/ace/2004/"/>
+        <dc:title>ACE 2004 Multilingual Training Corpus</dc:title>
+        <dataid:licenseName>LDC Non-Member agreement</dataid:licenseName>
+        <dcat:keyword>linguistics</dcat:keyword>
+        <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+        <dcat:keyword>corpus</dcat:keyword>
+        <dc:language>english</dc:language>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >03-15-2005</dc:issued>
+        <dc:rights>Please cite: Mitchell, Alexis, et al. ACE 2004 Multilingual Training Corpus LDC2005T09. Web Download. Philadelphia: Linguistic Data Consortium, 2005.</dc:rights>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Dataset"/>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>amitche0(at)ldc.upenn.edu</foaf:mbox>
+            <foaf:name>Alexis Mitchell</foaf:name>
+            <rdfs:label>Alexis Mitchell</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <dcat:distribution>
+          <dcat:Distribution rdf:about="http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip">
+            <dcat:mediaType>application/zip</dcat:mediaType>
+            <dcat:accessURL>http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip</dcat:accessURL>
+            <dc:rights>All rights reserved by owner of original dataset</dc:rights>
+            <dc:description>Contains multiple datasets. ACE2004 corpus in ACE2004_Coref_Turking subfolder</dc:description>
+            <dc:title>ACL2011WikificationData.zip</dc:title>
+            <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Distribution"/>
+          </dcat:Distribution>
+        </dcat:distribution>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+      </void:Dataset>
+    </foaf:primaryTopic>
+  </void:DatasetDescription>
+</rdf:RDF>

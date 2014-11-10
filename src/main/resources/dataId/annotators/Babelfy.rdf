@@ -1,0 +1,38 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <dataid:ServiceDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/Babelfy">
+    <foaf:primaryTopic>
+      <prov:Entity rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/Babelfy#annotator">
+        <dataid:licenseName>Creative Commons Attribution-Noncommercial-Share Alike 3.0</dataid:licenseName>
+        <dcat:keyword>ner</dcat:keyword>
+        <dcat:keyword>Sa2W</dcat:keyword>
+        <dc:license rdf:resource="http://creativecommons.org/licenses/by-nc-sa/3.0/rdf"/>
+        <dc:rights>Please cite: Andrea Moro, Alessandro Raganato and Roberto Navigli. Entity Linking meets Word Sense Disambiguation: A Unified Approach. Transactions of the Association for Computational Linguistics (TACL), 2, 2014.</dc:rights>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >06-01-2014</dc:issued>
+        <dc:description>Babelfy is a unified, multilingual, graph-based approach to Entity Linking and Word Sense Disambiguation based on a loose identification of candidate meanings coupled with a densest subgraph heuristic which selects high-coherence semantic interpretations. </dc:description>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>moro(at)di.uniroma1.it</foaf:mbox>
+            <foaf:name>Andrea Moro</foaf:name>
+            <rdfs:label>Andrea Moro</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <dc:title>Babelfy - Word sense disambiguation and entity linking together!</dc:title>
+        <dcat:landingPage rdf:resource="http://http://babelfy.org/"/>
+        <rdfs:label>Babelfy</rdfs:label>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Service"/>
+      </prov:Entity>
+    </foaf:primaryTopic>
+  </dataid:ServiceDescription>
+</rdf:RDF>
