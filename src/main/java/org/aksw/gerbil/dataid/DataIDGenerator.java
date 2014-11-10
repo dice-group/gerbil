@@ -13,6 +13,8 @@ import org.aksw.gerbil.web.ExperimentTaskStateHelper;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 
+import com.hp.hpl.jena.datatypes.RDFDatatype;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -25,7 +27,7 @@ public class DataIDGenerator {
     private static final String EXPERIMENT_PREFIX = "#experiment_";
     private static final String DATASET_DATAID = "dataId/corpora/";
     private static final String ANNOTATOR_DATAID = "dataId/annotators/";
-    private static final String DATAID_EXTENSION = ".ttl";
+    private static final String DATAID_EXTENSION = "";
 
     private String gerbilURL;
     private String gerbilFullURL;
@@ -102,8 +104,8 @@ public class DataIDGenerator {
         experimentTask.addProperty(RDF.type, CUBE.Observation);
 
         // add annotator and dataset
-        experimentTask.addProperty(GERBIL.annotator, gerbilURL + DATASET_DATAID + removeSlash(result.annotator) + DATAID_EXTENSION);
-        experimentTask.addProperty(GERBIL.dataset, gerbilURL + ANNOTATOR_DATAID + removeSlash(result.dataset) + DATAID_EXTENSION);
+        experimentTask.addProperty(GERBIL.annotator, gerbilURL + DATASET_DATAID + DataIDUtils.treatsNames(result.annotator) + DATAID_EXTENSION);
+        experimentTask.addProperty(GERBIL.dataset, gerbilURL + ANNOTATOR_DATAID + DataIDUtils.treatsNames(result.dataset) + DATAID_EXTENSION);
 
         // set the status of this task
         model.add(experimentTask, GERBIL.statusCode, model.createTypedLiteral(result.state));
@@ -112,20 +114,18 @@ public class DataIDGenerator {
         if (ExperimentTaskStateHelper.taskFinished(result)) {
             // creating and setting literals for the current experiment
             model.add(experimentTask, GERBIL.microF1, model.createTypedLiteral(result.getMicroF1Measure()));
-            model.add(experimentTask, GERBIL.microPrecision, model.createTypedLiteral(result.getMicroPrecision()));
-            model.add(experimentTask, GERBIL.microRecall, model.createTypedLiteral(result.getMicroRecall()));
-            model.add(experimentTask, GERBIL.macroF1, model.createTypedLiteral(result.getMacroF1Measure()));
-            model.add(experimentTask, GERBIL.macroPrecision, model.createTypedLiteral(result.getMacroPrecision()));
-            model.add(experimentTask, GERBIL.macroRecall, model.createTypedLiteral(result.getMacroRecall()));
+            model.add(experimentTask, GERBIL.microPrecision, model.createTypedLiteral(result.getMicroPrecision(),XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.microRecall, model.createTypedLiteral(result.getMicroRecall(),XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroF1, model.createTypedLiteral(result.getMacroF1Measure(),XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroPrecision, model.createTypedLiteral(result.getMacroPrecision(),XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroRecall, model.createTypedLiteral(String.valueOf(result.getMacroRecall()), XSDDatatype.XSDdecimal));
             model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(result.errorCount));
         }
-
+        
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(result.timestamp);
         model.add(experimentTask, GERBIL.timestamp, model.createTypedLiteral(cal));
     }
     
-    private String removeSlash(String str){
-    	return str.replace("/", "_");
-    }
+
 }
