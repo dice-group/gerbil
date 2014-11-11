@@ -88,8 +88,14 @@ public class DataIDGenerator {
             // If this is the first experiment result, use it to get further
             // properties of the experiment (matching, ...)
             if (experimentNumber == 0) {
-                experiment.addProperty(GERBIL.experimentType, GERBIL.getExperimentTypeResource(result.type));
-                experiment.addProperty(GERBIL.matching, GERBIL.getMatchingResource(result.matching));
+                Resource r = GERBIL.getExperimentTypeResource(result.type);
+                if (r != null) {
+                    experiment.addProperty(GERBIL.experimentType, r);
+                }
+                r = GERBIL.getMatchingResource(result.matching);
+                if (r != null) {
+                    experiment.addProperty(GERBIL.matching, r);
+                }
             }
             // create experiment task
             addExperimentTask(model, result, experiment, experimentNumber);

@@ -59,6 +59,7 @@ public class GERBIL {
     public static final Resource ExperimentTask = resource("ExperimentTask");
 
     public static final Resource A2W = resource("A2W");
+    public static final Resource C2W = resource("C2W");
     public static final Resource D2W = resource("D2W");
     public static final Resource Rc2W = resource("Rc2W");
     public static final Resource Sa2W = resource("Sa2W");
@@ -104,6 +105,8 @@ public class GERBIL {
         switch (type) {
         case A2W:
             return A2W;
+        case C2W:
+            return C2W;
         case D2W:
             return D2W;
         case Rc2W:
