@@ -1,3 +1,26 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package org.aksw.gerbil.dataid;
 
 import java.io.ByteArrayOutputStream;
@@ -13,7 +36,6 @@ import org.aksw.gerbil.web.ExperimentTaskStateHelper;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -76,7 +98,7 @@ public class DataIDGenerator {
         }
 
         // writing dataid result to output (this should be removed)
-         RDFDataMgr.write(System.out, model, RDFFormat.TURTLE);
+        // RDFDataMgr.write(System.out, model, RDFFormat.TURTLE);
 
         OutputStream o = new ByteArrayOutputStream();
 
@@ -104,8 +126,10 @@ public class DataIDGenerator {
         experimentTask.addProperty(RDF.type, CUBE.Observation);
 
         // add annotator and dataset
-        experimentTask.addProperty(GERBIL.annotator, gerbilURL + DATASET_DATAID + DataIDUtils.treatsNames(result.annotator) + DATAID_EXTENSION);
-        experimentTask.addProperty(GERBIL.dataset, gerbilURL + ANNOTATOR_DATAID + DataIDUtils.treatsNames(result.dataset) + DATAID_EXTENSION);
+        experimentTask.addProperty(GERBIL.annotator,
+                gerbilURL + DATASET_DATAID + DataIDUtils.treatsNames(result.annotator) + DATAID_EXTENSION);
+        experimentTask.addProperty(GERBIL.dataset,
+                gerbilURL + ANNOTATOR_DATAID + DataIDUtils.treatsNames(result.dataset) + DATAID_EXTENSION);
 
         // set the status of this task
         model.add(experimentTask, GERBIL.statusCode, model.createTypedLiteral(result.state));
@@ -114,18 +138,22 @@ public class DataIDGenerator {
         if (ExperimentTaskStateHelper.taskFinished(result)) {
             // creating and setting literals for the current experiment
             model.add(experimentTask, GERBIL.microF1, model.createTypedLiteral(result.getMicroF1Measure()));
-            model.add(experimentTask, GERBIL.microPrecision, model.createTypedLiteral(result.getMicroPrecision(),XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.microRecall, model.createTypedLiteral(result.getMicroRecall(),XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroF1, model.createTypedLiteral(result.getMacroF1Measure(),XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroPrecision, model.createTypedLiteral(result.getMacroPrecision(),XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroRecall, model.createTypedLiteral(String.valueOf(result.getMacroRecall()), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.microPrecision,
+                    model.createTypedLiteral(result.getMicroPrecision(), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.microRecall,
+                    model.createTypedLiteral(result.getMicroRecall(), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroF1,
+                    model.createTypedLiteral(result.getMacroF1Measure(), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroPrecision,
+                    model.createTypedLiteral(result.getMacroPrecision(), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroRecall,
+                    model.createTypedLiteral(String.valueOf(result.getMacroRecall()), XSDDatatype.XSDdecimal));
             model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(result.errorCount));
         }
-        
+
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(result.timestamp);
         model.add(experimentTask, GERBIL.timestamp, model.createTypedLiteral(cal));
     }
-    
 
 }
