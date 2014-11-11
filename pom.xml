@@ -28,7 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.aksw</groupId>
     <artifactId>gerbil</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>General Entity Annotator Benchmark</name>
     <description>This project is a benchmark for entity annotation and disambiguation tools. It is based on the BAT-Framework of Cornolti et al.</description>
 
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.aksw</groupId>
             <artifactId>gerbil.nif.transfer</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0</version>
         </dependency>
 
         <!-- BAT-Framework and its dependencies -->
