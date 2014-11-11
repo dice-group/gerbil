@@ -21,7 +21,7 @@ import org.aksw.gerbil.exceptions.GerbilException;
 
 public class NERDAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
-    public static final String ANNOTATOR_NAME = "NERD";
+    public static final String ANNOTATOR_NAME = "NERD-ML";
     private static final String NERD_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.nerd.Key";
 
     private WikipediaApiInterface wikiApi;
