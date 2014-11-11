@@ -62,7 +62,7 @@ import com.google.common.collect.Sets;
 public class NERDAnnotator implements Sa2WSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NERDAnnotator.class);
-    public static final String NAME = "NERD";
+    public static final String NAME = "NERD-ML";
     private static String NERD_API_PROPERTY_NAME = "org.aksw.gerbil.annotators.nerd.api";
     private final String NERD_API = GerbilConfiguration.getInstance().getString(NERD_API_PROPERTY_NAME);
 
