@@ -47,6 +47,8 @@ import org.slf4j.LoggerFactory;
 public class AnnotatorMapping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatorMapping.class);
+    
+    private static final String NIF_WS_SUFFIX = "(NIF WS)";
 
     private static AnnotatorMapping instance = null;
 
@@ -89,7 +91,7 @@ public class AnnotatorMapping {
                 }
                 String uri = name.substring(pos + 1, name.length() - 1);
                 // remove "NIFWS_" from the name
-                name = name.substring(6, pos);
+                name = name.substring(6, pos) + NIF_WS_SUFFIX;
                 return new NIFWebserviceAnnotatorConfiguration(uri, name, false, SingletonWikipediaApi.getInstance(),
                         new DBPediaApi(), ExperimentType.Sa2W);
             }

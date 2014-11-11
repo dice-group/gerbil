@@ -60,6 +60,7 @@ public class DatasetMapping {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetMapping.class);
 
     private static final String UPLOADED_FILES_PATH_PROPERTY_KEY = "org.aksw.gerbil.UploadPath";
+    private static final String UPLOADED_DATASET_SUFFIX = "(uploaded)";
 
     private static DatasetMapping instance = null;
 
@@ -141,7 +142,7 @@ public class DatasetMapping {
                 }
                 String uri = uploadedFilesPath + name.substring(pos + 1, name.length() - 1);
                 // remove "NIFDS_" from the name
-                name = name.substring(6, pos);
+                name = name.substring(6, pos) + UPLOADED_DATASET_SUFFIX;
                 LOGGER.error("name={}, uri={}", name, uri);
                 return new NIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), name, uri,
                         false, ExperimentType.Sa2W);
