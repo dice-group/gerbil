@@ -23,12 +23,17 @@
  */
 package org.aksw.gerbil.database;
 
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -58,6 +63,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_LATEST_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState ORDER BY lastChanged DESC LIMIT 1";
     private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks , (SELECT datasetName, annotatorName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState GROUP BY datasetName, annotatorName) pairs WHERE annotatorName=pairs.annotatorName AND datasetName=pairs.datasetName AND experimentType=:experimentType AND matching=:matching AND lastChanged=pairs.lastChanged";
     private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
+    private final static String SHUTDOWN = "SHUTDOWN";
 
     private final NamedParameterJdbcTemplate template;
 
@@ -192,7 +198,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("lastChanged", new java.sql.Timestamp(today.getTime()));
         this.template.update(SET_UNFINISHED_TASK_STATE, parameters);
     }
-    
+
     @Deprecated
     @Override
     protected List<String[]> getAnnotatorDatasetCombinations(String experimentType, String matching) {
@@ -201,7 +207,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         params.addValue("matching", matching);
         return this.template.query(GET_LATEST_EXPERIMENT_TASKS, params, new StringArrayRowMapper(new int[] { 1, 2 }));
     }
-    
+
     @Deprecated
     @Override
     protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
@@ -232,5 +238,16 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
         return this.template.query(GET_LATEST_EXPERIMENT_TASK_RESULTS, parameters,
                 new ExperimentTaskResultRowMapper());
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.template.execute(SHUTDOWN, new PreparedStatementCallback<Object>() {
+            @Override
+            public Object doInPreparedStatement(PreparedStatement arg0) throws SQLException, DataAccessException {
+                // nothing to do
+                return null;
+            }
+        });
     }
 }

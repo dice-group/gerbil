@@ -11,7 +11,7 @@
         /> -->
     <context:property-placeholder location="classpath:gerbil.properties" />
 
-    <bean id="experimentDAO" class="org.aksw.gerbil.database.ExperimentDAOImpl">
+    <bean id="experimentDAO" class="org.aksw.gerbil.database.ExperimentDAOImpl" destroy-method="close">
         <constructor-arg name="dataSource" ref="databaseDataSource" />
         <property name="resultDurability" value="${gerbil.database.resultDurability}" />
     </bean>

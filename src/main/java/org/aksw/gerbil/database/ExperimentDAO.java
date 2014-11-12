@@ -23,6 +23,7 @@
  */
 package org.aksw.gerbil.database;
 
+import java.io.Closeable;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -35,7 +36,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskResult;
  * @author m.roeder
  * 
  */
-public interface ExperimentDAO {
+public interface ExperimentDAO extends Closeable {
 
     /**
      * Sentinel value indicating that the database already contains a result for
