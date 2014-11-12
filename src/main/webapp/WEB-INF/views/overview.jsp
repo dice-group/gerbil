@@ -7,6 +7,17 @@
 <link rel="stylesheet"
 	href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
 <title>Overview</title>
+<script type="text/javascript"
+	src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript"
+	src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript"
+	src="/gerbil/webResources/js/gerbil.color.js"></script>
+<script type="text/javascript"
+	src="/gerbil/webResources/js/RadarChart.js"></script>
+<script type="text/javascript"
+	src="/gerbil/webResources/js/script_radar_overview.js"></script>
 </head>
 <style>
 table {
@@ -53,13 +64,6 @@ table {
 <body>
 	<div class="container">
 		<!-- mappings to URLs in back-end controller -->
-		<script src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
-		<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-		<script src="http://d3js.org/d3.v3.min.js"></script>
-		<script src="/gerbil/webResources/RadarChart.js"></script>
-		<script type="text/javascript"
-			src="/gerbil/webResources/script_radar_overview.js"></script>
-
 		<c:url var="experimentoverview" value="/experimentoverview" />
 		<c:url var="matchings" value="/matchings" />
 		<c:url var="exptypes" value="/exptypes" />
@@ -206,7 +210,7 @@ table {
 			        }
 		        });
 		        //[[{axis:"Email",value:0.71},{axis:"aa",value:0}],[{axis:"Email",value:0.71},{axis:"aa",value:0.1},]];
-                        console.log(chartData);
+		        console.log(chartData);
 		        drawChart(chartData, LegendOptions);
 	        }).fail(function() {
 		        console.log("error loading data for table");

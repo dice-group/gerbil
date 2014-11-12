@@ -151,6 +151,7 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      */
     protected abstract void connectExistingTaskWithExperiment(int experimentTaskId, String experimentId);
 
+    @Deprecated
     @Override
     public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching) {
         List<String[]> experimentTasks = getAnnotatorDatasetCombinations(experimentType, matching);
@@ -176,6 +177,7 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      *            the name of the matching used
      * @return a list of annotator dataset combinations
      */
+    @Deprecated
     protected abstract List<String[]> getAnnotatorDatasetCombinations(String experimentType, String matching);
 
     /**
@@ -192,6 +194,7 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      *            the name of the matching used
      * @return the result of the most recent experiment task or null if no such task exists
      */
+    @Deprecated
     protected abstract ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
             String annotatorName, String datasetName);
 }
