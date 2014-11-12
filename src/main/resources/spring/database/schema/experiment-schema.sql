@@ -21,3 +21,5 @@ CREATE TABLE IF NOT EXISTS Experiments (
   PRIMARY KEY (id, taskId)
 );
 
+DROP INDEX IF EXISTS ExperimentTaskConfig;
+CREATE INDEX ExperimentTaskConfig ON ExperimentTasks (matching,experimentType,annotatorName,datasetName);

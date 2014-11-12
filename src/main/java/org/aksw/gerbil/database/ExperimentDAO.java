@@ -200,7 +200,7 @@ public interface ExperimentDAO {
      * @return a list of the latest results available in the database.
      */
     public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching);
-    
+
     /**
      * Returns a list of all running experiment tasks.
      * 
