@@ -143,18 +143,13 @@ public class DataIDGenerator {
         // If this task has been finished
         if (ExperimentTaskStateHelper.taskFinished(result)) {
             // creating and setting literals for the current experiment
-            model.add(experimentTask, GERBIL.microF1, model.createTypedLiteral(result.getMicroF1Measure()));
-            model.add(experimentTask, GERBIL.microPrecision,
-                    model.createTypedLiteral(result.getMicroPrecision(), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.microRecall,
-                    model.createTypedLiteral(result.getMicroRecall(), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroF1,
-                    model.createTypedLiteral(result.getMacroF1Measure(), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroPrecision,
-                    model.createTypedLiteral(result.getMacroPrecision(), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroRecall,
-                    model.createTypedLiteral(String.valueOf(result.getMacroRecall()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(result.errorCount));
+            model.add(experimentTask, GERBIL.microF1, model.createTypedLiteral(String.valueOf(result.getMicroF1Measure()),XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.microPrecision, model.createTypedLiteral(String.valueOf(result.getMicroPrecision()),XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.microRecall, model.createTypedLiteral(String.valueOf(result.getMicroRecall()),XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroF1, model.createTypedLiteral(String.valueOf(result.getMacroF1Measure()),XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroPrecision, model.createTypedLiteral(String.valueOf(result.getMacroPrecision()),XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroRecall, model.createTypedLiteral(String.valueOf(result.getMacroRecall()), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(String.valueOf(result.errorCount)));
         }
 
         Calendar cal = Calendar.getInstance();
