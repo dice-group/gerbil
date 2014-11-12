@@ -23,6 +23,7 @@
  */
 package org.aksw.gerbil.database;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,6 +103,10 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     @Override
     public List<ExperimentTaskResult> getAllRunningExperimentTasks() {
         return new ArrayList<ExperimentTaskResult>(0);
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 
 }
