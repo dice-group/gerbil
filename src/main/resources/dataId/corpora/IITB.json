@@ -1,0 +1,94 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Soumen Chakrabarti",
+    "homepage" : "http://www.cse.iitb.ac.in/soumen/",
+    "mbox" : "soumen(at)cse.iitb.ac.in",
+    "name" : "Soumen Chakrabarti"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/IITB",
+    "@type" : "void:DatasetDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/corpora/IITB#dataset"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/IITB#dataset",
+    "@type" : [ "dcat:Dataset", "prov:Entity", "void:Dataset", "dataid:Dataset" ],
+    "licenseName" : "Creative Commons Attribution 4.0 International",
+    "description" : "Documents for manual annotation were collected from the links within homepages of popular sites belonging to a handful of domains that included sports, entertainment, science and technology, and health (sources: http://news.google.com/ and http://www.espnstar.com/).",
+    "issued" : "06-28-2009",
+    "language" : "english",
+    "license" : "http://purl.org/NET/rdflicense/cc-by4.0",
+    "rights" : "Please cite: Sayali Kulkarni, Amit Singh, Ganesh Ramakrishnan, and Soumen Chakrabarti. Collective Annotation of Wikipedia Entities in Web Text. in SIGKDD 2009.",
+    "title" : "IITB",
+    "label" : "IITB",
+    "contactPoint" : "_:b0",
+    "distribution" : [ "http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_crawledDocs.tar.gz", "http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_Annotations.xml" ],
+    "keyword" : [ "documents", "technology", "linguistics", "corpus", "entertainment", "science", "health", "sports", "ner", "web" ],
+    "landingPage" : "http://www.cse.iitb.ac.in/soumen/doc/CSAW/Annot/"
+  }, {
+    "@id" : "http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_Annotations.xml",
+    "@type" : [ "dcat:Distribution", "dataid:Distribution" ],
+    "description" : "Ground truth annotations on the web documents documents collected from volunteers.",
+    "license" : "http://purl.org/NET/rdflicense/cc-zero1.0",
+    "title" : "CSAW_Annotations.xml",
+    "accessURL" : "http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_Annotations.xml",
+    "mediaType" : "application/xml"
+  }, {
+    "@id" : "http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_crawledDocs.tar.gz",
+    "@type" : [ "dcat:Distribution", "dataid:Distribution" ],
+    "description" : "Web documents crawled for SIGKDD 2009 evaluation",
+    "license" : "http://purl.org/NET/rdflicense/allrightsreserved",
+    "rights" : "All rights reserved by owners of original web documents",
+    "title" : "CSAW_crawledDocs.tar.gz",
+    "accessURL" : "http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_crawledDocs.tar.gz",
+    "mediaType" : "application/zip"
+  } ],
+  "@context" : {
+    "mediaType" : "http://www.w3.org/ns/dcat#mediaType",
+    "accessURL" : "http://www.w3.org/ns/dcat#accessURL",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "rights" : "http://purl.org/dc/terms/rights",
+    "description" : "http://purl.org/dc/terms/description",
+    "title" : "http://purl.org/dc/terms/title",
+    "homepage" : "http://xmlns.com/foaf/0.1/homepage",
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "language" : "http://purl.org/dc/terms/language",
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

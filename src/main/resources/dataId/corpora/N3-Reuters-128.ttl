@@ -1,0 +1,56 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128>
+  a void:DatasetDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128#dataset>.
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128#dataset>
+  a dataid:Dataset, dcat:Dataset, void:Dataset, sd:Dataset, prov:Entity ;
+  dc:title "Reuters-128 NIF NER Corpus " ;
+  rdfs:label "Reuters-128 NIF NER Corpus " ;
+  dc:description """This English corpus is based on the well known Reuters-21578 corpus which contains economic news articles. In particular, we chose 128 articles containing at least one NE. Compared to the News-100 corpus the documents of Reuters-128 are significantly shorter and thus carry a smaller context.
+
+To create the annotation of NEs with URIs, we implemented a supporting judgement tool. The input for the tool was a subset of more than 150 Reuters-21578 news articles sampled randomly. First, FOX (Ngonga Ngomo et al., 2011) was used for recognizing a first set of NEs. This reduced the amount of work to a feasible portion regarding the size of this dataset. Afterwards, the domain experts corrected the mistakes of FOX manually using the annotation tool. Therefore, the tool highlighted the entities in the texts and added initial URI candidates via simple string matching algorithms. Two scientists determined the correct URI for each named entity manually with an initial voter agreement of 74%. This low initial agreement rate hints towards the difficulty of the disambiguation task. In some cases judges did not agree initially, but came to an agreement shortly after reviewing the cases. While annotating, we left out ticker symbols of companies (e.g., GOOG for Google Inc.), abbreviations and job descriptions because those are always preceded by the full company name respectively a person’s name.""" ;
+  dc:issued "02-04-2014"^^xsd:date ;
+  void:exampleResource <https://raw.githubusercontent.com/AKSW/n3-collection/master/Reuters-128.ttl> ;
+  dc:language "english" ;
+  void:vocabulary <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> ;
+  dcat:landingPage <http://aksw.org/Projects/N3NERNEDNIF.html> ;
+  dcat:keyword "nif","ner","linguistics","corpus","evaluation" ;
+  dataid:licenseName "Creative Commons Attribution 4.0 International" ;
+  dc:license <http://purl.org/NET/rdflicense/cc-by4.0> ;
+  dc:rights """Please cite: Michael Röder, Ricardo Usbeck, Sebastian Hellmann, Daniel Gerber und Andreas Both. N3 - A Collection of Datasets for Named Entity Recognition and Disambiguation in the NLP Interchange Format. In The 9th edition of the Language Resources and Evaluation Conference, 26-31 May, Reykjavik, Iceland """ ;
+  void:subset <http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128#links> ;
+  dcat:distribution <https://raw.githubusercontent.com/AKSW/n3-collection/master/Reuters-128.ttl> ;
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Ricardo Usbeck" ;
+    foaf:name "Ricardo Usbeck" ;
+    foaf:mbox "ricardo.usbeck(at)googlemail.com"
+  ] .
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/N3-Reuters-128#links>
+  a dataid:Linkset ;
+  dc:issued "02-04-2014"^^xsd:date ;
+  void:linkPredicate <http://www.w3.org/2005/11/its/rdf#taIdentRef> ;
+  void:triples "650" ;
+  void:target <http://dbpedia.org> .
+
+<https://raw.githubusercontent.com/AKSW/n3-collection/master/Reuters-128.ttl>
+  a dataid:Distribution ;
+  dc:title "Complete corpus" ;
+  dc:description "Complete corpus file in turtle format" ;
+  dc:issued "02-04-2014"^^xsd:date ;
+  dcat:accessURL "https://raw.githubusercontent.com/AKSW/n3-collection/master/Reuters-128.ttl" ;
+  dc:format "text/turtle" ;
+  void:triples "6967" .

@@ -1,3 +1,26 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package org.aksw.gerbil.config;
 
 import org.apache.commons.configuration.CompositeConfiguration;
@@ -32,28 +55,7 @@ public class GerbilConfiguration {
         return instance;
     }
 
-    // private Properties gerbilProperties = new Properties();
-
-    // private GerbilConfiguration() {
-    // }
-
     public static synchronized void loadAdditionalProperties(String fileName) {
-        // try {
-        // InputStream stream = Experimenter.class.getClassLoader()
-        // .getResourceAsStream(fileName);
-        // if (stream == null) {
-        // LOGGER.error("Couldnt load Properties from the properties file (\"" + fileName
-        // + "\"). This GERBIL instance won't work as expected.");
-        // return;
-        // }
-        // BufferedInputStream bStream = new BufferedInputStream(stream);
-        // gerbilProperties.load(bStream);
-        // bStream.close();
-        // } catch (IOException e) {
-        // LOGGER.error("Couldnt load Properties from the properties file (\"" + fileName
-        // + "\"). This GERBIL instance won't work as expected.", e);
-        // gerbilProperties = null;
-        // }
         try {
             ((CompositeConfiguration) getInstance()).addConfiguration(new PropertiesConfiguration(fileName));
         } catch (ConfigurationException e) {
@@ -61,16 +63,4 @@ public class GerbilConfiguration {
                     + "\"). This GERBIL instance won't work as expected.", e);
         }
     }
-
-    // public String getPropertyValue(String propertyName) {
-    // String value = null;
-    // if (gerbilProperties != null) {
-    // value = gerbilProperties.getProperty(propertyName);
-    // if (value.contains("{0}")) {
-    // String gerbilDataPath = gerbilProperties.getProperty(GERBIL_DATAPATH_PROPERTY_NAME);
-    // value = MessageFormat.format(value, gerbilDataPath);
-    // }
-    // }
-    // return value;
-    // }
 }

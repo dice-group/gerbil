@@ -1,19 +1,49 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package org.aksw.gerbil.database;
 
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 /**
+ * SQL database based implementation of the {@link AbstractExperimentDAO} class.
  * 
  * @author b.eickmann
+ * @author m.roeder
  * 
  */
 public class ExperimentDAOImpl extends AbstractExperimentDAO {
@@ -27,6 +57,13 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_CACHED_TASK = "SELECT id FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND lastChanged>:lastChanged AND state>:errorState ORDER BY lastChanged DESC LIMIT 1";
     private final static String GET_HIGHEST_EXPERIMENT_ID = "SELECT id FROM Experiments ORDER BY id DESC LIMIT 1";
     private final static String SET_UNFINISHED_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE state=:unfinishedState";
+    @Deprecated
+    private final static String GET_LATEST_EXPERIMENT_TASKS = "SELECT DISTINCT annotatorName, datasetName FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching";
+    @Deprecated
+    private final static String GET_LATEST_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState ORDER BY lastChanged DESC LIMIT 1";
+    private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks , (SELECT datasetName, annotatorName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState GROUP BY datasetName, annotatorName) pairs WHERE annotatorName=pairs.annotatorName AND datasetName=pairs.datasetName AND experimentType=:experimentType AND matching=:matching AND lastChanged=pairs.lastChanged";
+    private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
+    private final static String SHUTDOWN = "SHUTDOWN";
 
     private final NamedParameterJdbcTemplate template;
 
@@ -162,4 +199,55 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         this.template.update(SET_UNFINISHED_TASK_STATE, parameters);
     }
 
+    @Deprecated
+    @Override
+    protected List<String[]> getAnnotatorDatasetCombinations(String experimentType, String matching) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("experimentType", experimentType);
+        params.addValue("matching", matching);
+        return this.template.query(GET_LATEST_EXPERIMENT_TASKS, params, new StringArrayRowMapper(new int[] { 1, 2 }));
+    }
+
+    @Deprecated
+    @Override
+    protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
+            String annotatorName, String datasetName) {
+        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType, matching);
+        params.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
+        List<ExperimentTaskResult> result = this.template.query(GET_LATEST_EXPERIMENT_TASK_RESULT, params,
+                new ExperimentTaskResultRowMapper());
+        if (result.size() > 0) {
+            return result.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ExperimentTaskResult> getAllRunningExperimentTasks() {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
+        return this.template.query(GET_RUNNING_EXPERIMENT_TASKS, params, new ExperimentTaskResultRowMapper());
+    }
+
+    @Override
+    public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("experimentType", experimentType);
+        parameters.addValue("matching", matching);
+        parameters.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
+        return this.template.query(GET_LATEST_EXPERIMENT_TASK_RESULTS, parameters,
+                new ExperimentTaskResultRowMapper());
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.template.execute(SHUTDOWN, new PreparedStatementCallback<Object>() {
+            @Override
+            public Object doInPreparedStatement(PreparedStatement arg0) throws SQLException, DataAccessException {
+                // nothing to do
+                return null;
+            }
+        });
+    }
 }

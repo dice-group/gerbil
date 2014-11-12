@@ -1,5 +1,29 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package org.aksw.gerbil.database;
 
+import java.io.Closeable;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -12,7 +36,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskResult;
  * @author m.roeder
  * 
  */
-public interface ExperimentDAO {
+public interface ExperimentDAO extends Closeable {
 
     /**
      * Sentinel value indicating that the database already contains a result for
@@ -39,9 +63,8 @@ public interface ExperimentDAO {
 
     /**
      * Initializes the database. Searches the database for experiment tasks that
-     * have been started but not ended yet (their status equals
-     * {@link #TASK_STARTED_BUT_NOT_FINISHED_YET} ) and set their status to
-     * {@link ErrorTypes#SERVER_STOPPED_WHILE_PROCESSING}. This method should
+     * have been started but not ended yet (their status equals {@link #TASK_STARTED_BUT_NOT_FINISHED_YET} ) and set
+     * their status to {@link ErrorTypes#SERVER_STOPPED_WHILE_PROCESSING}. This method should
      * only be called directly after the initialization of the database. It
      * makes sure that "old" experiment tasks which have been started but never
      * finished are set to an error state and can't be used inside the caching
@@ -74,8 +97,8 @@ public interface ExperimentDAO {
      * experiment task inside the database that does not have an error code as
      * state. If such a task exists and if it is not to old regarding the
      * durability of experiment task results, the experiment id is connected to
-     * the already existing task and {@link #CACHED_EXPERIMENT_TASK_CAN_BE_USED}
-     * = {@value #CACHED_EXPERIMENT_TASK_CAN_BE_USED} is returned. Otherwise, a
+     * the already existing task and {@link #CACHED_EXPERIMENT_TASK_CAN_BE_USED} =
+     * {@value #CACHED_EXPERIMENT_TASK_CAN_BE_USED} is returned. Otherwise, a
      * new experiment task is created, set to unfinished by setting its state to
      * {@link #TASK_STARTED_BUT_NOT_FINISHED_YET}, connected to the given
      * experiment and the id of the newly created experiment task is returned.
@@ -93,8 +116,8 @@ public interface ExperimentDAO {
      *            the name of the matching used
      * @param experimentId
      *            the id of the experiment
-     * @return {@link #CACHED_EXPERIMENT_TASK_CAN_BE_USED}=
-     *         {@value #CACHED_EXPERIMENT_TASK_CAN_BE_USED} if there is already
+     * @return {@link #CACHED_EXPERIMENT_TASK_CAN_BE_USED}= {@value #CACHED_EXPERIMENT_TASK_CAN_BE_USED} if there is
+     *         already
      *         an experiment task with the given preferences or the id of the
      *         newly created experiment task.
      */
@@ -103,8 +126,7 @@ public interface ExperimentDAO {
 
     /**
      * Creates a new experiment task with the given preferences, set to
-     * unfinished by setting its state to
-     * {@link #TASK_STARTED_BUT_NOT_FINISHED_YET} and connects it to the
+     * unfinished by setting its state to {@link #TASK_STARTED_BUT_NOT_FINISHED_YET} and connects it to the
      * experiment with the given experiment id.
      * 
      * @param annotatorName
@@ -155,8 +177,8 @@ public interface ExperimentDAO {
      * @param experimentTaskId
      *            the id of the experiment task for which the state should be
      *            retrieved
-     * @return the state of the experiment task or {@link #TASK_NOT_FOUND}=
-     *         {@value #TASK_NOT_FOUND} if such a task couldn't be found.
+     * @return the state of the experiment task or {@link #TASK_NOT_FOUND}= {@value #TASK_NOT_FOUND} if such a task
+     *         couldn't be found.
      */
     public int getExperimentState(int experimentTaskId);
 
@@ -167,4 +189,23 @@ public interface ExperimentDAO {
      * @return the highest experiment ID or null if there is no experiment
      */
     public String getHighestExperimentId();
+
+    /**
+     * Returns the latest results for experiments with the given experiment type and matching type. Note that the
+     * experiment tasks of which the results are returned should be finished.
+     * 
+     * @param experimentType
+     *            the name of the experiment type
+     * @param matching
+     *            the name of the matching used
+     * @return a list of the latest results available in the database.
+     */
+    public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching);
+
+    /**
+     * Returns a list of all running experiment tasks.
+     * 
+     * @return a list of all running experiment tasks.
+     */
+    public List<ExperimentTaskResult> getAllRunningExperimentTasks();
 }

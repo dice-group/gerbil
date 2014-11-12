@@ -1,0 +1,144 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Entity",
+    "creator" : "_:b1",
+    "title" : "KORE50 dataset",
+    "landingPage" : "http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/aida/downloads/"
+  }, {
+    "@id" : "_:b1",
+    "@type" : "dataid:Agent",
+    "label" : "Johannes Hoffart, Stephan Seufert, Dat Ba Nguyen, Martin Theobald, and Gerhard Weikum",
+    "mbox" : "jhoffart(at)mpi-inf.mpg.de",
+    "name" : "Johannes Hoffart, Stephan Seufert, Dat Ba Nguyen, Martin Theobald, and Gerhard Weikum"
+  }, {
+    "@id" : "_:b2",
+    "@type" : "dataid:Agent",
+    "label" : "Magnus Knuth",
+    "mbox" : "magnus.knuth(at)hpi.uni-potsdam.de",
+    "name" : "Magnus Knuth"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/KORE50",
+    "@type" : "void:DatasetDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/corpora/KORE50#dataset"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/KORE50#dataset",
+    "@type" : [ "sd:Dataset", "dataid:Dataset", "void:Dataset", "dcat:Dataset", "prov:Entity" ],
+    "licenseName" : "Creative Commons Attribution-ShareAlike 4.0 International",
+    "description" : "KORE 50 is a subset of the larger AIDA corpus, which is based on the dataset of the CoNLL 2003 NER task. The dataset aims to capture hard to disambiguate mentions of entities and it contains a large number of first names referring to persons, whose identity needs to be deduced from the given context. It comprises 50 sentences from different domains, such as music, celebrities, and business and is provided in a clear TSV format. The corpus was converted to NLP Interchange Format (NIF). ",
+    "issued" : {
+      "@type" : "xsd:date",
+      "@value" : "03-11-2014"
+    },
+    "language" : "english",
+    "license" : "http://purl.org/NET/rdflicense/cc-by-sa4.0",
+    "rights" : "Please cite: J. Hoffart, S. Seufert, D. B. Nguyen, M. Theobald, and G. Weikum. KORE: Keyphrase overlap relatedness for entity disambiguation. In Proc. of the 21st ACM international conference on Information and knowledge management AND N. Steinmetz, M. Knuth, and H. Sack. Statistical Analyses of Named Entity\nDisambiguation Benchmarks in Proceedings of NLP-DBPEDIA@ISWC 2013",
+    "title" : "KORE 50 NIF NER Corpus",
+    "exampleResource" : "http://www.yovisto.com/labs/ner-benchmarks/data/kore50-nif-2014-11-03.ttl",
+    "rootResource" : "http://www.yovisto.com/labs/ner-benchmarks/data/kore50-nif-2014-11-03.ttl",
+    "subset" : "http://gerbil.aksw.org/gerbil/dataId/corpora/KORE50#links",
+    "triples" : "1410",
+    "vocabulary" : "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#",
+    "label" : "KORE 50 NIF NER Corpus",
+    "contactPoint" : "_:b2",
+    "distribution" : "http://www.yovisto.com/labs/ner-benchmarks/data/kore50-nif-2014-11-03.ttl",
+    "keyword" : [ "linguistics", "corpus", "ner", "evaluation", "nif" ],
+    "landingPage" : "http://www.yovisto.com/labs/ner-benchmarks/",
+    "wasDerivedFrom" : "_:b0"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/KORE50#links",
+    "@type" : "dataid:Linkset",
+    "issued" : "03-11-2014",
+    "modified" : "03-11-2014",
+    "linkPredicate" : "http://www.w3.org/2005/11/its/rdf#taIdentRef",
+    "target" : "http://dbpedia.org",
+    "triples" : "144"
+  }, {
+    "@id" : "http://www.yovisto.com/labs/ner-benchmarks/data/kore50-nif-2014-11-03.ttl",
+    "@type" : [ "dcat:Distribution", "dataid:Distribution" ],
+    "description" : "Complete KORE50 NIF corpus",
+    "issued" : "03-11-2014",
+    "title" : "kore50-nif-2014-11-03.ttl",
+    "triples" : "1410",
+    "accessURL" : "http://www.yovisto.com/labs/ner-benchmarks/data/kore50-nif-2014-11-03.ttl",
+    "mediaType" : "text/turtle"
+  } ],
+  "@context" : {
+    "creator" : {
+      "@id" : "http://purl.org/dc/terms/creator",
+      "@type" : "@id"
+    },
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "title" : "http://purl.org/dc/terms/title",
+    "target" : {
+      "@id" : "http://rdfs.org/ns/void#target",
+      "@type" : "@id"
+    },
+    "triples" : "http://rdfs.org/ns/void#triples",
+    "linkPredicate" : {
+      "@id" : "http://rdfs.org/ns/void#linkPredicate",
+      "@type" : "@id"
+    },
+    "modified" : "http://purl.org/dc/terms/modified",
+    "issued" : "http://purl.org/dc/terms/issued",
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "mediaType" : "http://www.w3.org/ns/dcat#mediaType",
+    "accessURL" : "http://www.w3.org/ns/dcat#accessURL",
+    "description" : "http://purl.org/dc/terms/description",
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "subset" : {
+      "@id" : "http://rdfs.org/ns/void#subset",
+      "@type" : "@id"
+    },
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "vocabulary" : {
+      "@id" : "http://rdfs.org/ns/void#vocabulary",
+      "@type" : "@id"
+    },
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "rights" : "http://purl.org/dc/terms/rights",
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "wasDerivedFrom" : {
+      "@id" : "http://www.w3.org/ns/prov#wasDerivedFrom",
+      "@type" : "@id"
+    },
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "language" : "http://purl.org/dc/terms/language",
+    "exampleResource" : {
+      "@id" : "http://rdfs.org/ns/void#exampleResource",
+      "@type" : "@id"
+    },
+    "rootResource" : {
+      "@id" : "http://rdfs.org/ns/void#rootResource",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

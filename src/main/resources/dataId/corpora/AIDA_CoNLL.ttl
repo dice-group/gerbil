@@ -1,0 +1,45 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/AIDA_CoNLL>
+  a void:DatasetDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/corpora/AIDA_CoNLL#dataset>.
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/AIDA_CoNLL#dataset>
+  a dataid:Dataset, dcat:Dataset, void:Dataset, prov:Entity ;
+  rdfs:label "AIDA CoNLL-YAGO Dataset" ;
+  dc:issued "11-21-2013"^^xsd:date ;
+  dc:language "english" ;
+  dcat:landingPage <http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/aida/downloads/> ;
+  dcat:keyword "newswire","ner","corpus","reuters","linguistics" ;
+  dataid:licenseName "Creative Commons CC-BY-SA 3.0 Germany" ;
+  dc:license <http://purl.oclc.org/NET/rdflicenses/cc-by-sa3.0de> ;
+  dcat:distribution <http://resources.mpi-inf.mpg.de/yago-naga/aida/download/aida-yago2-dataset.zip> ;
+  dc:rights """Please cite: Johannes Hoffart, Mohamed Amir Yosef, Ilaria Bordino, Hagen Fürstenau, Manfred Pinkal, Marc Spaniol, Bilyana Taneva, Stefan Thater, Gerhard Weikum. Robust Disambiguation of Named Entities in Text. In: Conference on Empirical Methods in Natural Language Processing, p. 782–792, Edinburgh, Scotland, 2011""";
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Johannes Hoffart" ;
+    foaf:name "Johannes Hoffart" ;
+    foaf:mbox "jhoffart(at)mpi-inf.mpg.de"
+  ] ;
+  dc:title "AIDA CoNLL-YAGO Dataset" ;
+  dc:description """Dataset contains assignments of entities to the mentions of named entities annotated for the original CoNLL 2003 entity recognition task. The entities are identified by YAGO2 entity name, by Wikipedia URL, or by Freebase mid (Thanks to Massimiliano Ciaramita from Google Zürich for creating the Wikipedia/Freebase mapping and making it available to us). The zip contains a README.txt with details about the format, as well as instructions how to create it from the original CoNLL 2003 dataset (this is required). """ .
+
+<http://resources.mpi-inf.mpg.de/yago-naga/aida/download/aida-yago2-dataset.zip>
+  a dataid:Distribution, dcat:Distribution ;
+  dc:title "aida-yago2-dataset.zip" ;
+  dc:description "Complete dataset" ;
+  dc:issued "11-21-2013"^^xsd:date ;
+  dcat:accessURL "http://resources.mpi-inf.mpg.de/yago-naga/aida/download/aida-yago2-dataset.zip" ;
+  dcat:mediaType "application/zip" .
+
+
+

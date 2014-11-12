@@ -1,0 +1,124 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package org.aksw.gerbil.dataid.vocabs;
+
+import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.matching.Matching;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
+
+public class GERBIL {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GERBIL.class);
+
+    protected static final String uri = "http://gerbil.aksw.org/gerbil/vocab#";
+
+    /**
+     * returns the URI for this schema
+     * 
+     * @return the URI for this schema
+     */
+    public static String getURI() {
+        return uri;
+    }
+
+    protected static final Resource resource(String local) {
+        return ResourceFactory.createResource(uri + local);
+    }
+
+    protected static final Property property(String local) {
+        return ResourceFactory.createProperty(uri, local);
+    }
+
+    public static final Resource Experiment = resource("Experiment");
+    public static final Resource ExperimentTask = resource("ExperimentTask");
+
+    public static final Resource A2W = resource("A2W");
+    public static final Resource C2W = resource("C2W");
+    public static final Resource D2W = resource("D2W");
+    public static final Resource Rc2W = resource("Rc2W");
+    public static final Resource Sa2W = resource("Sa2W");
+    public static final Resource Sc2W = resource("Sc2W");
+
+    public static final Resource StrongAnnoMatch = resource("StrongAnnoMatch");
+    public static final Resource WeakAnnoMatch = resource("WeakAnnoMatch");
+    public static final Resource StrongEntityMatch = resource("StrongEntityMatch");
+
+    public static final Resource DSD = resource("dsd");
+
+    public static final Property annotator = property("annotator");
+    public static final Property dataset = property("dataset");
+    public static final Property experimentType = property("experimentType");
+    public static final Property errorCount = property("errorCount");
+    public static final Property macroF1 = property("macroF1");
+    public static final Property macroPrecision = property("macroPrecision");
+    public static final Property macroRecall = property("macroRecall");
+    public static final Property matching = property("matching");
+    public static final Property microF1 = property("microF1");
+    public static final Property microPrecision = property("microPrecision");
+    public static final Property microRecall = property("microRecall");
+    public static final Property statusCode = property("statusCode");
+    public static final Property timestamp = property("timestamp");
+    public static final Property topic = property("topic");
+
+    public static Resource getMatchingResource(Matching matching) {
+        switch (matching) {
+        case STRONG_ANNOTATION_MATCH:
+            return StrongAnnoMatch;
+        case WEAK_ANNOTATION_MATCH:
+            return WeakAnnoMatch;
+        case STRONG_ENTITY_MATCH:
+            return StrongEntityMatch;
+        default:
+            ;
+        }
+        LOGGER.error("Got an unknown matching type: " + matching.name());
+        return null;
+    }
+
+    public static Resource getExperimentTypeResource(ExperimentType type) {
+        switch (type) {
+        case A2W:
+            return A2W;
+        case C2W:
+            return C2W;
+        case D2W:
+            return D2W;
+        case Rc2W:
+            return Rc2W;
+        case Sa2W:
+            return Sa2W;
+        case Sc2W:
+            return Sc2W;
+        default:
+            ;
+        }
+        LOGGER.error("Got an unknown experiment type: " + type.name());
+        return null;
+    }
+}

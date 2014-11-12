@@ -1,3 +1,26 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package org.aksw.gerbil.bat.annotator.nif;
 
 import it.acubelab.batframework.data.Annotation;
@@ -15,7 +38,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 
-import org.aksw.gerbil.transfer.nif.AnnotatedDocument;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.NIFDocumentCreator;
 import org.aksw.gerbil.transfer.nif.NIFDocumentParser;
 import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentCreator;
@@ -40,8 +63,8 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     private String url;
     private String name;
     private CloseableHttpClient client;
-    private long lastRequestSend = 0;
-    private long lastResponseReceived = 0;
+    // private long lastRequestSend = 0;
+    // private long lastResponseReceived = 0;
     private int documentCount = 0;
     private NIFDocumentCreator nifCreator = new TurtleNIFDocumentCreator();
     private NIFDocumentParser nifParser = new TurtleNIFDocumentParser();
@@ -66,18 +89,18 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
      */
     @Override
     public long getLastAnnotationTime() {
-        if (lastRequestSend < lastResponseReceived) {
-            return lastResponseReceived - lastRequestSend;
-        } else {
-            return -1L;
-        }
+        // if (lastRequestSend < lastResponseReceived) {
+        // return lastResponseReceived - lastRequestSend;
+        // } else {
+        return -1L;
+        // }
     }
 
     @Override
     public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions)
             throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        AnnotatedDocument document = BAT2NIF_TranslationHelper
+        Document document = BAT2NIF_TranslationHelper
                 .createAnnotatedDocument(text, mentions);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
@@ -87,7 +110,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<Annotation> solveA2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        AnnotatedDocument document = BAT2NIF_TranslationHelper
+        Document document = BAT2NIF_TranslationHelper
                 .createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
@@ -97,7 +120,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<Tag> solveC2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        AnnotatedDocument document = BAT2NIF_TranslationHelper
+        Document document = BAT2NIF_TranslationHelper
                 .createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
@@ -107,7 +130,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<ScoredTag> solveSc2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        AnnotatedDocument document = BAT2NIF_TranslationHelper
+        Document document = BAT2NIF_TranslationHelper
                 .createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
@@ -117,14 +140,14 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<ScoredAnnotation> solveSa2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        AnnotatedDocument document = BAT2NIF_TranslationHelper
+        Document document = BAT2NIF_TranslationHelper
                 .createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
         return NIF2BAT_TranslationHelper.createScoredAnnotations(wikiApi, dbpediaApi, document);
     }
 
-    protected AnnotatedDocument request(AnnotatedDocument document) {
+    protected Document request(Document document) {
         // give the document a URI
         document.setDocumentURI(DOCUMENT_URI + documentCount);
         ++documentCount;
@@ -139,7 +162,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
                     + e.getLocalizedMessage());
         }
         // send NIF document (start time measure)
-        lastRequestSend = System.currentTimeMillis();
+        // lastRequestSend = System.currentTimeMillis();
         HttpPost request = new HttpPost(url);
         request.setEntity(entity);
         request.addHeader("Content-Type", nifCreator.getHttpContentType());
@@ -163,7 +186,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
             }
             // receive NIF document (end time measure and set time)
             entity = response.getEntity();
-            lastResponseReceived = System.currentTimeMillis();
+            // lastResponseReceived = System.currentTimeMillis();
             // read response and parse NIF
             try {
                 reader = new InputStreamReader(entity.getContent());

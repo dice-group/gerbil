@@ -1,0 +1,66 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Giuseppe Rizzo",
+    "mbox" : "giuseppe.rizzo(at)eurecom.fr",
+    "name" : "Giuseppe Rizzo"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/NERD",
+    "@type" : "dataid:ServiceDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/annotators/NERD#annotator"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/annotators/NERD#annotator",
+    "@type" : [ "prov:Entity", "dataid:Service" ],
+    "licenseName" : "GNU public license 3.0",
+    "description" : "Named Entity Recognition and Disambiguation.",
+    "issued" : "05-31-2014",
+    "license" : "http://purl.org/NET/rdflicense/gpl3.0",
+    "rights" : "Please cite: Giuseppe Rizzo and Marieke Van Erp and Rapha�l Troncy. Benchmarking the Extraction and Disambiguation of Named Entities on the Semantic Web. In Proceedings of the Ninth International Conference on Language Resources and Evaluation (LREC'14), 2014.",
+    "title" : "NERD",
+    "label" : "NERD",
+    "contactPoint" : "_:b0",
+    "keyword" : [ "Sa2W", "ner" ],
+    "landingPage" : "http://nerd.eurecom.fr"
+  } ],
+  "@context" : {
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "rights" : "http://purl.org/dc/terms/rights",
+    "description" : "http://purl.org/dc/terms/description",
+    "title" : "http://purl.org/dc/terms/title",
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

@@ -19,24 +19,25 @@ public class DatasetConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetConfig.class);
 
-    @Bean
-    public AdapterList<DatasetConfiguration> annotatorList(List<DatasetConfiguration> configurations) {
-        // if (LOGGER.isInfoEnabled()) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Found ");
-        builder.append(configurations.size());
-        builder.append(" annotators [");
-        for (int i = 0; i < configurations.size(); i++) {
-            if (i > 0) {
-                builder.append(", ");
-            }
-            builder.append(configurations.get(i).getClass().getSimpleName());
-        }
-        builder.append("].");
-        LOGGER.error(builder.toString());
-        // }
-        return new AdapterList<DatasetConfiguration>(configurations);
-    }
+    // @Bean
+    // public AdapterList<DatasetConfiguration>
+    // annotatorList(List<DatasetConfiguration> configurations) {
+    // // if (LOGGER.isInfoEnabled()) {
+    // StringBuilder builder = new StringBuilder();
+    // builder.append("Found ");
+    // builder.append(configurations.size());
+    // builder.append(" annotators [");
+    // for (int i = 0; i < configurations.size(); i++) {
+    // if (i > 0) {
+    // builder.append(", ");
+    // }
+    // builder.append(configurations.get(i).getClass().getSimpleName());
+    // }
+    // builder.append("].");
+    // LOGGER.error(builder.toString());
+    // // }
+    // return new AdapterList<DatasetConfiguration>(configurations);
+    // }
 
     public AdapterList<DatasetConfiguration> knownNIFFileDatasetList(WikipediaApiInterface wikiApi,
             DBPediaApi dbpediaApi) {

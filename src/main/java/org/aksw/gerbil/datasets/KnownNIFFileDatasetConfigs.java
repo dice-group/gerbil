@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.web.config.AdapterList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class KnownNIFFileDatasetConfigs extends AdapterList<DatasetConfiguration
                     + "\" won't be available.");
             return null;
         } else {
-            return new NIFFileDatasetConfig(wikiApi, dbpediaApi, dataset.getDatasetName(), nifFile);
+            return new NIFFileDatasetConfig(wikiApi, dataset.getDatasetName(), nifFile, true, ExperimentType.Sa2W);
         }
     }
 

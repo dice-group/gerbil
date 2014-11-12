@@ -1,0 +1,54 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/IITB>
+  a void:DatasetDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/corpora/IITB#dataset>.
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/IITB#dataset>
+  a dataid:Dataset, dcat:Dataset, void:Dataset, prov:Entity ;
+  rdfs:label "IITB" ;
+  dc:issued "06-28-2009"^^xsd:date ;
+  dc:language "english" ;
+  dcat:landingPage <http://www.cse.iitb.ac.in/soumen/doc/CSAW/Annot/> ;
+  dcat:keyword "web","documents","sports","entertainment","science","technology","health","ner","corpus","linguistics" ;
+  dataid:licenseName "Creative Commons Attribution 4.0 International" ;
+  dcat:distribution <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_crawledDocs.tar.gz>, <http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_Annotations.xml> ;
+  dc:license <http://purl.org/NET/rdflicense/cc-by4.0> ;
+  dc:rights """Please cite: Sayali Kulkarni, Amit Singh, Ganesh Ramakrishnan, and Soumen Chakrabarti. Collective Annotation of Wikipedia Entities in Web Text. in SIGKDD 2009.""";
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Soumen Chakrabarti" ;
+    foaf:name "Soumen Chakrabarti" ;
+    foaf:mbox "soumen(at)cse.iitb.ac.in" ;
+	foaf:homepage "http://www.cse.iitb.ac.in/soumen/"
+  ] ;
+  dc:title "IITB" ;
+  dc:description """Documents for manual annotation were collected from the links within homepages of popular sites belonging to a handful of domains that included sports, entertainment, science and technology, and health (sources: http://news.google.com/ and http://www.espnstar.com/).""" .
+
+<http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_crawledDocs.tar.gz>
+  a dataid:Distribution, dcat:Distribution ;
+  dc:title "CSAW_crawledDocs.tar.gz" ;
+  dc:description "Web documents crawled for SIGKDD 2009 evaluation" ;
+  dc:rights "All rights reserved by owners of original web documents" ;
+  dc:license <http://purl.org/NET/rdflicense/allrightsreserved> ;
+  dcat:accessURL "http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_crawledDocs.tar.gz" ;
+  dcat:mediaType "application/zip" .
+  
+<http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_Annotations.xml>
+  a dataid:Distribution, dcat:Distribution ;
+  dc:title "CSAW_Annotations.xml" ;
+  dc:description "Ground truth annotations on the web documents documents collected from volunteers." ;
+  dc:license <http://purl.org/NET/rdflicense/cc-zero1.0> ;
+  dcat:accessURL "http://www.cse.iitb.ac.in/~soumen/doc/CSAW/Annot/CSAW_Annotations.xml" ;
+  dcat:mediaType "application/xml" .
+
+

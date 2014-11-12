@@ -1,20 +1,44 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package org.aksw.gerbil.bat.datasets;
 
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
 import it.acubelab.batframework.data.Tag;
 import it.acubelab.batframework.problems.A2WDataset;
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.ProblemReduction;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
+import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.exceptions.GerbilException;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.slf4j.Logger;
@@ -43,14 +67,13 @@ public abstract class AbstractNIFDataset implements A2WDataset {
 
     private String name;
     private WikipediaApiInterface wikiApi;
-    private DBPediaApi dbpediaApi;
+    private boolean hasBeenInitialized = false;
 
-    public AbstractNIFDataset(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi, String name) {
+    public AbstractNIFDataset(WikipediaApiInterface wikiApi, String name) {
         texts = new LinkedList<String>();
         annotationsList = new LinkedList<HashSet<Annotation>>();
         this.name = name;
         this.wikiApi = wikiApi;
-        this.dbpediaApi = dbpediaApi;
     }
 
     /**
@@ -85,13 +108,15 @@ public abstract class AbstractNIFDataset implements A2WDataset {
         }
     }
 
-    protected void init() {
+    public synchronized void init() throws GerbilException {
+        if (hasBeenInitialized) {
+            return;
+        }
         Model dataset = ModelFactory.createDefaultModel();
         // dataset = RDFDataMgr.loadModel(rdfpath);
         InputStream inputStream = getDataAsInputStream();
         if (inputStream == null) {
-            // FIXME better error handling
-            return;
+            throw new GerbilException("Couldn't get InputStream.", ErrorTypes.DATASET_LOADING_ERROR);
         }
         RDFDataMgr.read(dataset, inputStream, getDataLanguage());
         closeInputStream(inputStream);
@@ -140,12 +165,7 @@ public abstract class AbstractNIFDataset implements A2WDataset {
                 // logger.info("processing annotation {}", page);
                 // dbpediaQuery.setIri("dbpedia", page);
 
-                try {
-                    id = wikiApi.getIdByTitle(dbpediaApi.dbpediaToWikipedia(extractTitle(page)));
-                } catch (IOException e) {
-                    LOGGER.warn("Couldn't get wiki id for dbpedia URI \"" + page + "\"");
-                    id = -1;
-                }
+                id = DBpediaToWikiId.getId(wikiApi, page);
                 position = annSolution.get("begin").asLiteral().getInt();
                 length = annSolution.get("end").asLiteral().getInt()
                         - position;
@@ -160,22 +180,15 @@ public abstract class AbstractNIFDataset implements A2WDataset {
                 }
             }
         }
+        hasBeenInitialized = true;
         LOGGER.info("{} dataset initialized", name);
     }
 
-    private static String extractTitle(String namedEntityUri) {
-        int posSlash = namedEntityUri.lastIndexOf('/');
-        int posPoints = namedEntityUri.lastIndexOf(':');
-        if (posSlash > posPoints) {
-            return namedEntityUri.substring(posSlash + 1);
-        } else if (posPoints < posSlash) {
-            return namedEntityUri.substring(posPoints + 1);
-        } else {
-            return namedEntityUri;
-        }
-    }
-
     public int getTagsCount() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         int count = 0;
         for (Set<Annotation> s : annotationsList)
             count += s.size();
@@ -183,31 +196,59 @@ public abstract class AbstractNIFDataset implements A2WDataset {
     }
 
     public List<HashSet<Tag>> getC2WGoldStandardList() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return ProblemReduction.A2WToC2WList(this.getA2WGoldStandardList());
     }
 
     public int getSize() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return this.texts.size();
     }
 
     public String getName() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return name;
     }
 
     public List<String> getTextInstanceList() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return texts;
     }
 
     public List<HashSet<Mention>> getMentionsInstanceList() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return ProblemReduction
                 .A2WToD2WMentionsInstance(getA2WGoldStandardList());
     }
 
     public List<HashSet<Annotation>> getD2WGoldStandardList() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return this.annotationsList;
     }
 
     public List<HashSet<Annotation>> getA2WGoldStandardList() {
+        if (!hasBeenInitialized) {
+            throw new IllegalStateException(
+                    "This dataset hasn't been initialized. Please call init() before using the dataset.");
+        }
         return this.getD2WGoldStandardList();
     }
 

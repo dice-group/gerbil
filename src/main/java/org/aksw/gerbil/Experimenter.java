@@ -1,3 +1,26 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package org.aksw.gerbil;
 
 import it.acubelab.batframework.utils.WikipediaApiInterface;
@@ -31,9 +54,6 @@ public class Experimenter implements Runnable {
             int taskId;
             for (int i = 0; i < configs.length; ++i) {
                 if (couldHaveCachedResult(configs[i])) {
-                    // FIXME If the result in the database contains an error
-                    // code, wouldn't it be better to handle such
-                    // a case as it wouldn't exist in the database?
                     taskId = experimentDAO.connectCachedResultOrCreateTask(configs[i].annotatorConfig.getName(),
                             configs[i].datasetConfig.getName(), configs[i].type.name(), configs[i].matching.name(),
                             experimentId);
@@ -58,10 +78,10 @@ public class Experimenter implements Runnable {
     }
 
     private boolean couldHaveCachedResult(ExperimentTaskConfiguration config) {
-        LOGGER.error("Could be cached: " + config.annotatorConfig.getName() + ".couldBeCached()="
-                + config.annotatorConfig.couldBeCached() + " && " + config.datasetConfig.getName()
-                + ".couldBeCached()=" + config.datasetConfig.couldBeCached() + " --> "
-                + (config.annotatorConfig.couldBeCached() && config.datasetConfig.couldBeCached()));
-        return config.annotatorConfig.couldBeCached() && config.datasetConfig.couldBeCached();
+        boolean couldBeCached = config.annotatorConfig.couldBeCached() && config.datasetConfig.couldBeCached();
+        LOGGER.debug("Could be cached: {}.couldBeCached()={} && {}.couldBeCached()={} --> {}",
+                config.annotatorConfig.getName(), config.annotatorConfig.couldBeCached(),
+                config.datasetConfig.getName(), config.datasetConfig.couldBeCached(), couldBeCached);
+        return couldBeCached;
     }
 }

@@ -1,0 +1,42 @@
+@prefix dataid: <http://dataid.dbpedia.org/ns/core#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/MSNBC>
+  a void:DatasetDescription;
+  foaf:primaryTopic <http://gerbil.aksw.org/gerbil/dataId/corpora/MSNBC#dataset>.
+
+<http://gerbil.aksw.org/gerbil/dataId/corpora/MSNBC#dataset>
+  a dataid:Dataset, dcat:Dataset, void:Dataset, prov:Entity ;
+  rdfs:label "MSNBC" ;
+  dc:issued "06-28-2009"^^xsd:date ;
+  dc:language "english" ;
+  dcat:landingPage <http://cogcomp.cs.illinois.edu/page/resource_view/4> ;
+  dcat:keyword "news","ner","corpus","linguistics" ;
+  dcat:distribution <http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip> ;
+  dc:license <http://purl.org/NET/rdflicense/allrightsreserved> ;
+  dc:rights """Please cite: Silviu Cucerzan. Large Scale Named Entity Disambiguation Based on Wikipedia Data. In The EMNLP-CoNLL Joint Conference, Prague, 2007.""";
+  dcat:contactPoint [
+    a dataid:Agent ;
+    rdfs:label "Silviu-Petru Cucerzan" ;
+    foaf:name "Silviu-Petru Cucerzan" ;
+    foaf:mbox "silviu(at)microsoft.com" ;
+	foaf:homepage "http://research.microsoft.com/en-us/people/silviu/"
+  ] ;
+  dc:title "MSNBC" ;
+  dc:description """Top two stories in the ten MSNBC news categories (Business, U.S. Politics, Entertainment, Health, Sports, Tech & Science, Travel, TV News, U.S. News, and World News) as of January 2, 2007 as input. Post-hoc evaluation of the disambiguations hypothesized for the surface forms correctly identified by the system (i.e. if the boundaries of a surface form were not identified correctly then we disregarded it). Disambiguation defined to be correct if it represented the best possible Wikipedia article that would satisfy a user’s need for information and incorrect otherwise.""" .
+
+<http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip>
+  a dataid:Distribution, dcat:Distribution ;
+  dc:title "ACL2011WikificationData.zip" ;
+  dc:description "Contains multiple datasets. MSNBC corpus in MSNBC subfolder" ;
+  dc:rights "All rights reserved by owner of original dataset" ;
+  dcat:accessURL "http://cogcomp.cs.illinois.edu/Data/ACL2011WikificationData.zip" ;
+  dcat:mediaType "application/zip" .

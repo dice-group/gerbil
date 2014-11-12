@@ -1,0 +1,83 @@
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "@type" : "dataid:Agent",
+    "label" : "Johannes Hoffart",
+    "mbox" : "jhoffart(at)mpi-inf.mpg.de",
+    "name" : "Johannes Hoffart"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/AIDA_CoNLL",
+    "@type" : "void:DatasetDescription",
+    "primaryTopic" : "http://gerbil.aksw.org/gerbil/dataId/corpora/AIDA_CoNLL#dataset"
+  }, {
+    "@id" : "http://gerbil.aksw.org/gerbil/dataId/corpora/AIDA_CoNLL#dataset",
+    "@type" : [ "prov:Entity", "dcat:Dataset", "void:Dataset", "dataid:Dataset" ],
+    "licenseName" : "Creative Commons CC-BY-SA 3.0 Germany",
+    "description" : "Dataset contains assignments of entities to the mentions of named entities annotated for the original CoNLL 2003 entity recognition task. The entities are identified by YAGO2 entity name, by Wikipedia URL, or by Freebase mid (Thanks to Massimiliano Ciaramita from Google Z�rich for creating the Wikipedia/Freebase mapping and making it available to us). The zip contains a README.txt with details about the format, as well as instructions how to create it from the original CoNLL 2003 dataset (this is required). ",
+    "issued" : "11-21-2013",
+    "language" : "english",
+    "license" : "http://purl.oclc.org/NET/rdflicenses/cc-by-sa3.0de",
+    "rights" : "Please cite: Johannes Hoffart, Mohamed Amir Yosef, Ilaria Bordino, Hagen F�rstenau, Manfred Pinkal, Marc Spaniol, Bilyana Taneva, Stefan Thater, Gerhard Weikum. Robust Disambiguation of Named Entities in Text. In: Conference on Empirical Methods in Natural Language Processing, p. 782�792, Edinburgh, Scotland, 2011",
+    "title" : "AIDA CoNLL-YAGO Dataset",
+    "label" : "AIDA CoNLL-YAGO Dataset",
+    "contactPoint" : "_:b0",
+    "distribution" : "http://resources.mpi-inf.mpg.de/yago-naga/aida/download/aida-yago2-dataset.zip",
+    "keyword" : [ "reuters", "linguistics", "ner", "corpus", "newswire" ],
+    "landingPage" : "http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/aida/downloads/"
+  }, {
+    "@id" : "http://resources.mpi-inf.mpg.de/yago-naga/aida/download/aida-yago2-dataset.zip",
+    "@type" : [ "dcat:Distribution", "dataid:Distribution" ],
+    "description" : "Complete dataset",
+    "issued" : "11-21-2013",
+    "title" : "aida-yago2-dataset.zip",
+    "accessURL" : "http://resources.mpi-inf.mpg.de/yago-naga/aida/download/aida-yago2-dataset.zip",
+    "mediaType" : "application/zip"
+  } ],
+  "@context" : {
+    "mbox" : "http://xmlns.com/foaf/0.1/mbox",
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "label" : "http://www.w3.org/2000/01/rdf-schema#label",
+    "language" : "http://purl.org/dc/terms/language",
+    "contactPoint" : {
+      "@id" : "http://www.w3.org/ns/dcat#contactPoint",
+      "@type" : "@id"
+    },
+    "keyword" : "http://www.w3.org/ns/dcat#keyword",
+    "title" : "http://purl.org/dc/terms/title",
+    "landingPage" : {
+      "@id" : "http://www.w3.org/ns/dcat#landingPage",
+      "@type" : "@id"
+    },
+    "rights" : "http://purl.org/dc/terms/rights",
+    "issued" : {
+      "@id" : "http://purl.org/dc/terms/issued",
+      "@type" : "http://www.w3.org/2001/XMLSchema#date"
+    },
+    "license" : {
+      "@id" : "http://purl.org/dc/terms/license",
+      "@type" : "@id"
+    },
+    "licenseName" : "http://dataid.dbpedia.org/ns/core#licenseName",
+    "description" : "http://purl.org/dc/terms/description",
+    "distribution" : {
+      "@id" : "http://www.w3.org/ns/dcat#distribution",
+      "@type" : "@id"
+    },
+    "primaryTopic" : {
+      "@id" : "http://xmlns.com/foaf/0.1/primaryTopic",
+      "@type" : "@id"
+    },
+    "mediaType" : "http://www.w3.org/ns/dcat#mediaType",
+    "accessURL" : "http://www.w3.org/ns/dcat#accessURL",
+    "dc" : "http://purl.org/dc/terms/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "dcat" : "http://www.w3.org/ns/dcat#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "sd" : "http://www.w3.org/ns/sparql-service-description#",
+    "void" : "http://rdfs.org/ns/void#",
+    "dataid" : "http://dataid.dbpedia.org/ns/core#",
+    "odrl" : "http://www.w3.org/ns/odrl/2#"
+  }
+}

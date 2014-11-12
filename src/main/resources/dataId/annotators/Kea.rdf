@@ -1,0 +1,29 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <dataid:ServiceDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/Kea">
+    <foaf:primaryTopic>
+      <prov:Entity rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/Kea#annotator">
+        <dcat:keyword>ner</dcat:keyword>
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/allrightsreserved"/>
+        <rdfs:label>Kea</rdfs:label>
+        <dc:rights>Please cite: N. Steinmetz and H. Sack. Semantic multimedia information retrieval based on contextual descriptions. In P. Cimiano, O. Corcho, V. Presutti, L. Hollink, and S. Rudolph, editors, The Semantic Web: Semantics and Big Data, volume 7882 of Lecture Notes in Computer Science, pages 382{396. Springer Berlin Heidelberg, 2013.</dc:rights>
+        <dcat:keyword>Sa2W</dcat:keyword>
+        <dc:title>Kea</dc:title>
+        <dataid:licenseName>All rights reserved</dataid:licenseName>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Service"/>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >11-03-2014</dc:issued>
+      </prov:Entity>
+    </foaf:primaryTopic>
+  </dataid:ServiceDescription>
+</rdf:RDF>

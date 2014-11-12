@@ -1,3 +1,26 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package org.aksw.gerbil.bat.annotator;
 
 import it.acubelab.batframework.data.Annotation;
@@ -173,8 +196,9 @@ public class ErrorCountingAnnotatorDecorator {
 
     protected static HashSet<Tag> solveC2W(AbstractErrorCounter errorCounter,
             String text) throws AnnotationException {
+        HashSet<Tag> result = null;
         try {
-            return ((C2WSystem) errorCounter.getDecoratedAnnotator())
+            result = ((C2WSystem) errorCounter.getDecoratedAnnotator())
                     .solveC2W(text);
         } catch (Exception e) {
             if (errorCounter.getErrorCount() == 0) {
@@ -190,6 +214,26 @@ public class ErrorCountingAnnotatorDecorator {
             errorCounter.increaseErrorCount();
             return new HashSet<Tag>(0);
         }
+        if (LOGGER.isDebugEnabled()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append('[');
+            builder.append(errorCounter.getName());
+            builder.append("] result=[");
+            boolean first = true;
+            for (Tag a : result) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(',');
+                }
+                builder.append("Tag(wId=");
+                builder.append(a.getConcept());
+                builder.append(')');
+            }
+            builder.append(']');
+            LOGGER.debug(builder.toString());
+        }
+        return result;
     }
 
     protected static HashSet<Annotation> solveD2W(
@@ -211,6 +255,7 @@ public class ErrorCountingAnnotatorDecorator {
                         + e.getLocalizedMessage());
             }
             errorCounter.increaseErrorCount();
+            return new HashSet<Annotation>(0);
         }
         if (LOGGER.isDebugEnabled()) {
             StringBuilder builder = new StringBuilder();

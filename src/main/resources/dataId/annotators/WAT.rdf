@@ -1,0 +1,37 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <dataid:ServiceDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/WAT">
+    <foaf:primaryTopic>
+      <prov:Entity rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/WAT#annotator">
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>stack.box(at)gmail.com</foaf:mbox>
+            <foaf:name>Francesco Piccinno</foaf:name>
+            <rdfs:label>Francesco Piccinno</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <dc:rights>Please cite: F. Piccinno and P. Ferragina. From tagme to wat: a new entity annotator. In Proceedings of the first international workshop on Entity recognition &amp; disambiguation, pages 55-62. ACM, 2014.</dc:rights>
+        <dcat:keyword>Sa2W</dcat:keyword>
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/licAPACHE"/>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >11-03-2014</dc:issued>
+        <dcat:keyword>ner</dcat:keyword>
+        <dc:title>WAT</dc:title>
+        <dataid:licenseName>APACHE LICENSE 2.0</dataid:licenseName>
+        <dcat:landingPage rdf:resource="http://acube.di.unipi.it/tagme/"/>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Service"/>
+        <rdfs:label>WAT</rdfs:label>
+      </prov:Entity>
+    </foaf:primaryTopic>
+  </dataid:ServiceDescription>
+</rdf:RDF>

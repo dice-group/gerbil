@@ -1,0 +1,38 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <dataid:ServiceDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/AGDISTIS">
+    <foaf:primaryTopic>
+      <prov:Entity rdf:about="http://gerbil.aksw.org/gerbil/dataId/annotators/AGDISTIS#annotator">
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >10-19-2014</dc:issued>
+        <dc:rights>Please cite: Ricardo Usbeck, Axel-Cyrille Ngonga Ngomo, S�ren Auer, Daniel Gerber und Andreas Both. AGDISTIS - Graph-Based Disambiguation of Named Entities using Linked Data. In Proceedings of International Semantic Web Conference (ISWC), 2014.</dc:rights>
+        <rdfs:label>AGDISTIS</rdfs:label>
+        <dataid:licenseName>MIT license</dataid:licenseName>
+        <dc:license rdf:resource="http://purl.org/NET/rdflicense/licMIT"/>
+        <dcat:keyword>D2W</dcat:keyword>
+        <dcat:keyword>ner</dcat:keyword>
+        <dcat:landingPage rdf:resource="http://aksw.org/Projects/AGDISTIS.html"/>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>ricardo.usbeck(at)googlemail.com</foaf:mbox>
+            <foaf:name>Ricardo Usbeck</foaf:name>
+            <rdfs:label>Ricardo Usbeck</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Service"/>
+        <dc:title>Agnostic Disambiguation of Named Entities Using Linked Open Data</dc:title>
+        <dc:description>AGDISTIS is an Open Source Named Entity Disambiguation Framework able to link entities against every Linked Data Knowledge Base.</dc:description>
+      </prov:Entity>
+    </foaf:primaryTopic>
+  </dataid:ServiceDescription>
+</rdf:RDF>

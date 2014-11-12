@@ -1,0 +1,81 @@
+<rdf:RDF
+    xmlns:dataid="http://dataid.dbpedia.org/ns/core#"
+    xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:odrl="http://www.w3.org/ns/odrl/2#"
+    xmlns:dc="http://purl.org/dc/terms/"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:void="http://rdfs.org/ns/void#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <void:DatasetDescription rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight">
+    <foaf:primaryTopic>
+      <dataid:Dataset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight#dataset">
+        <dataid:licenseName>Creative Commons Attribution-ShareAlike 4.0 International</dataid:licenseName>
+        <rdfs:label>DBpedia Spotlight NIF NER Corpus</rdfs:label>
+        <dc:title>DBpedia Spotlight NIF NER Corpus</dc:title>
+        <void:triples>3425</void:triples>
+        <dc:language>english</dc:language>
+        <dcat:keyword>nif</dcat:keyword>
+        <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
+        >07-17-2014</dc:issued>
+        <dcat:keyword>corpus</dcat:keyword>
+        <dc:rights>Please cite: P. N. Mendes, M. Jakob, A. García-Silva, and C. Bizer. DBpedia Spotlight: shedding light on the web of documents. In Proc. of the 7th Int. Conf. on Semantic Systems, 2011 AND N. Steinmetz, M. Knuth, and H. Sack. Statistical Analyses of Named Entity
+Disambiguation Benchmarks in Proceedings of NLP-DBPEDIA@ISWC 2013</dc:rights>
+        <dcat:distribution>
+          <dataid:Distribution rdf:about="http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl">
+            <void:triples>3425</void:triples>
+            <dc:format>text/turtle</dc:format>
+            <dcat:accessURL>http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl</dcat:accessURL>
+            <dc:description>Complete Corpus in turtle format</dc:description>
+            <dc:title>Complete DBpedia Spotlight corpus</dc:title>
+          </dataid:Distribution>
+        </dcat:distribution>
+        <dcat:contactPoint>
+          <dataid:Agent>
+            <foaf:mbox>magnus.knuth(at)hpi.uni-potsdam.de</foaf:mbox>
+            <foaf:name>Magnus Knuth</foaf:name>
+            <rdfs:label>Magnus Knuth</rdfs:label>
+          </dataid:Agent>
+        </dcat:contactPoint>
+        <dc:description>It contains 60 natural language sentences from ten different New York Times articles with overall 249 annotated DBpedia entities, i. e. the entities are not explicitely bound to mentions within the texts, which causes a certain lack of clarity. Therefore, we (in all conscience) retroactively have allocated the entities to their positions within the texts. The entities dbp:Markup_Language and dbp:PBC_CSKA_Moscow could not be linked in the texts, since there was also a more specific entity enlisted occupying their solely possible location, e. g. hypertext markup language has been annotated with dbp:HTML rather than dbp:Markup_language.</dc:description>
+        <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+        <prov:wasDerivedFrom>
+          <dataid:Entity>
+            <dc:creator>
+              <dataid:Agent>
+                <foaf:mbox>pablo(at)pablomendes.com</foaf:mbox>
+                <foaf:name>Pablo N. Mendes</foaf:name>
+                <rdfs:label>Pablo N. Mendes</rdfs:label>
+              </dataid:Agent>
+            </dc:creator>
+            <dcat:landingPage rdf:resource="http://wiki.dbpedia.org/spotlight/isemantics2011/evaluation"/>
+            <dc:title>DBpedia Spotlight Evaluation Corpus</dc:title>
+          </dataid:Entity>
+        </prov:wasDerivedFrom>
+        <rdf:type rdf:resource="http://rdfs.org/ns/void#Dataset"/>
+        <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+        <dcat:keyword>evaluation</dcat:keyword>
+        <dcat:landingPage rdf:resource="http://www.yovisto.com/labs/ner-benchmarks/"/>
+        <void:exampleResource rdf:resource="http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl"/>
+        <void:vocabulary rdf:resource="http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#"/>
+        <dcat:keyword>linguistics</dcat:keyword>
+        <rdf:type rdf:resource="http://www.w3.org/ns/sparql-service-description#Dataset"/>
+        <dcat:keyword>ner</dcat:keyword>
+        <dc:license rdf:resource="http://purl.oclc.org/NET/rdflicense/cc-by-sa"/>
+        <void:subset>
+          <dataid:Linkset rdf:about="http://gerbil.aksw.org/gerbil/dataId/corpora/DBpediaSpotlight#links">
+            <void:target rdf:resource="http://dbpedia.org"/>
+            <void:triples>325</void:triples>
+            <void:linkPredicate rdf:resource="http://www.w3.org/2005/11/its/rdf#taIdentRef"/>
+            <dc:modified>10-28-2014</dc:modified>
+            <dc:issued>10-28-2014</dc:issued>
+          </dataid:Linkset>
+        </void:subset>
+        <void:rootResource rdf:resource="http://www.yovisto.com/labs/ner-benchmarks/data/dbpedia-spotlight-nif.ttl"/>
+      </dataid:Dataset>
+    </foaf:primaryTopic>
+  </void:DatasetDescription>
+</rdf:RDF>
