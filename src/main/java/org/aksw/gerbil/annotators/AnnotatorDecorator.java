@@ -23,26 +23,11 @@
  */
 package org.aksw.gerbil.annotators;
 
+import org.aksw.gerbil.exceptions.GerbilException;
+
 import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import org.aksw.gerbil.bat.annotator.FOXAnnotator;
-import org.aksw.gerbil.datatypes.ExperimentType;
+public interface AnnotatorDecorator<T extends TopicSystem> extends TopicSystem {
 
-@Deprecated
-public class FOXAnnotatorConfig extends AbstractAnnotatorConfiguration {
-
-    private WikipediaApiInterface wikiApi;
-    // don't cache me in the final version
-    private static boolean        cache = false;
-
-    public FOXAnnotatorConfig(WikipediaApiInterface wikiApi) {
-        super(FOXAnnotator.NAME, cache, ExperimentType.Sa2W);
-        this.wikiApi = wikiApi;
-    }
-
-    @Override
-    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
-        return new FOXAnnotator(wikiApi);
-    }
+    public T getAnnotator() throws GerbilException;
 }

@@ -36,6 +36,7 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@Deprecated
 @Component
 public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {
 

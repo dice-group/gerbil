@@ -23,28 +23,42 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.systemPlugins.TagmeAnnotator;
+import it.acubelab.batframework.problems.Sa2WSystem;
 
+import org.aksw.gerbil.annotations.GerbilAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.springframework.stereotype.Component;
+import org.aksw.gerbil.exceptions.GerbilException;
 
-@Deprecated
-@Component
-public class TagMeAnnotatorConfig extends AbstractAnnotatorConfiguration {
-
-    public static final String ANNOTATOR_NAME = "TagMe 2";
-
+@GerbilAnnotator(name = "TagMe 2", couldBeCached = true, applicableForExperiments = ExperimentType.Sa2W)
+public class TagmeAnnotator extends AbstractSa2WAnnotatorDecorator {
+    
     private static final String TAGME_CONFIG_FILE_PROPERTY_NAME = "org.aksw.gerbil.annotators.TagmeAnnotatorConfig.ConfigFile";
 
-    public TagMeAnnotatorConfig() {
-        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2W });
+    private String configFile;
+
+    public TagmeAnnotator() throws GerbilException {
+        configFile = GerbilConfiguration.getInstance().getString(TAGME_CONFIG_FILE_PROPERTY_NAME);
+        if (configFile == null) {
+            throw new GerbilException("Couldn't load config file path (\"" + TAGME_CONFIG_FILE_PROPERTY_NAME + "\".",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
     }
 
     @Override
-    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
-        return new TagmeAnnotator(GerbilConfiguration.getInstance().getString(TAGME_CONFIG_FILE_PROPERTY_NAME));
+    public Sa2WSystem getAnnotator() throws GerbilException {
+        Sa2WSystem annotator = super.getAnnotator();
+        if (annotator == null) {
+            try {
+                annotator = new it.acubelab.batframework.systemPlugins.TagmeAnnotator(configFile);
+                setAnnotator(annotator);
+            } catch (Exception e) {
+                throw new GerbilException("Got an exception while loading annotator.", e,
+                        ErrorTypes.ANNOTATOR_LOADING_ERROR);
+            }
+        }
+        return annotator;
     }
 
 }

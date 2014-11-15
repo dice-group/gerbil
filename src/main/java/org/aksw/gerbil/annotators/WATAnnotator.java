@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.bat.annotator;
+package org.aksw.gerbil.annotators;
 
 import com.google.gson.*;
 import it.acubelab.batframework.data.Annotation;
@@ -41,6 +41,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.aksw.gerbil.annotations.GerbilAnnotator;
+import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.exceptions.GerbilException;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -51,9 +56,14 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-@Deprecated
+@GerbilAnnotator(name = "WAT", couldBeCached = true, applicableForExperiments = ExperimentType.Sa2W)
 public class WATAnnotator implements Sa2WSystem {
-    private long lastTime = 0;
+
+    public static final String ANNOTATOR_NAME = "WAT";
+
+    private static final String WAT_CONFIG_FILE_PROPERTY_ENDPOINT = "org.aksw.gerbil.annotators.wat.endpoint";
+    private static final String WAT_CONFIG_FILE_PROPERTY_PARAMETERS = "org.aksw.gerbil.annotators.wat.parameters";
+
     private final String endpoint;
     private final String urlParameters;
     private final String urlTag;
@@ -65,11 +75,19 @@ public class WATAnnotator implements Sa2WSystem {
     private HttpClient client = HttpClients.createDefault();
     private static final Logger LOGGER = LoggerFactory.getLogger(WATAnnotator.class);
 
-    public WATAnnotator(String endpoint, String urlParameters) {
-        this.endpoint = endpoint;
+    public WATAnnotator() throws GerbilException {
+        this.endpoint = GerbilConfiguration.getInstance().getString(WAT_CONFIG_FILE_PROPERTY_ENDPOINT);
+        if (endpoint == null) {
+            throw new GerbilException("Couldn't load endpoint (\"" + WAT_CONFIG_FILE_PROPERTY_ENDPOINT + "\".",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
+        this.urlParameters = GerbilConfiguration.getInstance().getString(WAT_CONFIG_FILE_PROPERTY_PARAMETERS);
+        if (endpoint == null) {
+            throw new GerbilException("Couldn't load parameters (\"" + WAT_CONFIG_FILE_PROPERTY_PARAMETERS + "\".",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
         this.urlTag = String.format("%s/tag/tag", endpoint);
         this.urlD2W = String.format("%s/tag/disambiguate", endpoint);
-        this.urlParameters = urlParameters;
         this.gson = gsonBuilder.create();
     }
 
@@ -90,7 +108,7 @@ public class WATAnnotator implements Sa2WSystem {
 
     @Override
     public long getLastAnnotationTime() {
-        return lastTime;
+        return -1;
     }
 
     public HashSet<Annotation> solveD2WParams(String text, HashSet<Mention> mentions) throws AnnotationException {

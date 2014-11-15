@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.bat.annotator;
+package org.aksw.gerbil.annotators;
 
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
@@ -35,15 +35,22 @@ import it.uniroma1.lcl.babelfy.Babelfy.AccessType;
 import it.uniroma1.lcl.babelfy.Babelfy.Matching;
 import it.uniroma1.lcl.babelfy.BabelfyKeyNotValidOrLimitReached;
 import it.uniroma1.lcl.babelfy.data.BabelSynsetAnchor;
+import it.uniroma1.lcl.babelnet.BabelNetConfiguration;
 import it.uniroma1.lcl.jlt.util.Language;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.aksw.gerbil.annotations.GerbilAnnotator;
 import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
+import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.exceptions.GerbilException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,32 +61,47 @@ import com.google.common.collect.Sets;
  * The BabelFy Annotator.
  * 
  * <p>
- * <i>Andrea Moro: "I recommend to use the maximum amount of available characters (3500) at each request (i.e., try to
- * put a document all together or split it in chunks of 3500 characters) both for scalability and performance
- * reasons."</i><br>
- * This means, that we have to split up documents longer than 3500 characters. Unfortunately, BabelFy seems to measure
- * the length on the escaped text which means that every text could be three times longer than the unescaped text. Thus,
- * we have to set {@link #BABELFY_MAX_TEXT_LENGTH}={@value #BABELFY_MAX_TEXT_LENGTH}.
+ * <i>Andrea Moro: "I recommend to use the maximum amount of available
+ * characters (3500) at each request (i.e., try to put a document all together
+ * or split it in chunks of 3500 characters) both for scalability and
+ * performance reasons."</i><br>
+ * This means, that we have to split up documents longer than 3500 characters.
+ * Unfortunately, BabelFy seems to measure the length on the escaped text which
+ * means that every text could be three times longer than the unescaped text.
+ * Thus, we have to set {@link #BABELFY_MAX_TEXT_LENGTH}=
+ * {@value #BABELFY_MAX_TEXT_LENGTH}.
  * </p>
  */
-@Deprecated
+@GerbilAnnotator(name = "Babelfy", couldBeCached = true, applicableForExperiments = ExperimentType.A2W)
 public class BabelfyAnnotator implements A2WSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BabelfyAnnotator.class);
 
-    private static final int BABELFY_MAX_TEXT_LENGTH = 1500;
+    public static final String ANNOTATOR_NAME = "Babelfy";
 
-    public static final String NAME = "Babelfy";
+    private static final String BABELNET_CONFIG_FILE_PROPERTY_NAME = "org.aksw.gerbil.annotators.BabelfyAnnotatorConfig.ConfigFile";
+    private static final String BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.BabelfyAnnotatorConfig.Key";
+    private static final int BABELFY_MAX_TEXT_LENGTH = 1100;
 
-    // private long calib = -1;
-    // private long lastTime = -1;
     private String key;
 
     @Autowired
     private WikipediaApiInterface wikiApi;
 
-    public BabelfyAnnotator() {
-        this("");
+    public BabelfyAnnotator() throws GerbilException {
+        String configFile = GerbilConfiguration.getInstance().getString(BABELNET_CONFIG_FILE_PROPERTY_NAME);
+        if (configFile == null) {
+            throw new GerbilException("Couldn't load needed Property \"" + BABELNET_CONFIG_FILE_PROPERTY_NAME + "\".",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
+        // Load the configuration
+        BabelNetConfiguration.getInstance().setConfigurationFile(new File(configFile));
+
+        // Load and use the key if there is one
+        key = GerbilConfiguration.getInstance().getString(BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME);
+        if (key == null) {
+            key = "";
+        }
     }
 
     public BabelfyAnnotator(WikipediaApiInterface wikiApi) {
@@ -96,18 +118,14 @@ public class BabelfyAnnotator implements A2WSystem {
     }
 
     public String getName() {
-        return NAME;
+        return ANNOTATOR_NAME;
     }
 
     public long getLastAnnotationTime() {
-        // if (calib == -1)
-        // calib = TimingCalibrator.getOffset(this);
-        // return lastTime - calib > 0 ? lastTime - calib : 0;
         return -1;
     }
 
-    public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions)
-            throws AnnotationException {
+    public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions) throws AnnotationException {
         return solveA2W(text, true);
     }
 
@@ -121,8 +139,7 @@ public class BabelfyAnnotator implements A2WSystem {
         return solveA2W(text, true);
     }
 
-    protected HashSet<Annotation> solveA2W(String text, boolean isShortDocument)
-            throws AnnotationException {
+    protected HashSet<Annotation> solveA2W(String text, boolean isShortDocument) throws AnnotationException {
         if (text.length() > BABELFY_MAX_TEXT_LENGTH) {
             return solveA2WForLongTexts(text);
         }
@@ -136,19 +153,22 @@ public class BabelfyAnnotator implements A2WSystem {
             String surfaceForm;
             String lowercasedText = text.toLowerCase();
             for (BabelSynsetAnchor anchor : babelAnnotations.getAnnotations()) {
-                // The positions of BabelSynsetAnchors are measured in tokens --> we have to find the token inside the
+                // The positions of BabelSynsetAnchors are measured in tokens
+                // --> we have to find the token inside the
                 // text
                 surfaceForm = anchor.getAnchorText();
                 posSurfaceFormInText = lowercasedText.indexOf(surfaceForm, positionInText);
                 List<String> uris = anchor.getBabelSynset().getDBPediaURIs(Language.EN);
                 String uri;
                 if ((posSurfaceFormInText >= 0) && (uris != null) && (uris.size() > 0)) {
-                    // DIRTY FIX Babelfy seems to return URIs with "DBpedia.org" instead of "dbpedia.org"
+                    // DIRTY FIX Babelfy seems to return URIs with "DBpedia.org"
+                    // instead of "dbpedia.org"
                     uri = uris.get(0);
                     uri = uri.replaceAll("DBpedia.org", "dbpedia.org");
                     int id = DBpediaToWikiId.getId(wikiApi, uri);
                     annotations.add(new Annotation(posSurfaceFormInText, surfaceForm.length(), id));
-                    // annotations.add(new Annotation(anchor.getStart(), anchor.getEnd() - anchor.getStart(), id));
+                    // annotations.add(new Annotation(anchor.getStart(),
+                    // anchor.getEnd() - anchor.getStart(), id));
                     positionInText = posSurfaceFormInText + surfaceForm.length();
                 }
             }
@@ -157,7 +177,8 @@ public class BabelfyAnnotator implements A2WSystem {
             throw new AnnotationException("The BabelFy Key is invalid or has reached its limit: "
                     + e.getLocalizedMessage());
         } catch (IOException | URISyntaxException e) {
-            // LOGGER.error("Exception while requesting annotations from BabelFy. Returning empty Annotation set.", e);
+            // LOGGER.error("Exception while requesting annotations from BabelFy. Returning empty Annotation set.",
+            // e);
             throw new AnnotationException("Exception while requesting annotations from BabelFy: "
                     + e.getLocalizedMessage());
         }

@@ -23,26 +23,38 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.problems.TopicSystem;
+import it.acubelab.batframework.problems.Sa2WSystem;
+import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import org.aksw.gerbil.bat.annotator.FOXAnnotator;
+import org.aksw.gerbil.annotations.GerbilAnnotator;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.exceptions.GerbilException;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Deprecated
-public class FOXAnnotatorConfig extends AbstractAnnotatorConfiguration {
+@GerbilAnnotator(name = "DBpedia Spotlight", couldBeCached = true, applicableForExperiments = ExperimentType.Sa2W)
+public class SpotlightAnnotator extends AbstractSa2WAnnotatorDecorator {
 
+    @Autowired
     private WikipediaApiInterface wikiApi;
-    // don't cache me in the final version
-    private static boolean        cache = false;
 
-    public FOXAnnotatorConfig(WikipediaApiInterface wikiApi) {
-        super(FOXAnnotator.NAME, cache, ExperimentType.Sa2W);
-        this.wikiApi = wikiApi;
+    @Autowired
+    private DBPediaApi dbpApi;
+
+    public SpotlightAnnotator() {
+        System.err.println("CREATED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
     @Override
-    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
-        return new FOXAnnotator(wikiApi);
+    public Sa2WSystem getAnnotator() throws GerbilException {
+        Sa2WSystem annotator = super.getAnnotator();
+        if (annotator == null) {
+            System.err.println(wikiApi);
+            System.err.println(dbpApi);
+            annotator = new it.acubelab.batframework.systemPlugins.SpotlightAnnotator(dbpApi, wikiApi);
+            setAnnotator(annotator);
+        }
+        return annotator;
     }
+
 }

@@ -30,6 +30,7 @@ import it.acubelab.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.bat.annotator.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
+@Deprecated
 public class NIFWebserviceAnnotatorConfiguration extends AbstractAnnotatorConfiguration {
 
     public static final String ANNOTATOR_NAME = "NIF-based Web Service";

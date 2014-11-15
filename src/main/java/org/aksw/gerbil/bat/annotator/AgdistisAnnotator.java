@@ -42,6 +42,7 @@ import org.json.simple.parser.ParseException;
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
+@Deprecated
 public class AgdistisAnnotator extends it.acubelab.batframework.systemPlugins.AgdistisAnnotator {
 
     protected String host;

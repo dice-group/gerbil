@@ -156,6 +156,7 @@ public class ExperimentTaskExecuter implements Runnable {
             try {
                 results = RunExperiments.performA2WExpVarThreshold(matchings, a2wAnnotator, null, a2wDataset, wikiAPI);
             } catch (Exception e) {
+                LOGGER.error("",e);
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
             break;

@@ -53,6 +53,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
 
@@ -60,22 +61,30 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
 
     private static final String DOCUMENT_URI = "http://www.aksw.org/gerbil/NifWebService/request_";
 
-    private String url;
-    private String name;
-    private CloseableHttpClient client;
+    protected String url;
+    protected String name;
+    protected CloseableHttpClient client;
     // private long lastRequestSend = 0;
     // private long lastResponseReceived = 0;
-    private int documentCount = 0;
-    private NIFDocumentCreator nifCreator = new TurtleNIFDocumentCreator();
-    private NIFDocumentParser nifParser = new TurtleNIFDocumentParser();
-    private WikipediaApiInterface wikiApi;
-    private DBPediaApi dbpediaApi;
+    protected int documentCount = 0;
+    protected NIFDocumentCreator nifCreator = new TurtleNIFDocumentCreator();
+    protected NIFDocumentParser nifParser = new TurtleNIFDocumentParser();
+    @Autowired
+    protected WikipediaApiInterface wikiApi;
+    @Autowired
+    protected DBPediaApi dbpediaApi;
 
     public NIFBasedAnnotatorWebservice(String url, String name, WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi) {
         this.url = url;
         this.name = name;
         this.wikiApi = wikiApi;
         this.dbpediaApi = dbpediaApi;
+        client = HttpClients.createDefault();
+    }
+
+    public NIFBasedAnnotatorWebservice(String url, String name) {
+        this.url = url;
+        this.name = name;
         client = HttpClients.createDefault();
     }
 
@@ -97,11 +106,9 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     }
 
     @Override
-    public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions)
-            throws AnnotationException {
+    public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        Document document = BAT2NIF_TranslationHelper
-                .createAnnotatedDocument(text, mentions);
+        Document document = BAT2NIF_TranslationHelper.createAnnotatedDocument(text, mentions);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
         return NIF2BAT_TranslationHelper.createAnnotations(wikiApi, dbpediaApi, document);
@@ -110,8 +117,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<Annotation> solveA2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        Document document = BAT2NIF_TranslationHelper
-                .createAnnotatedDocument(text);
+        Document document = BAT2NIF_TranslationHelper.createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
         return NIF2BAT_TranslationHelper.createAnnotations(wikiApi, dbpediaApi, document);
@@ -120,8 +126,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<Tag> solveC2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        Document document = BAT2NIF_TranslationHelper
-                .createAnnotatedDocument(text);
+        Document document = BAT2NIF_TranslationHelper.createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
         return NIF2BAT_TranslationHelper.createTags(wikiApi, dbpediaApi, document);
@@ -130,8 +135,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<ScoredTag> solveSc2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        Document document = BAT2NIF_TranslationHelper
-                .createAnnotatedDocument(text);
+        Document document = BAT2NIF_TranslationHelper.createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
         return NIF2BAT_TranslationHelper.createScoredTags(wikiApi, dbpediaApi, document);
@@ -140,8 +144,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
     @Override
     public HashSet<ScoredAnnotation> solveSa2W(String text) throws AnnotationException {
         // translate the mentions into an AnnotatedDocument object
-        Document document = BAT2NIF_TranslationHelper
-                .createAnnotatedDocument(text);
+        Document document = BAT2NIF_TranslationHelper.createAnnotatedDocument(text);
         document = request(document);
         // translate the annotated document into a HashSet of BAT Annotations
         return NIF2BAT_TranslationHelper.createScoredAnnotations(wikiApi, dbpediaApi, document);
@@ -158,8 +161,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
             entity = new StringEntity(nifDocument, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             LOGGER.error("Exception while creating POST request.", e);
-            throw new AnnotationException("Exception while creating POST request. "
-                    + e.getLocalizedMessage());
+            throw new AnnotationException("Exception while creating POST request. " + e.getLocalizedMessage());
         }
         // send NIF document (start time measure)
         // lastRequestSend = System.currentTimeMillis();
@@ -176,8 +178,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
                 response = client.execute(request);
             } catch (Exception e) {
                 LOGGER.error("Exception while sending request.", e);
-                throw new AnnotationException("Exception while sending request. "
-                        + e.getLocalizedMessage());
+                throw new AnnotationException("Exception while sending request. " + e.getLocalizedMessage());
             }
             StatusLine status = response.getStatusLine();
             if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
@@ -193,8 +194,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
                 document = nifParser.getDocumentFromNIFReader(reader);
             } catch (Exception e) {
                 LOGGER.error("Couldn't parse the response.", e);
-                throw new AnnotationException("Couldn't parse the response. "
-                        + e.getLocalizedMessage());
+                throw new AnnotationException("Couldn't parse the response. " + e.getLocalizedMessage());
             }
         } finally {
             if (reader != null) {

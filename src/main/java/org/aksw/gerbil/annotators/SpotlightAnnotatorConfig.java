@@ -32,6 +32,7 @@ import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.systemPlugins.SpotlightAnnotator;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
+@Deprecated
 @Component
 public class SpotlightAnnotatorConfig extends AbstractAnnotatorConfiguration {
 

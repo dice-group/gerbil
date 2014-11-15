@@ -45,7 +45,6 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
-import org.aksw.gerbil.utils.AnnotatorMapping;
 import org.aksw.gerbil.utils.DatasetMapping;
 import org.aksw.gerbil.utils.IDCreator;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
@@ -132,15 +131,15 @@ public class MainController {
                 matchingString);
         Matching matching = getMatching(matchingString);
         ExperimentType eType = ExperimentType.valueOf(experimentType);
-        Set<String> annotators = AnnotatorMapping.getAnnotatorsForExperimentType(eType);
+        List<AnnotatorConfiguration> annotators = this.annotators.getAdaptersForExperiment(eType);
         Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(eType);
         String results[][] = new String[annotators.size() + 1][datasets.size() + 1];
         results[0][0] = "Micro F1-measure";
         Map<String, Integer> annotator2Index = new HashMap<String, Integer>();
         int count = 1;
-        for (String annotator : annotators) {
-            annotator2Index.put(annotator, count);
-            results[count][0] = annotator;
+        for (AnnotatorConfiguration annotator : annotators) {
+            annotator2Index.put(annotator.getName(), count);
+            results[count][0] = annotator.getName();
             ++count;
         }
         Map<String, Integer> dataset2Index = new HashMap<String, Integer>();
@@ -224,7 +223,7 @@ public class MainController {
         int count = 0;
         for (String annotator : annotators) {
             for (String dataset : datasets) {
-                configs[count] = new ExperimentTaskConfiguration(AnnotatorMapping.getAnnotatorConfig(annotator),
+                configs[count] = new ExperimentTaskConfiguration(this.annotators.getAdapterForName(annotator),
                         DatasetMapping.getDatasetConfig(dataset), ExperimentType.valueOf(type), getMatching(matching));
                 LOGGER.debug("Created config: " + configs[count]);
                 ++count;

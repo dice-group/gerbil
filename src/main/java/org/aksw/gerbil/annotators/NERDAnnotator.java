@@ -31,7 +31,7 @@
 //
 //   Licensed under ...
 
-package org.aksw.gerbil.bat.annotator;
+package org.aksw.gerbil.annotators;
 
 import fr.eurecom.nerd.client.NERD;
 import fr.eurecom.nerd.client.schema.Entity;
@@ -51,26 +51,30 @@ import it.acubelab.batframework.utils.WikipediaApiInterface;
 import java.util.HashSet;
 import java.util.List;
 
+import org.aksw.gerbil.annotations.GerbilAnnotator;
 import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
 import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.exceptions.GerbilException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Sets;
 
-@Deprecated
+@GerbilAnnotator(name = "NERD-ML", couldBeCached = true, applicableForExperiments = ExperimentType.Sa2W)
 public class NERDAnnotator implements Sa2WSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NERDAnnotator.class);
-    public static final String NAME = "NERD-ML";
-    private static String NERD_API_PROPERTY_NAME = "org.aksw.gerbil.annotators.nerd.api";
-    private final String NERD_API = GerbilConfiguration.getInstance().getString(NERD_API_PROPERTY_NAME);
+
+    public static final String ANNOTATOR_NAME = "NERD-ML";
+
+    private static final String NERD_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.nerd.Key";
+    private static final String NERD_API_PROPERTY_NAME = "org.aksw.gerbil.annotators.nerd.api";
 
     private String key;
-
-    // private long lastTime = -1;
-    // private long calib = -1;
+    private String api;
 
     @Autowired
     private WikipediaApiInterface wikiApi;
@@ -78,9 +82,18 @@ public class NERDAnnotator implements Sa2WSystem {
     /**
      * Shouldn't be used until we have finished porting the project to Spring.
      */
-    @Deprecated
-    public NERDAnnotator(String key) {
-        this.key = key;
+    public NERDAnnotator() throws GerbilException {
+        api = GerbilConfiguration.getInstance().getString(NERD_WEB_SERVICE_KEY_PROPERTY_NAME);
+        if (key == null) {
+            throw new GerbilException("Couldn't load the NERD API (\"" + NERD_WEB_SERVICE_KEY_PROPERTY_NAME
+                    + "\") from properties file.", ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
+        // Load and use the key if there is one
+        key = GerbilConfiguration.getInstance().getString(NERD_API_PROPERTY_NAME);
+        if (key == null) {
+            throw new GerbilException("Couldn't load the NERD API key (\"" + NERD_API_PROPERTY_NAME
+                    + "\") from properties file.", ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
     }
 
     public NERDAnnotator(WikipediaApiInterface wikiApi, String key) {
@@ -90,24 +103,21 @@ public class NERDAnnotator implements Sa2WSystem {
 
     @Override
     public String getName() {
-        return NAME;
+        return ANNOTATOR_NAME;
     }
 
     @Override
-    public HashSet<Annotation> solveA2W(String text) throws AnnotationException
-    {
+    public HashSet<Annotation> solveA2W(String text) throws AnnotationException {
         return ProblemReduction.Sa2WToA2W(solveSa2W(text), Float.MIN_VALUE);
     }
 
     @Override
-    public HashSet<Tag> solveC2W(String text) throws AnnotationException
-    {
+    public HashSet<Tag> solveC2W(String text) throws AnnotationException {
         return ProblemReduction.A2WToC2W(solveA2W(text));
     }
 
     @Override
-    public long getLastAnnotationTime()
-    {
+    public long getLastAnnotationTime() {
         // if (calib == -1)
         // calib = TimingCalibrator.getOffset(this);
         // return lastTime - calib > 0 ? lastTime - calib : 0;
@@ -115,34 +125,32 @@ public class NERDAnnotator implements Sa2WSystem {
     }
 
     @Override
-    public HashSet<ScoredTag> solveSc2W(String text) throws AnnotationException
-    {
+    public HashSet<ScoredTag> solveSc2W(String text) throws AnnotationException {
         return ProblemReduction.Sa2WToSc2W(this.solveSa2W(text));
     }
 
     @Override
-    public HashSet<ScoredAnnotation> solveSa2W(String text) throws AnnotationException
-    {
+    public HashSet<ScoredAnnotation> solveSa2W(String text) throws AnnotationException {
         return getNERDAnnotations(text);
     }
 
     @Override
-    public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions)
-            throws AnnotationException
-    {
+    public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions) throws AnnotationException {
         return ProblemReduction.Sa2WToD2W(getNERDAnnotations(text), mentions, 0.1f);
 
         // HashSet<ScoredAnnotation> anns = getNERDAnnotations(text);
         // HashSet<Annotation> result = new HashSet<Annotation>();
         //
         // //FIXME
-        // //naive implementation that iterates through the list of mentions and gets,
+        // //naive implementation that iterates through the list of mentions and
+        // gets,
         // //if available, the wiki link for that mention
         // for (Mention m : mentions) {
         // for (ScoredAnnotation a : anns)
         // {
         // if( m.getPosition() == a.getPosition() )
-        // result.add(new Annotation(a.getPosition(), a.getLength(), a.getConcept()));
+        // result.add(new Annotation(a.getPosition(), a.getLength(),
+        // a.getConcept()));
         // }
         // }
         //
@@ -150,49 +158,39 @@ public class NERDAnnotator implements Sa2WSystem {
     }
 
     /**
-     * Send request to NERD and parse the response as a set of scored annotations.
+     * Send request to NERD and parse the response as a set of scored
+     * annotations.
      * 
      * @param text
      *            the text to send
      */
-    public HashSet<ScoredAnnotation> getNERDAnnotations(String text)
-    {
+    public HashSet<ScoredAnnotation> getNERDAnnotations(String text) {
         HashSet<ScoredAnnotation> annotations = Sets.newHashSet();
         try {
             // lastTime = Calendar.getInstance().getTimeInMillis();
 
             LOGGER.debug("shipping to NERD the text to annotate");
-            
-            NERD nerd = new NERD(NERD_API, key);
-            List<Entity> entities = nerd.annotate(ExtractorType.NERDML,
-                    DocumentType.PLAINTEXT,
-                    text,
-                    GranularityType.OEN,
-                    60L,
-                    true,
-                    true);
+
+            NERD nerd = new NERD(api, key);
+            List<Entity> entities = nerd.annotate(ExtractorType.NERDML, DocumentType.PLAINTEXT, text,
+                    GranularityType.OEN, 60L, true, true);
 
             LOGGER.debug("NERD has found {} entities", entities.size());
 
             for (Entity e : entities) {
                 int id = DBpediaToWikiId.getId(wikiApi, e.getUri());
 
-                annotations.add(new ScoredAnnotation(
-                        e.getStartChar(),
-                        e.getEndChar() - e.getStartChar(),
-                        id,
-                        new Float(e.getConfidence()))
-                        );
+                annotations.add(new ScoredAnnotation(e.getStartChar(), e.getEndChar() - e.getStartChar(), id,
+                        new Float(e.getConfidence())));
             }
         } catch (Exception e) {
             e.printStackTrace();
 
             // TODO
-            // fix the error handling in order to closely check what is the source of the error
-            throw new AnnotationException("An error occurred while querying " +
-                    this.getName() +
-                    " API. Message: " +
-                    e.getMessage());
+            // fix the error handling in order to closely check what is the
+            // source of the error
+            throw new AnnotationException("An error occurred while querying " + this.getName() + " API. Message: "
+                    + e.getMessage());
         }
 
         return annotations;

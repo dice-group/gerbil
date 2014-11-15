@@ -23,26 +23,30 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
-import org.aksw.gerbil.bat.annotator.FOXAnnotator;
+import org.aksw.gerbil.annotations.GerbilAnnotator;
+import org.aksw.gerbil.bat.annotator.nif.NIFBasedAnnotatorWebservice;
+import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.exceptions.GerbilException;
 
-@Deprecated
-public class FOXAnnotatorConfig extends AbstractAnnotatorConfiguration {
+@GerbilAnnotator(name = "Dexter", couldBeCached = true, applicableForExperiments = ExperimentType.D2W)
+public class DexterAnnotator extends NIFBasedAnnotatorWebservice {
 
-    private WikipediaApiInterface wikiApi;
-    // don't cache me in the final version
-    private static boolean        cache = false;
+    public static final String ANNOTATOR_NAME = "Dexter";
 
-    public FOXAnnotatorConfig(WikipediaApiInterface wikiApi) {
-        super(FOXAnnotator.NAME, cache, ExperimentType.Sa2W);
-        this.wikiApi = wikiApi;
+    private static final String ANNOTATION_URL_PROPERTY_KEY = "org.aksw.gerbil.annotators.DexterAnnotatorConfig.annotationUrl";
+
+    // @Autowired
+    // private WikipediaApiInterface wikiApi;
+
+    public DexterAnnotator() throws GerbilException {
+        super("", ANNOTATOR_NAME);
+        url = GerbilConfiguration.getInstance().getString(ANNOTATION_URL_PROPERTY_KEY);
+        if (url == null) {
+            throw new GerbilException("Couldn't load the needed property \"" + ANNOTATION_URL_PROPERTY_KEY + "\".",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
     }
 
-    @Override
-    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
-        return new FOXAnnotator(wikiApi);
-    }
 }

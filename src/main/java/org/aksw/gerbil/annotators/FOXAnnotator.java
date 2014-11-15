@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.bat.annotator;
+package org.aksw.gerbil.annotators;
 
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
@@ -47,24 +47,25 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Deprecated
+//@GerbilAnnotator(name = "FOX", couldBeCached = true, applicableForExperiments = ExperimentType.Sa2W)
 public class FOXAnnotator implements Sa2WSystem {
 
-    private static final Logger     LOGGER = LoggerFactory.getLogger(FOXAnnotator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FOXAnnotator.class);
 
-    /*    static {
-            PropertyConfigurator.configure(FOXAnnotator.class.getResourceAsStream("log4jFOXAnnotator.properties"));
-        }*/
-
-    public static final String      NAME   = "FOX";
-    protected IFoxApi               fox    = new FoxApi();
+    public static final String ANNOTATOR_NAME = "FOX";
+    protected IFoxApi fox = new FoxApi();
+    @Autowired
     protected WikipediaApiInterface wikiApi;
 
     public static void main(String[] a) {
         String test = "The philosopher and mathematician Gottfried Wilhelm Leibniz was born in Leipzig.";
         HashSet<Annotation> set = new FOXAnnotator(SingletonWikipediaApi.getInstance()).solveA2W(test);
         LOGGER.info("Got {} annotations.", set.size());
+    }
+
+    public FOXAnnotator() {
     }
 
     public FOXAnnotator(WikipediaApiInterface wikiApi) {
@@ -104,12 +105,8 @@ public class FOXAnnotator implements Sa2WSystem {
         Set<ScoredAnnotation> set = new HashSet<>();
         try {
             // request FOX
-            FoxResponse response = fox
-                    .setInput(text)
-                    .setLightVersion(FoxParameter.FOXLIGHT.OFF)
-                    .setOutputFormat(FoxParameter.OUTPUT.JSONLD)
-                    .setTask(FoxParameter.TASK.NER)
-                    .send();
+            FoxResponse response = fox.setInput(text).setLightVersion(FoxParameter.FOXLIGHT.OFF)
+                    .setOutputFormat(FoxParameter.OUTPUT.JSONLD).setTask(FoxParameter.TASK.NER).send();
 
             // parse results
             if (response != null && response.getOutput() != null) {
@@ -174,7 +171,7 @@ public class FOXAnnotator implements Sa2WSystem {
 
     @Override
     public String getName() {
-        return NAME;
+        return ANNOTATOR_NAME;
     }
 
     @Override

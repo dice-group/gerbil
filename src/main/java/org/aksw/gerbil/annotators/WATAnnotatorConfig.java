@@ -29,13 +29,14 @@ import org.aksw.gerbil.bat.annotator.WATAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
+@Deprecated
 public class WATAnnotatorConfig extends AbstractAnnotatorConfiguration {
     public static final String ANNOTATOR_NAME = "WAT";
     private static final String WAT_CONFIG_FILE_PROPERTY_ENDPOINT = "org.aksw.gerbil.annotators.wat.endpoint";
     private static final String WAT_CONFIG_FILE_PROPERTY_PARAMETERS = "org.aksw.gerbil.annotators.wat.parameters";
 
     public WATAnnotatorConfig() {
-        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2W});
+        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2W });
     }
 
     @Override

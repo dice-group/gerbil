@@ -30,6 +30,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 
+@Deprecated
 public abstract class AbstractAnnotatorConfiguration extends AbstractAdapterConfiguration implements
         AnnotatorConfiguration {
 

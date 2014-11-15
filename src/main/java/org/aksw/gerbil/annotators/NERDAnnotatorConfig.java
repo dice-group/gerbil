@@ -42,6 +42,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 
+@Deprecated
 public class NERDAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
     public static final String ANNOTATOR_NAME = "NERD-ML";

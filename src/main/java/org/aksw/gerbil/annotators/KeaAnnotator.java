@@ -23,10 +23,16 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.acubelab.batframework.data.Annotation;
+import it.acubelab.batframework.data.Mention;
+import it.acubelab.batframework.data.ScoredAnnotation;
+import it.acubelab.batframework.data.ScoredTag;
+import it.acubelab.batframework.data.Tag;
+import it.acubelab.batframework.utils.AnnotationException;
 
+import java.util.HashSet;
+
+import org.aksw.gerbil.annotations.GerbilAnnotator;
 import org.aksw.gerbil.bat.annotator.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -35,10 +41,10 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
-public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
+@GerbilAnnotator(name = "Kea", couldBeCached = true, applicableForExperiments = ExperimentType.Sa2W)
+public class KeaAnnotator extends NIFBasedAnnotatorWebservice {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeaAnnotatorConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeaAnnotator.class);
 
     public static final String ANNOTATOR_NAME = "Kea";
 
@@ -47,30 +53,22 @@ public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private static final String USER_NAME_PROPERTY_KEY = "org.aksw.gerbil.annotators.KeaAnnotatorConfig.user";
     private static final String PASSWORD_PROPERTY_KEY = "org.aksw.gerbil.annotators.KeaAnnotatorConfig.password";
 
-    private WikipediaApiInterface wikiApi;
-    private DBPediaApi dbpediaApi;
+    private String disambiguationUrl;
+    private String annotationUrl;
 
-    public KeaAnnotatorConfig(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi) {
-        super(ANNOTATOR_NAME, true, ExperimentType.Sa2W);
-        this.wikiApi = wikiApi;
-        this.dbpediaApi = dbpediaApi;
-    }
-
-    @Override
-    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
-        String propertyKey;
-        // If this we need a D2W system
-        if (ExperimentType.D2W.equalsOrContainsType(type)) {
-            propertyKey = DISAMBIGATION_URL_PROPERTY_KEY;
-        } else {
-            propertyKey = ANNOTATION_URL_PROPERTY_KEY;
+    public KeaAnnotator() throws GerbilException {
+        super("", ANNOTATOR_NAME);
+        disambiguationUrl = GerbilConfiguration.getInstance().getString(DISAMBIGATION_URL_PROPERTY_KEY);
+        if (disambiguationUrl == null) {
+            throw new GerbilException("Couldn't load property \"" + DISAMBIGATION_URL_PROPERTY_KEY + "\".",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
         }
-        String annotatorURL = GerbilConfiguration.getInstance().getString(propertyKey);
-        if (annotatorURL == null) {
-            throw new GerbilException("Couldn't load property \"" + propertyKey
-                    + "\" containing the URL for the experiment type " + type, ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        annotationUrl = GerbilConfiguration.getInstance().getString(ANNOTATION_URL_PROPERTY_KEY);
+        if (annotationUrl == null) {
+            throw new GerbilException("Couldn't load property \"" + ANNOTATION_URL_PROPERTY_KEY + "\".",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
         }
-        annotatorURL = annotatorURL.replace("http://", "");
+        annotationUrl = annotationUrl.replace("http://", "");
         StringBuilder url = new StringBuilder();
         url.append("http://");
 
@@ -86,8 +84,38 @@ public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
             LOGGER.error("Couldn't load the user name (" + USER_NAME_PROPERTY_KEY + ") or the password property ("
                     + PASSWORD_PROPERTY_KEY + "). It is possbile that this annotator won't work.");
         }
-        url.append(annotatorURL);
+        url.append(annotationUrl);
+        annotationUrl = url.toString();
+        this.url = annotationUrl;
+    }
 
-        return new NIFBasedAnnotatorWebservice(url.toString(), this.getName(), wikiApi, dbpediaApi);
+    @Override
+    public HashSet<Annotation> solveA2W(String text) throws AnnotationException {
+        this.url = annotationUrl;
+        return super.solveA2W(text);
+    }
+
+    @Override
+    public HashSet<Tag> solveC2W(String text) throws AnnotationException {
+        this.url = annotationUrl;
+        return super.solveC2W(text);
+    }
+
+    @Override
+    public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions) throws AnnotationException {
+        this.url = disambiguationUrl;
+        return super.solveD2W(text, mentions);
+    }
+
+    @Override
+    public HashSet<ScoredAnnotation> solveSa2W(String text) throws AnnotationException {
+        this.url = annotationUrl;
+        return super.solveSa2W(text);
+    }
+
+    @Override
+    public HashSet<ScoredTag> solveSc2W(String text) throws AnnotationException {
+        this.url = annotationUrl;
+        return super.solveSc2W(text);
     }
 }

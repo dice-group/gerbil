@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.aksw.gerbil.exceptions.GerbilException;
 
+@Deprecated
 @Component
 public class AgdistisAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
