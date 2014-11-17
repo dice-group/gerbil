@@ -54,60 +54,60 @@ public class NIFWebserviceTest {
 
     public static void main(String[] args) throws FileNotFoundException, ClassNotFoundException, IOException,
             GerbilException {
-        // runDirectComprarisonD2W();
-        // runDirectComprarisonA2W();
-        // runCompleteExperimentD2W();
-        runCompleteExperimentA2W();
+//         runDirectComprarisonD2KB();
+//         runDirectComprarisonA2KB();
+//         runCompleteExperimentD2KB();
+        runCompleteExperimentA2KB();
     }
 
-    public static void runCompleteExperimentA2W() {
+    public static void runCompleteExperimentA2KB() {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         DBPediaApi dbpApi = new DBPediaApi();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
                 new ExperimentTaskConfiguration(
                         new NIFWebserviceAnnotatorConfiguration(ANNOTATOR_URL, ANNOTATOR_NAME, false,
-                                wikiAPI, dbpApi, ExperimentType.A2W),
+                                wikiAPI, dbpApi, ExperimentType.A2KB),
                         new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
-                        ExperimentType.A2W,
+                        ExperimentType.A2KB,
                         Matching.WEAK_ANNOTATION_MATCH),
                 // compare this with the real Spotlight annotator
                 new ExperimentTaskConfiguration(
                         new SpotlightAnnotatorConfig(wikiAPI, dbpApi),
                         new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
-                        ExperimentType.A2W, Matching.WEAK_ANNOTATION_MATCH)
+                        ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH)
         };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "SPOTLIGHT_NIF_TEST");
         experimenter.run();
     }
 
-    public static void runCompleteExperimentD2W() {
+    public static void runCompleteExperimentD2KB() {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         DBPediaApi dbpApi = new DBPediaApi();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
                 new ExperimentTaskConfiguration(
                         new NIFWebserviceAnnotatorConfiguration(ANNOTATOR_URL, ANNOTATOR_NAME, false,
-                                wikiAPI, dbpApi, ExperimentType.D2W),
+                                wikiAPI, dbpApi, ExperimentType.D2KB),
                         new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
-                        ExperimentType.D2W,
+                        ExperimentType.D2KB,
                         Matching.STRONG_ANNOTATION_MATCH),
                 // compare this with the real Spotlight annotator
                 new ExperimentTaskConfiguration(
                         new SpotlightAnnotatorConfig(wikiAPI, dbpApi),
                         new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
-                        ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH)
+                        ExperimentType.D2KB, Matching.STRONG_ANNOTATION_MATCH)
         };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "SPOTLIGHT_NIF_TEST");
         experimenter.run();
     }
 
-    public static void runDirectComprarisonA2W() throws GerbilException {
-        runDirectComprarison(ExperimentType.A2W);
+    public static void runDirectComprarisonA2KB() throws GerbilException {
+        runDirectComprarison(ExperimentType.A2KB);
     }
 
-    public static void runDirectComprarisonD2W() throws GerbilException {
-        runDirectComprarison(ExperimentType.D2W);
+    public static void runDirectComprarisonD2KB() throws GerbilException {
+        runDirectComprarison(ExperimentType.D2KB);
     }
 
     public static void runDirectComprarison(ExperimentType experimentType) throws GerbilException {

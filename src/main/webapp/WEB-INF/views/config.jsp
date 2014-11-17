@@ -210,7 +210,7 @@
 	        $('#matching').html('');
 	        $('#annotator').html('');
 	        $.getJSON('${matchings}', {
-	            experimentType : $('#type').val() ? $('#type').val() : "D2W",
+	            experimentType : $('#type').val() ? $('#type').val() : "D2KB",
 	            ajax : 'false'
 	        }, function(data) {
 		        var formattedData = [];
@@ -227,7 +227,7 @@
         function loadAnnotator() {
 	        $('#annotator').html('');
 	        $.getJSON('${annotators}', {
-	            experimentType : $('#type').val() ? $('#type').val() : "D2W",
+	            experimentType : $('#type').val() ? $('#type').val() : "D2KB",
 	            ajax : 'false'
 	        }, function(data) {
 		        var formattedData = [];
@@ -245,7 +245,7 @@
         function loadDatasets() {
 	        $('#dataset').html('');
 	        $.getJSON('${datasets}', {
-	            experimentType : $('#type').val() ? $('#type').val() : "D2W",
+	            experimentType : $('#type').val() ? $('#type').val() : "D2KB",
 	            ajax : 'false'
 	        }, function(data) {
 		        var formattedData = [];
@@ -382,7 +382,7 @@
 		                        $("#datasetList li span.li_content").each(function() {
 			                        dataset.push("NIFDS_" + $(this).text());
 		                        });
-		                        var type = $('#type').val() ? $('#type').val() : "D2W";
+		                        var type = $('#type').val() ? $('#type').val() : "D2KB";
 		                        var matching = $('#matching').val() ? $('#matching').val()
 		                                : "Ma - strong annotation match";
 		                        var data = {};

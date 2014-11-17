@@ -137,7 +137,7 @@ public class ExperimentTaskExecuter implements Runnable {
             throws GerbilException {
         HashMap<String, HashMap<String, HashMap<String, HashMap<Float, MetricsResultSet>>>> results = null;
         switch (configuration.type) {
-        case D2W: {
+        case D2KB: {
             Vector<D2WSystem> d2wAnnotator = new Vector<D2WSystem>(1);
             d2wAnnotator.add((D2WSystem) annotator);
             Vector<D2WDataset> d2wDataset = new Vector<D2WDataset>(1);
@@ -149,7 +149,7 @@ public class ExperimentTaskExecuter implements Runnable {
             }
             break;
         }
-        case A2W: {
+        case A2KB: {
             Vector<A2WSystem> a2wAnnotator = new Vector<A2WSystem>(1);
             a2wAnnotator.add((A2WSystem) annotator);
             Vector<A2WDataset> a2wDataset = new Vector<A2WDataset>(1);
@@ -163,7 +163,7 @@ public class ExperimentTaskExecuter implements Runnable {
             }
             break;
         }
-        case Sa2W: {
+        case Sa2KB: {
             Vector<Sa2WSystem> sa2wAnnotator = new Vector<Sa2WSystem>(1);
             sa2wAnnotator.add((Sa2WSystem) annotator);
             Vector<A2WDataset> a2wDataset = new Vector<A2WDataset>(1);
@@ -177,7 +177,7 @@ public class ExperimentTaskExecuter implements Runnable {
             }
             break;
         }
-        case C2W: {
+        case C2KB: {
             Vector<C2WSystem> c2wAnnotator = new Vector<C2WSystem>(1);
             c2wAnnotator.add((C2WSystem) annotator);
             Vector<C2WDataset> c2wDataset = new Vector<C2WDataset>(1);
@@ -192,8 +192,8 @@ public class ExperimentTaskExecuter implements Runnable {
             }
             break;
         }
-        case Sc2W: // Falls through
-        case Rc2W: {
+        case Sc2KB: // Falls through
+        case Rc2KB: {
             Vector<Sc2WSystem> rc2wAnnotator = new Vector<Sc2WSystem>(1);
             rc2wAnnotator.add((Sc2WSystem) annotator);
             Vector<C2WDataset> rc2wDataset = new Vector<C2WDataset>(1);

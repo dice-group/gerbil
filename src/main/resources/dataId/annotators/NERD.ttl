@@ -18,10 +18,10 @@
   rdfs:label "NERD" ;
   dc:issued "05-31-2014"^^xsd:date ;
   dcat:landingPage <http://nerd.eurecom.fr> ;
-  dcat:keyword "ner","Sa2W" ;
+  dcat:keyword "ner","Sa2KB" ;
   dataid:licenseName "GNU public license 3.0" ;
   dc:license <http://purl.org/NET/rdflicense/gpl3.0> ;
-  dc:rights """Please cite: Giuseppe Rizzo and Marieke Van Erp and Raphaël Troncy. Benchmarking the Extraction and Disambiguation of Named Entities on the Semantic Web. In Proceedings of the Ninth International Conference on Language Resources and Evaluation (LREC'14), 2014.""";
+  dc:rights """Please cite: Giuseppe Rizzo and Marieke Van Erp and Raphaï¿½l Troncy. Benchmarking the Extraction and Disambiguation of Named Entities on the Semantic Web. In Proceedings of the Ninth International Conference on Language Resources and Evaluation (LREC'14), 2014.""";
   dcat:contactPoint [
     a dataid:Agent ;
     rdfs:label "Giuseppe Rizzo" ;

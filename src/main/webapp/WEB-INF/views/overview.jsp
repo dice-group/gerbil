@@ -118,7 +118,7 @@ table {
 	                        '${matchings}',
 	                        {
 	                            experimentType : $('#expTypes input').length != 0 ? $('#expTypes input:checked').val()
-	                                    : "D2W",
+	                                    : "D2KB",
 	                            ajax : 'false'
 	                        },
 	                        function(data) {

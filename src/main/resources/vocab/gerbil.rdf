@@ -39,18 +39,18 @@
     <rdfs:seeAlso>
       <skos:ConceptScheme rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#type">
         <skos:hasTopConcept>
-          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#A2W">
+          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#A2KB">
             <skos:inScheme rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
-            <skos:notation>A2W</skos:notation>
+            <skos:notation>A2KB</skos:notation>
             <skos:prefLabel xml:lang="en">Annotate to Wikipedia</skos:prefLabel>
             <skos:topConceptOf rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
             <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
           </gerbil:Type>
         </skos:hasTopConcept>
         <skos:hasTopConcept>
-          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#Sa2W">
+          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#Sa2KB">
             <skos:inScheme rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
-            <skos:notation>Sa2W</skos:notation>
+            <skos:notation>Sa2KB</skos:notation>
             <skos:prefLabel xml:lang="en">Scored-annotate to Wikipedia</skos:prefLabel>
             <skos:topConceptOf rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
             <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
@@ -59,25 +59,25 @@
         <rdfs:label xml:lang="en">Code list for GERBIL Experiment Types - codelist scheme</rdfs:label>
         <skos:notation>type</skos:notation>
         <skos:hasTopConcept>
-          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#C2W">
+          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#C2KB">
             <skos:inScheme rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
-            <skos:notation>C2W</skos:notation>
+            <skos:notation>C2KB</skos:notation>
             <skos:prefLabel xml:lang="en">Concepts to Wikipedia</skos:prefLabel>
             <skos:topConceptOf rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
             <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
           </gerbil:Type>
         </skos:hasTopConcept>
         <skos:hasTopConcept>
-          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#D2W">
+          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#D2KB">
             <skos:inScheme rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
-            <skos:notation>D2W</skos:notation>
+            <skos:notation>D2KB</skos:notation>
             <skos:prefLabel xml:lang="en">Disambiguate to Wikipedia</skos:prefLabel>
             <skos:topConceptOf rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
             <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
           </gerbil:Type>
         </skos:hasTopConcept>
         <skos:hasTopConcept>
-          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#Sc2W">
+          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#Sc2KB">
             <skos:inScheme rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
             <skos:notation>Scored concepts to Wikipedia</skos:notation>
             <skos:prefLabel xml:lang="en">Female</skos:prefLabel>
@@ -89,9 +89,9 @@
         <skos:note xml:lang="en">This code list provides the experiment types of named entity annotators.</skos:note>
         <rdfs:seeAlso rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#Type"/>
         <skos:hasTopConcept>
-          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#Rc2W">
+          <gerbil:Type rdf:about="http://gerbil.aksw.org/gerbil/vocab/gerbil#Rc2KB">
             <skos:inScheme rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
-            <skos:notation>Rc2W</skos:notation>
+            <skos:notation>Rc2KB</skos:notation>
             <skos:prefLabel xml:lang="en">Ranked-concepts to Wikipedia</skos:prefLabel>
             <skos:topConceptOf rdf:resource="http://gerbil.aksw.org/gerbil/vocab/gerbil#type"/>
             <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>

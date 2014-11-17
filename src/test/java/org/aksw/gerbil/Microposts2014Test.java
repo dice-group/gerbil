@@ -52,7 +52,7 @@ public class Microposts2014Test {
         					new ExperimentTaskConfiguration(
         								new NERDAnnotatorConfig(wikiAPI), 
         								new Microposts2014Config(Microposts2014Chunk.TRAIN, SingletonWikipediaApi.getInstance()), 
-        								ExperimentType.D2W,
+        								ExperimentType.D2KB,
         								Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, 
         											 new SimpleLoggingDAO4Debugging(), 

@@ -36,7 +36,7 @@ public class FOXAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private static boolean        cache = false;
 
     public FOXAnnotatorConfig(WikipediaApiInterface wikiApi) {
-        super(FOXAnnotator.NAME, cache, ExperimentType.Sa2W);
+        super(FOXAnnotator.NAME, cache, ExperimentType.Sa2KB);
         this.wikiApi = wikiApi;
     }
 

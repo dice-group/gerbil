@@ -27,15 +27,15 @@ package org.aksw.gerbil.datatypes;
  * The type of an experiment.
  * 
  * Hierarchy of experiment types:<br>
- * {@link #Sa2W} ≻ {@link #Sc2W}<br>
- * {@link #Sc2W} ≻ {@link #Rc2W}<br>
- * {@link #Rc2W} ≻ {@link #C2W}<br>
- * {@link #Sa2W} ≻ {@link #A2W}<br>
- * {@link #A2W} ≻ {@link #C2W}<br>
- * {@link #A2W} ≻ {@link #D2W}<br>
+ * {@link #Sa2KB} ≻ {@link #Sc2KB}<br>
+ * {@link #Sc2KB} ≻ {@link #Rc2KB}<br>
+ * {@link #Rc2KB} ≻ {@link #C2KB}<br>
+ * {@link #Sa2KB} ≻ {@link #A2KB}<br>
+ * {@link #A2KB} ≻ {@link #C2KB}<br>
+ * {@link #A2KB} ≻ {@link #D2KB}<br>
  * 
  * <p>
- * {@link #Sa2W} is the hardest problem containing all others while {@link #C2W} and {@link #D2W} are the leaves of the
+ * {@link #Sa2KB} is the hardest problem containing all others while {@link #C2KB} and {@link #D2KB} are the leaves of the
  * hierarchy.
  * </p>
  * 
@@ -53,7 +53,7 @@ public enum ExperimentType {
      * Input: text with marked entities <br>
      * Output: mentions for every entity
      */
-    D2W,
+    D2KB,
     /**
      * Annotate to Wikipedia
      * <p>
@@ -62,7 +62,7 @@ public enum ExperimentType {
      * Input: text<br>
      * Output: marked entities and mentions for their meaning
      */
-    A2W,
+    A2KB,
     /**
      * Scored-annotate to Wikipedia
      * <p>
@@ -72,7 +72,7 @@ public enum ExperimentType {
      * Input: text<br>
      * Output: marked entities and scored mentions for their meaning
      */
-    Sa2W,
+    Sa2KB,
     /**
      * Concepts to Wikipedia
      * <p>
@@ -81,7 +81,7 @@ public enum ExperimentType {
      * Input: text<br>
      * Output: marked entities
      */
-    C2W,
+    C2KB,
     /**
      * Scored concepts to Wikipedia
      * <p>
@@ -91,7 +91,7 @@ public enum ExperimentType {
      * Input: text<br>
      * Output: scored markings of entities
      */
-    Sc2W,
+    Sc2KB,
     /**
      * Ranked-concepts to Wikipedia
      * <p>
@@ -101,79 +101,79 @@ public enum ExperimentType {
      * Input: text<br>
      * Output: ranked markings of entities
      */
-    Rc2W;
+    Rc2KB;
 
     public boolean equalsOrContainsType(ExperimentType type) {
         switch (this) {
-        case Sa2W: {
+        case Sa2KB: {
             return true;
         }
-        case Sc2W: {
+        case Sc2KB: {
             switch (type) {
-            case Sa2W: // falls through
-            case A2W:
-            case D2W: {
+            case Sa2KB: // falls through
+            case A2KB:
+            case D2KB: {
                 return false;
             }
-            case Sc2W: // falls through
-            case Rc2W:
-            case C2W: {
+            case Sc2KB: // falls through
+            case Rc2KB:
+            case C2KB: {
                 return true;
             }
             }
         }
-        case Rc2W: {
+        case Rc2KB: {
             switch (type) {
-            case Sa2W: // falls through
-            case Sc2W:
-            case A2W:
-            case D2W: {
+            case Sa2KB: // falls through
+            case Sc2KB:
+            case A2KB:
+            case D2KB: {
                 return false;
             }
-            case Rc2W: // falls through
-            case C2W: {
+            case Rc2KB: // falls through
+            case C2KB: {
                 return true;
             }
             }
         }
-        case A2W: {
+        case A2KB: {
             switch (type) {
-            case Sa2W: // falls through
-            case Sc2W:
-            case Rc2W:
-            case C2W: {
+            case Sa2KB: // falls through
+            case Sc2KB:
+            case Rc2KB:
+            case C2KB: {
                 return false;
             }
-            case A2W: // falls through
-            case D2W: {
+            case A2KB: // falls through
+            case D2KB: {
                 return true;
             }
             }
         }
-        case C2W: {
+        case C2KB: {
             switch (type) {
-            case Sa2W: // falls through
-            case Sc2W:
-            case Rc2W:
-            case A2W:
-            case D2W: {
+            case Sa2KB: // falls through
+            case Sc2KB:
+            case Rc2KB:
+            case A2KB:
+            case D2KB: {
                 return false;
             }
-            case C2W: {
+            case C2KB: {
                 return true;
             }
             }
         }
-        case D2W: {
+        case D2KB: {
             switch (type) {
-            case Sa2W: // falls through
-            case Sc2W:
-            case Rc2W:
-            case A2W:
-            case C2W: {
+            case Sa2KB: // falls through
+            case Sc2KB:
+            case Rc2KB:
+            case A2KB:
+            case C2KB: {
                 return false;
             }
-            case D2W: {
+            case D2KB: {
                 return true;
             }
             }

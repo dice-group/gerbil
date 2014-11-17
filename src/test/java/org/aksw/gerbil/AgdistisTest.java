@@ -47,7 +47,7 @@ public class AgdistisTest {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()),
                 new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
-                ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH) };
+                ExperimentType.D2KB, Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI,
                 new SimpleLoggingDAO4Debugging(), taskConfigs, "AGDISTIS_TEST");
         experimenter.run();

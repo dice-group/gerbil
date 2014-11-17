@@ -18,7 +18,7 @@
   rdfs:label "WAT" ;
   dc:issued "11-03-2014"^^xsd:date ;
   dcat:landingPage <http://acube.di.unipi.it/tagme/> ;
-  dcat:keyword "ner","Sa2W" ;
+  dcat:keyword "ner","Sa2KB" ;
   dataid:licenseName "APACHE LICENSE 2.0" ;
   dc:license <http://purl.org/NET/rdflicense/licAPACHE> ;
   dc:rights """Please cite: F. Piccinno and P. Ferragina. From tagme to wat: a new entity annotator. In Proceedings of the first international workshop on Entity recognition & disambiguation, pages 55-62. ACM, 2014.""";

@@ -42,7 +42,7 @@ public class AgdistisAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private WikipediaApiInterface wikiApi;
 
     public AgdistisAnnotatorConfig(WikipediaApiInterface wikiApi) {
-        super(ANNOTATOR_NAME, true, ExperimentType.D2W);
+        super(ANNOTATOR_NAME, true, ExperimentType.D2KB);
         this.wikiApi = wikiApi;
     }
 

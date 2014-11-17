@@ -20,7 +20,7 @@
     "title" : "Babelfy - Word sense disambiguation and entity linking together!",
     "label" : "Babelfy",
     "contactPoint" : "_:b0",
-    "keyword" : [ "ner", "Sa2W" ],
+    "keyword" : [ "ner", "Sa2KB" ],
     "landingPage" : "http://http://babelfy.org/"
   } ],
   "@context" : {

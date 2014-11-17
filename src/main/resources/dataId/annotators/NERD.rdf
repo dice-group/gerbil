@@ -21,7 +21,7 @@
             <rdfs:label>Giuseppe Rizzo</rdfs:label>
           </dataid:Agent>
         </dcat:contactPoint>
-        <dcat:keyword>Sa2W</dcat:keyword>
+        <dcat:keyword>Sa2KB</dcat:keyword>
         <dcat:keyword>ner</dcat:keyword>
         <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
         >05-31-2014</dc:issued>

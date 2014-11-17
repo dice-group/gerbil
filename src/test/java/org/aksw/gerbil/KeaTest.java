@@ -48,7 +48,7 @@ public class KeaTest {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new KeaAnnotatorConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi()),
                 new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
-                ExperimentType.Sa2W, Matching.STRONG_ANNOTATION_MATCH) };
+                ExperimentType.Sa2KB, Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI,
                 new SimpleLoggingDAO4Debugging(), taskConfigs, "AGDISTIS_TEST");
         experimenter.run();

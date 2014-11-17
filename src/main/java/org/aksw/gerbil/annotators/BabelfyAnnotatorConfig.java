@@ -48,7 +48,7 @@ public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {
     }
 
     public BabelfyAnnotatorConfig(WikipediaApiInterface wikiApi, boolean optimizedForShortTexts) {
-        super(ANNOTATOR_NAME, true, ExperimentType.A2W);
+        super(ANNOTATOR_NAME, true, ExperimentType.A2KB);
         this.wikiApi = wikiApi;
     }
 

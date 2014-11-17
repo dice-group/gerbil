@@ -93,7 +93,7 @@ public class AnnotatorMapping {
                 // remove "NIFWS_" from the name
                 name = name.substring(6, pos) + NIF_WS_SUFFIX;
                 return new NIFWebserviceAnnotatorConfiguration(uri, name, false, SingletonWikipediaApi.getInstance(),
-                        new DBPediaApi(), ExperimentType.Sa2W);
+                        new DBPediaApi(), ExperimentType.Sa2KB);
             }
             LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
             return null;

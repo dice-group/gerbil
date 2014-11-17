@@ -27,7 +27,7 @@
         <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
         >10-26-2008</dc:issued>
         <dc:description>WikipediaMiner is a toolkit for tapping the rich semantics encoded within Wikipedia. It makes it easy to integrate Wikipedia's knowledge into your own applications</dc:description>
-        <dcat:keyword>Sa2W</dcat:keyword>
+        <dcat:keyword>Sa2KB</dcat:keyword>
         <dcat:landingPage rdf:resource="http://acube.di.unipi.it/tagme/"/>
         <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Service"/>
         <dcat:keyword>ner</dcat:keyword>

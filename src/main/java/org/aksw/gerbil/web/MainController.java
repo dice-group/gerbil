@@ -87,7 +87,7 @@ public class MainController {
 			isInitialized = true;
 		}
 		// Simply call the dataset mapping so that it has to be instantiated
-		DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2W);
+		DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2KB);
 	}
 
 	@PostConstruct
@@ -188,8 +188,8 @@ public class MainController {
 
 	/**
 	 * expects a string like
-	 * {"type":"A2W","matching":"Mw - weak annotation match"
-	 * ,"annotator":["A2w one","A2W two"],"dataset":["datasets"]}
+	 * {"type":"A2KB","matching":"Mw - weak annotation match"
+	 * ,"annotator":["A2KB one","A2KB two"],"dataset":["datasets"]}
 	 * 
 	 * @param experimentData
 	 * @return
@@ -265,21 +265,21 @@ public class MainController {
 	Set<String> matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {
 		ExperimentType type = ExperimentType.valueOf(experimentType);
 		switch (type) {
-		case C2W:
+		case C2KB:
 			return Sets.newLinkedHashSet(Lists.newArrayList("Me - strong entity match"));
-		case D2W:
+		case D2KB:
 			// Mw will not be shown since the positions are always exact and
 			// thus it works like Ma
 			return Sets.newLinkedHashSet(Lists.newArrayList("Ma - strong annotation match"));
-		case A2W:
+		case A2KB:
 			return Sets.newLinkedHashSet(Lists.newArrayList(
 
 			"Ma - strong annotation match", "Mw - weak annotation match"));
-		case Rc2W:
+		case Rc2KB:
 			return Sets.newLinkedHashSet(Lists.newArrayList("Me - strong entity match"));
-		case Sc2W:
+		case Sc2KB:
 			return Sets.newLinkedHashSet(Lists.newArrayList("Me - strong entity match"));
-		case Sa2W:
+		case Sa2KB:
 			return Sets.newLinkedHashSet(Lists.newArrayList("Ma - strong annotation match", "Mw - weak annotation match"));
 		default:
 			return Sets.newLinkedHashSet(Lists.newArrayList("None"));

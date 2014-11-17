@@ -45,7 +45,7 @@ public class WATTest {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new WATAnnotatorConfig(), new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
-                        NIFDatasets.KORE50), ExperimentType.D2W, Matching.STRONG_ANNOTATION_MATCH) };
+                        NIFDatasets.KORE50), ExperimentType.D2KB, Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "WAT_TEST");
         experimenter.run();

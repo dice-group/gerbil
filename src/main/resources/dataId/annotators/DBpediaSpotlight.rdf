@@ -28,7 +28,7 @@
           </dataid:Agent>
         </dcat:contactPoint>
         <dc:license rdf:resource="http://purl.org/NET/rdflicense/licAPACHE"/>
-        <dcat:keyword>Sa2W</dcat:keyword>
+        <dcat:keyword>Sa2KB</dcat:keyword>
         <dc:description>DBpedia Spotlight is a tool for automatically annotating mentions of DBpedia resources in text.</dc:description>
         <dcat:landingPage rdf:resource="http://spotlight.dbpedia.org/"/>
         <dc:title>DBpedia Spotlight - Shedding Light on the Web of Documents</dc:title>

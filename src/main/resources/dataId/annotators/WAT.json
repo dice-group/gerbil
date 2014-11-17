@@ -19,7 +19,7 @@
     "title" : "WAT",
     "label" : "WAT",
     "contactPoint" : "_:b0",
-    "keyword" : [ "Sa2W", "ner" ],
+    "keyword" : [ "Sa2KB", "ner" ],
     "landingPage" : "http://acube.di.unipi.it/tagme/"
   } ],
   "@context" : {

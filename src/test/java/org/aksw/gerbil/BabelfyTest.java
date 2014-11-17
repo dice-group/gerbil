@@ -46,7 +46,7 @@ public class BabelfyTest {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()), new KnownNIFFileDatasetConfig(
                         SingletonWikipediaApi.getInstance(),
-                        NIFDatasets.N3_REUTERS_128), ExperimentType.D2W,
+                        NIFDatasets.N3_REUTERS_128), ExperimentType.D2KB,
                 Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "BABELFY_TEST");

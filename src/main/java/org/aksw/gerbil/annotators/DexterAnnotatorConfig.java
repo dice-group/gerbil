@@ -43,7 +43,7 @@ public class DexterAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private DBPediaApi dbpediaApi;
 
     public DexterAnnotatorConfig(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi) {
-        super(ANNOTATOR_NAME, true, ExperimentType.Sa2W);
+        super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
         this.wikiApi = wikiApi;
         this.dbpediaApi = dbpediaApi;
     }

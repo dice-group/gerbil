@@ -59,7 +59,7 @@ public class KnownNIFFileDatasetConfig extends AbstractDatasetConfiguration {
     private WikipediaApiInterface wikiApi;
 
     public KnownNIFFileDatasetConfig(WikipediaApiInterface wikiApi, NIFDatasets dataset) {
-        super(dataset.getDatasetName(), true, ExperimentType.Sa2W);
+        super(dataset.getDatasetName(), true, ExperimentType.Sa2KB);
         this.dataset = dataset;
         this.wikiApi = wikiApi;
     }

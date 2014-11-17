@@ -78,7 +78,7 @@ public class DatasetAnalyzer {
     }
 
     private void analyzeAsC2W(DatasetConfiguration config) throws GerbilException {
-        D2WDataset dataset = (D2WDataset) config.getDataset(ExperimentType.D2W);
+        D2WDataset dataset = (D2WDataset) config.getDataset(ExperimentType.D2KB);
         if (dataset == null) {
             return;
         }
@@ -94,7 +94,7 @@ public class DatasetAnalyzer {
     }
 
     private void analyzeAsD2W(DatasetConfiguration config) throws GerbilException {
-        C2WDataset dataset = (C2WDataset) config.getDataset(ExperimentType.C2W);
+        C2WDataset dataset = (C2WDataset) config.getDataset(ExperimentType.C2KB);
         if (dataset == null) {
             return;
         }

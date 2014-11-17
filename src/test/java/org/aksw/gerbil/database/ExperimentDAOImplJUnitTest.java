@@ -109,12 +109,12 @@ public class ExperimentDAOImplJUnitTest {
         Random random = new Random();
         for (int i = 0; i < 10; ++i) {
             if (i < 8) {
-                results.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2W,
+                results.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2KB,
                         Matching.STRONG_ANNOTATION_MATCH, new double[] { random.nextFloat(), random.nextFloat(),
                                 random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat() },
                         ExperimentDAO.TASK_FINISHED, random.nextInt()));
             } else {
-                results.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2W,
+                results.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2KB,
                         Matching.STRONG_ANNOTATION_MATCH, new double[6],
                         i == 8 ? ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET : ErrorTypes.UNEXPECTED_EXCEPTION
                                 .getErrorCode(), 0));
@@ -183,10 +183,10 @@ public class ExperimentDAOImplJUnitTest {
         // Only the first task should be retrieved, the second is not finished, the third has the wrong matching and the
         // fourth has the wrong type
         String tasks[][] = new String[][] {
-                { "annotator1", "dataset1", ExperimentType.A2W.name(), Matching.WEAK_ANNOTATION_MATCH.name() },
-                { "annotator1", "dataset2", ExperimentType.A2W.name(), Matching.WEAK_ANNOTATION_MATCH.name() },
-                { "annotator1", "dataset1", ExperimentType.A2W.name(), Matching.STRONG_ANNOTATION_MATCH.name() },
-                { "annotator2", "dataset1", ExperimentType.D2W.name(), Matching.WEAK_ANNOTATION_MATCH.name() } };
+                { "annotator1", "dataset1", ExperimentType.A2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() },
+                { "annotator1", "dataset2", ExperimentType.A2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() },
+                { "annotator1", "dataset1", ExperimentType.A2KB.name(), Matching.STRONG_ANNOTATION_MATCH.name() },
+                { "annotator2", "dataset1", ExperimentType.D2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() } };
         int taskId;
         for (int i = 0; i < tasks.length; ++i) {
             taskId = this.dao.createTask(tasks[i][0], tasks[i][1], tasks[i][2], tasks[i][3], "id-" + i);
@@ -194,7 +194,7 @@ public class ExperimentDAOImplJUnitTest {
                 this.dao.setExperimentState(taskId, ExperimentDAO.TASK_FINISHED);
             }
         }
-        List<ExperimentTaskResult> results = this.dao.getLatestResultsOfExperiments(ExperimentType.A2W.name(),
+        List<ExperimentTaskResult> results = this.dao.getLatestResultsOfExperiments(ExperimentType.A2KB.name(),
                 Matching.WEAK_ANNOTATION_MATCH.name());
         Assert.assertEquals(1, results.size());
         Assert.assertEquals("annotator1", results.get(0).annotator);

@@ -54,11 +54,11 @@ public class NERDAnnotatorConfig extends AbstractAnnotatorConfiguration {
      */
     @Deprecated
     public NERDAnnotatorConfig() {
-        super(ANNOTATOR_NAME, true, ExperimentType.Sa2W);
+        super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
     }
 
     public NERDAnnotatorConfig(WikipediaApiInterface wikiApi) {
-        super(ANNOTATOR_NAME, true, ExperimentType.Sa2W);
+        super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
         this.wikiApi = wikiApi;
     }
 

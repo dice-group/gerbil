@@ -50,7 +50,7 @@ public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private DBPediaApi dbpediaApi;
 
     public KeaAnnotatorConfig(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi) {
-        super(ANNOTATOR_NAME, true, ExperimentType.Sa2W);
+        super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
         this.wikiApi = wikiApi;
         this.dbpediaApi = dbpediaApi;
     }
@@ -58,8 +58,8 @@ public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
     @Override
     protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
         String propertyKey;
-        // If this we need a D2W system
-        if (ExperimentType.D2W.equalsOrContainsType(type)) {
+        // If this we need a D2KB system
+        if (ExperimentType.D2KB.equalsOrContainsType(type)) {
             propertyKey = DISAMBIGATION_URL_PROPERTY_KEY;
         } else {
             propertyKey = ANNOTATION_URL_PROPERTY_KEY;

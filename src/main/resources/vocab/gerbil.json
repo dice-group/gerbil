@@ -36,30 +36,30 @@
     "@id" : "_:b9",
     "dimension" : "gerbil:timestamp"
   }, {
-    "@id" : "gerbil:A2W",
+    "@id" : "gerbil:A2KB",
     "@type" : [ "gerbil:Type", "skos:Concept" ],
     "inScheme" : "gerbil:type",
-    "notation" : "A2W",
+    "notation" : "A2KB",
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Annotate to Wikipedia"
     },
     "topConceptOf" : "gerbil:type"
   }, {
-    "@id" : "gerbil:C2W",
+    "@id" : "gerbil:C2KB",
     "@type" : [ "gerbil:Type", "skos:Concept" ],
     "inScheme" : "gerbil:type",
-    "notation" : "C2W",
+    "notation" : "C2KB",
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Concepts to Wikipedia"
     },
     "topConceptOf" : "gerbil:type"
   }, {
-    "@id" : "gerbil:D2W",
+    "@id" : "gerbil:D2KB",
     "@type" : [ "gerbil:Type", "skos:Concept" ],
     "inScheme" : "gerbil:type",
-    "notation" : "D2W",
+    "notation" : "D2KB",
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Disambiguate to Wikipedia"
@@ -79,27 +79,27 @@
     "seeAlso" : "gerbil:matchingScheme",
     "subClassOf" : "skos:Concept"
   }, {
-    "@id" : "gerbil:Rc2W",
+    "@id" : "gerbil:Rc2KB",
     "@type" : [ "gerbil:Type", "skos:Concept" ],
     "inScheme" : "gerbil:type",
-    "notation" : "Rc2W",
+    "notation" : "Rc2KB",
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Ranked-concepts to Wikipedia"
     },
     "topConceptOf" : "gerbil:type"
   }, {
-    "@id" : "gerbil:Sa2W",
+    "@id" : "gerbil:Sa2KB",
     "@type" : [ "gerbil:Type", "skos:Concept" ],
     "inScheme" : "gerbil:type",
-    "notation" : "Sa2W",
+    "notation" : "Sa2KB",
     "prefLabel" : {
       "@language" : "en",
       "@value" : "Scored-annotate to Wikipedia"
     },
     "topConceptOf" : "gerbil:type"
   }, {
-    "@id" : "gerbil:Sc2W",
+    "@id" : "gerbil:Sc2KB",
     "@type" : [ "gerbil:Type", "skos:Concept" ],
     "inScheme" : "gerbil:type",
     "notation" : "Scored concepts to Wikipedia",
@@ -288,7 +288,7 @@
       "@value" : "Code list for GERBIL Experiment Types - codelist scheme"
     },
     "seeAlso" : "gerbil:Type",
-    "hasTopConcept" : [ "gerbil:A2W", "gerbil:Sa2W", "gerbil:C2W", "gerbil:D2W", "gerbil:Sc2W", "gerbil:Rc2W" ],
+    "hasTopConcept" : [ "gerbil:A2KB", "gerbil:Sa2KB", "gerbil:C2KB", "gerbil:D2KB", "gerbil:Sc2KB", "gerbil:Rc2KB" ],
     "notation" : "type",
     "note" : {
       "@language" : "en",

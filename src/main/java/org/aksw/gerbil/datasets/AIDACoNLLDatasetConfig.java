@@ -49,7 +49,7 @@ public class AIDACoNLLDatasetConfig extends AbstractDatasetConfiguration {
     private WikipediaApiInterface wikiApi;
 
     public AIDACoNLLDatasetConfig(AIDACoNLLChunk chunk, WikipediaApiInterface wikiApi) {
-        super(DATASET_NAME_START, true, ExperimentType.Sa2W);
+        super(DATASET_NAME_START, true, ExperimentType.Sa2KB);
         this.chunk = chunk;
         this.wikiApi = wikiApi;
         // Set the correct name

@@ -96,12 +96,12 @@ gerbil:type a skos:ConceptScheme;
     rdfs:label "Code list for GERBIL Experiment Types - codelist scheme"@en;
     skos:notation "type";
     skos:note "This code list provides the experiment types of named entity annotators."@en;
-    skos:hasTopConcept gerbil:D2W ;
-	skos:hasTopConcept gerbil:A2W ;
-	skos:hasTopConcept gerbil:Sa2W ;
-	skos:hasTopConcept gerbil:C2W ;
-	skos:hasTopConcept gerbil:Sc2W ;
-	skos:hasTopConcept gerbil:Rc2W ;
+    skos:hasTopConcept gerbil:D2KB ;
+	skos:hasTopConcept gerbil:A2KB ;
+	skos:hasTopConcept gerbil:Sa2KB ;
+	skos:hasTopConcept gerbil:C2KB ;
+	skos:hasTopConcept gerbil:Sc2KB ;
+	skos:hasTopConcept gerbil:Rc2KB ;
 	rdfs:seeAlso gerbil:Type .
 
 gerbil:Type a rdfs:Class, owl:Class;
@@ -110,40 +110,40 @@ gerbil:Type a rdfs:Class, owl:Class;
     rdfs:comment "This code list provides the experiment types of named entity annotators. Types as defined in Cornolti at al. A Framework for Benchmarking Entity-Annotation Systems. 22nd WWW, 2013"@en;
 	rdfs:seeAlso gerbil:type .
 
-gerbil:D2W a skos:Concept, gerbil:Type;
+gerbil:D2KB a skos:Concept, gerbil:Type;
     skos:topConceptOf gerbil:type;
     skos:prefLabel "Disambiguate to Wikipedia"@en ;
-    skos:notation "D2W" ;
+    skos:notation "D2KB" ;
     skos:inScheme gerbil:type .
 
-gerbil:A2W a skos:Concept, gerbil:Type;
+gerbil:A2KB a skos:Concept, gerbil:Type;
     skos:topConceptOf gerbil:type;
     skos:prefLabel "Annotate to Wikipedia"@en ;
-    skos:notation "A2W" ;
+    skos:notation "A2KB" ;
     skos:inScheme gerbil:type .
 	
-gerbil:Sa2W a skos:Concept, gerbil:Type;
+gerbil:Sa2KB a skos:Concept, gerbil:Type;
     skos:topConceptOf gerbil:type;
     skos:prefLabel "Scored-annotate to Wikipedia"@en ;
-    skos:notation "Sa2W" ;
+    skos:notation "Sa2KB" ;
     skos:inScheme gerbil:type .
 	
-gerbil:C2W a skos:Concept, gerbil:Type;
+gerbil:C2KB a skos:Concept, gerbil:Type;
     skos:topConceptOf gerbil:type;
     skos:prefLabel "Concepts to Wikipedia"@en ;
-    skos:notation "C2W" ;
+    skos:notation "C2KB" ;
     skos:inScheme gerbil:type .
 	
-gerbil:Sc2W a skos:Concept, gerbil:Type;
+gerbil:Sc2KB a skos:Concept, gerbil:Type;
     skos:topConceptOf gerbil:type;
     skos:prefLabel "Female"@en ;
     skos:notation "Scored concepts to Wikipedia" ;
     skos:inScheme gerbil:type .
 	
-gerbil:Rc2W a skos:Concept, gerbil:Type;
+gerbil:Rc2KB a skos:Concept, gerbil:Type;
     skos:topConceptOf gerbil:type;
     skos:prefLabel "Ranked-concepts to Wikipedia"@en ;
-    skos:notation "Rc2W" ;
+    skos:notation "Rc2KB" ;
     skos:inScheme gerbil:type .
 	
 #### Matching

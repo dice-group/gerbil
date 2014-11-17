@@ -145,7 +145,7 @@ public class DatasetMapping {
                 name = name.substring(6, pos) + UPLOADED_DATASET_SUFFIX;
                 LOGGER.error("name={}, uri={}", name, uri);
                 return new NIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), name, uri,
-                        false, ExperimentType.Sa2W);
+                        false, ExperimentType.Sa2KB);
             }
             LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
             return null;

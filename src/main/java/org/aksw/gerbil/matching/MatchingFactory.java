@@ -38,22 +38,22 @@ public class MatchingFactory {
             ExperimentType type) {
         switch (matching) {
         case WEAK_ANNOTATION_MATCH: {
-            // this is for Sa2W, A2W
-            if (type.equalsOrContainsType(ExperimentType.A2W)) {
+            // this is for Sa2KB, A2KB
+            if (type.equalsOrContainsType(ExperimentType.A2KB)) {
                 return new WeakAnnotationMatch(wikiApi);
             }
             break;
         }
         case STRONG_ANNOTATION_MATCH: {
-            // this is for Sa2W, A2W and D2W
-            if (type.equalsOrContainsType(ExperimentType.D2W)) {
+            // this is for Sa2KB, A2KB and D2KB
+            if (type.equalsOrContainsType(ExperimentType.D2KB)) {
                 return new StrongAnnotationMatch(wikiApi);
             }
             break;
         }
         case STRONG_ENTITY_MATCH: {
-            // this is for Sc2W, Rc2W and C2W
-            if (ExperimentType.Sc2W.equalsOrContainsType(type)) {
+            // this is for Sc2KB, Rc2KB and C2KB
+            if (ExperimentType.Sc2KB.equalsOrContainsType(type)) {
                 return new StrongTagMatch(wikiApi);
             }
             break;

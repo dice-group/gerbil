@@ -20,7 +20,7 @@
     "title" : "Agnostic Disambiguation of Named Entities Using Linked Open Data",
     "label" : "AGDISTIS",
     "contactPoint" : "_:b0",
-    "keyword" : [ "D2W", "ner" ],
+    "keyword" : [ "D2KB", "ner" ],
     "landingPage" : "http://aksw.org/Projects/AGDISTIS.html"
   } ],
   "@context" : {

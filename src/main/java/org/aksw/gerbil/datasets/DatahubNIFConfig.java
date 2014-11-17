@@ -50,7 +50,7 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
     private RestTemplate rt;
 
     public DatahubNIFConfig(WikipediaApiInterface wikiApi, String datasetName, String datasetUrl, boolean couldBeCached) {
-        super(datasetName, couldBeCached, ExperimentType.Sa2W);
+        super(datasetName, couldBeCached, ExperimentType.Sa2KB);
         this.wikiApi = wikiApi;
         this.datasetUrl = datasetUrl;
         rt = new RestTemplate();

@@ -36,7 +36,7 @@ public class TagMeAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private static final String TAGME_CONFIG_FILE_PROPERTY_NAME = "org.aksw.gerbil.annotators.TagmeAnnotatorConfig.ConfigFile";
 
     public TagMeAnnotatorConfig() {
-        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2W });
+        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2KB });
     }
 
     @Override

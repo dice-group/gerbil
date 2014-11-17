@@ -45,7 +45,7 @@ public class NERDTest {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new NERDAnnotatorConfig(wikiAPI), new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
-                        NIFDatasets.KORE50), ExperimentType.D2W,
+                        NIFDatasets.KORE50), ExperimentType.D2KB,
                 Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "NERD_TEST");

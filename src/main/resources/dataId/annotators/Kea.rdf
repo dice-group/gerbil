@@ -17,7 +17,7 @@
         <dc:license rdf:resource="http://purl.org/NET/rdflicense/allrightsreserved"/>
         <rdfs:label>Kea</rdfs:label>
         <dc:rights>Please cite: N. Steinmetz and H. Sack. Semantic multimedia information retrieval based on contextual descriptions. In P. Cimiano, O. Corcho, V. Presutti, L. Hollink, and S. Rudolph, editors, The Semantic Web: Semantics and Big Data, volume 7882 of Lecture Notes in Computer Science, pages 382{396. Springer Berlin Heidelberg, 2013.</dc:rights>
-        <dcat:keyword>Sa2W</dcat:keyword>
+        <dcat:keyword>Sa2KB</dcat:keyword>
         <dc:title>Kea</dc:title>
         <dataid:licenseName>All rights reserved</dataid:licenseName>
         <rdf:type rdf:resource="http://dataid.dbpedia.org/ns/core#Service"/>

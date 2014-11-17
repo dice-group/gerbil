@@ -42,7 +42,7 @@ public class AQUAINTDatasetConfiguration extends AbstractDatasetConfiguration {
     private WikipediaApiInterface wikiApi;
 
     public AQUAINTDatasetConfiguration(WikipediaApiInterface wikiApi) {
-        super(DATASET_NAME, true, ExperimentType.Sa2W);
+        super(DATASET_NAME, true, ExperimentType.Sa2KB);
         this.wikiApi = wikiApi;
     }
 

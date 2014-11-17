@@ -35,7 +35,7 @@ public class WATAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private static final String WAT_CONFIG_FILE_PROPERTY_PARAMETERS = "org.aksw.gerbil.annotators.wat.parameters";
 
     public WATAnnotatorConfig() {
-        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2W});
+        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2KB});
     }
 
     @Override

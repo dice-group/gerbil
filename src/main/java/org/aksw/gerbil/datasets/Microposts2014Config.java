@@ -54,7 +54,7 @@ public class Microposts2014Config extends AbstractDatasetConfiguration {
 									WikipediaApiInterface wikiApi
 						 	    ) 
 	{
-	    super(DATASET_NAME_START, true, ExperimentType.Sa2W);
+	    super(DATASET_NAME_START, true, ExperimentType.Sa2KB);
 	    this.chunk = chunk;
         this.wikiApi = wikiApi;
         // Set the correct name

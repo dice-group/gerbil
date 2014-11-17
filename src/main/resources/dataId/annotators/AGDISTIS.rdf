@@ -19,7 +19,7 @@
         <rdfs:label>AGDISTIS</rdfs:label>
         <dataid:licenseName>MIT license</dataid:licenseName>
         <dc:license rdf:resource="http://purl.org/NET/rdflicense/licMIT"/>
-        <dcat:keyword>D2W</dcat:keyword>
+        <dcat:keyword>D2KB</dcat:keyword>
         <dcat:keyword>ner</dcat:keyword>
         <dcat:landingPage rdf:resource="http://aksw.org/Projects/AGDISTIS.html"/>
         <dcat:contactPoint>

@@ -20,7 +20,7 @@
     "title" : "DBpedia Spotlight - Shedding Light on the Web of Documents",
     "label" : "DBpedia Spotlight",
     "contactPoint" : "_:b0",
-    "keyword" : [ "ner", "Sa2W" ],
+    "keyword" : [ "ner", "Sa2KB" ],
     "landingPage" : "http://spotlight.dbpedia.org/"
   } ],
   "@context" : {

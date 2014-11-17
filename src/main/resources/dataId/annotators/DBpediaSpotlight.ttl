@@ -18,7 +18,7 @@
   rdfs:label "DBpedia Spotlight" ;
   dc:issued "09-04-2013"^^xsd:date ;
   dcat:landingPage <http://spotlight.dbpedia.org/> ;
-  dcat:keyword "ner","Sa2W" ;
+  dcat:keyword "ner","Sa2KB" ;
   dataid:licenseName "Apache License 2.0" ;
   dc:license <http://purl.org/NET/rdflicense/licAPACHE> ;
   dc:rights """Please cite: Joachim Daiber and Max Jakob and Chris Hokamp and Pablo N. Mendes. Improving Efficiency and Accuracy in Multilingual Entity Extraction. In Proceedings of the 9th International Conference on Semantic Systems (I-Semantics), 2013.""";

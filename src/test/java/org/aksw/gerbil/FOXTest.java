@@ -45,7 +45,7 @@ public class FOXTest {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new FOXAnnotatorConfig(wikiAPI), new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
-                        NIFDatasets.KORE50), ExperimentType.A2W,
+                        NIFDatasets.KORE50), ExperimentType.A2KB,
                 Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "FOX_TEST");

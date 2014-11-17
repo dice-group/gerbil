@@ -23,7 +23,7 @@
         <dc:rights>Please cite: P. Ferragina and U. Scaiella. Fast and accurate annotation of short texts with wikipedia pages. IEEE software, 29(1), 2012.</dc:rights>
         <dcat:landingPage rdf:resource="http://acube.di.unipi.it/tagme/"/>
         <dc:description>TAGME is a topic annotator that is able to identify meaningful sequences of words in a short text and link them to a pertinent Wikipedia page.</dc:description>
-        <dcat:keyword>Sa2W</dcat:keyword>
+        <dcat:keyword>Sa2KB</dcat:keyword>
         <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
         >02-01-2014</dc:issued>
         <dc:title>TagMe 2</dc:title>

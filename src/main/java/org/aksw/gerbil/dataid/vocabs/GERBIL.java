@@ -58,12 +58,12 @@ public class GERBIL {
     public static final Resource Experiment = resource("Experiment");
     public static final Resource ExperimentTask = resource("ExperimentTask");
 
-    public static final Resource A2W = resource("A2W");
-    public static final Resource C2W = resource("C2W");
-    public static final Resource D2W = resource("D2W");
-    public static final Resource Rc2W = resource("Rc2W");
-    public static final Resource Sa2W = resource("Sa2W");
-    public static final Resource Sc2W = resource("Sc2W");
+    public static final Resource A2KB = resource("A2KB");
+    public static final Resource C2KB = resource("C2KB");
+    public static final Resource D2KB = resource("D2KB");
+    public static final Resource Rc2KB = resource("Rc2KB");
+    public static final Resource Sa2KB = resource("Sa2KB");
+    public static final Resource Sc2KB = resource("Sc2KB");
 
     public static final Resource StrongAnnoMatch = resource("StrongAnnoMatch");
     public static final Resource WeakAnnoMatch = resource("WeakAnnoMatch");
@@ -103,18 +103,18 @@ public class GERBIL {
 
     public static Resource getExperimentTypeResource(ExperimentType type) {
         switch (type) {
-        case A2W:
-            return A2W;
-        case C2W:
-            return C2W;
-        case D2W:
-            return D2W;
-        case Rc2W:
-            return Rc2W;
-        case Sa2W:
-            return Sa2W;
-        case Sc2W:
-            return Sc2W;
+        case A2KB:
+            return A2KB;
+        case C2KB:
+            return C2KB;
+        case D2KB:
+            return D2KB;
+        case Rc2KB:
+            return Rc2KB;
+        case Sa2KB:
+            return Sa2KB;
+        case Sc2KB:
+            return Sc2KB;
         default:
             ;
         }

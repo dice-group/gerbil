@@ -36,7 +36,7 @@ public class WikipediaMinerAnnotatorConfig extends AbstractAnnotatorConfiguratio
     private static final String WIKI_MINER_CONFIG_FILE_PROPERTY_NAME = "org.aksw.gerbil.annotators.WikipediaMinerAnnotatorConfig.ConfigFile";
 
     public WikipediaMinerAnnotatorConfig() {
-        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2W });
+        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2KB });
     }
 
     @Override

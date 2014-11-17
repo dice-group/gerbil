@@ -12,7 +12,7 @@
     "rights" : "Please cite: N. Steinmetz and H. Sack. Semantic multimedia information retrieval based on contextual descriptions. In P. Cimiano, O. Corcho, V. Presutti, L. Hollink, and S. Rudolph, editors, The Semantic Web: Semantics and Big Data, volume 7882 of Lecture Notes in Computer Science, pages 382{396. Springer Berlin Heidelberg, 2013.",
     "title" : "Kea",
     "label" : "Kea",
-    "keyword" : [ "ner", "Sa2W" ]
+    "keyword" : [ "ner", "Sa2KB" ]
   } ],
   "@context" : {
     "keyword" : "http://www.w3.org/ns/dcat#keyword",

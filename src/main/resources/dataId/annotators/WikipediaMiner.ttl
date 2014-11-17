@@ -18,7 +18,7 @@
   rdfs:label "Wikipedia Miner" ;
   dc:issued "10-26-2008"^^xsd:date ;
   dcat:landingPage <http://acube.di.unipi.it/tagme/> ;
-  dcat:keyword "ner","Sa2W" ;
+  dcat:keyword "ner","Sa2KB" ;
   dataid:licenseName "GNU General Public License 2.0" ;
   dc:license <http://purl.org/NET/rdflicense/gpl2.0> ;
   dc:rights """Please cite: D. Milne and I. H. Witten. Learning to link with wikipedia. In 17th ACM CIKM, pages 509-518, 2008.""";

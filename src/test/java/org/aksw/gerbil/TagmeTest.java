@@ -43,7 +43,7 @@ public class TagmeTest {
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new TagMeAnnotatorConfig(), new IITBDatasetConfig(wikiAPI), ExperimentType.D2W,
+                new TagMeAnnotatorConfig(), new IITBDatasetConfig(wikiAPI), ExperimentType.D2KB,
                 Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "TAGME_TEST");

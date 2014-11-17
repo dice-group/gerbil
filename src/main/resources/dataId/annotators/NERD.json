@@ -20,7 +20,7 @@
     "title" : "NERD",
     "label" : "NERD",
     "contactPoint" : "_:b0",
-    "keyword" : [ "Sa2W", "ner" ],
+    "keyword" : [ "Sa2KB", "ner" ],
     "landingPage" : "http://nerd.eurecom.fr"
   } ],
   "@context" : {

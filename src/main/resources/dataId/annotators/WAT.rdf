@@ -21,7 +21,7 @@
           </dataid:Agent>
         </dcat:contactPoint>
         <dc:rights>Please cite: F. Piccinno and P. Ferragina. From tagme to wat: a new entity annotator. In Proceedings of the first international workshop on Entity recognition &amp; disambiguation, pages 55-62. ACM, 2014.</dc:rights>
-        <dcat:keyword>Sa2W</dcat:keyword>
+        <dcat:keyword>Sa2KB</dcat:keyword>
         <dc:license rdf:resource="http://purl.org/NET/rdflicense/licAPACHE"/>
         <dc:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date"
         >11-03-2014</dc:issued>

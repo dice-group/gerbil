@@ -18,7 +18,7 @@
   rdfs:label "Babelfy" ;
   dc:issued "06-01-2014"^^xsd:date ;
   dcat:landingPage <http://http://babelfy.org/> ;
-  dcat:keyword "ner","Sa2W" ;
+  dcat:keyword "ner","Sa2KB" ;
   dataid:licenseName "Creative Commons Attribution-Noncommercial-Share Alike 3.0" ;
   dc:license <http://creativecommons.org/licenses/by-nc-sa/3.0/rdf> ;
   dc:rights """Please cite: Andrea Moro, Alessandro Raganato and Roberto Navigli. Entity Linking meets Word Sense Disambiguation: A Unified Approach. Transactions of the Association for Computational Linguistics (TACL), 2, 2014.""";

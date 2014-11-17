@@ -18,10 +18,10 @@
   rdfs:label "AGDISTIS" ;
   dc:issued "10-19-2014"^^xsd:date ;
   dcat:landingPage <http://aksw.org/Projects/AGDISTIS.html> ;
-  dcat:keyword "ner","D2W" ;
+  dcat:keyword "ner","D2KB" ;
   dataid:licenseName "MIT license" ;
   dc:license <http://purl.org/NET/rdflicense/licMIT> ;
-  dc:rights """Please cite: Ricardo Usbeck, Axel-Cyrille Ngonga Ngomo, Sören Auer, Daniel Gerber und Andreas Both. AGDISTIS - Graph-Based Disambiguation of Named Entities using Linked Data. In Proceedings of International Semantic Web Conference (ISWC), 2014.""";
+  dc:rights """Please cite: Ricardo Usbeck, Axel-Cyrille Ngonga Ngomo, Sï¿½ren Auer, Daniel Gerber und Andreas Both. AGDISTIS - Graph-Based Disambiguation of Named Entities using Linked Data. In Proceedings of International Semantic Web Conference (ISWC), 2014.""";
   dcat:contactPoint [
     a dataid:Agent ;
     rdfs:label "Ricardo Usbeck" ;

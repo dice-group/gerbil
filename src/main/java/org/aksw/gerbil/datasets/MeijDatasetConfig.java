@@ -40,7 +40,7 @@ public class MeijDatasetConfig extends AbstractDatasetConfiguration {
     private static final String MEIJ_RANK_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.MeijDatasetConfig.rankFile";
 
     public MeijDatasetConfig() {
-        super(DATASET_NAME, true, ExperimentType.Rc2W);
+        super(DATASET_NAME, true, ExperimentType.Rc2KB);
     }
 
     @Override

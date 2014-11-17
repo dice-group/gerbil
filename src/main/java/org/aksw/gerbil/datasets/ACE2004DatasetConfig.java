@@ -42,7 +42,7 @@ public class ACE2004DatasetConfig extends AbstractDatasetConfiguration {
     private WikipediaApiInterface wikiAPI;
 
     public ACE2004DatasetConfig(WikipediaApiInterface wikiAPI) {
-        super(DATASET_NAME, true, ExperimentType.Sa2W);
+        super(DATASET_NAME, true, ExperimentType.Sa2KB);
         this.wikiAPI = wikiAPI;
     }
 
