@@ -204,13 +204,16 @@
 		        }
 		        $('#type').multiselect('dataprovider', formattedData);
 		        $('#type').multiselect('rebuild');
+		        loadMatching();
+		        loadAnnotator();
+                loadDatasets();
 	        });
         }
         function loadMatching() {
 	        $('#matching').html('');
 	        $('#annotator').html('');
 	        $.getJSON('${matchings}', {
-	            experimentType : $('#type').val() ? $('#type').val() : "D2KB",
+	            experimentType : $('#type').val() ,
 	            ajax : 'false'
 	        }, function(data) {
 		        var formattedData = [];
@@ -222,12 +225,13 @@
 		        }
 		        $('#matching').multiselect('dataprovider', formattedData);
 		        $('#matching').multiselect('rebuild');
+		       
 	        });
         }
         function loadAnnotator() {
 	        $('#annotator').html('');
 	        $.getJSON('${annotators}', {
-	            experimentType : $('#type').val() ? $('#type').val() : "D2KB",
+	            experimentType : $('#type').val() ,
 	            ajax : 'false'
 	        }, function(data) {
 		        var formattedData = [];
@@ -245,7 +249,7 @@
         function loadDatasets() {
 	        $('#dataset').html('');
 	        $.getJSON('${datasets}', {
-	            experimentType : $('#type').val() ? $('#type').val() : "D2KB",
+	            experimentType : $('#type').val() ,
 	            ajax : 'false'
 	        }, function(data) {
 		        var formattedData = [];
@@ -295,17 +299,13 @@
 	                $('#matching').multiselect();
 	                $('#annotator').multiselect();
 	                $('#dataset').multiselect();
-	                loadExperimentTypes();
-	                loadMatching();
-	                loadAnnotator();
-	                loadDatasets();
 
 	                // listeners for dropdowns 
 	                $('#type').change(loadMatching);
 	                $('#type').change(loadAnnotator);
 	                $('#type').change(loadDatasets);
-	                $('#matching').change(loadAnnotator);
-	                $('#matching').change(loadDatasets);
+
+	                loadExperimentTypes();
 
 	                //supervise configuration of experiment and let it only run
 	                //if everything is ok 
