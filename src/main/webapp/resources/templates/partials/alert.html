@@ -1,0 +1,6 @@
+<div data-ui-if="alerts">
+  <div data-ng-repeat="alert in alerts" data-ng-controller="AlertCtrl" class="alert alert-{{alert.type}}">
+    <button type="button" class="close" data-ng-click="close($index)">&times;</button>
+    {{alert.message}}
+  </div>
+</div>

@@ -1,0 +1,111 @@
+<div class="container">
+    <div data-ng-include="'resources/templates/partials/navi.html'"></div>
+</div>
+<div class="container">
+    <h3>New Experiment</h3>
+    <div class="row">
+        <div class="span2">Experiment Type</div>
+        <div class="btn-group">
+            <button class="btn btn-primary" data-ng-repeat="exptype in exptypes" data-ng-class="{active: currentType==exptype.name}" data-ng-click="setType(exptype.name)" data-ng-bind="exptype.name"></button>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span2">Matching</div>
+        <div class="btn-group">
+            <button class="btn btn-primary" data-ng-repeat="match in experiment.matching" data-ng-class="{active: currentMatch==match}" data-ng-click="setMatch(match)" data-ng-bind="match"></button>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span2">Annotators</div>
+        <data-ui-select class="span6" multiple data-ng-model="$parent.currentAnnotators" theme="select2" data-ng-disabled="disabled">
+            <data-ui-select-match placeholder="Select annotators...">{{$item}}</data-ui-select-match>
+            <data-ui-select-choices repeat="annotators in experiment.annotator.sort() | filter:$select.search">{{annotators}}</data-ui-select-choices>
+        </data-ui-select>
+    </div>
+    <br>Or add another annotator via webservice:
+    <br>
+    <div class="row">
+        <div class="span2">Webservice</div>
+        <input type="text" data-ng-model="newWebservice.name" placeholder="Name">
+        <input type="text" data-ng-model="newWebservice.url" placeholder="URL">
+        <br>
+        <div class="span2"></div>
+        <button class="btn btn-primary" data-ng-click="addWebservice()">Add annotator webservice</button>
+        <br>
+        <br>
+        <div data-ng-repeat="ws in newWebservices">
+            <div class="span2"></div>
+            <div>
+                <label class="label label-success">{{ws.name}}</label>&nbsp;{{ws.url}}&nbsp;
+                <button class="btn btn-mini btn-danger" data-ng-click="removeWebservice(ws)">&#10006;</button>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span2">Datasets</div>
+        <data-ui-select class="span6" multiple data-ng-model="$parent.currentDatasets" theme="select2" data-ng-disabled="disabled">
+            <data-ui-select-match placeholder="Select datasets...">{{$item}}</data-ui-select-match>
+            <data-ui-select-choices repeat="dataset in experiment.datasets.sort() | filter:$select.search">{{dataset}}</data-ui-select-choices>
+        </data-ui-select>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class="row">
+        <div class="span2">Or upload a dataset:</div>
+        <div class="progress" data-ng-model="percent" ng-show="percent">
+            <div style="width:{{percent}}%">{{percent}}%</div>
+        </div>
+        <br>
+        <div class="span2">Dataset</div>
+        <input type="text" name="name" data-ng-model="filedata.name" placeholder="Name">
+        <!--<input type="file" data-ng-file-select="onFileSelect($files)">
+        <input type="file" data-ng-file-select="onFileSelect($files)" multiple accept="image/*"> 
+        <div class="button" data-ng-file-select="onFileSelect($files)" data-multiple="true"></div>-->
+        <br>
+        <div class="span2"></div>
+        <div data-ng-file-drop="onFileSelect($files)" class="drop-box" data-ng-file-drag-over-class="dragOverClass($event)" data-ng-show="dropSupported">drop files here</div>
+        <div data-ng-file-drop-available="dropSupported=true" data-ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
+        <br>
+        <div class="span2"></div>
+        <button class="btn btn-primary" data-ng-click="upload.abort()">Cancel Upload</button>
+        <br>
+        <br>
+        <!--
+        <label class="btn btn-primary" for="my-file-selector">
+            <input id="my-file-selector" type="file" name="file" data-ng-model="singleFile" style="display:none;" onchange='$("#info").html($(this).val());'>
+            Choose a file ...
+        </label>
+        &nbsp;
+        <span class='label label-info' id="info"></span>
+        <br>
+        <div class="span2"></div>
+        <input type="submit" class="btn btn-primary" value="Upload" data-ng-click="onFileSelect($file)"></input>
+        -->
+        <br>
+        <div data-ng-repeat="ds in newDatasets">
+            <div class="span2"></div>
+            <div>
+                <label class="label label-success">{{ds.name}}</label>&nbsp;{{ds.url}}&nbsp;
+                <button class="btn btn-mini btn-danger" data-ng-click="removeDataset(ds)">&#10006;</button>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span2">Disclaimer</div>
+        <input class="checkbox" data-ng-model="disclaimer" type="checkbox">I have read and understand the <a href="https://github.com/AKSW/gerbil/wiki/Disclaimer">disclaimer</a>.</input>
+        <br>
+        <div class="span2"></div>
+        <button class="btn btn-primary" data-ng-click="run()" data-ng-disabled="!disclaimer || runs">Run Experiment</button>
+        <br>
+        <br>
+        <div class="span2"></div>
+        <a data-ng-show="overviewid > -1" data-ng-href="#/overview?id={{overviewid}}">
+        Find your experimental data here.
+        </a>
+    </div>
+</div>

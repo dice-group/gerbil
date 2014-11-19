@@ -1,0 +1,100 @@
+<div class="container">
+    <div data-ng-include="'resources/templates/partials/navi.html'"></div>
+</div>
+<!-- -->
+<!-- Experiment via ID -->
+<!-- -->
+<div data-ng-show="search.id">
+    <div class="container">
+        <h3>Specific Experiment Overview</h3>
+        The current view shows data of a specific experiment. To see an overview about all click <a href="#overview">here</a>.
+        <br>
+        <script type="application/ld+json">{{overviewdata.dataid}}</script>
+<!--
+        <pre>{{overviewdata.tasks}}</pre>
+        <pre>{{overviewdata.dataid}}</pre>
+-->
+        </br>
+        </br>
+        </br>
+        Type: {{overviewdata.type}}</br>
+        Matching:  {{overviewdata.matching}}</br>
+		<table id="resultTable" class="table">
+			<thead>
+				<tr>
+					<th>Annotator</th>
+					<th>Dataset</th>
+					<th>Micro F1</th>
+					<th>Micro Precision</th>
+					<th>Micro Recall</th>
+					<th>Macro F1</th>
+					<th>Macro Precision</th>
+					<th>Macro Recall</th>
+					<!-- <th>State</th> -->
+					<th>Error Count</th>
+					<th>Timestamp</th>
+				</tr>
+			</thead>
+			<tbody>
+            <tr data-ng-repeat="task in overviewdata.tasks">
+                {{task.stateMsg}}
+                <td data-ng-bind="task.annotator"></td>
+                <td data-ng-bind="task.dataset"></td>
+                <td data-ng-bind="task.microF1Measure.toFixed(4)"></td>
+                <td data-ng-bind="task.microPrecision.toFixed(4)"></td>
+                <td data-ng-bind="task.microRecall.toFixed(4)"></td>
+                <td data-ng-bind="task.macroF1Measure.toFixed(4)"></td>
+                <td data-ng-bind="task.macroPrecision.toFixed(4)"></td>
+                <td data-ng-bind="task.macroRecall.toFixed(4)"></td>
+                <td data-ng-bind="task.errorCount"></td>
+                <td data-ng-bind="task.timestampstring"></td>                
+            </tr>
+            </tbody>
+        </table>       
+    </div>
+</div>
+<!-- -->
+<!-- ALL Experiments-->
+<!-- -->
+<div data-ng-show="!search.id">
+    <div class="container">
+        <h3>Experiment Overview</h3>
+        <div class="row">
+            <div class="span2">Experiment Type</div>
+            <div class="btn-group">
+                <button class="btn btn-primary" data-ng-repeat="exptype in exptypes" data-ng-class="{active: currentType==exptype.name}" data-ng-click="setType(exptype.name)" data-ng-bind="exptype.name"></button>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="span2">Matching</div>
+            <div class="btn-group">
+                <button class="btn btn-primary" data-ng-repeat="match in experiment.matching" data-ng-class="{active: currentMatch==match}" data-ng-click="setMatch(match)" data-ng-bind="match"></button>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="span2"></div>
+            <button data-ng-disabled="!overviewdata" class="btn btn-primary" onclick="plot(JSON.parse($('#overviewdata').text()))">Show Data</button>
+        </div>
+
+        <!-- data -->
+        <!-- TODO -->
+        <div class="hide" id="overviewdata">{{overviewdata}}</div>
+
+        <!-- plot -->
+        <div id="body"><div id="chart"></div></div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <!-- table -->
+        <div class="container-fluid">
+            <table id="outputTable" class="table table-hover table-condensed">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

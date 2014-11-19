@@ -1,0 +1,28 @@
+<div class="navbar navbar-inner">
+    <div class="pull-left" style="width:77px">
+        <div class="logo-nav">
+           <a href="#/"> <img class="logo-top" src="resources/img/gerbillogo.png" alt="Gerbil logo"></a>
+        </div>
+    </div>
+    <ul class="nav">
+      <li data-ng-repeat="route in routes"
+          data-ng-class="{active: $uiRoute}"
+          data-ui-route="#/{{route.name}}.*">
+<!--
+        <a data-ng-if="route.path" data-ng-href="#/{{route.name}}/{{question._id}}">
+          {{route.label || route.name | inflector:humanize}}
+        </a>
+-->
+        <a data-ng-href="#/{{route.name}}">
+          {{route.label || route.name | inflector:humanize}}
+        </a>
+      </li>
+    </ul>
+</div>
+
+<div class="row">
+  <div class="offset3 span6">
+    <span data-ng-include="'resources/templates/partials/alert.html'"></span>
+  </div>
+</div>
+
