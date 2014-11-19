@@ -1,0 +1,77 @@
+body {
+    padding-top: 30px;
+    margin-bottom: 2em;
+}
+/* toolbar logo */
+.logo-top {
+    max-height: 40px;
+}
+input[type=file] {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    filter: alpha(opacity=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    opacity: 0;
+    background-color: transparent;
+    color: transparent;
+}
+
+
+.progress {
+	display: inline-block;
+	width: 300px;	
+	border: 1px groove #CCC;
+}
+
+.progress div {
+	font-size: smaller;
+	background: green;
+	width: 0;
+}
+
+.drop-box {
+    display: inline-block;
+	background: #F8F8F8;
+	border: 1px dashed #DDD;
+	width: 300px;
+	height: 65px; 
+	text-align: center;
+	padding-top: 35px; 
+}
+
+.drop-box.dragover {
+	border: 1px dashed green;
+}
+
+.drop-box.dragover-err {
+	border: 1px dashed red;
+}
+
+
+/* chart */
+#chart {
+    display:block;
+	vertical-align: center;
+}
+/* table*/
+table {
+	table-layout: fixed;
+}
+
+.table thead th {
+	vertical-align: middle !important;
+	width: 20px !important;
+    height:60px;
+    white-space: nowrap;
+}
+
+.rotated_cell {
+	transform: rotate(270deg);
+	-moz-transform: rotate(270deg);
+	-ms-transform: rotate(270deg);
+	-o-transform: rotate(270deg);
+	-webkit-transform: rotate(270deg);
+}
+/**/
