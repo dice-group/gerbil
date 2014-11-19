@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="fragment" content="!">
+    <title>Gerbil</title>
+    <link rel="stylesheet" href="resources/css/bootstrap/css/bootstrap.min.css">
+
+    <!-- Select2 theme 
+    <link rel="stylesheet" href="resources/css/select2.css">
+    <link rel="stylesheet" href="resources/css/selectize.default.css">-->
+    <script src="resources/lib/jquery-2.1.1.min.js"></script>
+    <!-- Select2 theme -->
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">
+
+    <!--
+    Selectize theme
+    Less versions are available at https://github.com/brianreavis/selectize.js/tree/master/dist/less
+  -->
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.default.css">
+    <!-- <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.bootstrap2.css"> -->
+    <!-- <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.8.5/css/selectize.bootstrap3.css"> -->
+    <link rel="stylesheet" href="resources/css/gerbil.css">
+</head>
+
+<body data-ng-app="gerbil">
+    <div data-ng-view></div>
+
+    <!-- dependencies  -->
+    <script src="resources/lib/underscore-min.js"></script>
+    <script src="resources/lib/spin.min.js"></script>
+    <script src="resources/lib/upload/angular-file-upload-shim.min.js"></script>
+
+    <script src="resources/lib/angular/angular.js"></script>
+    <script src="resources/lib/angular/angular-route.min.js"></script>
+    <script src="resources/lib/angular/angular-cookies.min.js"></script>
+    <script src="resources/lib/angular/angular-sanitize.js"></script>
+
+    <script src="resources/lib/angular-ui/angular-ui-0.4.0.min.js"></script>
+    <script src="resources/lib/angular-ui/ui-bootstrap-tpls-0.11.2.min.js"></script>
+    <!--<script src="resources/css/bootstrap/js/bootstrap.min.js"></script>-->
+    <script src="resources/lib/angular-ui/ui-select.js"></script>
+    <script src="resources/lib/angular-spin.js"></script>
+
+    <!-- angularFileUpload -->
+    <script src="resources/lib/upload/angular-file-upload.min.js"></script>
+
+    <!-- application -->
+    <script src="resources/js/app.js"></script>
+
+    <!-- controllers -->
+    <script src="resources/js/controllers/home.js"></script>
+    <script src="resources/js/controllers/config.js"></script>
+    <script src="resources/js/controllers/overview.js"></script>
+    <script src="resources/js/controllers/about.js"></script>
+    <script src="resources/js/controllers/navi.js"></script>
+     <script src="resources/js/controllers/alert.js"></script>
+
+    <!-- services -->
+    <script src="resources/js/services/alert.js"></script>
+
+    <!-- plot -->
+    <script src="resources/lib/plot/d3.v3.min.js"></script>
+    <script src="resources/lib/plot/gerbil.color.js"></script>
+    <script src="resources/lib/plot/RadarChart.js"></script>
+    <script src="resources/lib/plot/script_radar_overview.js"></script>
+</body>
+</html>
