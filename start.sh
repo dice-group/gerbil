@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#rm start.log
+#rm gerbil.log
+#rm -R gerbil_data/cache
+#mkdir gerbil_data/cache
+
 echo "Checking dependencies..."
 file="gerbil_data/gerbil_data.zip"
 url="http://github.com/AKSW/gerbil/releases/download/v1.0.0/gerbil_data.zip"
@@ -32,4 +37,4 @@ if [ ! -f "$file" ]; then
 	echo "##############################################################################"  >> $file
 fi
 
-mvn clean tomcat:run -Dmaven.tomcat.port=1234
+nohup mvn clean tomcat:run -Dmaven.tomcat.port=1234 > start.log &
