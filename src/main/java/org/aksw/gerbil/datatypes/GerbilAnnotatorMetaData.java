@@ -21,14 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.web.config;
+package org.aksw.gerbil.datatypes;
 
 import it.acubelab.batframework.problems.TopicSystem;
 
 import org.aksw.gerbil.annotations.GerbilAnnotator;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
-import org.aksw.gerbil.datatypes.ErrorTypes;
-import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.springframework.context.ApplicationContext;
 

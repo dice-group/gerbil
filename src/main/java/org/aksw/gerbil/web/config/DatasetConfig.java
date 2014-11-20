@@ -23,40 +23,76 @@
  */
 package org.aksw.gerbil.web.config;
 
+import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.aksw.gerbil.annotations.GerbilAnnotator;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfigs;
-import org.springframework.context.annotation.ComponentScan;
+import org.aksw.gerbil.datatypes.GerbilDatasetMetaData;
+import org.aksw.gerbil.web.config.spring.AndTypeFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.core.type.filter.AssignableTypeFilter;
 
 @Configuration
-@ComponentScan(basePackages = "org.aksw.gerbil.datasets")
 public class DatasetConfig {
 
-    // private static final Logger LOGGER =
-    // LoggerFactory.getLogger(DatasetConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatorConfig.class);
 
-    // @Bean
-    // public AdapterList<DatasetConfiguration>
-    // annotatorList(List<DatasetConfiguration> configurations) {
-    // // if (LOGGER.isInfoEnabled()) {
-    // StringBuilder builder = new StringBuilder();
-    // builder.append("Found ");
-    // builder.append(configurations.size());
-    // builder.append(" annotators [");
-    // for (int i = 0; i < configurations.size(); i++) {
-    // if (i > 0) {
-    // builder.append(", ");
-    // }
-    // builder.append(configurations.get(i).getClass().getSimpleName());
-    // }
-    // builder.append("].");
-    // LOGGER.error(builder.toString());
-    // // }
-    // return new AdapterList<DatasetConfiguration>(configurations);
-    // }
+    private static final String DATASET_PACKAGES_PROPERTY_KEY = "org.aksw.gerbil.web.config.DatasetConfig.DatasetPackages";
+
+    @SuppressWarnings("unchecked")
+    @Bean
+    public AdapterList<DatasetConfiguration> annotatorList(ApplicationContext context) throws ClassNotFoundException {
+        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AndTypeFilter(new AnnotationTypeFilter(GerbilAnnotator.class),
+                new AssignableTypeFilter(TopicDataset.class)));
+
+        List<DatasetConfiguration> configs = new ArrayList<DatasetConfiguration>();
+        String packages[] = GerbilConfiguration.getInstance().getStringArray(DATASET_PACKAGES_PROPERTY_KEY);
+        GerbilAnnotator annotation;
+        Class<?> clazz;
+        for (int i = 0; i < packages.length; i++) {
+            Set<BeanDefinition> definitions = scanner.findCandidateComponents(packages[i]);
+            for (BeanDefinition beanDefinition : definitions) {
+                clazz = this.getClass().getClassLoader().loadClass(beanDefinition.getBeanClassName());
+                annotation = clazz.getAnnotation(GerbilAnnotator.class);
+                configs.add(new GerbilDatasetMetaData(annotation, context, (Class<? extends TopicDataset>) clazz));
+            }
+        }
+
+        if (LOGGER.isInfoEnabled()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Found ");
+            builder.append(configs.size());
+            builder.append(" datasets [");
+            for (int i = 0; i < configs.size(); i++) {
+                if (i > 0) {
+                    builder.append(", ");
+                }
+                builder.append(configs.get(i).getClass().getSimpleName());
+                builder.append('(');
+                builder.append(configs.get(i).getName());
+                builder.append(')');
+            }
+            builder.append("].");
+            LOGGER.info(builder.toString());
+        }
+        return new AdapterList<DatasetConfiguration>(configs);
+    }
 
     public AdapterList<DatasetConfiguration> knownNIFFileDatasetList(WikipediaApiInterface wikiApi,
             DBPediaApi dbpediaApi) {

@@ -42,15 +42,12 @@ public class SpotlightAnnotator extends AbstractSa2WAnnotatorDecorator {
     private DBPediaApi dbpApi;
 
     public SpotlightAnnotator() {
-        System.err.println("CREATED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
     @Override
     public Sa2WSystem getAnnotator() throws GerbilException {
         Sa2WSystem annotator = super.getAnnotator();
         if (annotator == null) {
-            System.err.println(wikiApi);
-            System.err.println(dbpApi);
             annotator = new it.acubelab.batframework.systemPlugins.SpotlightAnnotator(dbpApi, wikiApi);
             setAnnotator(annotator);
         }

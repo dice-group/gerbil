@@ -21,9 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.web.config;
+package org.aksw.gerbil.datatypes;
 
-import org.aksw.gerbil.datatypes.ExperimentType;
 
 public interface GerbilAdapterMetaData {
 

@@ -33,6 +33,7 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.apache.jena.riot.Lang;
 
+@Deprecated
 public class KnownNIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
     private static final String NIF_DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.";

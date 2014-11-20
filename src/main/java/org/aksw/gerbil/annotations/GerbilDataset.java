@@ -21,49 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.datatypes;
+package org.aksw.gerbil.annotations;
 
-@Deprecated
-public abstract class AbstractAdapterConfiguration implements AdapterConfiguration {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    protected String name;
-    protected boolean couldBeCached;
-    protected ExperimentType applicableForExperiments[];
+import org.aksw.gerbil.datatypes.ExperimentType;
 
-    public AbstractAdapterConfiguration(String name, boolean couldBeCached, ExperimentType... applicableForExperiment) {
-        this.name = name;
-        this.couldBeCached = couldBeCached;
-        this.applicableForExperiments = applicableForExperiment;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+public @interface GerbilDataset {
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean couldBeCached() {
-        return couldBeCached;
-    }
-
-    @Override
-    public void setCouldBeCached(boolean couldBeCached) {
-        this.couldBeCached = couldBeCached;
-    }
-
-    @Override
-    public boolean isApplicableForExperiment(ExperimentType type) {
-        for (int i = 0; i < applicableForExperiments.length; i++) {
-            if (applicableForExperiments[i].equalsOrContainsType(type)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    public String name();
+    
+    public ExperimentType[] applicableForExperiments();
+    
+    public boolean couldBeCached();
 }
