@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
  * 
  * @author m.roeder
  * 
- *         FIXME we should use the Apache Commons Configuration for reading and managing our properties.
- * 
  */
 public class GerbilConfiguration {
 
@@ -44,6 +42,7 @@ public class GerbilConfiguration {
 
     private static final String DEFAULT_GERBIL_PROPERTIES_FILE_NAME = "gerbil.properties";
     public static final String GERBIL_DATAPATH_PROPERTY_NAME = "org.aksw.gerbil.DataPath";
+    public static final String GERBIL_VERSION_PROPERTY_NAME = "org.aksw.gerbil.Version";
 
     private static Configuration instance = null;
 
@@ -62,5 +61,9 @@ public class GerbilConfiguration {
             LOGGER.error("Couldnt load Properties from the properties file (\"" + fileName
                     + "\"). This GERBIL instance won't work as expected.", e);
         }
+    }
+
+    public static String getGerbilVersion() {
+        return getInstance().getString(GERBIL_VERSION_PROPERTY_NAME);
     }
 }

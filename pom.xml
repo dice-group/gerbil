@@ -353,6 +353,17 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <!-- Note that the properties files will be filtered. If mvn finds known place holders they will be replaced -->
+                <directory>src/main/properties</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
     <packaging>war</packaging>
 
