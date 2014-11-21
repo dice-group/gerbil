@@ -40,7 +40,7 @@ import org.springframework.core.io.Resource;
 public class RootConfig {
 
     {
-        // FIXME this is an extremly ugly workaround to be able to log the stuff coming from the BAT-Framework
+        // FIXME this is an extremely ugly workaround to be able to log the stuff coming from the BAT-Framework
         replaceSystemStreams();
     }
 

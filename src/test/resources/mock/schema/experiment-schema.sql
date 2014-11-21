@@ -13,7 +13,7 @@ macroRecall double,
 errorCount int(10),
 state int(10),
 lastChanged TIMESTAMP,
-
+version VARCHAR(20)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS Experiments (

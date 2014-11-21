@@ -63,6 +63,7 @@
 					<!-- <th>State</th> -->
 					<th>Error Count</th>
 					<th>Timestamp</th>
+					<th>GERBIL version</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -90,6 +91,7 @@
 							<td colspan="7" style="text-align:center">${task.stateMsg}</td>
 						</c:if>
 						<td>${task.timestampstring}</td>
+						<td>${task.gerbilVersion}</td>
 					</tr>
 				</c:forEach>
 			</tbody>

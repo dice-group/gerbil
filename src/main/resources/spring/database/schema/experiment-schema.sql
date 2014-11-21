@@ -13,6 +13,7 @@ macroRecall double,
 errorCount int,
 state int,
 lastChanged TIMESTAMP,
+version VARCHAR(20)
 );
 
 CREATE TABLE IF NOT EXISTS Experiments (
@@ -23,3 +24,16 @@ CREATE TABLE IF NOT EXISTS Experiments (
 
 DROP INDEX IF EXISTS ExperimentTaskConfig;
 CREATE INDEX ExperimentTaskConfig ON ExperimentTasks (matching,experimentType,annotatorName,datasetName);
+
+-- Changes from version 1.0.0 to 1.1.0
+CREATE TABLE IF NOT EXISTS ExperimentTasks_Version (
+id int PRIMARY KEY,
+version VARCHAR(20)
+);
+UPDATE ExperimentTasks SET experimentType='D2KB' WHERE experimentType='D2W';
+UPDATE ExperimentTasks SET experimentType='A2KB' WHERE experimentType='A2W';
+UPDATE ExperimentTasks SET experimentType='Sa2KB' WHERE experimentType='Sa2W';
+UPDATE ExperimentTasks SET experimentType='C2KB' WHERE experimentType='C2W';
+UPDATE ExperimentTasks SET experimentType='Sc2KB' WHERE experimentType='Sc2W';
+UPDATE ExperimentTasks SET experimentType='Rc2KB' WHERE experimentType='Rc2W';
+UPDATE ExperimentTasks SET annotatorName='Babelfy' WHERE annotatorName='BabelFy';

@@ -125,9 +125,9 @@ public interface ExperimentDAO extends Closeable {
             String matching, String experimentId);
 
     /**
-     * Creates a new experiment task with the given preferences, set to
-     * unfinished by setting its state to {@link #TASK_STARTED_BUT_NOT_FINISHED_YET} and connects it to the
-     * experiment with the given experiment id.
+     * Creates a new experiment task with the given preferences, sets its GERBIL version value using the current
+     * version, sets the task to unfinished by setting its state to {@link #TASK_STARTED_BUT_NOT_FINISHED_YET} and
+     * connects it to the experiment with the given experiment id.
      * 
      * @param annotatorName
      *            the name with which the annotator can be identified

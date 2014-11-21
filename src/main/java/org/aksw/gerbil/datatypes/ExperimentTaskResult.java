@@ -47,6 +47,9 @@ public class ExperimentTaskResult {
     public String dataset;
     public ExperimentType type;
     public Matching matching;
+    public int idInDb;
+    public String gerbilVersion;
+
     /**
      * Contains the error message if {@link #state} != {@link ExperimentDAO#TASK_FINISHED}, else this should be null.
      */
@@ -54,6 +57,16 @@ public class ExperimentTaskResult {
 
     public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
             double results[], int state, int errorCount, long timestamp) {
+        this(annotator, dataset, type, matching, results, state, errorCount, timestamp, -1, null);
+    }
+
+    public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
+            double results[], int state, int errorCount, long timestamp, int idInDb) {
+        this(annotator, dataset, type, matching, results, state, errorCount, timestamp, idInDb, null);
+    }
+
+    public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
+            double results[], int state, int errorCount, long timestamp, int idInDb, String gerbilVersion) {
         this.annotator = annotator;
         this.dataset = dataset;
         this.type = type;
@@ -62,11 +75,13 @@ public class ExperimentTaskResult {
         this.state = state;
         this.errorCount = errorCount;
         this.timestamp = timestamp;
+        this.idInDb = idInDb;
+        this.gerbilVersion = gerbilVersion;
     }
 
     public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
             double results[], int state, int errorCount) {
-        this(annotator, dataset, type, matching, results, state, errorCount, (new java.util.Date()).getTime());
+        this(annotator, dataset, type, matching, results, state, errorCount, (new java.util.Date()).getTime(), -1, null);
     }
 
     public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state, int errorCount) {
@@ -175,6 +190,14 @@ public class ExperimentTaskResult {
 
     public void setStateMsg(String stateMsg) {
         this.stateMsg = stateMsg;
+    }
+
+    public String getGerbilVersion() {
+        return gerbilVersion;
+    }
+
+    public void setGerbilVersion(String gerbilVersion) {
+        this.gerbilVersion = gerbilVersion;
     }
 
     @Override
