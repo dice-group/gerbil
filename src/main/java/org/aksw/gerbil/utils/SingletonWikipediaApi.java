@@ -23,6 +23,7 @@
  */
 package org.aksw.gerbil.utils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -41,11 +42,42 @@ public class SingletonWikipediaApi extends WikipediaApiInterface {
 
     public static synchronized SingletonWikipediaApi getInstance() {
         if (instance == null) {
-            String titleCacheFile = GerbilConfiguration.getInstance().getString(TITLE_CACHE_FILE_PROPERTY_NAME);
-            String redirectCacheFile = GerbilConfiguration.getInstance().getString(REDIRECT_CACHE_FILE_PROPERTY_NAME);
+            String titleCacheFileName = GerbilConfiguration.getInstance().getString(TITLE_CACHE_FILE_PROPERTY_NAME);
+            String redirectCacheFileName = GerbilConfiguration.getInstance().getString(
+                    REDIRECT_CACHE_FILE_PROPERTY_NAME);
             try {
+                boolean fileCheck = true;
+                File titleCacheFile = new File(titleCacheFileName);
+                if (titleCacheFile.exists() && titleCacheFile.isDirectory()) {
+                    LOGGER.error("The cache file \"" + titleCacheFile.getAbsolutePath() + "\" is a directory.");
+                    fileCheck = false;
+                }
+                File parent = titleCacheFile.getParentFile();
+                if ((parent != null) && (!parent.exists())) {
+                    if (!parent.mkdirs()) {
+                        LOGGER.error("Couldn't create folder for cache file \"" + parent.getAbsolutePath() + "\".");
+                        fileCheck = false;
+                    }
+                }
+                File redirectCacheFile = new File(titleCacheFileName);
+                if (redirectCacheFile.exists() && redirectCacheFile.isDirectory()) {
+                    LOGGER.error("The cache file \"" + redirectCacheFile.getAbsolutePath() + "\" is a directory.");
+                    fileCheck = false;
+                }
+                parent = redirectCacheFile.getParentFile();
+                if ((parent != null) && (!parent.exists())) {
+                    if (!parent.mkdirs()) {
+                        LOGGER.error("Couldn't create folder for cache file \"" + parent.getAbsolutePath() + "\".");
+                        fileCheck = false;
+                    }
+                }
+
                 try {
-                    instance = new SingletonWikipediaApi(titleCacheFile, redirectCacheFile);
+                    if (fileCheck) {
+                        instance = new SingletonWikipediaApi(titleCacheFileName, redirectCacheFileName);
+                    } else {
+                        instance = new SingletonWikipediaApi(null, null);
+                    }
                 } catch (IOException e) {
                     LOGGER.error(
                             "Got an IO Exception while trying to initialize the SingletonWikipediaApi from cache. Trying it again witout caching...",
