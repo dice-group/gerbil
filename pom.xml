@@ -341,12 +341,14 @@
                     <excludes>
                         <exclude>**/README</exclude>
                         <exclude>*.log</exclude>
+                        <exclude>*.html</exclude>
                         <exclude>start.sh</exclude>
                         <exclude>**/LICENSE</exclude>
                         <exclude>documentation/**</exclude>
                         <exclude>repository/**</exclude>
                         <exclude>gerbil_data/**</exclude>
                         <exclude>src/main/resources/**</exclude>
+                        <exclude>src/main/properties/**</exclude>
                         <exclude>src/main/webapp/**</exclude>
                         <exclude>src/test/resources/**</exclude>
                     </excludes>
