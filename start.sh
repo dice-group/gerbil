@@ -19,7 +19,7 @@ if [ ! -f "$file" ]; then
 fi
 
 echo "Checking properties files..."
-dir="src/main/resources"
+dir="src/main/properties"
 file="$dir/gerbil_keys.properties"
 
 if [ ! -f "$file" ]; then
