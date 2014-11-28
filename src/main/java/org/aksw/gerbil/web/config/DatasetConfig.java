@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.aksw.gerbil.annotations.GerbilAnnotator;
+import org.aksw.gerbil.annotations.GerbilDataset;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfigs;
@@ -56,20 +56,20 @@ public class DatasetConfig {
 
     @SuppressWarnings("unchecked")
     @Bean
-    public AdapterList<DatasetConfiguration> annotatorList(ApplicationContext context) throws ClassNotFoundException {
+    public AdapterList<DatasetConfiguration> datasetList(ApplicationContext context) throws ClassNotFoundException {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
-        scanner.addIncludeFilter(new AndTypeFilter(new AnnotationTypeFilter(GerbilAnnotator.class),
+        scanner.addIncludeFilter(new AndTypeFilter(new AnnotationTypeFilter(GerbilDataset.class),
                 new AssignableTypeFilter(TopicDataset.class)));
 
         List<DatasetConfiguration> configs = new ArrayList<DatasetConfiguration>();
         String packages[] = GerbilConfiguration.getInstance().getStringArray(DATASET_PACKAGES_PROPERTY_KEY);
-        GerbilAnnotator annotation;
+        GerbilDataset annotation;
         Class<?> clazz;
         for (int i = 0; i < packages.length; i++) {
             Set<BeanDefinition> definitions = scanner.findCandidateComponents(packages[i]);
             for (BeanDefinition beanDefinition : definitions) {
                 clazz = this.getClass().getClassLoader().loadClass(beanDefinition.getBeanClassName());
-                annotation = clazz.getAnnotation(GerbilAnnotator.class);
+                annotation = clazz.getAnnotation(GerbilDataset.class);
                 configs.add(new GerbilDatasetMetaData(annotation, context, (Class<? extends TopicDataset>) clazz));
             }
         }

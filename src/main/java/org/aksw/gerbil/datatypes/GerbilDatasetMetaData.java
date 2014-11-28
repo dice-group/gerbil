@@ -25,7 +25,7 @@ package org.aksw.gerbil.datatypes;
 
 import it.acubelab.batframework.problems.TopicDataset;
 
-import org.aksw.gerbil.annotations.GerbilAnnotator;
+import org.aksw.gerbil.annotations.GerbilDataset;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.springframework.context.ApplicationContext;
@@ -35,9 +35,9 @@ public class GerbilDatasetMetaData extends AbstractGerbilAdapterMetaData impleme
     private ApplicationContext context;
     private Class<? extends TopicDataset> datasetClass;
 
-    public GerbilDatasetMetaData(GerbilAnnotator annotatorAnnotation, ApplicationContext context,
+    public GerbilDatasetMetaData(GerbilDataset datasetAnnotation, ApplicationContext context,
             Class<? extends TopicDataset> datasetClass) {
-        super(annotatorAnnotation.name(), annotatorAnnotation.couldBeCached(), annotatorAnnotation
+        super(datasetAnnotation.name(), datasetAnnotation.couldBeCached(), datasetAnnotation
                 .applicableForExperiments());
         this.context = context;
         this.datasetClass = datasetClass;
