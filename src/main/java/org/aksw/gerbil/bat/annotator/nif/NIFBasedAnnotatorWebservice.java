@@ -151,6 +151,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
         // give the document a URI
         document.setDocumentURI(DOCUMENT_URI + documentCount);
         ++documentCount;
+        LOGGER.info("Started request for {}", document.getDocumentURI());
         // create NIF document
         String nifDocument = nifCreator.getDocumentAsNIFString(document);
         HttpEntity entity = null;
@@ -216,6 +217,7 @@ public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
                 }
             }
         }
+        LOGGER.info("Finished request for {}", document.getDocumentURI());
         return document;
     }
 }

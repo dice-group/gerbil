@@ -122,6 +122,7 @@ public class ExperimentTaskExecuter implements Runnable {
 
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, result);
+            LOGGER.info("Task Finished " + configuration.toString());
         } catch (GerbilException e) {
             LOGGER.error("Got an error while running the task. Storing the error code in the db...", e);
             // store error
