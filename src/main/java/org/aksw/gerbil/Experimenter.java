@@ -28,6 +28,7 @@ import it.acubelab.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.execute.ExperimentTaskExecuter;
+import org.aksw.gerbil.execute.SimpleThreadObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +71,10 @@ public class Experimenter implements Runnable {
                             wikiAPI);
                     Thread t = new Thread(executer);
                     t.start();
+                    if (SimpleThreadObserver.canObserveThread()) {
+                        t = new Thread(new SimpleThreadObserver(t));
+                        t.start();
+                    }
                 }
             }
             LOGGER.info("Experimenter finished the creation of tasks for experiment \"" + experimentId + "\"");
