@@ -125,11 +125,10 @@ public class BabelfyAnnotator implements A2WSystem {
         if (text.length() > BABELFY_MAX_TEXT_LENGTH) {
             return solveA2WForLongTexts(text);
         }
-        Babelfy bfy = Babelfy.getInstance(AccessType.ONLINE);
         HashSet<Annotation> annotations = Sets.newHashSet();
         // lastTime = Calendar.getInstance().getTimeInMillis();
         try {
-            it.uniroma1.lcl.babelfy.data.Annotation babelAnnotations = bfy.babelfy(key, text,
+            it.uniroma1.lcl.babelfy.data.Annotation babelAnnotations = requestAnnotations(key, text,
                     isShortDocument ? Matching.PARTIAL : Matching.EXACT, Language.EN);
             int positionInText = 0, posSurfaceFormInText = 0;
             String surfaceForm;
@@ -162,6 +161,12 @@ public class BabelfyAnnotator implements A2WSystem {
         }
         // lastTime = Calendar.getInstance().getTimeInMillis() - lastTime;
         return annotations;
+    }
+
+    protected static synchronized it.uniroma1.lcl.babelfy.data.Annotation requestAnnotations(String key, String text,
+            Matching matching, Language lang) throws IOException, URISyntaxException, BabelfyKeyNotValidOrLimitReached {
+        Babelfy bfy = Babelfy.getInstance(AccessType.ONLINE);
+        return bfy.babelfy(key, text, matching, lang);
     }
 
     protected HashSet<Annotation> solveA2WForLongTexts(String text) {

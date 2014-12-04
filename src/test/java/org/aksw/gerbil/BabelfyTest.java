@@ -30,8 +30,8 @@ import java.io.IOException;
 
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
-import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
-import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
+import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
+import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig.AIDACoNLLChunk;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
@@ -43,11 +43,20 @@ public class BabelfyTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
-        ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()), new KnownNIFFileDatasetConfig(
-                        SingletonWikipediaApi.getInstance(),
-                        NIFDatasets.N3_REUTERS_128), ExperimentType.D2KB,
-                Matching.STRONG_ANNOTATION_MATCH) };
+        // ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
+        // ExperimentTaskConfiguration(
+        // new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()), new KnownNIFFileDatasetConfig(
+        // SingletonWikipediaApi.getInstance(),
+        // NIFDatasets.N3_REUTERS_128), ExperimentType.D2KB,
+        // Matching.STRONG_ANNOTATION_MATCH) };
+        ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
+                new ExperimentTaskConfiguration(
+                        new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()), new AIDACoNLLDatasetConfig(
+                                AIDACoNLLChunk.TEST_A, SingletonWikipediaApi.getInstance()), ExperimentType.A2KB,
+                        Matching.WEAK_ANNOTATION_MATCH), new ExperimentTaskConfiguration(
+                        new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()), new AIDACoNLLDatasetConfig(
+                                AIDACoNLLChunk.TEST_B, SingletonWikipediaApi.getInstance()), ExperimentType.A2KB,
+                        Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "BABELFY_TEST");
         experimenter.run();
