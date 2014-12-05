@@ -6,7 +6,8 @@
 	href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet"
 	href="/gerbil/webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
-<link rel="icon" type="image/png" href="/gerbil/webResources/gerbilicon.png">
+<link rel="icon" type="image/png"
+	href="/gerbil/webResources/gerbilicon.png">
 <style type="text/css">
 /* making the buttons wide enough and right-aligned */
 .btn-group>.btn {
@@ -47,7 +48,7 @@
 /* Fixes for IE < 8 */
 @media screen\9  {
 	.fileinput-button input {
-		filter: alpha(opacity =                   0);
+		filter: alpha(opacity =                           0);
 		font-size: 100%;
 		height: 100%;
 	}
@@ -62,6 +63,7 @@
 	<c:url var="exptypes" value="/exptypes" />
 	<c:url var="datasets" value="/datasets" />
 	<c:url var="execute" value="/execute" />
+	<c:url var="testNifWs" value="/testNifWs" />
 
 	<script src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
 	<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -126,6 +128,17 @@
 							role="alert">
 							<button type="button" class="close" data-dismiss="alert"></button>
 							<strong>Warning!</strong> Enter a name and an URI.
+						</div>
+						<div id="infoAnnotatorTest" class="alert alert-info" role="alert">
+							<button type="button" class="close" data-dismiss="alert"></button>
+							<strong>Please wait</strong> while the communication with your
+							annotator is tested...
+						</div>
+						<div id="dangerAnnotatorTestError" class="alert alert-danger"
+							role="alert">
+							<button type="button" class="close" data-dismiss="alert"></button>
+							<strong>Warning!</strong> There was an error while testing the
+							annotator.<br> <span id="annotatorTestErrorMsg"></span>
 						</div>
 						<input type="button" id="addAnnotator"
 							class="btn btn-primary pull-right" value="Add another annotator"
@@ -207,14 +220,14 @@
 		        $('#type').multiselect('rebuild');
 		        loadMatching();
 		        loadAnnotator();
-                loadDatasets();
+		        loadDatasets();
 	        });
         }
         function loadMatching() {
 	        $('#matching').html('');
 	        $('#annotator').html('');
 	        $.getJSON('${matchings}', {
-	            experimentType : $('#type').val() ,
+	            experimentType : $('#type').val(),
 	            ajax : 'false'
 	        }, function(data) {
 		        var formattedData = [];
@@ -226,13 +239,13 @@
 		        }
 		        $('#matching').multiselect('dataprovider', formattedData);
 		        $('#matching').multiselect('rebuild');
-		       
+
 	        });
         }
         function loadAnnotator() {
 	        $('#annotator').html('');
 	        $.getJSON('${annotators}', {
-	            experimentType : $('#type').val() ,
+	            experimentType : $('#type').val(),
 	            ajax : 'false'
 	        }, function(data) {
 		        var formattedData = [];
@@ -250,7 +263,7 @@
         function loadDatasets() {
 	        $('#dataset').html('');
 	        $.getJSON('${datasets}', {
-	            experimentType : $('#type').val() ,
+	            experimentType : $('#type').val(),
 	            ajax : 'false'
 	        }, function(data) {
 		        var formattedData = [];
@@ -292,6 +305,46 @@
 		        $('#submit').attr("disabled", true);
 	        }
         }
+        function defineNIFAnnotator() {
+	        // hide all message that might be outdated
+	        $('#warningEmptyAnnotator').hide();
+	        $('#infoAnnotatorTest').hide();
+	        $('#dangerAnnotatorTestError').hide();
+
+	        var name = $('#nameAnnotator').val();
+	        var uri = $('#URIAnnotator').val();
+	        // check that URL and name are set
+	        if (name === '' || uri === '') {
+		        $('#warningEmptyAnnotator').show();
+	        } else {
+		        $('#infoAnnotatorTest').show();
+		        $.getJSON('${testNifWs}', {
+		            experimentType : $('#type').val(),
+		            url : uri
+		        }, function(data) {
+			        $('#infoAnnotatorTest').hide();
+			        if (data.testOk === true) {
+				        $('#annotatorList').append(
+				                "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
+				                        + name + "(" + uri + ")</span></li>");
+				        var listItems = $('#annotatorList > li > span');
+				        for ( var i = 0; i < listItems.length; i++) {
+					        listItems[i].onclick = function() {
+						        this.parentNode.parentNode.removeChild(this.parentNode);
+						        checkExperimentConfiguration();
+					        };
+				        }
+				        $('#nameAnnotator').val('');
+				        $('#URIAnnotator').val('');
+			        } else {
+				        $('span#annotatorTestErrorMsg').text(data.errorMsg);
+				        $('#dangerAnnotatorTestError').show();
+			        }
+		        });
+	        }
+	        //check showing run button if something is changed in dropdown menu
+	        checkExperimentConfiguration();
+        }
 
         $(document).ready(
                 function() {
@@ -325,30 +378,9 @@
 
 	                //if add button is clicked check whether there is a name and a uri 
 	                $('#warningEmptyAnnotator').hide();
-	                $('#addAnnotator').click(
-	                        function() {
-		                        var name = $('#nameAnnotator').val();
-		                        var uri = $('#URIAnnotator').val();
-		                        if (name === '' || uri === '') {
-			                        $('#warningEmptyAnnotator').show();
-		                        } else {
-			                        $('#warningEmptyAnnotator').hide();
-			                        $('#annotatorList').append(
-			                                "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
-			                                        + name + "(" + uri + ")</span></li>");
-			                        var listItems = $('#annotatorList > li > span');
-			                        for ( var i = 0; i < listItems.length; i++) {
-				                        listItems[i].onclick = function() {
-					                        this.parentNode.parentNode.removeChild(this.parentNode);
-					                        checkExperimentConfiguration();
-				                        };
-			                        }
-			                        $('#nameAnnotator').val('');
-			                        $('#URIAnnotator').val('');
-		                        }
-		                        //check showing run button if something is changed in dropdown menu
-		                        checkExperimentConfiguration();
-	                        });
+	                $('#infoAnnotatorTest').hide();
+	                $('#dangerAnnotatorTestError').hide();
+	                $('#addAnnotator').click(defineNIFAnnotator);
 	                //if add button is clicked check whether there is a name and a uri 
 	                $('#warningEmptyDataset').hide();
 	                $('#fileupload').click(function() {
@@ -409,7 +441,7 @@
 		                        });
 	                        });
                 });
-        
+
         // define file upload
         $(function() {
 	        'use strict';

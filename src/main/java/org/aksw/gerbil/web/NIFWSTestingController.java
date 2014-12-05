@@ -14,14 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * This controller tests the connectivity of a NIF based web service with the given URL.
+ * 
+ * @author Michael Röder
+ * 
+ */
 @Controller
 public class NIFWSTestingController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NIFWSTestingController.class);
 
-    private static final String RETURN_STATUS_NAME = "test_ok";
-    // private static final String RETURN_STATUS_VALUE_OK = "ok";
-    // private static final String RETURN_STATUS_VALUE_ERROR = "error";
+    private static final String RETURN_STATUS_NAME = "testOk";
     private static final String RETURN_ERROR_MSG_NAME = "errorMsg";
     private static final String NIF_WS_TEST_TEXT = "This simple text is for texting the communication between the given web service and the GERBIL web service.";
 
