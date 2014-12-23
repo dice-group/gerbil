@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
@@ -49,9 +50,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.xml.sax.SAXException;
 
-/**
- * ...
- * 
+/** 
  * @author Giuseppe Rizzo <giuse.rizzo@gmail.com>
  */
 public class Microposts2014Dataset implements A2WDataset {
@@ -68,18 +67,17 @@ public class Microposts2014Dataset implements A2WDataset {
             ParserConfigurationException,
             SAXException
     {
-        List<HashSet<Microposts2014Annotation>> mAnns = new Vector<HashSet<Microposts2014Annotation>>();
+        List<List<Microposts2014Annotation>> mAnns = new ArrayList<List<Microposts2014Annotation>>();
         List<String> titlesToPrefetch = new Vector<String>();
         BufferedReader r = new BufferedReader(
                 new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8")));
         String line;
 
-        HashSet<Microposts2014Annotation> currentAnns = null;
+        List<Microposts2014Annotation> currentAnns = null;
         String currentTitle = null;
         while ((line = r.readLine()) != null)
         {
-            int currentPos = 1;
-            currentAnns = new HashSet<Microposts2014Annotation>();
+            currentAnns = new ArrayList<Microposts2014Annotation>();
             mAnns.add(currentAnns);
 
             Matcher mRecord = recordPattern.matcher(line);
@@ -91,24 +89,33 @@ public class Microposts2014Dataset implements A2WDataset {
                 if (mTweet.matches())
                 {
                     // current tweet
-                    tweets.add(new MutableString(mTweet.group(1)));
+                	String tweet = mTweet.group(1);
+                    tweets.add(new MutableString(tweet));
 
                     String pairs = mRecord.group(4);
                     if (pairs != null && !pairs.equals(""))
                     {
                         String[] tAnn = pairs.split("\t");
-                        for (int i = 0; i < tAnn.length; i = i + 2) {
+                        for (int i = 0; i < tAnn.length; i = i + 2) 
+                        {                       	
                             // fetch the DBpedia name
-                            // TODO: naive assumption that all DBpedia resources have a corresponding Wikipedia ones
+                            // TODO: naive assumption that all DBpedia resources have the corresponding Wikipedia ones
                             // better to be verified
-                            System.out.println(mRecord.group(1));
-                            Matcher m = dbpediaUrlPattern.matcher(tAnn[i + 1]);
-                            if (m.matches()) {
-                                currentTitle = m.group(1);
+                            Matcher mDBpedia = dbpediaUrlPattern.matcher(tAnn[i + 1]);
+                            if (mDBpedia.matches()) 
+                            {
+                            	String mention = tAnn[i];
+                            	
+                                int offset = indexMentionAlreadySpotted(mention, currentAnns);
+                                int currentPos = tweet.indexOf(mention, offset);
+                                
+                            	currentTitle = mDBpedia.group(1);
                                 currentTitle = URLDecoder.decode(currentTitle, "utf-8");
-                                currentAnns.add(new Microposts2014Annotation(currentPos, currentTitle));
+                                currentAnns.add(new Microposts2014Annotation(mention,currentPos, mention.length(), currentTitle));
+                               
+                            	System.out.println(mention + " " + currentPos + " " + mention.length() + " " + currentTitle); 
+                            	
                                 titlesToPrefetch.add(currentTitle);
-                                currentPos++;
                             }
 
                         }
@@ -129,14 +136,14 @@ public class Microposts2014Dataset implements A2WDataset {
         wikiApi.prefetchTitles(titlesToPrefetch);
 
         /** Create annotation list */
-        for (HashSet<Microposts2014Annotation> s : mAnns) {
+        for (List<Microposts2014Annotation> s : mAnns) {
             HashSet<Annotation> sA = new HashSet<Annotation>();
             for (Microposts2014Annotation aA : s) {
                 int wid = wikiApi.getIdByTitle(aA.title);
                 if (wid == -1)
                     System.out.println("ERROR: Dataset is malformed: Wikipedia API could not find page " + aA.title);
                 else
-                    sA.add(new Annotation(aA.position, aA.title.length(), wid));
+                    sA.add(new Annotation(aA.position, aA.length, wid));
             }
             HashSet<Annotation> sANonOverlapping = Annotation.deleteOverlappingAnnotations(sA);
             annotations.add(sANonOverlapping);
@@ -191,14 +198,27 @@ public class Microposts2014Dataset implements A2WDataset {
         return "Microposts2014";
     }
 
-    private class Microposts2014Annotation {
-        public Microposts2014Annotation(int position, String title) {
+    private int indexMentionAlreadySpotted(String mention, List<Microposts2014Annotation> currentAnns)
+    {
+    	int result = 0;
+    	for (Microposts2014Annotation a : currentAnns) {
+    		if(a.mention.equals(mention))
+    			result = a.position + mention.length(); //if many, then we get the last
+    	}
+    	return result;
+	}
+    
+	private class Microposts2014Annotation {
+        public Microposts2014Annotation(String mention, int position, int length, String title) {
+        	this.mention = mention;
             this.position = position;
             this.title = title;
+            this.length = length;
         }
-
+        
+        public String mention;
         public String title;
         public int position;
+        public int length;
     }
-
 }
