@@ -147,7 +147,6 @@ public class Microposts2014Dataset implements A2WDataset {
             }
             HashSet<Annotation> sANonOverlapping = Annotation.deleteOverlappingAnnotations(sA);
             annotations.add(sANonOverlapping);
-
         }
     }
 
