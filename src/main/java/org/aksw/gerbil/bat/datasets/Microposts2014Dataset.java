@@ -30,6 +30,7 @@ import it.acubelab.batframework.problems.A2WDataset;
 import it.acubelab.batframework.utils.AnnotationException;
 import it.acubelab.batframework.utils.ProblemReduction;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.lang.MutableString;
 
 import java.io.BufferedReader;
@@ -48,12 +49,16 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-/** 
+/**
  * @author Giuseppe Rizzo <giuse.rizzo@gmail.com>
  */
 public class Microposts2014Dataset implements A2WDataset {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Microposts2014Dataset.class);
 
     private List<HashSet<Annotation>> annotations = new Vector<HashSet<Annotation>>();
     private List<MutableString> tweets = new Vector<MutableString>();
@@ -89,33 +94,52 @@ public class Microposts2014Dataset implements A2WDataset {
                 if (mTweet.matches())
                 {
                     // current tweet
-                	String tweet = mTweet.group(1);
+                    String tweet = mTweet.group(1);
                     tweets.add(new MutableString(tweet));
 
                     String pairs = mRecord.group(4);
                     if (pairs != null && !pairs.equals(""))
                     {
                         String[] tAnn = pairs.split("\t");
-                        for (int i = 0; i < tAnn.length; i = i + 2) 
-                        {                       	
+                        for (int i = 0; i < tAnn.length; i = i + 2)
+                        {
                             // fetch the DBpedia name
                             // TODO: naive assumption that all DBpedia resources have the corresponding Wikipedia ones
                             // better to be verified
                             Matcher mDBpedia = dbpediaUrlPattern.matcher(tAnn[i + 1]);
-                            if (mDBpedia.matches()) 
+                            if (mDBpedia.matches())
                             {
-                            	String mention = tAnn[i];
-                            	
+                                String mention = tAnn[i];
+
+                                // Let's start getting the title
+                                currentTitle = mDBpedia.group(1);
+                                currentTitle = URLDecoder.decode(currentTitle, "utf-8");
+
+                                // Try to create a Microposts2014Annotation object by searching the mention inside the
+                                // tweet
+                                Microposts2014Annotation annotation = null;
                                 int offset = indexMentionAlreadySpotted(mention, currentAnns);
                                 int currentPos = tweet.indexOf(mention, offset);
-                                
-                            	currentTitle = mDBpedia.group(1);
-                                currentTitle = URLDecoder.decode(currentTitle, "utf-8");
-                                currentAnns.add(new Microposts2014Annotation(mention,currentPos, mention.length(), currentTitle));
-                               
-                            	System.out.println(mention + " " + currentPos + " " + mention.length() + " " + currentTitle); 
-                            	
-                                titlesToPrefetch.add(currentTitle);
+                                if (currentPos >= 0) {
+                                    annotation = new Microposts2014Annotation(mention, currentPos, mention.length(),
+                                            currentTitle);
+                                }
+                                if (annotation == null) {
+                                    // Micha: In some cases the mention is not exactly the same as the part of the text.
+                                    // For now, we only can try to remove hash tags and search again.
+                                    annotation = findMentionInsideTweetIgnoringHashes(tweet, mention, offset,
+                                            currentTitle);
+                                }
+                                if (annotation == null) {
+                                    LOGGER.error(
+                                            "Couldn't find mention=\"{}\" inside the tweet=\"{}\" (should be there after the offset {}). Ignoring this mention.",
+                                            mention, tweet, offset);
+                                } else {
+                                    currentAnns.add(annotation);
+                                    // System.out.println(mention + " " + currentPos + " " + mention.length() + " "
+                                    // + currentTitle);
+                                    titlesToPrefetch.add(currentTitle);
+                                }
                             }
 
                         }
@@ -141,13 +165,68 @@ public class Microposts2014Dataset implements A2WDataset {
             for (Microposts2014Annotation aA : s) {
                 int wid = wikiApi.getIdByTitle(aA.title);
                 if (wid == -1)
-                    System.out.println("ERROR: Dataset is malformed: Wikipedia API could not find page " + aA.title);
+                    LOGGER.warn("Dataset is malformed: Wikipedia API could not find page " + aA.title);
                 else
                     sA.add(new Annotation(aA.position, aA.length, wid));
             }
             HashSet<Annotation> sANonOverlapping = Annotation.deleteOverlappingAnnotations(sA);
             annotations.add(sANonOverlapping);
         }
+    }
+
+    /**
+     * A very simple workaround to search for a mention without hashes. Note that this only works, if the mention
+     * couldn't be found because the tweets contains hash tags that should be part of the mentions.
+     * 
+     * @param tweet
+     *            the tweet
+     * @param mention
+     *            the mention that couldn't be found directly inside the tweet
+     * @param offset
+     *            the position from which the search should start
+     * @param wikiTitle
+     *            the title of the entity inside the Wikipedia
+     * 
+     * @return
+     */
+    protected static Microposts2014Annotation findMentionInsideTweetIgnoringHashes(String tweet, String mention,
+            int offset, String wikiTitle) {
+        IntArrayList hashes = new IntArrayList();
+        int pos = tweet.indexOf('#');
+        while (pos >= 0) {
+            hashes.add(pos);
+            pos = tweet.indexOf('#', pos + 1);
+        }
+        // There are no hashes --> the problem of finding the mention can't be solved by removing the hashes
+        if (hashes.size() == 0) {
+            return null;
+        }
+        // The offset might have been moved through the removing of the hashes.
+        int newOffset = 0;
+        for (int i = 0; (i < hashes.size() && (hashes.get(i) < newOffset)); ++i) {
+            --newOffset;
+        }
+        String newTweet = tweet.replaceAll("#", "");
+        pos = newTweet.indexOf(mention, newOffset);
+        // if the mention couldn't be found
+        if (pos < 0) {
+            return null;
+        }
+        // find the start and end positions of the mention inside the original tweet by looking at the list of hashes
+        int startPos = pos;
+        int endPos = pos + mention.length();
+        for (int i = 0; i < hashes.size(); ++i) {
+            if (hashes.get(i) < endPos) {
+                ++endPos;
+                if (hashes.get(i) < startPos) {
+                    ++startPos;
+                }
+            }
+        }
+        String newMention = new String(tweet.substring(startPos, endPos));
+        LOGGER.debug("Couldn't find \"{}\" but found \"{}\" instead.", mention, newMention);
+        return new Microposts2014Annotation(newMention, startPos, newMention.length(),
+                wikiTitle);
     }
 
     @Override
@@ -199,22 +278,22 @@ public class Microposts2014Dataset implements A2WDataset {
 
     private int indexMentionAlreadySpotted(String mention, List<Microposts2014Annotation> currentAnns)
     {
-    	int result = 0;
-    	for (Microposts2014Annotation a : currentAnns) {
-    		if(a.mention.equals(mention))
-    			result = a.position + mention.length(); //if many, then we get the last
-    	}
-    	return result;
-	}
-    
-	private class Microposts2014Annotation {
+        int result = 0;
+        for (Microposts2014Annotation a : currentAnns) {
+            if (a.mention.equals(mention))
+                result = a.position + mention.length(); // if many, then we get the last
+        }
+        return result;
+    }
+
+    protected static class Microposts2014Annotation {
         public Microposts2014Annotation(String mention, int position, int length, String title) {
-        	this.mention = mention;
+            this.mention = mention;
             this.position = position;
             this.title = title;
             this.length = length;
         }
-        
+
         public String mention;
         public String title;
         public int position;

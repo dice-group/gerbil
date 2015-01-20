@@ -36,30 +36,30 @@ import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.junit.Ignore;
 
 /**
- * ...
- *
+ * Class for testing the microposts dataset.
+ * 
  * @author Giuseppe Rizzo <giuse.rizzo@gmail.com>
  */
 @Ignore
 public class Microposts2014Test {
 
-	public static void main(String[] args) {
-		
-		WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
-        ExperimentTaskConfiguration taskConfigs[] = 
-        		new ExperimentTaskConfiguration[] 
-        				{ 
-        					new ExperimentTaskConfiguration(
-        								new NERDAnnotatorConfig(wikiAPI), 
-        								new Microposts2014Config(Microposts2014Chunk.TRAIN, SingletonWikipediaApi.getInstance()), 
-        								ExperimentType.D2KB,
-        								Matching.STRONG_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI, 
-        											 new SimpleLoggingDAO4Debugging(), 
-        											 taskConfigs,
-        										     "NERD_TEST");
+    public static void main(String[] args) {
+
+        WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
+        ExperimentTaskConfiguration taskConfigs[] =
+                new ExperimentTaskConfiguration[]
+                {
+                        new ExperimentTaskConfiguration(
+                                new NERDAnnotatorConfig(wikiAPI),
+                                new Microposts2014Config(Microposts2014Chunk.TRAIN, SingletonWikipediaApi.getInstance()),
+                                ExperimentType.D2KB,
+                                Matching.STRONG_ANNOTATION_MATCH) };
+        Experimenter experimenter = new Experimenter(wikiAPI,
+                new SimpleLoggingDAO4Debugging(),
+                taskConfigs,
+                "MICROPOSTS_TEST");
         experimenter.run();
 
-	}
+    }
 
 }

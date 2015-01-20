@@ -33,29 +33,29 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 /**
- * ...
- *
+ * Configuration class that is able to load the Micropost2014 datasets (train and test).
+ * The datasets are distinguished using the {@link Microposts2014Chunk} enum.
+ * 
  * @author Giuseppe Rizzo <giuse.rizzo@gmail.com>
  */
 public class Microposts2014Config extends AbstractDatasetConfiguration {
 
-    public static final String DATASET_NAME_START = "Microposts2014";   
+    public static final String DATASET_NAME_START = "Microposts2014";
     private static final String DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.Microposts2014DatasetConfig";
-    
+
     private Microposts2014Chunk chunk;
     private WikipediaApiInterface wikiApi;
 
     public static enum Microposts2014Chunk {
         TRAIN, TEST
     }
-    
-	public Microposts2014Config(	
-									Microposts2014Chunk chunk, 
-									WikipediaApiInterface wikiApi
-						 	    ) 
-	{
-	    super(DATASET_NAME_START, true, ExperimentType.Sa2KB);
-	    this.chunk = chunk;
+
+    public Microposts2014Config(
+            Microposts2014Chunk chunk,
+            WikipediaApiInterface wikiApi)
+    {
+        super(DATASET_NAME_START, true, ExperimentType.Sa2KB);
+        this.chunk = chunk;
         this.wikiApi = wikiApi;
         // Set the correct name
         switch (chunk) {
@@ -68,27 +68,27 @@ public class Microposts2014Config extends AbstractDatasetConfiguration {
             break;
         }
         }
-	}
+    }
 
-	@Override
-	protected TopicDataset loadDataset() throws Exception {
+    @Override
+    protected TopicDataset loadDataset() throws Exception {
         switch (chunk) {
         case TRAIN: {
-    		String file = GerbilConfiguration.getInstance().getString(DATASET_FILE_PROPERTY_NAME.concat(".Train"));
+            String file = GerbilConfiguration.getInstance().getString(DATASET_FILE_PROPERTY_NAME.concat(".Train"));
             if (file == null) {
                 throw new IOException("Couldn't load needed Property \"" + DATASET_FILE_PROPERTY_NAME + "\".");
             }
             return new Microposts2014Dataset(file, wikiApi);
         }
         case TEST: {
-        	String file = GerbilConfiguration.getInstance().getString(DATASET_FILE_PROPERTY_NAME.concat(".Test"));
+            String file = GerbilConfiguration.getInstance().getString(DATASET_FILE_PROPERTY_NAME.concat(".Test"));
             if (file == null) {
                 throw new IOException("Couldn't load needed Property \"" + DATASET_FILE_PROPERTY_NAME + "\".");
-            }        	
+            }
             return new Microposts2014Dataset(file, wikiApi);
         }
         }
         return null;
-	}
+    }
 
 }
