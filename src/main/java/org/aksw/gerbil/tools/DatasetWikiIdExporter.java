@@ -29,12 +29,11 @@ import it.acubelab.batframework.problems.C2WDataset;
 import it.acubelab.batframework.problems.D2WDataset;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -45,90 +44,77 @@ import org.apache.commons.io.IOUtils;
 
 public class DatasetWikiIdExporter {
 
-    private static final boolean PRINT_DATASET_URIS = true;
+    private static final String EXPORT_FOLDER_NAME = "export";
 
     public static void main(String[] args) {
         List<DatasetConfiguration> datasetConfigs = DatasetMapping.getDatasetConfigurations();
+        File exportFolder = new File(EXPORT_FOLDER_NAME);
+        if (!exportFolder.exists()) {
+            exportFolder.mkdirs();
+        }
         PrintStream output = null;
-        try {
-            output = new PrintStream("datasetAnalyzation.log");
-            DatasetWikiIdExporter analyzer = new DatasetWikiIdExporter(output);
-            for (DatasetConfiguration config : datasetConfigs) {
-                try {
-                    analyzer.analyzeDataset(config, PRINT_DATASET_URIS);
-                    SingletonWikipediaApi.getInstance().flush();
-                } catch (GerbilException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        DatasetWikiIdExporter analyzer = new DatasetWikiIdExporter();
+        for (DatasetConfiguration config : datasetConfigs) {
+            try {
+                output = new PrintStream(exportFolder.getAbsolutePath() + File.separator
+                        + config.getName().replaceAll("[/:]", "_") + "_wikiIds.txt");
+                analyzer.analyzeDataset(config, output);
+                SingletonWikipediaApi.getInstance().flush();
+            } catch (GerbilException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                IOUtils.closeQuietly(output);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            IOUtils.closeQuietly(output);
         }
     }
 
-    private PrintStream output;
-
-    public DatasetWikiIdExporter(PrintStream output) {
-        this.output = output;
+    public DatasetWikiIdExporter() {
     }
 
-    public void analyzeDataset(DatasetConfiguration config, boolean printDatasetUris) throws GerbilException {
-        analyzeAsD2W(config, printDatasetUris);
-        analyzeAsC2W(config, printDatasetUris);
+    public void analyzeDataset(DatasetConfiguration config, PrintStream output) throws GerbilException {
+        IntOpenHashSet ids = analyzeAsD2W(config);
+        if (ids == null) {
+            ids = analyzeAsC2W(config);
+        }
+        printIds(ids, output);
     }
 
-    private void analyzeAsC2W(DatasetConfiguration config, boolean printDatasetUris) throws GerbilException {
+    private IntOpenHashSet analyzeAsC2W(DatasetConfiguration config) throws GerbilException {
         D2WDataset dataset = (D2WDataset) config.getDataset(ExperimentType.D2KB);
         if (dataset == null) {
-            return;
+            return null;
         }
-        output.print("D2W dataset: " + config.getName());
-        output.print(" size=" + dataset.getSize());
         List<HashSet<Annotation>> goldStandard = dataset.getD2WGoldStandardList();
-        double averageAnnotation = 0;
-        IntOpenHashSet ids = null;
-        if (printDatasetUris) {
-            ids = new IntOpenHashSet();
-        }
+        IntOpenHashSet ids = new IntOpenHashSet();
         for (HashSet<Annotation> annotations : goldStandard) {
-            averageAnnotation += annotations.size();
-            if (printDatasetUris) {
-                for (Annotation annotation : annotations) {
-                    ids.add(annotation.getConcept());
-                }
+            for (Annotation annotation : annotations) {
+                ids.add(annotation.getConcept());
             }
         }
-        output.println(" Annotations=" + averageAnnotation);
-        output.println(" avg.Annotations=" + (averageAnnotation / dataset.getSize()));
-        // if (printDatasetUris) {
-        // PrintStream idsOut = new PrintStream();
-        // for (Annotation annotation : annotations) {
-        // ids.add(annotation.getConcept());
-        // }
-        // }
+        return ids;
     }
 
-    private void analyzeAsD2W(DatasetConfiguration config, boolean printDatasetUris) throws GerbilException {
+    private IntOpenHashSet analyzeAsD2W(DatasetConfiguration config) throws GerbilException {
         C2WDataset dataset = (C2WDataset) config.getDataset(ExperimentType.C2KB);
         if (dataset == null) {
-            return;
+            return null;
         }
-        output.print("C2W dataset: " + config.toString());
-        output.print(" size=" + dataset.getSize());
         List<HashSet<Tag>> goldStandard = dataset.getC2WGoldStandardList();
-        double averageAnnotation = 0;
-        Set<String> uris = null;
-        if (printDatasetUris) {
-            uris = new HashSet<String>();
+        IntOpenHashSet ids = new IntOpenHashSet();
+        for (HashSet<Tag> tags : goldStandard) {
+            for (Tag tag : tags) {
+                ids.add(tag.getConcept());
+            }
         }
-        for (HashSet<Tag> annotations : goldStandard) {
-            averageAnnotation += annotations.size();
+        return ids;
+    }
+
+    private void printIds(IntOpenHashSet ids, PrintStream output) {
+        int idArray[] = ids.toArray(new int[ids.size()]);
+        for (int i = 0; i < idArray.length; ++i) {
+            output.println(idArray[i]);
         }
-        output.println(" Tags=" + averageAnnotation);
-        output.println(" avg.Tags=" + (averageAnnotation / dataset.getSize()));
     }
 }
