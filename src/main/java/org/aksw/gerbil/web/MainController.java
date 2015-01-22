@@ -28,10 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -118,62 +115,64 @@ public class MainController {
         return model;
     }
 
-    @RequestMapping("/experimentoverview")
-    public @ResponseBody
-    String experimentoverview(@RequestParam(value = "experimentType") String experimentType,
-            @RequestParam(value = "matching") String matchingString) {
-        LOGGER.debug("Got request on /experimentoverview(experimentType={}, matching={}", experimentType,
-                matchingString);
-        Matching matching = getMatching(matchingString);
-        ExperimentType eType = ExperimentType.valueOf(experimentType);
-        Set<String> annotators = AnnotatorMapping.getAnnotatorsForExperimentType(eType);
-        Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(eType);
-        String results[][] = new String[annotators.size() + 1][datasets.size() + 1];
-        results[0][0] = "Micro F1-measure";
-        Map<String, Integer> annotator2Index = new HashMap<String, Integer>();
-        int count = 1;
-        for (String annotator : annotators) {
-            annotator2Index.put(annotator, count);
-            results[count][0] = annotator;
-            ++count;
-        }
-        Map<String, Integer> dataset2Index = new HashMap<String, Integer>();
-        count = 1;
-        for (String dataset : datasets) {
-            dataset2Index.put(dataset, count);
-            results[0][count] = dataset;
-            ++count;
-        }
-
-        List<ExperimentTaskResult> expResults = dao.getLatestResultsOfExperiments(experimentType, matching.name());
-        int row, col;
-        for (ExperimentTaskResult result : expResults) {
-            if (annotator2Index.containsKey(result.annotator) && dataset2Index.containsKey(result.dataset)) {
-                row = annotator2Index.get(result.annotator);
-                col = dataset2Index.get(result.dataset);
-                if (result.state == ExperimentDAO.TASK_FINISHED) {
-                    results[row][col] = String.format(Locale.US, "%.3f", result.getMicroF1Measure());
-                } else {
-                    results[row][col] = "error (" + result.state + ")";
-                }
-            }
-        }
-        StringBuilder dataBuilder = new StringBuilder();
-        for (int i = 0; i < results.length; ++i) {
-            dataBuilder.append(i == 0 ? '[' : ',');
-            for (int j = 0; j < results[i].length; ++j) {
-                dataBuilder.append(j == 0 ? "[\"" : "\",\"");
-                if (results[i][j] != null) {
-                    dataBuilder.append(results[i][j]);
-                } else {
-                    dataBuilder.append("n.a.");
-                }
-            }
-            dataBuilder.append("\"]");
-        }
-        dataBuilder.append(']');
-        return dataBuilder.toString();
-    }
+    // Moved this to ExperimentOverviewController
+    //
+    // @RequestMapping("/experimentoverview")
+    // public @ResponseBody
+    // String experimentoverview(@RequestParam(value = "experimentType") String experimentType,
+    // @RequestParam(value = "matching") String matchingString) {
+    // LOGGER.debug("Got request on /experimentoverview(experimentType={}, matching={}", experimentType,
+    // matchingString);
+    // Matching matching = getMatching(matchingString);
+    // ExperimentType eType = ExperimentType.valueOf(experimentType);
+    // Set<String> annotators = AnnotatorMapping.getAnnotatorsForExperimentType(eType);
+    // Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(eType);
+    // String results[][] = new String[annotators.size() + 1][datasets.size() + 1];
+    // results[0][0] = "Micro F1-measure";
+    // Map<String, Integer> annotator2Index = new HashMap<String, Integer>();
+    // int count = 1;
+    // for (String annotator : annotators) {
+    // annotator2Index.put(annotator, count);
+    // results[count][0] = annotator;
+    // ++count;
+    // }
+    // Map<String, Integer> dataset2Index = new HashMap<String, Integer>();
+    // count = 1;
+    // for (String dataset : datasets) {
+    // dataset2Index.put(dataset, count);
+    // results[0][count] = dataset;
+    // ++count;
+    // }
+    //
+    // List<ExperimentTaskResult> expResults = dao.getLatestResultsOfExperiments(experimentType, matching.name());
+    // int row, col;
+    // for (ExperimentTaskResult result : expResults) {
+    // if (annotator2Index.containsKey(result.annotator) && dataset2Index.containsKey(result.dataset)) {
+    // row = annotator2Index.get(result.annotator);
+    // col = dataset2Index.get(result.dataset);
+    // if (result.state == ExperimentDAO.TASK_FINISHED) {
+    // results[row][col] = String.format(Locale.US, "%.3f", result.getMicroF1Measure());
+    // } else {
+    // results[row][col] = "error (" + result.state + ")";
+    // }
+    // }
+    // }
+    // StringBuilder dataBuilder = new StringBuilder();
+    // for (int i = 0; i < results.length; ++i) {
+    // dataBuilder.append(i == 0 ? '[' : ',');
+    // for (int j = 0; j < results[i].length; ++j) {
+    // dataBuilder.append(j == 0 ? "[\"" : "\",\"");
+    // if (results[i][j] != null) {
+    // dataBuilder.append(results[i][j]);
+    // } else {
+    // dataBuilder.append("n.a.");
+    // }
+    // }
+    // dataBuilder.append("\"]");
+    // }
+    // dataBuilder.append(']');
+    // return dataBuilder.toString();
+    // }
 
     @RequestMapping("/about")
     public ModelAndView about() {
@@ -229,12 +228,6 @@ public class MainController {
         exp.run();
 
         return experimentId;
-    }
-
-    private Matching getMatching(String matching) {
-        String matchingName = matching.substring(matching.indexOf('-') + 1).trim().toUpperCase().replace(' ', '_');
-        Matching m = Matching.valueOf(matchingName);
-        return m;
     }
 
     @RequestMapping("/experiment")
@@ -396,5 +389,11 @@ public class MainController {
         } else {
             return requestURL.append('?').append(queryString).toString();
         }
+    }
+
+    protected static Matching getMatching(String matching) {
+        String matchingName = matching.substring(matching.indexOf('-') + 1).trim().toUpperCase().replace(' ', '_');
+        Matching m = Matching.valueOf(matchingName);
+        return m;
     }
 }

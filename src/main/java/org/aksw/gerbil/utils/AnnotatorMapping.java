@@ -44,10 +44,17 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class is a very ugly workaround performing the mapping from annotator names to {@link AnnotatorConfiguration}
+ * objects and from an {@link ExperimentType} to a list of {@link AnnotatorConfiguration}s that are usable for this
+ * {@link ExperimentType}.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ */
 public class AnnotatorMapping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatorMapping.class);
-    
+
     private static final String NIF_WS_SUFFIX = "(NIF WS)";
 
     private static AnnotatorMapping instance = null;

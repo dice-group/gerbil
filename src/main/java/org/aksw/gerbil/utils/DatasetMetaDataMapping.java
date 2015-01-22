@@ -6,6 +6,8 @@ import java.util.Map;
 /**
  * Very ugly way to manage the mapping of datasets to their metadata objects.
  * 
+ * FIXME: This should be part of the dataset objects or their metadata/configuration classes.
+ * 
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
@@ -13,7 +15,7 @@ public class DatasetMetaDataMapping {
 
     private static DatasetMetaDataMapping instance;
 
-    public DatasetMetaDataMapping getInstance() {
+    public static DatasetMetaDataMapping getInstance() {
         if (instance == null) {
             Map<String, DatasetMetaData> mapping = new HashMap<String, DatasetMetaData>();
             // mapping.put(key, value);

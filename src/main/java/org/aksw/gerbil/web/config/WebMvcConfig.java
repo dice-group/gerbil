@@ -35,6 +35,14 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+/**
+ * This {@link Configuration} class handles the initialization of the MVC elements.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ * @author Lars Wesemann
+ * @author Didier Cherix
+ * 
+ */
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "org.aksw.gerbil.web", "org.aksw.gerbil.datasets.datahub" })
@@ -53,9 +61,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         viewResolver.setSuffix(".jsp");
         return viewResolver;
     }
-    
+
     @Bean
-    public CommonsMultipartResolver multipartResolver(){
+    public CommonsMultipartResolver multipartResolver() {
         return new CommonsMultipartResolver();
     }
 

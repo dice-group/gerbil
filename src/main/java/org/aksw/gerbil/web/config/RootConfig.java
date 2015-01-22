@@ -34,6 +34,22 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+/**
+ * This is the root {@link Configuration} class that is processed by the Spring framework and performs the following
+ * configurations:
+ * <ul>
+ * <li>Loads the properties file \"gerbil.properties\"</li>
+ * <li>Starts a component scan inside the package <code>org.aksw.gerbil.web.config</code> searching for other
+ * {@link Configuration}s</li>
+ * <li>Replaces the streams used by <code>System.out</code> and <code>System.err</code> by two {@link ConsoleLogger}
+ * objects. (This is a very ugly workaround that should be fixed in the near future)</li>
+ * </ul>
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ * @author Lars Wesemann
+ * @author Didier Cherix
+ * 
+ */
 @Configuration
 @ComponentScan(basePackages = "org.aksw.gerbil.web.config")
 @PropertySource("gerbil.properties")
@@ -45,11 +61,12 @@ public class RootConfig {
     }
 
     protected static void replaceSystemStreams() {
-        System.setOut(new PrintStream(new ConsoleLogger(false), true)); 
-        System.setErr(new PrintStream(new ConsoleLogger(true), true)); 
+        System.setOut(new PrintStream(new ConsoleLogger(false), true));
+        System.setErr(new PrintStream(new ConsoleLogger(true), true));
     }
-    
-    static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
+
+    static @Bean
+    public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
         Resource[] resourceLocations = new Resource[] {
                 new ClassPathResource("gerbil.properties"),

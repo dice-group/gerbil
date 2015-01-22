@@ -51,9 +51,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ...
+ * This class is a very ugly workaround performing the mapping from dataset names to {@link DatasetConfiguration}
+ * objects and from an {@link ExperimentType} to a list of {@link DatasetConfiguration}s that are usable for this
+ * {@link ExperimentType}.
  * 
- * @authors ..... Giuseppe Rizzo <giuse.rizzo@gmail.com>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ * @author Giuseppe Rizzo <giuse.rizzo@gmail.com>
  */
 public class DatasetMapping {
 
