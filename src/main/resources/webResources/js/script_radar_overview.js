@@ -1,4 +1,4 @@
-function drawChart(data, LegendOptions){
+function drawChart(data, LegendOptions, chartElementId){
 	var w = 500,
 	h = 500;
 
@@ -19,13 +19,13 @@ function drawChart(data, LegendOptions){
 	
 	//Call function to draw the Radar chart
 	//Will expect that data is in %'s
-	RadarChart.draw("#chart", data, mycfg);
+	RadarChart.draw("#" + chartElementId, data, mycfg);
 	
 	////////////////////////////////////////////
 	/////////// Initiate legend ////////////////
 	////////////////////////////////////////////
 	
-	var svg = d3.select('#body')
+	var svg = d3.select('#' + chartElementId + 'body')
 		.selectAll('svg')
 		.append('svg')
 		.attr("width", w+300)

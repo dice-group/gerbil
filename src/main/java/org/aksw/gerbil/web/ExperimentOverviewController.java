@@ -36,7 +36,10 @@ public class ExperimentOverviewController {
     private static final int MIN_NUMBER_OF_VALUES_FOR_CORR_CALC = 5;
     private static final String CORRELATION_TABLE_COLUMN_HEADINGS[] = { "number of documents", "avg. document length",
             "number of entities", "entities per document", "entities per token", "amount of persons",
-            "amount of organizations", "amount of locations", "amount of others" };
+            "amount of organizations", "amount of locations", "amount of others"/*
+                                                                                 * ,
+                                                                                 * "corr. based on # datasets"
+                                                                                 */};
 
     @Autowired
     @Qualifier("experimentDAO")
@@ -139,20 +142,21 @@ public class ExperimentOverviewController {
             amountOfLocations.clear();
             amountOfOthers.clear();
             for (int j = 0; j < results[i].length; ++j) {
-                if ((metadata[i] != null) && (results[i][j] >= 0)) {
+                if ((metadata[j] != null) && (results[i][j] >= 0)) {
                     annotatorResults.add(results[i][j]);
-                    numberOfDocuments.add(metadata[i].numberOfDocuments);
-                    avgDocumentLength.add(metadata[i].avgDocumentLength);
-                    numberOfEntities.add(metadata[i].numberOfEntities);
-                    entitiesPerDoc.add(metadata[i].entitiesPerDoc);
-                    entitiesPerToken.add(metadata[i].entitiesPerToken);
-                    amountOfPersons.add(metadata[i].amountOfPersons);
-                    amountOfOrganizations.add(metadata[i].amountOfOrganizations);
-                    amountOfLocations.add(metadata[i].amountOfLocations);
-                    amountOfOthers.add(metadata[i].amountOfOthers);
+                    numberOfDocuments.add(metadata[j].numberOfDocuments);
+                    avgDocumentLength.add(metadata[j].avgDocumentLength);
+                    numberOfEntities.add(metadata[j].numberOfEntities);
+                    entitiesPerDoc.add(metadata[j].entitiesPerDoc);
+                    entitiesPerToken.add(metadata[j].entitiesPerToken);
+                    amountOfPersons.add(metadata[j].amountOfPersons);
+                    amountOfOrganizations.add(metadata[j].amountOfOrganizations);
+                    amountOfLocations.add(metadata[j].amountOfLocations);
+                    amountOfOthers.add(metadata[j].amountOfOthers);
                 }
             }
-            // If we have enough datasets with metadata and results of the current annotator for these datasets
+            // If we have enough datasets with metadata and results of the
+            // current annotator for these datasets
             elementCount = annotatorResults.size();
             if (elementCount > MIN_NUMBER_OF_VALUES_FOR_CORR_CALC) {
                 annotatorResultsAsArray = annotatorResults.toArray(new double[elementCount]);
@@ -174,6 +178,7 @@ public class ExperimentOverviewController {
                         annotatorResultsAsArray, amountOfLocations.toArray(new double[elementCount]));
                 correlations[i][8] = PearsonsSampleCorrelationCoefficient.calculateRankCorrelation(
                         annotatorResultsAsArray, amountOfOthers.toArray(new double[elementCount]));
+                // correlations[i][9] = annotatorResultsAsArray.length;
             }
         }
 

@@ -49,13 +49,14 @@ table {
 	padding: 5px 0px;
 }
 
-#chart { /*position: absolute;*/
+.chartDiv { /*position: absolute;*/
 	top: 50px;
 	left: 100px;
 	vertical-align: center;
+	text-align:center;
 }
 
-#body {
+.chartBody {
 	overflow: hidden;
 	margin: 0;
 	font-size: 14px;
@@ -100,14 +101,25 @@ table {
 					F1-measure.</p>
 			</div>
 			<div class="container-fluid">
-				<div id="body">
-					<div id="chart"></div>
+				<div id="resultsChartBody" class="chartBody">
+					<div id="resultsChart" class="chartDiv"></div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="container-fluid">
-		<table id="outputTable" class="table table-hover table-condensed">
+		<table id="resultsTable" class="table table-hover table-condensed">
+			<thead></thead>
+			<tbody></tbody>
+		</table>
+	</div>
+			<div class="container-fluid">
+				<div id="correlationsChartBody" class="chartBody">
+					<div id="correlationsChart" class="chartDiv"></div>
+				</div>
+			</div>
+	<div class="container-fluid">
+		<table id="correlationsTable" class="table table-hover table-condensed">
 			<thead></thead>
 			<tbody></tbody>
 		</table>
@@ -157,18 +169,30 @@ table {
 		                        loadMatchings();
 	                        });
         };
-
-        function loadTable() {
+        
+        function loadTables() {
 	        $.getJSON('${experimentoverview}', {
 	            experimentType : $('#expTypes input:checked').val(),
 	            matching : $('#matching input:checked').val(),
 	            ajax : 'false'
-	        }, function(data) {
+	        }, function(data){
+				var tableData = data[0];
+				showTable(tableData,"resultsTable");
+				drawSpiderDiagram(tableData, "resultsChart");
+				tableData = data[1];
+				showTable(tableData,"correlationsTable");
+				drawSpiderDiagram(tableData, "correlationsChart");
+			}).fail(function() {
+		        console.log("error loading data for table");
+	        });
+        };
+		
+		function showTable(tableData, tableElementId) {
 		        //http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
 		        var tbl_body = "";
 		        var tbl_hd = "";
 
-		        $.each(data, function(i) {
+		        $.each(tableData, function(i) {
 			        var tbl_row = "";
 			        if (i > 0) {
 				        $.each(this, function(k, v) {
@@ -182,13 +206,16 @@ table {
 				        tbl_hd += "<tr>" + tbl_row + "</tr>";
 			        }
 		        });
-		        $("#outputTable thead").html(tbl_hd);
-		        $("#outputTable tbody").html(tbl_body);
+		        $("#" + tableElementId + " thead").html(tbl_hd);
+		        $("#" + tableElementId + " tbody").html(tbl_body);
+		}
+		
+		function drawSpiderDiagram(tableData, chartElementId) {
 		        //draw spider chart
 		        var chartData = [];
 		        //Legend titles  ['Smartphone','Tablet'];
 		        var LegendOptions = [];
-		        $.each(data, function(i) {
+		        $.each(tableData, function(i) {
 			        //iterate over rows
 			        if (i > 0) {
 				        var annotatorResults = [];
@@ -199,10 +226,14 @@ table {
 					        } else {
 						        //results like {axis:"Email",value:0.71},
 						        var tmp = {};
-						        tmp.axis = data[0][k];
+						        tmp.axis = tableData[0][k];
 						        if (v == "n.a." || v.indexOf("error") > -1) {
 							        tmp.value = 0;
 						        } else {
+									// if the number is negative make it poositive
+									if(v.indexOf("-") > -1) {
+										v = v.replace("-","+");
+									}
 							        tmp.value = v;
 						        }
 						        annotatorResults.push(tmp);
@@ -212,12 +243,9 @@ table {
 			        }
 		        });
 		        //[[{axis:"Email",value:0.71},{axis:"aa",value:0}],[{axis:"Email",value:0.71},{axis:"aa",value:0.1},]];
-		        console.log(chartData);
-		        drawChart(chartData, LegendOptions);
-	        }).fail(function() {
-		        console.log("error loading data for table");
-	        });
-        };
+				console.log("start drawing into " + chartElementId);
+		        drawChart(chartData, LegendOptions, chartElementId);
+	        }
 
         $(document).ready(function() {
 	        //++++++++++++
@@ -226,7 +254,7 @@ table {
 	        loadExperimentTypes();
 
 	        $("#show").click(function(e) {
-		        loadTable();
+		        loadTables();
 	        });
         });
 	</script>
