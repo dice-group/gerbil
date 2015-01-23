@@ -33,6 +33,7 @@ import java.util.Set;
 import org.aksw.gerbil.annotators.AgdistisAnnotatorConfig;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
+import org.aksw.gerbil.annotators.DexterAnnotatorConfig;
 import org.aksw.gerbil.annotators.KeaAnnotatorConfig;
 import org.aksw.gerbil.annotators.NERDAnnotatorConfig;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
@@ -45,9 +46,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is a very ugly workaround performing the mapping from annotator names to {@link AnnotatorConfiguration}
- * objects and from an {@link ExperimentType} to a list of {@link AnnotatorConfiguration}s that are usable for this
- * {@link ExperimentType}.
+ * This class is a very ugly workaround performing the mapping from annotator
+ * names to {@link AnnotatorConfiguration} objects and from an
+ * {@link ExperimentType} to a list of {@link AnnotatorConfiguration}s that are
+ * usable for this {@link ExperimentType}.
  * 
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  */
@@ -64,8 +66,10 @@ public class AnnotatorMapping {
             Map<String, AnnotatorConfiguration> mapping = new HashMap<String, AnnotatorConfiguration>();
             mapping.put(BabelfyAnnotatorConfig.ANNOTATOR_NAME,
                     new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()));
-            mapping.put(SpotlightAnnotatorConfig.ANNOTATOR_NAME, new SpotlightAnnotatorConfig(
-                    SingletonWikipediaApi.getInstance(), new DBPediaApi()));
+            mapping.put(DexterAnnotatorConfig.ANNOTATOR_NAME,
+                    new DexterAnnotatorConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi()));
+            mapping.put(SpotlightAnnotatorConfig.ANNOTATOR_NAME,
+                    new SpotlightAnnotatorConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi()));
             mapping.put(TagMeAnnotatorConfig.ANNOTATOR_NAME, new TagMeAnnotatorConfig());
             mapping.put(WATAnnotatorConfig.ANNOTATOR_NAME, new WATAnnotatorConfig());
             mapping.put(WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME, new WikipediaMinerAnnotatorConfig());
@@ -73,7 +77,8 @@ public class AnnotatorMapping {
                     new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()));
             mapping.put(NERDAnnotatorConfig.ANNOTATOR_NAME,
                     new NERDAnnotatorConfig(SingletonWikipediaApi.getInstance()));
-            // mapping.put(FOXAnnotator.NAME, new FOXAnnotatorConfig(SingletonWikipediaApi.getInstance()));
+            // mapping.put(FOXAnnotator.NAME, new
+            // FOXAnnotatorConfig(SingletonWikipediaApi.getInstance()));
             mapping.put(KeaAnnotatorConfig.ANNOTATOR_NAME, new KeaAnnotatorConfig(SingletonWikipediaApi.getInstance(),
                     new DBPediaApi()));
 

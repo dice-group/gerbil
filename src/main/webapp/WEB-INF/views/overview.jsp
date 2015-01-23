@@ -97,6 +97,7 @@ table {
 				</div>
 			</div>
 			<div class="col-md-12">
+				<h2>F1-measures</h2>
 				<p>The table as well as the diagram contain the micro
 					F1-measure.</p>
 			</div>
@@ -113,11 +114,19 @@ table {
 			<tbody></tbody>
 		</table>
 	</div>
+	<div class="container">
+		<div class="form-horizontal">
+			<div class="col-md-12">
+				<h2>Annotator &ndash; Dataset feature correlations</h2>
+				<p>The table as well as the diagram contain the pearson correlations between the annotators and the dataset features. Note that the diagram only shows the absolute values of the correlation. For the correlation type, you should take a look at the table.</p>
+			</div>
 			<div class="container-fluid">
 				<div id="correlationsChartBody" class="chartBody">
 					<div id="correlationsChart" class="chartDiv"></div>
 				</div>
 			</div>
+		</div>
+	</div>
 	<div class="container-fluid">
 		<table id="correlationsTable" class="table table-hover table-condensed">
 			<thead></thead>
