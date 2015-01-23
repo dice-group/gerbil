@@ -31,6 +31,7 @@ import it.acubelab.batframework.problems.D2WDataset;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.StringReader;
 import java.util.HashSet;
 import java.util.List;
 
@@ -40,8 +41,13 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.utils.DatasetMapping;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.apache.commons.io.IOUtils;
+import org.apache.lucene.analysis.WhitespaceTokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DatasetAnalyzer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasetAnalyzer.class);
 
     public static void main(String[] args) {
         List<DatasetConfiguration> datasetConfigs = DatasetMapping.getDatasetConfigurations();
@@ -85,12 +91,33 @@ public class DatasetAnalyzer {
         output.print("D2W dataset: " + config.getName());
         output.print(" size=" + dataset.getSize());
         List<HashSet<Annotation>> goldStandard = dataset.getD2WGoldStandardList();
-        double averageAnnotation = 0;
+        double annotationsSum = 0;
         for (HashSet<Annotation> annotations : goldStandard) {
-            averageAnnotation += annotations.size();
+            annotationsSum += annotations.size();
         }
-        output.println(" Annotations=" + averageAnnotation);
-        output.println(" avg.Annotations=" + (averageAnnotation / dataset.getSize()));
+        // analyze texts
+        int tokensSum = 0;
+        for (String text : dataset.getTextInstanceList()) {
+            tokensSum += countTokensInText(text);
+        }
+        output.print(" Annotations=" + annotationsSum);
+        output.print(" Annotations/doc=" + (annotationsSum / dataset.getSize()));
+        output.print(" tokens=" + tokensSum);
+        output.print(" tokens/doc=" + ((double) tokensSum / (double) dataset.getSize()));
+        output.println(" Annotations/tokens=" + ((double) annotationsSum / (double) tokensSum));
+    }
+
+    private int countTokensInText(String text) {
+        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(new StringReader(text));
+        int tokens = 0;
+        try {
+            while (tokenizer.incrementToken()) {
+                ++tokens;
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error while tokenizing text. Returning.", e);
+        }
+        return tokens;
     }
 
     private void analyzeAsD2W(DatasetConfiguration config) throws GerbilException {
@@ -98,14 +125,22 @@ public class DatasetAnalyzer {
         if (dataset == null) {
             return;
         }
-        output.print("C2W dataset: " + config.toString());
+        output.print("C2W dataset: " + config.getName());
         output.print(" size=" + dataset.getSize());
         List<HashSet<Tag>> goldStandard = dataset.getC2WGoldStandardList();
-        double averageAnnotation = 0;
+        double annotationsSum = 0;
         for (HashSet<Tag> annotations : goldStandard) {
-            averageAnnotation += annotations.size();
+            annotationsSum += annotations.size();
         }
-        output.println(" Tags=" + averageAnnotation);
-        output.println(" avg.Tags=" + (averageAnnotation / dataset.getSize()));
+        // analyze texts
+        int tokensSum = 0;
+        for (String text : dataset.getTextInstanceList()) {
+            tokensSum += countTokensInText(text);
+        }
+        output.print(" Tags=" + annotationsSum);
+        output.print(" Tags/doc=" + (annotationsSum / dataset.getSize()));
+        output.print(" tokens=" + tokensSum);
+        output.print(" tokens/doc=" + ((double) tokensSum / (double) dataset.getSize()));
+        output.println(" Tags/tokens=" + ((double) annotationsSum / (double) tokensSum));
     }
 }
