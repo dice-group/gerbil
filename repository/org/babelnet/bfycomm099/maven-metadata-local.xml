@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <groupId>org.babelnet</groupId>
-  <artifactId>babelnet-api</artifactId>
-  <version>2.5</version>
+  <artifactId>bfycomm099</artifactId>
+  <version>0.9.9</version>
   <versioning>
     <versions>
-      <version>2.5</version>
+      <version>0.9.9</version>
     </versions>
-    <lastUpdated>20140912090020</lastUpdated>
+    <lastUpdated>20150218192842</lastUpdated>
   </versioning>
 </metadata>

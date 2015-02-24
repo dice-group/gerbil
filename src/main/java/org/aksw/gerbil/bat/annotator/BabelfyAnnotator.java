@@ -25,20 +25,26 @@ package org.aksw.gerbil.bat.annotator;
 
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
+import it.acubelab.batframework.data.ScoredAnnotation;
+import it.acubelab.batframework.data.ScoredTag;
 import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.A2WSystem;
+import it.acubelab.batframework.problems.Sa2WSystem;
 import it.acubelab.batframework.utils.AnnotationException;
 import it.acubelab.batframework.utils.ProblemReduction;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
-import it.uniroma1.lcl.babelfy.Babelfy;
-import it.uniroma1.lcl.babelfy.Babelfy.AccessType;
-import it.uniroma1.lcl.babelfy.Babelfy.Matching;
-import it.uniroma1.lcl.babelfy.BabelfyKeyNotValidOrLimitReached;
-import it.uniroma1.lcl.babelfy.data.BabelSynsetAnchor;
+import it.uniroma1.lcl.babelfy.commons.BabelfyConstraints;
+import it.uniroma1.lcl.babelfy.commons.BabelfyParameters;
+import it.uniroma1.lcl.babelfy.commons.IBabelfy;
+import it.uniroma1.lcl.babelfy.commons.annotation.CharOffsetFragment;
+import it.uniroma1.lcl.babelfy.commons.annotation.DisambiguationConstraint;
+import it.uniroma1.lcl.babelfy.commons.annotation.MCS;
+import it.uniroma1.lcl.babelfy.commons.annotation.PoStaggingOptions;
+import it.uniroma1.lcl.babelfy.commons.annotation.SemanticAnnotation;
+import it.uniroma1.lcl.babelfy.commons.annotation.SemanticAnnotationResource;
+import it.uniroma1.lcl.babelfy.commons.annotation.SemanticAnnotationType;
+import it.uniroma1.lcl.babelfy.core.Babelfy;
 import it.uniroma1.lcl.jlt.util.Language;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -62,151 +68,135 @@ import com.google.common.collect.Sets;
  * we have to set {@link #BABELFY_MAX_TEXT_LENGTH}={@value #BABELFY_MAX_TEXT_LENGTH}.
  * </p>
  */
-public class BabelfyAnnotator implements A2WSystem {
+public class BabelfyAnnotator implements Sa2WSystem {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BabelfyAnnotator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BabelfyAnnotator.class);
 
-    private static final int BABELFY_MAX_TEXT_LENGTH = 1500;
+	private static final int BABELFY_MAX_TEXT_LENGTH = 3500;
 
-    public static final String NAME = "Babelfy";
+	public static final String NAME = "Babelfy";
 
-    // private long calib = -1;
-    // private long lastTime = -1;
-    private String key;
+	// private long calib = -1;
+	// private long lastTime = -1;
 
-    @Autowired
-    private WikipediaApiInterface wikiApi;
+	@Autowired
+	private WikipediaApiInterface wikiApi;
 
-    public BabelfyAnnotator() {
-        this("");
-    }
+	public BabelfyAnnotator(WikipediaApiInterface wikiApi) {
+		this.wikiApi = wikiApi;
+	}
 
-    public BabelfyAnnotator(WikipediaApiInterface wikiApi) {
-        this("", wikiApi);
-    }
+	@Override
+	public String getName() {
+		return NAME;
+	}
 
-    public BabelfyAnnotator(String key) {
-        this.key = key;
-    }
+	@Override
+	public long getLastAnnotationTime() {
+		// if (calib == -1)
+		// calib = TimingCalibrator.getOffset(this);
+		// return lastTime - calib > 0 ? lastTime - calib : 0;
+		return -1;
+	}
 
-    public BabelfyAnnotator(String key, WikipediaApiInterface wikiApi) {
-        this.key = key;
-        this.wikiApi = wikiApi;
-    }
+	@Override
+	public HashSet<Tag> solveC2W(String text) throws AnnotationException {
+		return ProblemReduction.Sc2WToC2W(ProblemReduction.Sa2WToSc2W(solveSa2W(text)));
+	}
 
-    public String getName() {
-        return NAME;
-    }
+	@Override
+	public HashSet<Annotation> solveA2W(String text) throws AnnotationException {
+		return ProblemReduction.Sa2WToA2W(solveSa2W(text));
+	}
 
-    public long getLastAnnotationTime() {
-        // if (calib == -1)
-        // calib = TimingCalibrator.getOffset(this);
-        // return lastTime - calib > 0 ? lastTime - calib : 0;
-        return -1;
-    }
+	@Override
+	public HashSet<ScoredTag> solveSc2W(String text) throws AnnotationException {
+		return ProblemReduction.Sa2WToSc2W(solveSa2W(text));
+	}
 
-    public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions)
-            throws AnnotationException {
-        return solveA2W(text, true);
-    }
+	@Override
+	public HashSet<Annotation> solveD2W(String text, HashSet<Mention> mentions)
+			throws AnnotationException {
+		return ProblemReduction.Sa2WToD2W(solveGeneralSa2W(text, mentions), mentions, -1.0f);
+	}
 
-    @Override
-    public HashSet<Tag> solveC2W(String text) throws AnnotationException {
-        return ProblemReduction.A2WToC2W(solveA2W(text));
-    }
+	@Override
+	public HashSet<ScoredAnnotation> solveSa2W(String text)
+			throws AnnotationException {
+		return solveGeneralSa2W(text, null);
+	}
 
-    @Override
-    public HashSet<Annotation> solveA2W(String text) throws AnnotationException {
-        return solveA2W(text, true);
-    }
+	protected HashSet<ScoredAnnotation> solveGeneralSa2W(String text,
+			HashSet<Mention> mentions) throws AnnotationException {
+		HashSet<ScoredAnnotation> annotations = Sets.newHashSet();
+		List<String> chunks = splitText(text);
+		BabelfyParameters bfyParameters = new BabelfyParameters();
+		bfyParameters.setAnnotationResource(SemanticAnnotationResource.WIKI);
+		bfyParameters.setMCS(MCS.OFF);
+		bfyParameters.setExtendCandidatesWithAIDAmeans(true);
+		if (mentions != null) {
+			bfyParameters.setThreshold(0.0);
+			bfyParameters.setPoStaggingOptions(PoStaggingOptions.INPUT_FRAGMENTS_AS_NOUNS);
+			bfyParameters.setDisambiguationConstraint(
+					DisambiguationConstraint.DISAMBIGUATE_ALL_RETURN_INPUT_FRAGMENTS);
+		} else {
+			bfyParameters.setThreshold(0.3);
+			bfyParameters.setAnnotationType(SemanticAnnotationType.NAMED_ENTITIES);
+		}
 
-    protected HashSet<Annotation> solveA2W(String text, boolean isShortDocument)
-            throws AnnotationException {
-        if (text.length() > BABELFY_MAX_TEXT_LENGTH) {
-            return solveA2WForLongTexts(text);
-        }
-        HashSet<Annotation> annotations = Sets.newHashSet();
-        // lastTime = Calendar.getInstance().getTimeInMillis();
-        try {
-            it.uniroma1.lcl.babelfy.data.Annotation babelAnnotations = requestAnnotations(key, text,
-                    isShortDocument ? Matching.PARTIAL : Matching.EXACT, Language.EN);
-            int positionInText = 0, posSurfaceFormInText = 0;
-            String surfaceForm;
-            String lowercasedText = text.toLowerCase();
-            for (BabelSynsetAnchor anchor : babelAnnotations.getAnnotations()) {
-                // The positions of BabelSynsetAnchors are measured in tokens --> we have to find the token inside the
-                // text
-                surfaceForm = anchor.getAnchorText();
-                posSurfaceFormInText = lowercasedText.indexOf(surfaceForm, positionInText);
-                List<String> uris = anchor.getBabelSynset().getDBPediaURIs(Language.EN);
-                String uri;
-                if ((posSurfaceFormInText >= 0) && (uris != null) && (uris.size() > 0)) {
-                    // DIRTY FIX Babelfy seems to return URIs with "DBpedia.org" instead of "dbpedia.org"
-                    uri = uris.get(0);
-                    uri = uri.replaceAll("DBpedia.org", "dbpedia.org");
-                    int id = DBpediaToWikiId.getId(wikiApi, uri);
-                    annotations.add(new Annotation(posSurfaceFormInText, surfaceForm.length(), id));
-                    // annotations.add(new Annotation(anchor.getStart(), anchor.getEnd() - anchor.getStart(), id));
-                    positionInText = posSurfaceFormInText + surfaceForm.length();
-                }
-            }
-        } catch (BabelfyKeyNotValidOrLimitReached e) {
-            LOGGER.error("The BabelFy Key is invalid or has reached its limit.", e);
-            throw new AnnotationException("The BabelFy Key is invalid or has reached its limit: "
-                    + e.getLocalizedMessage());
-        } catch (IOException | URISyntaxException e) {
-            // LOGGER.error("Exception while requesting annotations from BabelFy. Returning empty Annotation set.", e);
-            throw new AnnotationException("Exception while requesting annotations from BabelFy: "
-                    + e.getLocalizedMessage());
-        }
-        // lastTime = Calendar.getInstance().getTimeInMillis() - lastTime;
-        return annotations;
-    }
+		IBabelfy bfy = new Babelfy(bfyParameters);
+		int prevChars = 0;
+		for (String chunk : chunks) {
+			BabelfyConstraints constraints = new BabelfyConstraints();
+			if (mentions != null) {
+				for (Mention m : mentions) {
+					if (m.getPosition() >= prevChars &&
+							m.getPosition()+m.getLength() < prevChars+chunk.length()) {
+						constraints.addFragmentToDisambiguate(
+								new CharOffsetFragment(m.getPosition()-prevChars,
+										m.getPosition()+m.getLength()-1-prevChars));
+					}
+				}
+			}
+			List<SemanticAnnotation> bfyAnnotations =
+					bfy.babelfy(chunk, Language.EN, constraints);
 
-    protected static synchronized it.uniroma1.lcl.babelfy.data.Annotation requestAnnotations(String key, String text,
-            Matching matching, Language lang) throws IOException, URISyntaxException, BabelfyKeyNotValidOrLimitReached {
-        Babelfy bfy = Babelfy.getInstance(AccessType.ONLINE);
-        return bfy.babelfy(key, text, matching, lang);
-    }
+			for (SemanticAnnotation bfyAnn : bfyAnnotations) {
+				int wikiID = -1;
+                wikiID = DBpediaToWikiId.getId(wikiApi, bfyAnn.getDBpediaURL());
+				if (wikiID >= 0) {
+					ScoredAnnotation gerbilAnn =
+							new ScoredAnnotation(prevChars+bfyAnn.getCharOffsetFragment().getStart(),
+									bfyAnn.getCharOffsetFragment().getEnd()-
+									bfyAnn.getCharOffsetFragment().getStart()+1,
+									wikiID, (float)bfyAnn.getScore());
+					annotations.add(gerbilAnn);
+				}
+			}
+			prevChars += chunk.length();
+		}
 
-    protected HashSet<Annotation> solveA2WForLongTexts(String text) {
-        List<String> chunks = splitText(text);
-        HashSet<Annotation> annotations;
-        annotations = solveA2W(chunks.get(0), false);
+		return annotations;
+	}
 
-        HashSet<Annotation> tempAnnotations;
-        int startOfChunk = 0;
-        for (int i = 1; i < chunks.size(); ++i) {
-            // get annotations. Note that
-            tempAnnotations = solveA2W(chunks.get(i), false);
-            // We have to correct the positions of the annotations
-            startOfChunk += chunks.get(i - 1).length();
-            for (Annotation annotation : tempAnnotations) {
-                annotations.add(new Annotation(annotation.getPosition() + startOfChunk, annotation.getLength(),
-                        annotation.getConcept()));
-            }
-        }
-        return annotations;
-    }
-
-    protected List<String> splitText(String text) {
-        List<String> chunks = new ArrayList<String>();
-        int start = 0, end = 0, nextEnd = 0;
-        // As long as we have to create chunks
-        while ((nextEnd >= 0) && ((text.length() - nextEnd) > BABELFY_MAX_TEXT_LENGTH)) {
-            // We have to use the next space, even it would be too far away
-            end = nextEnd = text.indexOf(' ', start + 1);
-            // Search for the next possible end this chunk
-            while ((nextEnd >= 0) && ((nextEnd - start) < BABELFY_MAX_TEXT_LENGTH)) {
-                end = nextEnd;
-                nextEnd = text.indexOf(' ', end + 1);
-            }
-            // Add the chunk
-            chunks.add(text.substring(start, end));
-            start = end;
-        }
-        // Add the last chunk
-        chunks.add(text.substring(start));
-        return chunks;
-    }
+	protected List<String> splitText(String text) {
+		List<String> chunks = new ArrayList<String>();
+		int start = 0, end = 0, nextEnd = 0;
+		// As long as we have to create chunks
+		while ((nextEnd >= 0) && ((text.length() - nextEnd) > BABELFY_MAX_TEXT_LENGTH)) {
+			// We have to use the next space, even it would be too far away
+			end = nextEnd = text.indexOf(' ', start + 1);
+			// Search for the next possible end this chunk
+			while ((nextEnd >= 0) && ((nextEnd - start) < BABELFY_MAX_TEXT_LENGTH)) {
+				end = nextEnd;
+				nextEnd = text.indexOf(' ', end + 1);
+			}
+			// Add the chunk
+			chunks.add(text.substring(start, end));
+			start = end;
+		}
+		// Add the last chunk
+		chunks.add(text.substring(start));
+		return chunks;
+	}
 }

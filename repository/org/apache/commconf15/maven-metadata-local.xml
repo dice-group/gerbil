@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.apache</groupId>
+  <artifactId>commconf15</artifactId>
+  <version>1.5</version>
+  <versioning>
+    <versions>
+      <version>1.5</version>
+    </versions>
+    <lastUpdated>20150218193102</lastUpdated>
+  </versioning>
+</metadata>

@@ -25,7 +25,7 @@ package org.aksw.gerbil.annotators;
 
 import it.acubelab.batframework.problems.TopicSystem;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
-import it.uniroma1.lcl.babelnet.BabelNetConfiguration;
+import it.uniroma1.lcl.babelfy.commons.BabelfyConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,13 +42,8 @@ public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private static final String BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.BabelfyAnnotatorConfig.Key";
 
     private WikipediaApiInterface wikiApi;
-
     public BabelfyAnnotatorConfig(WikipediaApiInterface wikiApi) {
-        this(wikiApi, false);
-    }
-
-    public BabelfyAnnotatorConfig(WikipediaApiInterface wikiApi, boolean optimizedForShortTexts) {
-        super(ANNOTATOR_NAME, true, ExperimentType.A2KB);
+        super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
         this.wikiApi = wikiApi;
     }
 
@@ -59,14 +54,11 @@ public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {
             throw new IOException("Couldn't load needed Property \"" + BABELNET_CONFIG_FILE_PROPERTY_NAME + "\".");
         }
         // Load the configuration
-        BabelNetConfiguration.getInstance().setConfigurationFile(new File(configFile));
+        BabelfyConfiguration.getInstance().setConfigurationFile(new File(configFile));
 
         // Load and use the key if there is one
         String key = GerbilConfiguration.getInstance().getString(BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME);
-        if (key == null) {
-            return new BabelfyAnnotator(wikiApi);
-        } else {
-            return new BabelfyAnnotator(key, wikiApi);
-        }
+        BabelfyConfiguration.getInstance().setRFkey(key);
+        return new BabelfyAnnotator(wikiApi);
     }
 }

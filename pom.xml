@@ -170,21 +170,6 @@
 
         <!-- BABELFY -->
         <dependency>
-            <groupId>org.babelnet</groupId>
-            <artifactId>babelfy</artifactId>
-            <version>0.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.babelnet</groupId>
-            <artifactId>jlt</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.babelnet</groupId>
-            <artifactId>babelnet-api</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <version>2.9.1</version>
@@ -204,8 +189,53 @@
             <artifactId>jwi</artifactId>
             <version>2.2.1</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>org.babelnet</groupId>
+            <artifactId>bfycomm099</artifactId>
+            <version>0.9.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.babelnet</groupId>
+            <artifactId>bfyonline099</artifactId>
+            <version>0.9.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache</groupId>
+            <artifactId>commlogg113</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache</groupId>
+            <artifactId>commconf15</artifactId>
+            <version>1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.babelnet</groupId>
+            <artifactId>jltutils203</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache</groupId>
+            <artifactId>commlang23</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google</groupId>
+            <artifactId>gson231</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache</groupId>
+            <artifactId>commcoll32</artifactId>
+            <version>3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford</groupId>
+            <artifactId>stanpost341</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+        
+        
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
