@@ -30,7 +30,6 @@
 //      Giuseppe Rizzo <giuse.rizzo@gmail.com>
 //
 //   Licensed under ...
-
 package org.aksw.gerbil.bat.annotator;
 
 import fr.eurecom.nerd.client.NERD;
@@ -59,6 +58,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Sets;
 
+/**
+ * NERD Annotator - It triggers queries to the NERD framework http://nerd.eurecom.fr and it parses the results
+ * 
+ * @author Giuseppe Rizzo <giuse.rizzo@gmail.com>
+ * 
+ */
 public class NERDAnnotator implements Sa2WSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NERDAnnotator.class);
@@ -67,9 +72,6 @@ public class NERDAnnotator implements Sa2WSystem {
     private final String NERD_API = GerbilConfiguration.getInstance().getString(NERD_API_PROPERTY_NAME);
 
     private String key;
-
-    // private long lastTime = -1;
-    // private long calib = -1;
 
     @Autowired
     private WikipediaApiInterface wikiApi;
@@ -107,10 +109,7 @@ public class NERDAnnotator implements Sa2WSystem {
     @Override
     public long getLastAnnotationTime()
     {
-        // if (calib == -1)
-        // calib = TimingCalibrator.getOffset(this);
-        // return lastTime - calib > 0 ? lastTime - calib : 0;
-        return -1;
+         return -1;
     }
 
     @Override
@@ -161,7 +160,7 @@ public class NERDAnnotator implements Sa2WSystem {
             // lastTime = Calendar.getInstance().getTimeInMillis();
 
             LOGGER.debug("shipping to NERD the text to annotate");
-            
+
             NERD nerd = new NERD(NERD_API, key);
             List<Entity> entities = nerd.annotate(ExtractorType.NERDML,
                     DocumentType.PLAINTEXT,

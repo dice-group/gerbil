@@ -23,6 +23,7 @@
  */
 package org.aksw.gerbil.execute;
 
+import it.acubelab.batframework.cache.BenchmarkCache;
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Tag;
 import it.acubelab.batframework.metrics.MatchRelation;
@@ -86,6 +87,8 @@ public class ExperimentTaskExecuter implements Runnable {
 
             // Create annotator
             TopicSystem annotator = configuration.annotatorConfig.getAnnotator(configuration.type);
+            // TODO add time measuring
+            //annotator = TimeMeasuringAnnotatorDecorator.createDecorator(annotator);
             annotator = ErrorCountingAnnotatorDecorator.createDecorator(annotator);
             if (annotator == null) {
                 throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
@@ -159,6 +162,8 @@ public class ExperimentTaskExecuter implements Runnable {
             matchings.add((MatchRelation<Annotation>) matching);
             try {
                 results = RunExperiments.performA2WExpVarThreshold(matchings, a2wAnnotator, null, a2wDataset, wikiAPI);
+                LOGGER.info("average time needed by {} on {}: {}", annotator.getName(), dataset.getName(),
+                        BenchmarkCache.getAvgA2WTimingsForDataset(annotator.getName(), dataset.getName()));
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
@@ -173,6 +178,8 @@ public class ExperimentTaskExecuter implements Runnable {
             matchings.add((MatchRelation<Annotation>) matching);
             try {
                 results = RunExperiments.performA2WExpVarThreshold(matchings, null, sa2wAnnotator, a2wDataset, wikiAPI);
+                LOGGER.info("average time needed by {} on {}: {}", annotator.getName(), dataset.getName(),
+                        BenchmarkCache.getAvgSa2WTimingsForDataset(annotator.getName(), dataset.getName()));
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
@@ -188,6 +195,8 @@ public class ExperimentTaskExecuter implements Runnable {
             try {
                 results = RunExperiments.performC2WExpVarThreshold(matchings, null, null,
                         null, c2wAnnotator, c2wDataset, wikiAPI);
+                LOGGER.info("average time needed by {} on {}: {}", annotator.getName(), dataset.getName(),
+                        BenchmarkCache.getAvgC2WTimingsForDataset(annotator.getName(), dataset.getName()));
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }

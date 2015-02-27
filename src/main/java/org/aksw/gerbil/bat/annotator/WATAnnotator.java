@@ -23,7 +23,6 @@
  */
 package org.aksw.gerbil.bat.annotator;
 
-import com.google.gson.*;
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
 import it.acubelab.batframework.data.ScoredAnnotation;
@@ -38,9 +37,6 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -50,9 +46,16 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class WATAnnotator implements Sa2WSystem {
-    private long lastTime = 0;
     private final String endpoint;
     private final String urlParameters;
     private final String urlTag;
@@ -89,7 +92,7 @@ public class WATAnnotator implements Sa2WSystem {
 
     @Override
     public long getLastAnnotationTime() {
-        return lastTime;
+        return -1;
     }
 
     public HashSet<Annotation> solveD2WParams(String text, HashSet<Mention> mentions) throws AnnotationException {

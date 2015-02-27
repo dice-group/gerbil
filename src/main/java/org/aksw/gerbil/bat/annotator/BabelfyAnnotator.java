@@ -50,14 +50,12 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Sets;
 
 /**
- * The BabelFy Annotator.
+ * The Babelfy Annotator.
  * 
  * <p>
  * <i>Andrea Moro: "I recommend to use the maximum amount of available characters (3500) at each request (i.e., try to
@@ -91,13 +89,9 @@ public class BabelfyAnnotator implements Sa2WSystem {
 		return NAME;
 	}
 
-	@Override
-	public long getLastAnnotationTime() {
-		// if (calib == -1)
-		// calib = TimingCalibrator.getOffset(this);
-		// return lastTime - calib > 0 ? lastTime - calib : 0;
-		return -1;
-	}
+    public long getLastAnnotationTime() {
+        return -1;
+    }
 
 	@Override
 	public HashSet<Tag> solveC2W(String text) throws AnnotationException {
@@ -202,4 +196,5 @@ public class BabelfyAnnotator implements Sa2WSystem {
 		chunks.add(text.substring(start));
 		return chunks;
 	}
+	
 }

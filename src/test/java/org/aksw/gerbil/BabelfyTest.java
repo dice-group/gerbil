@@ -30,8 +30,6 @@ import java.io.IOException;
 
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
-import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
-import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig.AIDACoNLLChunk;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
