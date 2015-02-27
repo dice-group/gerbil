@@ -42,6 +42,11 @@ public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private static final String BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.BabelfyAnnotatorConfig.Key";
 
     private WikipediaApiInterface wikiApi;
+    /**
+     * The annotator instance shared by all experiment tasks.
+     */
+    private BabelfyAnnotator instance = null;
+
     public BabelfyAnnotatorConfig(WikipediaApiInterface wikiApi) {
         super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
         this.wikiApi = wikiApi;
@@ -49,16 +54,19 @@ public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
     @Override
     protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
-        String configFile = GerbilConfiguration.getInstance().getString(BABELNET_CONFIG_FILE_PROPERTY_NAME);
-        if (configFile == null) {
-            throw new IOException("Couldn't load needed Property \"" + BABELNET_CONFIG_FILE_PROPERTY_NAME + "\".");
-        }
-        // Load the configuration
-        BabelfyConfiguration.getInstance().setConfigurationFile(new File(configFile));
+        if (instance == null) {
+            String configFile = GerbilConfiguration.getInstance().getString(BABELNET_CONFIG_FILE_PROPERTY_NAME);
+            if (configFile == null) {
+                throw new IOException("Couldn't load needed Property \"" + BABELNET_CONFIG_FILE_PROPERTY_NAME + "\".");
+            }
+            // Load the configuration
+            BabelfyConfiguration.getInstance().setConfigurationFile(new File(configFile));
 
-        // Load and use the key if there is one
-        String key = GerbilConfiguration.getInstance().getString(BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME);
-        BabelfyConfiguration.getInstance().setRFkey(key);
-        return new BabelfyAnnotator(wikiApi);
+            // Load and use the key if there is one
+            String key = GerbilConfiguration.getInstance().getString(BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME);
+            BabelfyConfiguration.getInstance().setRFkey(key);
+            instance = new BabelfyAnnotator(wikiApi);
+        }
+        return instance;
     }
 }

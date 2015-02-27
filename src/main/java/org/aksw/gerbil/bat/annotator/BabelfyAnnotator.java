@@ -70,7 +70,7 @@ import com.google.common.collect.Sets;
  */
 public class BabelfyAnnotator implements Sa2WSystem {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BabelfyAnnotator.class);
+//	private static final Logger LOGGER = LoggerFactory.getLogger(BabelfyAnnotator.class);
 
 	private static final int BABELFY_MAX_TEXT_LENGTH = 3500;
 
@@ -158,8 +158,7 @@ public class BabelfyAnnotator implements Sa2WSystem {
 					}
 				}
 			}
-			List<SemanticAnnotation> bfyAnnotations =
-					bfy.babelfy(chunk, Language.EN, constraints);
+			List<SemanticAnnotation> bfyAnnotations = sendRequest(bfy, chunk, constraints);
 
 			for (SemanticAnnotation bfyAnn : bfyAnnotations) {
 				int wikiID = -1;
@@ -177,6 +176,10 @@ public class BabelfyAnnotator implements Sa2WSystem {
 		}
 
 		return annotations;
+	}
+	
+	protected synchronized List<SemanticAnnotation> sendRequest(IBabelfy bfy, String chunk, BabelfyConstraints constraints) {
+	    return bfy.babelfy(chunk, Language.EN, constraints);
 	}
 
 	protected List<String> splitText(String text) {
