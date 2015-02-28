@@ -23,7 +23,6 @@
  */
 package org.aksw.gerbil.execute;
 
-import it.acubelab.batframework.cache.BenchmarkCache;
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Tag;
 import it.acubelab.batframework.metrics.MatchRelation;
@@ -39,7 +38,6 @@ import it.acubelab.batframework.problems.Sc2WSystem;
 import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.problems.TopicSystem;
 import it.acubelab.batframework.utils.Pair;
-import it.acubelab.batframework.utils.RunExperiments;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.util.HashMap;
@@ -47,25 +45,29 @@ import java.util.Vector;
 
 import org.aksw.gerbil.bat.annotator.ErrorCounter;
 import org.aksw.gerbil.bat.annotator.ErrorCountingAnnotatorDecorator;
+import org.aksw.gerbil.bat.utils.RunExperiments;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskState;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.matching.MatchingFactory;
+import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExperimentTaskExecuter implements Runnable {
+public class ExperimentTask implements Task {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentTaskExecuter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentTask.class);
 
     private ExperimentDAO experimentDAO;
     private ExperimentTaskConfiguration configuration;
     private int experimentTaskId;
     private WikipediaApiInterface wikiAPI;
+    private ExperimentTaskState taskState = null;
 
-    public ExperimentTaskExecuter(int experimentTaskId, ExperimentDAO experimentDAO,
+    public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO,
             ExperimentTaskConfiguration configuration, WikipediaApiInterface wikiAPI) {
         this.experimentDAO = experimentDAO;
         this.configuration = configuration;
@@ -80,15 +82,15 @@ public class ExperimentTaskExecuter implements Runnable {
             // Create dataset
             TopicDataset dataset = configuration.datasetConfig.getDataset(configuration.type);
             if (dataset == null) {
-                throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName()
-                        + "\" experimentType=\"" + configuration.type.name() + "\".",
-                        ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
+                throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
+                        + configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
             // Create annotator
             TopicSystem annotator = configuration.annotatorConfig.getAnnotator(configuration.type);
             // TODO add time measuring
-            //annotator = TimeMeasuringAnnotatorDecorator.createDecorator(annotator);
+            // annotator =
+            // TimeMeasuringAnnotatorDecorator.createDecorator(annotator);
             annotator = ErrorCountingAnnotatorDecorator.createDecorator(annotator);
             if (annotator == null) {
                 throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
@@ -100,13 +102,13 @@ public class ExperimentTaskExecuter implements Runnable {
             MatchRelation<?> matching = MatchingFactory.createMatchRelation(wikiAPI, configuration.matching,
                     configuration.type);
             if (matching == null) {
-                throw new GerbilException("matching=\"" + configuration.matching.name()
-                        + "\" experimentType=\"" + configuration.type.name() + "\".",
-                        ErrorTypes.MATCHING_DOES_NOT_SUPPORT_EXPERIMENT);
+                throw new GerbilException("matching=\"" + configuration.matching.name() + "\" experimentType=\""
+                        + configuration.type.name() + "\".", ErrorTypes.MATCHING_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
+            taskState = new ExperimentTaskState(dataset.getSize());
             // perform experiment
-            MetricsResultSet metrics = runExperiment(dataset, annotator, matching).second;
+            MetricsResultSet metrics = runExperiment(dataset, annotator, matching, taskState).second;
 
             int errorCount = 0;
             if (annotator instanceof ErrorCounter) {
@@ -137,8 +139,7 @@ public class ExperimentTaskExecuter implements Runnable {
 
     @SuppressWarnings("unchecked")
     private Pair<Float, MetricsResultSet> runExperiment(TopicDataset dataset, TopicSystem annotator,
-            MatchRelation<?> matching)
-            throws GerbilException {
+            MatchRelation<?> matching, ExperimentTaskState state) throws GerbilException {
         HashMap<String, HashMap<String, HashMap<String, HashMap<Float, MetricsResultSet>>>> results = null;
         switch (configuration.type) {
         case D2KB: {
@@ -147,7 +148,7 @@ public class ExperimentTaskExecuter implements Runnable {
             Vector<D2WDataset> d2wDataset = new Vector<D2WDataset>(1);
             d2wDataset.add((D2WDataset) dataset);
             try {
-                results = RunExperiments.performD2WExpVarThreshold(d2wAnnotator, null, d2wDataset, wikiAPI);
+                results = RunExperiments.performD2WExpVarThreshold(d2wAnnotator, null, d2wDataset, state, wikiAPI);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
@@ -161,9 +162,12 @@ public class ExperimentTaskExecuter implements Runnable {
             Vector<MatchRelation<Annotation>> matchings = new Vector<MatchRelation<Annotation>>(1);
             matchings.add((MatchRelation<Annotation>) matching);
             try {
-                results = RunExperiments.performA2WExpVarThreshold(matchings, a2wAnnotator, null, a2wDataset, wikiAPI);
-                LOGGER.info("average time needed by {} on {}: {}", annotator.getName(), dataset.getName(),
-                        BenchmarkCache.getAvgA2WTimingsForDataset(annotator.getName(), dataset.getName()));
+                results = RunExperiments.performA2WExpVarThreshold(matchings, a2wAnnotator, null, a2wDataset, state,
+                        wikiAPI);
+                // LOGGER.info("average time needed by {} on {}: {}",
+                // annotator.getName(), dataset.getName(),
+                // BenchmarkCache.getAvgA2WTimingsForDataset(annotator.getName(),
+                // dataset.getName()));
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
@@ -177,9 +181,12 @@ public class ExperimentTaskExecuter implements Runnable {
             Vector<MatchRelation<Annotation>> matchings = new Vector<MatchRelation<Annotation>>(1);
             matchings.add((MatchRelation<Annotation>) matching);
             try {
-                results = RunExperiments.performA2WExpVarThreshold(matchings, null, sa2wAnnotator, a2wDataset, wikiAPI);
-                LOGGER.info("average time needed by {} on {}: {}", annotator.getName(), dataset.getName(),
-                        BenchmarkCache.getAvgSa2WTimingsForDataset(annotator.getName(), dataset.getName()));
+                results = RunExperiments.performA2WExpVarThreshold(matchings, null, sa2wAnnotator, a2wDataset, state,
+                        wikiAPI);
+                // LOGGER.info("average time needed by {} on {}: {}",
+                // annotator.getName(), dataset.getName(),
+                // BenchmarkCache.getAvgSa2WTimingsForDataset(annotator.getName(),
+                // dataset.getName()));
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
@@ -193,10 +200,12 @@ public class ExperimentTaskExecuter implements Runnable {
             Vector<MatchRelation<Tag>> matchings = new Vector<MatchRelation<Tag>>(1);
             matchings.add((MatchRelation<Tag>) matching);
             try {
-                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null,
-                        null, c2wAnnotator, c2wDataset, wikiAPI);
-                LOGGER.info("average time needed by {} on {}: {}", annotator.getName(), dataset.getName(),
-                        BenchmarkCache.getAvgC2WTimingsForDataset(annotator.getName(), dataset.getName()));
+                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null, null, c2wAnnotator,
+                        c2wDataset, state, wikiAPI);
+                // LOGGER.info("average time needed by {} on {}: {}",
+                // annotator.getName(), dataset.getName(),
+                // BenchmarkCache.getAvgC2WTimingsForDataset(annotator.getName(),
+                // dataset.getName()));
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
@@ -211,8 +220,8 @@ public class ExperimentTaskExecuter implements Runnable {
             Vector<MatchRelation<Tag>> matchings = new Vector<MatchRelation<Tag>>(1);
             matchings.add((MatchRelation<Tag>) matching);
             try {
-                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null,
-                        rc2wAnnotator, null, rc2wDataset, wikiAPI);
+                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null, rc2wAnnotator, null,
+                        rc2wDataset, state, wikiAPI);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
@@ -224,6 +233,19 @@ public class ExperimentTaskExecuter implements Runnable {
         }
         return RunExperiments.getBestRecord(results, matching.getName(), annotator.getName(), dataset.getName());
     }
-    
-    
+
+    @Override
+    public String getId() {
+        return configuration.toString();
+    }
+
+    @Override
+    public String getProgress() {
+        if (taskState != null) {
+            return (taskState.getExperimentTaskProcess() * 100.0) + "% of dataset";
+        } else {
+            return null;
+        }
+    }
+
 }

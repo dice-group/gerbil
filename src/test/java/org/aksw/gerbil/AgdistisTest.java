@@ -36,6 +36,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
 
 @Ignore
@@ -48,7 +49,7 @@ public class AgdistisTest {
                 new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()),
                 new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
                 ExperimentType.D2KB, Matching.STRONG_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI,
+        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleOverseer(),
                 new SimpleLoggingDAO4Debugging(), taskConfigs, "AGDISTIS_TEST");
         experimenter.run();
     }

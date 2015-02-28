@@ -27,8 +27,8 @@ import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-import org.aksw.gerbil.execute.ExperimentTaskExecuter;
-import org.aksw.gerbil.execute.SimpleThreadObserver;
+import org.aksw.gerbil.execute.ExperimentTask;
+import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +40,15 @@ public class Experimenter implements Runnable {
     private String experimentId;
     private ExperimentDAO experimentDAO;
     private WikipediaApiInterface wikiAPI;
+    private Overseer overseer;
 
-    public Experimenter(WikipediaApiInterface wikiAPI, ExperimentDAO experimentDAO,
+    public Experimenter(WikipediaApiInterface wikiAPI, Overseer overseer, ExperimentDAO experimentDAO,
             ExperimentTaskConfiguration configs[], String experimentId) {
         this.configs = configs;
         this.experimentId = experimentId;
         this.experimentDAO = experimentDAO;
         this.wikiAPI = wikiAPI;
+        this.overseer = overseer;
     }
 
     @Override
@@ -55,26 +57,25 @@ public class Experimenter implements Runnable {
             int taskId;
             for (int i = 0; i < configs.length; ++i) {
                 if (couldHaveCachedResult(configs[i])) {
-                    taskId = experimentDAO.connectCachedResultOrCreateTask(
-                            configs[i].annotatorConfig.getName(),
-                            configs[i].datasetConfig.getName(), configs[i].type.name(),
-                            configs[i].matching.name(), experimentId);
+                    taskId = experimentDAO.connectCachedResultOrCreateTask(configs[i].annotatorConfig.getName(),
+                            configs[i].datasetConfig.getName(), configs[i].type.name(), configs[i].matching.name(),
+                            experimentId);
                 } else {
                     taskId = experimentDAO.createTask(configs[i].annotatorConfig.getName(),
-                            configs[i].datasetConfig.getName(), configs[i].type.name(),
-                            configs[i].matching.name(), experimentId);
+                            configs[i].datasetConfig.getName(), configs[i].type.name(), configs[i].matching.name(),
+                            experimentId);
                 }
                 // If there is no experiment task result in the database
                 if (taskId != ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED) {
                     // Create an executer which performs the task
-                    ExperimentTaskExecuter executer = new ExperimentTaskExecuter(taskId, experimentDAO, configs[i],
-                            wikiAPI);
-                    Thread t = new Thread(executer);
-                    t.start();
-                    if (SimpleThreadObserver.canObserveThread()) {
-                        t = new Thread(new SimpleThreadObserver(t));
-                        t.start();
-                    }
+                    ExperimentTask task = new ExperimentTask(taskId, experimentDAO, configs[i], wikiAPI);
+                    overseer.startTask(task);
+                    // Thread t = new Thread(executer);
+                    // t.start();
+                    // if (SimpleThreadObserver.canObserveThread()) {
+                    // t = new Thread(new SimpleThreadObserver(t));
+                    // t.start();
+                    // }
                 }
             }
             LOGGER.info("Experimenter finished the creation of tasks for experiment \"" + experimentId + "\"");

@@ -320,6 +320,13 @@
 			<version>1.3.171</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- Concurrent lib -->
+		<dependency>
+			<groupId>org.aksw.simba</groupId>
+			<artifactId>topicmodeling.concurrent</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+
 		<!-- FOX -->
 		<dependency>
 			<groupId>org.aksw</groupId>

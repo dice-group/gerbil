@@ -35,6 +35,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
 
 @Ignore
@@ -45,7 +46,7 @@ public class TagmeTest {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new TagMeAnnotatorConfig(), new IITBDatasetConfig(wikiAPI), ExperimentType.D2KB,
                 Matching.STRONG_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
+        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleOverseer(), new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "TAGME_TEST");
         experimenter.run();
     }

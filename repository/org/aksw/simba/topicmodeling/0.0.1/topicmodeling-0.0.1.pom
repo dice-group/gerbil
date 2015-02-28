@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.aksw.simba</groupId>
+  <artifactId>topicmodeling</artifactId>
+  <version>0.0.1</version>
+  <packaging>pom</packaging>
+
+    <!-- LICENSE -->
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>http://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+    
+    <!-- DEVELOPERS -->
+    <developers>
+        <developer>
+            <id>m.roeder</id>
+            <name>${developer.name}</name>
+            <email>${developer.mail}</email>
+        </developer>
+    </developers>
+    
+    <!-- PROPERTIES -->
+    <properties>
+        <developer.name>Michael Röder</developer.name>
+        <developer.mail>michael.roeder@unister.de</developer.mail>
+        <project.inceptionYear>2014</project.inceptionYear>
+    </properties>
+    
+  <!-- MODULES -->
+  <modules>
+  	<module>topicmodeling.parent</module>
+  	<module>topicmodeling.concurrent</module>
+  </modules>
+</project>

@@ -37,20 +37,20 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
 
 @Ignore
 public class DexterTest {
 
-    public static void main(String[] args) throws FileNotFoundException,
-            IOException, ClassNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new DexterAnnotatorConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi()),
                 new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
                 ExperimentType.Sa2KB, Matching.WEAK_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI,
-                new SimpleLoggingDAO4Debugging(), taskConfigs, "DEXTER_TEST");
+        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
+                taskConfigs, "DEXTER_TEST");
         experimenter.run();
     }
 }

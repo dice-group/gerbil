@@ -3,6 +3,7 @@ package org.aksw.gerbil.execute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class SimpleThreadObserver implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleThreadObserver.class);

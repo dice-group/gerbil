@@ -33,6 +33,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
 
 /**
@@ -54,7 +55,7 @@ public class Microposts2014Test {
                                 new Microposts2014Config(Microposts2014Chunk.TRAIN, SingletonWikipediaApi.getInstance()),
                                 ExperimentType.D2KB,
                                 Matching.STRONG_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI,
+        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleOverseer(),
                 new SimpleLoggingDAO4Debugging(),
                 taskConfigs,
                 "MICROPOSTS_TEST");

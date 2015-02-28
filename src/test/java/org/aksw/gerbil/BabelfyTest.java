@@ -36,6 +36,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
 
 @Ignore
@@ -43,24 +44,23 @@ public class BabelfyTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
-        // ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new
+        // ExperimentTaskConfiguration taskConfigs[] = new
+        // ExperimentTaskConfiguration[] { new
         // ExperimentTaskConfiguration(
-        // new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()), new KnownNIFFileDatasetConfig(
+        // new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()), new
+        // KnownNIFFileDatasetConfig(
         // SingletonWikipediaApi.getInstance(),
         // NIFDatasets.N3_REUTERS_128), ExperimentType.D2KB,
         // Matching.STRONG_ANNOTATION_MATCH) };
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
-                new ExperimentTaskConfiguration(
-                        new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()), new KnownNIFFileDatasetConfig(
-                                SingletonWikipediaApi.getInstance(),
-                                NIFDatasets.N3_REUTERS_128), ExperimentType.A2KB,
-                        Matching.WEAK_ANNOTATION_MATCH), new ExperimentTaskConfiguration(
-                        new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()), new KnownNIFFileDatasetConfig(
-                                SingletonWikipediaApi.getInstance(),
-                                NIFDatasets.DBPEDIA_SPOTLIGHT), ExperimentType.A2KB,
-                        Matching.WEAK_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleLoggingDAO4Debugging(), taskConfigs,
-                "BABELFY_TEST");
+                new ExperimentTaskConfiguration(new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()),
+                        new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.N3_REUTERS_128),
+                        ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH),
+                new ExperimentTaskConfiguration(new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()),
+                        new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
+                                NIFDatasets.DBPEDIA_SPOTLIGHT), ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH) };
+        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
+                taskConfigs, "BABELFY_TEST");
         experimenter.run();
     }
 }
