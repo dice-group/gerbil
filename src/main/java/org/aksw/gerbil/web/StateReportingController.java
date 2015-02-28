@@ -35,12 +35,14 @@ public class StateReportingController {
                 resultBuilder.append("<br>\n");
                 resultBuilder.append("progress=");
                 resultBuilder.append(state.task.getProgress());
-                resultBuilder.append("<br>\n");
                 stackTrace = state.stackTrace;
-                for (int i = 0; i < stackTrace.length; ++i) {
-                    resultBuilder.append("\t\t");
-                    resultBuilder.append(stackTrace[i].toString());
+                if (state.stackTrace != null) {
                     resultBuilder.append("<br>\n");
+                    for (int i = 0; i < stackTrace.length; ++i) {
+                        resultBuilder.append("\t\t");
+                        resultBuilder.append(stackTrace[i].toString());
+                        resultBuilder.append("<br>\n");
+                    }
                 }
                 resultBuilder.append("</p>\n");
             }
