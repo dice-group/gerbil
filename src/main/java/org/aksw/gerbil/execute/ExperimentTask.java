@@ -91,7 +91,7 @@ public class ExperimentTask implements Task {
             // TODO add time measuring
             // annotator =
             // TimeMeasuringAnnotatorDecorator.createDecorator(annotator);
-            annotator = ErrorCountingAnnotatorDecorator.createDecorator(annotator);
+            annotator = ErrorCountingAnnotatorDecorator.createDecorator(annotator, dataset.getSize());
             if (annotator == null) {
                 throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",

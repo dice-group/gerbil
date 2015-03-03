@@ -54,7 +54,7 @@ public class BabelfyTest {
         // Matching.STRONG_ANNOTATION_MATCH) };
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
                 new ExperimentTaskConfiguration(new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()),
-                        new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.N3_REUTERS_128),
+                        new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
                         ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH),
                 new ExperimentTaskConfiguration(new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()),
                         new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
