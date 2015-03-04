@@ -23,10 +23,12 @@
  */
 package org.aksw.gerbil.datatypes;
 
+import org.aksw.gerbil.transfer.nif.Marking;
+
 /**
  * The type of an experiment.
  * 
- * Hierarchy of experiment types:<br>
+ * old hierarchy of experiment types:<br>
  * {@link #Sa2KB} ≻ {@link #Sc2KB}<br>
  * {@link #Sc2KB} ≻ {@link #Rc2KB}<br>
  * {@link #Rc2KB} ≻ {@link #C2KB}<br>
@@ -34,9 +36,11 @@ package org.aksw.gerbil.datatypes;
  * {@link #A2KB} ≻ {@link #C2KB}<br>
  * {@link #A2KB} ≻ {@link #D2KB}<br>
  * 
+ * 
+ * 
  * <p>
- * {@link #Sa2KB} is the hardest problem containing all others while {@link #C2KB} and {@link #D2KB} are the leaves of the
- * hierarchy.
+ * {@link #Sa2KB} is the hardest problem containing all others while
+ * {@link #C2KB} and {@link #D2KB} are the leaves of the hierarchy.
  * </p>
  * 
  * @author m.roeder
@@ -53,55 +57,102 @@ public enum ExperimentType {
      * Input: text with marked entities <br>
      * Output: mentions for every entity
      */
+    @Deprecated
     D2KB,
     /**
      * Annotate to Wikipedia
      * <p>
-     * Identify the relevant mentions in the input text and assign to each of them the pertinent entities.
+     * Identify the relevant mentions in the input text and assign to each of
+     * them the pertinent entities.
      * </p>
      * Input: text<br>
      * Output: marked entities and mentions for their meaning
      */
+    @Deprecated
     A2KB,
     /**
      * Scored-annotate to Wikipedia
      * <p>
-     * Identify the relevant mentions in the input text and assign to each of them the pertinent entities. Additionally,
-     * each annotation is assigned a score representing the likelihood that the annotation is correct.
+     * Identify the relevant mentions in the input text and assign to each of
+     * them the pertinent entities. Additionally, each annotation is assigned a
+     * score representing the likelihood that the annotation is correct.
      * </p>
      * Input: text<br>
      * Output: marked entities and scored mentions for their meaning
      */
+    @Deprecated
     Sa2KB,
     /**
      * Concepts to Wikipedia
      * <p>
-     * Tags are taken as the set of relevant entities that are mentioned in the input text.
+     * Tags are taken as the set of relevant entities that are mentioned in the
+     * input text.
      * </p>
      * Input: text<br>
      * Output: marked entities
      */
+    @Deprecated
     C2KB,
     /**
      * Scored concepts to Wikipedia
      * <p>
-     * Tags are taken as the set of relevant entities that are mentioned in the input text. Additionally, each tag is
-     * assigned a score representing the likelihood that the annotation is correct.
+     * Tags are taken as the set of relevant entities that are mentioned in the
+     * input text. Additionally, each tag is assigned a score representing the
+     * likelihood that the annotation is correct.
      * </p>
      * Input: text<br>
      * Output: scored markings of entities
      */
+    @Deprecated
     Sc2KB,
     /**
      * Ranked-concepts to Wikipedia
      * <p>
-     * Identify the entities mentioned in a text and rank them in terms of their relevance for the topics dealt with in
-     * the input text.
+     * Identify the entities mentioned in a text and rank them in terms of their
+     * relevance for the topics dealt with in the input text.
      * </p>
      * Input: text<br>
      * Output: ranked markings of entities
      */
-    Rc2KB;
+    @Deprecated
+    Rc2KB,
+    /**
+     * Entity Extraction comprises the two steps {@link #EntityRecognition} and
+     * {@link #EntityLinking}.
+     */
+    EntityExtraction,
+    /**
+     * Entity Recognition is the identification of an entity inside a given
+     * text.
+     */
+    EntityRecognition,
+    /**
+     * Entity Linking is the assigning of a URI from a given Knowledge Base to a
+     * given entity.
+     */
+    EntityLinking;// ,
+    // /**
+    // * Entity Typing is the assigning of a type from a given Knowledge Base to
+    // a
+    // * given entity. Note that this is different to Entity Linking because
+    // even
+    // * unknown entities can be typed.
+    // */
+    // EntityTyping,
+    // /**
+    // * Class Induction is the determining of an entity type based on a given
+    // * Knowledge Base containing the type and a given document containing this
+    // * entity and its type.
+    // */
+    // OKEChallenge1, OKEChallenge2, OKEChallenge3;
+
+    public Class<? extends Marking> getInputType() {
+        return null;
+    }
+
+    public Class<? extends Marking> getOutputType() {
+        return null;
+    }
 
     public boolean equalsOrContainsType(ExperimentType type) {
         switch (this) {
@@ -110,8 +161,11 @@ public enum ExperimentType {
         }
         case Sc2KB: {
             switch (type) {
+            case EntityRecognition:
             case Sa2KB: // falls through
+            case EntityExtraction:
             case A2KB:
+            case EntityLinking:
             case D2KB: {
                 return false;
             }
@@ -124,9 +178,12 @@ public enum ExperimentType {
         }
         case Rc2KB: {
             switch (type) {
+            case EntityRecognition:
             case Sa2KB: // falls through
             case Sc2KB:
+            case EntityExtraction:
             case A2KB:
+            case EntityLinking:
             case D2KB: {
                 return false;
             }
@@ -136,8 +193,10 @@ public enum ExperimentType {
             }
             }
         }
+        case EntityExtraction: // falls through
         case A2KB: {
             switch (type) {
+            case EntityRecognition:
             case Sa2KB: // falls through
             case Sc2KB:
             case Rc2KB:
@@ -145,6 +204,8 @@ public enum ExperimentType {
                 return false;
             }
             case A2KB: // falls through
+            case EntityExtraction:
+            case EntityLinking:
             case D2KB: {
                 return true;
             }
@@ -152,10 +213,13 @@ public enum ExperimentType {
         }
         case C2KB: {
             switch (type) {
+            case EntityRecognition:
             case Sa2KB: // falls through
             case Sc2KB:
             case Rc2KB:
+            case EntityExtraction:
             case A2KB:
+            case EntityLinking:
             case D2KB: {
                 return false;
             }
@@ -163,17 +227,38 @@ public enum ExperimentType {
                 return true;
             }
             }
-        }
+        }// falls through
+        case EntityLinking:
         case D2KB: {
             switch (type) {
+            case EntityRecognition:
             case Sa2KB: // falls through
             case Sc2KB:
             case Rc2KB:
+            case EntityExtraction:
             case A2KB:
             case C2KB: {
                 return false;
             }
+            case EntityLinking:
             case D2KB: {
+                return true;
+            }
+            }
+        }
+        case EntityRecognition: {
+            switch (type) {
+            case Sa2KB: // falls through
+            case Sc2KB:
+            case Rc2KB:
+            case EntityExtraction:
+            case A2KB:
+            case C2KB:
+            case EntityLinking:
+            case D2KB: {
+                return false;
+            }
+            case EntityRecognition: {
                 return true;
             }
             }

@@ -39,6 +39,7 @@ public class Experimenter implements Runnable {
     private ExperimentTaskConfiguration configs[];
     private String experimentId;
     private ExperimentDAO experimentDAO;
+    @Deprecated
     private WikipediaApiInterface wikiAPI;
     private Overseer overseer;
 
@@ -68,7 +69,7 @@ public class Experimenter implements Runnable {
                 // If there is no experiment task result in the database
                 if (taskId != ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED) {
                     // Create an executer which performs the task
-                    ExperimentTask task = new ExperimentTask(taskId, experimentDAO, configs[i], wikiAPI);
+                    ExperimentTask task = new ExperimentTask(taskId, experimentDAO, configs[i]);
                     overseer.startTask(task);
                     // Thread t = new Thread(executer);
                     // t.start();

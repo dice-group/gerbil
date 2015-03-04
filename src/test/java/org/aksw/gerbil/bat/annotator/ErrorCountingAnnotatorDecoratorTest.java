@@ -31,7 +31,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTask task = new ExperimentTask(1, db, new ExperimentTaskConfiguration(
                 new ErrorCausingAnnotatorConfig(5), new SimpleTestDatasetConfig(100), ExperimentType.C2KB,
-                Matching.STRONG_ENTITY_MATCH), SingletonWikipediaApi.getInstance());
+                Matching.STRONG_ENTITY_MATCH));
         task.run();
         ExperimentTaskResult result = db.getTaskResult(1);
         Assert.assertNotNull(result);
@@ -44,7 +44,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTask task = new ExperimentTask(2, db, new ExperimentTaskConfiguration(
                 new ErrorCausingAnnotatorConfig(30), new SimpleTestDatasetConfig(1000), ExperimentType.C2KB,
-                Matching.STRONG_ENTITY_MATCH), SingletonWikipediaApi.getInstance());
+                Matching.STRONG_ENTITY_MATCH));
         task.run();
         Assert.assertTrue(db.getExperimentState(2) < 0);
     }

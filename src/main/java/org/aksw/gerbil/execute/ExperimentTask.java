@@ -41,18 +41,24 @@ import it.acubelab.batframework.utils.Pair;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Vector;
 
+import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.bat.annotator.ErrorCounter;
 import org.aksw.gerbil.bat.annotator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.bat.utils.RunExperiments;
 import org.aksw.gerbil.database.ExperimentDAO;
+import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentTaskState;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.matching.MatchingFactory;
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,15 +70,14 @@ public class ExperimentTask implements Task {
     private ExperimentDAO experimentDAO;
     private ExperimentTaskConfiguration configuration;
     private int experimentTaskId;
+    @Deprecated
     private WikipediaApiInterface wikiAPI;
     private ExperimentTaskState taskState = null;
 
-    public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO,
-            ExperimentTaskConfiguration configuration, WikipediaApiInterface wikiAPI) {
+    public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO, ExperimentTaskConfiguration configuration) {
         this.experimentDAO = experimentDAO;
         this.configuration = configuration;
         this.experimentTaskId = experimentTaskId;
-        this.wikiAPI = wikiAPI;
     }
 
     @Override
@@ -80,18 +85,19 @@ public class ExperimentTask implements Task {
         LOGGER.info("Task started " + configuration.toString());
         try {
             // Create dataset
-            TopicDataset dataset = configuration.datasetConfig.getDataset(configuration.type);
+            Dataset dataset = (Dataset) configuration.datasetConfig.getDataset(configuration.type);
             if (dataset == null) {
                 throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
                         + configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
             // Create annotator
-            TopicSystem annotator = configuration.annotatorConfig.getAnnotator(configuration.type);
+            Annotator annotator = (Annotator) configuration.annotatorConfig.getAnnotator(configuration.type);
             // TODO add time measuring
             // annotator =
             // TimeMeasuringAnnotatorDecorator.createDecorator(annotator);
-            annotator = ErrorCountingAnnotatorDecorator.createDecorator(annotator, dataset.getSize());
+            annotator = (Annotator) ErrorCountingAnnotatorDecorator.createDecorator((TopicSystem) annotator,
+                    dataset.size());
             if (annotator == null) {
                 throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
@@ -106,7 +112,7 @@ public class ExperimentTask implements Task {
                         + configuration.type.name() + "\".", ErrorTypes.MATCHING_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
-            taskState = new ExperimentTaskState(dataset.getSize());
+            taskState = new ExperimentTaskState(dataset.size());
             // perform experiment
             MetricsResultSet metrics = runExperiment(dataset, annotator, matching, taskState).second;
 
@@ -138,7 +144,7 @@ public class ExperimentTask implements Task {
     }
 
     @SuppressWarnings("unchecked")
-    private Pair<Float, MetricsResultSet> runExperiment(TopicDataset dataset, TopicSystem annotator,
+    private Pair<Float, MetricsResultSet> runExperiment(Dataset dataset, Annotator annotator,
             MatchRelation<?> matching, ExperimentTaskState state) throws GerbilException {
         HashMap<String, HashMap<String, HashMap<String, HashMap<Float, MetricsResultSet>>>> results = null;
         switch (configuration.type) {
@@ -226,6 +232,15 @@ public class ExperimentTask implements Task {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
             break;
+        }
+        case EntityRecognition: {
+            Set<NamedEntity> result;
+            EntityLinker linker = ((EntityLinker) annotator);
+            for(Document document : dataset.getInstances()) {
+                result = linker.performLinking(document);
+                
+            }
+            
         }
         default:
             throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
