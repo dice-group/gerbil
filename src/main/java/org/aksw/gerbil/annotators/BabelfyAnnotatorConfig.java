@@ -30,43 +30,50 @@ import it.uniroma1.lcl.babelfy.commons.BabelfyConfiguration;
 import java.io.File;
 import java.io.IOException;
 
+import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.bat.annotator.BabelfyAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
-public class BabelfyAnnotatorConfig extends AbstractAnnotatorConfiguration {
+public class BabelfyAnnotatorConfig /*extends AbstractAnnotatorConfiguration*/ {
 
-    public static final String ANNOTATOR_NAME = "Babelfy";
-
-    private static final String BABELNET_CONFIG_FILE_PROPERTY_NAME = "org.aksw.gerbil.annotators.BabelfyAnnotatorConfig.ConfigFile";
-    private static final String BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.BabelfyAnnotatorConfig.Key";
-
-    private WikipediaApiInterface wikiApi;
-    /**
-     * The annotator instance shared by all experiment tasks.
-     */
-    private BabelfyAnnotator instance = null;
-
-    public BabelfyAnnotatorConfig(WikipediaApiInterface wikiApi) {
-        super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
-        this.wikiApi = wikiApi;
-    }
-
-    @Override
-    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
-        if (instance == null) {
-            String configFile = GerbilConfiguration.getInstance().getString(BABELNET_CONFIG_FILE_PROPERTY_NAME);
-            if (configFile == null) {
-                throw new IOException("Couldn't load needed Property \"" + BABELNET_CONFIG_FILE_PROPERTY_NAME + "\".");
-            }
-            // Load the configuration
-            BabelfyConfiguration.getInstance().setConfigurationFile(new File(configFile));
-
-            // Load and use the key if there is one
-            String key = GerbilConfiguration.getInstance().getString(BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME);
-            BabelfyConfiguration.getInstance().setRFkey(key);
-            instance = new BabelfyAnnotator(wikiApi);
-        }
-        return instance;
-    }
+    // public static final String ANNOTATOR_NAME = "Babelfy";
+    //
+    // private static final String BABELNET_CONFIG_FILE_PROPERTY_NAME =
+    // "org.aksw.gerbil.annotators.BabelfyAnnotatorConfig.ConfigFile";
+    // private static final String BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME =
+    // "org.aksw.gerbil.annotators.BabelfyAnnotatorConfig.Key";
+    //
+    // private WikipediaApiInterface wikiApi;
+    // /**
+    // * The annotator instance shared by all experiment tasks.
+    // */
+    // private BabelfyAnnotator instance = null;
+    //
+    // public BabelfyAnnotatorConfig(WikipediaApiInterface wikiApi) {
+    // super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
+    // this.wikiApi = wikiApi;
+    // }
+    //
+    // @Override
+    // protected Annotator loadAnnotator(ExperimentType type) throws Exception {
+    // if (instance == null) {
+    // String configFile =
+    // GerbilConfiguration.getInstance().getString(BABELNET_CONFIG_FILE_PROPERTY_NAME);
+    // if (configFile == null) {
+    // throw new IOException("Couldn't load needed Property \"" +
+    // BABELNET_CONFIG_FILE_PROPERTY_NAME + "\".");
+    // }
+    // // Load the configuration
+    // BabelfyConfiguration.getInstance().setConfigurationFile(new
+    // File(configFile));
+    //
+    // // Load and use the key if there is one
+    // String key =
+    // GerbilConfiguration.getInstance().getString(BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME);
+    // BabelfyConfiguration.getInstance().setRFkey(key);
+    // instance = new BabelfyAnnotator(wikiApi);
+    // }
+    // return instance;
+    // }
 }

@@ -55,7 +55,7 @@ public class Microposts2014Test {
                                 new Microposts2014Config(Microposts2014Chunk.TRAIN, SingletonWikipediaApi.getInstance()),
                                 ExperimentType.D2KB,
                                 Matching.STRONG_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleOverseer(),
+        Experimenter experimenter = new Experimenter(new SimpleOverseer(),
                 new SimpleLoggingDAO4Debugging(),
                 taskConfigs,
                 "MICROPOSTS_TEST");

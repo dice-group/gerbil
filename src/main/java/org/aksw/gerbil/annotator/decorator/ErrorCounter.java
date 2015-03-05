@@ -21,28 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.annotators;
+package org.aksw.gerbil.annotator.decorator;
 
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.systemPlugins.TagmeAnnotator;
+public interface ErrorCounter {
 
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentType;
+	public int getErrorCount();
 
-public class TagMeAnnotatorConfig /*extends AbstractAnnotatorConfiguration*/ {
-    
-//    public static final String ANNOTATOR_NAME = "TagMe 2";
-//
-//    private static final String TAGME_CONFIG_FILE_PROPERTY_NAME = "org.aksw.gerbil.annotators.TagmeAnnotatorConfig.ConfigFile";
-//
-//    public TagMeAnnotatorConfig() {
-//        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2KB });
-//    }
-//
-//    @Override
-//    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
-//        return new TagmeAnnotator(GerbilConfiguration.getInstance().getString(TAGME_CONFIG_FILE_PROPERTY_NAME));
-//    }
-
-    
+	public void setErrorCount(int errorCount);
 }

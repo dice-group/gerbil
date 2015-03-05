@@ -1,11 +1,11 @@
 package org.aksw.gerbil.annotator;
 
-import java.util.Set;
+import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.aksw.gerbil.transfer.nif.Span;
 
 public interface EntityRecognizer extends Annotator {
 
-    public Set<NamedEntity> performRecognition(Document document);
+    public List<Span> performRecognition(Document document);
 }

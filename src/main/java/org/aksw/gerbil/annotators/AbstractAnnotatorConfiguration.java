@@ -23,8 +23,7 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.problems.TopicSystem;
-
+import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -32,14 +31,13 @@ import org.aksw.gerbil.exceptions.GerbilException;
 
 public abstract class AbstractAnnotatorConfiguration extends AbstractAdapterConfiguration implements
         AnnotatorConfiguration {
-
     public AbstractAnnotatorConfiguration(String annotatorName, boolean couldBeCached,
             ExperimentType... applicableForExperiment) {
         super(annotatorName, couldBeCached, applicableForExperiment);
     }
 
     @Override
-    public TopicSystem getAnnotator(ExperimentType experimentType) throws GerbilException {
+    public Annotator getAnnotator(ExperimentType experimentType) throws GerbilException {
         for (int i = 0; i < applicableForExperiments.length; ++i) {
             if (applicableForExperiments[i].equalsOrContainsType(experimentType)) {
                 try {
@@ -52,7 +50,7 @@ public abstract class AbstractAnnotatorConfiguration extends AbstractAdapterConf
         return null;
     }
 
-    protected abstract TopicSystem loadAnnotator(ExperimentType type) throws Exception;
+    protected abstract Annotator loadAnnotator(ExperimentType type) throws Exception;
 
     public ExperimentType[] getApplicableForExperiments() {
         return applicableForExperiments;

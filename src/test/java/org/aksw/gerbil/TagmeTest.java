@@ -46,7 +46,7 @@ public class TagmeTest {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new TagMeAnnotatorConfig(), new IITBDatasetConfig(wikiAPI), ExperimentType.D2KB,
                 Matching.STRONG_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleOverseer(), new SimpleLoggingDAO4Debugging(), taskConfigs,
+        Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(), taskConfigs,
                 "TAGME_TEST");
         experimenter.run();
     }

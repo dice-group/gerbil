@@ -23,8 +23,6 @@
  */
 package org.aksw.gerbil;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.execute.ExperimentTask;
@@ -39,16 +37,13 @@ public class Experimenter implements Runnable {
     private ExperimentTaskConfiguration configs[];
     private String experimentId;
     private ExperimentDAO experimentDAO;
-    @Deprecated
-    private WikipediaApiInterface wikiAPI;
     private Overseer overseer;
 
-    public Experimenter(WikipediaApiInterface wikiAPI, Overseer overseer, ExperimentDAO experimentDAO,
+    public Experimenter(Overseer overseer, ExperimentDAO experimentDAO,
             ExperimentTaskConfiguration configs[], String experimentId) {
         this.configs = configs;
         this.experimentId = experimentId;
         this.experimentDAO = experimentDAO;
-        this.wikiAPI = wikiAPI;
         this.overseer = overseer;
     }
 
@@ -71,12 +66,6 @@ public class Experimenter implements Runnable {
                     // Create an executer which performs the task
                     ExperimentTask task = new ExperimentTask(taskId, experimentDAO, configs[i]);
                     overseer.startTask(task);
-                    // Thread t = new Thread(executer);
-                    // t.start();
-                    // if (SimpleThreadObserver.canObserveThread()) {
-                    // t = new Thread(new SimpleThreadObserver(t));
-                    // t.start();
-                    // }
                 }
             }
             LOGGER.info("Experimenter finished the creation of tasks for experiment \"" + experimentId + "\"");

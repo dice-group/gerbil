@@ -27,7 +27,8 @@ import it.acubelab.batframework.problems.TopicSystem;
 import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import org.aksw.gerbil.bat.annotator.nif.NIFBasedAnnotatorWebservice;
+import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -49,12 +50,12 @@ public class DexterAnnotatorConfig extends AbstractAnnotatorConfiguration {
     }
 
     @Override
-    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
+    protected Annotator loadAnnotator(ExperimentType type) throws Exception {
         String annotatorURL = GerbilConfiguration.getInstance().getString(ANNOTATION_URL_PROPERTY_KEY);
         if (annotatorURL == null) {
             throw new GerbilException("Couldn't load the needed property \"" + ANNOTATION_URL_PROPERTY_KEY
                     + "\".", ErrorTypes.ANNOTATOR_LOADING_ERROR);
         }
-        return new NIFBasedAnnotatorWebservice(annotatorURL, this.getName(), wikiApi, dbpediaApi);
+        return new NIFBasedAnnotatorWebservice(annotatorURL, this.getName());
     }
 }

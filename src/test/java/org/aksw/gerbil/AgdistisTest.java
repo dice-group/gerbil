@@ -23,8 +23,6 @@
  */
 package org.aksw.gerbil;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -42,15 +40,13 @@ import org.junit.Ignore;
 @Ignore
 public class AgdistisTest {
 
-    public static void main(String[] args) throws FileNotFoundException,
-            IOException, ClassNotFoundException {
-        WikipediaApiInterface wikiAPI = SingletonWikipediaApi.getInstance();
+    public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()),
-                new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
-                ExperimentType.D2KB, Matching.STRONG_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleOverseer(),
-                new SimpleLoggingDAO4Debugging(), taskConfigs, "AGDISTIS_TEST");
+                new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()), new KnownNIFFileDatasetConfig(
+                        SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50), ExperimentType.D2KB,
+                Matching.STRONG_ANNOTATION_MATCH) };
+        Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
+                taskConfigs, "AGDISTIS_TEST");
         experimenter.run();
     }
 }

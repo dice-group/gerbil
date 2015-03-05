@@ -21,28 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.annotators;
+package org.aksw.gerbil.annotator.impl.nif;
 
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.systemPlugins.TagmeAnnotator;
+import it.acubelab.batframework.data.Mention;
 
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
-public class TagMeAnnotatorConfig /*extends AbstractAnnotatorConfiguration*/ {
-    
-//    public static final String ANNOTATOR_NAME = "TagMe 2";
-//
-//    private static final String TAGME_CONFIG_FILE_PROPERTY_NAME = "org.aksw.gerbil.annotators.TagmeAnnotatorConfig.ConfigFile";
-//
-//    public TagMeAnnotatorConfig() {
-//        super(ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.Sa2KB });
-//    }
-//
-//    @Override
-//    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
-//        return new TagmeAnnotator(GerbilConfiguration.getInstance().getString(TAGME_CONFIG_FILE_PROPERTY_NAME));
-//    }
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
+import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 
-    
+@Deprecated
+public class BAT2NIF_TranslationHelper {
+
+    public static Document createAnnotatedDocument(String text) {
+        return createAnnotatedDocument(text, null);
+    }
+
+    public static Document createAnnotatedDocument(String text,
+            Set<Mention> mentions) {
+        List<Marking> markings = new ArrayList<Marking>();
+        if (mentions != null) {
+            for (Mention mention : mentions) {
+                markings.add(translateMention2Annotation(mention));
+            }
+        }
+        return new DocumentImpl(text, markings);
+    }
+
+    public static Marking translateMention2Annotation(Mention mention) {
+        return new SpanImpl(mention.getPosition(), mention.getLength());
+    }
 }

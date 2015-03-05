@@ -20,7 +20,6 @@ import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.execute.ExperimentTask;
 import org.aksw.gerbil.matching.Matching;
-import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.junit.Assert;
 import org.junit.Test;
 

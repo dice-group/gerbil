@@ -1,21 +1,24 @@
 package org.aksw.gerbil.matching.impl;
 
-import java.util.Set;
+import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.Span;
+
+import com.carrotsearch.hppc.BitSet;
 
 public class StrongSpanMatching<T extends Span> extends AbstractMatchingsCounter<T> {
 
     @Override
-    protected T findMatching(T expectedElement, Set<T> annotatorResult) {
+    protected int findMatching(T expectedElement, List<T> annotatorResult, BitSet alreadyUsedResults) {
         int eStart = expectedElement.getStartPosition();
         int eLength = expectedElement.getLength();
-        for (T result : annotatorResult) {
-            if ((eStart == result.getStartPosition()) && (eLength == result.getLength())) {
-                return result;
+        for (int i = 0; i < annotatorResult.size(); ++i) {
+            if ((!alreadyUsedResults.get(i)) && (eStart == annotatorResult.get(i).getStartPosition())
+                    && (eLength == annotatorResult.get(i).getLength())) {
+                return i;
             }
         }
-        return null;
+        return ELEMENT_NOT_FOUND;
     }
 
 }

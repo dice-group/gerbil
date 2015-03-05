@@ -50,7 +50,7 @@ public class KeaTest {
                 new KeaAnnotatorConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi()),
                 new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
                 ExperimentType.Sa2KB, Matching.STRONG_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleOverseer(),
+        Experimenter experimenter = new Experimenter(new SimpleOverseer(),
                 new SimpleLoggingDAO4Debugging(), taskConfigs, "AGDISTIS_TEST");
         experimenter.run();
     }

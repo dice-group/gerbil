@@ -44,7 +44,6 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.AnnotatorMapping;
 import org.aksw.gerbil.utils.DatasetMapping;
 import org.aksw.gerbil.utils.IDCreator;
-import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -169,7 +168,7 @@ public class MainController {
             }
         }
         String experimentId = IDCreator.getInstance().createID();
-        Experimenter exp = new Experimenter(SingletonWikipediaApi.getInstance(), overseer, dao, configs, experimentId);
+        Experimenter exp = new Experimenter(overseer, dao, configs, experimentId);
         exp.run();
 
         return experimentId;

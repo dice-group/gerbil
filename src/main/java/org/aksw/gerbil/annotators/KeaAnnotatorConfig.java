@@ -23,11 +23,11 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.problems.TopicSystem;
 import it.acubelab.batframework.systemPlugins.DBPediaApi;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import org.aksw.gerbil.bat.annotator.nif.NIFBasedAnnotatorWebservice;
+import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -50,13 +50,13 @@ public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private DBPediaApi dbpediaApi;
 
     public KeaAnnotatorConfig(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi) {
-        super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
+        super(ANNOTATOR_NAME, true, ExperimentType.EntityExtraction);
         this.wikiApi = wikiApi;
         this.dbpediaApi = dbpediaApi;
     }
 
     @Override
-    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
+    protected Annotator loadAnnotator(ExperimentType type) throws Exception {
         String propertyKey;
         // If this we need a D2KB system
         if (ExperimentType.D2KB.equalsOrContainsType(type)) {
@@ -87,6 +87,6 @@ public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
         }
         url.append(annotatorURL);
 
-        return new NIFBasedAnnotatorWebservice(url.toString(), this.getName(), wikiApi, dbpediaApi);
+        return new NIFBasedAnnotatorWebservice(url.toString(), this.getName());
     }
 }

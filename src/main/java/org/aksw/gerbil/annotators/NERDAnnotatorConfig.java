@@ -42,36 +42,36 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 
-public class NERDAnnotatorConfig extends AbstractAnnotatorConfiguration {
+public class NERDAnnotatorConfig /*extends AbstractAnnotatorConfiguration*/ {
 
-    public static final String ANNOTATOR_NAME = "NERD-ML";
-    private static final String NERD_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.nerd.Key";
-
-    private WikipediaApiInterface wikiApi;
-
-    /**
-     * Shouldn't be used until we have finished porting the project to Spring.
-     */
-    @Deprecated
-    public NERDAnnotatorConfig() {
-        super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
-    }
-
-    public NERDAnnotatorConfig(WikipediaApiInterface wikiApi) {
-        super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
-        this.wikiApi = wikiApi;
-    }
-
-    @Override
-    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
-        // Load and use the key if there is one
-        String key = GerbilConfiguration.getInstance().getString(NERD_WEB_SERVICE_KEY_PROPERTY_NAME);
-        if (key == null) {
-            throw new GerbilException("Couldn't load the NERD API key from properties file.",
-                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
-        } else {
-            return new NERDAnnotator(wikiApi, key);
-        }
-    }
+//    public static final String ANNOTATOR_NAME = "NERD-ML";
+//    private static final String NERD_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.nerd.Key";
+//
+//    private WikipediaApiInterface wikiApi;
+//
+//    /**
+//     * Shouldn't be used until we have finished porting the project to Spring.
+//     */
+//    @Deprecated
+//    public NERDAnnotatorConfig() {
+//        super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
+//    }
+//
+//    public NERDAnnotatorConfig(WikipediaApiInterface wikiApi) {
+//        super(ANNOTATOR_NAME, true, ExperimentType.Sa2KB);
+//        this.wikiApi = wikiApi;
+//    }
+//
+//    @Override
+//    protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
+//        // Load and use the key if there is one
+//        String key = GerbilConfiguration.getInstance().getString(NERD_WEB_SERVICE_KEY_PROPERTY_NAME);
+//        if (key == null) {
+//            throw new GerbilException("Couldn't load the NERD API key from properties file.",
+//                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+//        } else {
+//            return new NERDAnnotator(wikiApi, key);
+//        }
+//    }
 
 }

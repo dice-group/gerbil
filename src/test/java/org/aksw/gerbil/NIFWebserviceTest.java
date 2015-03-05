@@ -35,7 +35,6 @@ import java.util.HashSet;
 
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
-import org.aksw.gerbil.bat.annotator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
@@ -66,14 +65,13 @@ public class NIFWebserviceTest {
         DBPediaApi dbpApi = new DBPediaApi();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
                 new ExperimentTaskConfiguration(new NIFWebserviceAnnotatorConfiguration(ANNOTATOR_URL, ANNOTATOR_NAME,
-                        false, wikiAPI, dbpApi, ExperimentType.A2KB), new KnownNIFFileDatasetConfig(
-                        SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50), ExperimentType.A2KB,
-                        Matching.WEAK_ANNOTATION_MATCH),
+                        false, ExperimentType.A2KB), new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
+                        NIFDatasets.KORE50), ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH),
                 // compare this with the real Spotlight annotator
                 new ExperimentTaskConfiguration(new SpotlightAnnotatorConfig(wikiAPI, dbpApi),
                         new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
                         ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
+        Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
                 taskConfigs, "SPOTLIGHT_NIF_TEST");
         experimenter.run();
     }
@@ -83,14 +81,13 @@ public class NIFWebserviceTest {
         DBPediaApi dbpApi = new DBPediaApi();
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
                 new ExperimentTaskConfiguration(new NIFWebserviceAnnotatorConfiguration(ANNOTATOR_URL, ANNOTATOR_NAME,
-                        false, wikiAPI, dbpApi, ExperimentType.D2KB), new KnownNIFFileDatasetConfig(
-                        SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50), ExperimentType.D2KB,
-                        Matching.STRONG_ANNOTATION_MATCH),
+                        false, ExperimentType.D2KB), new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
+                        NIFDatasets.KORE50), ExperimentType.D2KB, Matching.STRONG_ANNOTATION_MATCH),
                 // compare this with the real Spotlight annotator
                 new ExperimentTaskConfiguration(new SpotlightAnnotatorConfig(wikiAPI, dbpApi),
                         new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
                         ExperimentType.D2KB, Matching.STRONG_ANNOTATION_MATCH) };
-        Experimenter experimenter = new Experimenter(wikiAPI, new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
+        Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
                 taskConfigs, "SPOTLIGHT_NIF_TEST");
         experimenter.run();
     }
@@ -109,11 +106,13 @@ public class NIFWebserviceTest {
 
         A2WDataset dataset = (A2WDataset) (new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(),
                 NIFDatasets.KORE50)).getDataset(experimentType);
-        A2WSystem spotlight = (A2WSystem) ErrorCountingAnnotatorDecorator.createDecorator(
-                (new SpotlightAnnotatorConfig(wikiAPI, dbpApi)).getAnnotator(experimentType), dataset.getSize());
-        A2WSystem nifWS = (A2WSystem) ErrorCountingAnnotatorDecorator.createDecorator(
-                (new NIFWebserviceAnnotatorConfiguration(ANNOTATOR_URL, ANNOTATOR_NAME, false, wikiAPI, dbpApi,
-                        experimentType)).getAnnotator(experimentType), dataset.getSize());
+        // A2WSystem spotlight = (A2WSystem)
+        // ErrorCountingAnnotatorDecorator.createDecorator(
+        // (new SpotlightAnnotatorConfig(wikiAPI,
+        // dbpApi)).getAnnotator(experimentType), dataset.getSize());
+        A2WSystem spotlight = (A2WSystem) (new SpotlightAnnotatorConfig(wikiAPI, dbpApi)).getAnnotator(experimentType);
+        A2WSystem nifWS = (A2WSystem) (new NIFWebserviceAnnotatorConfiguration(ANNOTATOR_URL, ANNOTATOR_NAME, false,
+                experimentType)).getAnnotator(experimentType);
 
         HashSet<Annotation> spotlightResult = null, nifWSResult = null;
         boolean foundError = false;

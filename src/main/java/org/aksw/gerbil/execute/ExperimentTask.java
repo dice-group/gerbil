@@ -23,41 +23,30 @@
  */
 package org.aksw.gerbil.execute;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.metrics.MatchRelation;
-import it.acubelab.batframework.metrics.MetricsResultSet;
-import it.acubelab.batframework.problems.A2WDataset;
-import it.acubelab.batframework.problems.A2WSystem;
-import it.acubelab.batframework.problems.C2WDataset;
-import it.acubelab.batframework.problems.C2WSystem;
-import it.acubelab.batframework.problems.D2WDataset;
-import it.acubelab.batframework.problems.D2WSystem;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.problems.Sc2WSystem;
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.utils.Pair;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.util.HashMap;
-import java.util.Set;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.EntityLinker;
+import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.bat.annotator.ErrorCounter;
-import org.aksw.gerbil.bat.annotator.ErrorCountingAnnotatorDecorator;
-import org.aksw.gerbil.bat.utils.RunExperiments;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentTaskState;
+import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
+import org.aksw.gerbil.evaluate.EvaluationResult;
+import org.aksw.gerbil.evaluate.EvaluationResultContainer;
+import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.evaluate.EvaluatorFractory;
+import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.matching.MatchingFactory;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.slf4j.Logger;
@@ -96,8 +85,10 @@ public class ExperimentTask implements Task {
             // TODO add time measuring
             // annotator =
             // TimeMeasuringAnnotatorDecorator.createDecorator(annotator);
-            annotator = (Annotator) ErrorCountingAnnotatorDecorator.createDecorator((TopicSystem) annotator,
-                    dataset.size());
+            // annotator = (Annotator)
+            // ErrorCountingAnnotatorDecorator.createDecorator((TopicSystem)
+            // annotator,
+            // dataset.size());
             if (annotator == null) {
                 throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
@@ -105,34 +96,35 @@ public class ExperimentTask implements Task {
             }
 
             // create matching
-            MatchRelation<?> matching = MatchingFactory.createMatchRelation(wikiAPI, configuration.matching,
-                    configuration.type);
-            if (matching == null) {
-                throw new GerbilException("matching=\"" + configuration.matching.name() + "\" experimentType=\""
-                        + configuration.type.name() + "\".", ErrorTypes.MATCHING_DOES_NOT_SUPPORT_EXPERIMENT);
-            }
+            // MatchRelation<?> matching =
+            // MatchingFactory.createMatchRelation(wikiAPI,
+            // configuration.matching,
+            // configuration.type);
+            Evaluator evaluator = EvaluatorFractory.createEvaluators(configuration);
+            // if (matching == null) {
+            // throw new GerbilException("matching=\"" +
+            // configuration.matching.name() + "\" experimentType=\""
+            // + configuration.type.name() + "\".",
+            // ErrorTypes.MATCHING_DOES_NOT_SUPPORT_EXPERIMENT);
+            // }
 
             taskState = new ExperimentTaskState(dataset.size());
             // perform experiment
-            MetricsResultSet metrics = runExperiment(dataset, annotator, matching, taskState).second;
+            EvaluationResult result = runExperiment(dataset, annotator, evaluator, taskState);
 
             int errorCount = 0;
             if (annotator instanceof ErrorCounter) {
                 errorCount = ((ErrorCounter) annotator).getErrorCount();
             }
             // create result object
+            // FIXME Fix this workaround
             double results[] = new double[6];
-            results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = metrics.getMacroF1();
-            results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = metrics.getMacroPrecision();
-            results[ExperimentTaskResult.MACRO_RECALL_INDEX] = metrics.getMacroRecall();
-            results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = metrics.getMicroF1();
-            results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = metrics.getMicroPrecision();
-            results[ExperimentTaskResult.MICRO_RECALL_INDEX] = metrics.getMicroRecall();
-            ExperimentTaskResult result = new ExperimentTaskResult(configuration, results, ExperimentDAO.TASK_FINISHED,
-                    errorCount);
+            transformResults(result, results);
+            ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, results,
+                    ExperimentDAO.TASK_FINISHED, errorCount);
 
             // store result
-            experimentDAO.setExperimentTaskResult(experimentTaskId, result);
+            experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
             LOGGER.info("Task Finished " + configuration.toString());
         } catch (GerbilException e) {
             LOGGER.error("Got an error while running the task. Storing the error code in the db...", e);
@@ -143,110 +135,144 @@ public class ExperimentTask implements Task {
         }
     }
 
+    private void transformResults(EvaluationResult result, double results[]) {
+        if (result instanceof EvaluationResultContainer) {
+            List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
+            for (EvaluationResult tempResult : tempResults) {
+                transformResults(tempResult, results);
+            }
+        } else if (result instanceof DoubleEvaluationResult) {
+            switch (result.getName()) {
+            case FMeasureCalculator.MACRO_F1_SCORE_NAME: {
+                results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
+                        .getValueAsDouble();
+                break;
+            }
+            case FMeasureCalculator.MACRO_PRECISION_NAME: {
+                results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
+                        .getValueAsDouble();
+                break;
+            }
+            case FMeasureCalculator.MACRO_RECALL_NAME: {
+                results[ExperimentTaskResult.MACRO_RECALL_INDEX] = ((DoubleEvaluationResult) result).getValueAsDouble();
+                break;
+            }
+            case FMeasureCalculator.MICRO_F1_SCORE_NAME: {
+                results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
+                        .getValueAsDouble();
+                break;
+            }
+            case FMeasureCalculator.MICRO_PRECISION_NAME: {
+                results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
+                        .getValueAsDouble();
+                break;
+            }
+            case FMeasureCalculator.MICRO_RECALL_NAME: {
+                results[ExperimentTaskResult.MICRO_RECALL_INDEX] = ((DoubleEvaluationResult) result).getValueAsDouble();
+                break;
+            }
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    private Pair<Float, MetricsResultSet> runExperiment(Dataset dataset, Annotator annotator,
-            MatchRelation<?> matching, ExperimentTaskState state) throws GerbilException {
-        HashMap<String, HashMap<String, HashMap<String, HashMap<Float, MetricsResultSet>>>> results = null;
+    private EvaluationResult runExperiment(Dataset dataset, Annotator annotator, Evaluator<?> evaluator,
+            ExperimentTaskState state) throws GerbilException {
+        EvaluationResult evalResult = null;
         switch (configuration.type) {
-        case D2KB: {
-            Vector<D2WSystem> d2wAnnotator = new Vector<D2WSystem>(1);
-            d2wAnnotator.add((D2WSystem) annotator);
-            Vector<D2WDataset> d2wDataset = new Vector<D2WDataset>(1);
-            d2wDataset.add((D2WDataset) dataset);
+        case D2KB:
+        case EntityLinking: {
             try {
-                results = RunExperiments.performD2WExpVarThreshold(d2wAnnotator, null, d2wDataset, state, wikiAPI);
+                List<List<NamedEntity>> results = new ArrayList<List<NamedEntity>>(dataset.size());
+                List<List<NamedEntity>> goldStandard = new ArrayList<List<NamedEntity>>(dataset.size());
+                EntityLinker linker = ((EntityLinker) annotator);
+                for (Document document : dataset.getInstances()) {
+                    results.add(linker.performLinking(document));
+                    goldStandard.add(document.getMarkings(NamedEntity.class));
+                }
+                evalResult = ((Evaluator<NamedEntity>) evaluator).evaluate(results, goldStandard);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
             break;
         }
-        case A2KB: {
-            Vector<A2WSystem> a2wAnnotator = new Vector<A2WSystem>(1);
-            a2wAnnotator.add((A2WSystem) annotator);
-            Vector<A2WDataset> a2wDataset = new Vector<A2WDataset>(1);
-            a2wDataset.add((A2WDataset) dataset);
-            Vector<MatchRelation<Annotation>> matchings = new Vector<MatchRelation<Annotation>>(1);
-            matchings.add((MatchRelation<Annotation>) matching);
+        case A2KB:
+        case Sa2KB:
+        case EntityExtraction: {
             try {
-                results = RunExperiments.performA2WExpVarThreshold(matchings, a2wAnnotator, null, a2wDataset, state,
-                        wikiAPI);
-                // LOGGER.info("average time needed by {} on {}: {}",
-                // annotator.getName(), dataset.getName(),
-                // BenchmarkCache.getAvgA2WTimingsForDataset(annotator.getName(),
-                // dataset.getName()));
-            } catch (Exception e) {
-                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-            }
-            break;
-        }
-        case Sa2KB: {
-            Vector<Sa2WSystem> sa2wAnnotator = new Vector<Sa2WSystem>(1);
-            sa2wAnnotator.add((Sa2WSystem) annotator);
-            Vector<A2WDataset> a2wDataset = new Vector<A2WDataset>(1);
-            a2wDataset.add((A2WDataset) dataset);
-            Vector<MatchRelation<Annotation>> matchings = new Vector<MatchRelation<Annotation>>(1);
-            matchings.add((MatchRelation<Annotation>) matching);
-            try {
-                results = RunExperiments.performA2WExpVarThreshold(matchings, null, sa2wAnnotator, a2wDataset, state,
-                        wikiAPI);
-                // LOGGER.info("average time needed by {} on {}: {}",
-                // annotator.getName(), dataset.getName(),
-                // BenchmarkCache.getAvgSa2WTimingsForDataset(annotator.getName(),
-                // dataset.getName()));
+                List<List<NamedEntity>> results = new ArrayList<List<NamedEntity>>(dataset.size());
+                List<List<NamedEntity>> goldStandard = new ArrayList<List<NamedEntity>>(dataset.size());
+                EntityLinker linker = ((EntityLinker) annotator);
+                for (Document document : dataset.getInstances()) {
+                    results.add(linker.performLinking(document));
+                    goldStandard.add(document.getMarkings(NamedEntity.class));
+                }
+                evalResult = ((Evaluator<NamedEntity>) evaluator).evaluate(results, goldStandard);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
             break;
         }
         case C2KB: {
-            Vector<C2WSystem> c2wAnnotator = new Vector<C2WSystem>(1);
-            c2wAnnotator.add((C2WSystem) annotator);
-            Vector<C2WDataset> c2wDataset = new Vector<C2WDataset>(1);
-            c2wDataset.add((C2WDataset) dataset);
-            Vector<MatchRelation<Tag>> matchings = new Vector<MatchRelation<Tag>>(1);
-            matchings.add((MatchRelation<Tag>) matching);
-            try {
-                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null, null, c2wAnnotator,
-                        c2wDataset, state, wikiAPI);
-                // LOGGER.info("average time needed by {} on {}: {}",
-                // annotator.getName(), dataset.getName(),
-                // BenchmarkCache.getAvgC2WTimingsForDataset(annotator.getName(),
-                // dataset.getName()));
-            } catch (Exception e) {
-                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-            }
-            break;
+            // Vector<C2WSystem> c2wAnnotator = new Vector<C2WSystem>(1);
+            // c2wAnnotator.add((C2WSystem) annotator);
+            // Vector<C2WDataset> c2wDataset = new Vector<C2WDataset>(1);
+            // c2wDataset.add((C2WDataset) dataset);
+            // Vector<MatchRelation<Tag>> matchings = new
+            // Vector<MatchRelation<Tag>>(1);
+            // matchings.add((MatchRelation<Tag>) matching);
+            // try {
+            // results = RunExperiments.performC2WExpVarThreshold(matchings,
+            // null, null, null, c2wAnnotator,
+            // c2wDataset, state, wikiAPI);
+            // // LOGGER.info("average time needed by {} on {}: {}",
+            // // annotator.getName(), dataset.getName(),
+            // // BenchmarkCache.getAvgC2WTimingsForDataset(annotator.getName(),
+            // // dataset.getName()));
+            // } catch (Exception e) {
+            throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
+            // }
+            // break;
         }
         case Sc2KB: // Falls through
         case Rc2KB: {
-            Vector<Sc2WSystem> rc2wAnnotator = new Vector<Sc2WSystem>(1);
-            rc2wAnnotator.add((Sc2WSystem) annotator);
-            Vector<C2WDataset> rc2wDataset = new Vector<C2WDataset>(1);
-            rc2wDataset.add((C2WDataset) dataset);
-            Vector<MatchRelation<Tag>> matchings = new Vector<MatchRelation<Tag>>(1);
-            matchings.add((MatchRelation<Tag>) matching);
+            // Vector<Sc2WSystem> rc2wAnnotator = new Vector<Sc2WSystem>(1);
+            // rc2wAnnotator.add((Sc2WSystem) annotator);
+            // Vector<C2WDataset> rc2wDataset = new Vector<C2WDataset>(1);
+            // rc2wDataset.add((C2WDataset) dataset);
+            // Vector<MatchRelation<Tag>> matchings = new
+            // Vector<MatchRelation<Tag>>(1);
+            // matchings.add((MatchRelation<Tag>) matching);
+            // try {
+            // results = RunExperiments.performC2WExpVarThreshold(matchings,
+            // null, null, rc2wAnnotator, null,
+            // rc2wDataset, state, wikiAPI);
+            // } catch (Exception e) {
+            throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
+            // }
+            // break;
+        }
+        case EntityRecognition: {
             try {
-                results = RunExperiments.performC2WExpVarThreshold(matchings, null, null, rc2wAnnotator, null,
-                        rc2wDataset, state, wikiAPI);
+                List<List<Span>> results = new ArrayList<List<Span>>(dataset.size());
+                List<List<Span>> goldStandard = new ArrayList<List<Span>>(dataset.size());
+                EntityRecognizer recognizer = ((EntityRecognizer) annotator);
+                for (Document document : dataset.getInstances()) {
+                    results.add(recognizer.performRecognition(document));
+                    goldStandard.add(document.getMarkings(Span.class));
+                }
+                evalResult = null; // TODO get evaluation result from evaluation
+                                   // object
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
             break;
-        }
-        case EntityRecognition: {
-            Set<NamedEntity> result;
-            EntityLinker linker = ((EntityLinker) annotator);
-            for(Document document : dataset.getInstances()) {
-                result = linker.performLinking(document);
-                
-            }
-            
         }
         default:
             throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
                     ErrorTypes.UNEXPECTED_EXCEPTION);
         }
-        return RunExperiments.getBestRecord(results, matching.getName(), annotator.getName(), dataset.getName());
+        return evalResult;
     }
 
     @Override

@@ -1,10 +1,9 @@
 package org.aksw.gerbil.web;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-
-import org.aksw.gerbil.bat.annotator.nif.NIFBasedAnnotatorWebservice;
+import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -15,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * This controller tests the connectivity of a NIF based web service with the given URL.
+ * This controller tests the connectivity of a NIF based web service with the
+ * given URL.
  * 
  * @author Michael Röder
  * 
@@ -27,7 +27,7 @@ public class NIFWSTestingController {
 
     private static final String RETURN_STATUS_NAME = "testOk";
     private static final String RETURN_ERROR_MSG_NAME = "errorMsg";
-    private static final String NIF_WS_TEST_TEXT = "This simple text is for texting the communication between the given web service and the GERBIL web service.";
+    private static final String NIF_WS_TEST_TEXT = "This simple text is for testing the communication between the given web service and the GERBIL web service.";
 
     @SuppressWarnings("unchecked")
     @RequestMapping("/testNifWs")
@@ -35,31 +35,33 @@ public class NIFWSTestingController {
     String testWebService(@RequestParam(value = "experimentType") String experimentType,
             @RequestParam(value = "url") String url) {
         LOGGER.info("Testing {} for an {} experiment.", url, experimentType);
-        NIFBasedAnnotatorWebservice annotator = new NIFBasedAnnotatorWebservice(url, "TEST",
-                SingletonWikipediaApi.getInstance(), new DBPediaApi());
+        NIFBasedAnnotatorWebservice annotator = new NIFBasedAnnotatorWebservice(url, "TEST");
         JSONObject result = new JSONObject();
         experimentType = experimentType.toUpperCase();
+        Document document = new DocumentImpl();
+        document.setText(NIF_WS_TEST_TEXT);
         try {
             switch (ExperimentType.valueOf(experimentType)) {
-            case A2KB: {
-                annotator.solveA2W(NIF_WS_TEST_TEXT);
-                break;
-            }
-            case C2KB: {
-                annotator.solveA2W(NIF_WS_TEST_TEXT);
-                break;
-            }
-            case D2KB: {
-                annotator.solveA2W(NIF_WS_TEST_TEXT);
-                break;
-            }
-            case Sa2KB: {
-                annotator.solveA2W(NIF_WS_TEST_TEXT);
-                break;
-            }
             case Rc2KB: // falls through
-            case Sc2KB: {
-                annotator.solveA2W(NIF_WS_TEST_TEXT);
+            case Sc2KB:
+            case C2KB: {
+                // annotator.solveA2W(NIF_WS_TEST_TEXT);
+                // FIXME
+                break;
+            }
+            case EntityLinking:
+            case D2KB: {
+                annotator.performLinking(document);
+                break;
+            }
+            case EntityExtraction:
+            case Sa2KB:
+            case A2KB: {
+                annotator.performExtraction(document);
+                break;
+            }
+            case EntityRecognition: {
+                annotator.performRecognition(document);
                 break;
             }
             default: {
