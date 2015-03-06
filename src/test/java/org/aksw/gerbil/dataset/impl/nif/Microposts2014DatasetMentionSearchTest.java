@@ -1,10 +1,11 @@
-package org.aksw.gerbil.bat.datasets;
+package org.aksw.gerbil.dataset.impl.nif;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.aksw.gerbil.bat.datasets.Microposts2014Dataset.Microposts2014Annotation;
+import org.aksw.gerbil.dataset.impl.nif.Microposts2014Dataset;
+import org.aksw.gerbil.dataset.impl.nif.Microposts2014Dataset.Microposts2014Annotation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

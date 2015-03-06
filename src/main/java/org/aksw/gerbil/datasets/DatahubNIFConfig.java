@@ -23,7 +23,6 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import java.io.File;
@@ -32,8 +31,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import org.aksw.gerbil.bat.datasets.FileBasedNIFDataset;
 import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.apache.jena.riot.Lang;
 import org.slf4j.Logger;
@@ -57,11 +57,12 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
     }
 
     /**
-     * We have to synchronize this method. Otherwise every experiment thread would check the file and try to download
-     * the data or try to use the file even the download hasn't been completed.
+     * We have to synchronize this method. Otherwise every experiment thread
+     * would check the file and try to download the data or try to use the file
+     * even the download hasn't been completed.
      */
     @Override
-    protected synchronized TopicDataset loadDataset() throws Exception {
+    protected synchronized Dataset loadDataset() throws Exception {
         String nifFile = GerbilConfiguration.getInstance().getString(DATAHUB_DATASET_FILE_PROPERTY_NAME) + getName();
         logger.debug("FILE {}", nifFile);
         File f = new File(nifFile);

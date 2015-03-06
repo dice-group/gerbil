@@ -51,9 +51,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is a very ugly workaround performing the mapping from dataset names to {@link DatasetConfiguration}
- * objects and from an {@link ExperimentType} to a list of {@link DatasetConfiguration}s that are usable for this
- * {@link ExperimentType}.
+ * This class is a very ugly workaround performing the mapping from dataset
+ * names to {@link DatasetConfiguration} objects and from an
+ * {@link ExperimentType} to a list of {@link DatasetConfiguration}s that are
+ * usable for this {@link ExperimentType}.
  * 
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * @author Giuseppe Rizzo <giuse.rizzo@gmail.com>
@@ -72,25 +73,36 @@ public class DatasetMapping {
             Map<String, DatasetConfiguration> nameDatasetMapping = new HashMap<String, DatasetConfiguration>();
             WikipediaApiInterface wikiApi = SingletonWikipediaApi.getInstance();
 
-            nameDatasetMapping.put(ACE2004DatasetConfig.DATASET_NAME, new ACE2004DatasetConfig(wikiApi));
-            nameDatasetMapping.put(AQUAINTDatasetConfiguration.DATASET_NAME, new AQUAINTDatasetConfiguration(wikiApi));
-            nameDatasetMapping.put(IITBDatasetConfig.DATASET_NAME, new IITBDatasetConfig(wikiApi));
-            nameDatasetMapping.put(MeijDatasetConfig.DATASET_NAME, new MeijDatasetConfig());
-            nameDatasetMapping.put(MSNBCDatasetConfig.DATASET_NAME, new MSNBCDatasetConfig(wikiApi));
+            // nameDatasetMapping.put(ACE2004DatasetConfig.DATASET_NAME, new
+            // ACE2004DatasetConfig(wikiApi));
+            // nameDatasetMapping.put(AQUAINTDatasetConfiguration.DATASET_NAME,
+            // new AQUAINTDatasetConfiguration(wikiApi));
+            // nameDatasetMapping.put(IITBDatasetConfig.DATASET_NAME, new
+            // IITBDatasetConfig(wikiApi));
+            // nameDatasetMapping.put(MeijDatasetConfig.DATASET_NAME, new
+            // MeijDatasetConfig());
+            // nameDatasetMapping.put(MSNBCDatasetConfig.DATASET_NAME, new
+            // MSNBCDatasetConfig(wikiApi));
 
-            nameDatasetMapping.put(AIDACoNLLDatasetConfig.DATASET_NAME_START + "-Training", new AIDACoNLLDatasetConfig(
-                    AIDACoNLLDatasetConfig.AIDACoNLLChunk.TRAINING, wikiApi));
-            nameDatasetMapping.put(AIDACoNLLDatasetConfig.DATASET_NAME_START + "-Test A", new AIDACoNLLDatasetConfig(
-                    AIDACoNLLDatasetConfig.AIDACoNLLChunk.TEST_A, wikiApi));
-            nameDatasetMapping.put(AIDACoNLLDatasetConfig.DATASET_NAME_START + "-Test B", new AIDACoNLLDatasetConfig(
-                    AIDACoNLLDatasetConfig.AIDACoNLLChunk.TEST_B, wikiApi));
-            nameDatasetMapping.put(AIDACoNLLDatasetConfig.DATASET_NAME_START + "-Complete", new AIDACoNLLDatasetConfig(
-                    AIDACoNLLDatasetConfig.AIDACoNLLChunk.COMPLETE, wikiApi));
+            // nameDatasetMapping.put(AIDACoNLLDatasetConfig.DATASET_NAME_START
+            // + "-Training", new AIDACoNLLDatasetConfig(
+            // AIDACoNLLDatasetConfig.AIDACoNLLChunk.TRAINING, wikiApi));
+            // nameDatasetMapping.put(AIDACoNLLDatasetConfig.DATASET_NAME_START
+            // + "-Test A", new AIDACoNLLDatasetConfig(
+            // AIDACoNLLDatasetConfig.AIDACoNLLChunk.TEST_A, wikiApi));
+            // nameDatasetMapping.put(AIDACoNLLDatasetConfig.DATASET_NAME_START
+            // + "-Test B", new AIDACoNLLDatasetConfig(
+            // AIDACoNLLDatasetConfig.AIDACoNLLChunk.TEST_B, wikiApi));
+            // nameDatasetMapping.put(AIDACoNLLDatasetConfig.DATASET_NAME_START
+            // + "-Complete", new AIDACoNLLDatasetConfig(
+            // AIDACoNLLDatasetConfig.AIDACoNLLChunk.COMPLETE, wikiApi));
 
-            nameDatasetMapping.put(Microposts2014Config.DATASET_NAME_START + "-Train", new Microposts2014Config(
-                    Microposts2014Config.Microposts2014Chunk.TRAIN, wikiApi));
-            nameDatasetMapping.put(Microposts2014Config.DATASET_NAME_START + "-Test", new Microposts2014Config(
-                    Microposts2014Config.Microposts2014Chunk.TEST, wikiApi));
+            // nameDatasetMapping.put(Microposts2014Config.DATASET_NAME_START +
+            // "-Train", new Microposts2014Config(
+            // Microposts2014Config.Microposts2014Chunk.TRAIN, wikiApi));
+            // nameDatasetMapping.put(Microposts2014Config.DATASET_NAME_START +
+            // "-Test", new Microposts2014Config(
+            // Microposts2014Config.Microposts2014Chunk.TEST, wikiApi));
 
             // Got through the known NIF datasets
             NIFDatasets nifDatasets[] = NIFDatasets.values();
@@ -147,8 +159,8 @@ public class DatasetMapping {
                 // remove "NIFDS_" from the name
                 name = name.substring(6, pos) + UPLOADED_DATASET_SUFFIX;
                 LOGGER.error("name={}, uri={}", name, uri);
-                return new NIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), name, uri,
-                        false, ExperimentType.Sa2KB);
+                return new NIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), name, uri, false,
+                        ExperimentType.Sa2KB);
             }
             LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
             return null;

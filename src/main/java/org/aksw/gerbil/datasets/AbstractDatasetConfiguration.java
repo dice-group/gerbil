@@ -23,8 +23,7 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.problems.TopicDataset;
-
+import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -38,7 +37,7 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
     }
 
     @Override
-    public TopicDataset getDataset(ExperimentType experimentType) throws GerbilException {
+    public Dataset getDataset(ExperimentType experimentType) throws GerbilException {
         for (int i = 0; i < applicableForExperiments.length; ++i) {
             if (applicableForExperiments[i].equalsOrContainsType(experimentType)) {
                 try {
@@ -51,6 +50,6 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
         return null;
     }
 
-    protected abstract TopicDataset loadDataset() throws Exception;
+    protected abstract Dataset loadDataset() throws Exception;
 
 }

@@ -23,10 +23,10 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.problems.TopicDataset;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import org.aksw.gerbil.bat.datasets.FileBasedNIFDataset;
+import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.apache.jena.riot.Lang;
 
@@ -43,7 +43,7 @@ public class NIFFileDatasetConfig extends AbstractDatasetConfiguration {
     }
 
     @Override
-    protected TopicDataset loadDataset() throws Exception {
+    protected Dataset loadDataset() throws Exception {
         FileBasedNIFDataset dataset = new FileBasedNIFDataset(wikiApi, file, getName(), Lang.TTL);
         dataset.init();
         return dataset;

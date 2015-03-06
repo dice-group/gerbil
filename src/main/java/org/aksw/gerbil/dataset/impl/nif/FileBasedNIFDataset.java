@@ -21,38 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.annotator.impl.nif;
+package org.aksw.gerbil.dataset.impl.nif;
 
-import it.acubelab.batframework.data.Mention;
+import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
-import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
-import org.aksw.gerbil.transfer.nif.data.SpanImpl;
+import org.apache.jena.riot.Lang;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Deprecated
-public class BAT2NIF_TranslationHelper {
+public class FileBasedNIFDataset extends AbstractNIFDataset {
 
-    public static Document createAnnotatedDocument(String text) {
-        return createAnnotatedDocument(text, null);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileBasedNIFDataset.class);
+
+    private String filePath;
+    private Lang language;
+
+    public FileBasedNIFDataset(WikipediaApiInterface wikiApi, String filePath, String name,
+            Lang language) {
+        super(name);
+        this.filePath = filePath;
+        this.language = language;
     }
 
-    public static Document createAnnotatedDocument(String text,
-            Set<Mention> mentions) {
-        List<Marking> markings = new ArrayList<Marking>();
-        if (mentions != null) {
-            for (Mention mention : mentions) {
-                markings.add(translateMention2Annotation(mention));
-            }
+    @Override
+    protected InputStream getDataAsInputStream() {
+        FileInputStream fin = null;
+        try {
+            LOGGER.debug("Loading NIF dataset from {}", filePath);
+            fin = new FileInputStream(filePath);
+        } catch (FileNotFoundException e) {
+            LOGGER.error("Couldn't load NIF dataset from file.", e);
         }
-        return new DocumentImpl(text, markings);
+        return fin;
     }
 
-    public static Marking translateMention2Annotation(Mention mention) {
-        return new SpanImpl(mention.getPosition(), mention.getLength());
+    @Override
+    protected Lang getDataLanguage() {
+        return language;
     }
+
 }

@@ -1,25 +1,25 @@
-package org.aksw.gerbil.bat.annotator;
+package org.aksw.gerbil.annotator.decorator;
 
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.C2WDataset;
-import it.acubelab.batframework.problems.C2WSystem;
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.problems.TopicSystem;
 import it.acubelab.batframework.utils.AnnotationException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
+import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotators.AbstractAnnotatorConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
+import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datasets.AbstractDatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.execute.ExperimentTask;
 import org.aksw.gerbil.matching.Matching;
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.Span;
+import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,7 +29,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
     public void testErrorCount() {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTask task = new ExperimentTask(1, db, new ExperimentTaskConfiguration(
-                new ErrorCausingAnnotatorConfig(5), new SimpleTestDatasetConfig(100), ExperimentType.C2KB,
+                new ErrorCausingAnnotatorConfig(5), new SimpleTestDatasetConfig(100), ExperimentType.EntityRecognition,
                 Matching.STRONG_ENTITY_MATCH));
         task.run();
         ExperimentTaskResult result = db.getTaskResult(1);
@@ -42,8 +42,8 @@ public class ErrorCountingAnnotatorDecoratorTest {
     public void testTaskCanceling() {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTask task = new ExperimentTask(2, db, new ExperimentTaskConfiguration(
-                new ErrorCausingAnnotatorConfig(30), new SimpleTestDatasetConfig(1000), ExperimentType.C2KB,
-                Matching.STRONG_ENTITY_MATCH));
+                new ErrorCausingAnnotatorConfig(30), new SimpleTestDatasetConfig(1000),
+                ExperimentType.EntityRecognition, Matching.STRONG_ENTITY_MATCH));
         task.run();
         Assert.assertTrue(db.getExperimentState(2) < 0);
     }
@@ -53,18 +53,18 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int errorsPerHundred;
 
         public ErrorCausingAnnotatorConfig(int errorsPerHundred) {
-            super("Error causing topic system", false, ExperimentType.C2KB);
+            super("Error causing topic system", false, ExperimentType.EntityRecognition);
             this.errorsPerHundred = errorsPerHundred;
         }
 
         @Override
-        protected TopicSystem loadAnnotator(ExperimentType type) throws Exception {
+        protected Annotator loadAnnotator(ExperimentType type) throws Exception {
             return new ErrorCausingTopicSystem(errorsPerHundred);
         }
 
     }
 
-    public static class ErrorCausingTopicSystem implements C2WSystem {
+    public static class ErrorCausingTopicSystem implements EntityRecognizer {
 
         private int errorsPerHundred;
         private int errorsInThisHundred = 0;
@@ -81,12 +81,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         }
 
         @Override
-        public long getLastAnnotationTime() {
-            return -1;
-        }
-
-        @Override
-        public HashSet<Tag> solveC2W(String text) throws AnnotationException {
+        public List<Span> performRecognition(Document document) {
             ++count;
             if (count > 100) {
                 count -= 100;
@@ -96,7 +91,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
                 ++errorsInThisHundred;
                 throw new AnnotationException("Test exception.");
             }
-            return new HashSet<Tag>();
+            return new ArrayList<Span>(0);
         }
 
     }
@@ -106,35 +101,31 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int size;
 
         public SimpleTestDatasetConfig(int size) {
-            super("test dataset", false, ExperimentType.C2KB);
+            super("test dataset", false, ExperimentType.EntityRecognition);
             this.size = size;
         }
 
         @Override
-        protected TopicDataset loadDataset() throws Exception {
+        protected Dataset loadDataset() throws Exception {
             return new SimpleTestDataset(size);
         }
 
     }
 
-    public static class SimpleTestDataset implements C2WDataset {
+    public static class SimpleTestDataset implements Dataset {
 
-        private String documents[];
-        private List<HashSet<Tag>> gold;
+        private List<Document> instances;
 
         public SimpleTestDataset(int size) {
-            documents = new String[size];
-            Arrays.fill(documents, "");
-            gold = new ArrayList<HashSet<Tag>>(size);
-            HashSet<Tag> set = new HashSet<Tag>();
-            for (int i = 0; i < size; i++) {
-                gold.add(set);
+            instances = new ArrayList<Document>(size);
+            for (int i = 0; i < size; ++i) {
+                instances.add(new DocumentImpl("", Integer.toString(i), new ArrayList<Marking>(0)));
             }
         }
 
         @Override
-        public int getSize() {
-            return documents.length;
+        public int size() {
+            return instances.size();
         }
 
         @Override
@@ -143,18 +134,8 @@ public class ErrorCountingAnnotatorDecoratorTest {
         }
 
         @Override
-        public List<String> getTextInstanceList() {
-            return Arrays.asList(documents);
-        }
-
-        @Override
-        public int getTagsCount() {
-            return 1;
-        }
-
-        @Override
-        public List<HashSet<Tag>> getC2WGoldStandardList() {
-            return gold;
+        public List<Document> getInstances() {
+            return instances;
         }
 
     }

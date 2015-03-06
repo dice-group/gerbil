@@ -23,8 +23,7 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.problems.TopicDataset;
-
+import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.AdapterConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -44,5 +43,5 @@ public interface DatasetConfiguration extends AdapterConfiguration {
      *             throws an exception if an error occurs during the dataset
      *             generation
      */
-    public TopicDataset getDataset(ExperimentType experimentType) throws GerbilException;
+    public Dataset getDataset(ExperimentType experimentType) throws GerbilException;
 }
