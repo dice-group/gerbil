@@ -25,15 +25,16 @@ package org.aksw.gerbil.transfer.nif;
 
 /**
  * A class implementing this interface contains a URI that points to the meaning
- * of this object.
+ * of this object as well as a confidence score for this linkage.
+ * 
+ * @deprecated This interface will be removed in the future since it is only a
+ *             combination of the {@link Meaning} and the {@link ScoredMarking}
+ *             interfaces.
  * 
  * @author Michael Röder
  * 
  */
-public interface ScoredMeaning extends Meaning {
+@Deprecated
+public interface ScoredMeaning extends Meaning, ScoredMarking {
 
-
-    public double getConfidence();
-
-    public void setConfidence(double confidence);
 }

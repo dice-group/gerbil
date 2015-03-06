@@ -27,7 +27,7 @@ package org.aksw.gerbil.transfer.nif;
  * A class implementing this interface contains a URI that points to the meaning
  * of this object.
  * 
- * @author Michael Röder
+ * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
  * 
  */
 public interface Meaning extends Marking {

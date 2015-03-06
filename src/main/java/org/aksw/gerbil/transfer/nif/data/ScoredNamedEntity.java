@@ -23,9 +23,10 @@
  */
 package org.aksw.gerbil.transfer.nif.data;
 
-import org.aksw.gerbil.transfer.nif.ScoredMeaning;
+import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.ScoredMarking;
 
-public class ScoredNamedEntity extends NamedEntity implements ScoredMeaning {
+public class ScoredNamedEntity extends NamedEntity implements Meaning, ScoredMarking {
 
     private double confidence;
 
