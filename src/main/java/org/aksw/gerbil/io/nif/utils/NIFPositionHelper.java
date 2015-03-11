@@ -8,8 +8,12 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.EndPosBasedComparator;
 import org.aksw.gerbil.transfer.nif.data.StartPosBasedComparator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NIFPositionHelper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NIFPositionHelper.class);
 
     /**
      * The positions in NIF are measured in codepoints, while Java counts in
@@ -46,5 +50,58 @@ public class NIFPositionHelper {
                 ++posInEnd;
             }
         }
+
+        checkPositionsForConspicuity(annotationsSortedByEnd, text);
+    }
+
+    public static void checkPositionsForConspicuity(List<Span> spans, String text) {
+        int start, end;
+        for (Span s : spans) {
+            start = s.getStartPosition();
+            end = start + s.getLength();
+            // make sure that the start position is not a whitespace
+            if (Character.isWhitespace(text.charAt(start))) {
+                printWarning(text, start, end, "Found an anormal marking that starts with a whitespace");
+            }
+            // make sure that the character directly in front of the span is no
+            // letter
+            if ((start > 0) && (Character.isAlphabetic(text.charAt(start - 1)))) {
+                printWarning(text, start, end, "Found an anormal marking that has a letter in front of it");
+            }
+            // make sure that the last character is not a whitespace
+            if (Character.isWhitespace(text.charAt(end - 1))) {
+                printWarning(text, start, end, "Found an anormal marking that ends with a whitespace");
+            }
+            // make sure that the character directly behind the span is not a
+            // letter
+            if ((end < text.length()) && (Character.isAlphabetic(text.charAt(end)))) {
+                printWarning(text, start, end, "Found an anormal marking that has a letter directly behind it");
+            }
+        }
+    }
+
+    private static void printWarning(String text, int start, int end, String warningMsg) {
+        StringBuilder builder = new StringBuilder();
+        int snippetStart;
+        builder.append(warningMsg);
+        builder.append(": \"");
+        if ((start - 20) <= 0) {
+            snippetStart = 0;
+        } else {
+            snippetStart = start - 20;
+            builder.append("...");
+        }
+        builder.append(text.substring(snippetStart, start));
+        builder.append('\'');
+        builder.append(text.substring(start, end));
+        builder.append('\'');
+        if ((end + 20) >= text.length()) {
+            builder.append(text.substring(end));
+        } else {
+            builder.append(text.substring(end, end + 20));
+            builder.append("...");
+        }
+        builder.append('"');
+        LOGGER.warn(builder.toString());
     }
 }

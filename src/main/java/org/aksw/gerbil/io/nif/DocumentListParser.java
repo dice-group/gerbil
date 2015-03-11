@@ -19,9 +19,9 @@ public class DocumentListParser {
 
     private static final String CONTEXT_PARAM_NAME = "context";
     private static final String TEXT_PARAM_NAME = "text";
-    private static final String DOCUMENT_QUERY_STRING = "SELECT distinct ?" + CONTEXT_PARAM_NAME + " ?"
-            + TEXT_PARAM_NAME + " WHERE {?context a <" + NIF.Context + "> . ?" + CONTEXT_PARAM_NAME + " <" + NIF.isString
-            + "> ?" + TEXT_PARAM_NAME + " .}";
+    private static final String DOCUMENT_QUERY_STRING = "SELECT DISTINCT ?" + CONTEXT_PARAM_NAME + " ?"
+            + TEXT_PARAM_NAME + " WHERE { ?context a <" + NIF.Context + "> . ?" + CONTEXT_PARAM_NAME + " <"
+            + NIF.isString + "> ?" + TEXT_PARAM_NAME + " . }";
 
     private DocumentParser documentParser;
 
@@ -38,18 +38,24 @@ public class DocumentListParser {
         QueryExecution exec = QueryExecutionFactory.create(documentQuery, nifModel);
         ResultSet documentResult = exec.execSelect();
 
-        List<Document> documents = new ArrayList<Document>();
+        // store the resources temporarily
+        List<Resource> resources = new ArrayList<Resource>();
         QuerySolution solution;
-        Resource documentResource;
-        Document document;
         while (documentResult.hasNext()) {
             solution = documentResult.next();
-            documentResource = solution.get(CONTEXT_PARAM_NAME).asResource();
+            resources.add(solution.get(CONTEXT_PARAM_NAME).asResource());
+        }
+
+        List<Document> documents = new ArrayList<Document>();
+
+        Document document;
+        for (Resource documentResource : resources) {
             document = documentParser.getDocument(nifModel, documentResource);
-            if(document != null) {
+            if (document != null) {
                 documents.add(document);
             }
         }
+
         return documents;
     }
 }
