@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
+@Deprecated
 public class SingletonWikipediaApi extends WikipediaApiInterface {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingletonWikipediaApi.class);
@@ -99,8 +100,8 @@ public class SingletonWikipediaApi extends WikipediaApiInterface {
     }
 
     /**
-     * Overrides the method of the super class because as a singleton this class needs a synchronized version of this
-     * method.
+     * Overrides the method of the super class because as a singleton this class
+     * needs a synchronized version of this method.
      */
     public synchronized void flush() throws FileNotFoundException, IOException {
         super.flush();

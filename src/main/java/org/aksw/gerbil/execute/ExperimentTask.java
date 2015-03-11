@@ -181,7 +181,7 @@ public class ExperimentTask implements Task {
         EvaluationResult evalResult = null;
         switch (configuration.type) {
         case D2KB:
-        case EntityLinking: {
+        case ELink: {
             try {
                 List<List<NamedEntity>> results = new ArrayList<List<NamedEntity>>(dataset.size());
                 List<List<NamedEntity>> goldStandard = new ArrayList<List<NamedEntity>>(dataset.size());
@@ -198,7 +198,7 @@ public class ExperimentTask implements Task {
         }
         case A2KB:
         case Sa2KB:
-        case EntityExtraction: {
+        case EExt: {
             try {
                 List<List<NamedEntity>> results = new ArrayList<List<NamedEntity>>(dataset.size());
                 List<List<NamedEntity>> goldStandard = new ArrayList<List<NamedEntity>>(dataset.size());
@@ -214,45 +214,13 @@ public class ExperimentTask implements Task {
             break;
         }
         case C2KB: {
-            // Vector<C2WSystem> c2wAnnotator = new Vector<C2WSystem>(1);
-            // c2wAnnotator.add((C2WSystem) annotator);
-            // Vector<C2WDataset> c2wDataset = new Vector<C2WDataset>(1);
-            // c2wDataset.add((C2WDataset) dataset);
-            // Vector<MatchRelation<Tag>> matchings = new
-            // Vector<MatchRelation<Tag>>(1);
-            // matchings.add((MatchRelation<Tag>) matching);
-            // try {
-            // results = RunExperiments.performC2WExpVarThreshold(matchings,
-            // null, null, null, c2wAnnotator,
-            // c2wDataset, state, wikiAPI);
-            // // LOGGER.info("average time needed by {} on {}: {}",
-            // // annotator.getName(), dataset.getName(),
-            // // BenchmarkCache.getAvgC2WTimingsForDataset(annotator.getName(),
-            // // dataset.getName()));
-            // } catch (Exception e) {
             throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
-            // }
-            // break;
         }
         case Sc2KB: // Falls through
         case Rc2KB: {
-            // Vector<Sc2WSystem> rc2wAnnotator = new Vector<Sc2WSystem>(1);
-            // rc2wAnnotator.add((Sc2WSystem) annotator);
-            // Vector<C2WDataset> rc2wDataset = new Vector<C2WDataset>(1);
-            // rc2wDataset.add((C2WDataset) dataset);
-            // Vector<MatchRelation<Tag>> matchings = new
-            // Vector<MatchRelation<Tag>>(1);
-            // matchings.add((MatchRelation<Tag>) matching);
-            // try {
-            // results = RunExperiments.performC2WExpVarThreshold(matchings,
-            // null, null, rc2wAnnotator, null,
-            // rc2wDataset, state, wikiAPI);
-            // } catch (Exception e) {
             throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
-            // }
-            // break;
         }
-        case EntityRecognition: {
+        case ERec: {
             try {
                 List<List<Span>> results = new ArrayList<List<Span>>(dataset.size());
                 List<List<Span>> goldStandard = new ArrayList<List<Span>>(dataset.size());
@@ -261,8 +229,7 @@ public class ExperimentTask implements Task {
                     results.add(recognizer.performRecognition(document));
                     goldStandard.add(document.getMarkings(Span.class));
                 }
-                evalResult = null; // TODO get evaluation result from evaluation
-                                   // object
+                evalResult = ((Evaluator<Span>) evaluator).evaluate(results, goldStandard);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }

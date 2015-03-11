@@ -23,8 +23,6 @@
  */
 package org.aksw.gerbil.utils;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,17 +31,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datasets.ACE2004DatasetConfig;
-import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
-import org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration;
 import org.aksw.gerbil.datasets.DatahubNIFConfig;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
-import org.aksw.gerbil.datasets.IITBDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
-import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
-import org.aksw.gerbil.datasets.MeijDatasetConfig;
-import org.aksw.gerbil.datasets.Microposts2014Config;
 import org.aksw.gerbil.datasets.NIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -71,7 +62,7 @@ public class DatasetMapping {
     private synchronized static DatasetMapping getInstance() {
         if (instance == null) {
             Map<String, DatasetConfiguration> nameDatasetMapping = new HashMap<String, DatasetConfiguration>();
-            WikipediaApiInterface wikiApi = SingletonWikipediaApi.getInstance();
+//            WikipediaApiInterface wikiApi = SingletonWikipediaApi.getInstance();
 
             // nameDatasetMapping.put(ACE2004DatasetConfig.DATASET_NAME, new
             // ACE2004DatasetConfig(wikiApi));
@@ -107,16 +98,14 @@ public class DatasetMapping {
             // Got through the known NIF datasets
             NIFDatasets nifDatasets[] = NIFDatasets.values();
             for (int i = 0; i < nifDatasets.length; ++i) {
-                nameDatasetMapping.put(nifDatasets[i].getDatasetName(), new KnownNIFFileDatasetConfig(wikiApi,
-                        nifDatasets[i]));
+                nameDatasetMapping.put(nifDatasets[i].getDatasetName(), new KnownNIFFileDatasetConfig(nifDatasets[i]));
             }
 
             // load Datahub data
             DatahubNIFLoader datahub = new DatahubNIFLoader();
             Map<String, String> datasets = datahub.getDataSets();
             for (String datasetName : datasets.keySet()) {
-                nameDatasetMapping.put(datasetName,
-                        new DatahubNIFConfig(wikiApi, datasetName, datasets.get(datasetName), true));
+                nameDatasetMapping.put(datasetName, new DatahubNIFConfig(datasetName, datasets.get(datasetName), true));
             }
 
             instance = new DatasetMapping(nameDatasetMapping);
@@ -159,8 +148,7 @@ public class DatasetMapping {
                 // remove "NIFDS_" from the name
                 name = name.substring(6, pos) + UPLOADED_DATASET_SUFFIX;
                 LOGGER.error("name={}, uri={}", name, uri);
-                return new NIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), name, uri, false,
-                        ExperimentType.Sa2KB);
+                return new NIFFileDatasetConfig(name, uri, false, ExperimentType.Sa2KB);
             }
             LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
             return null;

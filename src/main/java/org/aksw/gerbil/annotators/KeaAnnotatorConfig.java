@@ -50,7 +50,7 @@ public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private DBPediaApi dbpediaApi;
 
     public KeaAnnotatorConfig(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi) {
-        super(ANNOTATOR_NAME, true, ExperimentType.EntityExtraction);
+        super(ANNOTATOR_NAME, true, ExperimentType.EExt);
         this.wikiApi = wikiApi;
         this.dbpediaApi = dbpediaApi;
     }

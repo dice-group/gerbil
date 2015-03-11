@@ -109,7 +109,7 @@ public class DataIDGenerator {
         OutputStream o = new ByteArrayOutputStream();
 
         // creating json-ld output format
-        RDFDataMgr.write(o, model, RDFFormat.JSONLD);
+        RDFDataMgr.write(o, model, RDFFormat.JSONLD_PRETTY);
 
         return o.toString();
     }

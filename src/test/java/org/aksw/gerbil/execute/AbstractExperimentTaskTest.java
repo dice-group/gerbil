@@ -1,0 +1,106 @@
+package org.aksw.gerbil.execute;
+
+import java.util.concurrent.Semaphore;
+
+import org.aksw.gerbil.database.ExperimentDAO;
+import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
+import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
+import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
+import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
+import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
+import org.aksw.simba.topicmodeling.concurrent.reporter.Reporter;
+import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
+import org.aksw.simba.topicmodeling.concurrent.tasks.TaskObserver;
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public abstract class AbstractExperimentTaskTest {
+
+    private Throwable testError = null;
+    private Semaphore mutex = new Semaphore(0);
+
+    public void runTest(int experimentTaskId, ExperimentDAO experimentDAO, ExperimentTaskConfiguration configuration,
+            TaskObserver observer) {
+        ExperimentTask task = new ExperimentTask(experimentTaskId, experimentDAO, configuration);
+        Overseer overseer = new SimpleOverseer();
+        overseer.addObserver(observer);
+        @SuppressWarnings("unused")
+        Reporter reporter = new LogReporter(overseer);
+        overseer.startTask(task);
+        // wait for the task to end
+        try {
+            mutex.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Assert.assertNull(testError);
+    }
+
+    protected static abstract class AbstractJUnitTestTaskObserver implements TaskObserver {
+
+        private static final Logger LOGGER = LoggerFactory
+                .getLogger(AbstractExperimentTaskTest.AbstractJUnitTestTaskObserver.class);
+
+        private AbstractExperimentTaskTest testInstance;
+
+        public AbstractJUnitTestTaskObserver(AbstractExperimentTaskTest testInstance) {
+            this.testInstance = testInstance;
+        }
+
+        @Override
+        public void reportTaskThrowedException(Task task, Throwable t) {
+            testInstance.testError = t;
+            LOGGER.error("Got an unexpected exception.", t);
+            // If there was an error we have to release the mutex here
+            testInstance.mutex.release();
+        }
+
+        @Override
+        public void reportTaskFinished(Task task) {
+            testTaskResults(task);
+            // If there was no error we have to release the mutex here
+            testInstance.mutex.release();
+        }
+
+        protected abstract void testTaskResults(Task task);
+
+    }
+
+    protected static class F1MeasureTestingObserver extends AbstractJUnitTestTaskObserver {
+
+        public static int MACRO_PREC_INDEX = 0;
+        public static int MACRO_REC_INDEX = 1;
+        public static int MACRO_F1_INDEX = 2;
+        public static int MICRO_PREC_INDEX = 3;
+        public static int MICRO_REC_INDEX = 4;
+        public static int MICRO_F1_INDEX = 5;
+        public static int ERROR_COUNT_INDEX = 6;
+
+        private int experimentTaskId;
+        private SimpleLoggingResultStoringDAO4Debugging experimentDAO;
+        private double expectedResults[];
+
+        public F1MeasureTestingObserver(AbstractExperimentTaskTest testInstance, int experimentTaskId,
+                SimpleLoggingResultStoringDAO4Debugging experimentDAO, double expectedResults[]) {
+            super(testInstance);
+            this.experimentTaskId = experimentTaskId;
+            this.experimentDAO = experimentDAO;
+            this.expectedResults = expectedResults;
+        }
+
+        @Override
+        protected void testTaskResults(Task task) {
+            Assert.assertEquals(ExperimentDAO.TASK_FINISHED, experimentDAO.getExperimentState(experimentTaskId));
+            ExperimentTaskResult result = experimentDAO.getTaskResult(experimentTaskId);
+            Assert.assertEquals(expectedResults[MACRO_PREC_INDEX], result.getMacroPrecision(), 0.0000001);
+            Assert.assertEquals(expectedResults[MACRO_REC_INDEX], result.getMacroRecall(), 0.0000001);
+            Assert.assertEquals(expectedResults[MACRO_F1_INDEX], result.getMacroF1Measure(), 0.0000001);
+            Assert.assertEquals(expectedResults[MICRO_PREC_INDEX], result.getMicroPrecision(), 0.0000001);
+            Assert.assertEquals(expectedResults[MICRO_REC_INDEX], result.getMicroRecall(), 0.0000001);
+            Assert.assertEquals(expectedResults[MICRO_F1_INDEX], result.getMicroF1Measure(), 0.0000001);
+            Assert.assertEquals(expectedResults[ERROR_COUNT_INDEX], result.getErrorCount(), 0.0000001);
+        }
+    }
+}

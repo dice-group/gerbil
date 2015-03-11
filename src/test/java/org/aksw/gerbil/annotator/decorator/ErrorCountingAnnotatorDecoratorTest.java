@@ -29,7 +29,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
     public void testErrorCount() {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTask task = new ExperimentTask(1, db, new ExperimentTaskConfiguration(
-                new ErrorCausingAnnotatorConfig(5), new SimpleTestDatasetConfig(100), ExperimentType.EntityRecognition,
+                new ErrorCausingAnnotatorConfig(5), new SimpleTestDatasetConfig(100), ExperimentType.ERec,
                 Matching.STRONG_ENTITY_MATCH));
         task.run();
         ExperimentTaskResult result = db.getTaskResult(1);
@@ -42,8 +42,8 @@ public class ErrorCountingAnnotatorDecoratorTest {
     public void testTaskCanceling() {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTask task = new ExperimentTask(2, db, new ExperimentTaskConfiguration(
-                new ErrorCausingAnnotatorConfig(30), new SimpleTestDatasetConfig(1000),
-                ExperimentType.EntityRecognition, Matching.STRONG_ENTITY_MATCH));
+                new ErrorCausingAnnotatorConfig(30), new SimpleTestDatasetConfig(1000), ExperimentType.ERec,
+                Matching.STRONG_ENTITY_MATCH));
         task.run();
         Assert.assertTrue(db.getExperimentState(2) < 0);
     }
@@ -53,7 +53,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int errorsPerHundred;
 
         public ErrorCausingAnnotatorConfig(int errorsPerHundred) {
-            super("Error causing topic system", false, ExperimentType.EntityRecognition);
+            super("Error causing topic system", false, ExperimentType.ERec);
             this.errorsPerHundred = errorsPerHundred;
         }
 
@@ -101,7 +101,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int size;
 
         public SimpleTestDatasetConfig(int size) {
-            super("test dataset", false, ExperimentType.EntityRecognition);
+            super("test dataset", false, ExperimentType.ERec);
             this.size = size;
         }
 

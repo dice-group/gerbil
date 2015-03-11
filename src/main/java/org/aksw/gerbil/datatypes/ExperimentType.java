@@ -120,17 +120,17 @@ public enum ExperimentType {
      * Entity Extraction comprises the two steps {@link #EntityRecognition} and
      * {@link #EntityLinking}.
      */
-    EntityExtraction,
+    EExt,
     /**
      * Entity Recognition is the identification of an entity inside a given
      * text.
      */
-    EntityRecognition,
+    ERec,
     /**
      * Entity Linking is the assigning of a URI from a given Knowledge Base to a
      * given entity.
      */
-    EntityLinking;// ,
+    ELink;// ,
     // /**
     // * Entity Typing is the assigning of a type from a given Knowledge Base to
     // a
@@ -161,11 +161,11 @@ public enum ExperimentType {
         }
         case Sc2KB: {
             switch (type) {
-            case EntityRecognition:
+            case ERec:
             case Sa2KB: // falls through
-            case EntityExtraction:
+            case EExt:
             case A2KB:
-            case EntityLinking:
+            case ELink:
             case D2KB: {
                 return false;
             }
@@ -178,12 +178,12 @@ public enum ExperimentType {
         }
         case Rc2KB: {
             switch (type) {
-            case EntityRecognition:
+            case ERec:
             case Sa2KB: // falls through
             case Sc2KB:
-            case EntityExtraction:
+            case EExt:
             case A2KB:
-            case EntityLinking:
+            case ELink:
             case D2KB: {
                 return false;
             }
@@ -193,19 +193,19 @@ public enum ExperimentType {
             }
             }
         }
-        case EntityExtraction: // falls through
+        case EExt: // falls through
         case A2KB: {
             switch (type) {
-            case EntityRecognition:
             case Sa2KB: // falls through
             case Sc2KB:
-            case Rc2KB:
-            case C2KB: {
+            case Rc2KB: {
                 return false;
             }
             case A2KB: // falls through
-            case EntityExtraction:
-            case EntityLinking:
+            case EExt:
+            case ELink:
+            case ERec:
+            case C2KB:
             case D2KB: {
                 return true;
             }
@@ -213,13 +213,13 @@ public enum ExperimentType {
         }
         case C2KB: {
             switch (type) {
-            case EntityRecognition:
+            case ERec:
             case Sa2KB: // falls through
             case Sc2KB:
             case Rc2KB:
-            case EntityExtraction:
+            case EExt:
             case A2KB:
-            case EntityLinking:
+            case ELink:
             case D2KB: {
                 return false;
             }
@@ -228,37 +228,37 @@ public enum ExperimentType {
             }
             }
         }// falls through
-        case EntityLinking:
+        case ELink:
         case D2KB: {
             switch (type) {
-            case EntityRecognition:
+            case ERec:
             case Sa2KB: // falls through
             case Sc2KB:
             case Rc2KB:
-            case EntityExtraction:
+            case EExt:
             case A2KB:
             case C2KB: {
                 return false;
             }
-            case EntityLinking:
+            case ELink:
             case D2KB: {
                 return true;
             }
             }
         }
-        case EntityRecognition: {
+        case ERec: {
             switch (type) {
             case Sa2KB: // falls through
             case Sc2KB:
             case Rc2KB:
-            case EntityExtraction:
+            case EExt:
             case A2KB:
             case C2KB:
-            case EntityLinking:
+            case ELink:
             case D2KB: {
                 return false;
             }
-            case EntityRecognition: {
+            case ERec: {
                 return true;
             }
             }

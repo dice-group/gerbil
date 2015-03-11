@@ -37,7 +37,7 @@ public class NIFWSTestingController {
         LOGGER.info("Testing {} for an {} experiment.", url, experimentType);
         NIFBasedAnnotatorWebservice annotator = new NIFBasedAnnotatorWebservice(url, "TEST");
         JSONObject result = new JSONObject();
-        experimentType = experimentType.toUpperCase();
+        // experimentType = experimentType.toUpperCase();
         Document document = new DocumentImpl();
         document.setText(NIF_WS_TEST_TEXT);
         try {
@@ -49,18 +49,18 @@ public class NIFWSTestingController {
                 // FIXME
                 break;
             }
-            case EntityLinking:
+            case ELink:
             case D2KB: {
                 annotator.performLinking(document);
                 break;
             }
-            case EntityExtraction:
+            case EExt:
             case Sa2KB:
             case A2KB: {
                 annotator.performExtraction(document);
                 break;
             }
-            case EntityRecognition: {
+            case ERec: {
                 annotator.performRecognition(document);
                 break;
             }

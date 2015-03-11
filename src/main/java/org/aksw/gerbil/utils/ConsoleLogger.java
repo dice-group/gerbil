@@ -32,8 +32,10 @@ import org.slf4j.LoggerFactory;
 /**
  * An OutputStream that writes contents to a Logger upon each call to flush().
  * 
- * Main parts copied from https://blogs.oracle.com/nickstephen/entry/java_redirecting_system_out_and
+ * Main parts copied from
+ * https://blogs.oracle.com/nickstephen/entry/java_redirecting_system_out_and
  */
+@Deprecated
 public class ConsoleLogger extends ByteArrayOutputStream {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleLogger.class);
@@ -47,8 +49,8 @@ public class ConsoleLogger extends ByteArrayOutputStream {
     }
 
     /**
-     * upon flush() write the existing contents of the OutputStream
-     * to the logger as a log record.
+     * upon flush() write the existing contents of the OutputStream to the
+     * logger as a log record.
      * 
      * @throws java.io.IOException
      *             in case of error

@@ -97,8 +97,13 @@ public abstract class AbstractNIFDataset implements Dataset {
         if (inputStream == null) {
             throw new GerbilException("Couldn't get InputStream.", ErrorTypes.DATASET_LOADING_ERROR);
         }
-        RDFDataMgr.read(nifModel, inputStream, getDataLanguage());
-        closeInputStream(inputStream);
+        try {
+            RDFDataMgr.read(nifModel, inputStream, getDataLanguage());
+        } catch (Exception e) {
+            throw new GerbilException("Exception while parsing dataset.", e, ErrorTypes.DATASET_LOADING_ERROR);
+        } finally {
+            closeInputStream(inputStream);
+        }
 
         DocumentListParser parser = new DocumentListParser(true);
         documents = parser.parseDocuments(nifModel);
@@ -106,6 +111,7 @@ public abstract class AbstractNIFDataset implements Dataset {
         // TODO At this point further information could be retrieved from the
         // model (if there are still triples available)
 
+        hasBeenInitialized = true;
         LOGGER.info("{} dataset initialized", name);
     }
 

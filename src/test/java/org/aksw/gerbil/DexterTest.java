@@ -45,7 +45,7 @@ public class DexterTest {
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new DexterAnnotatorConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi()),
-                new KnownNIFFileDatasetConfig(SingletonWikipediaApi.getInstance(), NIFDatasets.KORE50),
+                new KnownNIFFileDatasetConfig(NIFDatasets.KORE50),
                 ExperimentType.Sa2KB, Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
                 taskConfigs, "DEXTER_TEST");

@@ -23,8 +23,6 @@
  */
 package org.aksw.gerbil.dataset.impl.nif;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -40,8 +38,7 @@ public class FileBasedNIFDataset extends AbstractNIFDataset {
     private String filePath;
     private Lang language;
 
-    public FileBasedNIFDataset(WikipediaApiInterface wikiApi, String filePath, String name,
-            Lang language) {
+    public FileBasedNIFDataset(String filePath, String name, Lang language) {
         super(name);
         this.filePath = filePath;
         this.language = language;

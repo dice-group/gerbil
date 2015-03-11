@@ -115,6 +115,7 @@ public class GERBIL {
             return Sa2KB;
         case Sc2KB:
             return Sc2KB;
+            // FIXME add missing experiment types
         default:
             ;
         }

@@ -9,20 +9,18 @@ import com.carrotsearch.hppc.BitSet;
 
 public abstract class AbstractMatchingsCounter<T extends Marking> implements MatchingsCounter<T> {
 
-    protected static final int ELEMENT_NOT_FOUND = -1;
-
     protected List<int[]> counts = new ArrayList<int[]>();
 
     @Override
     public void countMatchings(List<T> annotatorResult, List<T> goldStandard) {
         int documentCounts[] = new int[3];
-        int matchingElementId;
+        BitSet matchingElements;
         BitSet alreadyUsedResults = new BitSet(annotatorResult.size());
         for (T expectedElement : goldStandard) {
-            matchingElementId = findMatching(expectedElement, annotatorResult, alreadyUsedResults);
-            if (matchingElementId != ELEMENT_NOT_FOUND) {
+            matchingElements = findMatching(expectedElement, annotatorResult, alreadyUsedResults);
+            if (!matchingElements.isEmpty()) {
                 ++documentCounts[TRUE_POSITIVE_COUNT_ID];
-                alreadyUsedResults.set(matchingElementId);
+                alreadyUsedResults.set(matchingElements.nextSetBit(0));
             } else {
                 ++documentCounts[FALSE_NEGATIVE_COUNT_ID];
             }
@@ -32,7 +30,7 @@ public abstract class AbstractMatchingsCounter<T extends Marking> implements Mat
         counts.add(documentCounts);
     }
 
-    protected abstract int findMatching(T expectedElement, List<T> annotatorResult, BitSet alreadyUsedResults);
+    protected abstract BitSet findMatching(T expectedElement, List<T> annotatorResult, BitSet alreadyUsedResults);
 
     @Override
     public List<int[]> getCounts() {

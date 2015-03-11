@@ -34,7 +34,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         EvaluationResultContainer results = new EvaluationResultContainer();
         results.addResults(calculateMicroFMeasure(matchingCounts));
         results.addResults(calculateMacroFMeasure(matchingCounts));
-        return null;
+        return results;
     }
 
     private EvaluationResult[] calculateMicroFMeasure(List<int[]> matchingCounts) {

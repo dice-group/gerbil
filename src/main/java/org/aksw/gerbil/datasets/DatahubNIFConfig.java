@@ -45,13 +45,11 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(DatahubNIFConfig.class);
     private static final String DATAHUB_DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.DatahubNIFConfig.datasetFiles";
 
-    private WikipediaApiInterface wikiApi;
     private String datasetUrl;
     private RestTemplate rt;
 
-    public DatahubNIFConfig(WikipediaApiInterface wikiApi, String datasetName, String datasetUrl, boolean couldBeCached) {
+    public DatahubNIFConfig(String datasetName, String datasetUrl, boolean couldBeCached) {
         super(datasetName, couldBeCached, ExperimentType.Sa2KB);
-        this.wikiApi = wikiApi;
         this.datasetUrl = datasetUrl;
         rt = new RestTemplate();
     }
@@ -74,7 +72,7 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
             Path file = Files.createFile(path);
             Files.write(file, data.getBytes(), StandardOpenOption.WRITE);
         }
-        FileBasedNIFDataset dataset = new FileBasedNIFDataset(wikiApi, nifFile, getName(), Lang.TTL);
+        FileBasedNIFDataset dataset = new FileBasedNIFDataset(nifFile, getName(), Lang.TTL);
         dataset.init();
         return dataset;
     }

@@ -40,6 +40,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.impl.StatementImpl;
 import com.hp.hpl.jena.shared.PrefixMapping;
 
+@Deprecated
 public class DBpediaToWikiId {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DBpediaToWikiId.class);
