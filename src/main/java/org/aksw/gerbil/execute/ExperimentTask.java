@@ -23,8 +23,6 @@
  */
 package org.aksw.gerbil.execute;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,10 +40,11 @@ import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
-import org.aksw.gerbil.evaluate.EvaluatorFractory;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
@@ -59,14 +58,17 @@ public class ExperimentTask implements Task {
     private ExperimentDAO experimentDAO;
     private ExperimentTaskConfiguration configuration;
     private int experimentTaskId;
-    @Deprecated
-    private WikipediaApiInterface wikiAPI;
+    private EvaluatorFactory evFactory;
+    // @Deprecated
+    // private WikipediaApiInterface wikiAPI;
     private ExperimentTaskState taskState = null;
 
-    public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO, ExperimentTaskConfiguration configuration) {
+    public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO,
+            org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration) {
         this.experimentDAO = experimentDAO;
         this.configuration = configuration;
         this.experimentTaskId = experimentTaskId;
+        this.evFactory = evFactory;
     }
 
     @Override
@@ -95,12 +97,13 @@ public class ExperimentTask implements Task {
                         ErrorTypes.ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT);
             }
 
+            List<Evaluator<?>> evaluators = new ArrayList<Evaluator<?>>();
             // create matching
             // MatchRelation<?> matching =
             // MatchingFactory.createMatchRelation(wikiAPI,
             // configuration.matching,
             // configuration.type);
-            Evaluator evaluator = EvaluatorFractory.createEvaluators(configuration);
+            evaluators.add(evFactory.createEvaluator(configuration, dataset));
             // if (matching == null) {
             // throw new GerbilException("matching=\"" +
             // configuration.matching.name() + "\" experimentType=\""
@@ -110,7 +113,7 @@ public class ExperimentTask implements Task {
 
             taskState = new ExperimentTaskState(dataset.size());
             // perform experiment
-            EvaluationResult result = runExperiment(dataset, annotator, evaluator, taskState);
+            EvaluationResult result = runExperiment(dataset, annotator, evaluators, taskState);
 
             int errorCount = 0;
             if (annotator instanceof ErrorCounter) {
@@ -175,9 +178,9 @@ public class ExperimentTask implements Task {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private EvaluationResult runExperiment(Dataset dataset, Annotator annotator, Evaluator<?> evaluator,
-            ExperimentTaskState state) throws GerbilException {
+    @SuppressWarnings({ "deprecation" })
+    private EvaluationResult runExperiment(Dataset dataset, Annotator annotator,
+            List<Evaluator<? extends Marking>> evaluators, ExperimentTaskState state) throws GerbilException {
         EvaluationResult evalResult = null;
         switch (configuration.type) {
         case D2KB:
@@ -186,11 +189,14 @@ public class ExperimentTask implements Task {
                 List<List<NamedEntity>> results = new ArrayList<List<NamedEntity>>(dataset.size());
                 List<List<NamedEntity>> goldStandard = new ArrayList<List<NamedEntity>>(dataset.size());
                 EntityLinker linker = ((EntityLinker) annotator);
+
                 for (Document document : dataset.getInstances()) {
-                    results.add(linker.performLinking(document));
+                    // reduce the document to a text and a list of Spans
+                    results.add(linker.performLinking(DocumentInformationReducer.reduceToTextAndSpans(document)));
                     goldStandard.add(document.getMarkings(NamedEntity.class));
+                    taskState.increaseExperimentStepCount();
                 }
-                evalResult = ((Evaluator<NamedEntity>) evaluator).evaluate(results, goldStandard);
+                evalResult = evaluate(evaluators, results, goldStandard);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
@@ -204,10 +210,13 @@ public class ExperimentTask implements Task {
                 List<List<NamedEntity>> goldStandard = new ArrayList<List<NamedEntity>>(dataset.size());
                 EntityLinker linker = ((EntityLinker) annotator);
                 for (Document document : dataset.getInstances()) {
-                    results.add(linker.performLinking(document));
+                    // reduce the document to a single text
+                    results.add(linker.performLinking(DocumentInformationReducer.reduceToPlainText(document)));
                     goldStandard.add(document.getMarkings(NamedEntity.class));
+                    taskState.increaseExperimentStepCount();
                 }
-                evalResult = ((Evaluator<NamedEntity>) evaluator).evaluate(results, goldStandard);
+                // FIXME expand URIs to sets of URIs
+                evalResult = evaluate(evaluators, results, goldStandard);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
@@ -226,10 +235,12 @@ public class ExperimentTask implements Task {
                 List<List<Span>> goldStandard = new ArrayList<List<Span>>(dataset.size());
                 EntityRecognizer recognizer = ((EntityRecognizer) annotator);
                 for (Document document : dataset.getInstances()) {
-                    results.add(recognizer.performRecognition(document));
+                    // reduce the document to a single text
+                    results.add(recognizer.performRecognition(DocumentInformationReducer.reduceToPlainText(document)));
                     goldStandard.add(document.getMarkings(Span.class));
+                    taskState.increaseExperimentStepCount();
                 }
-                evalResult = ((Evaluator<Span>) evaluator).evaluate(results, goldStandard);
+                evalResult = evaluate(evaluators, results, goldStandard);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
@@ -240,6 +251,20 @@ public class ExperimentTask implements Task {
                     ErrorTypes.UNEXPECTED_EXCEPTION);
         }
         return evalResult;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T extends Marking> EvaluationResult evaluate(List<Evaluator<? extends Marking>> evaluators,
+            List<List<T>> results, List<List<T>> goldStandard) {
+        EvaluationResultContainer evalResults = new EvaluationResultContainer();
+        EvaluationResult evalResult;
+        for (Evaluator<? extends Marking> e : evaluators) {
+            evalResult = ((Evaluator<T>) e).evaluate(results, goldStandard);
+            if (evalResult != null) {
+                evalResults.addResult(evalResult);
+            }
+        }
+        return evalResults;
     }
 
     @Override

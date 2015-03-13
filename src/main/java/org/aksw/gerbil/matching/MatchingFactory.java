@@ -31,9 +31,14 @@ import it.acubelab.batframework.metrics.WeakAnnotationMatch;
 import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.matching.impl.MatchingsSearcher;
+import org.aksw.gerbil.matching.impl.StrongSpanMatchingsCounter;
+import org.aksw.gerbil.matching.impl.WeakSpanMatchingsCounter;
+import org.aksw.gerbil.transfer.nif.Span;
 
 public class MatchingFactory {
 
+    @Deprecated
     public static MatchRelation<? extends Tag> createMatchRelation(WikipediaApiInterface wikiApi, Matching matching,
             ExperimentType type) {
         switch (matching) {
@@ -60,5 +65,20 @@ public class MatchingFactory {
         }
         }
         return null;
+    }
+
+    public static MatchingsSearcher<? extends Span> createSpanMatchingsSearcher(Matching matching) {
+        switch (matching) {
+        case STRONG_ENTITY_MATCH:
+        case WEAK_ANNOTATION_MATCH: {
+            return new WeakSpanMatchingsCounter<>();
+        }
+        case STRONG_ANNOTATION_MATCH: {
+            return new StrongSpanMatchingsCounter<>();
+        }
+        default: {
+            throw new IllegalArgumentException("Got an unknown Matching \"" + matching.toString() + "\".");
+        }
+        }
     }
 }

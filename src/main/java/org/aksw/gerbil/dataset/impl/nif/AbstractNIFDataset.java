@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.RdfModelContainingDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.io.nif.DocumentListParser;
@@ -39,13 +40,14 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-public abstract class AbstractNIFDataset implements Dataset {
+public abstract class AbstractNIFDataset implements RdfModelContainingDataset {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(AbstractNIFDataset.class);
 
     private List<Document> documents;
     private String name;
     private boolean hasBeenInitialized = false;
+    private Model rdfModel;
 
     public AbstractNIFDataset(String name) {
         this.name = name;
@@ -108,8 +110,10 @@ public abstract class AbstractNIFDataset implements Dataset {
         DocumentListParser parser = new DocumentListParser(true);
         documents = parser.parseDocuments(nifModel);
 
-        // TODO At this point further information could be retrieved from the
-        // model (if there are still triples available)
+        // if there are still triples available
+        if (nifModel.size() > 0) {
+            rdfModel = nifModel;
+        }
 
         hasBeenInitialized = true;
         LOGGER.info("{} dataset initialized", name);
@@ -139,6 +143,11 @@ public abstract class AbstractNIFDataset implements Dataset {
                     "This dataset hasn't been initialized. Please call init() before using the dataset.");
         }
         return documents;
+    }
+
+    @Override
+    public Model getRdfModel() {
+        return rdfModel;
     }
 
 }

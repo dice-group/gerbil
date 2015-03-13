@@ -6,6 +6,7 @@ import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
@@ -21,9 +22,9 @@ public abstract class AbstractExperimentTaskTest {
     private Throwable testError = null;
     private Semaphore mutex = new Semaphore(0);
 
-    public void runTest(int experimentTaskId, ExperimentDAO experimentDAO, ExperimentTaskConfiguration configuration,
-            TaskObserver observer) {
-        ExperimentTask task = new ExperimentTask(experimentTaskId, experimentDAO, configuration);
+    public void runTest(int experimentTaskId, ExperimentDAO experimentDAO, EvaluatorFactory evFactory,
+            ExperimentTaskConfiguration configuration, TaskObserver observer) {
+        ExperimentTask task = new ExperimentTask(experimentTaskId, experimentDAO, evFactory, configuration);
         Overseer overseer = new SimpleOverseer();
         overseer.addObserver(observer);
         @SuppressWarnings("unused")

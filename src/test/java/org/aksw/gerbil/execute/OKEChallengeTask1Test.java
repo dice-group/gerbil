@@ -11,6 +11,7 @@ import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datasets.NIFFileDatasetConfig;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
@@ -102,7 +103,7 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
                                                 (Marking) new NamedEntity(22, 14,
                                                         "http://dbpedia.org/resource/James_Carville"),
                                                 (Marking) new NamedEntity(57, 17,
-                                                        "http://dbpedia.org/resource/Political_adviser"),
+                                                        "http://dbpedia.org/resource/Political_consulting"),
                                                 (Marking) new NamedEntity(78, 12,
                                                         "http://dbpedia.org/resource/Bill_Clinton"),
                                                 (Marking) new NamedEntity(96, 13,
@@ -141,7 +142,7 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(
                 Arrays.asList(annotatorResults)), dataset, ExperimentType.EExt, matching);
-        runTest(experimentTaskId, experimentDAO, configuration, new F1MeasureTestingObserver(this, experimentTaskId,
-                experimentDAO, expectedResults));
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration, new F1MeasureTestingObserver(
+                this, experimentTaskId, experimentDAO, expectedResults));
     }
 }

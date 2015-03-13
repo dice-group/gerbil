@@ -14,6 +14,7 @@ import org.aksw.gerbil.datasets.AbstractDatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.ExperimentTask;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -28,7 +29,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
     @Test
     public void testErrorCount() {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
-        ExperimentTask task = new ExperimentTask(1, db, new ExperimentTaskConfiguration(
+        ExperimentTask task = new ExperimentTask(1, db, new EvaluatorFactory(), new ExperimentTaskConfiguration(
                 new ErrorCausingAnnotatorConfig(5), new SimpleTestDatasetConfig(100), ExperimentType.ERec,
                 Matching.STRONG_ENTITY_MATCH));
         task.run();
@@ -41,7 +42,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
     @Test
     public void testTaskCanceling() {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
-        ExperimentTask task = new ExperimentTask(2, db, new ExperimentTaskConfiguration(
+        ExperimentTask task = new ExperimentTask(2, db, new EvaluatorFactory(), new ExperimentTaskConfiguration(
                 new ErrorCausingAnnotatorConfig(30), new SimpleTestDatasetConfig(1000), ExperimentType.ERec,
                 Matching.STRONG_ENTITY_MATCH));
         task.run();

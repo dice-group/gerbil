@@ -10,6 +10,7 @@ import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.TestDataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
@@ -28,8 +29,8 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
                             "http://www.aksw.org/gerbil/test-document/Brad"))),
                     (Document) new DocumentImpl(
                             "McDonald’s Corp., which replaced its chief executive officer last week, saw U.S. sales drop 4 percent in February after a short-lived recovery in its domestic market sputtered.",
-                            "http://www.aksw.org/gerbil/test-document-2", Arrays.asList((Marking) new NamedEntity(0, 16,
-                                    "http://www.aksw.org/gerbil/test-document/McDonaldsCorp"),
+                            "http://www.aksw.org/gerbil/test-document-2", Arrays.asList((Marking) new NamedEntity(0,
+                                    16, "http://www.aksw.org/gerbil/test-document/McDonaldsCorp"),
                                     (Marking) new NamedEntity(76, 4, "http://www.aksw.org/gerbil/test-document/US"))));
 
     @Test
@@ -39,26 +40,26 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
                 new TestEntityRecognizer(INSTANCES), new TestDataset(INSTANCES, ExperimentType.ERec),
                 ExperimentType.ERec, Matching.STRONG_ANNOTATION_MATCH);
-        runTest(experimentTaskId, experimentDAO, configuration, new EverythingCorrectTestingObserver(this,
-                experimentTaskId, experimentDAO));
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
+                new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 2;
         configuration = new ExperimentTaskConfiguration(new TestEntityRecognizer(INSTANCES), new TestDataset(INSTANCES,
                 ExperimentType.ERec), ExperimentType.ERec, Matching.WEAK_ANNOTATION_MATCH);
-        runTest(experimentTaskId, experimentDAO, configuration, new EverythingCorrectTestingObserver(this,
-                experimentTaskId, experimentDAO));
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
+                new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 3;
         configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(INSTANCES), new TestDataset(INSTANCES,
                 ExperimentType.ERec), ExperimentType.ERec, Matching.STRONG_ANNOTATION_MATCH);
-        runTest(experimentTaskId, experimentDAO, configuration, new EverythingCorrectTestingObserver(this,
-                experimentTaskId, experimentDAO));
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
+                new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 4;
         configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(INSTANCES), new TestDataset(INSTANCES,
                 ExperimentType.ERec), ExperimentType.ERec, Matching.WEAK_ANNOTATION_MATCH);
-        runTest(experimentTaskId, experimentDAO, configuration, new EverythingCorrectTestingObserver(this,
-                experimentTaskId, experimentDAO));
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
+                new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
     }
 
     @Test
@@ -66,16 +67,15 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestEntityLinker(INSTANCES),
-                new TestDataset(INSTANCES, ExperimentType.ELink), ExperimentType.ELink,
-                Matching.STRONG_ENTITY_MATCH);
-        runTest(experimentTaskId, experimentDAO, configuration, new EverythingCorrectTestingObserver(this,
-                experimentTaskId, experimentDAO));
+                new TestDataset(INSTANCES, ExperimentType.ELink), ExperimentType.ELink, Matching.STRONG_ENTITY_MATCH);
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
+                new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 2;
         configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(INSTANCES), new TestDataset(INSTANCES,
                 ExperimentType.ELink), ExperimentType.ELink, Matching.STRONG_ENTITY_MATCH);
-        runTest(experimentTaskId, experimentDAO, configuration, new EverythingCorrectTestingObserver(this,
-                experimentTaskId, experimentDAO));
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
+                new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
     }
 
     @Test
@@ -83,16 +83,15 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(INSTANCES),
-                new TestDataset(INSTANCES, ExperimentType.EExt), ExperimentType.EExt,
-                Matching.STRONG_ANNOTATION_MATCH);
-        runTest(experimentTaskId, experimentDAO, configuration, new EverythingCorrectTestingObserver(this,
-                experimentTaskId, experimentDAO));
+                new TestDataset(INSTANCES, ExperimentType.EExt), ExperimentType.EExt, Matching.STRONG_ANNOTATION_MATCH);
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
+                new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 2;
         configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(INSTANCES), new TestDataset(INSTANCES,
                 ExperimentType.EExt), ExperimentType.EExt, Matching.WEAK_ANNOTATION_MATCH);
-        runTest(experimentTaskId, experimentDAO, configuration, new EverythingCorrectTestingObserver(this,
-                experimentTaskId, experimentDAO));
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
+                new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
     }
 
     protected static class EverythingCorrectTestingObserver extends F1MeasureTestingObserver {

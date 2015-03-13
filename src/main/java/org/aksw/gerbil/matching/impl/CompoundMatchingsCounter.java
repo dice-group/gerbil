@@ -6,20 +6,21 @@ import org.aksw.gerbil.transfer.nif.Marking;
 
 import com.carrotsearch.hppc.BitSet;
 
-public class CompoundMatchingsCounter<T extends Marking> extends AbstractMatchingsCounter<T> {
+public class CompoundMatchingsCounter<T extends Marking> implements MatchingsSearcher<T> {
 
-    public AbstractMatchingsCounter<T> matchingsCounter[];
+    public MatchingsSearcher<T> matchingsCounter[];
 
-    public CompoundMatchingsCounter(@SuppressWarnings("unchecked") AbstractMatchingsCounter<T>... matchingsCounter) {
+    public CompoundMatchingsCounter(@SuppressWarnings("unchecked") MatchingsSearcher<T>... matchingsCounter) {
         this.matchingsCounter = matchingsCounter;
     }
 
     @Override
-    protected BitSet findMatching(T expectedElement, List<T> annotatorResult, BitSet alreadyUsedResults) {
+    public BitSet findMatchings(T expectedElement, List<T> annotatorResult, BitSet alreadyUsedResults) {
         BitSet matchings;
-        matchings = matchingsCounter[0].findMatching(expectedElement, annotatorResult, alreadyUsedResults);
+        matchings = matchingsCounter[0].findMatchings(expectedElement, annotatorResult, alreadyUsedResults);
         for (int i = 1; (i < matchingsCounter.length) && (!matchings.isEmpty()); i++) {
-            matchings.intersect(matchingsCounter[i].findMatching(expectedElement, annotatorResult, alreadyUsedResults));
+            matchings
+                    .intersect(matchingsCounter[i].findMatchings(expectedElement, annotatorResult, alreadyUsedResults));
         }
         return matchings;
     }

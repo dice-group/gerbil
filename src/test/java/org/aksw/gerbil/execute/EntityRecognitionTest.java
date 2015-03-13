@@ -10,6 +10,7 @@ import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.TestDataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
@@ -90,8 +91,8 @@ public class EntityRecognitionTest extends AbstractExperimentTaskTest {
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestEntityRecognizer(
                 Arrays.asList(annotatorResults)), new TestDataset(Arrays.asList(goldStandards), ExperimentType.ERec),
                 ExperimentType.ERec, matching);
-        runTest(experimentTaskId, experimentDAO, configuration, new F1MeasureTestingObserver(this, experimentTaskId,
-                experimentDAO, expectedResults));
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration, new F1MeasureTestingObserver(
+                this, experimentTaskId, experimentDAO, expectedResults));
     }
 
 }

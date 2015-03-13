@@ -26,7 +26,6 @@ package org.aksw.gerbil.web;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -83,7 +82,7 @@ public class MainController {
             isInitialized = true;
         }
         // Simply call the dataset mapping so that it has to be instantiated
-        DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2KB);
+        DatasetMapping.getDatasetsForExperimentType(ExperimentType.EExt);
     }
 
     @PostConstruct
@@ -190,15 +189,20 @@ public class MainController {
     @RequestMapping("/exptypes")
     public @ResponseBody
     List<String> expTypes() {
-        List<ExperimentType> list = Arrays.asList(ExperimentType.values());
         List<String> names = Lists.newArrayList();
-        for (ExperimentType name : list) {
-            names.add(name.toString());
+        for (ExperimentType type : ExperimentType.values()) {
+            try {
+                if (ExperimentType.class.getDeclaredField(type.toString()).getAnnotation(Deprecated.class) == null)
+                    names.add(type.toString());
+            } catch (Exception e) {
+                LOGGER.error("Couldn't check availability of ExperimentType " + type.toString());
+            }
         }
         Collections.sort(names);
         return names;
     }
 
+    @SuppressWarnings("deprecation")
     @RequestMapping("/matchings")
     public @ResponseBody
     List<String> matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {

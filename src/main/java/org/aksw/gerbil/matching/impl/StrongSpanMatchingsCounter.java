@@ -6,10 +6,10 @@ import org.aksw.gerbil.transfer.nif.Span;
 
 import com.carrotsearch.hppc.BitSet;
 
-public class StrongSpanMatchingsCounter<T extends Span> extends AbstractMatchingsCounter<T> {
+public class StrongSpanMatchingsCounter<T extends Span> implements MatchingsSearcher<T> {
 
     @Override
-    protected BitSet findMatching(T expectedElement, List<T> annotatorResult, BitSet alreadyUsedResults) {
+    public BitSet findMatchings(T expectedElement, List<T> annotatorResult, BitSet alreadyUsedResults) {
         int eStart = expectedElement.getStartPosition();
         int eLength = expectedElement.getLength();
         BitSet matching = new BitSet(alreadyUsedResults.size());

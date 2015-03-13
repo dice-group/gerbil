@@ -25,6 +25,7 @@ package org.aksw.gerbil;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.ExperimentTask;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.slf4j.Logger;
@@ -38,13 +39,15 @@ public class Experimenter implements Runnable {
     private String experimentId;
     private ExperimentDAO experimentDAO;
     private Overseer overseer;
+    private EvaluatorFactory evFactory;
 
-    public Experimenter(Overseer overseer, ExperimentDAO experimentDAO,
-            ExperimentTaskConfiguration configs[], String experimentId) {
+    public Experimenter(Overseer overseer, ExperimentDAO experimentDAO, ExperimentTaskConfiguration configs[],
+            String experimentId) {
         this.configs = configs;
         this.experimentId = experimentId;
         this.experimentDAO = experimentDAO;
         this.overseer = overseer;
+        this.evFactory = new EvaluatorFactory();
     }
 
     @Override
@@ -64,7 +67,7 @@ public class Experimenter implements Runnable {
                 // If there is no experiment task result in the database
                 if (taskId != ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED) {
                     // Create an executer which performs the task
-                    ExperimentTask task = new ExperimentTask(taskId, experimentDAO, configs[i]);
+                    ExperimentTask task = new ExperimentTask(taskId, experimentDAO, evFactory, configs[i]);
                     overseer.startTask(task);
                 }
             }

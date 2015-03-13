@@ -14,8 +14,8 @@ public abstract class AbstractMatchingsCounterTest<T extends Marking> {
     private List<List<T>> goldStandard;
     private List<int[]> expectedCounts;
 
-    public AbstractMatchingsCounterTest(MatchingsCounter<T> counter, MatchingTestExample<T> testExamples[]) {
-        this.counter = counter;
+    public AbstractMatchingsCounterTest(MatchingsSearcher<T> searcher, MatchingTestExample<T> testExamples[]) {
+        this.counter = new MatchingsCounterImpl<T>(searcher);
         this.annotatorResult = new ArrayList<List<T>>(testExamples.length);
         this.goldStandard = new ArrayList<List<T>>(testExamples.length);
         this.expectedCounts = new ArrayList<int[]>(testExamples.length);
