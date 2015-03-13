@@ -31,9 +31,9 @@ import org.aksw.gerbil.transfer.nif.Marking;
 
 public class DocumentImpl implements Document {
 
-    private String uri;
-    private String text;
-    private List<Marking> markings;
+    protected String uri;
+    protected String text;
+    protected List<Marking> markings;
 
     public DocumentImpl() {
         markings = new ArrayList<Marking>();

@@ -35,6 +35,10 @@ public class SpanImpl implements Span {
         this.length = length;
     }
 
+    public SpanImpl(Span span) {
+        this(span.getStartPosition(), span.getLength());
+    }
+
     @Override
     public int getStartPosition() {
         return startPosition;
