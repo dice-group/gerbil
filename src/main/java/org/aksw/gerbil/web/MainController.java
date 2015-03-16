@@ -68,9 +68,6 @@ public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
-    private static final String GERBIL_VOCABULARY_JSON_FILE = "vocab/gerbil.json";
-    private static final String GERBIL_VOCABULARY_RDF_FILE = "vocab/gerbil.rdf";
-    private static final String GERBIL_VOCABULARY_TTL_FILE = "vocab/gerbil.ttl";
     private static final String GOOGLE_ANALYTICS_FILE_NAME = "google1d91bc68c8a56517.html";
 
     private static boolean isInitialized = false;
@@ -243,24 +240,6 @@ public class MainController {
         return list;
     }
 
-    @RequestMapping(value = "/vocab*", produces = { "application/json+ld", "application/json" })
-    public @ResponseBody
-    String vocabularyAsJSON() {
-        return getResourceAsString(GERBIL_VOCABULARY_JSON_FILE);
-    }
-
-    @RequestMapping(value = "/vocab*", produces = "application/rdf+xml")
-    public @ResponseBody
-    String vocabularyAsRDFXML() {
-        return getResourceAsString(GERBIL_VOCABULARY_RDF_FILE);
-    }
-
-    @RequestMapping(value = "/vocab*", produces = { "text/turtle", "text/plain" })
-    public @ResponseBody
-    String vocabularyAsTTL() {
-        return getResourceAsString(GERBIL_VOCABULARY_TTL_FILE);
-    }
-
     /**
      * This mapping is needed to authenticate us against Google Analytics. It
      * reads the google file and sends it as String.
@@ -277,20 +256,6 @@ public class MainController {
             LOGGER.error("Couldn't read googel analytisc file.", e);
         }
         return "";
-    }
-
-    private String getResourceAsString(String resource) {
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream(resource);
-        if (is != null) {
-            try {
-                return IOUtils.toString(is, "utf-8");
-            } catch (IOException e) {
-                LOGGER.error("Exception while loading vocabulary resource. Returning null.", e);
-            } finally {
-                IOUtils.closeQuietly(is);
-            }
-        }
-        return null;
     }
 
     private String getURLBase() {
