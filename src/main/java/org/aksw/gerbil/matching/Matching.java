@@ -23,26 +23,52 @@
  */
 package org.aksw.gerbil.matching;
 
+import org.aksw.gerbil.datatypes.Describable;
+
 /**
- * The matching defines how the results of an annotator are compared with the annotations of the dataset.
+ * The matching defines how the results of an annotator are compared with the
+ * annotations of the dataset.
  * 
  * @author m.roeder
  * 
  */
-public enum Matching {
+public enum Matching implements Describable {
     /**
-     * The matching returns true iff the disambiguated entity of the annotater equals at least one tag/annotation of the
-     * text.
+     * The matching returns true iff the disambiguated entity of the annotater
+     * equals at least one tag/annotation of the text.
      */
-    STRONG_ENTITY_MATCH,
+    STRONG_ENTITY_MATCH("Strong Entity Match",
+            "The URI returned by the annotator has to equal an entity or tag URI of the gold standard."),
     /**
-     * This matching returns true iff a) the position, b) the length and c) the disambiguated meaning of an entity are
-     * the same as those of the entity in the dataset.
+     * This matching returns true iff a) the position, b) the length and c) the
+     * disambiguated meaning of an entity are the same as those of the entity in
+     * the dataset.
      */
-    STRONG_ANNOTATION_MATCH,
+    STRONG_ANNOTATION_MATCH("Strong Annotation Match",
+            "The position of the entity inside the text has to exactly match the position inside the gold standard."),
     /**
-     * This matching returns true iff the disambiguated meaning of an entity is the same as the meaning of an entity in
-     * the dataset and both entities overlap inside the text.
+     * This matching returns true iff the disambiguated meaning of an entity is
+     * the same as the meaning of an entity in the dataset and both entities
+     * overlap inside the text.
      */
-    WEAK_ANNOTATION_MATCH
+    WEAK_ANNOTATION_MATCH("Strong Annotation Match",
+            "The position of the entity inside the text has to overlap the position inside the gold standard.");
+
+    private String label;
+    private String description;
+
+    Matching(String label, String description) {
+        this.label = label;
+        this.description = description;
+    }
+    
+    @Override
+    public String getLabel() {
+        return label;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
 }
