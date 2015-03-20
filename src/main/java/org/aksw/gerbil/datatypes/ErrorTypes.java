@@ -34,16 +34,41 @@ public enum ErrorTypes {
      * ALL ERROR TYPES SHOULD HAVE A _NEGATIVE_ ERROR CODE STARTING BELOW -100!
      */
 
-    DATASET_DOES_NOT_SUPPORT_EXPERIMENT(-101, "The dataset does not support the experiment type."), DATASET_LOADING_ERROR(
-            -104, "The dataset couldn't be loaded."),
+    /**
+     * The dataset does not support the experiment type.
+     */
+    DATASET_DOES_NOT_SUPPORT_EXPERIMENT(-101, "The dataset does not support the experiment type."),
+    /**
+     * The dataset couldn't be loaded.
+     */
+    DATASET_LOADING_ERROR(-104, "The dataset couldn't be loaded."),
 
-    ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT(-102, "The annotator does not support the experiment type."), ANNOTATOR_LOADING_ERROR(
-            -105, "The annotator couldn't be loaded."),
+    /**
+     * The annotator does not support the experiment type.
+     */
+    ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT(-102, "The annotator does not support the experiment type."),
+    /**
+     * The annotator couldn't be loaded.
+     */
+    ANNOTATOR_LOADING_ERROR(-105, "The annotator couldn't be loaded."),
 
-    MATCHING_DOES_NOT_SUPPORT_EXPERIMENT(-103, "The matching does not support the experiment type"),
+    /**
+     * The matching does not support the experiment type.d
+     */
+    MATCHING_DOES_NOT_SUPPORT_EXPERIMENT(-103, "The matching does not support the experiment type."),
 
-    UNEXPECTED_EXCEPTION(-106, "Got an unexpected exception while running the experiment."), SERVER_STOPPED_WHILE_PROCESSING(
-            -107, "The GERBIL server has been stopped while the experiment was running");
+    /**
+     * Got an unexpected exception while running the experiment.
+     */
+    UNEXPECTED_EXCEPTION(-106, "Got an unexpected exception while running the experiment."),
+    /**
+     * The GERBIL server has been stopped while the experiment was running.
+     */
+    SERVER_STOPPED_WHILE_PROCESSING(-107, "The GERBIL server has been stopped while the experiment was running."),
+    /**
+     * The annotator caused to many single errors.
+     */
+    TO_MANY_SINGLE_ERRORS(-108, "The annotator caused to many single errors.");
 
     private ErrorTypes(int errorCode, String description) {
         this.errorCode = errorCode;

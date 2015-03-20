@@ -7,10 +7,11 @@ import org.aksw.gerbil.matching.MatchingFactory;
 import org.aksw.gerbil.matching.impl.CompoundMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.matching.impl.MatchingsSearcher;
-import org.aksw.gerbil.matching.impl.MeaningMatchingsCounter;
-import org.aksw.gerbil.semantic.DatasetBasedSameAsRetriever;
-import org.aksw.gerbil.semantic.MultipleSameAsRetriever;
-import org.aksw.gerbil.semantic.SameAsRetriever;
+import org.aksw.gerbil.matching.impl.MeaningMatchingsSearcher;
+import org.aksw.gerbil.semantic.kb.UriKBClassifier;
+import org.aksw.gerbil.semantic.sameas.DatasetBasedSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
@@ -18,6 +19,23 @@ import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 public class EvaluatorFactory {
 
     protected SameAsRetriever globalRetriever = null;
+    protected UriKBClassifier globalClassifier = null;
+
+    public EvaluatorFactory() {
+    }
+
+    public EvaluatorFactory(SameAsRetriever globalRetriever) {
+        this.globalRetriever = globalRetriever;
+    }
+
+    public EvaluatorFactory(UriKBClassifier globalClassifier) {
+        this.globalClassifier = globalClassifier;
+    }
+
+    public EvaluatorFactory(SameAsRetriever globalRetriever, UriKBClassifier globalClassifier) {
+        this.globalRetriever = globalRetriever;
+        this.globalClassifier = globalClassifier;
+    }
 
     @SuppressWarnings({ "unchecked", "deprecation" })
     public <T extends Marking> Evaluator<T> createEvaluator(ExperimentTaskConfiguration configuration, Dataset dataset) {
@@ -29,7 +47,7 @@ public class EvaluatorFactory {
             return (Evaluator<T>) new FMeasureCalculator<NamedEntity>(new MatchingsCounterImpl<NamedEntity>(
                     new CompoundMatchingsCounter<NamedEntity>((MatchingsSearcher<NamedEntity>) MatchingFactory
                             .createSpanMatchingsSearcher(configuration.matching),
-                            new MeaningMatchingsCounter<NamedEntity>(localRetriever))));
+                            new MeaningMatchingsSearcher<NamedEntity>(localRetriever, globalClassifier))));
         }
         case ERec: {
             return (Evaluator<T>) new FMeasureCalculator<Span>(new MatchingsCounterImpl<Span>(
@@ -42,7 +60,7 @@ public class EvaluatorFactory {
             return (Evaluator<T>) new FMeasureCalculator<NamedEntity>(new MatchingsCounterImpl<NamedEntity>(
                     new CompoundMatchingsCounter<NamedEntity>((MatchingsSearcher<NamedEntity>) MatchingFactory
                             .createSpanMatchingsSearcher(configuration.matching),
-                            new MeaningMatchingsCounter<NamedEntity>(localRetriever))));
+                            new MeaningMatchingsSearcher<NamedEntity>(localRetriever, globalClassifier))));
         }
         default: {
             throw new RuntimeException();

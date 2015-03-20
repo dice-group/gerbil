@@ -13,6 +13,8 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
+import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
+import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
@@ -31,6 +33,8 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
             "The senator received a Bachelor of Laws from the Columbia University." };
     private static final DatasetConfiguration GOLD_STD = new NIFFileDatasetConfig("OKE_Task1",
             "src/test/resources/OKE_Challenge/example_data/task1.ttl", false, ExperimentType.EExt);
+    private static final UriKBClassifier URI_KB_CLASSIFIER = new SimpleWhiteListBasedUriKBClassifier(
+            "http://dbpedia.org/resource/");
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -39,7 +43,8 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
         testConfigs.add(new Object[] { new Document[] {}, GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
                 new double[] { 0, 0, 0, 0, 0, 0, 0 } });
         // The extractor found everything and marked all entities using the OKE
-        // URI
+        // URI --> some of them should be wrong, because they are not linked to
+        // the DBpedia
         testConfigs
                 .add(new Object[] {
                         new Document[] {
@@ -120,6 +125,35 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
                                                 (Marking) new NamedEntity(49, 19,
                                                         "http://dbpedia.org/resource/Columbia_University"))) },
                         GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+        // The extractor found everything and marked all entities using dbpedia
+        // URIs (if they were available) or own URIs
+        testConfigs.add(new Object[] {
+                new Document[] {
+                        new DocumentImpl(TEXTS[0],
+                                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1", Arrays
+                                        .asList((Marking) new NamedEntity(0, 20,
+                                                "http://dbpedia.org/resource/Florence_May_Harding"),
+                                                (Marking) new NamedEntity(34, 6,
+                                                        "http://aksws.org/notInWiki/National_Art_School"),
+                                                (Marking) new NamedEntity(44, 6, "http://dbpedia.org/resource/Sydney"),
+                                                (Marking) new NamedEntity(61, 21,
+                                                        "http://aksws.org/notInWiki/Douglas_Robert_Dundas"))),
+                        new DocumentImpl(TEXTS[1],
+                                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
+                                Arrays.asList((Marking) new NamedEntity(22, 14,
+                                        "http://dbpedia.org/resource/James_Carville"), (Marking) new NamedEntity(57,
+                                        17, "http://dbpedia.org/resource/Political_consulting"),
+                                        (Marking) new NamedEntity(78, 12, "http://dbpedia.org/resource/Bill_Clinton"),
+                                        (Marking) new NamedEntity(96, 13, "http://dbpedia.org/resource/Donna_Brazile"),
+                                        (Marking) new NamedEntity(115, 16,
+                                                "http://dbpedia.org/resource/Campaign_manager"),
+                                        (Marking) new NamedEntity(184, 7, "http://dbpedia.org/resource/Al_Gore"))),
+                        new DocumentImpl(TEXTS[2],
+                                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
+                                Arrays.asList((Marking) new NamedEntity(4, 7, "http://aksws.org/notInWiki/Senator_1"),
+                                        (Marking) new NamedEntity(49, 19,
+                                                "http://dbpedia.org/resource/Columbia_University"))) }, GOLD_STD,
+                Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
         return testConfigs;
     }
 
@@ -142,7 +176,7 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(
                 Arrays.asList(annotatorResults)), dataset, ExperimentType.EExt, matching);
-        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration, new F1MeasureTestingObserver(
-                this, experimentTaskId, experimentDAO, expectedResults));
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
+                new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }
 }

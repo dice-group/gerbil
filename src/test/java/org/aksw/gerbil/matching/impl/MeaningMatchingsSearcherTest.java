@@ -1,9 +1,13 @@
 package org.aksw.gerbil.matching.impl;
 
+import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
+import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 
-public class MeaningMatchingsCounterTest extends AbstractMatchingsCounterTest<Meaning> {
+public class MeaningMatchingsSearcherTest extends AbstractMatchingsCounterTest<Meaning> {
+
+    private static final UriKBClassifier CLASSIFIER = new SimpleWhiteListBasedUriKBClassifier("http://kb/");
 
     @SuppressWarnings("rawtypes")
     private static final MatchingTestExample EXAMPLES[] = new MatchingTestExample[] {
@@ -23,7 +27,8 @@ public class MeaningMatchingsCounterTest extends AbstractMatchingsCounterTest<Me
                     new Annotation("http://kb/2"), new Annotation("http://kb/3") }, new Meaning[] {
                     new Annotation("http://kb/1"), new Annotation("http://kb/2"), new Annotation("http://kb/3") },
                     new int[] { 3, 0, 0 }),
-            // test case with several exact matching Meanings with a different order
+            // test case with several exact matching Meanings with a different
+            // order
             new MatchingTestExample<Meaning>(new Meaning[] { new Annotation("http://kb/1"),
                     new Annotation("http://kb/2"), new Annotation("http://kb/3") }, new Meaning[] {
                     new Annotation("http://kb/2"), new Annotation("http://kb/3"), new Annotation("http://kb/1") },
@@ -33,27 +38,21 @@ public class MeaningMatchingsCounterTest extends AbstractMatchingsCounterTest<Me
                     new Annotation("http://kb/1"), new Annotation("http://kb/1") }, new Meaning[] {
                     new Annotation("http://kb/1"), new Annotation("http://kb/1"), new Annotation("http://kb/1") },
                     new int[] { 3, 0, 0 }),
-    // test case with one matching pair and another not matching pair
-    // new MatchingTestExample<Meaning>(new Span[] { new SpanImpl(60, 10), new
-    // SpanImpl(20, 10) }, new Span[] {
-    // new SpanImpl(0, 10), new SpanImpl(20, 10) }, new int[] { 1, 1, 1 }),
-    // // test case with partly overlapping spans
-    // new MatchingTestExample<Meaning>(new Span[] { new SpanImpl(0, 10), new
-    // SpanImpl(20, 10),
-    // new SpanImpl(40, 10), new SpanImpl(62, 3) }, new Span[] { new SpanImpl(2,
-    // 10),
-    // new SpanImpl(16, 10), new SpanImpl(42, 4), new SpanImpl(60, 10) }, new
-    // int[] { 0, 4, 4 }),
-    // // test case with overlapping spans in the annotator result matching
-    // // a single span of the gold standard
-    // new MatchingTestExample<Meaning>(new Span[] { new SpanImpl(0, 10), new
-    // SpanImpl(6, 10) },
-    // new Span[] { new SpanImpl(2, 10) }, new int[] { 0, 2, 1 })
-    };
+            // test case with several exact matching Meanings with two of them
+            // that couldn't be mapped to the KB
+            new MatchingTestExample<Meaning>(new Meaning[] { new Annotation("http://kb/1"),
+                    new Annotation("http://ukb/2"), new Annotation("http://ukb/3") }, new Meaning[] {
+                    new Annotation("http://aukb/2"), new Annotation("http://aukb/3"), new Annotation("http://kb/1") },
+                    new int[] { 3, 0, 0 }),
+            // test case with one exact matching Meanings, one wrong matching
+            // and a missing matching
+            new MatchingTestExample<Meaning>(new Meaning[] { new Annotation("http://kb/1"),
+                    new Annotation("http://ukb/2") }, new Meaning[] { new Annotation("http://kb/1"),
+                    new Annotation("http://kb/2"), new Annotation("http://kb/3") }, new int[] { 1, 1, 2 }) };
 
     @SuppressWarnings("unchecked")
-    public MeaningMatchingsCounterTest() {
-        super(new MeaningMatchingsCounter<Meaning>(), EXAMPLES);
+    public MeaningMatchingsSearcherTest() {
+        super(new MeaningMatchingsSearcher<Meaning>(CLASSIFIER), EXAMPLES);
     }
 
 }

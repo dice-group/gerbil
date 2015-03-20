@@ -1,4 +1,4 @@
-package org.aksw.gerbil.semantic;
+package org.aksw.gerbil.semantic.sameas;
 
 import java.util.HashSet;
 import java.util.Set;

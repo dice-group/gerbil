@@ -29,7 +29,7 @@ import java.util.List;
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
-import org.aksw.gerbil.bat.annotator.ErrorCounter;
+import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -41,6 +41,7 @@ import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.evaluate.IntEvaluationResult;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -87,10 +88,9 @@ public class ExperimentTask implements Task {
             // TODO add time measuring
             // annotator =
             // TimeMeasuringAnnotatorDecorator.createDecorator(annotator);
-            // annotator = (Annotator)
-            // ErrorCountingAnnotatorDecorator.createDecorator((TopicSystem)
-            // annotator,
-            // dataset.size());
+            ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator.createDecorator(annotator,
+                    dataset.size());
+            annotator = errorCounter;
             if (annotator == null) {
                 throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
@@ -104,6 +104,7 @@ public class ExperimentTask implements Task {
             // configuration.matching,
             // configuration.type);
             evaluators.add(evFactory.createEvaluator(configuration, dataset));
+            evaluators.add(errorCounter);
             // if (matching == null) {
             // throw new GerbilException("matching=\"" +
             // configuration.matching.name() + "\" experimentType=\""
@@ -115,16 +116,11 @@ public class ExperimentTask implements Task {
             // perform experiment
             EvaluationResult result = runExperiment(dataset, annotator, evaluators, taskState);
 
-            int errorCount = 0;
-            if (annotator instanceof ErrorCounter) {
-                errorCount = ((ErrorCounter) annotator).getErrorCount();
-            }
             // create result object
             // FIXME Fix this workaround
-            double results[] = new double[6];
-            transformResults(result, results);
-            ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, results,
-                    ExperimentDAO.TASK_FINISHED, errorCount);
+            ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[6],
+                    ExperimentDAO.TASK_FINISHED, 0);
+            transformResults(result, expResult);
 
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
@@ -138,42 +134,48 @@ public class ExperimentTask implements Task {
         }
     }
 
-    private void transformResults(EvaluationResult result, double results[]) {
+    private void transformResults(EvaluationResult result, ExperimentTaskResult expResult) {
         if (result instanceof EvaluationResultContainer) {
             List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
             for (EvaluationResult tempResult : tempResults) {
-                transformResults(tempResult, results);
+                transformResults(tempResult, expResult);
             }
         } else if (result instanceof DoubleEvaluationResult) {
             switch (result.getName()) {
             case FMeasureCalculator.MACRO_F1_SCORE_NAME: {
-                results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
+                expResult.results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
                         .getValueAsDouble();
                 break;
             }
             case FMeasureCalculator.MACRO_PRECISION_NAME: {
-                results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
+                expResult.results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
                         .getValueAsDouble();
                 break;
             }
             case FMeasureCalculator.MACRO_RECALL_NAME: {
-                results[ExperimentTaskResult.MACRO_RECALL_INDEX] = ((DoubleEvaluationResult) result).getValueAsDouble();
+                expResult.results[ExperimentTaskResult.MACRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
+                        .getValueAsDouble();
                 break;
             }
             case FMeasureCalculator.MICRO_F1_SCORE_NAME: {
-                results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
+                expResult.results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
                         .getValueAsDouble();
                 break;
             }
             case FMeasureCalculator.MICRO_PRECISION_NAME: {
-                results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
+                expResult.results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
                         .getValueAsDouble();
                 break;
             }
             case FMeasureCalculator.MICRO_RECALL_NAME: {
-                results[ExperimentTaskResult.MICRO_RECALL_INDEX] = ((DoubleEvaluationResult) result).getValueAsDouble();
+                expResult.results[ExperimentTaskResult.MICRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
+                        .getValueAsDouble();
                 break;
             }
+            }
+        } else if (result instanceof IntEvaluationResult) {
+            if (result.getName().equals(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME)) {
+                expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
             }
         }
     }

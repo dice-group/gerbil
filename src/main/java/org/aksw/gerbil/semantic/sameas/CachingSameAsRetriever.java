@@ -1,4 +1,4 @@
-package org.aksw.gerbil.semantic;
+package org.aksw.gerbil.semantic.sameas;
 
 import java.io.File;
 import java.io.FileInputStream;

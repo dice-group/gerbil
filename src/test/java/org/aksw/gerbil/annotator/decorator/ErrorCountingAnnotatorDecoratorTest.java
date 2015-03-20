@@ -60,25 +60,25 @@ public class ErrorCountingAnnotatorDecoratorTest {
 
         @Override
         protected Annotator loadAnnotator(ExperimentType type) throws Exception {
-            return new ErrorCausingTopicSystem(errorsPerHundred);
+            return new ErrorCausingAnnotator(errorsPerHundred);
         }
 
     }
 
-    public static class ErrorCausingTopicSystem implements EntityRecognizer {
+    public static class ErrorCausingAnnotator implements EntityRecognizer {
 
         private int errorsPerHundred;
         private int errorsInThisHundred = 0;
         private int count = 0;
 
-        public ErrorCausingTopicSystem(int errorsPerHundred) {
+        public ErrorCausingAnnotator(int errorsPerHundred) {
             super();
             this.errorsPerHundred = errorsPerHundred;
         }
 
         @Override
         public String getName() {
-            return "Error causing topic system";
+            return "Error causing annotator";
         }
 
         @Override
