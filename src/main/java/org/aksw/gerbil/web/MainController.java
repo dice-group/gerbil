@@ -25,8 +25,6 @@ package org.aksw.gerbil.web;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -47,7 +45,6 @@ import org.aksw.gerbil.utils.IDCreator;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -56,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -66,225 +64,212 @@ import com.google.common.collect.Lists;
 @Controller
 public class MainController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
-    private static final String GOOGLE_ANALYTICS_FILE_NAME = "google1d91bc68c8a56517.html";
+	private static final String GOOGLE_ANALYTICS_FILE_NAME = "google1d91bc68c8a56517.html";
 
-    private static boolean isInitialized = false;
+	private static boolean isInitialized = false;
 
-    private static synchronized void initialize(ExperimentDAO dao) {
-        if (!isInitialized) {
-            String id = dao.getHighestExperimentId();
-            if (id != null) {
-                IDCreator.getInstance().setLastCreatedID(id);
-            }
-            isInitialized = true;
-        }
-        // Simply call the dataset mapping so that it has to be instantiated
-        DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2KB);
-    }
+	private static synchronized void initialize(ExperimentDAO dao) {
+		if (!isInitialized) {
+			String id = dao.getHighestExperimentId();
+			if (id != null) {
+				IDCreator.getInstance().setLastCreatedID(id);
+			}
+			isInitialized = true;
+		}
+		// Simply call the dataset mapping so that it has to be instantiated
+		DatasetMapping.getDatasetsForExperimentType(ExperimentType.Sa2KB);
+	}
 
-    @PostConstruct
-    public void init() {
-        initialize(dao);
-    }
+	@PostConstruct
+	public void init() {
+		initialize(dao);
+	}
 
-    @Autowired
-    @Qualifier("experimentDAO")
-    private ExperimentDAO dao;
+	@Autowired
+	@Qualifier("experimentDAO")
+	private ExperimentDAO dao;
 
-    @Autowired
-    private Overseer overseer;
+	@Autowired
+	private Overseer overseer;
 
-    // DataID URL is generated automatically in the experiment method?
-    private DataIDGenerator dataIdGenerator;
+	// DataID URL is generated automatically in the experiment method?
+	private DataIDGenerator dataIdGenerator;
 
-    @Autowired
-    HttpServletRequest request;
+	@Autowired
+	HttpServletRequest request;
 
-    @RequestMapping("/config")
-    public ModelAndView config() {
-        ModelAndView model = new ModelAndView();
-        model.setViewName("config");
-        return model;
-    }
+	@RequestMapping("/config")
+	public ModelAndView config() {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("config");
+		return model;
+	}
 
-    @RequestMapping("/overview")
-    public ModelAndView overview() {
-        ModelAndView model = new ModelAndView();
-        model.setViewName("overview");
-        return model;
-    }
+	@RequestMapping("/overview")
+	public ModelAndView overview() {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("overview");
+		return model;
+	}
 
-    @RequestMapping("/about")
-    public ModelAndView about() {
-        ModelAndView model = new ModelAndView();
-        model.setViewName("about");
-        return model;
-    }
+	@RequestMapping("/about")
+	public ModelAndView about() {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("about");
+		return model;
+	}
 
-    @RequestMapping("/")
-    public ModelAndView index() {
-        return new ModelAndView("index");
-    }
+	@RequestMapping("/")
+	public ModelAndView index() {
+		return new ModelAndView("index");
+	}
 
-    /**
-     * expects a string like
-     * {"type":"A2KB","matching":"Mw - weak annotation match"
-     * ,"annotator":["A2KB one","A2KB two"],"dataset":["datasets"]}
-     * 
-     * @param experimentData
-     * @return
-     */
+	/**
+	 * expects a string like
+	 * {"type":"A2KB","matching":"Mw - weak annotation match"
+	 * ,"annotator":["A2KB one","A2KB two"],"dataset":["datasets"]}
+	 * 
+	 * @param experimentData
+	 * @return
+	 */
 
-    @RequestMapping("/execute")
-    public @ResponseBody
-    String execute(@RequestParam(value = "experimentData") String experimentData) {
-        LOGGER.debug("Got request on /execute with experimentData=" + experimentData);
-        Object obj = JSONValue.parse(experimentData);
-        JSONObject configuration = (JSONObject) obj;
-        String type = (String) configuration.get("type");
-        String matching = (String) configuration.get("matching");
-        JSONArray jsonAnnotators = (JSONArray) configuration.get("annotator");
-        String[] annotators = new String[jsonAnnotators.size()];
-        for (int i = 0; i < jsonAnnotators.size(); i++) {
-            annotators[i] = (String) jsonAnnotators.get(i);
-        }
-        JSONArray jsonDataset = (JSONArray) configuration.get("dataset");
-        String[] datasets = new String[jsonDataset.size()];
-        for (int i = 0; i < jsonDataset.size(); i++) {
-            datasets[i] = (String) jsonDataset.get(i);
-        }
-        ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[annotators.length * datasets.length];
-        int count = 0;
-        for (String annotator : annotators) {
-            for (String dataset : datasets) {
-                configs[count] = new ExperimentTaskConfiguration(AnnotatorMapping.getAnnotatorConfig(annotator),
-                        DatasetMapping.getDatasetConfig(dataset), ExperimentType.valueOf(type), getMatching(matching));
-                LOGGER.debug("Created config: " + configs[count]);
-                ++count;
-            }
-        }
-        String experimentId = IDCreator.getInstance().createID();
-        Experimenter exp = new Experimenter(SingletonWikipediaApi.getInstance(), overseer, dao, configs, experimentId);
-        exp.run();
+	@RequestMapping("/execute")
+	public @ResponseBody String execute(@RequestParam(value = "experimentData") String experimentData) {
+		LOGGER.debug("Got request on /execute with experimentData=" + experimentData);
+		Object obj = JSONValue.parse(experimentData);
+		JSONObject configuration = (JSONObject) obj;
+		String type = (String) configuration.get("type");
+		String matching = (String) configuration.get("matching");
+		JSONArray jsonAnnotators = (JSONArray) configuration.get("annotator");
+		String[] annotators = new String[jsonAnnotators.size()];
+		for (int i = 0; i < jsonAnnotators.size(); i++) {
+			annotators[i] = (String) jsonAnnotators.get(i);
+		}
+		JSONArray jsonDataset = (JSONArray) configuration.get("dataset");
+		String[] datasets = new String[jsonDataset.size()];
+		for (int i = 0; i < jsonDataset.size(); i++) {
+			datasets[i] = (String) jsonDataset.get(i);
+		}
+		ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[annotators.length * datasets.length];
+		int count = 0;
+		for (String annotator : annotators) {
+			for (String dataset : datasets) {
+				configs[count] = new ExperimentTaskConfiguration(AnnotatorMapping.getAnnotatorConfig(annotator), DatasetMapping.getDatasetConfig(dataset), ExperimentType.valueOf(type), getMatching(matching));
+				LOGGER.debug("Created config: " + configs[count]);
+				++count;
+			}
+		}
+		String experimentId = IDCreator.getInstance().createID();
+		Experimenter exp = new Experimenter(SingletonWikipediaApi.getInstance(), overseer, dao, configs, experimentId);
+		exp.run();
 
-        return experimentId;
-    }
+		return experimentId;
+	}
 
-    @RequestMapping("/experiment")
-    public ModelAndView experiment(@RequestParam(value = "id") String id) {
-        LOGGER.debug("Got request on /experiment with id=" + id);
-        dataIdGenerator = new DataIDGenerator(getURLBase(), getFullURL());
-        List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
-        ExperimentTaskStateHelper.setStatusLines(results);
-        ModelAndView model = new ModelAndView();
-        model.setViewName("experiment");
-        model.addObject("tasks", results);
-        model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
-        return model;
-    }
+	@RequestMapping("/experiment")
+	public ModelAndView experiment(@RequestParam(value = "id") String id) {
+		LOGGER.debug("Got request on /experiment with id=" + id);
+		dataIdGenerator = new DataIDGenerator(getURLBase(), getFullURL());
+		List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
+		ExperimentTaskStateHelper.setStatusLines(results);
+		ModelAndView model = new ModelAndView();
+		model.setViewName("experiment");
+		model.addObject("tasks", results);
+		model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
+		return model;
+	}
 
-    @RequestMapping("/exptypes")
-    public @ResponseBody
-    List<String> expTypes() {
-        List<ExperimentType> list = Arrays.asList(ExperimentType.values());
-        List<String> names = Lists.newArrayList();
-        for (ExperimentType name : list) {
-            names.add(name.toString());
-        }
-        Collections.sort(names);
-        return names;
-    }
+	@RequestMapping("/exptypes")
+	public @ResponseBody ModelMap expTypes() {
+		ModelMap model = new ModelMap("ExperimentType", ExperimentType.values());
+		return model;
+	}
 
-    @RequestMapping("/matchings")
-    public @ResponseBody
-    List<String> matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {
-        ExperimentType type = ExperimentType.valueOf(experimentType);
-        switch (type) {
-        case C2KB:
-            return Lists.newArrayList("Me - strong entity match");
-        case D2KB:
-            // Mw will not be shown since the positions are always exact and
-            // thus it works like Ma
-            return Lists.newArrayList("Ma - strong annotation match");
-        case A2KB:
-            return Lists.newArrayList("Mw - weak annotation match", "Ma - strong annotation match");
-        case Rc2KB:
-            return Lists.newArrayList("Me - strong entity match");
-        case Sc2KB:
-            return Lists.newArrayList("Me - strong entity match");
-        case Sa2KB:
-            return Lists.newArrayList("Mw - weak annotation match", "Ma - strong annotation match");
-        default:
-            return Lists.newArrayList("None");
-        }
-    }
+	@RequestMapping("/matchings")
+	public @ResponseBody ModelMap matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {
+		ExperimentType type = ExperimentType.valueOf(experimentType);
+		switch (type) {
+		case C2KB:
+			return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
+		case D2KB:
+			// Mw will not be shown since the positions are always exact and
+			// thus it works like Ma
+			return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ANNOTATION_MATCH));
+		case A2KB:
+			return new ModelMap("Matching", Lists.newArrayList(Matching.WEAK_ANNOTATION_MATCH, Matching.STRONG_ANNOTATION_MATCH));
+		case Rc2KB:
+			return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
+		case Sc2KB:
+			return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
+		case Sa2KB:
+			return new ModelMap("Matching", Lists.newArrayList(Matching.WEAK_ANNOTATION_MATCH, Matching.STRONG_ANNOTATION_MATCH));
+		default:
+			return new ModelMap("Matching", Lists.newArrayList("none"));
+		}
+	}
 
-    @RequestMapping("/annotators")
-    public @ResponseBody
-    List<String> annotatorsForExpType(@RequestParam(value = "experimentType") String experimentType) {
-        Set<String> annotatorsForExperimentType = AnnotatorMapping.getAnnotatorsForExperimentType(ExperimentType
-                .valueOf(experimentType));
-        List<String> list = Lists.newArrayList(annotatorsForExperimentType);
-        Collections.sort(list);
-        return list;
-    }
+	@RequestMapping("/annotators")
+	public @ResponseBody List<String> annotatorsForExpType(@RequestParam(value = "experimentType") String experimentType) {
+		Set<String> annotatorsForExperimentType = AnnotatorMapping.getAnnotatorsForExperimentType(ExperimentType.valueOf(experimentType));
+		List<String> list = Lists.newArrayList(annotatorsForExperimentType);
+		Collections.sort(list);
+		return list;
+	}
 
-    @RequestMapping("/datasets")
-    public @ResponseBody
-    List<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
-        Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(ExperimentType.valueOf(experimentType));
-        List<String> list = Lists.newArrayList(datasets);
-        Collections.sort(list);
-        return list;
-    }
+	@RequestMapping("/datasets")
+	public @ResponseBody List<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
+		Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(ExperimentType.valueOf(experimentType));
+		List<String> list = Lists.newArrayList(datasets);
+		Collections.sort(list);
+		return list;
+	}
 
-    /**
-     * This mapping is needed to authenticate us against Google Analytics. It
-     * reads the google file and sends it as String.
-     * 
-     * @return The google analytics file as String or an empty String if the
-     *         file couldn't be loaded.
-     */
-    @RequestMapping(value = "/google*")
-    public @ResponseBody
-    String googleAnalyticsFile() {
-        try {
-            return FileUtils.readFileToString(new File(GOOGLE_ANALYTICS_FILE_NAME));
-        } catch (IOException e) {
-            LOGGER.error("Couldn't read googel analytisc file.", e);
-        }
-        return "";
-    }
+	/**
+	 * This mapping is needed to authenticate us against Google Analytics. It
+	 * reads the google file and sends it as String.
+	 * 
+	 * @return The google analytics file as String or an empty String if the
+	 *         file couldn't be loaded.
+	 */
+	@RequestMapping(value = "/google*")
+	public @ResponseBody String googleAnalyticsFile() {
+		try {
+			return FileUtils.readFileToString(new File(GOOGLE_ANALYTICS_FILE_NAME));
+		} catch (IOException e) {
+			LOGGER.error("Couldn't read googel analytisc file.", e);
+		}
+		return "";
+	}
 
-    private String getURLBase() {
-        String scheme = request.getScheme();
-        String serverName = request.getServerName();
-        int serverPort = request.getServerPort();
-        StringBuffer url = new StringBuffer();
-        url.append(scheme).append("://").append(serverName);
-        if ((serverPort != 80) && (serverPort != 443)) {
-            url.append(":").append(serverPort);
-        }
-        url.append("/gerbil/");
-        return url.toString();
-    }
+	private String getURLBase() {
+		String scheme = request.getScheme();
+		String serverName = request.getServerName();
+		int serverPort = request.getServerPort();
+		StringBuffer url = new StringBuffer();
+		url.append(scheme).append("://").append(serverName);
+		if ((serverPort != 80) && (serverPort != 443)) {
+			url.append(":").append(serverPort);
+		}
+		url.append("/gerbil/");
+		return url.toString();
+	}
 
-    private String getFullURL() {
-        StringBuffer requestURL = request.getRequestURL();
-        String queryString = request.getQueryString();
+	private String getFullURL() {
+		StringBuffer requestURL = request.getRequestURL();
+		String queryString = request.getQueryString();
 
-        if (queryString == null) {
-            return requestURL.toString();
-        } else {
-            return requestURL.append('?').append(queryString).toString();
-        }
-    }
+		if (queryString == null) {
+			return requestURL.toString();
+		} else {
+			return requestURL.append('?').append(queryString).toString();
+		}
+	}
 
-    protected static Matching getMatching(String matching) {
-        String matchingName = matching.substring(matching.indexOf('-') + 1).trim().toUpperCase().replace(' ', '_');
-        Matching m = Matching.valueOf(matchingName);
-        return m;
-    }
+	protected static Matching getMatching(String matching) {
+		String matchingName = matching.substring(matching.indexOf('-') + 1).trim().toUpperCase().replace(' ', '_');
+		Matching m = Matching.valueOf(matchingName);
+		return m;
+	}
 }

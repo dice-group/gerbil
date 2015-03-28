@@ -16,6 +16,19 @@
 		<div class="container">
 			<h1>GERBIL - General Entity Annotator Benchmark</h1>
 			<p>This is GERBIL. All your peanuts belong to me!</p>
+			<p>We present GERBIL, a general entity annotation system. 
+			GERBIL offers an easy-to-use web-based platform for the agile 
+			comparison of annotators using multiple datasets and uniform 
+			measuring approaches. To add a tool to GERBIL, all the 
+			end user has to do is to provide a URL to a REST interface 
+			to its tool which abides by a given specification. The 
+			integration and benchmarking of the tool against user-specified 
+			datasets is then carried out automatically by the GERBIL platform. 
+			Currently, out platform provides results for 9 annotators and 
+			11 datasets with more coming. Internally, GERBIL is based on 
+			the Natural Language Programming Interchange Format (NIF) and 
+			provide Java classes for implementing APIs for datasets and 
+			annotators to NIF.
 		</div>
 		
 		<div class="container">

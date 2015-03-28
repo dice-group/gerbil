@@ -25,6 +25,8 @@ package org.aksw.gerbil.matching;
 
 import org.aksw.gerbil.datatypes.Describable;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * The matching defines how the results of an annotator are compared with the
  * annotations of the dataset.
@@ -32,26 +34,27 @@ import org.aksw.gerbil.datatypes.Describable;
  * @author m.roeder
  * 
  */
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Matching implements Describable {
     /**
      * The matching returns true iff the disambiguated entity of the annotater
      * equals at least one tag/annotation of the text.
      */
-    STRONG_ENTITY_MATCH("Strong Entity Match",
+    STRONG_ENTITY_MATCH("Me - strong entity match",
             "The URI returned by the annotator has to equal an entity or tag URI of the gold standard."),
     /**
      * This matching returns true iff a) the position, b) the length and c) the
      * disambiguated meaning of an entity are the same as those of the entity in
      * the dataset.
      */
-    STRONG_ANNOTATION_MATCH("Strong Annotation Match",
+    STRONG_ANNOTATION_MATCH("Ma - strong annotation match",
             "The position of the entity inside the text has to exactly match the position inside the gold standard."),
     /**
      * This matching returns true iff the disambiguated meaning of an entity is
      * the same as the meaning of an entity in the dataset and both entities
      * overlap inside the text.
      */
-    WEAK_ANNOTATION_MATCH("Strong Annotation Match",
+    WEAK_ANNOTATION_MATCH("Mw - weak annotation match",
             "The position of the entity inside the text has to overlap the position inside the gold standard.");
 
     private String label;
