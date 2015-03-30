@@ -24,7 +24,7 @@
 			to its tool which abides by a given specification. The 
 			integration and benchmarking of the tool against user-specified 
 			datasets is then carried out automatically by the GERBIL platform. 
-			Currently, out platform provides results for 9 annotators and 
+			Currently, our platform provides results for 9 annotators and 
 			11 datasets with more coming. Internally, GERBIL is based on 
 			the Natural Language Programming Interchange Format (NIF) and 
 			provide Java classes for implementing APIs for datasets and 
