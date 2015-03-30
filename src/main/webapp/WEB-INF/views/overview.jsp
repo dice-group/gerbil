@@ -145,14 +145,25 @@ table {
 	                        },
 	                        function(data) {
 		                        var htmlMatchings = "";
-		                        for ( var i = 0; i < data.length; i++) {
+		                        for ( var i = 0; i < data.Matching.length; i++) {
 			                        htmlMatchings += "<label class=\"btn btn-primary\" >";
-			                        htmlMatchings += " <input class=\"toggle\" type=\"radio\" name=\"matchingType\" id=\"" + data[i] + "\" value=\"" + data[i] + "\" >"
-			                                + data[i];
+			                        htmlMatchings += " <input class=\"toggle\" type=\"radio\" name=\"matchingType\" id=\"" + data.Matching[i].label + "\" value=\"" + data.Matching[i].label + "\" >"
+			                                + data.Matching[i].label;
 			                        htmlMatchings += "</label>";
 		                        }
 		                        $('#matching').html(htmlMatchings);
 		                        $('#matching input')[0].checked = true;
+		                        $('#matching label').each(function( index ) {
+						        	for ( var i = 0; i < data.Matching.length; i++) {
+							        	if(data.Matching[i].label==$( this ).find('input').val()){
+					 						$( this ).attr('data-toggle',		'tooltip')
+					 									.attr('data-placement',	'top')
+					 									.attr('title',			data.Matching[i].description);
+				 						}
+						       	 	}
+								});
+					        
+			               		$('[data-toggle="tooltip"]').tooltip();
 	                        });
         };
 
@@ -165,10 +176,10 @@ table {
 	                        },
 	                        function(data) {
 		                        var htmlExperimentTypes = "";
-		                        for ( var i = 0; i < data.length; i++) {
+		                        for ( var i = 0; i < data.ExperimentType.length; i++) {
 			                        htmlExperimentTypes += "<label class=\"btn btn-primary\" >";
-			                        htmlExperimentTypes += " <input class=\"toggle\" type=\"radio\" name=\"experimentType\" id=\"" + data[i] + "\" value=\"" + data[i] + "\" >"
-			                                + data[i];
+			                        htmlExperimentTypes += " <input class=\"toggle\" type=\"radio\" name=\"experimentType\" id=\"" + data.ExperimentType[i].label + "\" value=\"" + data.ExperimentType[i].label + "\" >"
+			                                + data.ExperimentType[i].label;
 			                        htmlExperimentTypes += "</label>";
 		                        }
 		                        $('#expTypes').html(htmlExperimentTypes);
@@ -176,6 +187,18 @@ table {
 		                        // Add the listener for loading the matchings
 		                        $("#expTypes input").change(loadMatchings);
 		                        loadMatchings();
+		                        
+		                        $('#expTypes label').each(function( index ) {
+		        					for ( var i = 0; i < data.ExperimentType.length; i++) {
+		        					if(data.ExperimentType[i].label==$( this ).find('input').val()){
+ 										$( this ).attr('data-toggle',		'tooltip')
+ 													.attr('data-placement',	'top')
+ 													.attr('title',			data.ExperimentType[i].description);
+ 									}
+		       	 				}});
+		        
+                				$('[data-toggle="tooltip"]').tooltip();
+                
 	                        });
         };
         

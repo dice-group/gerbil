@@ -210,14 +210,27 @@
 		        ajax : 'false'
 	        }, function(data) {
 		        var formattedData = [];
-		        for ( var i = 0; i < data.length; i++) {
+		        for ( var i = 0; i < data.ExperimentType.length; i++) {
 			        var dat = {};
-			        dat.label = data[i];
-			        dat.value = data[i];
+			        dat.label = data.ExperimentType[i].label;
+			        dat.value = data.ExperimentType[i].label;
 			        formattedData.push(dat);
 		        }
 		        $('#type').multiselect('dataprovider', formattedData);
 		        $('#type').multiselect('rebuild');
+		        
+		        $($('#type').next().find('li')).each(function( index ) {
+		        	for ( var i = 0; i < data.ExperimentType.length; i++) {
+		        	if(data.ExperimentType[i].label==$( this ).find('input').val()){
+ 						$( this ).attr('data-toggle',		'tooltip')
+ 									.attr('data-placement',	'top')
+ 									.attr('title',			data.ExperimentType[i].description);
+ 						}
+		       	 	}
+				});
+		        
+                $('[data-toggle="tooltip"]').tooltip();
+                
 		        loadMatching();
 		        loadAnnotator();
 		        loadDatasets();
@@ -231,14 +244,27 @@
 	            ajax : 'false'
 	        }, function(data) {
 		        var formattedData = [];
-		        for ( var i = 0; i < data.length; i++) {
+		        for ( var i = 0; i < data.Matching.length; i++) {
 			        var dat = {};
-			        dat.label = data[i];
-			        dat.value = data[i];
+			        dat.label = data.Matching[i].label;
+			        dat.value = data.Matching[i].label;
 			        formattedData.push(dat);
 		        }
 		        $('#matching').multiselect('dataprovider', formattedData);
 		        $('#matching').multiselect('rebuild');
+		        
+		         
+		        $($('#matching').next().find('li')).each(function( index ) {
+		        	for ( var i = 0; i < data.Matching.length; i++) {
+		        	if(data.Matching[i].label==$( this ).find('input').val()){
+ 						$( this ).attr('data-toggle',		'tooltip')
+ 									.attr('data-placement',	'top')
+ 									.attr('title',			data.Matching[i].description);
+ 						}
+		       	 	}
+				});
+		        
+                $('[data-toggle="tooltip"]').tooltip();
 
 	        });
         }
