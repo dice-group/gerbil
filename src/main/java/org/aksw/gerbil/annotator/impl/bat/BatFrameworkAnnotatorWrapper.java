@@ -27,7 +27,7 @@ public class BatFrameworkAnnotatorWrapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(BatFrameworkAnnotatorWrapper.class);
 
     public static Annotator wrapBatFrameworkTopicSystem(TopicSystem annotator, WikipediaApiInterface wikiApi) {
-        LOGGER.warn("Using wrappers for BAT framework adapters is deprecated!");
+        LOGGER.warn("Using wrappers for BAT framework adapters is not recommended!");
         if ((annotator instanceof Sa2WSystem) || (annotator instanceof A2WSystem)) {
             return new A2KBSystemWrapper((A2WSystem) annotator, wikiApi);
         }
