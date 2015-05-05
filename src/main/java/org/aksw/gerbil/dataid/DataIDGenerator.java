@@ -34,7 +34,6 @@ import org.aksw.gerbil.dataid.vocabs.GERBIL;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.web.ExperimentTaskStateHelper;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFFormat;
 
 import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;

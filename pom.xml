@@ -330,7 +330,7 @@
 		<dependency>
 			<groupId>org.aksw.simba</groupId>
 			<artifactId>topicmodeling.concurrent</artifactId>
-			<version>0.0.1</version>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- FOX -->
