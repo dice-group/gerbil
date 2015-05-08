@@ -24,8 +24,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+/**
+ * This class tests only the entity recognition and linking part of the task
+ * without the entity typing.
+ * 
+ * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * 
+ */
 @RunWith(Parameterized.class)
-public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
+public class OKEChallengeTask1EETest extends AbstractExperimentTaskTest {
 
     private static final String TEXTS[] = new String[] {
             "Florence May Harding studied at a school in Sydney, and with Douglas Robert Dundas , but in effect had no formal training in either botany or art.",
@@ -45,7 +52,6 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
         // The extractor found everything and marked all entities using the OKE
         // URI --> some of them should be wrong, because they are not linked to
         // the DBpedia
-        // FIXME Add typing part of the task!!!
         testConfigs
                 .add(new Object[] {
                         new Document[] {
@@ -61,6 +67,7 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Sydney"),
                                                 (Marking) new NamedEntity(61, 21,
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Douglas_Robert_Dundas"))),
+                                // found 2xnull but missed 2xDBpedia (TP=2,FP=0,FN=2,P=1,R=0.5,F1=0)
                                 new DocumentImpl(
                                         TEXTS[1],
                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
@@ -77,6 +84,7 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Campaign_manager"),
                                                 (Marking) new NamedEntity(184, 7,
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Al_Gore"))),
+                                // missed 6xDBpedia (TP=0,FP=0,FN=6,P=0,R=0,F1=0)
                                 new DocumentImpl(
                                         TEXTS[2],
                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
@@ -85,7 +93,7 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Senator_1"),
                                                 (Marking) new NamedEntity(49, 19,
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Columbia_University"))) },
-                        GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+                        GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0 } });
         // The extractor found everything and marked all entities using dbpedia
         // URIs (if they were available)
         testConfigs
@@ -163,7 +171,7 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
     private double expectedResults[];
     private Matching matching;
 
-    public OKEChallengeTask1Test(Document[] annotatorResults, DatasetConfiguration dataset, Matching matching,
+    public OKEChallengeTask1EETest(Document[] annotatorResults, DatasetConfiguration dataset, Matching matching,
             double[] expectedResults) {
         this.annotatorResults = annotatorResults;
         this.dataset = dataset;

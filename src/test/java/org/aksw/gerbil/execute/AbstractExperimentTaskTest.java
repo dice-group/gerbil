@@ -36,7 +36,7 @@ public abstract class AbstractExperimentTaskTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Assert.assertNull(testError);
+        Assert.assertNull("Got an exception: " + testError, testError);
     }
 
     protected static abstract class AbstractJUnitTestTaskObserver implements TaskObserver {

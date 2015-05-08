@@ -47,7 +47,7 @@ public class EvaluatorFactory {
             return (Evaluator<T>) new FMeasureCalculator<NamedEntity>(new MatchingsCounterImpl<NamedEntity>(
                     new CompoundMatchingsCounter<NamedEntity>((MatchingsSearcher<NamedEntity>) MatchingFactory
                             .createSpanMatchingsSearcher(configuration.matching),
-                            new MeaningMatchingsSearcher<NamedEntity>(localRetriever, globalClassifier))));
+                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever, localRetriever, null))));
         }
         case ERec: {
             return (Evaluator<T>) new FMeasureCalculator<Span>(new MatchingsCounterImpl<Span>(
@@ -57,10 +57,11 @@ public class EvaluatorFactory {
         case ELink: { // FIXME define whether the problem reduction to D2KB
                       // should use a weak or strong matching
             SameAsRetriever localRetriever = getSameAsRetriever(dataset);
+            // FIXME here, we have to add a AccuracyCalculator instead of a FMeasureCalculator
             return (Evaluator<T>) new FMeasureCalculator<NamedEntity>(new MatchingsCounterImpl<NamedEntity>(
                     new CompoundMatchingsCounter<NamedEntity>((MatchingsSearcher<NamedEntity>) MatchingFactory
                             .createSpanMatchingsSearcher(configuration.matching),
-                            new MeaningMatchingsSearcher<NamedEntity>(localRetriever, globalClassifier))));
+                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever, localRetriever, null))));
         }
         default: {
             throw new RuntimeException();

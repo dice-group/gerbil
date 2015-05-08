@@ -1,0 +1,6 @@
+[sameAsReplaceRule: (?a owl:sameAs ?b) -> (?a owl:equivalentClass ?b), (?b owl:equivalentClass ?a)]
+[eqClassRule1: (?a owl:equivalentClass ?b) -> (?b owl:equivalentClass ?a)]
+[eqClassRule2: (?a owl:equivalentClass ?b), (?b owl:equivalentClass ?c) -> (?a owl:equivalentClass ?c), (?c owl:equivalentClass ?a)]
+[subClass1: (?a rdfs:subClassOf ?b), (?a owl:equivalentClass ?c) -> (?c rdfs:subClassOf ?b)]
+[subClass2: (?a rdfs:subClassOf ?b), (?b owl:equivalentClass ?c) -> (?a rdfs:subClassOf ?c)]
+[subClass3: (?a rdfs:subClassOf ?b), (?b rdfs:subClassOf ?c) -> (?a rdfs:subClassOf ?c)]

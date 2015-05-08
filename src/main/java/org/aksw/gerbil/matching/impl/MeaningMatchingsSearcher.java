@@ -5,29 +5,57 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
+import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Meaning;
 
 import com.carrotsearch.hppc.BitSet;
 
+/**
+ * This implementation of a {@link MatchingsSearcher} searches for a matching
+ * meaning for every given expected meaning and a list of annotator results.
+ * 
+ * TODO This class could be further enhanced. For every expected URI the
+ * annotator result URIs are extended. This could be done outside of this
+ * method.
+ * 
+ * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * 
+ * @param <T>
+ *            is the {@link Meaning} class or one of its extensions.
+ */
 public class MeaningMatchingsSearcher<T extends Meaning> implements MatchingsSearcher<T> {
 
-    private SameAsRetriever sameAsRetriever;
+    private SameAsRetriever datasetSameAsRetriever;
+    private SameAsRetriever annotatorSameAsRetriever;
     private UriKBClassifier uriKBClassifier;
 
     public MeaningMatchingsSearcher() {
-    }
-
-    public MeaningMatchingsSearcher(SameAsRetriever sameAsRetriever) {
-        this.sameAsRetriever = sameAsRetriever;
     }
 
     public MeaningMatchingsSearcher(UriKBClassifier uriKBClassifier) {
         this.uriKBClassifier = uriKBClassifier;
     }
 
-    public MeaningMatchingsSearcher(SameAsRetriever sameAsRetriever, UriKBClassifier uriKBClassifier) {
-        this.sameAsRetriever = sameAsRetriever;
+    public MeaningMatchingsSearcher(UriKBClassifier uriKBClassifier, SameAsRetriever globalSameAsRestriever,
+            SameAsRetriever datasetSameAsRetriever, SameAsRetriever annotatorSameAsRetriever) {
+        if (globalSameAsRestriever != null) {
+            if (datasetSameAsRetriever != null) {
+                this.datasetSameAsRetriever = new MultipleSameAsRetriever(datasetSameAsRetriever,
+                        globalSameAsRestriever);
+            } else {
+                this.datasetSameAsRetriever = globalSameAsRestriever;
+            }
+            if (annotatorSameAsRetriever != null) {
+                this.annotatorSameAsRetriever = new MultipleSameAsRetriever(annotatorSameAsRetriever,
+                        globalSameAsRestriever);
+            } else {
+                this.annotatorSameAsRetriever = globalSameAsRestriever;
+            }
+        } else {
+            this.datasetSameAsRetriever = datasetSameAsRetriever;
+            this.annotatorSameAsRetriever = annotatorSameAsRetriever;
+        }
         this.uriKBClassifier = uriKBClassifier;
     }
 
@@ -39,8 +67,8 @@ public class MeaningMatchingsSearcher<T extends Meaning> implements MatchingsSea
         boolean expectingKBUri, annotatorHasKBUri;
 
         // Extend the expected result
-        if (sameAsRetriever != null) {
-            extendedUris = sameAsRetriever.retrieveSameURIs(expectedUri);
+        if (datasetSameAsRetriever != null) {
+            extendedUris = datasetSameAsRetriever.retrieveSameURIs(expectedUri);
         }
         if (extendedUris == null) {
             extendedUris = new HashSet<String>();
@@ -54,10 +82,10 @@ public class MeaningMatchingsSearcher<T extends Meaning> implements MatchingsSea
             if (!alreadyUsedResults.get(i)) {
                 annotatorResult = annotatorResults.get(i);
                 // extend the annotator result, if possible
-                if (sameAsRetriever == null) {
+                if (annotatorSameAsRetriever == null) {
                     extendedAnnotResult = null;
                 } else {
-                    extendedAnnotResult = sameAsRetriever.retrieveSameURIs(annotatorResult.getUri());
+                    extendedAnnotResult = annotatorSameAsRetriever.retrieveSameURIs(annotatorResult.getUri());
                 }
                 // if the result couldn't be extended -> use the single URI for
                 // comparing

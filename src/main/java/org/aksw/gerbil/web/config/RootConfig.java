@@ -56,6 +56,7 @@ import org.springframework.core.io.Resource;
  * @author Didier Cherix
  * 
  */
+@SuppressWarnings("deprecation")
 @Configuration
 @ComponentScan(basePackages = "org.aksw.gerbil.web.config")
 @PropertySource("gerbil.properties")
@@ -89,4 +90,10 @@ public class RootConfig {
         Reporter reporter = new LogReporter(overseer);
         return overseer;
     }
+
+    // public static @Bean
+    // SubClassInferencer<ClassifiedClassNode> createSubClassInferencer() {
+    // return SimpleSubClassInferencerFactory.createInferencer();
+    // FIXME
+    // }
 }
