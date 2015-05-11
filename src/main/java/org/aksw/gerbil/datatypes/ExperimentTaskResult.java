@@ -30,6 +30,8 @@ import java.util.Date;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.matching.Matching;
 
+import com.carrotsearch.hppc.IntDoubleOpenHashMap;
+
 public class ExperimentTaskResult {
 
     public static final int MICRO_F1_MEASURE_INDEX = 0;
@@ -49,6 +51,7 @@ public class ExperimentTaskResult {
     public Matching matching;
     public int idInDb;
     public String gerbilVersion;
+    public IntDoubleOpenHashMap additionalResults = null;
 
     /**
      * Contains the error message if {@link #state} != {@link ExperimentDAO#TASK_FINISHED}, else this should be null.
@@ -270,5 +273,13 @@ public class ExperimentTaskResult {
         if (type != other.type)
             return false;
         return true;
+    }
+    
+    public boolean hasAdditionalResults() {
+        return (additionalResults != null) && (additionalResults.size() > 0);
+    }
+    
+    public void getAdditionalResults() {
+        
     }
 }

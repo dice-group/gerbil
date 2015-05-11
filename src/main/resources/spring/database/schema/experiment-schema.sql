@@ -37,3 +37,11 @@ UPDATE ExperimentTasks SET experimentType='C2KB' WHERE experimentType='C2W';
 UPDATE ExperimentTasks SET experimentType='Sc2KB' WHERE experimentType='Sc2W';
 UPDATE ExperimentTasks SET experimentType='Rc2KB' WHERE experimentType='Rc2W';
 UPDATE ExperimentTasks SET annotatorName='Babelfy' WHERE annotatorName='BabelFy';
+
+-- Changes from version 1.1.0 to 1.2.0
+CREATE TABLE IF NOT EXISTS ExperimentTasks_AdditionalResults (
+resultId int PRIMARY KEY,
+taskId int NOT NULL,
+value double,
+PRIMARY KEY (resultId, taskId)
+);

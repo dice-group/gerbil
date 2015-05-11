@@ -1,5 +1,6 @@
 package org.aksw.gerbil.evaluate.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
@@ -8,19 +9,14 @@ import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounter;
-import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 
 public class HierarchicalFMeasureCalculator<T extends TypedNamedEntity> implements Evaluator<T> {
 
-    public static final String MACRO_F1_SCORE_NAME = "Macro F1 score";
-    public static final String MACRO_PRECISION_NAME = "Macro Precision";
-    public static final String MACRO_RECALL_NAME = "Macro Recall";
-    public static final String MICRO_F1_SCORE_NAME = "Micro F1 score";
-    public static final String MICRO_PRECISION_NAME = "Micro Precision";
-    public static final String MICRO_RECALL_NAME = "Micro Recall";
-
     protected HierarchicalMatchingsCounter matchingsCounter;
+
+    private static final int PRECISION_ID = 0;
+    private static final int RECALL_ID = 1;
 
     public HierarchicalFMeasureCalculator(HierarchicalMatchingsCounter matchingsCounter) {
         super();
@@ -33,66 +29,73 @@ public class HierarchicalFMeasureCalculator<T extends TypedNamedEntity> implemen
             matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i));
         }
         List<List<int[]>> matchingCounts = matchingsCounter.getCounts();
+        List<List<double[]>> measures = calculateMeasures(matchingCounts);
+
         EvaluationResultContainer results = new EvaluationResultContainer();
-//       TODO results.addResults(calculateMicroFMeasure(matchingCounts));
-//       TODO results.addResults(calculateMacroFMeasure(matchingCounts));
+        results.addResults(calculateMicroFMeasure(measures));
+        results.addResults(calculateMacroFMeasure(measures));
         return results;
     }
 
-    private EvaluationResult[] calculateMicroFMeasure(List<int[]> matchingCounts) {
-        int sums[] = new int[3];
-        for (int[] counts : matchingCounts) {
-            sums[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] += counts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID];
-            sums[MatchingsCounter.FALSE_POSITIVE_COUNT_ID] += counts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID];
-            sums[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID] += counts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID];
-        }
-        double measures[] = calculateMeasures(sums);
-        return new EvaluationResult[] { new DoubleEvaluationResult(MICRO_PRECISION_NAME, measures[0]),
-                new DoubleEvaluationResult(MICRO_RECALL_NAME, measures[1]),
-                new DoubleEvaluationResult(MICRO_F1_SCORE_NAME, measures[2]) };
-    }
-
-    private EvaluationResult[] calculateMacroFMeasure(List<int[]> matchingCounts) {
-        double avgs[] = new double[3];
-        double measures[];
-        for (int[] counts : matchingCounts) {
-            measures = calculateMeasures(counts);
-            avgs[0] += measures[0];
-            avgs[1] += measures[1];
-            avgs[2] += measures[2];
-        }
-        avgs[0] /= matchingCounts.size();
-        avgs[1] /= matchingCounts.size();
-        avgs[2] /= matchingCounts.size();
-        return new EvaluationResult[] { new DoubleEvaluationResult(MACRO_PRECISION_NAME, avgs[0]),
-                new DoubleEvaluationResult(MACRO_RECALL_NAME, avgs[1]),
-                new DoubleEvaluationResult(MACRO_F1_SCORE_NAME, avgs[2]) };
-    }
-
-    private double[] calculateMeasures(int[] counts) {
-        double precision, recall, F1_score;
-        if (counts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] == 0) {
-            if ((counts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID] == 0)
-                    && (counts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID] == 0)) {
-                // If there haven't been something to find and nothing has been
-                // found --> everything is great
-                precision = 1.0;
-                recall = 1.0;
-                F1_score = 1.0;
-            } else {
-                // The annotator found no correct ones, but made some mistake
-                // --> that is bad
-                precision = 0.0;
-                recall = 0.0;
-                F1_score = 0.0;
+    private List<List<double[]>> calculateMeasures(List<List<int[]>> matchingCounts) {
+        List<List<double[]>> measures = new ArrayList<List<double[]>>(matchingCounts.size());
+        List<double[]> localMeasures;
+        double[] singleMeasures;
+        for (List<int[]> counts : matchingCounts) {
+            if (counts.size() > 0) {
+                localMeasures = new ArrayList<double[]>(counts.size());
+                for (int[] singleCounts : counts) {
+                    singleMeasures = new double[2];
+                    singleMeasures[PRECISION_ID] = singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID]
+                            / (singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] + singleCounts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID]);
+                    singleMeasures[RECALL_ID] = singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID]
+                            / (singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] + singleCounts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID]);
+                }
+                measures.add(localMeasures);
             }
-        } else {
-            precision = (double) counts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID]
-                    / (double) (counts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] + counts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID]);
-            recall = (double) counts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID]
-                    / (double) (counts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] + counts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID]);
-            F1_score = (2 * precision * recall) / (precision + recall);
         }
-        return new double[] { precision, recall, F1_score };
+        return measures;
+    }
+
+    private EvaluationResult[] calculateMicroFMeasure(List<List<double[]>> measuresList) {
+        double precision = 0, recall = 0;
+        int count = 0;
+        for (List<double[]> m : measuresList) {
+            for (double[] measures : m) {
+                precision += measures[PRECISION_ID];
+                recall += measures[RECALL_ID];
+            }
+            ++count;
+        }
+        precision /= count;
+        recall /= count;
+        return new EvaluationResult[] { new DoubleEvaluationResult(FMeasureCalculator.MICRO_PRECISION_NAME, precision),
+                new DoubleEvaluationResult(FMeasureCalculator.MICRO_RECALL_NAME, recall),
+                new DoubleEvaluationResult(FMeasureCalculator.MICRO_F1_SCORE_NAME, calculateF1(precision, recall)) };
+    }
+
+    private EvaluationResult[] calculateMacroFMeasure(List<List<double[]>> measuresList) {
+        double precision = 0, recall = 0, f1Score = 0, tmpPrecSum = 0, tmpRecSum = 0;
+        for (List<double[]> m : measuresList) {
+            tmpPrecSum = 0;
+            tmpRecSum = 0;
+            for (double[] measures : m) {
+                tmpPrecSum += measures[PRECISION_ID];
+                tmpRecSum += measures[RECALL_ID];
+            }
+            precision += tmpPrecSum / m.size();
+            recall += tmpRecSum / m.size();
+            f1Score += calculateF1(precision, recall);
+        }
+        precision /= measuresList.size();
+        recall /= measuresList.size();
+        f1Score /= measuresList.size();
+        return new EvaluationResult[] { new DoubleEvaluationResult(FMeasureCalculator.MACRO_PRECISION_NAME, precision),
+                new DoubleEvaluationResult(FMeasureCalculator.MACRO_RECALL_NAME, recall),
+                new DoubleEvaluationResult(FMeasureCalculator.MACRO_F1_SCORE_NAME, f1Score) };
+    }
+
+    private double calculateF1(double precision, double recall) {
+        return (2 * precision * recall) / (precision + recall);
     }
 }

@@ -24,7 +24,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 @RunWith(Parameterized.class)
 public class HierarchicalMatchingsCounterTest {
 
-    private static final String KNOWN_KB_URIS[] = new String[] { "http://example.org/" };
+    protected static final String KNOWN_KB_URIS[] = new String[] { "http://example.org/" };
 
     /**
      * <p>
@@ -140,74 +140,74 @@ public class HierarchicalMatchingsCounterTest {
         Model classModel;
 
         Resource resources[];
-//        /*
-//         * Overspecialization (figure 2 a)
-//         */
-//        classModel = ModelFactory.createDefaultModel();
-//        resources = createResources(3, classModel);
-//        classModel.add(resources[1], RDFS.subClassOf, resources[0]);
-//        classModel.add(resources[2], RDFS.subClassOf, resources[1]);
-//        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI() },
-//                new String[] { resources[2].getURI() }, new int[] { 1, 0, 1 } });
-//        /*
-//         * Underspecialization (figure 2 b) reusing the model from above!
-//         */
-//        testConfigs.add(new Object[] { classModel, new String[] { resources[2].getURI() },
-//                new String[] { resources[1].getURI() }, new int[] { 1, 1, 0 } });
-//        /*
-//         * Overspecialization (reusing the model from above)
-//         */
-//        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI(), resources[2].getURI() },
-//                new String[] { resources[2].getURI() }, new int[] { 1, 0, 1 } });
-//        /*
-//         * Underspecialization (reusing the model from above)
-//         */
-//        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI(), resources[2].getURI() },
-//                new String[] { resources[0].getURI() }, new int[] { 2, 1, 0 } });
-//        /*
-//         * Exact matching (reusing the model from above)
-//         */
-//        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI() },
-//                new String[] { resources[1].getURI() }, new int[] { 2, 0, 0 } });
-//        /*
-//         * Exact matching (reusing the model from above)
-//         */
-//        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI(), resources[2].getURI() },
-//                new String[] { resources[1].getURI() }, new int[] { 2, 0, 0 } });
-//        /*
-//         * Exact matching (reusing the model from above)
-//         */
-//        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI() },
-//                new String[] { resources[1].getURI(), resources[2].getURI() }, new int[] { 2, 0, 0 } });
-//        /*
-//         * Alternative paths (figure 2 c)
-//         */
-//        classModel = ModelFactory.createDefaultModel();
-//        resources = createResources(5, classModel);
-//        classModel.add(resources[1], RDFS.subClassOf, resources[0]);
-//        classModel.add(resources[2], RDFS.subClassOf, resources[0]);
-//        classModel.add(resources[3], RDFS.subClassOf, resources[2]);
-//        classModel.add(resources[4], RDFS.subClassOf, resources[3]);
-//        classModel.add(resources[4], RDFS.subClassOf, resources[1]);
-//        testConfigs.add(new Object[] { classModel, new String[] { resources[4].getURI() },
-//                new String[] { resources[0].getURI() }, new int[] { 1, 4, 0 } });
-//        /*
-//         * Pairing problem (figure 2 d)
-//         */
-//        classModel = ModelFactory.createDefaultModel();
-//        resources = createResources(6, classModel);
-//        classModel.add(resources[1], RDFS.subClassOf, resources[0]);
-//        classModel.add(resources[2], RDFS.subClassOf, resources[0]);
-//        classModel.add(resources[3], RDFS.subClassOf, resources[1]);
-//        classModel.add(resources[4], RDFS.subClassOf, resources[1]);
-//        classModel.add(resources[5], RDFS.subClassOf, resources[2]);
-//        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI(), resources[5].getURI() },
-//                new String[] { resources[3].getURI(), resources[4].getURI() }, new int[] { 2, 0, 2 } });
-//        /*
-//         * Long distance problem (figure 2 d) reusing the model from above!
-//         */
-//        testConfigs.add(new Object[] { classModel, new String[] { "http://example.org/D" },
-//                new String[] { "http://example.org/F" }, new int[] { 0, 1, 1 } });
+        /*
+         * Overspecialization (figure 2 a)
+         */
+        classModel = ModelFactory.createDefaultModel();
+        resources = createResources(3, classModel);
+        classModel.add(resources[1], RDFS.subClassOf, resources[0]);
+        classModel.add(resources[2], RDFS.subClassOf, resources[1]);
+        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI() },
+                new String[] { resources[2].getURI() }, new int[] { 1, 0, 1 } });
+        /*
+         * Underspecialization (figure 2 b) reusing the model from above!
+         */
+        testConfigs.add(new Object[] { classModel, new String[] { resources[2].getURI() },
+                new String[] { resources[1].getURI() }, new int[] { 1, 1, 0 } });
+        /*
+         * Overspecialization (reusing the model from above)
+         */
+        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI(), resources[2].getURI() },
+                new String[] { resources[2].getURI() }, new int[] { 1, 0, 1 } });
+        /*
+         * Underspecialization (reusing the model from above)
+         */
+        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI(), resources[2].getURI() },
+                new String[] { resources[0].getURI() }, new int[] { 2, 1, 0 } });
+        /*
+         * Exact matching (reusing the model from above)
+         */
+        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI() },
+                new String[] { resources[1].getURI() }, new int[] { 2, 0, 0 } });
+        /*
+         * Exact matching (reusing the model from above)
+         */
+        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI(), resources[2].getURI() },
+                new String[] { resources[1].getURI() }, new int[] { 2, 0, 0 } });
+        /*
+         * Exact matching (reusing the model from above)
+         */
+        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI() },
+                new String[] { resources[1].getURI(), resources[2].getURI() }, new int[] { 2, 0, 0 } });
+        /*
+         * Alternative paths (figure 2 c)
+         */
+        classModel = ModelFactory.createDefaultModel();
+        resources = createResources(5, classModel);
+        classModel.add(resources[1], RDFS.subClassOf, resources[0]);
+        classModel.add(resources[2], RDFS.subClassOf, resources[0]);
+        classModel.add(resources[3], RDFS.subClassOf, resources[2]);
+        classModel.add(resources[4], RDFS.subClassOf, resources[3]);
+        classModel.add(resources[4], RDFS.subClassOf, resources[1]);
+        testConfigs.add(new Object[] { classModel, new String[] { resources[4].getURI() },
+                new String[] { resources[0].getURI() }, new int[] { 1, 4, 0 } });
+        /*
+         * Pairing problem (figure 2 d)
+         */
+        classModel = ModelFactory.createDefaultModel();
+        resources = createResources(6, classModel);
+        classModel.add(resources[1], RDFS.subClassOf, resources[0]);
+        classModel.add(resources[2], RDFS.subClassOf, resources[0]);
+        classModel.add(resources[3], RDFS.subClassOf, resources[1]);
+        classModel.add(resources[4], RDFS.subClassOf, resources[1]);
+        classModel.add(resources[5], RDFS.subClassOf, resources[2]);
+        testConfigs.add(new Object[] { classModel, new String[] { resources[1].getURI(), resources[5].getURI() },
+                new String[] { resources[3].getURI(), resources[4].getURI() }, new int[] { 2, 0, 2 } });
+        /*
+         * Long distance problem (figure 2 d) reusing the model from above!
+         */
+        testConfigs.add(new Object[] { classModel, new String[] { "http://example.org/D" },
+                new String[] { "http://example.org/F" }, new int[] { 0, 1, 1 } });
         /*
          * DAG example (figure 8 b)
          */
