@@ -37,7 +37,12 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         return results;
     }
 
-    private EvaluationResult[] calculateMicroFMeasure(List<int[]> matchingCounts) {
+    protected EvaluationResult[] calculateMicroFMeasure(List<int[]> matchingCounts) {
+        return calculateMicroFMeasure(matchingCounts, MICRO_PRECISION_NAME, MICRO_RECALL_NAME, MICRO_F1_SCORE_NAME);
+    }
+
+    protected EvaluationResult[] calculateMicroFMeasure(List<int[]> matchingCounts, String precisionName,
+            String recallName, String f1ScoreName) {
         int sums[] = new int[3];
         for (int[] counts : matchingCounts) {
             sums[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] += counts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID];
@@ -45,12 +50,17 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
             sums[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID] += counts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID];
         }
         double measures[] = calculateMeasures(sums);
-        return new EvaluationResult[] { new DoubleEvaluationResult(MICRO_PRECISION_NAME, measures[0]),
-                new DoubleEvaluationResult(MICRO_RECALL_NAME, measures[1]),
-                new DoubleEvaluationResult(MICRO_F1_SCORE_NAME, measures[2]) };
+        return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, measures[0]),
+                new DoubleEvaluationResult(recallName, measures[1]),
+                new DoubleEvaluationResult(f1ScoreName, measures[2]) };
     }
 
-    private EvaluationResult[] calculateMacroFMeasure(List<int[]> matchingCounts) {
+    protected EvaluationResult[] calculateMacroFMeasure(List<int[]> matchingCounts) {
+        return calculateMacroFMeasure(matchingCounts, MACRO_PRECISION_NAME, MACRO_RECALL_NAME, MACRO_F1_SCORE_NAME);
+    }
+
+    protected EvaluationResult[] calculateMacroFMeasure(List<int[]> matchingCounts, String precisionName,
+            String recallName, String f1ScoreName) {
         double avgs[] = new double[3];
         double measures[];
         for (int[] counts : matchingCounts) {
@@ -62,9 +72,8 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         avgs[0] /= matchingCounts.size();
         avgs[1] /= matchingCounts.size();
         avgs[2] /= matchingCounts.size();
-        return new EvaluationResult[] { new DoubleEvaluationResult(MACRO_PRECISION_NAME, avgs[0]),
-                new DoubleEvaluationResult(MACRO_RECALL_NAME, avgs[1]),
-                new DoubleEvaluationResult(MACRO_F1_SCORE_NAME, avgs[2]) };
+        return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, avgs[0]),
+                new DoubleEvaluationResult(recallName, avgs[1]), new DoubleEvaluationResult(f1ScoreName, avgs[2]) };
     }
 
     private double[] calculateMeasures(int[] counts) {
