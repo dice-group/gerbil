@@ -21,7 +21,7 @@ public class ClassConsideringMatchingsCounter<T extends Marking> extends Matchin
 
     public ClassConsideringMatchingsCounter(MatchingsSearcher<T> searcher, MarkingClassifier<T> classifier) {
         super(searcher);
-        classifier.getNumberOfClasses();
+        this.classifier = classifier;
         classBasedCounts = new List[classifier.getNumberOfClasses()];
         for (int i = 0; i < classBasedCounts.length; ++i) {
             classBasedCounts[i] = new ArrayList<int[]>();

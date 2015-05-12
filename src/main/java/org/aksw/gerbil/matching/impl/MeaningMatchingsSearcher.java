@@ -93,7 +93,7 @@ public class MeaningMatchingsSearcher<T extends Meaning> implements MatchingsSea
                     annotatorHasKBUri = (uriKBClassifier == null) ? true : uriKBClassifier.isKBUri(annotatorResult
                             .getUri());
                     // if both can be mapped to a KB and the URIs equal
-                    if ((annotatorHasKBUri) && (expectingKBUri) && (annotatorResult.getUri().equals(expectedUri))) {
+                    if ((annotatorHasKBUri) && (expectingKBUri) && (extendedUris.contains(annotatorResult.getUri()))) {
                         matching.set(i);
                         // else if both are not mapped to a KB
                     } else if ((!annotatorHasKBUri) && (!expectingKBUri)) {

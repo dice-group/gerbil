@@ -26,7 +26,6 @@ package org.aksw.gerbil.dataset.impl.nif;
 import java.io.InputStream;
 import java.util.List;
 
-import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.RdfModelContainingDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;

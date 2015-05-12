@@ -130,7 +130,7 @@ public enum ExperimentType {
      * Entity Linking is the assigning of a URI from a given Knowledge Base to a
      * given entity.
      */
-    ELink;// ,
+    ELink, ETyping, OKE_Task1, OKE_Task2;// ,
     // /**
     // * Entity Typing is the assigning of a type from a given Knowledge Base to
     // a
@@ -166,7 +166,10 @@ public enum ExperimentType {
             case EExt:
             case A2KB:
             case ELink:
-            case D2KB: {
+            case D2KB:
+            case ETyping:
+            case OKE_Task1:
+            case OKE_Task2: {
                 return false;
             }
             case Sc2KB: // falls through
@@ -184,7 +187,10 @@ public enum ExperimentType {
             case EExt:
             case A2KB:
             case ELink:
-            case D2KB: {
+            case D2KB:
+            case ETyping:
+            case OKE_Task1:
+            case OKE_Task2: {
                 return false;
             }
             case Rc2KB: // falls through
@@ -198,7 +204,10 @@ public enum ExperimentType {
             switch (type) {
             case Sa2KB: // falls through
             case Sc2KB:
-            case Rc2KB: {
+            case Rc2KB:
+            case ETyping:
+            case OKE_Task1:
+            case OKE_Task2: {
                 return false;
             }
             case A2KB: // falls through
@@ -220,7 +229,10 @@ public enum ExperimentType {
             case EExt:
             case A2KB:
             case ELink:
-            case D2KB: {
+            case D2KB:
+            case ETyping:
+            case OKE_Task1:
+            case OKE_Task2: {
                 return false;
             }
             case C2KB: {
@@ -237,7 +249,10 @@ public enum ExperimentType {
             case Rc2KB:
             case EExt:
             case A2KB:
-            case C2KB: {
+            case C2KB:
+            case ETyping:
+            case OKE_Task1:
+            case OKE_Task2: {
                 return false;
             }
             case ELink:
@@ -255,13 +270,23 @@ public enum ExperimentType {
             case A2KB:
             case C2KB:
             case ELink:
-            case D2KB: {
+            case D2KB:
+            case ETyping:
+            case OKE_Task1:
+            case OKE_Task2: {
                 return false;
             }
             case ERec: {
                 return true;
             }
             }
+        }
+        case OKE_Task1: {
+            return true;
+        }
+        case ETyping:
+        case OKE_Task2: {
+            return false;
         }
         }
         return false;

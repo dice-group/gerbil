@@ -39,14 +39,16 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasur
 
     public InKBClassBasedFMeasureCalculator(MatchingsSearcher<T> searcher, UriKBClassifier classifier) {
         super(null);
+        this.classifier = classifier;
         this.matchingsCounter = new ClassConsideringMatchingsCounter<T>(searcher, this);
     }
 
     @Override
     public EvaluationResult evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard) {
-        for (int i = 0; i < annotatorResults.size(); ++i) {
-            matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i));
-        }
+//        for (int i = 0; i < annotatorResults.size(); ++i) {
+//            matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i));
+//        }
+        // the super class performs the matching counter calls
         EvaluationResultContainer results = (EvaluationResultContainer) super.evaluate(annotatorResults, goldStandard);
         results.addResults(calculateAccuracies(matchingsCounter.getCounts(), goldStandard));
         results.addResults(calculateMicroFMeasure(
@@ -89,7 +91,9 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasur
 
     @Override
     public int getClass(T meaning) {
+        if ((meaning == null) || (!(meaning instanceof Meaning)) || (((Meaning) meaning).getUri() == null)) {
+            return EE_CLASS_ID;
+        }
         return classifier.isKBUri(((Meaning) meaning).getUri()) ? IN_KB_CLASS_ID : EE_CLASS_ID;
     }
-
 }

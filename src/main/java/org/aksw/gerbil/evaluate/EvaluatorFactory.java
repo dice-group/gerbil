@@ -6,6 +6,7 @@ import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
+import org.aksw.gerbil.evaluate.impl.InKBClassBasedFMeasureCalculator;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.MatchingFactory;
 import org.aksw.gerbil.matching.impl.CompoundMatchingsCounter;
@@ -63,13 +64,12 @@ public class EvaluatorFactory {
         case ELink: { // FIXME define whether the problem reduction to D2KB
                       // should use a weak or strong matching
             SameAsRetriever localRetriever = getSameAsRetriever(dataset);
-            // FIXME here, we have to add a AccuracyCalculator instead of a
-            // FMeasureCalculator
-            return (Evaluator<T>) new FMeasureCalculator<NamedEntity>(new MatchingsCounterImpl<NamedEntity>(
-                    new CompoundMatchingsCounter<NamedEntity>((MatchingsSearcher<NamedEntity>) MatchingFactory
-                            .createSpanMatchingsSearcher(configuration.matching),
+            return (Evaluator<T>) new InKBClassBasedFMeasureCalculator<NamedEntity>(
+                    new CompoundMatchingsCounter<NamedEntity>(
+                            (MatchingsSearcher<NamedEntity>) MatchingFactory
+                                    .createSpanMatchingsSearcher(configuration.matching),
                             new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever,
-                                    localRetriever, null))));
+                                    localRetriever, null)), globalClassifier);
         }
         default: {
             throw new RuntimeException();
@@ -82,9 +82,11 @@ public class EvaluatorFactory {
             Dataset dataset) {
         ExperimentTaskConfiguration subTaskConfig;
         switch (configuration.type) {
-        case D2KB: // falls through
+        case ERec:
         case ELink:
-        case ERec: {
+        case D2KB:
+        case OKE_Task1:
+        case OKE_Task2: {
             return;
         }
         case Sa2KB: // falls through
@@ -97,6 +99,7 @@ public class EvaluatorFactory {
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.ELink, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(createEvaluator(ExperimentType.ELink, configuration, dataset));
+            return;
         }
         default: {
             throw new RuntimeException();

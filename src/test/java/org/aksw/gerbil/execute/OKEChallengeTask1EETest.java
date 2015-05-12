@@ -47,6 +47,7 @@ public class OKEChallengeTask1EETest extends AbstractExperimentTaskTest {
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         // The extractor returns nothing
+        // TODO
         testConfigs.add(new Object[] { new Document[] {}, GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
                 new double[] { 0, 0, 0, 0, 0, 0, 0 } });
         // The extractor found everything and marked all entities using the OKE
@@ -67,7 +68,8 @@ public class OKEChallengeTask1EETest extends AbstractExperimentTaskTest {
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Sydney"),
                                                 (Marking) new NamedEntity(61, 21,
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Douglas_Robert_Dundas"))),
-                                // found 2xnull but missed 2xDBpedia (TP=2,FP=0,FN=2,P=1,R=0.5,F1=0)
+                                // found 2xnull but missed 2xDBpedia
+                                // (TP=2,FP=2,FN=2,P=0.5,R=0.5,F1=0.5)
                                 new DocumentImpl(
                                         TEXTS[1],
                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
@@ -84,7 +86,8 @@ public class OKEChallengeTask1EETest extends AbstractExperimentTaskTest {
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Campaign_manager"),
                                                 (Marking) new NamedEntity(184, 7,
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Al_Gore"))),
-                                // missed 6xDBpedia (TP=0,FP=0,FN=6,P=0,R=0,F1=0)
+                                // missed 6xDBpedia
+                                // (TP=0,FP=6,FN=6,P=0,R=0,F1=0)
                                 new DocumentImpl(
                                         TEXTS[2],
                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
@@ -93,7 +96,10 @@ public class OKEChallengeTask1EETest extends AbstractExperimentTaskTest {
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Senator_1"),
                                                 (Marking) new NamedEntity(49, 19,
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Columbia_University"))) },
-                        GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0 } });
+                        // found 1xnull but missed 1xDBpedia
+                        // (TP=1,FP=1,FN=1,P=0.5,R=0.5,F1=0.5)
+                        GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
+                        new double[] { 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, 0.25, 0.25, 0.25, 0 } });
         // The extractor found everything and marked all entities using dbpedia
         // URIs (if they were available)
         testConfigs
