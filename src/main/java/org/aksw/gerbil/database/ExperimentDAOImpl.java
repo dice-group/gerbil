@@ -69,8 +69,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT tasks.annotatorName, tasks.datasetName, tasks.experimentType, tasks.matching, tasks.microF1, tasks.microPrecision, tasks.microRecall, tasks.macroF1, tasks.macroPrecision, tasks.macroRecall, tasks.state, tasks.errorCount, tasks.lastChanged, tasks.id FROM ExperimentTasks tasks, (SELECT datasetName, annotatorName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState GROUP BY datasetName, annotatorName) pairs WHERE tasks.annotatorName=pairs.annotatorName AND tasks.datasetName=pairs.datasetName AND tasks.experimentType=:experimentType AND tasks.matching=:matching AND tasks.lastChanged=pairs.lastChanged";
     private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
     private final static String SHUTDOWN = "SHUTDOWN";
+    private final static String GET_ADDITIONAL_RESULTS = "SELECT resultId, value FROM ExperimentTasks_AdditionalResults WHERE taskId=:taskId";
+    private final static String INSERT_ADDITIONAL_RESULT = "INSERT INTO ExperimentTasks_AdditionalResults(taskId, resultId, value) VALUES (:taskId, :resultId, :value)";
 
-    // FIXME remove the following two statements by removing the experiment task version workaround
+    // FIXME remove the following two statements by removing the experiment task
+    // version workaround
     private final static String GET_VERSION_OF_EXPERIMENT_TASK = "SELECT version FROM ExperimentTasks_Version WHERE id=:id";
     private final static String INSERT_VERSION_OF_EXPERIMENT_TASK = "INSERT INTO ExperimentTasks_Version (id, version) VALUES(:id,:version)";
 
@@ -91,7 +94,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("id", experimentId);
         List<ExperimentTaskResult> result = this.template.query(GET_EXPERIMENT_RESULTS, parameters,
                 new ExperimentTaskResultRowMapper());
-        // FIXME remove this ugly workaround regarding the version of an experiment task
+        // FIXME remove this ugly workaround regarding the version of an
+        // experiment task
         for (ExperimentTaskResult e : result) {
             addVersion(e);
         }
@@ -110,8 +114,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private String getVersion(int experimentTaskId) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", experimentTaskId);
-        List<String> result = this.template.query(GET_VERSION_OF_EXPERIMENT_TASK, parameters,
-                new StringRowMapper());
+        List<String> result = this.template.query(GET_VERSION_OF_EXPERIMENT_TASK, parameters, new StringRowMapper());
         if (result.size() > 0) {
             return result.get(0);
         } else {
@@ -186,6 +189,22 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("lastChanged", new java.sql.Timestamp(result.timestamp));
 
         this.template.update(SET_EXPERIMENT_TASK_RESULT, parameters);
+        if (result.hasAdditionalResults()) {
+            for (int i = 0; i < result.additionalResults.allocated.length; ++i) {
+                if ((result.additionalResults.allocated[i]) && (result.additionalResults.keys[i] >= 6)) {
+                    addAdditionaResult(experimentTaskId, result.additionalResults.keys[i],
+                            result.additionalResults.values[i]);
+                }
+            }
+        }
+    }
+
+    protected void addAdditionaResult(int taskId, int resultId, double value) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", taskId);
+        parameters.addValue("resultId", resultId);
+        parameters.addValue("value", value);
+        this.template.update(INSERT_ADDITIONAL_RESULT, parameters);
     }
 
     @Override
@@ -287,14 +306,30 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("experimentType", experimentType);
         parameters.addValue("matching", matching);
         parameters.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
-        List<ExperimentTaskResult> result = this.template.query(GET_LATEST_EXPERIMENT_TASK_RESULTS, parameters,
+        List<ExperimentTaskResult> results = this.template.query(GET_LATEST_EXPERIMENT_TASK_RESULTS, parameters,
                 new ExperimentTaskResultRowMapper());
-        // FIXME remove this ugly workaround regarding the version of an experiment task
-        // We had to took this part out, because it needs to much time and the version isn't used inside the overview
+        // FIXME remove this ugly workaround regarding the version of an
+        // experiment task
+        // We had to took this part out, because it needs to much time and the
+        // version isn't used inside the overview
         // for (ExperimentTaskResult e : result) {
         // addVersion(e);
         // }
-        return result;
+
+        for (ExperimentTaskResult result : results) {
+            addAdditionalResults(result);
+        }
+        return results;
+    }
+
+    protected void addAdditionalResults(ExperimentTaskResult result) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", result.idInDb);
+        List<IntDoublePair> addResults = this.template.query(GET_ADDITIONAL_RESULTS, parameters,
+                new IntDoublePairRowMapper());
+        for (IntDoublePair a : addResults) {
+            result.addAdditionalResult(a.first, a.second);
+        }
     }
 
     @Override

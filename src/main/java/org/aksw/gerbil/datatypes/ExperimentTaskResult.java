@@ -54,7 +54,8 @@ public class ExperimentTaskResult {
     public IntDoubleOpenHashMap additionalResults = null;
 
     /**
-     * Contains the error message if {@link #state} != {@link ExperimentDAO#TASK_FINISHED}, else this should be null.
+     * Contains the error message if {@link #state} !=
+     * {@link ExperimentDAO#TASK_FINISHED}, else this should be null.
      */
     public String stateMsg = null;
 
@@ -88,9 +89,8 @@ public class ExperimentTaskResult {
     }
 
     public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state, int errorCount) {
-        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(),
-                configuration.type, configuration.matching, results, state, errorCount, (new java.util.Date())
-                        .getTime());
+        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
+                configuration.matching, results, state, errorCount, (new java.util.Date()).getTime());
     }
 
     public double[] getResults() {
@@ -274,12 +274,16 @@ public class ExperimentTaskResult {
             return false;
         return true;
     }
-    
+
     public boolean hasAdditionalResults() {
         return (additionalResults != null) && (additionalResults.size() > 0);
     }
-    
-    public void getAdditionalResults() {
-        
+
+    public IntDoubleOpenHashMap getAdditionalResults() {
+        return additionalResults;
+    }
+
+    public void addAdditionalResult(int resultId, double value) {
+        additionalResults.put(resultId, value);
     }
 }

@@ -40,7 +40,7 @@ UPDATE ExperimentTasks SET annotatorName='Babelfy' WHERE annotatorName='BabelFy'
 
 -- Changes from version 1.1.0 to 1.2.0
 CREATE TABLE IF NOT EXISTS ExperimentTasks_AdditionalResults (
-resultId int PRIMARY KEY,
+resultId int NOT NULL,
 taskId int NOT NULL,
 value double,
 PRIMARY KEY (resultId, taskId)
