@@ -78,6 +78,8 @@ public abstract class AbstractExperimentTaskTest {
         public static int MICRO_REC_INDEX = 4;
         public static int MICRO_F1_INDEX = 5;
         public static int ERROR_COUNT_INDEX = 6;
+        
+        private static final double DELTA = 0.0000001;
 
         private int experimentTaskId;
         private SimpleLoggingResultStoringDAO4Debugging experimentDAO;
@@ -95,13 +97,13 @@ public abstract class AbstractExperimentTaskTest {
         protected void testTaskResults(Task task) {
             Assert.assertEquals(ExperimentDAO.TASK_FINISHED, experimentDAO.getExperimentState(experimentTaskId));
             ExperimentTaskResult result = experimentDAO.getTaskResult(experimentTaskId);
-            Assert.assertEquals(expectedResults[MACRO_PREC_INDEX], result.getMacroPrecision(), 0.0000001);
-            Assert.assertEquals(expectedResults[MACRO_REC_INDEX], result.getMacroRecall(), 0.0000001);
-            Assert.assertEquals(expectedResults[MACRO_F1_INDEX], result.getMacroF1Measure(), 0.0000001);
-            Assert.assertEquals(expectedResults[MICRO_PREC_INDEX], result.getMicroPrecision(), 0.0000001);
-            Assert.assertEquals(expectedResults[MICRO_REC_INDEX], result.getMicroRecall(), 0.0000001);
-            Assert.assertEquals(expectedResults[MICRO_F1_INDEX], result.getMicroF1Measure(), 0.0000001);
-            Assert.assertEquals(expectedResults[ERROR_COUNT_INDEX], result.getErrorCount(), 0.0000001);
+            Assert.assertEquals(expectedResults[MACRO_PREC_INDEX], result.getMacroPrecision(), DELTA);
+            Assert.assertEquals(expectedResults[MACRO_REC_INDEX], result.getMacroRecall(), DELTA);
+            Assert.assertEquals(expectedResults[MACRO_F1_INDEX], result.getMacroF1Measure(), DELTA);
+            Assert.assertEquals(expectedResults[MICRO_PREC_INDEX], result.getMicroPrecision(), DELTA);
+            Assert.assertEquals(expectedResults[MICRO_REC_INDEX], result.getMicroRecall(), DELTA);
+            Assert.assertEquals(expectedResults[MICRO_F1_INDEX], result.getMicroF1Measure(), DELTA);
+            Assert.assertEquals(expectedResults[ERROR_COUNT_INDEX], result.getErrorCount(), DELTA);
         }
     }
 }

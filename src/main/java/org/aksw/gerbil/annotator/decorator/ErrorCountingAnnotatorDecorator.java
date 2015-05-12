@@ -32,8 +32,10 @@ import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.EntityExtractor;
 import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
+import org.aksw.gerbil.annotator.EntityTyper;
+import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
-import org.aksw.gerbil.evaluate.EvaluationResult;
+import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.IntEvaluationResult;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -41,6 +43,8 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
+import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +67,9 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
 
     public static ErrorCountingAnnotatorDecorator createDecorator(Annotator annotator, int numberOfExpectedCalls) {
         int maxErrors = (int) Math.ceil(AMOUNT_OF_TOLERATED_ERRORS * numberOfExpectedCalls);
+        if (annotator instanceof OKETask1Annotator) {
+            return new ErrorCountingOKETask1Annotator((OKETask1Annotator) annotator, maxErrors);
+        }
         if (annotator instanceof EntityExtractor) {
             return new ErrorCountingEntityExtractor((EntityExtractor) annotator, maxErrors);
         }
@@ -74,6 +81,9 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         }
         if (annotator instanceof EntityLinker) {
             return new ErrorCountingEntityLinker((EntityLinker) annotator, maxErrors);
+        }
+        if (annotator instanceof EntityTyper) {
+            return new ErrorCountingEntityTyper((EntityTyper) annotator, maxErrors);
         }
         // if (annotator instanceof C2WSystem) {
         // return new ErrorCountingC2W((C2WSystem) annotator, maxErrors);
@@ -122,6 +132,36 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
             return ErrorCountingAnnotatorDecorator.performExtraction(this, document);
         }
 
+    }
+
+    private static class ErrorCountingEntityTyper extends ErrorCountingAnnotatorDecorator implements EntityTyper {
+
+        protected ErrorCountingEntityTyper(EntityTyper decoratedAnnotator, int maxErrors) {
+            super(decoratedAnnotator, maxErrors);
+        }
+
+        @Override
+        public List<TypedSpan> performTyping(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performTyping(this, document);
+        }
+    }
+
+    private static class ErrorCountingOKETask1Annotator extends ErrorCountingEntityExtractor implements
+            OKETask1Annotator {
+
+        protected ErrorCountingOKETask1Annotator(OKETask1Annotator decoratedAnnotator, int maxErrors) {
+            super(decoratedAnnotator, maxErrors);
+        }
+
+        @Override
+        public List<TypedSpan> performTyping(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performTyping(this, document);
+        }
+
+        @Override
+        public List<TypedNamedEntity> performTask1(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performOKETask1(this, document);
+        }
     }
 
     // private static class ErrorCountingC2W extends AbstractErrorCounter
@@ -269,6 +309,44 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         return result;
     }
 
+    protected static List<TypedSpan> performTyping(ErrorCountingAnnotatorDecorator errorCounter, Document document)
+            throws GerbilException {
+        List<TypedSpan> result = null;
+        try {
+            result = ((EntityTyper) errorCounter.getDecoratedAnnotator()).performTyping(document);
+        } catch (Exception e) {
+            if (errorCounter.getErrorCount() == 0) {
+                // Log only the first exception completely
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + ")", e);
+            } else {
+                // Log only the Exception message without the stack trace
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + "): "
+                        + e.getLocalizedMessage());
+            }
+            errorCounter.increaseErrorCount();
+            return new ArrayList<TypedSpan>(0);
+        }
+        if (LOGGER.isDebugEnabled()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append('[');
+            builder.append(errorCounter.getName());
+            builder.append("] result=[");
+            boolean first = true;
+            for (TypedSpan ts : result) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(',');
+                }
+                builder.append("NamedEntity");
+                builder.append(ts.toString());
+            }
+            builder.append(']');
+            LOGGER.debug(builder.toString());
+        }
+        return result;
+    }
+
     // protected static HashSet<ScoredTag> solveSc2W(AbstractErrorCounter
     // errorCounter, String text) {
     // HashSet<ScoredTag> result = null;
@@ -351,6 +429,44 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         return result;
     }
 
+    protected static List<TypedNamedEntity> performOKETask1(ErrorCountingAnnotatorDecorator errorCounter,
+            Document document) throws AnnotationException, GerbilException {
+        List<TypedNamedEntity> result = null;
+        try {
+            result = ((OKETask1Annotator) errorCounter.getDecoratedAnnotator()).performTask1(document);
+        } catch (Exception e) {
+            if (errorCounter.getErrorCount() == 0) {
+                // Log only the first exception completely
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + ")", e);
+            } else {
+                // Log only the Exception message without the stack trace
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + "): "
+                        + e.getLocalizedMessage());
+            }
+            errorCounter.increaseErrorCount();
+            return new ArrayList<TypedNamedEntity>(0);
+        }
+        if (LOGGER.isDebugEnabled()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append('[');
+            builder.append(errorCounter.getName());
+            builder.append("] result=[");
+            boolean first = true;
+            for (Span s : result) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(',');
+                }
+                builder.append("Span");
+                builder.append(s.toString());
+            }
+            builder.append(']');
+            LOGGER.debug(builder.toString());
+        }
+        return result;
+    }
+
     protected int errorCount = 0;
     protected int maxErrors;
     protected Annotator decoratedAnnotator;
@@ -388,7 +504,8 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
     }
 
     @Override
-    public EvaluationResult evaluate(List<List<Marking>> annotatorResults, List<List<Marking>> goldStandard) {
-        return new IntEvaluationResult(ERROR_COUNT_RESULT_NAME, errorCount);
+    public void evaluate(List<List<Marking>> annotatorResults, List<List<Marking>> goldStandard,
+            EvaluationResultContainer results) {
+        results.addResult(new IntEvaluationResult(ERROR_COUNT_RESULT_NAME, errorCount));
     }
 }

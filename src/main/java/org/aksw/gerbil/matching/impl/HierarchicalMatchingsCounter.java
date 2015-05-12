@@ -12,13 +12,13 @@ import org.aksw.gerbil.semantic.subclass.ClassifiedClassNode;
 import org.aksw.gerbil.semantic.subclass.ClassifyingClassNodeFactory;
 import org.aksw.gerbil.semantic.subclass.SimpleClassSet;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
-import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.aksw.gerbil.transfer.nif.TypedMarking;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.carrotsearch.hppc.BitSet;
 
-public class HierarchicalMatchingsCounter {
+public class HierarchicalMatchingsCounter<T extends TypedMarking> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HierarchicalMatchingsCounter.class);
 
@@ -30,34 +30,32 @@ public class HierarchicalMatchingsCounter {
      * pairs of named entities for which the types should be matched to each
      * other.
      */
-    protected MatchingsSearcher<? super TypedNamedEntity> matchingsSearcher;
+    protected MatchingsSearcher<T> matchingsSearcher;
     protected List<List<int[]>> counts = new ArrayList<List<int[]>>();
     protected SubClassInferencer inferencer;
     private UriKBClassifier uriKBClassifier;
 
-    public HierarchicalMatchingsCounter(MatchingsSearcher<? super TypedNamedEntity> matchingsSearcher,
+    public HierarchicalMatchingsCounter(MatchingsSearcher<T> matchingsSearcher,
             UriKBClassifier uriKBClassifier, SubClassInferencer inferencer) {
         this.matchingsSearcher = matchingsSearcher;
         this.uriKBClassifier = uriKBClassifier;
         this.inferencer = inferencer;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void countMatchings(List<? extends TypedNamedEntity> annotatorResult,
-            List<? extends TypedNamedEntity> goldStandard) {
+    public void countMatchings(List<T> annotatorResult, List<T> goldStandard) {
         int documentCounts[];
         List<int[]> localCounts = new ArrayList<int[]>();
         BitSet matchingElements;
         BitSet alreadyUsedResults = new BitSet(annotatorResult.size());
-        TypedNamedEntity matchedResult;
+        T matchedResult;
         int matchedResultId;
         ClassSet classes;
         ClassifyingClassNodeFactory expectedClassesFactory = new ClassifyingClassNodeFactory(EXPECTED_CLASSES_CLASS_ID);
         ClassifyingClassNodeFactory annotatorClassesFactory = new ClassifyingClassNodeFactory(
                 ANNOTATOR_CLASSES_CLASS_ID);
         Set<String> types;
-        for (TypedNamedEntity expectedElement : goldStandard) {
-            matchingElements = matchingsSearcher.findMatchings(expectedElement, (List) annotatorResult,
+        for (T expectedElement : goldStandard) {
+            matchingElements = matchingsSearcher.findMatchings(expectedElement, annotatorResult,
                     alreadyUsedResults);
             if (!matchingElements.isEmpty()) {
                 // We use the first matching as solution for the typing task

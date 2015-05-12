@@ -30,6 +30,7 @@ import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
+import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataset.Dataset;
@@ -51,6 +52,7 @@ import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -278,6 +280,25 @@ public class ExperimentTask implements Task {
             }
             break;
         }
+        case OKE_Task1: {
+            try {
+                List<List<TypedNamedEntity>> results = new ArrayList<List<TypedNamedEntity>>(dataset.size());
+                List<List<TypedNamedEntity>> goldStandard = new ArrayList<List<TypedNamedEntity>>(dataset.size());
+                OKETask1Annotator okeTask1Annotator = ((OKETask1Annotator) annotator);
+
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a text and a list of Spans
+                    results.add(okeTask1Annotator.performTask1(DocumentInformationReducer
+                            .reduceToTextAndSpans(document)));
+                    goldStandard.add(document.getMarkings(TypedNamedEntity.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
         default:
             throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
                     ErrorTypes.UNEXPECTED_EXCEPTION);
@@ -287,14 +308,10 @@ public class ExperimentTask implements Task {
 
     @SuppressWarnings("unchecked")
     protected <T extends Marking> EvaluationResult evaluate(List<Evaluator<? extends Marking>> evaluators,
-            List<List<T>> results, List<List<T>> goldStandard) {
+            List<List<T>> annotatorResults, List<List<T>> goldStandard) {
         EvaluationResultContainer evalResults = new EvaluationResultContainer();
-        EvaluationResult evalResult;
         for (Evaluator<? extends Marking> e : evaluators) {
-            evalResult = ((Evaluator<T>) e).evaluate(results, goldStandard);
-            if (evalResult != null) {
-                evalResults.addResult(evalResult);
-            }
+            ((Evaluator<T>) e).evaluate(annotatorResults, goldStandard, evalResults);
         }
         return evalResults;
     }

@@ -44,12 +44,9 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasur
     }
 
     @Override
-    public EvaluationResult evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard) {
-//        for (int i = 0; i < annotatorResults.size(); ++i) {
-//            matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i));
-//        }
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
         // the super class performs the matching counter calls
-        EvaluationResultContainer results = (EvaluationResultContainer) super.evaluate(annotatorResults, goldStandard);
+        super.evaluate(annotatorResults, goldStandard, results);
         results.addResults(calculateAccuracies(matchingsCounter.getCounts(), goldStandard));
         results.addResults(calculateMicroFMeasure(
                 ((ClassConsideringMatchingsCounter<T>) matchingsCounter).getCounts(IN_KB_CLASS_ID),
@@ -63,7 +60,6 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasur
         results.addResults(calculateMacroFMeasure(
                 ((ClassConsideringMatchingsCounter<T>) matchingsCounter).getCounts(EE_CLASS_ID),
                 EE_MACRO_PRECISION_NAME, EE_MACRO_RECALL_NAME, EE_MACRO_F1_SCORE_NAME));
-        return results;
     }
 
     private EvaluationResult[] calculateAccuracies(List<int[]> matchingCounts, List<List<T>> goldStandard) {

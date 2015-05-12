@@ -26,15 +26,13 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     }
 
     @Override
-    public EvaluationResult evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard) {
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
         for (int i = 0; i < annotatorResults.size(); ++i) {
             matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i));
         }
         List<int[]> matchingCounts = matchingsCounter.getCounts();
-        EvaluationResultContainer results = new EvaluationResultContainer();
         results.addResults(calculateMicroFMeasure(matchingCounts));
         results.addResults(calculateMacroFMeasure(matchingCounts));
-        return results;
     }
 
     protected EvaluationResult[] calculateMicroFMeasure(List<int[]> matchingCounts) {

@@ -3,7 +3,7 @@ package org.aksw.gerbil.semantic.subclass;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.hp.hpl.jena.rdf.model.InfModel;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -14,9 +14,9 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class SimpleSubClassInferencer implements SubClassInferencer {
 
-    private InfModel classModel;
+    private Model classModel;
 
-    public SimpleSubClassInferencer(InfModel classModel) {
+    public SimpleSubClassInferencer(Model classModel) {
         this.classModel = classModel;
     }
 
