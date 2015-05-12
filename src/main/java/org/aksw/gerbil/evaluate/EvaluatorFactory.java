@@ -1,8 +1,12 @@
 package org.aksw.gerbil.evaluate;
 
+import java.util.List;
+
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
+import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
+import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.MatchingFactory;
 import org.aksw.gerbil.matching.impl.CompoundMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
@@ -38,8 +42,9 @@ public class EvaluatorFactory {
     }
 
     @SuppressWarnings({ "unchecked", "deprecation" })
-    public <T extends Marking> Evaluator<T> createEvaluator(ExperimentTaskConfiguration configuration, Dataset dataset) {
-        switch (configuration.type) {
+    protected <T extends Marking> Evaluator<T> createEvaluator(ExperimentType type,
+            ExperimentTaskConfiguration configuration, Dataset dataset) {
+        switch (type) {
         case Sa2KB:
         case A2KB:
         case EExt: {
@@ -47,7 +52,8 @@ public class EvaluatorFactory {
             return (Evaluator<T>) new FMeasureCalculator<NamedEntity>(new MatchingsCounterImpl<NamedEntity>(
                     new CompoundMatchingsCounter<NamedEntity>((MatchingsSearcher<NamedEntity>) MatchingFactory
                             .createSpanMatchingsSearcher(configuration.matching),
-                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever, localRetriever, null))));
+                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever,
+                                    localRetriever, null))));
         }
         case ERec: {
             return (Evaluator<T>) new FMeasureCalculator<Span>(new MatchingsCounterImpl<Span>(
@@ -57,11 +63,40 @@ public class EvaluatorFactory {
         case ELink: { // FIXME define whether the problem reduction to D2KB
                       // should use a weak or strong matching
             SameAsRetriever localRetriever = getSameAsRetriever(dataset);
-            // FIXME here, we have to add a AccuracyCalculator instead of a FMeasureCalculator
+            // FIXME here, we have to add a AccuracyCalculator instead of a
+            // FMeasureCalculator
             return (Evaluator<T>) new FMeasureCalculator<NamedEntity>(new MatchingsCounterImpl<NamedEntity>(
                     new CompoundMatchingsCounter<NamedEntity>((MatchingsSearcher<NamedEntity>) MatchingFactory
                             .createSpanMatchingsSearcher(configuration.matching),
-                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever, localRetriever, null))));
+                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever,
+                                    localRetriever, null))));
+        }
+        default: {
+            throw new RuntimeException();
+        }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    protected void addSubTaskEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration,
+            Dataset dataset) {
+        ExperimentTaskConfiguration subTaskConfig;
+        switch (configuration.type) {
+        case D2KB: // falls through
+        case ELink:
+        case ERec: {
+            return;
+        }
+        case Sa2KB: // falls through
+        case A2KB:
+        case EExt: {
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.ERec, configuration.matching);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.ERec, subTaskConfig,
+                    dataset)));
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.ELink, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(createEvaluator(ExperimentType.ELink, configuration, dataset));
         }
         default: {
             throw new RuntimeException();
@@ -80,5 +115,10 @@ public class EvaluatorFactory {
         } else {
             return globalRetriever;
         }
+    }
+
+    public void addEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration, Dataset dataset) {
+        evaluators.add(createEvaluator(configuration.type, configuration, dataset));
+        addSubTaskEvaluators(evaluators, configuration, dataset);
     }
 }

@@ -24,8 +24,10 @@
 package org.aksw.gerbil.datatypes;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.matching.Matching;
@@ -52,6 +54,7 @@ public class ExperimentTaskResult {
     public int idInDb;
     public String gerbilVersion;
     public IntDoubleOpenHashMap additionalResults = null;
+    public List<ExperimentTaskResult> subTasks;
 
     /**
      * Contains the error message if {@link #state} !=
@@ -284,6 +287,32 @@ public class ExperimentTaskResult {
     }
 
     public void addAdditionalResult(int resultId, double value) {
+        if (additionalResults == null) {
+            additionalResults = new IntDoubleOpenHashMap();
+        }
         additionalResults.put(resultId, value);
+    }
+
+    public void setAdditionalResults(IntDoubleOpenHashMap additionalResults) {
+        this.additionalResults = additionalResults;
+    }
+
+    public boolean hasSubTasks() {
+        return (subTasks != null) && (subTasks.size() > 0);
+    }
+
+    public List<ExperimentTaskResult> getSubTasks() {
+        return subTasks;
+    }
+
+    public void addSubTask(ExperimentTaskResult subTaskResult) {
+        if (subTasks == null) {
+            subTasks = new ArrayList<ExperimentTaskResult>();
+        }
+        subTasks.add(subTaskResult);
+    }
+
+    public void setSubTasks(List<ExperimentTaskResult> subTasks) {
+        this.subTasks = subTasks;
     }
 }

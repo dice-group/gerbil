@@ -69,8 +69,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT tasks.annotatorName, tasks.datasetName, tasks.experimentType, tasks.matching, tasks.microF1, tasks.microPrecision, tasks.microRecall, tasks.macroF1, tasks.macroPrecision, tasks.macroRecall, tasks.state, tasks.errorCount, tasks.lastChanged, tasks.id FROM ExperimentTasks tasks, (SELECT datasetName, annotatorName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState GROUP BY datasetName, annotatorName) pairs WHERE tasks.annotatorName=pairs.annotatorName AND tasks.datasetName=pairs.datasetName AND tasks.experimentType=:experimentType AND tasks.matching=:matching AND tasks.lastChanged=pairs.lastChanged";
     private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
     private final static String SHUTDOWN = "SHUTDOWN";
+
     private final static String GET_ADDITIONAL_RESULTS = "SELECT resultId, value FROM ExperimentTasks_AdditionalResults WHERE taskId=:taskId";
     private final static String INSERT_ADDITIONAL_RESULT = "INSERT INTO ExperimentTasks_AdditionalResults(taskId, resultId, value) VALUES (:taskId, :resultId, :value)";
+    private final static String GET_SUB_TASK_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, taskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
+    private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_AdditionalResults(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
 
     // FIXME remove the following two statements by removing the experiment task
     // version workaround
@@ -98,6 +101,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         // experiment task
         for (ExperimentTaskResult e : result) {
             addVersion(e);
+            addAdditionalResults(e);
+            addSubTasks(e);
         }
         return result;
     }
@@ -147,7 +152,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         this.template.update(INSERT_TASK, params, keyHolder);
         Integer generatedKey = (Integer) keyHolder.getKey();
-        connectToExperiment(experimentId, generatedKey);
+        if (experimentId != null) {
+            connectToExperiment(experimentId, generatedKey);
+        }
         // FIXME remove this method and implement a better version handling
         setVersion(generatedKey);
         return generatedKey;
@@ -195,6 +202,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                     addAdditionaResult(experimentTaskId, result.additionalResults.keys[i],
                             result.additionalResults.values[i]);
                 }
+            }
+        }
+        if (result.hasSubTasks()) {
+            for (ExperimentTaskResult subTask : result.getSubTasks()) {
+                insertSubTask(subTask, experimentTaskId);
             }
         }
     }
@@ -329,6 +341,32 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                 new IntDoublePairRowMapper());
         for (IntDoublePair a : addResults) {
             result.addAdditionalResult(a.first, a.second);
+        }
+    }
+
+    protected void insertSubTask(ExperimentTaskResult subTask, int experimentTaskId) {
+        subTask.idInDb = createTask(subTask.annotator, subTask.dataset, subTask.type.name(), subTask.matching.name(),
+                null);
+        setExperimentTaskResult(subTask.idInDb, subTask);
+        addSubTaskRelation(experimentTaskId, subTask.idInDb);
+    }
+
+    protected void addSubTaskRelation(int taskId, int subTaskId) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", taskId);
+        parameters.addValue("subTaskId", subTaskId);
+        this.template.update(INSERT_SUB_TASK_RELATION, parameters);
+    }
+
+    protected void addSubTasks(ExperimentTaskResult expTask) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", expTask.idInDb);
+        List<ExperimentTaskResult> subTasks = this.template.query(GET_SUB_TASK_RESULTS, parameters,
+                new ExperimentTaskResultRowMapper());
+        expTask.setSubTasks(subTasks);
+        for (ExperimentTaskResult subTask : subTasks) {
+            subTask.gerbilVersion = expTask.gerbilVersion;
+            addAdditionalResults(subTask);
         }
     }
 

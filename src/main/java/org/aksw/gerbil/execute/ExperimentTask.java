@@ -42,6 +42,7 @@ import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.evaluate.IntEvaluationResult;
+import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -103,7 +104,7 @@ public class ExperimentTask implements Task {
             // MatchingFactory.createMatchRelation(wikiAPI,
             // configuration.matching,
             // configuration.type);
-            evaluators.add(evFactory.createEvaluator(configuration, dataset));
+            evFactory.addEvaluators(evaluators, configuration, dataset);
             evaluators.add(errorCounter);
             // if (matching == null) {
             // throw new GerbilException("matching=\"" +
@@ -135,6 +136,15 @@ public class ExperimentTask implements Task {
     }
 
     private void transformResults(EvaluationResult result, ExperimentTaskResult expResult) {
+        if (result instanceof SubTaskResult) {
+            ExperimentTaskResult subTask = new ExperimentTaskResult(((SubTaskResult) result).getConfiguration(),
+                    new double[6], ExperimentDAO.TASK_FINISHED, 0);
+            List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
+            for (EvaluationResult tempResult : tempResults) {
+                transformResults(tempResult, subTask);
+            }
+            expResult.addSubTask(subTask);
+        }
         if (result instanceof EvaluationResultContainer) {
             List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
             for (EvaluationResult tempResult : tempResults) {
