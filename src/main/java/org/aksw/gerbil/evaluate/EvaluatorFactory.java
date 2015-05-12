@@ -6,10 +6,12 @@ import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
+import org.aksw.gerbil.evaluate.impl.HierarchicalFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.InKBClassBasedFMeasureCalculator;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.MatchingFactory;
 import org.aksw.gerbil.matching.impl.CompoundMatchingsCounter;
+import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.matching.impl.MatchingsSearcher;
 import org.aksw.gerbil.matching.impl.MeaningMatchingsSearcher;
@@ -17,14 +19,17 @@ import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.sameas.DatasetBasedSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 
 public class EvaluatorFactory {
 
     protected SameAsRetriever globalRetriever = null;
     protected UriKBClassifier globalClassifier = null;
+    protected SubClassInferencer inferencer = null;
 
     public EvaluatorFactory() {
     }
@@ -40,6 +45,13 @@ public class EvaluatorFactory {
     public EvaluatorFactory(SameAsRetriever globalRetriever, UriKBClassifier globalClassifier) {
         this.globalRetriever = globalRetriever;
         this.globalClassifier = globalClassifier;
+    }
+
+    public EvaluatorFactory(SameAsRetriever globalRetriever, UriKBClassifier globalClassifier,
+            SubClassInferencer inferencer) {
+        this.globalRetriever = globalRetriever;
+        this.globalClassifier = globalClassifier;
+        this.inferencer = inferencer;
     }
 
     @SuppressWarnings({ "unchecked", "deprecation" })
@@ -71,6 +83,11 @@ public class EvaluatorFactory {
                             new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever,
                                     localRetriever, null)), globalClassifier);
         }
+        case ETyping: {
+            return (Evaluator<T>) new HierarchicalFMeasureCalculator<TypedNamedEntity>(
+                    new HierarchicalMatchingsCounter((MatchingsSearcher<TypedNamedEntity>) MatchingFactory
+                            .createSpanMatchingsSearcher(configuration.matching), globalClassifier, inferencer));
+        }
         default: {
             throw new RuntimeException();
         }
@@ -84,6 +101,7 @@ public class EvaluatorFactory {
         switch (configuration.type) {
         case ERec:
         case ELink:
+        case ETyping:
         case D2KB:
         case OKE_Task1:
         case OKE_Task2: {

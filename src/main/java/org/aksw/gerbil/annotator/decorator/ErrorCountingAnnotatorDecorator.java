@@ -39,8 +39,8 @@ import org.aksw.gerbil.evaluate.IntEvaluationResult;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +88,7 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         }
 
         @Override
-        public List<NamedEntity> performLinking(Document document) throws GerbilException {
+        public List<MeaningSpan> performLinking(Document document) throws GerbilException {
             return ErrorCountingAnnotatorDecorator.performLinking(this, document);
         }
     }
@@ -118,7 +118,7 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         }
 
         @Override
-        public List<NamedEntity> performExtraction(Document document) throws GerbilException {
+        public List<MeaningSpan> performExtraction(Document document) throws GerbilException {
             return ErrorCountingAnnotatorDecorator.performExtraction(this, document);
         }
 
@@ -193,9 +193,9 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
     // return result;
     // }
 
-    protected static List<NamedEntity> performLinking(ErrorCountingAnnotatorDecorator errorCounter, Document document)
+    protected static List<MeaningSpan> performLinking(ErrorCountingAnnotatorDecorator errorCounter, Document document)
             throws GerbilException {
-        List<NamedEntity> result = null;
+        List<MeaningSpan> result = null;
         try {
             result = ((EntityLinker) errorCounter.getDecoratedAnnotator()).performLinking(document);
         } catch (Exception e) {
@@ -208,7 +208,7 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
                         + e.getLocalizedMessage());
             }
             errorCounter.increaseErrorCount();
-            return new ArrayList<NamedEntity>(0);
+            return new ArrayList<MeaningSpan>(0);
         }
         if (LOGGER.isDebugEnabled()) {
             StringBuilder builder = new StringBuilder();
@@ -216,7 +216,7 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
             builder.append(errorCounter.getName());
             builder.append("] result=[");
             boolean first = true;
-            for (NamedEntity ne : result) {
+            for (MeaningSpan ne : result) {
                 if (first) {
                     first = false;
                 } else {
@@ -231,9 +231,9 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         return result;
     }
 
-    protected static List<NamedEntity> performExtraction(ErrorCountingAnnotatorDecorator errorCounter, Document document)
+    protected static List<MeaningSpan> performExtraction(ErrorCountingAnnotatorDecorator errorCounter, Document document)
             throws GerbilException {
-        List<NamedEntity> result = null;
+        List<MeaningSpan> result = null;
         try {
             result = ((EntityExtractor) errorCounter.getDecoratedAnnotator()).performExtraction(document);
         } catch (Exception e) {
@@ -246,7 +246,7 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
                         + e.getLocalizedMessage());
             }
             errorCounter.increaseErrorCount();
-            return new ArrayList<NamedEntity>(0);
+            return new ArrayList<MeaningSpan>(0);
         }
         if (LOGGER.isDebugEnabled()) {
             StringBuilder builder = new StringBuilder();
@@ -254,7 +254,7 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
             builder.append(errorCounter.getName());
             builder.append("] result=[");
             boolean first = true;
-            for (NamedEntity ne : result) {
+            for (MeaningSpan ne : result) {
                 if (first) {
                     first = false;
                 } else {

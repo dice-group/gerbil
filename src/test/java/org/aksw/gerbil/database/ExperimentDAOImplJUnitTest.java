@@ -102,6 +102,7 @@ public class ExperimentDAOImplJUnitTest {
         Assert.assertFalse(thirdTaskId == fourthTaskId);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testExperimentCreationAndSelection() throws InterruptedException {
         final String EXPERIMENT_ID = "id-999";
@@ -178,6 +179,7 @@ public class ExperimentDAOImplJUnitTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testGetLatestResultsOfExperiments() {
         // Only the first task should be retrieved, the second is not finished, the third has the wrong matching and the

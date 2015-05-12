@@ -15,8 +15,8 @@ import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.utils.bat.BAT2NIF_TranslationHelper;
 import org.aksw.gerbil.utils.bat.NIF2BAT_TranslationHelper;
 import org.slf4j.Logger;
@@ -52,11 +52,11 @@ public class BatFrameworkAnnotatorWrapper {
             return new ArrayList<Span>(translater.translateAnnotations(annotator.solveA2W(document.getText())));
         }
 
-        protected List<NamedEntity> performExtraction(A2WSystem annotator, Document document) {
+        protected List<MeaningSpan> performExtraction(A2WSystem annotator, Document document) {
             return translater.translateAnnotations(annotator.solveA2W(document.getText()));
         }
 
-        protected List<NamedEntity> performLinking(D2WSystem annotator, Document document) {
+        protected List<MeaningSpan> performLinking(D2WSystem annotator, Document document) {
             return translater.translateAnnotations(annotator.solveD2W(document.getText(),
                     NIF2BAT_TranslationHelper.createMentions(document)));
         }
@@ -75,12 +75,12 @@ public class BatFrameworkAnnotatorWrapper {
         }
 
         @Override
-        public List<NamedEntity> performExtraction(Document document) {
+        public List<MeaningSpan> performExtraction(Document document) {
             return performExtraction(annotator, document);
         }
 
         @Override
-        public List<NamedEntity> performLinking(Document document) throws GerbilException {
+        public List<MeaningSpan> performLinking(Document document) throws GerbilException {
             return performLinking(annotator, document);
         }
     }
@@ -92,7 +92,7 @@ public class BatFrameworkAnnotatorWrapper {
         }
 
         @Override
-        public List<NamedEntity> performLinking(Document document) throws GerbilException {
+        public List<MeaningSpan> performLinking(Document document) throws GerbilException {
             return performLinking(annotator, document);
         }
 

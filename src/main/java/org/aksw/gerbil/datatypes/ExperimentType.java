@@ -239,8 +239,8 @@ public enum ExperimentType {
                 return true;
             }
             }
-        }// falls through
-        case ELink:
+        }
+        case ELink:// falls through
         case D2KB: {
             switch (type) {
             case ERec:
@@ -284,9 +284,11 @@ public enum ExperimentType {
         case OKE_Task1: {
             return true;
         }
-        case ETyping:
+        case ETyping: {
+            return type == ETyping;
+        }
         case OKE_Task2: {
-            return false;
+            return type == OKE_Task2;
         }
         }
         return false;

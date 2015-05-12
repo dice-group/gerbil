@@ -13,6 +13,7 @@ import java.util.Set;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
@@ -76,8 +77,8 @@ public class BAT2NIF_TranslationHelper {
         return markings;
     }
 
-    public List<NamedEntity> translateAnnotations(Set<it.acubelab.batframework.data.Annotation> annotations) {
-        List<NamedEntity> markings = new ArrayList<NamedEntity>();
+    public List<MeaningSpan> translateAnnotations(Set<it.acubelab.batframework.data.Annotation> annotations) {
+        List<MeaningSpan> markings = new ArrayList<MeaningSpan>();
         if (annotations != null) {
             for (it.acubelab.batframework.data.Annotation a : annotations) {
                 if (a instanceof it.acubelab.batframework.data.ScoredAnnotation) {

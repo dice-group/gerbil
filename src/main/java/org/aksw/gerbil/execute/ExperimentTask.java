@@ -29,6 +29,7 @@ import java.util.List;
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
+import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataset.Dataset;
@@ -47,8 +48,9 @@ import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -198,14 +200,14 @@ public class ExperimentTask implements Task {
         case D2KB:
         case ELink: {
             try {
-                List<List<NamedEntity>> results = new ArrayList<List<NamedEntity>>(dataset.size());
-                List<List<NamedEntity>> goldStandard = new ArrayList<List<NamedEntity>>(dataset.size());
+                List<List<MeaningSpan>> results = new ArrayList<List<MeaningSpan>>(dataset.size());
+                List<List<MeaningSpan>> goldStandard = new ArrayList<List<MeaningSpan>>(dataset.size());
                 EntityLinker linker = ((EntityLinker) annotator);
 
                 for (Document document : dataset.getInstances()) {
                     // reduce the document to a text and a list of Spans
                     results.add(linker.performLinking(DocumentInformationReducer.reduceToTextAndSpans(document)));
-                    goldStandard.add(document.getMarkings(NamedEntity.class));
+                    goldStandard.add(document.getMarkings(MeaningSpan.class));
                     taskState.increaseExperimentStepCount();
                 }
                 evalResult = evaluate(evaluators, results, goldStandard);
@@ -218,13 +220,13 @@ public class ExperimentTask implements Task {
         case Sa2KB:
         case EExt: {
             try {
-                List<List<NamedEntity>> results = new ArrayList<List<NamedEntity>>(dataset.size());
-                List<List<NamedEntity>> goldStandard = new ArrayList<List<NamedEntity>>(dataset.size());
+                List<List<MeaningSpan>> results = new ArrayList<List<MeaningSpan>>(dataset.size());
+                List<List<MeaningSpan>> goldStandard = new ArrayList<List<MeaningSpan>>(dataset.size());
                 EntityLinker linker = ((EntityLinker) annotator);
                 for (Document document : dataset.getInstances()) {
                     // reduce the document to a single text
                     results.add(linker.performLinking(DocumentInformationReducer.reduceToPlainText(document)));
-                    goldStandard.add(document.getMarkings(NamedEntity.class));
+                    goldStandard.add(document.getMarkings(MeaningSpan.class));
                     taskState.increaseExperimentStepCount();
                 }
                 // FIXME expand URIs to sets of URIs
@@ -250,6 +252,24 @@ public class ExperimentTask implements Task {
                     // reduce the document to a single text
                     results.add(recognizer.performRecognition(DocumentInformationReducer.reduceToPlainText(document)));
                     goldStandard.add(document.getMarkings(Span.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case ETyping: {
+            try {
+                List<List<TypedSpan>> results = new ArrayList<List<TypedSpan>>(dataset.size());
+                List<List<TypedSpan>> goldStandard = new ArrayList<List<TypedSpan>>(dataset.size());
+                EntityTyper typer = ((EntityTyper) annotator);
+
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a text and a list of Spans
+                    results.add(typer.performTyping(DocumentInformationReducer.reduceToTextAndSpans(document)));
+                    goldStandard.add(document.getMarkings(TypedSpan.class));
                     taskState.increaseExperimentStepCount();
                 }
                 evalResult = evaluate(evaluators, results, goldStandard);

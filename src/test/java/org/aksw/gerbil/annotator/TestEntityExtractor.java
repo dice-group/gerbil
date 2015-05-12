@@ -6,24 +6,24 @@ import java.util.List;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.junit.Ignore;
 
 @Ignore
 public class TestEntityExtractor extends AbstractTestAnnotator implements EntityExtractor {
 
     public TestEntityExtractor(List<Document> instances) {
-        super("TestEntityExtractor", false, instances, ExperimentType.EExt);
+        super("TestEntityExtractor", false, instances, ExperimentType.OKE_Task1);
     }
 
     @Override
-    public List<NamedEntity> performLinking(Document document) throws GerbilException {
+    public List<MeaningSpan> performLinking(Document document) throws GerbilException {
         Document result = this.getDocument(document.getDocumentURI());
         if (result == null) {
-            return new ArrayList<NamedEntity>(0);
+            return new ArrayList<MeaningSpan>(0);
         }
-        return result.getMarkings(NamedEntity.class);
+        return result.getMarkings(MeaningSpan.class);
     }
 
     @Override
@@ -36,12 +36,12 @@ public class TestEntityExtractor extends AbstractTestAnnotator implements Entity
     }
 
     @Override
-    public List<NamedEntity> performExtraction(Document document) {
+    public List<MeaningSpan> performExtraction(Document document) {
         Document result = this.getDocument(document.getDocumentURI());
         if (result == null) {
-            return new ArrayList<NamedEntity>(0);
+            return new ArrayList<MeaningSpan>(0);
         }
-        return result.getMarkings(NamedEntity.class);
+        return result.getMarkings(MeaningSpan.class);
     }
 
 }
