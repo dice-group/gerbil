@@ -3,11 +3,12 @@ package org.aksw.gerbil.io.nif;
 import org.aksw.gerbil.io.nif.utils.NIFUriHelper;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.ScoredMarking;
 import org.aksw.gerbil.transfer.nif.Span;
+import org.aksw.gerbil.transfer.nif.TypedMarking;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.ScoredAnnotation;
-import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
+import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
 
@@ -63,12 +64,15 @@ public class AnnotationWriter {
         nifModel.add(spanAsResource, NIF.endIndex, nifModel.createTypedLiteral(end, XSDDatatype.XSDnonNegativeInteger));
         nifModel.add(spanAsResource, NIF.referenceContext, documentAsResource);
 
-        if (span instanceof NamedEntity) {
-            nifModel.add(spanAsResource, ITSRDF.taIdentRef, nifModel.createResource(((NamedEntity) span).getUri()));
+        if (span instanceof Meaning) {
+            nifModel.add(spanAsResource, ITSRDF.taIdentRef, nifModel.createResource(((Meaning) span).getUri()));
         }
-        if (span instanceof ScoredNamedEntity) {
+        if (span instanceof ScoredMarking) {
             nifModel.add(spanAsResource, ITSRDF.taConfidence,
-                    nifModel.createTypedLiteral(((ScoredNamedEntity) span).getConfidence(), XSDDatatype.XSDdouble));
+                    nifModel.createTypedLiteral(((ScoredMarking) span).getConfidence(), XSDDatatype.XSDdouble));
+        }
+        if (span instanceof TypedMarking) {
+            nifModel.add(spanAsResource, ITSRDF.taClassRef, nifModel.createResource(((TypedNamedEntity) span).getUri()));
         }
     }
 }

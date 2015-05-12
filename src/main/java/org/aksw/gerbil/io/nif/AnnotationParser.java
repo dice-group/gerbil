@@ -1,6 +1,8 @@
 package org.aksw.gerbil.io.nif;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
@@ -8,7 +10,9 @@ import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.ScoredAnnotation;
 import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
+import org.aksw.gerbil.transfer.nif.data.ScoredTypedNamedEntity;
 import org.aksw.gerbil.transfer.nif.data.SpanImpl;
+import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
 import org.slf4j.Logger;
@@ -57,13 +61,31 @@ public class AnnotationParser {
                 nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taIdentRef);
                 if (nodeIter.hasNext()) {
                     entityUri = nodeIter.next().toString();
-                    nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
+                    nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taClassRef);
+                    // FIXME there is no typed named entity with a confidence
+                    // score
                     if (nodeIter.hasNext()) {
-                        confidence = nodeIter.next().asLiteral().getDouble();
-                        markings.add(new ScoredNamedEntity(start, end - start, entityUri, confidence));
+                        Set<String> types = new HashSet<String>();
+                        while (nodeIter.hasNext()) {
+                            types.add(nodeIter.next().toString());
+                        }
+                        nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
+                        if (nodeIter.hasNext()) {
+                            confidence = nodeIter.next().asLiteral().getDouble();
+                            markings.add(new ScoredTypedNamedEntity(start, end - start, entityUri, types, confidence));
+                        } else {
+                            // It has been typed without a confidence
+                            markings.add(new TypedNamedEntity(start, end - start, entityUri, types));
+                        }
                     } else {
-                        // It has been disambiguated without a confidence
-                        markings.add(new NamedEntity(start, end - start, entityUri));
+                        nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
+                        if (nodeIter.hasNext()) {
+                            confidence = nodeIter.next().asLiteral().getDouble();
+                            markings.add(new ScoredNamedEntity(start, end - start, entityUri, confidence));
+                        } else {
+                            // It has been disambiguated without a confidence
+                            markings.add(new NamedEntity(start, end - start, entityUri));
+                        }
                     }
                 } else {
                     // It is a named entity that hasn't been disambiguated

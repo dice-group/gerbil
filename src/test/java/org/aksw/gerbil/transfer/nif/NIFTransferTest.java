@@ -23,14 +23,18 @@
  */
 package org.aksw.gerbil.transfer.nif;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
-import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
+import org.aksw.gerbil.transfer.nif.data.ScoredTypedNamedEntity;
+import org.aksw.gerbil.transfer.nif.data.SpanImpl;
+import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,33 +46,42 @@ public class NIFTransferTest {
 
     @Parameters
     public static List<Object[]> data() {
-        return Arrays
-                .asList(new Object[][] {
-                        { new DocumentImpl("Dies ist ein Testtext.", "http://www.aksw.org/gerbil/test-document", Arrays
-                                .asList((Marking) new SpanImpl(13, 8))) },
-                        { new DocumentImpl("Dies ist ein Testtext.", "http://www.aksw.org/gerbil/test-document", Arrays
-                                .asList((Marking) new SpanImpl(0, 4))) },
-                        { new DocumentImpl("Dies ist ein Testtext.", "http://www.aksw.org/gerbil/test-document", Arrays
-                                .asList(((Marking) new SpanImpl(0, 4)), (Marking) new SpanImpl(13, 8))) },
-                        { new DocumentImpl("Dies ist ein Testtext.", "http://www.aksw.org/gerbil/test-document", Arrays
-                                .asList((Marking) new NamedEntity(13, 8, "http://www.aksw.org/gerbil/testtext"))) },
-                        { new DocumentImpl("Dies ist ein Testtext.", "http://www.aksw.org/gerbil/test-document", Arrays
-                                .asList((Marking) new ScoredNamedEntity(13, 8, "http://www.aksw.org/gerbil/testtext",
-                                        0.87))) },
-                        { new DocumentImpl("<> dies ?% ist ein TästTöxt!!.",
-                                "http://www.aksw.org/gerbil/test-document", Arrays.asList((Marking) new SpanImpl(3, 4),
-                                        (Marking) new SpanImpl(19, 8))) },
-                        { new DocumentImpl(
-                                "Angelina, her father Jon, and her partner Brad never played together in the same movie.",
-                                "http://www.aksw.org/gerbil/test-document", Arrays.asList(
-                                        (Marking) new SpanImpl(21, 3), (Marking) new SpanImpl(0, 8),
-                                        (Marking) new SpanImpl(42, 4))) },
-                        { new DocumentImpl(
-                                "Angelina, her father Jon, and her partner Brad never played together in the same movie.",
-                                "http://www.aksw.org/gerbil/test-document", Arrays.asList((Marking) new Annotation(
-                                        "http://www.aksw.org/gerbil/testtext"), (Marking) new Annotation(
-                                        "http://www.aksw.org/gerbil/testtext2"), (Marking) new Annotation(
-                                        "http://www.aksw.org/gerbil/testtext"))) } });
+        List<Object[]> tests = new ArrayList<Object[]>();
+        tests.add(new Object[] { new DocumentImpl("Dies ist ein Testtext.", "http://www.aksw.org/gerbil/test-document",
+                Arrays.asList((Marking) new SpanImpl(13, 8))) });
+        tests.add(new Object[] { new DocumentImpl("Dies ist ein Testtext.", "http://www.aksw.org/gerbil/test-document",
+                Arrays.asList((Marking) new SpanImpl(0, 4))) });
+        tests.add(new Object[] { new DocumentImpl("Dies ist ein Testtext.", "http://www.aksw.org/gerbil/test-document",
+                Arrays.asList(((Marking) new SpanImpl(0, 4)), (Marking) new SpanImpl(13, 8))) });
+        tests.add(new Object[] { new DocumentImpl("Dies ist ein Testtext.", "http://www.aksw.org/gerbil/test-document",
+                Arrays.asList((Marking) new NamedEntity(13, 8, "http://www.aksw.org/gerbil/testtext"))) });
+        tests.add(new Object[] { new DocumentImpl("Dies ist ein Testtext.", "http://www.aksw.org/gerbil/test-document",
+                Arrays.asList((Marking) new ScoredNamedEntity(13, 8, "http://www.aksw.org/gerbil/testtext", 0.87))) });
+        tests.add(new Object[] { new DocumentImpl("<> dies ?% ist ein TästTöxt!!.",
+                "http://www.aksw.org/gerbil/test-document", Arrays.asList((Marking) new SpanImpl(3, 4),
+                        (Marking) new SpanImpl(19, 8))) });
+        tests.add(new Object[] { new DocumentImpl(
+                "Angelina, her father Jon, and her partner Brad never played together in the same movie.",
+                "http://www.aksw.org/gerbil/test-document", Arrays.asList((Marking) new SpanImpl(21, 3),
+                        (Marking) new SpanImpl(0, 8), (Marking) new SpanImpl(42, 4))) });
+        tests.add(new Object[] { new DocumentImpl(
+                "Angelina, her father Jon, and her partner Brad never played together in the same movie.",
+                "http://www.aksw.org/gerbil/test-document", Arrays.asList((Marking) new Annotation(
+                        "http://www.aksw.org/gerbil/testtext"), (Marking) new Annotation(
+                        "http://www.aksw.org/gerbil/testtext2"), (Marking) new Annotation(
+                        "http://www.aksw.org/gerbil/testtext"))) });
+        tests.add(new Object[] { new DocumentImpl(
+                "Angelina, her father Jon, and her partner Brad never played together in the same movie.",
+                "http://www.aksw.org/gerbil/test-document",
+                Arrays.asList(
+                        (Marking) new TypedNamedEntity(21, 3, "http://www.aksw.org/notInWiki/Jon", new HashSet<String>(
+                                Arrays.asList("http://www.aksw.org/notInWiki/Person"))),
+                        (Marking) new TypedNamedEntity(0, 8, "http://www.aksw.org/notInWiki/Angelina",
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Person",
+                                        "http://www.aksw.org/notInWiki/Actor", "http://www.aksw.org/notInWiki/Mother"))),
+                        (Marking) new ScoredTypedNamedEntity(42, 4, "http://www.aksw.org/notInWiki/Brad",
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Person")), 0.25))) });
+        return tests;
     }
 
     private Document document;

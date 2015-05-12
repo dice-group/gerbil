@@ -23,10 +23,10 @@
  */
 package org.aksw.gerbil.transfer.nif.data;
 
-import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.ScoredMarking;
 
-public class ScoredNamedEntity extends NamedEntity implements Meaning, ScoredMarking {
+public class ScoredNamedEntity extends NamedEntity implements MeaningSpan, ScoredMarking {
 
     private double confidence;
 
@@ -69,7 +69,17 @@ public class ScoredNamedEntity extends NamedEntity implements Meaning, ScoredMar
 
     @Override
     public String toString() {
-        return "(" + startPosition + ", " + length + ", " + uri + ", " + confidence + ")";
+        StringBuilder builder = new StringBuilder();
+        builder.append('(');
+        builder.append(startPosition);
+        builder.append(", ");
+        builder.append(length);
+        builder.append(", ");
+        builder.append(uri);
+        builder.append(", ");
+        builder.append(confidence);
+        builder.append(')');
+        return builder.toString();
     }
 
 }

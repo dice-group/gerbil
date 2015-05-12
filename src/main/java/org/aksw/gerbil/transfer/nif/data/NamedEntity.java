@@ -23,9 +23,9 @@
  */
 package org.aksw.gerbil.transfer.nif.data;
 
-import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.MeaningSpan;
 
-public class NamedEntity extends SpanImpl implements Meaning {
+public class NamedEntity extends SpanImpl implements MeaningSpan {
 
     protected String uri;
 
