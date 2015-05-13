@@ -29,7 +29,7 @@ public class NIFWSTestingController {
     private static final String RETURN_ERROR_MSG_NAME = "errorMsg";
     private static final String NIF_WS_TEST_TEXT = "This simple text is for testing the communication between the given web service and the GERBIL web service.";
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
     @RequestMapping("/testNifWs")
     public @ResponseBody
     String testWebService(@RequestParam(value = "experimentType") String experimentType,

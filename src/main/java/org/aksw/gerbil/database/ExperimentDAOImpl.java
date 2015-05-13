@@ -73,7 +73,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_ADDITIONAL_RESULTS = "SELECT resultId, value FROM ExperimentTasks_AdditionalResults WHERE taskId=:taskId";
     private final static String INSERT_ADDITIONAL_RESULT = "INSERT INTO ExperimentTasks_AdditionalResults(taskId, resultId, value) VALUES (:taskId, :resultId, :value)";
     private final static String GET_SUB_TASK_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, taskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
-    private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_AdditionalResults(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
+    private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
 
     // FIXME remove the following two statements by removing the experiment task
     // version workaround

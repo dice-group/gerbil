@@ -212,6 +212,7 @@ public class MainController {
             return Lists.newArrayList("Me - strong entity match");
         case D2KB:
         case ELink:
+        case ETyping:
             // Mw will not be shown since the positions are always exact and
             // thus it works like Ma
             return Lists.newArrayList("Ma - strong annotation match");
@@ -219,9 +220,12 @@ public class MainController {
             return Lists.newArrayList("Me - strong entity match");
         case Sc2KB:
             return Lists.newArrayList("Me - strong entity match");
+        case OKE_Task1:
+        case OKE_Task2:
         case EExt:
         case ERec:
         case Sa2KB:
+        case A2KB:
             return Lists.newArrayList("Mw - weak annotation match", "Ma - strong annotation match");
         default:
             return Lists.newArrayList("None");
