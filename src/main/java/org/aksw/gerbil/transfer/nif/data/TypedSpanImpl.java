@@ -40,4 +40,29 @@ public class TypedSpanImpl extends SpanImpl implements TypedSpan {
         builder.append(')');
         return builder.toString();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((types == null) ? 0 : types.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TypedSpanImpl other = (TypedSpanImpl) obj;
+        if (types == null) {
+            if (other.types != null)
+                return false;
+        } else if (!types.equals(other.types))
+            return false;
+        return true;
+    }
 }

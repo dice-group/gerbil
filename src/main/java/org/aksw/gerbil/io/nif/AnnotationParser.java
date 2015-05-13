@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.ScoredAnnotation;
@@ -22,6 +23,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 public class AnnotationParser {
 
@@ -62,8 +64,6 @@ public class AnnotationParser {
                 if (nodeIter.hasNext()) {
                     entityUri = nodeIter.next().toString();
                     nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taClassRef);
-                    // FIXME there is no typed named entity with a confidence
-                    // score
                     if (nodeIter.hasNext()) {
                         Set<String> types = new HashSet<String>();
                         while (nodeIter.hasNext()) {
@@ -72,19 +72,23 @@ public class AnnotationParser {
                         nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
                         if (nodeIter.hasNext()) {
                             confidence = nodeIter.next().asLiteral().getDouble();
-                            markings.add(new ScoredTypedNamedEntity(start, end - start, entityUri, types, confidence));
+                            markings.add(addTypeInformation(new ScoredTypedNamedEntity(start, end - start, entityUri,
+                                    types, confidence), nifModel));
                         } else {
                             // It has been typed without a confidence
-                            markings.add(new TypedNamedEntity(start, end - start, entityUri, types));
+                            markings.add(addTypeInformation(new TypedNamedEntity(start, end - start, entityUri, types),
+                                    nifModel));
                         }
                     } else {
                         nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
                         if (nodeIter.hasNext()) {
                             confidence = nodeIter.next().asLiteral().getDouble();
-                            markings.add(new ScoredNamedEntity(start, end - start, entityUri, confidence));
+                            markings.add(addTypeInformationIfPossible(new ScoredNamedEntity(start, end - start,
+                                    entityUri, confidence), nifModel));
                         } else {
                             // It has been disambiguated without a confidence
-                            markings.add(new NamedEntity(start, end - start, entityUri));
+                            markings.add(addTypeInformationIfPossible(new NamedEntity(start, end - start, entityUri),
+                                    nifModel));
                         }
                     }
                 } else {
@@ -116,5 +120,36 @@ public class AnnotationParser {
                 }
             }
         }
+    }
+
+    private MeaningSpan addTypeInformationIfPossible(NamedEntity ne, Model nifModel) {
+        TypedNamedEntity typedNE = new TypedNamedEntity(ne.getStartPosition(), ne.getLength(), ne.getUri(),
+                new HashSet<String>());
+        addTypeInformation(typedNE, nifModel);
+        if (typedNE.getTypes().size() > 0) {
+            return typedNE;
+        } else {
+            return ne;
+        }
+    }
+
+    private MeaningSpan addTypeInformationIfPossible(ScoredNamedEntity ne, Model nifModel) {
+        ScoredTypedNamedEntity typedNE = new ScoredTypedNamedEntity(ne.getStartPosition(), ne.getLength(), ne.getUri(),
+                new HashSet<String>(), ne.getConfidence());
+        addTypeInformation(typedNE, nifModel);
+        if (typedNE.getTypes().size() > 0) {
+            return typedNE;
+        } else {
+            return ne;
+        }
+    }
+
+    private TypedNamedEntity addTypeInformation(TypedNamedEntity typedNE, Model nifModel) {
+        NodeIterator nodeIter = nifModel.listObjectsOfProperty(nifModel.getResource(typedNE.getUri()), RDF.type);
+        Set<String> types = typedNE.getTypes();
+        while (nodeIter.hasNext()) {
+            types.add(nodeIter.next().asResource().getURI());
+        }
+        return typedNE;
     }
 }
