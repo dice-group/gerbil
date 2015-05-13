@@ -72,6 +72,7 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasur
                 tpSum += tp;
                 elementsSum += elements;
                 macroAcc += (double) tp / (double) elements;
+                ++docCount;
             }
         }
         macroAcc /= docCount;

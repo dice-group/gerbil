@@ -17,6 +17,7 @@ import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.matching.impl.MatchingsSearcher;
 import org.aksw.gerbil.matching.impl.MeaningMatchingsSearcher;
+import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.sameas.DatasetBasedSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
@@ -55,7 +56,11 @@ public class EvaluatorFactory {
     public EvaluatorFactory(SameAsRetriever globalRetriever, UriKBClassifier globalClassifier,
             SubClassInferencer inferencer) {
         this.globalRetriever = globalRetriever;
-        this.globalClassifier = globalClassifier;
+        if (globalClassifier != null) {
+            this.globalClassifier = globalClassifier;
+        } else {
+            this.globalClassifier = new SimpleWhiteListBasedUriKBClassifier("http://dbpedia.org/resource/");
+        }
         if (inferencer != null) {
             this.inferencer = inferencer;
         } else {

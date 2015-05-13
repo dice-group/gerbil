@@ -47,7 +47,6 @@ public class OKEChallengeTask1EETest extends AbstractExperimentTaskTest {
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         // The extractor returns nothing
-        // TODO
         testConfigs.add(new Object[] { new Document[] {}, GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
                 new double[] { 0, 0, 0, 0, 0, 0, 0 } });
         // The extractor found everything and marked all entities using the OKE
