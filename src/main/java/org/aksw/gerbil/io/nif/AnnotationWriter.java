@@ -1,5 +1,7 @@
 package org.aksw.gerbil.io.nif;
 
+import java.util.Set;
+
 import org.aksw.gerbil.io.nif.utils.NIFUriHelper;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
@@ -72,7 +74,10 @@ public class AnnotationWriter {
                     nifModel.createTypedLiteral(((ScoredMarking) span).getConfidence(), XSDDatatype.XSDdouble));
         }
         if (span instanceof TypedMarking) {
-            nifModel.add(spanAsResource, ITSRDF.taClassRef, nifModel.createResource(((TypedNamedEntity) span).getUri()));
+            Set<String> types = ((TypedNamedEntity) span).getTypes();
+            for (String type : types) {
+                nifModel.add(spanAsResource, ITSRDF.taClassRef, nifModel.createResource(type));
+            }
         }
     }
 }
