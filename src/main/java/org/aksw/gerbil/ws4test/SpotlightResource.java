@@ -2,8 +2,10 @@ package org.aksw.gerbil.ws4test;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 
-import org.aksw.gerbil.transfer.nif.AnnotatedDocument;
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentCreator;
 import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentParser;
 import org.restlet.representation.Representation;
@@ -31,7 +33,7 @@ public class SpotlightResource extends ServerResource {
             LOGGER.error("Exception while reading request.", e);
             return "";
         }
-        AnnotatedDocument document;
+        Document document;
         try {
             document = parser.getDocumentFromNIFReader(inputReader);
         } catch (Exception e) {
@@ -39,7 +41,7 @@ public class SpotlightResource extends ServerResource {
             return "";
         }
         LOGGER.debug("Request: " + document.toString());
-        document.setAnnotations(client.annotate(document.getText()));
+        document.setMarkings(new ArrayList<Marking>(client.annotate(document.getText())));
         LOGGER.debug("Result: " + document.toString());
         String nifDocument = creator.getDocumentAsNIFString(document);
         return nifDocument;

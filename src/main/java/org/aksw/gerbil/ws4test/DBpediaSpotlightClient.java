@@ -9,8 +9,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.gerbil.transfer.nif.Annotation;
-import org.aksw.gerbil.transfer.nif.data.DisambiguatedAnnotation;
+import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -91,23 +90,23 @@ public class DBpediaSpotlightClient {
         return null;
     }
 
-    protected List<Annotation> parseResponse(String response) {
+    protected List<NamedEntity> parseResponse(String response) {
         if (response == null) {
             return null;
         }
         @SuppressWarnings("unchecked")
-        List<Annotation> annotations = gson.fromJson(response, List.class);
+        List<NamedEntity> annotations = gson.fromJson(response, List.class);
         return annotations;
     }
 
-    public List<Annotation> annotate(String text) {
+    public List<NamedEntity> annotate(String text) {
         if (text == null) {
             return null;
         }
         text = text.trim();
 
         if (text.length() == 0) {
-            return new ArrayList<Annotation>(0);
+            return new ArrayList<NamedEntity>(0);
         }
         try {
             return parseResponse(request(text));
@@ -117,16 +116,16 @@ public class DBpediaSpotlightClient {
         }
     }
 
-    private static class AnnotationsDeserializer implements JsonDeserializer<List<Annotation>> {
+    private static class AnnotationsDeserializer implements JsonDeserializer<List<NamedEntity>> {
         private static final String NAMED_ENTITIES_ARRAY_KEY = "Resources";
         private static final String NAMED_ENTITY_URI_KEY = "@URI";
         private static final String NAMED_ENTITY_OFFSET_KEY = "@offset";
         private static final String NAMED_ENTITY_SURFACE_FORM_KEY = "@surfaceForm";
 
-        public List<Annotation> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        public List<NamedEntity> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                 throws JsonParseException {
             JsonObject responseAsObject = json.getAsJsonObject();
-            List<Annotation> annotations = new ArrayList<Annotation>();
+            List<NamedEntity> annotations = new ArrayList<NamedEntity>();
             if (responseAsObject.has(NAMED_ENTITIES_ARRAY_KEY)) {
                 JsonArray resources = responseAsObject.get(NAMED_ENTITIES_ARRAY_KEY).getAsJsonArray();
                 JsonObject annotation;
@@ -140,8 +139,8 @@ public class DBpediaSpotlightClient {
                             uri = URLDecoder.decode(uri, "utf-8");
                         } catch (UnsupportedEncodingException e) {
                         }
-                        annotations.add(new DisambiguatedAnnotation(annotation.get(NAMED_ENTITY_OFFSET_KEY).getAsInt(),
-                                annotation.get(NAMED_ENTITY_SURFACE_FORM_KEY).getAsString().length(), uri));
+                        annotations.add(new NamedEntity(annotation.get(NAMED_ENTITY_OFFSET_KEY).getAsInt(), annotation
+                                .get(NAMED_ENTITY_SURFACE_FORM_KEY).getAsString().length(), uri));
                     }
                 }
             }
