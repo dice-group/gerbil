@@ -5,6 +5,7 @@ import java.util.List;
 import org.aksw.gerbil.transfer.nif.TypingInfo;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 
+@Deprecated
 public class TypeExtractionResult {
 
     public List<NamedEntity> types;

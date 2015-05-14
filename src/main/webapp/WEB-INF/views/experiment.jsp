@@ -87,12 +87,33 @@
 									value="${task.macroRecall}" /></td>
 							<!-- <td>${task.state}</td> -->
 							<td>${task.errorCount}</td>
+							<td>${task.timestampstring}</td>
+							<td>${task.gerbilVersion}</td>
+							<c:forEach var="subTask" items="${task.subTasks}">
+								</tr>
+								<tr>	
+									<td></td>
+									<td>${subTask.type}</td>
+									<td><fmt:formatNumber type="number" maxFractionDigits="4"
+											value="${subTask.microF1Measure}" /></td>
+									<td><fmt:formatNumber type="number" maxFractionDigits="4"
+											value="${subTask.microPrecision}" /></td>
+									<td><fmt:formatNumber type="number" maxFractionDigits="4"
+											value="${subTask.microRecall}" /></td>
+									<td><fmt:formatNumber type="number" maxFractionDigits="4"
+											value="${subTask.macroF1Measure}" /></td>
+									<td><fmt:formatNumber type="number" maxFractionDigits="4"
+											value="${subTask.macroPrecision}" /></td>
+									<td><fmt:formatNumber type="number" maxFractionDigits="4"
+											value="${subTask.macroRecall}" /></td>
+									<td colspan="3"></td>
+							</c:forEach>
 						</c:if>
 						<c:if test="${not empty task.stateMsg}">
 							<td colspan="7" style="text-align:center">${task.stateMsg}</td>
-						</c:if>
 						<td>${task.timestampstring}</td>
 						<td>${task.gerbilVersion}</td>
+						</c:if>
 					</tr>
 				</c:forEach>
 			</tbody>
