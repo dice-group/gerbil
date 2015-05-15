@@ -2,20 +2,10 @@
 <metadata>
   <groupId>org.aksw</groupId>
   <artifactId>gerbil.nif.transfer</artifactId>
-<<<<<<< HEAD
   <versioning>
     <versions>
       <version>1.1.0-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20150513145936</lastUpdated>
-=======
-  <version>0.0.1-SNAPSHOT</version>
-  <versioning>
-    <versions>
-      <version>0.0.1-SNAPSHOT</version>
-      <version>0.0.1</version>
-    </versions>
-    <lastUpdated>20141105122827</lastUpdated>
->>>>>>> b947d731df077b24ad26d94e7bffc28fe56d4874
+    <lastUpdated>20150515192513</lastUpdated>
   </versioning>
 </metadata>
