@@ -23,8 +23,6 @@
  */
 package org.aksw.gerbil;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -35,7 +33,6 @@ import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
-import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
 
@@ -44,9 +41,8 @@ public class DexterTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new DexterAnnotatorConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi()),
-                new KnownNIFFileDatasetConfig(NIFDatasets.KORE50),
-                ExperimentType.Sa2KB, Matching.WEAK_ANNOTATION_MATCH) };
+                new DexterAnnotatorConfig(), new KnownNIFFileDatasetConfig(NIFDatasets.KORE50), ExperimentType.EExt,
+                Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
                 taskConfigs, "DEXTER_TEST");
         experimenter.run();

@@ -8,6 +8,7 @@ import org.aksw.gerbil.annotator.EntityExtractor;
 import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
+import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -15,8 +16,10 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 
-public class SpotlightAnnotator implements EntityRecognizer, EntityLinker, EntityExtractor, EntityTyper {
+public class SpotlightAnnotator implements OKETask1Annotator, EntityRecognizer, EntityLinker, EntityExtractor,
+        EntityTyper {
 
     private static final String SERVICE_URL_PARAM_KEY = "org.aksw.gerbil.annotator.impl.spotlight.SpotlightAnnotator.ServieURL";
 
@@ -72,6 +75,16 @@ public class SpotlightAnnotator implements EntityRecognizer, EntityLinker, Entit
     public List<Span> performRecognition(Document document) throws GerbilException {
         try {
             return new ArrayList<Span>(client.spot(document));
+        } catch (IOException e) {
+            throw new GerbilException("The DBpedia Spotlight client reported an error.", e,
+                    ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
+    }
+
+    @Override
+    public List<TypedNamedEntity> performTask1(Document document) throws GerbilException {
+        try {
+            return client.annotate(document);
         } catch (IOException e) {
             throw new GerbilException("The DBpedia Spotlight client reported an error.", e,
                     ErrorTypes.UNEXPECTED_EXCEPTION);

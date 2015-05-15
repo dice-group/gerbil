@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -183,52 +184,53 @@ public class MainController {
 
     @RequestMapping("/exptypes")
     public @ResponseBody
-    List<String> expTypes() {
-        List<String> names = Lists.newArrayList();
+    ModelMap expTypes() {
+        List<ExperimentType> names = Lists.newArrayList();
         for (ExperimentType type : ExperimentType.values()) {
             try {
-                if (ExperimentType.class.getDeclaredField(type.toString()).getAnnotation(Deprecated.class) == null)
-                    names.add(type.toString());
+                if (ExperimentType.class.getDeclaredField(type.name()).getAnnotation(Deprecated.class) == null)
+                    names.add(type);
             } catch (Exception e) {
-                LOGGER.error("Couldn't check availability of ExperimentType " + type.toString());
+                LOGGER.error("Couldn't check availability of ExperimentType " + type.toString(), e);
             }
         }
         Collections.sort(names);
-        return names;
+        return new ModelMap("ExperimentType", names.toArray(new ExperimentType[names.size()]));
     }
-//    @RequestMapping("/exptypes")
-//    public @ResponseBody ModelMap expTypes() {
-//        ModelMap model = new ModelMap("ExperimentType", ExperimentType.values());
-//        return model;
-//    }
+
+    // @RequestMapping("/exptypes")
+    // public @ResponseBody ModelMap expTypes() {
+    // ModelMap model = new ModelMap("ExperimentType", ExperimentType.values());
+    // return model;
+    // }
 
     @SuppressWarnings("deprecation")
     @RequestMapping("/matchings")
     public @ResponseBody
-    List<String> matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {
+    ModelMap matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {
         ExperimentType type = ExperimentType.valueOf(experimentType);
         switch (type) {
         case C2KB:
-            return Lists.newArrayList("Me - strong entity match");
+            return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
         case D2KB:
         case ELink:
         case ETyping:
             // Mw will not be shown since the positions are always exact and
             // thus it works like Ma
-            return Lists.newArrayList("Ma - strong annotation match");
+            return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ANNOTATION_MATCH));
         case Rc2KB:
-            return Lists.newArrayList("Me - strong entity match");
         case Sc2KB:
-            return Lists.newArrayList("Me - strong entity match");
+            return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
         case OKE_Task1:
         case OKE_Task2:
         case EExt:
         case ERec:
         case Sa2KB:
         case A2KB:
-            return Lists.newArrayList("Mw - weak annotation match", "Ma - strong annotation match");
+            return new ModelMap("Matching", Lists.newArrayList(Matching.WEAK_ANNOTATION_MATCH,
+                    Matching.STRONG_ANNOTATION_MATCH));
         default:
-            return Lists.newArrayList("None");
+            return new ModelMap("Matching", Lists.newArrayList("none"));
         }
     }
 

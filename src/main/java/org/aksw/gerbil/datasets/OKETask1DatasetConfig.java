@@ -31,14 +31,13 @@ import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.apache.jena.riot.Lang;
 
-public class KnownNIFFileDatasetConfig extends AbstractDatasetConfiguration {
+public class OKETask1DatasetConfig extends AbstractDatasetConfiguration {
 
-    private static final String NIF_DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.";
+    private static final String NIF_DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.OKETask1DatasetConfig.";
 
     public static enum NIFDatasets {
-        KORE50("KORE50"),
-        // N3_NEWS_100("N3-News-100"), Removed since this is a german dataset
-        N3_REUTERS_128("N3-Reuters-128"), N3_RSS_500("N3-RSS-500"), DBPEDIA_SPOTLIGHT("DBpediaSpotlight");
+        OKE_2015_TASK1_EXAMPLE("OKE 2015 Task 1 example set"), OKE_2015_TASK1_GS_SAMPLE(
+                "OKE 2015 Task 1 gold standard sample");
 
         private String name;
 
@@ -53,8 +52,8 @@ public class KnownNIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
     private NIFDatasets dataset;
 
-    public KnownNIFFileDatasetConfig(NIFDatasets dataset) {
-        super(dataset.getDatasetName(), true, ExperimentType.EExt);
+    public OKETask1DatasetConfig(NIFDatasets dataset) {
+        super(dataset.getDatasetName(), true, ExperimentType.OKE_Task1);
         this.dataset = dataset;
     }
 

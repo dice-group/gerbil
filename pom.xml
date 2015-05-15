@@ -29,7 +29,7 @@
 		<junit.version>4.11</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.10.RELEASE</spring.version>
-		<jena.version>2.12.1</jena.version>
+		<jena.version>2.13.0</jena.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version> 
 	</properties>
 

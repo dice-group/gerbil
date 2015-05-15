@@ -34,8 +34,8 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datasets.DatahubNIFConfig;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
-import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datasets.NIFFileDatasetConfig;
+import org.aksw.gerbil.datasets.OKETask1DatasetConfig;
 import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;
@@ -62,7 +62,8 @@ public class DatasetMapping {
     private synchronized static DatasetMapping getInstance() {
         if (instance == null) {
             Map<String, DatasetConfiguration> nameDatasetMapping = new HashMap<String, DatasetConfiguration>();
-//            WikipediaApiInterface wikiApi = SingletonWikipediaApi.getInstance();
+            // WikipediaApiInterface wikiApi =
+            // SingletonWikipediaApi.getInstance();
 
             // nameDatasetMapping.put(ACE2004DatasetConfig.DATASET_NAME, new
             // ACE2004DatasetConfig(wikiApi));
@@ -96,9 +97,15 @@ public class DatasetMapping {
             // Microposts2014Config.Microposts2014Chunk.TEST, wikiApi));
 
             // Got through the known NIF datasets
-            NIFDatasets nifDatasets[] = NIFDatasets.values();
-            for (int i = 0; i < nifDatasets.length; ++i) {
-                nameDatasetMapping.put(nifDatasets[i].getDatasetName(), new KnownNIFFileDatasetConfig(nifDatasets[i]));
+            KnownNIFFileDatasetConfig.NIFDatasets knownNifDatasets[] = KnownNIFFileDatasetConfig.NIFDatasets.values();
+            for (int i = 0; i < knownNifDatasets.length; ++i) {
+                nameDatasetMapping.put(knownNifDatasets[i].getDatasetName(), new KnownNIFFileDatasetConfig(
+                        knownNifDatasets[i]));
+            }
+            OKETask1DatasetConfig.NIFDatasets okeTask1NifDatasets[] = OKETask1DatasetConfig.NIFDatasets.values();
+            for (int i = 0; i < okeTask1NifDatasets.length; ++i) {
+                nameDatasetMapping.put(okeTask1NifDatasets[i].getDatasetName(), new OKETask1DatasetConfig(
+                        okeTask1NifDatasets[i]));
             }
 
             // load Datahub data
@@ -148,7 +155,8 @@ public class DatasetMapping {
                 // remove "NIFDS_" from the name
                 name = name.substring(6, pos) + UPLOADED_DATASET_SUFFIX;
                 LOGGER.error("name={}, uri={}", name, uri);
-                return new NIFFileDatasetConfig(name, uri, false, ExperimentType.Sa2KB);
+                return new NIFFileDatasetConfig(name, uri, false, ExperimentType.EExt, ExperimentType.OKE_Task1,
+                        ExperimentType.OKE_Task2);
             }
             LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
             return null;

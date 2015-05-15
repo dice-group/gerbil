@@ -23,17 +23,17 @@
  */
 package org.aksw.gerbil.utils;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.gerbil.annotator.impl.spotlight.SpotlightAnnotator;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.annotators.DexterAnnotatorConfig;
 import org.aksw.gerbil.annotators.KeaAnnotatorConfig;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
+import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,23 +57,24 @@ public class AnnotatorMapping {
     private synchronized static AnnotatorMapping getInstance() {
         if (instance == null) {
             Map<String, AnnotatorConfiguration> mapping = new HashMap<String, AnnotatorConfiguration>();
-//            mapping.put(BabelfyAnnotatorConfig.ANNOTATOR_NAME,
-//                    new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()));
-            mapping.put(DexterAnnotatorConfig.ANNOTATOR_NAME,
-                    new DexterAnnotatorConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi()));
-//            mapping.put(SpotlightAnnotatorConfig.ANNOTATOR_NAME,
-//                    new SpotlightAnnotatorConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi()));
-//            mapping.put(TagMeAnnotatorConfig.ANNOTATOR_NAME, new TagMeAnnotatorConfig());
-//            mapping.put(WATAnnotatorConfig.ANNOTATOR_NAME, new WATAnnotatorConfig());
-//            mapping.put(WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME, new WikipediaMinerAnnotatorConfig());
-//            mapping.put(AgdistisAnnotatorConfig.ANNOTATOR_NAME,
-//                    new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()));
-//            mapping.put(NERDAnnotatorConfig.ANNOTATOR_NAME,
-//                    new NERDAnnotatorConfig(SingletonWikipediaApi.getInstance()));
+            // mapping.put(BabelfyAnnotatorConfig.ANNOTATOR_NAME,
+            // new BabelfyAnnotatorConfig(SingletonWikipediaApi.getInstance()));
+            mapping.put(DexterAnnotatorConfig.ANNOTATOR_NAME, new DexterAnnotatorConfig());
+            mapping.put(SpotlightAnnotator.ANNOTATOR_NAME, new SpotlightAnnotatorConfig());
+            // mapping.put(TagMeAnnotatorConfig.ANNOTATOR_NAME, new
+            // TagMeAnnotatorConfig());
+            // mapping.put(WATAnnotatorConfig.ANNOTATOR_NAME, new
+            // WATAnnotatorConfig());
+            // mapping.put(WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME, new
+            // WikipediaMinerAnnotatorConfig());
+            // mapping.put(AgdistisAnnotatorConfig.ANNOTATOR_NAME,
+            // new
+            // AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()));
+            // mapping.put(NERDAnnotatorConfig.ANNOTATOR_NAME,
+            // new NERDAnnotatorConfig(SingletonWikipediaApi.getInstance()));
             // mapping.put(FOXAnnotator.NAME, new
             // FOXAnnotatorConfig(SingletonWikipediaApi.getInstance()));
-            mapping.put(KeaAnnotatorConfig.ANNOTATOR_NAME, new KeaAnnotatorConfig(SingletonWikipediaApi.getInstance(),
-                    new DBPediaApi()));
+            mapping.put(KeaAnnotatorConfig.ANNOTATOR_NAME, new KeaAnnotatorConfig());
 
             instance = new AnnotatorMapping(mapping);
         }
@@ -97,7 +98,8 @@ public class AnnotatorMapping {
                 String uri = name.substring(pos + 1, name.length() - 1);
                 // remove "NIFWS_" from the name
                 name = name.substring(6, pos) + NIF_WS_SUFFIX;
-                return new NIFWebserviceAnnotatorConfiguration(uri, name, false, ExperimentType.Sa2KB);
+                return new NIFWebserviceAnnotatorConfiguration(uri, name, false, ExperimentType.OKE_Task1,
+                        ExperimentType.OKE_Task2);
             }
             LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
             return null;

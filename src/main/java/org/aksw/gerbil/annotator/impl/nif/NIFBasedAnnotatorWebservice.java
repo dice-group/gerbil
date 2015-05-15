@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.aksw.gerbil.annotator.EntityExtractor;
 import org.aksw.gerbil.annotator.EntityTyper;
+import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
@@ -42,6 +43,7 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentCreator;
 import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentParser;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -53,7 +55,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NIFBasedAnnotatorWebservice implements EntityExtractor, EntityTyper {
+public class NIFBasedAnnotatorWebservice implements OKETask1Annotator, EntityExtractor, EntityTyper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NIFBasedAnnotatorWebservice.class);
 
@@ -143,6 +145,11 @@ public class NIFBasedAnnotatorWebservice implements EntityExtractor, EntityTyper
     @Override
     public List<TypedSpan> performTyping(Document document) throws GerbilException {
         return performAnnotation(document, TypedSpan.class);
+    }
+
+    @Override
+    public List<TypedNamedEntity> performTask1(Document document) throws GerbilException {
+        return performAnnotation(document, TypedNamedEntity.class);
     }
 
     protected <T extends Marking> List<T> performAnnotation(Document document, Class<T> resultClass) {

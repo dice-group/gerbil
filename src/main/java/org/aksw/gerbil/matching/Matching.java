@@ -64,7 +64,7 @@ public enum Matching implements Describable {
         this.label = label;
         this.description = description;
     }
-    
+
     @Override
     public String getLabel() {
         return label;
@@ -73,5 +73,9 @@ public enum Matching implements Describable {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    public String getName() {
+        return name();
     }
 }

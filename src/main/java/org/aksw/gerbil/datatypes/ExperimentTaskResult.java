@@ -315,4 +315,12 @@ public class ExperimentTaskResult {
     public void setSubTasks(List<ExperimentTaskResult> subTasks) {
         this.subTasks = subTasks;
     }
+
+    public int getNumberOfSubTasks() {
+        if (subTasks == null) {
+            return 0;
+        } else {
+            return subTasks.size();
+        }
+    }
 }

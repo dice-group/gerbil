@@ -23,9 +23,6 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.config.GerbilConfiguration;
@@ -46,20 +43,15 @@ public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private static final String USER_NAME_PROPERTY_KEY = "org.aksw.gerbil.annotators.KeaAnnotatorConfig.user";
     private static final String PASSWORD_PROPERTY_KEY = "org.aksw.gerbil.annotators.KeaAnnotatorConfig.password";
 
-    private WikipediaApiInterface wikiApi;
-    private DBPediaApi dbpediaApi;
-
-    public KeaAnnotatorConfig(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi) {
+    public KeaAnnotatorConfig() {
         super(ANNOTATOR_NAME, true, ExperimentType.EExt);
-        this.wikiApi = wikiApi;
-        this.dbpediaApi = dbpediaApi;
     }
 
     @Override
     protected Annotator loadAnnotator(ExperimentType type) throws Exception {
         String propertyKey;
-        // If this we need a D2KB system
-        if (ExperimentType.D2KB.equalsOrContainsType(type)) {
+        // If we need a D2KB system
+        if (ExperimentType.ELink.equalsOrContainsType(type)) {
             propertyKey = DISAMBIGATION_URL_PROPERTY_KEY;
         } else {
             propertyKey = ANNOTATION_URL_PROPERTY_KEY;

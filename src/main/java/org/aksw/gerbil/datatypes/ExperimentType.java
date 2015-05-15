@@ -163,6 +163,10 @@ public enum ExperimentType implements Describable {
     public String getDescription() {
         return description;
     }
+    
+    public String getName() {
+        return name();
+    }
 
     // public Class<? extends Marking> getInputType() {
     // return null;
@@ -313,6 +317,6 @@ public enum ExperimentType implements Describable {
     }
 
     public String toString() {
-        return "{label: " + getLabel() + ", description: " + getDescription() + "}";
+        return "{name:" + name() + " ,label:" + getLabel() + ", description:" + getDescription() + "}";
     }
 }

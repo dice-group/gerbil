@@ -45,16 +45,27 @@
 	<%@include file="navbar.jsp"%>
 	<h1>GERBIL Experiment</h1>
 	<c:if test="${not empty tasks}">
+		<c:set var="hasSubTasks" value="false"/>
+		<c:forEach var="task" items="${tasks}">
+			<c:if test="${task.numberOfSubTasks > 0}">
+				<c:set var="hasSubTasks" value="true"/>
+			</c:if>
+		</c:forEach>
 
 	Type: <c:out value="${tasks[0].type.label}" />
 		</br>
 	Matching: <c:out value="${tasks[0].matching.label}" />
 		<table id="resultTable"
-			class="table  table-hover table-condensed tablesorter tableScroll">
+			class="table  table-hover table-condensed tableScroll">
+		<!--<table id="resultTable"
+			class="table  table-hover table-condensed tablesorter tableScroll">-->
 			<thead>
 				<tr>
 					<th>Annotator</th>
 					<th>Dataset</th>
+					<c:if test="${hasSubTasks}">
+						<th></th>
+					</c:if>
 					<th>Micro F1</th>
 					<th>Micro Precision</th>
 					<th>Micro Recall</th>
@@ -70,9 +81,14 @@
 			<tbody>
 				<c:forEach var="task" items="${tasks}">
 					<tr>
-						<td>${task.annotator}</td>
-						<td>${task.dataset}</td>
 						<c:if test="${empty task.stateMsg}">
+							<!--<td rowspan="${task.numberOfSubTasks + 1}">${task.annotator}</td>-->
+							<!--<td rowspan="${task.numberOfSubTasks + 1}">${task.dataset}</td>-->
+							<td>${task.annotator}</td>
+							<td>${task.dataset}</td>
+							<c:if test="${hasSubTasks}">
+								<td></td>
+							</c:if>
 							<td><fmt:formatNumber type="number" maxFractionDigits="4"
 									value="${task.microF1Measure}" /></td>
 							<td><fmt:formatNumber type="number" maxFractionDigits="4"
@@ -92,7 +108,8 @@
 							<c:forEach var="subTask" items="${task.subTasks}">
 								</tr>
 								<tr>	
-									<td></td>
+									<td>${task.annotator}</td>
+									<td>${task.dataset}</td>
 									<td>${subTask.type}</td>
 									<td><fmt:formatNumber type="number" maxFractionDigits="4"
 											value="${subTask.microF1Measure}" /></td>
@@ -106,10 +123,18 @@
 											value="${subTask.macroPrecision}" /></td>
 									<td><fmt:formatNumber type="number" maxFractionDigits="4"
 											value="${subTask.macroRecall}" /></td>
-									<td colspan="3"></td>
+									<!--<td colspan="3"></td> -->
+									<td>${task.errorCount}</td>
+									<td>${task.timestampstring}</td>
+									<td>${task.gerbilVersion}</td>
 							</c:forEach>
 						</c:if>
-						<c:if test="${not empty task.stateMsg}">
+						<c:if test="${!empty task.stateMsg}">
+							<td>${task.annotator}</td>
+							<td>${task.dataset}</td>
+							<c:if test="${hasSubTasks}">
+								<td></td>
+							</c:if>
 							<td colspan="7" style="text-align:center">${task.stateMsg}</td>
 						<td>${task.timestampstring}</td>
 						<td>${task.gerbilVersion}</td>

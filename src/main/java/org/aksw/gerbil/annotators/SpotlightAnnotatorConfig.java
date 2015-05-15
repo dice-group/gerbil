@@ -31,7 +31,7 @@ public class SpotlightAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
     public SpotlightAnnotatorConfig() {
         super(SpotlightAnnotator.ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.EExt,
-                ExperimentType.ETyping });
+                ExperimentType.ETyping, ExperimentType.OKE_Task1 });
     }
 
     @Override

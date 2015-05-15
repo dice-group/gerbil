@@ -213,7 +213,7 @@
 		        for ( var i = 0; i < data.ExperimentType.length; i++) {
 			        var dat = {};
 			        dat.label = data.ExperimentType[i].label;
-			        dat.value = data.ExperimentType[i].label;
+			        dat.value = data.ExperimentType[i].name;
 			        formattedData.push(dat);
 		        }
 		        $('#type').multiselect('dataprovider', formattedData);
@@ -247,7 +247,7 @@
 		        for ( var i = 0; i < data.Matching.length; i++) {
 			        var dat = {};
 			        dat.label = data.Matching[i].label;
-			        dat.value = data.Matching[i].label;
+			        dat.value = data.Matching[i].name;
 			        formattedData.push(dat);
 		        }
 		        $('#matching').multiselect('dataprovider', formattedData);
