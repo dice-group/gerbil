@@ -22,7 +22,7 @@ public class SpotlightResource extends ServerResource {
 
     private TurtleNIFDocumentParser parser = new TurtleNIFDocumentParser();
     private TurtleNIFDocumentCreator creator = new TurtleNIFDocumentCreator();
-    private DBpediaSpotlightClient client = new DBpediaSpotlightClient(DBPEDIA_SPOTLIGHT_ENDPOINT);
+    private SpotlightClient client = new SpotlightClient(DBPEDIA_SPOTLIGHT_ENDPOINT);
 
     @Post
     public String accept(Representation request) {
@@ -41,7 +41,7 @@ public class SpotlightResource extends ServerResource {
             return "";
         }
         LOGGER.debug("Request: " + document.toString());
-        document.setMarkings(new ArrayList<Marking>(client.annotate(document.getText())));
+        document.setMarkings(new ArrayList<Marking>(client.annotateSavely(document)));
         LOGGER.debug("Result: " + document.toString());
         String nifDocument = creator.getDocumentAsNIFString(document);
         return nifDocument;
