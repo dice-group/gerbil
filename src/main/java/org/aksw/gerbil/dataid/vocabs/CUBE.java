@@ -52,5 +52,6 @@ public class CUBE {
     public static final Resource Observation = property("Observation");
 
     public static final Property structure = property("structure");
+    public static final Property dataset = property("dataset");
 
 }

@@ -23,7 +23,7 @@
  */
 package org.aksw.gerbil.datatypes;
 
-import org.aksw.gerbil.transfer.nif.Marking;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * The type of an experiment.
@@ -46,9 +46,8 @@ import org.aksw.gerbil.transfer.nif.Marking;
  * @author m.roeder
  * 
  */
-
-// TODO add to String with better naming and info method
-public enum ExperimentType {
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+public enum ExperimentType implements Describable {
     /**
      * Disambiguate to Wikipedia
      * <p>
@@ -58,7 +57,9 @@ public enum ExperimentType {
      * Output: mentions for every entity
      */
     @Deprecated
-    D2KB,
+    D2KB(
+            "D2KB",
+            "The input for the annotator is a text with entities that already have been marked inside. The annotator should link all these mentioned entities to a knowledge base."),
     /**
      * Annotate to Wikipedia
      * <p>
@@ -69,7 +70,7 @@ public enum ExperimentType {
      * Output: marked entities and mentions for their meaning
      */
     @Deprecated
-    A2KB,
+    A2KB("A2KB", "The annotator gets a text and shall recognize entities inside and link them to a knowledge base."),
     /**
      * Scored-annotate to Wikipedia
      * <p>
@@ -81,7 +82,9 @@ public enum ExperimentType {
      * Output: marked entities and scored mentions for their meaning
      */
     @Deprecated
-    Sa2KB,
+    Sa2KB(
+            "Sa2KB",
+            "The annotator gets a text and shall recognize entities inside and link them to a knowledge base. Additionally, each annotation is assigned a score representing the likelihood that the annotation is correct."),
     /**
      * Concepts to Wikipedia
      * <p>
@@ -92,7 +95,7 @@ public enum ExperimentType {
      * Output: marked entities
      */
     @Deprecated
-    C2KB,
+    C2KB("C2KB", "The annotator gets a text and shall return relevant entities that are mentioned inside the text."),
     /**
      * Scored concepts to Wikipedia
      * <p>
@@ -104,7 +107,9 @@ public enum ExperimentType {
      * Output: scored markings of entities
      */
     @Deprecated
-    Sc2KB,
+    Sc2KB(
+            "Sc2KB",
+            "The annotator gets a text and shall return relevant entities that are mentioned inside the text. Additionally, each tag is assigned a score representing the likelihood that the annotation is correct."),
     /**
      * Ranked-concepts to Wikipedia
      * <p>
@@ -115,44 +120,57 @@ public enum ExperimentType {
      * Output: ranked markings of entities
      */
     @Deprecated
-    Rc2KB,
-    /**
-     * Entity Extraction comprises the two steps {@link #EntityRecognition} and
-     * {@link #EntityLinking}.
-     */
-    EExt,
+    Rc2KB(
+            "Sc2KB",
+            "The annotator gets a text and shall return relevant entities that are mentioned inside the textand rank them in terms of their relevance for the topics dealt with in the input text"),
     /**
      * Entity Recognition is the identification of an entity inside a given
      * text.
      */
-    ERec,
+    ERec("Entity Recognition", "Entity Recognition is the identification of entities inside a given text."),
     /**
      * Entity Linking is the assigning of a URI from a given Knowledge Base to a
      * given entity.
      */
-    ELink, ETyping, OKE_Task1, OKE_Task2;// ,
-    // /**
-    // * Entity Typing is the assigning of a type from a given Knowledge Base to
-    // a
-    // * given entity. Note that this is different to Entity Linking because
-    // even
-    // * unknown entities can be typed.
-    // */
-    // EntityTyping,
-    // /**
-    // * Class Induction is the determining of an entity type based on a given
-    // * Knowledge Base containing the type and a given document containing this
-    // * entity and its type.
-    // */
-    // OKEChallenge1, OKEChallenge2, OKEChallenge3;
+    ELink("Entity Linking",
+            "Entity Linking is the assigning of a URI from a given Knowledge Base to a given entity inside a given text."),
+    /**
+     * Entity Extraction comprises the two tasks {@link #EntityRecognition} and
+     * {@link #EntityLinking}.
+     */
+    EExt("Entity Extraction", "Entity Extraction comprises the two steps Entity Recognition and Entity Linking."), ETyping(
+            "Entity Typing",
+            "Entity Typing is the assigning of a class URI from a given Knowledge Base to a given entity inside a given text."), OKE_Task1(
+            "OKE Challenge 2015 - Task 1",
+            "This task comprises the recognition, linking and typing of all entities inside a given text."), OKE_Task2(
+            "OKE Challenge 2015 - Task 2",
+            "This task comprises the determining of the type of a given entity inside a given text and the extraction of the part of the text, describing the type."), ;
 
-    public Class<? extends Marking> getInputType() {
-        return null;
+    private String label;
+    private String description;
+
+    ExperimentType(String label, String description) {
+        this.label = label;
+        this.description = description;
     }
 
-    public Class<? extends Marking> getOutputType() {
-        return null;
+    @Override
+    public String getLabel() {
+        return label;
     }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    // public Class<? extends Marking> getInputType() {
+    // return null;
+    // }
+    //
+    // public Class<? extends Marking> getOutputType() {
+    // return null;
+    // }
 
     public boolean equalsOrContainsType(ExperimentType type) {
         switch (this) {
@@ -292,5 +310,9 @@ public enum ExperimentType {
         }
         }
         return false;
+    }
+
+    public String toString() {
+        return "{label: " + getLabel() + ", description: " + getDescription() + "}";
     }
 }

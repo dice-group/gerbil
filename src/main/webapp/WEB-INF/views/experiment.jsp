@@ -46,9 +46,9 @@
 	<h1>GERBIL Experiment</h1>
 	<c:if test="${not empty tasks}">
 
-	Type: <c:out value="${tasks[0].type}" />
+	Type: <c:out value="${tasks[0].type.label}" />
 		</br>
-	Matching: <c:out value="${tasks[0].matching}" />
+	Matching: <c:out value="${tasks[0].matching.label}" />
 		<table id="resultTable"
 			class="table  table-hover table-condensed tablesorter tableScroll">
 			<thead>

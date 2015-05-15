@@ -30,6 +30,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.10.RELEASE</spring.version>
 		<jena.version>2.12.1</jena.version>
+		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version> 
 	</properties>
 
 	<repositories>
@@ -72,6 +73,11 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
 			<version>${jena.version}</version>
+		</dependency>
+		<dependency>
+		  	<groupId>com.github.jsonld-java</groupId>
+  			<artifactId>jsonld-java-jena</artifactId>
+  			<version>${jsonld-java-jena.version}</version>
 		</dependency>
 
 		<!-- BAT-Framework and its dependencies -->
@@ -330,7 +336,7 @@
 		<dependency>
 			<groupId>org.aksw.simba</groupId>
 			<artifactId>topicmodeling.concurrent</artifactId>
-			<version>0.0.1</version>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- FOX -->

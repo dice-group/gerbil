@@ -34,8 +34,8 @@ import org.aksw.gerbil.dataid.vocabs.GERBIL;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.web.ExperimentTaskStateHelper;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFFormat;
 
+import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -109,7 +109,7 @@ public class DataIDGenerator {
         OutputStream o = new ByteArrayOutputStream();
 
         // creating json-ld output format
-        RDFDataMgr.write(o, model, RDFFormat.JSONLD_PRETTY);
+        RDFDataMgr.write(o, model, JenaJSONLD.JSONLD);
 
         return o.toString();
     }
@@ -142,6 +142,7 @@ public class DataIDGenerator {
 
         // If this task has been finished
         if (ExperimentTaskStateHelper.taskFinished(result)) {
+        	model.add(experimentTask, CUBE.dataset, model.createResource(experiment.getURI()));
             // creating and setting literals for the current experiment
             model.add(experimentTask, GERBIL.microF1, model.createTypedLiteral(String.valueOf(result.getMicroF1Measure()),XSDDatatype.XSDdecimal));
             model.add(experimentTask, GERBIL.microPrecision, model.createTypedLiteral(String.valueOf(result.getMicroPrecision()),XSDDatatype.XSDdecimal));
