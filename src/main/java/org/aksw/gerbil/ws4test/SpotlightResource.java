@@ -18,11 +18,9 @@ public class SpotlightResource extends ServerResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotlightResource.class);
 
-    private static final String DBPEDIA_SPOTLIGHT_ENDPOINT = "spotlight.dbpedia.org:80";
-
     private TurtleNIFDocumentParser parser = new TurtleNIFDocumentParser();
     private TurtleNIFDocumentCreator creator = new TurtleNIFDocumentCreator();
-    private SpotlightClient client = new SpotlightClient(DBPEDIA_SPOTLIGHT_ENDPOINT);
+    private SpotlightClient client = new SpotlightClient();
 
     @Post
     public String accept(Representation request) {
