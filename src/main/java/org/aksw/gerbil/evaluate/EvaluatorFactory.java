@@ -33,6 +33,10 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class EvaluatorFactory {
 
+    public static final String DEFAULT_WELL_KNOWN_KBS[] = new String[] { "http://dbpedia.org/resource/",
+            "http://dbpedia.org/ontology/", "http://ontologydesignpatterns.org/ont/wikipedia/d0.owl#",
+            "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#" };
+
     protected SameAsRetriever globalRetriever = null;
     protected UriKBClassifier globalClassifier = null;
     protected SubClassInferencer inferencer = null;
@@ -59,7 +63,7 @@ public class EvaluatorFactory {
         if (globalClassifier != null) {
             this.globalClassifier = globalClassifier;
         } else {
-            this.globalClassifier = new SimpleWhiteListBasedUriKBClassifier("http://dbpedia.org/resource/");
+            this.globalClassifier = new SimpleWhiteListBasedUriKBClassifier(DEFAULT_WELL_KNOWN_KBS);
         }
         if (inferencer != null) {
             this.inferencer = inferencer;
