@@ -110,7 +110,7 @@
 								<tr>	
 									<td>${task.annotator}</td>
 									<td>${task.dataset}</td>
-									<td>${subTask.type}</td>
+									<td>${subTask.type.label}</td>
 									<td><fmt:formatNumber type="number" maxFractionDigits="4"
 											value="${subTask.microF1Measure}" /></td>
 									<td><fmt:formatNumber type="number" maxFractionDigits="4"

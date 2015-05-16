@@ -64,6 +64,10 @@ public class NIFWSTestingController {
                 annotator.performRecognition(document);
                 break;
             }
+            case OKE_Task1: {
+                annotator.performTask1(document);
+                break;
+            }
             default: {
                 throw new IllegalArgumentException("Got an unknown experiment type \"" + experimentType + "\".");
             }
