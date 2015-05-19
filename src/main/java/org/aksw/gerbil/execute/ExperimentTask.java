@@ -31,6 +31,7 @@ import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
+import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataset.Dataset;
@@ -290,6 +291,25 @@ public class ExperimentTask implements Task {
                     // reduce the document to a text and a list of Spans
                     results.add(okeTask1Annotator.performTask1(DocumentInformationReducer
                             .reduceToTextAndSpans(document)));
+                    goldStandard.add(document.getMarkings(TypedNamedEntity.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case OKE_Task2: {
+            try {
+                List<List<TypedNamedEntity>> results = new ArrayList<List<TypedNamedEntity>>(dataset.size());
+                List<List<TypedNamedEntity>> goldStandard = new ArrayList<List<TypedNamedEntity>>(dataset.size());
+                OKETask2Annotator okeTask2Annotator = ((OKETask2Annotator) annotator);
+
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a text and a list of Spans
+                    results.add(okeTask2Annotator.performTask2(DocumentInformationReducer
+                            .reduceToTextAndEntities(document)));
                     goldStandard.add(document.getMarkings(TypedNamedEntity.class));
                     taskState.increaseExperimentStepCount();
                 }
