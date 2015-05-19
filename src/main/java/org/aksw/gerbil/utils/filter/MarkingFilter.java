@@ -1,4 +1,4 @@
-package org.aksw.gerbil.evaluate.impl.filter;
+package org.aksw.gerbil.utils.filter;
 
 import java.util.List;
 

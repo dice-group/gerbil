@@ -34,6 +34,7 @@ import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
+import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
@@ -67,6 +68,9 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
 
     public static ErrorCountingAnnotatorDecorator createDecorator(Annotator annotator, int numberOfExpectedCalls) {
         int maxErrors = (int) Math.ceil(AMOUNT_OF_TOLERATED_ERRORS * numberOfExpectedCalls);
+        if (annotator instanceof OKETask2Annotator) {
+            return new ErrorCountingOKETask2Annotator((OKETask2Annotator) annotator, maxErrors);
+        }
         if (annotator instanceof OKETask1Annotator) {
             return new ErrorCountingOKETask1Annotator((OKETask1Annotator) annotator, maxErrors);
         }
@@ -164,74 +168,18 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         }
     }
 
-    // private static class ErrorCountingC2W extends AbstractErrorCounter
-    // implements C2WSystem {
-    //
-    // public ErrorCountingC2W(C2WSystem decoratedAnnotator, int maxErrors) {
-    // super(decoratedAnnotator, maxErrors);
-    // }
-    //
-    // @Override
-    // public HashSet<Tag> solveC2W(String text) throws AnnotationException {
-    // return ErrorCountingAnnotatorDecorator.solveC2W(this, text);
-    // }
-    // }
-    //
-    // private static class ErrorCountingSc2W extends ErrorCountingC2W
-    // implements Sc2WSystem {
-    //
-    // public ErrorCountingSc2W(Sc2WSystem decoratedAnnotator, int maxErrors) {
-    // super(decoratedAnnotator, maxErrors);
-    // }
-    //
-    // @Override
-    // public HashSet<ScoredTag> solveSc2W(String text) throws
-    // AnnotationException {
-    // return ErrorCountingAnnotatorDecorator.solveSc2W(this, text);
-    // }
-    // }
+    private static class ErrorCountingOKETask2Annotator extends ErrorCountingAnnotatorDecorator implements
+            OKETask2Annotator {
 
-    // protected static HashSet<Tag> solveC2W(AbstractErrorCounter errorCounter,
-    // String text) throws AnnotationException {
-    // HashSet<Tag> result = null;
-    // try {
-    // result = ((C2WSystem)
-    // errorCounter.getDecoratedAnnotator()).solveC2W(text);
-    // } catch (Exception e) {
-    // if (errorCounter.getErrorCount() == 0) {
-    // // Log only the first exception completely
-    // LOGGER.error("Got an Exception from the annotator (" +
-    // errorCounter.getName() + ")", e);
-    // } else {
-    // // Log only the Exception message without the stack trace
-    // LOGGER.error("Got an Exception from the annotator (" +
-    // errorCounter.getName() + "): "
-    // + e.getLocalizedMessage());
-    // }
-    // errorCounter.increaseErrorCount();
-    // return new HashSet<Tag>(0);
-    // }
-    // if (LOGGER.isDebugEnabled()) {
-    // StringBuilder builder = new StringBuilder();
-    // builder.append('[');
-    // builder.append(errorCounter.getName());
-    // builder.append("] result=[");
-    // boolean first = true;
-    // for (Tag a : result) {
-    // if (first) {
-    // first = false;
-    // } else {
-    // builder.append(',');
-    // }
-    // builder.append("Tag(wId=");
-    // builder.append(a.getConcept());
-    // builder.append(')');
-    // }
-    // builder.append(']');
-    // LOGGER.debug(builder.toString());
-    // }
-    // return result;
-    // }
+        protected ErrorCountingOKETask2Annotator(OKETask2Annotator decoratedAnnotator, int maxErrors) {
+            super(decoratedAnnotator, maxErrors);
+        }
+
+        @Override
+        public List<TypedNamedEntity> performTask2(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performOKETask2(this, document);
+        }
+    }
 
     protected static List<MeaningSpan> performLinking(ErrorCountingAnnotatorDecorator errorCounter, Document document)
             throws GerbilException {
@@ -347,50 +295,6 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         return result;
     }
 
-    // protected static HashSet<ScoredTag> solveSc2W(AbstractErrorCounter
-    // errorCounter, String text) {
-    // HashSet<ScoredTag> result = null;
-    // try {
-    // result = ((Sc2WSystem)
-    // errorCounter.getDecoratedAnnotator()).solveSc2W(text);
-    // } catch (Exception e) {
-    // if (errorCounter.getErrorCount() == 0) {
-    // // Log only the first exception completely
-    // LOGGER.error("Got an Exception from the annotator (" +
-    // errorCounter.getName() + ")", e);
-    // } else {
-    // // Log only the Exception message without the stack trace
-    // LOGGER.error("Got an Exception from the annotator (" +
-    // errorCounter.getName() + "): "
-    // + e.getLocalizedMessage());
-    // }
-    // errorCounter.increaseErrorCount();
-    // return new HashSet<ScoredTag>(0);
-    // }
-    // if (LOGGER.isDebugEnabled()) {
-    // StringBuilder builder = new StringBuilder();
-    // builder.append('[');
-    // builder.append(errorCounter.getName());
-    // builder.append("] result=[");
-    // boolean first = true;
-    // for (ScoredTag t : result) {
-    // if (first) {
-    // first = false;
-    // } else {
-    // builder.append(',');
-    // }
-    // builder.append("ScoredTag(wId=");
-    // builder.append(t.getConcept());
-    // builder.append(",s=");
-    // builder.append(t.getScore());
-    // builder.append(')');
-    // }
-    // builder.append(']');
-    // LOGGER.debug(builder.toString());
-    // }
-    // return result;
-    // }
-
     protected static List<Span> performRecognition(ErrorCountingAnnotatorDecorator errorCounter, Document document)
             throws AnnotationException, GerbilException {
         List<Span> result = null;
@@ -434,6 +338,44 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         List<TypedNamedEntity> result = null;
         try {
             result = ((OKETask1Annotator) errorCounter.getDecoratedAnnotator()).performTask1(document);
+        } catch (Exception e) {
+            if (errorCounter.getErrorCount() == 0) {
+                // Log only the first exception completely
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + ")", e);
+            } else {
+                // Log only the Exception message without the stack trace
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + "): "
+                        + e.getLocalizedMessage());
+            }
+            errorCounter.increaseErrorCount();
+            return new ArrayList<TypedNamedEntity>(0);
+        }
+        if (LOGGER.isDebugEnabled()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append('[');
+            builder.append(errorCounter.getName());
+            builder.append("] result=[");
+            boolean first = true;
+            for (Span s : result) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(',');
+                }
+                builder.append("Span");
+                builder.append(s.toString());
+            }
+            builder.append(']');
+            LOGGER.debug(builder.toString());
+        }
+        return result;
+    }
+
+    protected static List<TypedNamedEntity> performOKETask2(ErrorCountingAnnotatorDecorator errorCounter,
+            Document document) throws AnnotationException, GerbilException {
+        List<TypedNamedEntity> result = null;
+        try {
+            result = ((OKETask2Annotator) errorCounter.getDecoratedAnnotator()).performTask2(document);
         } catch (Exception e) {
             if (errorCounter.getErrorCount() == 0) {
                 // Log only the first exception completely

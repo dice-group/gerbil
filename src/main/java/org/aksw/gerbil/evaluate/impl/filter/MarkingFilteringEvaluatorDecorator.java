@@ -6,6 +6,7 @@ import org.aksw.gerbil.evaluate.AbstractEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.utils.filter.MarkingFilter;
 
 public class MarkingFilteringEvaluatorDecorator<T extends Marking> extends AbstractEvaluatorDecorator<T> {
 

@@ -10,6 +10,7 @@ import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.HierarchicalFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.InKBClassBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.SubTaskAverageCalculator;
+import org.aksw.gerbil.evaluate.impl.filter.MarkingFilteringEvaluatorDecorator;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.MatchingFactory;
 import org.aksw.gerbil.matching.impl.CompoundMatchingsCounter;
@@ -28,8 +29,11 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class EvaluatorFactory {
 
@@ -123,8 +127,29 @@ public class EvaluatorFactory {
                     ExperimentType.ETyping, subTaskConfig, dataset)));
             return new SubTaskAverageCalculator<TypedNamedEntity>(evaluators);
         }
+        case OKE_Task2: {
+            ExperimentTaskConfiguration subTaskConfig;
+            List<SubTaskEvaluator<TypedNamedEntity>> evaluators = new ArrayList<SubTaskEvaluator<TypedNamedEntity>>();
+            String classTypes[] = new String[] { RDFS.Class.getURI(), OWL.Class.getURI() };
+            // sub task 1, find the correct type of the entity (use only
+            // entities, without a class type!)
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, new MarkingFilteringEvaluatorDecorator<>(
+                    new TypeBasedMarkingFilter<TypedNamedEntity>(true, classTypes),
+                    (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ETyping, subTaskConfig, dataset))));
+            // sub task 2, find the correct position of the type in the text
+            // (use only entities with a class type!)
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.ERec, configuration.matching);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, new MarkingFilteringEvaluatorDecorator<>(
+                    new TypeBasedMarkingFilter<TypedNamedEntity>(false, classTypes),
+                    (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ERec, subTaskConfig, dataset))));
+
+            return new SubTaskAverageCalculator<TypedNamedEntity>(evaluators);
+        }
         default: {
-            throw new RuntimeException();
+            throw new IllegalArgumentException("Got an unknown Experiment Type.");
         }
         }
     }
