@@ -34,6 +34,7 @@ import org.aksw.gerbil.annotators.AgdistisAnnotatorConfig;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
 import org.aksw.gerbil.annotators.DexterAnnotatorConfig;
+import org.aksw.gerbil.annotators.EntityclassifierEUConfig;
 import org.aksw.gerbil.annotators.KeaAnnotatorConfig;
 import org.aksw.gerbil.annotators.NERDAnnotatorConfig;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
@@ -77,6 +78,8 @@ public class AnnotatorMapping {
                     new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()));
             mapping.put(NERDAnnotatorConfig.ANNOTATOR_NAME,
                     new NERDAnnotatorConfig(SingletonWikipediaApi.getInstance()));
+            mapping.put(EntityclassifierEUConfig.ANNOTATOR_NAME,
+                    new EntityclassifierEUConfig(SingletonWikipediaApi.getInstance(), new DBPediaApi()));
             // mapping.put(FOXAnnotator.NAME, new
             // FOXAnnotatorConfig(SingletonWikipediaApi.getInstance()));
             mapping.put(KeaAnnotatorConfig.ANNOTATOR_NAME, new KeaAnnotatorConfig(SingletonWikipediaApi.getInstance(),
