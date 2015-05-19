@@ -38,6 +38,11 @@
 		<li>J&ouml;rg Waitelonis (HPI Potsdam, Germany)
 		<li>Lars Wesemann (R&D, Unister GmbH, Germany)
 	</ul>
+	
+	<p>
+	How to cite:<br>
+	<i>GERBIL -- General Entity Annotation Benchmark Framework</i> by Ricardo Usbeck, Michael R&ouml;der, Axel-Cyrille Ngonga Ngomo, Ciro Baron, Andreas Both, Martin Br&uuml;mmer, Diego Ceccarelli, Marco Cornolti, Didier Cherix, Bernd Eickmann, Paolo Ferragina, Christiane Lemke, Andrea Moro, Roberto Navigli, Francesco Piccinno, Giuseppe Rizzo, Harald Sack, Ren&eacute; Speck, Rapha&euml;l Troncy, J&ouml;rg Waitelonis and Lars Wesemann in 24th WWW conference.
+	</p>
 
 	<p>Parts of this work have been supported by the ESF.</p>
 	<a href="http://www.esf-in-sachsen.de"><img alt="ESF in Sachsen"
