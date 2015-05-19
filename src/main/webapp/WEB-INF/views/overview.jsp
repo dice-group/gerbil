@@ -19,7 +19,7 @@
 <script type="text/javascript"
 	src="/gerbil/webResources/js/script_radar_overview.js"></script>
 <link rel="icon" type="image/png"
-	href="/gerbil/webResources/gerbilicon.png">
+	href="/gerbil/webResources/gerbilicon_transparent.png">
 </head>
 <style>
 table {
