@@ -88,9 +88,14 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasur
 
     @Override
     public int getClass(T meaning) {
-        if ((meaning == null) || (!(meaning instanceof Meaning)) || (((Meaning) meaning).getUri() == null)) {
+        if ((meaning == null) || (!(meaning instanceof Meaning))) {
             return EE_CLASS_ID;
         }
-        return classifier.isKBUri(((Meaning) meaning).getUri()) ? IN_KB_CLASS_ID : EE_CLASS_ID;
+        for (String uri : ((Meaning) meaning).getUris()) {
+            if (classifier.isKBUri(uri)) {
+                return IN_KB_CLASS_ID;
+            }
+        }
+        return EE_CLASS_ID;
     }
 }

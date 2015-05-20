@@ -31,13 +31,16 @@ public class OKEChallengeTask1DatasetTest {
                             (Marking) new TypedNamedEntity(
                                     0,
                                     20,
-                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Florence_May_Harding",
+                                    new HashSet<String>(
+                                            Arrays.asList("http://dbpedia.org/resource/Florence_May_Harding",
+                                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Florence_May_Harding")),
                                     new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
                                             "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
                             (Marking) new NamedEntity(34, 6,
                                     "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/National_Art_School"),
-                            (Marking) new TypedNamedEntity(44, 6,
-                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Sydney",
+                            (Marking) new TypedNamedEntity(44, 6, new HashSet<String>(Arrays.asList(
+                                    "http://dbpedia.org/resource/Sydney",
+                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Sydney")),
                                     new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
                                             "http://ontologydesignpatterns.org/ont/wikipedia/d0.owl#Location"))),
                             (Marking) new TypedNamedEntity(
@@ -50,44 +53,59 @@ public class OKEChallengeTask1DatasetTest {
                     "Such notables include James Carville, who was the senior political adviser to Bill Clinton, and Donna Brazile, the campaign manager of the 2000 presidential campaign of Vice-President Al Gore.",
                     "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
                     Arrays.asList(
-                            (Marking) new TypedNamedEntity(22, 14,
-                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/James_Carville",
+                            (Marking) new TypedNamedEntity(22, 14, new HashSet<String>(Arrays.asList(
+                                    "http://dbpedia.org/resource/James_Carville",
+                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/James_Carville")),
                                     new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
                                             "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
                             (Marking) new TypedNamedEntity(
                                     57,
                                     17,
-                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Political_adviser",
+                                    new HashSet<String>(
+                                            Arrays.asList("http://dbpedia.org/resource/Political_consulting",
+                                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Political_adviser")),
                                     new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
                                             "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"))),
-                            (Marking) new TypedNamedEntity(78, 12,
-                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Bill_Clinton",
+                            (Marking) new TypedNamedEntity(78, 12, new HashSet<String>(Arrays.asList(
+                                    "http://dbpedia.org/resource/Bill_Clinton",
+                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Bill_Clinton")),
                                     new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
                                             "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
-                            (Marking) new TypedNamedEntity(96, 13,
-                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Donna_Brazile",
+                            (Marking) new TypedNamedEntity(96, 13, new HashSet<String>(Arrays.asList(
+                                    "http://dbpedia.org/resource/Donna_Brazile",
+                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Donna_Brazile")),
                                     new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
                                             "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
-                            (Marking) new TypedNamedEntity(115, 16,
-                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Campaign_manager",
+                            (Marking) new TypedNamedEntity(
+                                    115,
+                                    16,
+                                    new HashSet<String>(
+                                            Arrays.asList("http://dbpedia.org/resource/Campaign_manager",
+                                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Campaign_manager")),
                                     new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
                                             "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"))),
-                            (Marking) new TypedNamedEntity(184, 7,
-                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Al_Gore",
+                            (Marking) new TypedNamedEntity(184, 7, new HashSet<String>(Arrays.asList(
+                                    "http://dbpedia.org/resource/Al_Gore",
+                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Al_Gore")),
                                     new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
                                             "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))))),
             new DocumentImpl(
                     "The senator received a Bachelor of Laws from the Columbia University.",
                     "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
                     Arrays.asList(
-                            (Marking) new TypedNamedEntity(4, 7,
-                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Senator_1",
+                            (Marking) new TypedNamedEntity(
+                                    4,
+                                    7,
+                                    new HashSet<String>(
+                                            Arrays.asList("http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Senator_1")),
                                     new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
                                             "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
                             (Marking) new TypedNamedEntity(
                                     49,
                                     19,
-                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Columbia_University",
+                                    new HashSet<String>(
+                                            Arrays.asList("http://dbpedia.org/resource/Columbia_University",
+                                                    "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Columbia_University")),
                                     new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
                                             "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization"))))) };
 

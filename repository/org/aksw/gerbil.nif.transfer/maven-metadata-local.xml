@@ -4,11 +4,8 @@
   <artifactId>gerbil.nif.transfer</artifactId>
   <versioning>
     <versions>
-      <version>0.0.1-SNAPSHOT</version>
-      <version>0.0.1</version>
-      <version>1.0.0</version>
       <version>1.1.0-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20150519163415</lastUpdated>
+    <lastUpdated>20150520141005</lastUpdated>
   </versioning>
 </metadata>

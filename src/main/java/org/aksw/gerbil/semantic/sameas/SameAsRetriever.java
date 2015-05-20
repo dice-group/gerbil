@@ -12,4 +12,6 @@ public interface SameAsRetriever {
      * @return
      */
     public Set<String> retrieveSameURIs(String uri);
+
+    public void addSameURIs(Set<String> uris);
 }
