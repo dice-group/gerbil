@@ -23,35 +23,30 @@
  */
 package org.aksw.gerbil.transfer.nif;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 
-import org.aksw.gerbil.io.nif.DocumentListParser;
-import org.apache.commons.io.IOUtils;
+import org.aksw.gerbil.io.nif.NIFParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.rdf.model.InfModel;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.reasoner.Reasoner;
-import com.hp.hpl.jena.reasoner.rulesys.GenericRuleReasoner;
-import com.hp.hpl.jena.reasoner.rulesys.Rule;
-
+/**
+ * This class is a simple Wrapper of a {@link NIFParser} instance offering the
+ * methods of the {@link NIFDocumentParser} interface and might be removed in
+ * future releases.
+ * 
+ * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * 
+ */
 public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractNIFDocumentParser.class);
 
-    private static final String TYPE_INFERENCE_RULES = "typeInferencerRules.txt";
+    private NIFParser parser;
 
-    private String httpContentType;
-    private DocumentListParser parser = new DocumentListParser();
-
-    public AbstractNIFDocumentParser(String httpContentType) {
-        this.httpContentType = httpContentType;
+    public AbstractNIFDocumentParser(NIFParser parser) {
+        this.parser = parser;
     }
 
     @Override
@@ -61,15 +56,7 @@ public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
 
     @Override
     public Document getDocumentFromNIFReader(Reader reader) throws Exception {
-        Model nifModel = parseNIFModelFromReader(reader);
-        nifModel = infereTypes(nifModel);
-        return createAnnotatedDocument(nifModel);
-    }
-
-    protected abstract Model parseNIFModelFromReader(Reader reader) throws Exception;
-
-    protected Document createAnnotatedDocument(Model nifModel) {
-        List<Document> documents = parser.parseDocuments(nifModel);
+        List<Document> documents = parser.parseNIF(reader);
         if (documents.size() == 0) {
             LOGGER.error("Couldn't find any documents inside the given NIF model. Returning null.");
             return null;
@@ -82,28 +69,6 @@ public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
 
     @Override
     public String getHttpContentType() {
-        return httpContentType;
+        return parser.getHttpContentType();
     }
-
-    private Model infereTypes(Model nifModel) {
-        InputStream is = AbstractNIFDocumentParser.class.getClassLoader().getResourceAsStream(TYPE_INFERENCE_RULES);
-        List<String> lines;
-        try {
-            lines = IOUtils.readLines(is);
-        } catch (IOException e) {
-            LOGGER.error("Couldn't load type inferencer rules from resource \"" + TYPE_INFERENCE_RULES
-                    + "\". Working on the standard model.", e);
-            return nifModel;
-        }
-        IOUtils.closeQuietly(is);
-        StringBuilder sb = new StringBuilder();
-        for (String line : lines) {
-            sb.append(line);
-        }
-
-        Reasoner reasoner = new GenericRuleReasoner(Rule.parseRules(sb.toString()));
-        InfModel inf = ModelFactory.createInfModel(reasoner, nifModel);
-        return inf;
-    }
-
 }

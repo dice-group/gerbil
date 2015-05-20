@@ -8,3 +8,6 @@
 [eqClassSubClass2: (?a rdfs:subClassOf ?b), (?b owl:equivalentClass ?c) -> (?a rdfs:subClassOf ?c)]
 [subClassTransition: (?a rdfs:subClassOf ?b), (?b rdfs:subClassOf ?c) -> (?a rdfs:subClassOf ?c)]
 [typeTransition: (?a a ?b), (?b rdfs:subClassOf ?c) -> (?a a ?c)]
+[classTypeInference1: (?a a ?b) -> (?b a rdfs:Class), (?b a owl:Class)]
+[classTypeInference2: (?a rdfs:subClassOf ?b) -> (?a a rdfs:Class), (?a a owl:Class), (?b a rdfs:Class), (?b a owl:Class)]
+[classTypeInference3: (?a owl:equivalentClass ?b) -> (?a a rdfs:Class), (?a a owl:Class), (?b a rdfs:Class), (?b a owl:Class)]

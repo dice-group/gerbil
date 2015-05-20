@@ -23,37 +23,33 @@
  */
 package org.aksw.gerbil.transfer.nif;
 
-import org.aksw.gerbil.io.nif.DocumentWriter;
+import java.util.Arrays;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import org.aksw.gerbil.io.nif.NIFWriter;
 
+/**
+ * This class is a simple Wrapper of a {@link NIFWriter} instance offering the
+ * methods of the {@link NIFDocumentCreator} interface and might be removed in
+ * future releases.
+ * 
+ * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * 
+ */
 public abstract class AbstractNIFDocumentCreator implements NIFDocumentCreator {
 
-    private String httpContentType;
-    private DocumentWriter documentWriter = new DocumentWriter();
+    private NIFWriter nifWriter;
 
-    public AbstractNIFDocumentCreator(String httpContentType) {
-        this.httpContentType = httpContentType;
+    public AbstractNIFDocumentCreator(NIFWriter nifWriter) {
+        this.nifWriter = nifWriter;
     }
 
     @Override
     public String getDocumentAsNIFString(Document document) {
-        Model nifModel = createNIFModel(document);
-        return generateNIFStringFromModel(nifModel);
-    }
-
-    protected abstract String generateNIFStringFromModel(Model nifModel);
-
-    protected Model createNIFModel(Document document) {
-        Model nifModel = ModelFactory.createDefaultModel();
-        nifModel.setNsPrefixes(NIFTransferPrefixMapping.getInstance());
-        documentWriter.writeDocumentToModel(nifModel, document);
-        return nifModel;
+        return nifWriter.writeNIF(Arrays.asList(document));
     }
 
     @Override
     public String getHttpContentType() {
-        return httpContentType;
+        return nifWriter.getHttpContentType();
     }
 }
