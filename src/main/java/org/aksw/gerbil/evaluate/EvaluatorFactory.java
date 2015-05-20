@@ -10,6 +10,7 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.HierarchicalFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.InKBClassBasedFMeasureCalculator;
+import org.aksw.gerbil.evaluate.impl.SpanMergingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.SubTaskAverageCalculator;
 import org.aksw.gerbil.evaluate.impl.filter.MarkingFilteringEvaluatorDecorator;
 import org.aksw.gerbil.matching.Matching;
@@ -152,7 +153,7 @@ public class EvaluatorFactory {
                     "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization",
                     "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person",
                     "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"));
-            
+
             // sub task 1, find the correct type of the entity (use only
             // entities, without a class type!)
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
@@ -167,7 +168,8 @@ public class EvaluatorFactory {
                     ExperimentType.ERec, configuration.matching);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, new MarkingFilteringEvaluatorDecorator<>(
                     new TypeBasedMarkingFilter<TypedNamedEntity>(true, classTypes),
-                    (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ERec, subTaskConfig, dataset))));
+                    new SpanMergingEvaluatorDecorator<>((Evaluator<TypedNamedEntity>) createEvaluator(
+                            ExperimentType.ERec, subTaskConfig, dataset)))));
 
             return new SubTaskAverageCalculator<TypedNamedEntity>(evaluators);
         }

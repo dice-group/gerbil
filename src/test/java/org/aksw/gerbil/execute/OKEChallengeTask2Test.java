@@ -96,7 +96,51 @@ public class OKEChallengeTask2Test extends AbstractExperimentTaskTest {
                                                         new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
                                                                 OWL.Class.getURI()))))) }, GOLD_STD,
                         Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
-        // The annotator found everything but did not used DOLCE classes
+        // The annotator found everything but marked the most specific classes
+        // only (which should still be correct)
+        testConfigs
+                .add(new Object[] {
+                        new Document[] {
+                                new DocumentImpl(
+                                        TEXTS[0],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-1",
+                                        Arrays.asList(
+                                                (Marking) new TypedNamedEntity(
+                                                        0,
+                                                        12,
+                                                        "http://dbpedia.org/resource/Brian_Banner",
+                                                        new HashSet<String>(
+                                                                Arrays.asList(
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/FictionalVillain",
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Villain",
+                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
+                                                (Marking) new TypedNamedEntity(
+                                                        18,
+                                                        17,
+                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/FictionalVillain",
+                                                        new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
+                                                                OWL.Class.getURI()))))),
+                                new DocumentImpl(
+                                        TEXTS[1],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-2",
+                                        Arrays.asList(
+                                                (Marking) new TypedNamedEntity(
+                                                        0,
+                                                        24,
+                                                        "http://dbpedia.org/resource/AVEX_Records",
+                                                        new HashSet<String>(
+                                                                Arrays.asList(
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/HoldingCompany",
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Company",
+                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization"))),
+                                                (Marking) new TypedNamedEntity(
+                                                        101,
+                                                        15,
+                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/HoldingCompany",
+                                                        new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
+                                                                OWL.Class.getURI()))))) }, GOLD_STD,
+                        Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+        // The annotator found everything but did not use DOLCE classes
         testConfigs
                 .add(new Object[] {
                         new Document[] {
