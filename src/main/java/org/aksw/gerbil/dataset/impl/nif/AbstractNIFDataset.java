@@ -24,15 +24,16 @@
 package org.aksw.gerbil.dataset.impl.nif;
 
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.List;
 
 import org.aksw.gerbil.dataset.RdfModelContainingDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.io.nif.DocumentListParser;
+import org.aksw.gerbil.io.nif.AbstractNIFParser;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.adapters.RDFReaderRIOT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,20 +100,17 @@ public abstract class AbstractNIFDataset implements RdfModelContainingDataset {
             throw new GerbilException("Couldn't get InputStream.", ErrorTypes.DATASET_LOADING_ERROR);
         }
         try {
-            RDFDataMgr.read(nifModel, inputStream, getDataLanguage());
+            LocalNIFParser parser = new LocalNIFParser(this);
+            documents = parser.parseNIF(inputStream, nifModel);
+            // RDFDataMgr.read(nifModel, inputStream, getDataLanguage());
         } catch (Exception e) {
             throw new GerbilException("Exception while parsing dataset.", e, ErrorTypes.DATASET_LOADING_ERROR);
         } finally {
             closeInputStream(inputStream);
         }
 
-        DocumentListParser parser = new DocumentListParser(true);
-        documents = parser.parseDocuments(nifModel);
-
         // if there are still triples available
-        if (nifModel.size() > 0) {
-            rdfModel = nifModel;
-        }
+        rdfModel = nifModel;
 
         hasBeenInitialized = true;
         LOGGER.info("{} dataset initialized", name);
@@ -147,6 +145,31 @@ public abstract class AbstractNIFDataset implements RdfModelContainingDataset {
     @Override
     public Model getRdfModel() {
         return rdfModel;
+    }
+
+    protected static class LocalNIFParser extends AbstractNIFParser {
+
+        private AbstractNIFDataset languageSource;
+
+        public LocalNIFParser(AbstractNIFDataset languageSource) {
+            super("");
+            this.languageSource = languageSource;
+        }
+
+        @Override
+        protected Model parseNIFModel(InputStream is, Model nifModel) {
+            RDFReaderRIOT rdfReader = new RDFReaderRIOT(languageSource.getDataLanguage());
+            rdfReader.read(nifModel, is, "");
+            return nifModel;
+        }
+
+        @Override
+        protected Model parseNIFModel(Reader reader, Model nifModel) {
+            RDFReaderRIOT rdfReader = new RDFReaderRIOT(languageSource.getDataLanguage());
+            rdfReader.read(nifModel, reader, "");
+            return nifModel;
+        }
+
     }
 
 }

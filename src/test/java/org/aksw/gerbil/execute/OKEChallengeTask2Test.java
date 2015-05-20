@@ -41,8 +41,7 @@ public class OKEChallengeTask2Test extends AbstractExperimentTaskTest {
         // The extractor returns nothing
         testConfigs.add(new Object[] { new Document[] {}, GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
                 new double[] { 0, 0, 0, 0, 0, 0, 0 } });
-        // The extractor found everything and marked all entities using dbpedia
-        // URIs (if they were available)
+        // The annotator found everything and marked all classes correctly
         testConfigs
                 .add(new Object[] {
                         new Document[] {
@@ -58,17 +57,16 @@ public class OKEChallengeTask2Test extends AbstractExperimentTaskTest {
                                                                 Arrays.asList(
                                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/FictionalVillain",
                                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Villain",
-                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Personification",
                                                                         "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
                                                 (Marking) new TypedNamedEntity(
                                                         18,
-                                                        35,
+                                                        17,
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/FictionalVillain",
                                                         new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
                                                                 OWL.Class.getURI()))),
                                                 (Marking) new TypedNamedEntity(
                                                         28,
-                                                        35,
+                                                        7,
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Villain",
                                                         new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
                                                                 OWL.Class.getURI()))))),
@@ -87,17 +85,157 @@ public class OKEChallengeTask2Test extends AbstractExperimentTaskTest {
                                                                         "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization"))),
                                                 (Marking) new TypedNamedEntity(
                                                         109,
-                                                        116,
+                                                        7,
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Company",
                                                         new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
                                                                 OWL.Class.getURI()))),
                                                 (Marking) new TypedNamedEntity(
-                                                        109,
-                                                        116,
+                                                        101,
+                                                        15,
                                                         "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/HoldingCompany",
                                                         new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
                                                                 OWL.Class.getURI()))))) }, GOLD_STD,
                         Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+        // The annotator found everything but did not used DOLCE classes
+        testConfigs
+                .add(new Object[] {
+                        new Document[] {
+                                new DocumentImpl(
+                                        TEXTS[0],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-1",
+                                        Arrays.asList(
+                                                (Marking) new TypedNamedEntity(
+                                                        0,
+                                                        12,
+                                                        "http://dbpedia.org/resource/Brian_Banner",
+                                                        new HashSet<String>(
+                                                                Arrays.asList(
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/FictionalVillain",
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Villain"))),
+                                                (Marking) new TypedNamedEntity(
+                                                        18,
+                                                        17,
+                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/FictionalVillain",
+                                                        new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
+                                                                OWL.Class.getURI()))),
+                                                (Marking) new TypedNamedEntity(
+                                                        28,
+                                                        7,
+                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Villain",
+                                                        new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
+                                                                OWL.Class.getURI()))))),
+                                new DocumentImpl(
+                                        TEXTS[1],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-2",
+                                        Arrays.asList(
+                                                (Marking) new TypedNamedEntity(
+                                                        0,
+                                                        24,
+                                                        "http://dbpedia.org/resource/AVEX_Records",
+                                                        new HashSet<String>(
+                                                                Arrays.asList(
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/HoldingCompany",
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Company"))),
+                                                (Marking) new TypedNamedEntity(
+                                                        109,
+                                                        7,
+                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Company",
+                                                        new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
+                                                                OWL.Class.getURI()))),
+                                                (Marking) new TypedNamedEntity(
+                                                        101,
+                                                        15,
+                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/HoldingCompany",
+                                                        new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
+                                                                OWL.Class.getURI()))))) }, GOLD_STD,
+                        Matching.WEAK_ANNOTATION_MATCH, new double[] { 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0 } });
+        // The annotator typed the classes correctly, but did not found the
+        // classes inside the text
+        testConfigs
+                .add(new Object[] {
+                        new Document[] {
+                                new DocumentImpl(
+                                        TEXTS[0],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-1",
+                                        Arrays.asList((Marking) new TypedNamedEntity(
+                                                0,
+                                                12,
+                                                "http://dbpedia.org/resource/Brian_Banner",
+                                                new HashSet<String>(
+                                                        Arrays.asList(
+                                                                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/FictionalVillain",
+                                                                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Villain",
+                                                                "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))))),
+                                new DocumentImpl(
+                                        TEXTS[1],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-2",
+                                        Arrays.asList((Marking) new TypedNamedEntity(
+                                                0,
+                                                24,
+                                                "http://dbpedia.org/resource/AVEX_Records",
+                                                new HashSet<String>(
+                                                        Arrays.asList(
+                                                                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/HoldingCompany",
+                                                                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Company",
+                                                                "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization"))))) },
+                        GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0 } });
+        // The annotator typed the classes correctly, but did not found the
+        // correct positions of the classes inside the text (yes, this is
+        // different to the case above)
+        testConfigs
+                .add(new Object[] {
+                        new Document[] {
+                                new DocumentImpl(
+                                        TEXTS[0],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-1",
+                                        Arrays.asList(
+                                                (Marking) new TypedNamedEntity(
+                                                        0,
+                                                        12,
+                                                        "http://dbpedia.org/resource/Brian_Banner",
+                                                        new HashSet<String>(
+                                                                Arrays.asList(
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/FictionalVillain",
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Villain",
+                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
+                                                (Marking) new TypedNamedEntity(
+                                                        0,
+                                                        1,
+                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/FictionalVillain",
+                                                        new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
+                                                                OWL.Class.getURI()))),
+                                                (Marking) new TypedNamedEntity(
+                                                        0,
+                                                        1,
+                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Villain",
+                                                        new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
+                                                                OWL.Class.getURI()))))),
+                                new DocumentImpl(
+                                        TEXTS[1],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-2",
+                                        Arrays.asList(
+                                                (Marking) new TypedNamedEntity(
+                                                        0,
+                                                        24,
+                                                        "http://dbpedia.org/resource/AVEX_Records",
+                                                        new HashSet<String>(
+                                                                Arrays.asList(
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/HoldingCompany",
+                                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Company",
+                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization"))),
+                                                (Marking) new TypedNamedEntity(
+                                                        0,
+                                                        1,
+                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/Company",
+                                                        new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
+                                                                OWL.Class.getURI()))),
+                                                (Marking) new TypedNamedEntity(
+                                                        0,
+                                                        1,
+                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/HoldingCompany",
+                                                        new HashSet<String>(Arrays.asList(RDFS.Class.getURI(),
+                                                                OWL.Class.getURI()))))) }, GOLD_STD,
+                        Matching.WEAK_ANNOTATION_MATCH, new double[] { 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0 } });
         return testConfigs;
     }
 

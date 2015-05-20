@@ -1,6 +1,7 @@
 package org.aksw.gerbil.evaluate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.aksw.gerbil.dataset.Dataset;
@@ -18,6 +19,7 @@ import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.matching.impl.MatchingsSearcher;
 import org.aksw.gerbil.matching.impl.MeaningMatchingsSearcher;
+import org.aksw.gerbil.semantic.kb.ExactWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.sameas.DatasetBasedSameAsRetriever;
@@ -76,8 +78,15 @@ public class EvaluatorFactory {
         }
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
+    @SuppressWarnings("rawtypes")
     protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset) {
+        return createEvaluator(type, configuration, dataset, globalRetriever, globalClassifier, inferencer);
+    }
+
+    @SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
+    protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration,
+            Dataset dataset, SameAsRetriever globalRetriever, UriKBClassifier globalClassifier,
+            SubClassInferencer inferencer) {
         switch (type) {
         case Sa2KB:
         case A2KB:
@@ -113,6 +122,12 @@ public class EvaluatorFactory {
             ExperimentTaskConfiguration subTaskConfig;
             List<SubTaskEvaluator<TypedNamedEntity>> evaluators = new ArrayList<SubTaskEvaluator<TypedNamedEntity>>();
 
+            UriKBClassifier okeClassifier = new ExactWhiteListBasedUriKBClassifier(Arrays.asList(
+                    "http://www.ontologydesignpatterns.org/ont/d0.owl#Location",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"));
+
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.ERec, configuration.matching);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<TypedNamedEntity>) createEvaluator(
@@ -124,26 +139,34 @@ public class EvaluatorFactory {
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<TypedNamedEntity>) createEvaluator(
-                    ExperimentType.ETyping, subTaskConfig, dataset)));
+                    ExperimentType.ETyping, subTaskConfig, dataset, globalRetriever, okeClassifier, inferencer)));
             return new SubTaskAverageCalculator<TypedNamedEntity>(evaluators);
         }
         case OKE_Task2: {
             ExperimentTaskConfiguration subTaskConfig;
             List<SubTaskEvaluator<TypedNamedEntity>> evaluators = new ArrayList<SubTaskEvaluator<TypedNamedEntity>>();
             String classTypes[] = new String[] { RDFS.Class.getURI(), OWL.Class.getURI() };
+
+            UriKBClassifier okeClassifier = new ExactWhiteListBasedUriKBClassifier(Arrays.asList(
+                    "http://www.ontologydesignpatterns.org/ont/d0.owl#Location",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"));
+            
             // sub task 1, find the correct type of the entity (use only
             // entities, without a class type!)
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, new MarkingFilteringEvaluatorDecorator<>(
-                    new TypeBasedMarkingFilter<TypedNamedEntity>(true, classTypes),
-                    (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ETyping, subTaskConfig, dataset))));
+                    new TypeBasedMarkingFilter<TypedNamedEntity>(false, classTypes),
+                    (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ETyping, subTaskConfig, dataset,
+                            globalRetriever, okeClassifier, inferencer))));
             // sub task 2, find the correct position of the type in the text
             // (use only entities with a class type!)
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.ERec, configuration.matching);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, new MarkingFilteringEvaluatorDecorator<>(
-                    new TypeBasedMarkingFilter<TypedNamedEntity>(false, classTypes),
+                    new TypeBasedMarkingFilter<TypedNamedEntity>(true, classTypes),
                     (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ERec, subTaskConfig, dataset))));
 
             return new SubTaskAverageCalculator<TypedNamedEntity>(evaluators);
