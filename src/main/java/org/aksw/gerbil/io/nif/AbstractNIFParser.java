@@ -30,6 +30,7 @@ import java.io.StringReader;
 import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.NIFTransferPrefixMapping;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,41 +61,56 @@ public abstract class AbstractNIFParser implements NIFParser {
     }
 
     @Override
+    public List<Document> parseNIF(String nifString, Model model) {
+        return parseNIF(new StringReader(nifString), model);
+    }
+
+    @Override
     public List<Document> parseNIF(Reader reader) {
-        Model nifModel = parseNIFModel(reader);
-        nifModel = infereTypes(nifModel);
+        return parseNIF(reader, getDefaultModel());
+    }
+
+    @Override
+    public List<Document> parseNIF(Reader reader, Model nifModel) {
+        parseNIFModel(reader, nifModel);
+        infereTypes(nifModel);
         return parser.parseDocuments(nifModel);
     }
 
-    protected abstract Model parseNIFModel(Reader reader);
+    protected abstract Model parseNIFModel(Reader reader, Model nifModel);
 
     @Override
     public List<Document> parseNIF(InputStream is) {
-        Model nifModel = parseNIFModel(is);
-        nifModel = infereTypes(nifModel);
+        return parseNIF(is, getDefaultModel());
+    }
+
+    @Override
+    public List<Document> parseNIF(InputStream is, Model nifModel) {
+        parseNIFModel(is, nifModel);
+        infereTypes(nifModel);
         return parser.parseDocuments(nifModel);
     }
 
-    protected abstract Model parseNIFModel(InputStream is);
+    protected abstract Model parseNIFModel(InputStream is, Model nifModel);
 
-    protected Document createAnnotatedDocument(Model nifModel) {
-        List<Document> documents = parser.parseDocuments(nifModel);
-        if (documents.size() == 0) {
-            LOGGER.error("Couldn't find any documents inside the given NIF model. Returning null.");
-            return null;
-        }
-        if (documents.size() > 1) {
-            LOGGER.warn("Found more than one document inside the given NIF model. Returning only the first one.");
-        }
-        return documents.get(0);
-    }
+    // protected Document createAnnotatedDocument(Model nifModel) {
+    // List<Document> documents = parser.parseDocuments(nifModel);
+    // if (documents.size() == 0) {
+    // LOGGER.error("Couldn't find any documents inside the given NIF model. Returning null.");
+    // return null;
+    // }
+    // if (documents.size() > 1) {
+    // LOGGER.warn("Found more than one document inside the given NIF model. Returning only the first one.");
+    // }
+    // return documents.get(0);
+    // }
 
     @Override
     public String getHttpContentType() {
         return httpContentType;
     }
 
-    protected Model infereTypes(Model nifModel) {
+    protected void infereTypes(Model nifModel) {
         InputStream is = AbstractNIFParser.class.getClassLoader().getResourceAsStream(TYPE_INFERENCE_RULES);
         List<String> lines;
         try {
@@ -102,7 +118,7 @@ public abstract class AbstractNIFParser implements NIFParser {
         } catch (IOException e) {
             LOGGER.error("Couldn't load type inferencer rules from resource \"" + TYPE_INFERENCE_RULES
                     + "\". Working on the standard model.", e);
-            return nifModel;
+            return;
         }
         IOUtils.closeQuietly(is);
         StringBuilder sb = new StringBuilder();
@@ -111,8 +127,14 @@ public abstract class AbstractNIFParser implements NIFParser {
         }
 
         Reasoner reasoner = new GenericRuleReasoner(Rule.parseRules(sb.toString()));
-        InfModel inf = ModelFactory.createInfModel(reasoner, nifModel);
-        return inf;
+        InfModel infModel = ModelFactory.createInfModel(reasoner, nifModel);
+        nifModel.add(infModel);
+    }
+
+    protected Model getDefaultModel() {
+        Model nifModel = ModelFactory.createDefaultModel();
+        nifModel.setNsPrefixes(NIFTransferPrefixMapping.getInstance());
+        return nifModel;
     }
 
 }

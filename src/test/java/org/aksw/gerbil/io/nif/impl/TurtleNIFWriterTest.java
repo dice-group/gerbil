@@ -20,9 +20,15 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TurtleIOTest {
+/**
+ * Tests the TurtleNIFWriter (assumes, that the {@link TurtleNIFParser} works correctly).
+ * 
+ * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ *
+ */
+public class TurtleNIFWriterTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TurtleIOTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TurtleNIFWriterTest.class);
 
     private static final String DATASET_FILE_NAME = "task2.ttl";
 

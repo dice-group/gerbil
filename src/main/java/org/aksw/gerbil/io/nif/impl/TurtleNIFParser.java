@@ -4,12 +4,10 @@ import java.io.InputStream;
 import java.io.Reader;
 
 import org.aksw.gerbil.io.nif.AbstractNIFParser;
-import org.aksw.gerbil.transfer.nif.NIFTransferPrefixMapping;
 import org.apache.jena.riot.adapters.JenaReadersWriters.RDFReaderRIOT_TTL;
 import org.apache.jena.riot.adapters.RDFReaderRIOT;
 
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class TurtleNIFParser extends AbstractNIFParser {
 
@@ -20,19 +18,15 @@ public class TurtleNIFParser extends AbstractNIFParser {
     }
 
     @Override
-    protected Model parseNIFModel(InputStream is) {
+    protected Model parseNIFModel(InputStream is, Model nifModel) {
         RDFReaderRIOT rdfReader = new RDFReaderRIOT_TTL();
-        Model nifModel = ModelFactory.createDefaultModel();
-        nifModel.setNsPrefixes(NIFTransferPrefixMapping.getInstance());
         rdfReader.read(nifModel, is, "");
         return nifModel;
     }
 
     @Override
-    protected Model parseNIFModel(Reader reader) {
+    protected Model parseNIFModel(Reader reader, Model nifModel) {
         RDFReaderRIOT rdfReader = new RDFReaderRIOT_TTL();
-        Model nifModel = ModelFactory.createDefaultModel();
-        nifModel.setNsPrefixes(NIFTransferPrefixMapping.getInstance());
         rdfReader.read(nifModel, reader, "");
         return nifModel;
     }
