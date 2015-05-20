@@ -27,7 +27,7 @@ package org.aksw.gerbil.transfer.nif;
  * A Marking belongs to a text and could mark a meaning inside the text or a
  * topic covered by the whole text.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public interface Marking {

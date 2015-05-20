@@ -26,7 +26,7 @@ package org.aksw.gerbil.transfer.nif;
 /**
  * A Span marks a position inside a text.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public interface Span extends Marking {

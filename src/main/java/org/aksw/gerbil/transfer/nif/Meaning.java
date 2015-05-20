@@ -31,7 +31,7 @@ import java.util.Set;
  * pointing exactly to the same meaning. Thus, they could be connected using an
  * owl:sameAs predicate.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public interface Meaning extends Marking {

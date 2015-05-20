@@ -31,7 +31,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
  * The Internationalization Tag Set (ITS) Version 2.0 vocabulary. <b>Note</b>
  * that this class contains only the classes and properties used by GERBIL.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public class ITSRDF {
