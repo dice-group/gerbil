@@ -13,7 +13,7 @@ import com.hp.hpl.jena.rdf.model.Model;
  * a given source and create a list of {@link Document} instances from this
  * data.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public interface NIFParser {

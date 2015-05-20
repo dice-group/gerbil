@@ -32,7 +32,7 @@ import org.aksw.gerbil.io.nif.NIFWriter;
  * methods of the {@link NIFDocumentCreator} interface and might be removed in
  * future releases.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public abstract class AbstractNIFDocumentCreator implements NIFDocumentCreator {

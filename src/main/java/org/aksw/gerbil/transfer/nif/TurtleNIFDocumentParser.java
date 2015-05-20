@@ -30,7 +30,7 @@ import org.aksw.gerbil.io.nif.impl.TurtleNIFParser;
  * the methods of the {@link NIFDocumentParser} interface and might be removed
  * in future releases.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public class TurtleNIFDocumentParser extends AbstractNIFDocumentParser {

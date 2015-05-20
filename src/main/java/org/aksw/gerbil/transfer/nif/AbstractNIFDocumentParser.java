@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * methods of the {@link NIFDocumentParser} interface and might be removed in
  * future releases.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {

@@ -30,7 +30,7 @@ import org.aksw.gerbil.io.nif.impl.TurtleNIFWriter;
  * the methods of the {@link NIFDocumentCreator} interface and might be removed
  * in future releases.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public class TurtleNIFDocumentCreator extends AbstractNIFDocumentCreator {
