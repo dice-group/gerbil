@@ -23,6 +23,9 @@
  */
 package org.aksw.gerbil.transfer.nif.data;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.ScoredMarking;
 
@@ -32,6 +35,11 @@ public class ScoredNamedEntity extends NamedEntity implements MeaningSpan, Score
 
     public ScoredNamedEntity(int startPosition, int length, String uri, double confidence) {
         super(startPosition, length, uri);
+        this.confidence = confidence;
+    }
+
+    public ScoredNamedEntity(int startPosition, int length, Set<String> uris, double confidence) {
+        super(startPosition, length, uris);
         this.confidence = confidence;
     }
 
@@ -75,7 +83,7 @@ public class ScoredNamedEntity extends NamedEntity implements MeaningSpan, Score
         builder.append(", ");
         builder.append(length);
         builder.append(", ");
-        builder.append(uri);
+        builder.append(Arrays.toString(uris.toArray()));
         builder.append(", ");
         builder.append(confidence);
         builder.append(')');

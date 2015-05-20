@@ -23,16 +23,30 @@
  */
 package org.aksw.gerbil.transfer.nif;
 
+import java.util.Set;
+
 /**
- * A class implementing this interface contains a URI that points to the meaning
- * of this object.
+ * A class implementing this interface contains a set of URI pointing to the
+ * meaning of this object. Note that it is assumed that all URIs of this set are
+ * pointing exactly to the same meaning. Thus, they could be connected using an
+ * owl:sameAs predicate.
  * 
  * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
  * 
  */
 public interface Meaning extends Marking {
 
+    @Deprecated
     public String getUri();
 
+    @Deprecated
     public void setUri(String uri);
+
+    public Set<String> getUris();
+
+    public void setUris(Set<String> uris);
+
+    public void addUri(String uri);
+
+    public boolean containsUri(String uri);
 }

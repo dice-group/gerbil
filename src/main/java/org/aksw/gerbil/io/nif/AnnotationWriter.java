@@ -40,7 +40,9 @@ public class AnnotationWriter {
         Resource annotationAsResource = nifModel.createResource(uriBuilder.toString());
         nifModel.add(annotationAsResource, RDF.type, NIF.Annotation);
         nifModel.add(documentAsResource, NIF.topic, annotationAsResource);
-        nifModel.add(annotationAsResource, ITSRDF.taIdentRef, nifModel.createResource(annotation.getUri()));
+        for (String meainingUri : annotation.getUris()) {
+            nifModel.add(annotationAsResource, ITSRDF.taIdentRef, nifModel.createResource(meainingUri));
+        }
 
         if (annotation instanceof ScoredAnnotation) {
             nifModel.add(annotationAsResource, NIF.confidence,
@@ -67,7 +69,9 @@ public class AnnotationWriter {
         nifModel.add(spanAsResource, NIF.referenceContext, documentAsResource);
 
         if (span instanceof Meaning) {
-            nifModel.add(spanAsResource, ITSRDF.taIdentRef, nifModel.createResource(((Meaning) span).getUri()));
+            for (String meainingUri : ((Meaning) span).getUris()) {
+                nifModel.add(spanAsResource, ITSRDF.taIdentRef, nifModel.createResource(meainingUri));
+            }
         }
         if (span instanceof ScoredMarking) {
             nifModel.add(spanAsResource, ITSRDF.taConfidence,

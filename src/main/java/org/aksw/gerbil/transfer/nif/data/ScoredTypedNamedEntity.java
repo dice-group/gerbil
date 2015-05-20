@@ -16,6 +16,11 @@ public class ScoredTypedNamedEntity extends TypedNamedEntity implements ScoredMa
         this.confidence = confidence;
     }
 
+    public ScoredTypedNamedEntity(int startPosition, int length, Set<String> uris, Set<String> types, double confidence) {
+        super(startPosition, length, uris, types);
+        this.confidence = confidence;
+    }
+
     public double getConfidence() {
         return confidence;
     }
@@ -48,7 +53,6 @@ public class ScoredTypedNamedEntity extends TypedNamedEntity implements ScoredMa
         return true;
     }
 
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -57,7 +61,7 @@ public class ScoredTypedNamedEntity extends TypedNamedEntity implements ScoredMa
         builder.append(", ");
         builder.append(length);
         builder.append(", ");
-        builder.append(uri);
+        builder.append(Arrays.toString(uris.toArray()));
         builder.append(", a ");
         builder.append(Arrays.toString(types.toArray()));
         builder.append(", ");

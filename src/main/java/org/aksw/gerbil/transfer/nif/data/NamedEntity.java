@@ -23,30 +23,77 @@
  */
 package org.aksw.gerbil.transfer.nif.data;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.aksw.gerbil.transfer.nif.MeaningEqualityChecker;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 
 public class NamedEntity extends SpanImpl implements MeaningSpan {
 
+    @Deprecated
     protected String uri;
+    protected Set<String> uris = new HashSet<String>();
 
     public NamedEntity(int startPosition, int length, String uri) {
         super(startPosition, length);
         this.uri = uri;
+        this.uris.add(uri);
     }
 
+    public NamedEntity(int startPosition, int length, Set<String> uris) {
+        super(startPosition, length);
+        setUris(uris);
+    }
+
+    @Deprecated
+    @Override
     public String getUri() {
         return uri;
     }
 
+    @Deprecated
+    @Override
     public void setUri(String uri) {
         this.uri = uri;
+        this.uris.clear();
+        this.uris.add(uri);
+    }
+
+    @Override
+    public Set<String> getUris() {
+        return uris;
+    }
+
+    @Override
+    public void setUris(Set<String> uris) {
+        this.uris = uris;
+        if (uris.size() > 0) {
+            this.uri = uris.iterator().next();
+        } else {
+            this.uri = null;
+        }
+    }
+
+    @Override
+    public void addUri(String uri) {
+        this.uris.add(uri);
+        if (this.uri == null) {
+            this.uri = uri;
+        }
+    }
+
+    @Override
+    public boolean containsUri(String uri) {
+        return uris.contains(uri);
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+        result = prime * result + ((uris == null) ? 0 : uris.hashCode());
         return result;
     }
 
@@ -59,17 +106,25 @@ public class NamedEntity extends SpanImpl implements MeaningSpan {
         if (getClass() != obj.getClass())
             return false;
         NamedEntity other = (NamedEntity) obj;
-        if (uri == null) {
-            if (other.uri != null)
+        if (uris == null) {
+            if (other.uris != null)
                 return false;
-        } else if (!uri.equals(other.uri))
+        } else if (!MeaningEqualityChecker.overlaps(this, other))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "(" + startPosition + ", " + length + ", " + uri + ")";
+        StringBuilder builder = new StringBuilder();
+        builder.append('(');
+        builder.append(startPosition);
+        builder.append(", ");
+        builder.append(length);
+        builder.append(", ");
+        builder.append(Arrays.toString(uris.toArray()));
+        builder.append(')');
+        return builder.toString();
     }
 
 }

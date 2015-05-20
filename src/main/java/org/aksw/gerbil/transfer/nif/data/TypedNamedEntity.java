@@ -14,6 +14,11 @@ public class TypedNamedEntity extends NamedEntity implements TypedSpan {
         this.types = types;
     }
 
+    public TypedNamedEntity(int startPosition, int length, Set<String> uris, Set<String> types) {
+        super(startPosition, length, uris);
+        this.types = types;
+    }
+
     public Set<String> getTypes() {
         return types;
     }
@@ -30,7 +35,7 @@ public class TypedNamedEntity extends NamedEntity implements TypedSpan {
         builder.append(", ");
         builder.append(length);
         builder.append(", ");
-        builder.append(uri);
+        builder.append(Arrays.toString(uris.toArray()));
         builder.append(", a ");
         builder.append(Arrays.toString(types.toArray()));
         builder.append(')');

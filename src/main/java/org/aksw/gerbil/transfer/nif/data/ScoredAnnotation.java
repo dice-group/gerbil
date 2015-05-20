@@ -23,6 +23,9 @@
  */
 package org.aksw.gerbil.transfer.nif.data;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.ScoredMarking;
 
@@ -38,6 +41,11 @@ public class ScoredAnnotation extends Annotation implements Meaning, ScoredMarki
 
     public ScoredAnnotation(String uri, double confidence) {
         super(uri);
+        this.confidence = confidence;
+    }
+
+    public ScoredAnnotation(Set<String> uris, double confidence) {
+        super(uris);
         this.confidence = confidence;
     }
 
@@ -75,7 +83,13 @@ public class ScoredAnnotation extends Annotation implements Meaning, ScoredMarki
 
     @Override
     public String toString() {
-        return "ScoredAnnotation [confidence=" + confidence + ", uri=" + uri + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append('(');
+        builder.append(Arrays.toString(uris.toArray()));
+        builder.append(", ");
+        builder.append(confidence);
+        builder.append(')');
+        return builder.toString();
     }
 
 }

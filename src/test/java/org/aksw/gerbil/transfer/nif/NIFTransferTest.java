@@ -76,7 +76,8 @@ public class NIFTransferTest {
                 Arrays.asList(
                         (Marking) new TypedNamedEntity(21, 3, "http://www.aksw.org/notInWiki/Jon", new HashSet<String>(
                                 Arrays.asList("http://www.aksw.org/notInWiki/Person"))),
-                        (Marking) new TypedNamedEntity(0, 8, "http://www.aksw.org/notInWiki/Angelina",
+                        (Marking) new TypedNamedEntity(0, 8, new HashSet<String>(Arrays.asList(
+                                "http://www.aksw.org/notInWiki/Angelina", "http://www.aksw.org/notInWiki/Angelina2")),
                                 new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Person",
                                         "http://www.aksw.org/notInWiki/Actor", "http://www.aksw.org/notInWiki/Mother"))),
                         (Marking) new ScoredTypedNamedEntity(42, 4, "http://www.aksw.org/notInWiki/Brad",
