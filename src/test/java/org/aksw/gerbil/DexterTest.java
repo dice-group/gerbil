@@ -32,6 +32,7 @@ import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
@@ -44,6 +45,7 @@ public class DexterTest {
                 new DexterAnnotatorConfig(), new KnownNIFFileDatasetConfig(NIFDatasets.KORE50), ExperimentType.EExt,
                 Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
+                new EvaluatorFactory(),
                 taskConfigs, "DEXTER_TEST");
         experimenter.run();
     }

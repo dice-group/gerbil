@@ -56,10 +56,10 @@ public class HierarchicalFMeasureCalculator<T extends TypedMarking> implements E
                             singleMeasures[RECALL_ID] = 0.0;
                         }
                     } else {
-                        singleMeasures[PRECISION_ID] = singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID]
-                                / (singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] + singleCounts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID]);
-                        singleMeasures[RECALL_ID] = singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID]
-                                / (singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] + singleCounts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID]);
+                        singleMeasures[PRECISION_ID] = (double) singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID]
+                                / (double) (singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] + singleCounts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID]);
+                        singleMeasures[RECALL_ID] = (double) singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID]
+                                / (double) (singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] + singleCounts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID]);
                     }
                     localMeasures.add(singleMeasures);
                 }

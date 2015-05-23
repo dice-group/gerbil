@@ -16,7 +16,7 @@ import org.apache.commons.collections.SetUtils;
 public class SimpleClassNode implements ClassNode {
 
     // private List<SimpleClassNode> children;
-    private Set<String> uris;
+    protected Set<String> uris;
 
     public SimpleClassNode(String uri) {
         // children = new ArrayList<SimpleClassNode>(3);
@@ -80,6 +80,6 @@ public class SimpleClassNode implements ClassNode {
 
     @Override
     public String toString() {
-        return "SimpleClassNode(uris=" + Arrays.toString(uris.toArray(new String[uris.size()])) + ")";
+        return "(uris=" + Arrays.toString(uris.toArray(new String[uris.size()])) + ")";
     }
 }

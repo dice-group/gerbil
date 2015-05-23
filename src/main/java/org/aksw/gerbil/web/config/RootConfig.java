@@ -23,13 +23,22 @@
  */
 package org.aksw.gerbil.web.config;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
+import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
+import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.aksw.gerbil.utils.ConsoleLogger;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.ExecutorBasedOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
 import org.aksw.simba.topicmodeling.concurrent.reporter.Reporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +46,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 /**
  * This is the root {@link Configuration} class that is processed by the Spring
@@ -61,6 +73,8 @@ import org.springframework.core.io.Resource;
 @ComponentScan(basePackages = "org.aksw.gerbil.web.config")
 @PropertySource("gerbil.properties")
 public class RootConfig {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RootConfig.class);
 
     private static final int DEFAULT_NUMBER_OF_WORKERS = 20;
 
@@ -91,9 +105,28 @@ public class RootConfig {
         return overseer;
     }
 
-    // public static @Bean
-    // SubClassInferencer<ClassifiedClassNode> createSubClassInferencer() {
-    // return SimpleSubClassInferencerFactory.createInferencer();
-    // FIXME
-    // }
+    public static @Bean
+    SubClassInferencer createSubClassInferencer() {
+        Model classModel = ModelFactory.createDefaultModel();
+        String hierarchyFiles[] = GerbilConfiguration.getInstance().getStringArray(
+                "org.aksw.gerbil.semantic.subclass.SubClassInferencer.classHierarchyFiles");
+        ClassHierarchyLoader loader = new ClassHierarchyLoader();
+        for (int i = 0; i < hierarchyFiles.length; i += 3) {
+            try {
+                loader.loadClassHierarchy(new File(hierarchyFiles[i]), hierarchyFiles[i + 1], hierarchyFiles[i + 2],
+                        classModel);
+            } catch (IOException e) {
+                LOGGER.error("Got an exception while trying to load the class hierarchy from the file \""
+                        + hierarchyFiles[i] + "\" encoded with \"" + hierarchyFiles[i + 1] + "\" using the base URI \""
+                        + hierarchyFiles[i + 2] + "\".", e);
+            }
+        }
+        return new SimpleSubClassInferencer(classModel);
+    }
+
+    public static @Bean
+    EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer) {
+        return new EvaluatorFactory(null, null, inferencer);
+    }
+
 }

@@ -35,8 +35,8 @@ public class HierarchicalMatchingsCounter<T extends TypedMarking> {
     protected SubClassInferencer inferencer;
     private UriKBClassifier uriKBClassifier;
 
-    public HierarchicalMatchingsCounter(MatchingsSearcher<T> matchingsSearcher,
-            UriKBClassifier uriKBClassifier, SubClassInferencer inferencer) {
+    public HierarchicalMatchingsCounter(MatchingsSearcher<T> matchingsSearcher, UriKBClassifier uriKBClassifier,
+            SubClassInferencer inferencer) {
         this.matchingsSearcher = matchingsSearcher;
         this.uriKBClassifier = uriKBClassifier;
         this.inferencer = inferencer;
@@ -55,8 +55,7 @@ public class HierarchicalMatchingsCounter<T extends TypedMarking> {
                 ANNOTATOR_CLASSES_CLASS_ID);
         Set<String> types;
         for (T expectedElement : goldStandard) {
-            matchingElements = matchingsSearcher.findMatchings(expectedElement, annotatorResult,
-                    alreadyUsedResults);
+            matchingElements = matchingsSearcher.findMatchings(expectedElement, annotatorResult, alreadyUsedResults);
             if (!matchingElements.isEmpty()) {
                 // We use the first matching as solution for the typing task
                 matchedResultId = matchingElements.nextSetBit(0);
@@ -78,6 +77,10 @@ public class HierarchicalMatchingsCounter<T extends TypedMarking> {
                 }
                 // Count the matchings
                 documentCounts = countMatchings(classes);
+                LOGGER.debug("Type matching found {} tp, {} fp and {} fn (classes={}).",
+                        documentCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID],
+                        documentCounts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID],
+                        documentCounts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID], classes);
 
                 // If the annotator did not return a type of a known KB and the
                 // gold standard did not contained a type of a known KB

@@ -32,6 +32,7 @@ import org.aksw.gerbil.datasets.OKETask1DatasetConfig;
 import org.aksw.gerbil.datasets.OKETask1DatasetConfig.NIFDatasets;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
@@ -44,7 +45,7 @@ public class SpotlightTest {
                 new SpotlightAnnotatorConfig(), new OKETask1DatasetConfig(NIFDatasets.OKE_2015_TASK1_EXAMPLE),
                 ExperimentType.OKE_Task1, Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
-                taskConfigs, "AGDISTIS_TEST");
+                new EvaluatorFactory(), taskConfigs, "AGDISTIS_TEST");
         experimenter.run();
     }
 }

@@ -123,7 +123,7 @@ public class EvaluatorFactory {
             ExperimentTaskConfiguration subTaskConfig;
             List<SubTaskEvaluator<TypedNamedEntity>> evaluators = new ArrayList<SubTaskEvaluator<TypedNamedEntity>>();
 
-            UriKBClassifier okeClassifier = new ExactWhiteListBasedUriKBClassifier(Arrays.asList(
+            UriKBClassifier okeClassifierTask1 = new ExactWhiteListBasedUriKBClassifier(Arrays.asList(
                     "http://www.ontologydesignpatterns.org/ont/d0.owl#Location",
                     "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization",
                     "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person",
@@ -140,7 +140,7 @@ public class EvaluatorFactory {
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<TypedNamedEntity>) createEvaluator(
-                    ExperimentType.ETyping, subTaskConfig, dataset, globalRetriever, okeClassifier, inferencer)));
+                    ExperimentType.ETyping, subTaskConfig, dataset, globalRetriever, okeClassifierTask1, inferencer)));
             return new SubTaskAverageCalculator<TypedNamedEntity>(evaluators);
         }
         case OKE_Task2: {
@@ -148,11 +148,8 @@ public class EvaluatorFactory {
             List<SubTaskEvaluator<TypedNamedEntity>> evaluators = new ArrayList<SubTaskEvaluator<TypedNamedEntity>>();
             String classTypes[] = new String[] { RDFS.Class.getURI(), OWL.Class.getURI() };
 
-            UriKBClassifier okeClassifier = new ExactWhiteListBasedUriKBClassifier(Arrays.asList(
-                    "http://www.ontologydesignpatterns.org/ont/d0.owl#Location",
-                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization",
-                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person",
-                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"));
+            UriKBClassifier okeClassifierTask2 = new SimpleWhiteListBasedUriKBClassifier(
+                    "http://www.ontologydesignpatterns.org/ont/");
 
             // sub task 1, find the correct type of the entity (use only
             // entities, without a class type!)
@@ -161,7 +158,7 @@ public class EvaluatorFactory {
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, new MarkingFilteringEvaluatorDecorator<>(
                     new TypeBasedMarkingFilter<TypedNamedEntity>(false, classTypes),
                     (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ETyping, subTaskConfig, dataset,
-                            globalRetriever, okeClassifier, inferencer))));
+                            globalRetriever, okeClassifierTask2, inferencer))));
             // sub task 2, find the correct position of the type in the text
             // (use only entities with a class type!)
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,

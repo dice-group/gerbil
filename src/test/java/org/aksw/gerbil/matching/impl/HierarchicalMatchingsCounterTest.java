@@ -24,7 +24,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 @RunWith(Parameterized.class)
 public class HierarchicalMatchingsCounterTest {
 
-    protected static final String KNOWN_KB_URIS[] = new String[] { "http://example.org/" };
+    public static final String KNOWN_KB_URIS[] = new String[] { "http://example.org/" };
 
     /**
      * <p>
@@ -254,7 +254,7 @@ public class HierarchicalMatchingsCounterTest {
 
     @Test
     public void test() {
-        HierarchicalMatchingsCounter counter = new HierarchicalMatchingsCounter(
+        HierarchicalMatchingsCounter<TypedNamedEntity> counter = new HierarchicalMatchingsCounter<TypedNamedEntity>(
                 new WeakSpanMatchingsCounter<TypedNamedEntity>(),
                 new SimpleWhiteListBasedUriKBClassifier(KNOWN_KB_URIS),
                 SimpleSubClassInferencerFactory.createInferencer(typeHierarchy));
@@ -280,7 +280,7 @@ public class HierarchicalMatchingsCounterTest {
                 Arrays.asList(types)));
     }
 
-    protected static Resource[] createResources(int numberOfResources, Model classModel) {
+    public static Resource[] createResources(int numberOfResources, Model classModel) {
         Resource resources[] = new Resource[numberOfResources];
         int startChar = (int) 'A';
         for (int i = 0; i < resources.length; ++i) {

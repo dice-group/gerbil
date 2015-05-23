@@ -41,8 +41,24 @@ public class Experimenter implements Runnable {
     private Overseer overseer;
     private EvaluatorFactory evFactory;
 
+    /**
+     * Constructor
+     * 
+     * @deprecated Please use the other constructor and provide an
+     *             {@link EvaluatorFactory}.
+     */
+    @Deprecated
     public Experimenter(Overseer overseer, ExperimentDAO experimentDAO, ExperimentTaskConfiguration configs[],
             String experimentId) {
+        this.configs = configs;
+        this.experimentId = experimentId;
+        this.experimentDAO = experimentDAO;
+        this.overseer = overseer;
+        this.evFactory = new EvaluatorFactory();
+    }
+
+    public Experimenter(Overseer overseer, ExperimentDAO experimentDAO, EvaluatorFactory evFactory,
+            ExperimentTaskConfiguration configs[], String experimentId) {
         this.configs = configs;
         this.experimentId = experimentId;
         this.experimentDAO = experimentDAO;

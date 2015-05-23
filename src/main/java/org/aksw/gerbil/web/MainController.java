@@ -38,6 +38,7 @@ import org.aksw.gerbil.dataid.DataIDGenerator;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.AnnotatorMapping;
 import org.aksw.gerbil.utils.DatasetMapping;
@@ -92,6 +93,9 @@ public class MainController {
 
     @Autowired
     private Overseer overseer;
+
+    @Autowired
+    private EvaluatorFactory evFactory;
 
     // DataID URL is generated automatically in the experiment method?
     private DataIDGenerator dataIdGenerator;
@@ -163,7 +167,7 @@ public class MainController {
             }
         }
         String experimentId = IDCreator.getInstance().createID();
-        Experimenter exp = new Experimenter(overseer, dao, configs, experimentId);
+        Experimenter exp = new Experimenter(overseer, dao, evFactory, configs, experimentId);
         exp.run();
 
         return experimentId;
