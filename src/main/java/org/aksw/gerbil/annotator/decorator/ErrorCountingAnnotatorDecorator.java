@@ -36,6 +36,7 @@ import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.IntEvaluationResult;
@@ -66,29 +67,42 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
 
     public static final String ERROR_COUNT_RESULT_NAME = "error count";
 
-    public static ErrorCountingAnnotatorDecorator createDecorator(Annotator annotator, int numberOfExpectedCalls) {
+    @SuppressWarnings("deprecation")
+    public static ErrorCountingAnnotatorDecorator createDecorator(ExperimentType type, Annotator annotator,
+            int numberOfExpectedCalls) {
         int maxErrors = (int) Math.ceil(AMOUNT_OF_TOLERATED_ERRORS * numberOfExpectedCalls);
-        if (annotator instanceof OKETask2Annotator) {
-            return new ErrorCountingOKETask2Annotator((OKETask2Annotator) annotator, maxErrors);
-        }
-        if (annotator instanceof OKETask1Annotator) {
-            return new ErrorCountingOKETask1Annotator((OKETask1Annotator) annotator, maxErrors);
-        }
-        if (annotator instanceof EntityExtractor) {
+        switch (type) {
+        case A2KB:
+            break;
+        case C2KB:
+            break;
+        case D2KB:
+            break;
+        case EExt:
             return new ErrorCountingEntityExtractor((EntityExtractor) annotator, maxErrors);
+        case ELink:
+            return new ErrorCountingEntityLinker((EntityLinker) annotator, maxErrors);
+        case ERec:
+            return new ErrorCountingEntityRecognizer((EntityRecognizer) annotator, maxErrors);
+        case ETyping:
+            return new ErrorCountingEntityTyper((EntityTyper) annotator, maxErrors);
+        case OKE_Task1:
+            return new ErrorCountingOKETask1Annotator((OKETask1Annotator) annotator, maxErrors);
+        case OKE_Task2:
+            return new ErrorCountingOKETask2Annotator((OKETask2Annotator) annotator, maxErrors);
+        case Rc2KB:
+            break;
+        case Sa2KB:
+            break;
+        case Sc2KB:
+            break;
+        default:
+            break;
+
         }
         // if (annotator instanceof Sc2WSystem) {
         // return new ErrorCountingSc2W((Sc2WSystem) annotator, maxErrors);
         // }
-        if (annotator instanceof EntityRecognizer) {
-            return new ErrorCountingEntityRecognizer((EntityRecognizer) annotator, maxErrors);
-        }
-        if (annotator instanceof EntityLinker) {
-            return new ErrorCountingEntityLinker((EntityLinker) annotator, maxErrors);
-        }
-        if (annotator instanceof EntityTyper) {
-            return new ErrorCountingEntityTyper((EntityTyper) annotator, maxErrors);
-        }
         // if (annotator instanceof C2WSystem) {
         // return new ErrorCountingC2W((C2WSystem) annotator, maxErrors);
         // }

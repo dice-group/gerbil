@@ -23,13 +23,6 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.datasetPlugins.MeijDataset;
-import it.acubelab.batframework.problems.TopicDataset;
-
-import java.io.IOException;
-
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class MeijDatasetConfig /*extends AbstractDatasetConfiguration*/ {
 

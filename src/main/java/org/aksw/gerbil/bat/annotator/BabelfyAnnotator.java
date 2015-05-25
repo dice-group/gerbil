@@ -66,6 +66,7 @@ import com.google.common.collect.Sets;
  * we have to set {@link #BABELFY_MAX_TEXT_LENGTH}={@value #BABELFY_MAX_TEXT_LENGTH}.
  * </p>
  */
+@Deprecated
 public class BabelfyAnnotator implements Sa2WSystem {
 
 //	private static final Logger LOGGER = LoggerFactory.getLogger(BabelfyAnnotator.class);

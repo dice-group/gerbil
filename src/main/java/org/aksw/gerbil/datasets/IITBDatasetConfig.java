@@ -23,14 +23,6 @@
  */
 package org.aksw.gerbil.datasets;
 
-import java.io.IOException;
-
-import it.acubelab.batframework.datasetPlugins.IITBDataset;
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class IITBDatasetConfig /*extends AbstractDatasetConfiguration*/ {
 

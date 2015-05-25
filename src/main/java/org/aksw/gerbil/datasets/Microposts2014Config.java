@@ -23,14 +23,6 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
-import java.io.IOException;
-
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.dataset.impl.nif.Microposts2014Dataset;
-import org.aksw.gerbil.datatypes.ExperimentType;
 
 /**
  * Configuration class that is able to load the Micropost2014 datasets (train and test).

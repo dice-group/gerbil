@@ -23,17 +23,6 @@
  */
 package org.aksw.gerbil.datasets;
 
-import java.io.IOException;
-
-import it.acubelab.batframework.datasetPlugins.ConllAidaDataset;
-import it.acubelab.batframework.datasetPlugins.ConllAidaTestADataset;
-import it.acubelab.batframework.datasetPlugins.ConllAidaTestBDataset;
-import it.acubelab.batframework.datasetPlugins.ConllAidaTrainingDataset;
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class AIDACoNLLDatasetConfig /*extends AbstractDatasetConfiguration*/ {
 

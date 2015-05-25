@@ -23,17 +23,6 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-import it.uniroma1.lcl.babelfy.commons.BabelfyConfiguration;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.bat.annotator.BabelfyAnnotator;
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class BabelfyAnnotatorConfig /*extends AbstractAnnotatorConfiguration*/ {
 

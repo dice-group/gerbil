@@ -18,6 +18,7 @@ import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.ScoredMeaning;
 import org.aksw.gerbil.transfer.nif.Span;
 
+@SuppressWarnings("deprecation")
 public class NIF2BAT_TranslationHelper {
 
     public static HashSet<Annotation> createAnnotations(WikipediaApiInterface wikiApi, DBPediaApi dbpediaApi,

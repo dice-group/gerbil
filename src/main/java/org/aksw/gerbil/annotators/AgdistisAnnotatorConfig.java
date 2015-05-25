@@ -23,14 +23,6 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
-import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.bat.annotator.AgdistisAnnotator;
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datatypes.ErrorTypes;
-import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.exceptions.GerbilException;
 
 public class AgdistisAnnotatorConfig /*extends AbstractAnnotatorConfiguration*/ {
 //

@@ -55,6 +55,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+@Deprecated
 public class WATAnnotator implements Sa2WSystem {
     private final String endpoint;
     private final String urlParameters;

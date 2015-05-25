@@ -28,6 +28,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
+@Deprecated
 public class SingletonWikipediaApiTest {
 
     @Test

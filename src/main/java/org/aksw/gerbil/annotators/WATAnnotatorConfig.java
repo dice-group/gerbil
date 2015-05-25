@@ -23,11 +23,6 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.problems.TopicSystem;
-
-import org.aksw.gerbil.bat.annotator.WATAnnotator;
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentType;
 
 public class WATAnnotatorConfig /*extends AbstractAnnotatorConfiguration*/ {
 //    public static final String ANNOTATOR_NAME = "WAT";

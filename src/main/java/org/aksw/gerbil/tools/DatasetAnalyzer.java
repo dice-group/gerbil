@@ -45,6 +45,7 @@ import org.apache.lucene.analysis.WhitespaceTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("deprecation")
 public class DatasetAnalyzer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetAnalyzer.class);

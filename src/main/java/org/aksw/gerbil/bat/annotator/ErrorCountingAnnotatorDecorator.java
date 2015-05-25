@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
  * @author Michael Röder
  * 
  */
+@Deprecated
 public class ErrorCountingAnnotatorDecorator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorCountingAnnotatorDecorator.class);

@@ -26,7 +26,7 @@ package org.aksw.gerbil;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
+import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.datasets.OKETask1DatasetConfig;
 import org.aksw.gerbil.datasets.OKETask1DatasetConfig.NIFDatasets;
@@ -38,14 +38,15 @@ import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
 
 @Ignore
-public class SpotlightTest {
+public class CetusTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new SpotlightAnnotatorConfig(), new OKETask1DatasetConfig(NIFDatasets.OKE_2015_TASK1_EXAMPLE),
-                ExperimentType.OKE_Task1, Matching.WEAK_ANNOTATION_MATCH) };
+                new NIFWebserviceAnnotatorConfiguration("http://localhost:8080/cetus/yago", "Cetus", false,
+                        ExperimentType.OKE_Task2), new OKETask1DatasetConfig(NIFDatasets.OKE_2015_TASK2_GS_SAMPLE),
+                ExperimentType.OKE_Task2, Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
-                new EvaluatorFactory(), taskConfigs, "SPOTLIGHT_TEST");
+                new EvaluatorFactory(), taskConfigs, "CETUS_TEST");
         experimenter.run();
     }
 }

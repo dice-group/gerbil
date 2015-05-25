@@ -48,6 +48,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class FOXAnnotator implements Sa2WSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FOXAnnotator.class);

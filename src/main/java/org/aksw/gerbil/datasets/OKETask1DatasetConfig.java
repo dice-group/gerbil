@@ -37,7 +37,9 @@ public class OKETask1DatasetConfig extends AbstractDatasetConfiguration {
 
     public static enum NIFDatasets {
         OKE_2015_TASK1_EXAMPLE("OKE 2015 Task 1 example set"), OKE_2015_TASK1_GS_SAMPLE(
-                "OKE 2015 Task 1 gold standard sample");
+                "OKE 2015 Task 1 gold standard sample"), OKE_2015_TASK1_EVALUATION("OKE 2015 Task 1 evaluation dataset"), OKE_2015_TASK2_EXAMPLE(
+                "OKE 2015 Task 2 example set"), OKE_2015_TASK2_GS_SAMPLE("OKE 2015 Task 2 gold standard sample"), OKE_2015_TASK2_EVALUATION(
+                "OKE 2015 Task 2 evaluation dataset");
 
         private String name;
 

@@ -33,6 +33,7 @@ import java.util.List;
 import org.aksw.gerbil.annotator.EntityExtractor;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
+import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
@@ -55,7 +56,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NIFBasedAnnotatorWebservice implements OKETask1Annotator, EntityExtractor, EntityTyper {
+public class NIFBasedAnnotatorWebservice implements OKETask2Annotator, OKETask1Annotator, EntityExtractor, EntityTyper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NIFBasedAnnotatorWebservice.class);
 
@@ -149,6 +150,11 @@ public class NIFBasedAnnotatorWebservice implements OKETask1Annotator, EntityExt
 
     @Override
     public List<TypedNamedEntity> performTask1(Document document) throws GerbilException {
+        return performAnnotation(document, TypedNamedEntity.class);
+    }
+
+    @Override
+    public List<TypedNamedEntity> performTask2(Document document) throws GerbilException {
         return performAnnotation(document, TypedNamedEntity.class);
     }
 

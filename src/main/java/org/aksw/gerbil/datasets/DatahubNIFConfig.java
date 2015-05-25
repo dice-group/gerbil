@@ -23,8 +23,6 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,7 +47,7 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
     private RestTemplate rt;
 
     public DatahubNIFConfig(String datasetName, String datasetUrl, boolean couldBeCached) {
-        super(datasetName, couldBeCached, ExperimentType.Sa2KB);
+        super(datasetName, couldBeCached, ExperimentType.EExt);
         this.datasetUrl = datasetUrl;
         rt = new RestTemplate();
     }

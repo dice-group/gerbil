@@ -64,6 +64,7 @@ import com.google.common.collect.Sets;
  * @author Giuseppe Rizzo <giuse.rizzo@gmail.com>
  * 
  */
+@Deprecated
 public class NERDAnnotator implements Sa2WSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NERDAnnotator.class);

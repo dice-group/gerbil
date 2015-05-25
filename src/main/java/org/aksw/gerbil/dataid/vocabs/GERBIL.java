@@ -64,6 +64,8 @@ public class GERBIL {
     public static final Resource Rc2KB = resource("Rc2KB");
     public static final Resource Sa2KB = resource("Sa2KB");
     public static final Resource Sc2KB = resource("Sc2KB");
+    public static final Resource OKE2015_Task1 = resource("OKE2015_Task1");
+    public static final Resource OKE2015_Task2 = resource("OKE2015_Task2");
 
     public static final Resource StrongAnnoMatch = resource("StrongAnnoMatch");
     public static final Resource WeakAnnoMatch = resource("WeakAnnoMatch");
@@ -101,6 +103,7 @@ public class GERBIL {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     public static Resource getExperimentTypeResource(ExperimentType type) {
         switch (type) {
         case A2KB:
@@ -115,6 +118,10 @@ public class GERBIL {
             return Sa2KB;
         case Sc2KB:
             return Sc2KB;
+        case OKE_Task1:
+            return OKE2015_Task1;
+        case OKE_Task2:
+            return OKE2015_Task2;
             // FIXME add missing experiment types
         default:
             ;
