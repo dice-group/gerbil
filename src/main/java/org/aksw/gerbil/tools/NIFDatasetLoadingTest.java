@@ -20,42 +20,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.utils.filter;
+package org.aksw.gerbil.tools;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
+import org.aksw.gerbil.exceptions.GerbilException;
+import org.apache.jena.riot.Lang;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.aksw.gerbil.transfer.nif.TypedMarking;
+public class NIFDatasetLoadingTest {
 
-public class TypeBasedMarkingFilter<T extends TypedMarking> extends AbstractMarkingFilter<T> {
+    private static final Logger LOGGER = LoggerFactory
+	    .getLogger(NIFDatasetLoadingTest.class);
 
-    private Set<String> types = new HashSet<String>();
-    private boolean acceptTypes;
-
-    public TypeBasedMarkingFilter(boolean acceptTypes, String... types) {
-        this.types.addAll(Arrays.asList(types));
-        this.acceptTypes = acceptTypes;
+    public static void main(String[] args) {
+	if (args.length != 1) {
+	    LOGGER.error("Wrong usage. Need exactly one single argument. Correct usage: 'NIFDatasetLoadingTest <path-to-nif-file>'.");
+	    return;
+	}
+	LOGGER.info("Starting loading of given test dataset \"" + args[0] + "\"...");
+	FileBasedNIFDataset dataset = new FileBasedNIFDataset(args[0],
+		"Test dataset", Lang.TTL);
+	try {
+	    dataset.init();
+	} catch (GerbilException e) {
+	    LOGGER.error("Got an exception while trying to load the dataset.",
+		    e);
+	}
+	LOGGER.info("Finished loading of given test dataset.");
     }
-
-    @Override
-    public boolean isMarkingGood(T marking) {
-        Set<String> types = marking.getTypes();
-        if (acceptTypes) {
-            for (String acceptedType : this.types) {
-                if (types.contains(acceptedType)) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            for (String notAcceptedType : this.types) {
-                if (types.contains(notAcceptedType)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
 }

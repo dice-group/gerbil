@@ -1,19 +1,27 @@
-<!-- The MIT License (MIT) Copyright (C) 2014 Agile Knowledge Engineering 
-	and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de) Permission is 
-	hereby granted, free of charge, to any person obtaining a copy of this software 
-	and associated documentation files (the "Software"), to deal in the Software 
-	without restriction, including without limitation the rights to use, copy, 
-	modify, merge, publish, distribute, sublicense, and/or sell copies of the 
-	Software, and to permit persons to whom the Software is furnished to do so, 
-	subject to the following conditions: The above copyright notice and this 
-	permission notice shall be included in all copies or substantial portions 
-	of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY 
-	KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
-	MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN 
-	NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-	DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
-	ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-	DEALINGS IN THE SOFTWARE. -->
+<!--
+
+    The MIT License
+    Copyright (c) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -22,6 +30,7 @@
 	<version>OKE2015-SNAPSHOT</version>
 	<name>General Entity Annotator Benchmark</name>
 	<description>This project is a benchmark for entity annotation and disambiguation tools. It is based on the BAT-Framework of Cornolti et al.</description>
+	<inceptionYear>2014</inceptionYear>
 
 	<properties>
 		<java.version>1.7</java.version>
@@ -30,7 +39,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.10.RELEASE</spring.version>
 		<jena.version>2.13.0</jena.version>
-		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version> 
+		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
 	</properties>
 
 	<repositories>
@@ -75,9 +84,9 @@
 			<version>${jena.version}</version>
 		</dependency>
 		<dependency>
-		  	<groupId>com.github.jsonld-java</groupId>
-  			<artifactId>jsonld-java-jena</artifactId>
-  			<version>${jsonld-java-jena.version}</version>
+			<groupId>com.github.jsonld-java</groupId>
+			<artifactId>jsonld-java-jena</artifactId>
+			<version>${jsonld-java-jena.version}</version>
 		</dependency>
 
 		<!-- BAT-Framework and its dependencies -->
@@ -164,12 +173,12 @@
 		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
 			<version>${slf4j.version}</version> </dependency> -->
 
-        <!-- HPPC Maps -->
-        <dependency>
-            <groupId>com.carrotsearch</groupId>
-            <artifactId>hppc</artifactId>
-            <version>0.5.3</version>
-        </dependency>
+		<!-- HPPC Maps -->
+		<dependency>
+			<groupId>com.carrotsearch</groupId>
+			<artifactId>hppc</artifactId>
+			<version>0.5.3</version>
+		</dependency>
 
 		<!-- BABELFY -->
 		<dependency>
@@ -369,11 +378,9 @@
 				<artifactId>license-maven-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
-					<header>src/main/resources/license_template.txt</header>
+					<header>com/mycila/maven/plugin/license/templates/MIT.txt</header>
 					<properties>
-						<owner>Agile Knowledge Engineering and Semantic Web (AKSW)</owner>
-						<year>2014</year>
-						<email>usbeck@informatik.uni-leipzig.de</email>
+						<owner>Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)</owner>
 					</properties>
 					<excludes>
 						<exclude>**/README</exclude>
@@ -390,6 +397,12 @@
 						<exclude>src/test/resources/**</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<!-- Maven Exec Plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.4.0</version>
 			</plugin>
 		</plugins>
 

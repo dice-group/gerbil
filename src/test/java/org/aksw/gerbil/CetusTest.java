@@ -1,7 +1,6 @@
 /**
- * The MIT License (MIT)
- *
- * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ * The MIT License
+ * Copyright (c) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +41,7 @@ public class CetusTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new NIFWebserviceAnnotatorConfiguration("http://localhost:8080/cetus/yago", "Cetus", false,
+                new NIFWebserviceAnnotatorConfiguration("http://localhost:8080/cetus/fox", "Cetus", false,
                         ExperimentType.OKE_Task2), new OKETask1DatasetConfig(NIFDatasets.OKE_2015_TASK2_GS_SAMPLE),
                 ExperimentType.OKE_Task2, Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
