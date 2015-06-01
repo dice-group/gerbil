@@ -82,6 +82,17 @@ public class NIFTransferTest {
                                         "http://www.aksw.org/notInWiki/Actor", "http://www.aksw.org/notInWiki/Mother"))),
                         (Marking) new ScoredTypedNamedEntity(42, 4, "http://www.aksw.org/notInWiki/Brad",
                                 new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Person")), 0.25))) });
+        tests.add(new Object[] { new DocumentImpl(
+                "Štvrtok is a village in Trenčín District in the Trenčín Region of north-western Slovakia.",
+                "http://www.aksw.org/gerbil/test-document",
+                Arrays.asList(
+                        (Marking) new TypedNamedEntity(0, 7, "http://dbpedia.org/resource/Štvrtok", new HashSet<String>(
+                                Arrays.asList("http://www.aksw.org/notInWiki/Village"))),
+                        (Marking) new TypedNamedEntity(14, 7, new HashSet<String>(Arrays.asList(
+                                "http://www.aksw.org/notInWiki/village")),
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Location"))),
+                        (Marking) new ScoredTypedNamedEntity(79, 8, "http://dbpedia.org/resource/Slovakia",
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Country")), 0.25))) });
         return tests;
     }
 
