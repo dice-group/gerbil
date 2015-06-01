@@ -27,9 +27,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.gerbil.annotator.impl.fox.FOXAnnotator;
 import org.aksw.gerbil.annotator.impl.spotlight.SpotlightAnnotator;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.annotators.DexterAnnotatorConfig;
+import org.aksw.gerbil.annotators.FOXAnnotatorConfig;
 import org.aksw.gerbil.annotators.KeaAnnotatorConfig;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
@@ -73,6 +75,7 @@ public class AnnotatorMapping {
             // new NERDAnnotatorConfig(SingletonWikipediaApi.getInstance()));
             // mapping.put(FOXAnnotator.NAME, new
             // FOXAnnotatorConfig(SingletonWikipediaApi.getInstance()));
+            mapping.put(FOXAnnotator.NAME, new FOXAnnotatorConfig());
             mapping.put(KeaAnnotatorConfig.ANNOTATOR_NAME, new KeaAnnotatorConfig());
 
             instance = new AnnotatorMapping(mapping);

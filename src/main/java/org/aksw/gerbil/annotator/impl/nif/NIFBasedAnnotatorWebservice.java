@@ -26,7 +26,6 @@ import it.acubelab.batframework.utils.AnnotationException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.EntityExtractor;
@@ -55,9 +54,11 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NIFBasedAnnotatorWebservice implements OKETask2Annotator, OKETask1Annotator, EntityExtractor, EntityTyper {
+public class NIFBasedAnnotatorWebservice implements OKETask2Annotator,
+	OKETask1Annotator, EntityExtractor, EntityTyper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NIFBasedAnnotatorWebservice.class);
+    private static final Logger LOGGER = LoggerFactory
+	    .getLogger(NIFBasedAnnotatorWebservice.class);
 
     private static final String DOCUMENT_URI = "http://www.aksw.org/gerbil/NifWebService/request_";
 
@@ -69,14 +70,14 @@ public class NIFBasedAnnotatorWebservice implements OKETask2Annotator, OKETask1A
     private NIFDocumentParser nifParser = new TurtleNIFDocumentParser();
 
     public NIFBasedAnnotatorWebservice(String url, String name) {
-        this.url = url;
-        this.name = name;
-        client = HttpClients.createDefault();
+	this.url = url;
+	this.name = name;
+	client = HttpClients.createDefault();
     }
 
     @Override
     public String getName() {
-        return name;
+	return name;
     }
 
     // @Override
@@ -128,38 +129,45 @@ public class NIFBasedAnnotatorWebservice implements OKETask2Annotator, OKETask1A
     // }
 
     @Override
-    public List<MeaningSpan> performLinking(Document document) throws GerbilException {
-        return performAnnotation(document, MeaningSpan.class);
+    public List<MeaningSpan> performLinking(Document document)
+	    throws GerbilException {
+	return performAnnotation(document, MeaningSpan.class);
     }
 
     @Override
-    public List<Span> performRecognition(Document document) throws GerbilException {
-        return performAnnotation(document, Span.class);
+    public List<Span> performRecognition(Document document)
+	    throws GerbilException {
+	return performAnnotation(document, Span.class);
     }
 
     @Override
-    public List<MeaningSpan> performExtraction(Document document) throws GerbilException {
-        return performAnnotation(document, MeaningSpan.class);
+    public List<MeaningSpan> performExtraction(Document document)
+	    throws GerbilException {
+	return performAnnotation(document, MeaningSpan.class);
     }
 
     @Override
-    public List<TypedSpan> performTyping(Document document) throws GerbilException {
-        return performAnnotation(document, TypedSpan.class);
+    public List<TypedSpan> performTyping(Document document)
+	    throws GerbilException {
+	return performAnnotation(document, TypedSpan.class);
     }
 
     @Override
-    public List<TypedNamedEntity> performTask1(Document document) throws GerbilException {
-        return performAnnotation(document, TypedNamedEntity.class);
+    public List<TypedNamedEntity> performTask1(Document document)
+	    throws GerbilException {
+	return performAnnotation(document, TypedNamedEntity.class);
     }
 
     @Override
-    public List<TypedNamedEntity> performTask2(Document document) throws GerbilException {
-        return performAnnotation(document, TypedNamedEntity.class);
+    public List<TypedNamedEntity> performTask2(Document document)
+	    throws GerbilException {
+	return performAnnotation(document, TypedNamedEntity.class);
     }
 
-    protected <T extends Marking> List<T> performAnnotation(Document document, Class<T> resultClass) {
-        document = request(document);
-        return document.getMarkings(resultClass);
+    protected <T extends Marking> List<T> performAnnotation(Document document,
+	    Class<T> resultClass) {
+	document = request(document);
+	return document.getMarkings(resultClass);
     }
 
     // @Override
@@ -175,73 +183,73 @@ public class NIFBasedAnnotatorWebservice implements OKETask2Annotator, OKETask1A
     // }
 
     protected Document request(Document document) {
-        // give the document a URI
-        document.setDocumentURI(DOCUMENT_URI + documentCount);
-        ++documentCount;
-        LOGGER.info("Started request for {}", document.getDocumentURI());
-        // create NIF document
-        String nifDocument = nifCreator.getDocumentAsNIFString(document);
-        HttpEntity entity = null;
-        try {
-            entity = new StringEntity(nifDocument, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            LOGGER.error("Exception while creating POST request.", e);
-            throw new AnnotationException("Exception while creating POST request. " + e.getLocalizedMessage());
-        }
-        // send NIF document (start time measure)
-        // lastRequestSend = System.currentTimeMillis();
-        HttpPost request = new HttpPost(url);
-        request.setEntity(entity);
-        request.addHeader("Content-Type", nifCreator.getHttpContentType());
-        request.addHeader("Accept", nifParser.getHttpContentType());
+	// give the document a URI
+	document.setDocumentURI(DOCUMENT_URI + documentCount);
+	++documentCount;
+	LOGGER.info("Started request for {}", document.getDocumentURI());
+	// create NIF document
+	String nifDocument = nifCreator.getDocumentAsNIFString(document);
+	HttpEntity entity = new StringEntity(nifDocument, "UTF-8");
+	// send NIF document (start time measure)
+	// lastRequestSend = System.currentTimeMillis();
+	HttpPost request = new HttpPost(url);
+	request.setEntity(entity);
+	request.addHeader("Content-Type", nifCreator.getHttpContentType());
+	request.addHeader("Accept", nifParser.getHttpContentType());
 
-        entity = null;
-        CloseableHttpResponse response = null;
-        InputStreamReader reader = null;
-        try {
-            try {
-                response = client.execute(request);
-            } catch (Exception e) {
-                LOGGER.error("Exception while sending request.", e);
-                throw new AnnotationException("Exception while sending request. " + e.getLocalizedMessage());
-            }
-            StatusLine status = response.getStatusLine();
-            if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
-                LOGGER.error("Response has the wrong status: " + status.toString());
-                throw new AnnotationException("Response has the wrong status: " + status.toString());
-            }
-            // receive NIF document (end time measure and set time)
-            entity = response.getEntity();
-            // lastResponseReceived = System.currentTimeMillis();
-            // read response and parse NIF
-            try {
-                reader = new InputStreamReader(entity.getContent());
-                document = nifParser.getDocumentFromNIFReader(reader);
-            } catch (Exception e) {
-                LOGGER.error("Couldn't parse the response.", e);
-                throw new AnnotationException("Couldn't parse the response. " + e.getLocalizedMessage());
-            }
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                }
-            }
-            if (entity != null) {
-                try {
-                    EntityUtils.consume(entity);
-                } catch (IOException e1) {
-                }
-            }
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-        LOGGER.info("Finished request for {}", document.getDocumentURI());
-        return document;
+	entity = null;
+	CloseableHttpResponse response = null;
+	InputStreamReader reader = null;
+	try {
+	    try {
+		response = client.execute(request);
+	    } catch (Exception e) {
+		LOGGER.error("Exception while sending request.", e);
+		throw new AnnotationException(
+			"Exception while sending request. "
+				+ e.getLocalizedMessage());
+	    }
+	    StatusLine status = response.getStatusLine();
+	    if ((status.getStatusCode() < 200)
+		    || (status.getStatusCode() >= 300)) {
+		LOGGER.error("Response has the wrong status: "
+			+ status.toString());
+		throw new AnnotationException("Response has the wrong status: "
+			+ status.toString());
+	    }
+	    // receive NIF document (end time measure and set time)
+	    entity = response.getEntity();
+	    // lastResponseReceived = System.currentTimeMillis();
+	    // read response and parse NIF
+	    try {
+		reader = new InputStreamReader(entity.getContent());
+		document = nifParser.getDocumentFromNIFReader(reader);
+	    } catch (Exception e) {
+		LOGGER.error("Couldn't parse the response.", e);
+		throw new AnnotationException("Couldn't parse the response. "
+			+ e.getLocalizedMessage());
+	    }
+	} finally {
+	    if (reader != null) {
+		try {
+		    reader.close();
+		} catch (IOException e) {
+		}
+	    }
+	    if (entity != null) {
+		try {
+		    EntityUtils.consume(entity);
+		} catch (IOException e1) {
+		}
+	    }
+	    if (response != null) {
+		try {
+		    response.close();
+		} catch (IOException e) {
+		}
+	    }
+	}
+	LOGGER.info("Finished request for {}", document.getDocumentURI());
+	return document;
     }
 }

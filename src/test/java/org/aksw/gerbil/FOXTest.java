@@ -20,32 +20,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.annotators;
+package org.aksw.gerbil;
 
-import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotator.impl.fox.FOXAnnotator;
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datatypes.ErrorTypes;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.aksw.gerbil.annotators.FOXAnnotatorConfig;
+import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
+import org.aksw.gerbil.datasets.OKETask1DatasetConfig;
+import org.aksw.gerbil.datasets.OKETask1DatasetConfig.NIFDatasets;
+import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.matching.Matching;
+import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
+import org.junit.Ignore;
 
-public class FOXAnnotatorConfig extends AbstractAnnotatorConfiguration {
+@Ignore
+public class FOXTest {
 
-    private static final String FOX_SERVICE_URL_PARAMETER_KEY = "org.aksw.gerbil.annotators.FOXAnnotatorConfig.serviceUrl";
-
-    public FOXAnnotatorConfig() {
-	super(FOXAnnotator.NAME, true, ExperimentType.OKE_Task1);
-    }
-
-    @Override
-    protected Annotator loadAnnotator(ExperimentType type) throws Exception {
-	String serviceUrl = GerbilConfiguration.getInstance().getString(
-		FOX_SERVICE_URL_PARAMETER_KEY);
-	if (serviceUrl == null) {
-	    throw new GerbilException("Couldn't load the needed property \""
-		    + FOX_SERVICE_URL_PARAMETER_KEY + "\".",
-		    ErrorTypes.ANNOTATOR_LOADING_ERROR);
-	}
-	return new FOXAnnotator(serviceUrl);
+    public static void main(String[] args) throws FileNotFoundException,
+	    IOException, ClassNotFoundException {
+	ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
+		new FOXAnnotatorConfig(), new OKETask1DatasetConfig(
+			NIFDatasets.OKE_2015_TASK1_EXAMPLE),
+		ExperimentType.OKE_Task1, Matching.WEAK_ANNOTATION_MATCH) };
+	Experimenter experimenter = new Experimenter(new SimpleOverseer(),
+		new SimpleLoggingDAO4Debugging(), new EvaluatorFactory(),
+		taskConfigs, "FOX_TEST");
+	experimenter.run();
     }
 }
