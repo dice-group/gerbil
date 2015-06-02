@@ -25,7 +25,6 @@ package org.aksw.gerbil.annotator.impl.nif;
 import it.acubelab.batframework.utils.AnnotationException;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.EntityExtractor;
@@ -194,12 +193,13 @@ public class NIFBasedAnnotatorWebservice implements OKETask2Annotator,
 	// lastRequestSend = System.currentTimeMillis();
 	HttpPost request = new HttpPost(url);
 	request.setEntity(entity);
-	request.addHeader("Content-Type", nifCreator.getHttpContentType());
-	request.addHeader("Accept", nifParser.getHttpContentType());
+	request.addHeader("Content-Type", nifCreator.getHttpContentType()
+		+ ";charset=UTF-8");
+	request.addHeader("Accept", nifParser.getHttpContentType()
+		+ ";charset=UTF-8");
 
 	entity = null;
 	CloseableHttpResponse response = null;
-	InputStreamReader reader = null;
 	try {
 	    try {
 		response = client.execute(request);
@@ -222,20 +222,14 @@ public class NIFBasedAnnotatorWebservice implements OKETask2Annotator,
 	    // lastResponseReceived = System.currentTimeMillis();
 	    // read response and parse NIF
 	    try {
-		reader = new InputStreamReader(entity.getContent());
-		document = nifParser.getDocumentFromNIFReader(reader);
+		document = nifParser.getDocumentFromNIFStream(entity
+			.getContent());
 	    } catch (Exception e) {
 		LOGGER.error("Couldn't parse the response.", e);
 		throw new AnnotationException("Couldn't parse the response. "
 			+ e.getLocalizedMessage());
 	    }
 	} finally {
-	    if (reader != null) {
-		try {
-		    reader.close();
-		} catch (IOException e) {
-		}
-	    }
 	    if (entity != null) {
 		try {
 		    EntityUtils.consume(entity);

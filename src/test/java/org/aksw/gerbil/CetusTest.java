@@ -41,7 +41,7 @@ public class CetusTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new NIFWebserviceAnnotatorConfiguration("http://139.18.2.164:6666/cetus/yago", "Cetus", false,
+                new NIFWebserviceAnnotatorConfiguration("http://localhost:6666/cetus/yago", "Cetus", false,
                         ExperimentType.OKE_Task2), new OKETask1DatasetConfig(NIFDatasets.OKE_2015_TASK2_GS_SAMPLE),
                 ExperimentType.OKE_Task2, Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
