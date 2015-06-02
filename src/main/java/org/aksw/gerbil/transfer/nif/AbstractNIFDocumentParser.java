@@ -23,6 +23,7 @@
  */
 package org.aksw.gerbil.transfer.nif;
 
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
@@ -41,34 +42,49 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractNIFDocumentParser implements NIFDocumentParser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractNIFDocumentParser.class);
+    private static final Logger LOGGER = LoggerFactory
+	    .getLogger(AbstractNIFDocumentParser.class);
 
     private NIFParser parser;
 
     public AbstractNIFDocumentParser(NIFParser parser) {
-        this.parser = parser;
+	this.parser = parser;
     }
 
     @Override
     public Document getDocumentFromNIFString(String nifString) throws Exception {
-        return getDocumentFromNIFReader(new StringReader(nifString));
+	return getDocumentFromNIFReader(new StringReader(nifString));
     }
 
     @Override
     public Document getDocumentFromNIFReader(Reader reader) throws Exception {
-        List<Document> documents = parser.parseNIF(reader);
-        if (documents.size() == 0) {
-            LOGGER.error("Couldn't find any documents inside the given NIF model. Returning null.");
-            return null;
-        }
-        if (documents.size() > 1) {
-            LOGGER.warn("Found more than one document inside the given NIF model. Returning only the first one.");
-        }
-        return documents.get(0);
+	List<Document> documents = parser.parseNIF(reader);
+	if (documents.size() == 0) {
+	    LOGGER.error("Couldn't find any documents inside the given NIF model. Returning null.");
+	    return null;
+	}
+	if (documents.size() > 1) {
+	    LOGGER.warn("Found more than one document inside the given NIF model. Returning only the first one.");
+	}
+	return documents.get(0);
+    }
+
+    @Override
+    public Document getDocumentFromNIFStream(InputStream stream)
+	    throws Exception {
+	List<Document> documents = parser.parseNIF(stream);
+	if (documents.size() == 0) {
+	    LOGGER.error("Couldn't find any documents inside the given NIF model. Returning null.");
+	    return null;
+	}
+	if (documents.size() > 1) {
+	    LOGGER.warn("Found more than one document inside the given NIF model. Returning only the first one.");
+	}
+	return documents.get(0);
     }
 
     @Override
     public String getHttpContentType() {
-        return parser.getHttpContentType();
+	return parser.getHttpContentType();
     }
 }

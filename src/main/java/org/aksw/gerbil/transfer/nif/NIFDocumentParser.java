@@ -23,6 +23,7 @@
  */
 package org.aksw.gerbil.transfer.nif;
 
+import java.io.InputStream;
 import java.io.Reader;
 
 public interface NIFDocumentParser {
@@ -31,6 +32,9 @@ public interface NIFDocumentParser {
 			throws Exception;
 
 	public Document getDocumentFromNIFReader(Reader reader)
+			throws Exception;
+
+	public Document getDocumentFromNIFStream(InputStream stream)
 			throws Exception;
 
 	public String getHttpContentType();
