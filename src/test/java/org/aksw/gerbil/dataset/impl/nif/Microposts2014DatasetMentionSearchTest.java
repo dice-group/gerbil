@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.aksw.gerbil.dataset.impl.nif.Microposts2014Dataset;
-import org.aksw.gerbil.dataset.impl.nif.Microposts2014Dataset.Microposts2014Annotation;
+import org.aksw.gerbil.dataset.impl.micro.Microposts2014Dataset;
+import org.aksw.gerbil.dataset.impl.micro.Microposts2014Dataset.Microposts2014Annotation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.dataset.impl.nif;
+package org.aksw.gerbil.dataset.impl.micro;
 
 import it.acubelab.batframework.data.Annotation;
 import it.acubelab.batframework.data.Mention;
