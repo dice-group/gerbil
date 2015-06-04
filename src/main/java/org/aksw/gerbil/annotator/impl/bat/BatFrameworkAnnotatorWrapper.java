@@ -51,7 +51,7 @@ public class BatFrameworkAnnotatorWrapper {
     
     public static final String ANNOTATOR_NAME_SUFFIX = " (BAT)";
 
-    public static Annotator wrapBatFrameworkTopicSystem(TopicSystem annotator,
+    public static Annotator create(TopicSystem annotator,
 	    WikipediaApiInterface wikiApi) {
 	LOGGER.warn("Using wrappers for BAT framework adapters is not recommended!");
 	if ((annotator instanceof Sa2WSystem)
@@ -59,7 +59,7 @@ public class BatFrameworkAnnotatorWrapper {
 	    return new A2KBSystemWrapper((A2WSystem) annotator, wikiApi);
 	}
 	if (annotator instanceof D2WSystem) {
-	    return new D2KBSystemWrapper((A2WSystem) annotator, wikiApi);
+	    return new D2KBSystemWrapper((D2WSystem) annotator, wikiApi);
 	}
 	return null; // TODO
     }

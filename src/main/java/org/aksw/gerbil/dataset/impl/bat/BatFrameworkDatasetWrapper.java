@@ -25,7 +25,7 @@ public class BatFrameworkDatasetWrapper {
     public static final String DATASET_NAME_SUFFIX = " (BAT)";
     public static final String DATASET_URI_PREFIX = "http://gerbil.aksw.org/BAT-Framework/";
 
-    public static Dataset wrapBatFrameworkTopicSystem(TopicDataset dataset,
+    public static Dataset create(TopicDataset dataset,
 	    WikipediaApiInterface wikiApi) {
 	LOGGER.warn("Using wrappers for BAT framework datasets is not recommended!");
 	if (dataset instanceof A2WDataset) {

@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.aksw.gerbil.annotator.impl.fox.FOXAnnotator;
 import org.aksw.gerbil.annotator.impl.spotlight.SpotlightAnnotator;
+import org.aksw.gerbil.annotators.AgdistisAnnotatorConfig;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.annotators.DexterAnnotatorConfig;
 import org.aksw.gerbil.annotators.FOXAnnotatorConfig;
@@ -51,10 +52,11 @@ public class AnnotatorMapping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatorMapping.class);
 
-    private static final String NIF_WS_SUFFIX = "(NIF WS)";
+    private static final String NIF_WS_SUFFIX = " (NIF WS)";
 
     private static AnnotatorMapping instance = null;
 
+    @SuppressWarnings("deprecation")
     private synchronized static AnnotatorMapping getInstance() {
         if (instance == null) {
             Map<String, AnnotatorConfiguration> mapping = new HashMap<String, AnnotatorConfiguration>();
@@ -68,9 +70,9 @@ public class AnnotatorMapping {
             // WATAnnotatorConfig());
             // mapping.put(WikipediaMinerAnnotatorConfig.ANNOTATOR_NAME, new
             // WikipediaMinerAnnotatorConfig());
-            // mapping.put(AgdistisAnnotatorConfig.ANNOTATOR_NAME,
-            // new
-            // AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()));
+	    mapping.put(
+		    AgdistisAnnotatorConfig.ANNOTATOR_NAME,
+		    new AgdistisAnnotatorConfig(SingletonWikipediaApi.getInstance()));
             // mapping.put(NERDAnnotatorConfig.ANNOTATOR_NAME,
             // new NERDAnnotatorConfig(SingletonWikipediaApi.getInstance()));
             // mapping.put(FOXAnnotator.NAME, new
