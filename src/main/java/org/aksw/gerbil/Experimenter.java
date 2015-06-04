@@ -62,7 +62,7 @@ public class Experimenter implements Runnable {
         this.experimentId = experimentId;
         this.experimentDAO = experimentDAO;
         this.overseer = overseer;
-        this.evFactory = new EvaluatorFactory();
+        this.evFactory = evFactory;
     }
 
     @Override
