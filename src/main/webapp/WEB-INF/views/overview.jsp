@@ -147,7 +147,7 @@ table {
 		                        var htmlMatchings = "";
 		                        for ( var i = 0; i < data.Matching.length; i++) {
 			                        htmlMatchings += "<label class=\"btn btn-primary\" >";
-			                        htmlMatchings += " <input class=\"toggle\" type=\"radio\" name=\"matchingType\" id=\"" + data.Matching[i].label + "\" value=\"" + data.Matching[i].label + "\" >"
+			                        htmlMatchings += " <input class=\"toggle\" type=\"radio\" name=\"matchingType\" id=\"" + data.Matching[i].name + "\" value=\"" + data.Matching[i].name + "\" >"
 			                                + data.Matching[i].label;
 			                        htmlMatchings += "</label>";
 		                        }
@@ -178,7 +178,7 @@ table {
 		                        var htmlExperimentTypes = "";
 		                        for ( var i = 0; i < data.ExperimentType.length; i++) {
 			                        htmlExperimentTypes += "<label class=\"btn btn-primary\" >";
-			                        htmlExperimentTypes += " <input class=\"toggle\" type=\"radio\" name=\"experimentType\" id=\"" + data.ExperimentType[i].label + "\" value=\"" + data.ExperimentType[i].label + "\" >"
+			                        htmlExperimentTypes += " <input class=\"toggle\" type=\"radio\" name=\"experimentType\" id=\"" + data.ExperimentType[i].name + "\" value=\"" + data.ExperimentType[i].name + "\" >"
 			                                + data.ExperimentType[i].label;
 			                        htmlExperimentTypes += "</label>";
 		                        }
