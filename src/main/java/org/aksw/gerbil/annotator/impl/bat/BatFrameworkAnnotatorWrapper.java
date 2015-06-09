@@ -48,7 +48,7 @@ public class BatFrameworkAnnotatorWrapper {
 
     private static final Logger LOGGER = LoggerFactory
 	    .getLogger(BatFrameworkAnnotatorWrapper.class);
-    
+
     public static final String ANNOTATOR_NAME_SUFFIX = " (BAT)";
 
     public static Annotator create(TopicSystem annotator,
@@ -61,7 +61,9 @@ public class BatFrameworkAnnotatorWrapper {
 	if (annotator instanceof D2WSystem) {
 	    return new D2KBSystemWrapper((D2WSystem) annotator, wikiApi);
 	}
-	return null; // TODO
+	LOGGER.error("Couldn't find a matching wrapper for \""
+		+ annotator.getClass().getName() + "\". Returning null.");
+	return null;
     }
 
     protected abstract static class AbstractTopicSystemWrapper<T extends TopicSystem>

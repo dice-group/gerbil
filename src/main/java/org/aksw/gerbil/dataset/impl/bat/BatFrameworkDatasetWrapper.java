@@ -36,9 +36,9 @@ public class BatFrameworkDatasetWrapper {
 	    return new C2KBDatasetWrapper<C2WDataset>((C2WDataset) dataset,
 		    wikiApi);
 	}
-	throw new IllegalArgumentException(
-		"Got a BAT framework with an unknown class \""
-			+ dataset.getClass().getName() + "\"");
+	LOGGER.error("Couldn't find a matching wrapper for \""
+		+ dataset.getClass().getName() + "\". Returning null.");
+	return null;
     }
 
     protected abstract static class AbstractTopicSystemWrapper<T extends TopicDataset>
