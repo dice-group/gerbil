@@ -22,11 +22,11 @@
  */
 package org.aksw.gerbil.annotator.impl.bat;
 
-import it.acubelab.batframework.problems.A2WSystem;
-import it.acubelab.batframework.problems.D2WSystem;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.problems.A2WSystem;
+import it.unipi.di.acube.batframework.problems.D2WSystem;
+import it.unipi.di.acube.batframework.problems.Sa2WSystem;
+import it.unipi.di.acube.batframework.problems.TopicSystem;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import java.util.ArrayList;
 import java.util.List;

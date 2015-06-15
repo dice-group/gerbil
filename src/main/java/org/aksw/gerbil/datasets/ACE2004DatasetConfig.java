@@ -22,8 +22,8 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.datasetPlugins.ACE2004Dataset;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.datasetPlugins.ACE2004Dataset;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import java.io.IOException;
 

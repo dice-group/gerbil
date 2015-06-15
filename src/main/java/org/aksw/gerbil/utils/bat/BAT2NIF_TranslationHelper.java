@@ -22,10 +22,10 @@
  */
 package org.aksw.gerbil.utils.bat;
 
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.ScoredTag;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.data.Mention;
+import it.unipi.di.acube.batframework.data.ScoredTag;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class BAT2NIF_TranslationHelper {
         return new DocumentImpl(text, new ArrayList<Marking>(translateTags(mentions)));
     }
 
-    public Document createDocumentWithAnnotations(String text, Set<it.acubelab.batframework.data.Annotation> annotations) {
+    public Document createDocumentWithAnnotations(String text, Set<it.unipi.di.acube.batframework.data.Annotation> annotations) {
         return new DocumentImpl(text, new ArrayList<Marking>(translateAnnotations(annotations)));
     }
 
@@ -99,12 +99,12 @@ public class BAT2NIF_TranslationHelper {
         return markings;
     }
 
-    public List<MeaningSpan> translateAnnotations(Set<it.acubelab.batframework.data.Annotation> annotations) {
+    public List<MeaningSpan> translateAnnotations(Set<it.unipi.di.acube.batframework.data.Annotation> annotations) {
         List<MeaningSpan> markings = new ArrayList<MeaningSpan>();
         if (annotations != null) {
-            for (it.acubelab.batframework.data.Annotation a : annotations) {
-                if (a instanceof it.acubelab.batframework.data.ScoredAnnotation) {
-                    markings.add(translate((it.acubelab.batframework.data.ScoredAnnotation) a));
+            for (it.unipi.di.acube.batframework.data.Annotation a : annotations) {
+                if (a instanceof it.unipi.di.acube.batframework.data.ScoredAnnotation) {
+                    markings.add(translate((it.unipi.di.acube.batframework.data.ScoredAnnotation) a));
                 } else {
                     markings.add(translate(a));
                 }
@@ -125,11 +125,11 @@ public class BAT2NIF_TranslationHelper {
         return new ScoredAnnotation(translateWId(tag.getConcept()), tag.getScore());
     }
 
-    public NamedEntity translate(it.acubelab.batframework.data.Annotation annotation) {
+    public NamedEntity translate(it.unipi.di.acube.batframework.data.Annotation annotation) {
         return new NamedEntity(annotation.getPosition(), annotation.getLength(), translateWId(annotation.getConcept()));
     }
 
-    public NamedEntity translate(it.acubelab.batframework.data.ScoredAnnotation annotation) {
+    public NamedEntity translate(it.unipi.di.acube.batframework.data.ScoredAnnotation annotation) {
         return new ScoredNamedEntity(annotation.getPosition(), annotation.getLength(),
                 translateWId(annotation.getConcept()), annotation.getScore());
     }

@@ -22,12 +22,12 @@
  */
 package org.aksw.gerbil.matching;
 
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.metrics.MatchRelation;
-import it.acubelab.batframework.metrics.StrongAnnotationMatch;
-import it.acubelab.batframework.metrics.StrongTagMatch;
-import it.acubelab.batframework.metrics.WeakAnnotationMatch;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.metrics.MatchRelation;
+import it.unipi.di.acube.batframework.metrics.StrongAnnotationMatch;
+import it.unipi.di.acube.batframework.metrics.StrongTagMatch;
+import it.unipi.di.acube.batframework.metrics.WeakAnnotationMatch;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.impl.MatchingsSearcher;

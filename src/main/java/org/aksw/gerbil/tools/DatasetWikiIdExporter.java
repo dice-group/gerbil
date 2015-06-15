@@ -22,11 +22,11 @@
  */
 package org.aksw.gerbil.tools;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.C2WDataset;
-import it.acubelab.batframework.problems.D2WDataset;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.problems.C2WDataset;
+import it.unipi.di.acube.batframework.problems.D2WDataset;
 
 import java.io.File;
 import java.io.IOException;

@@ -22,7 +22,7 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.impl.bat.BatFrameworkAnnotatorWrapper;

@@ -22,13 +22,13 @@
  */
 package org.aksw.gerbil.utils.bat;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.ScoredAnnotation;
-import it.acubelab.batframework.data.ScoredTag;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.data.Mention;
+import it.unipi.di.acube.batframework.data.ScoredAnnotation;
+import it.unipi.di.acube.batframework.data.ScoredTag;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.systemPlugins.DBPediaApi;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import java.util.HashSet;
 import java.util.List;

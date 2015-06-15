@@ -22,7 +22,7 @@
  */
 package org.aksw.gerbil.utils;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;

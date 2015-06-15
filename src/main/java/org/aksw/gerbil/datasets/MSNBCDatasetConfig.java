@@ -22,8 +22,8 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.datasetPlugins.MSNBCDataset;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.datasetPlugins.MSNBCDataset;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import java.io.IOException;
 

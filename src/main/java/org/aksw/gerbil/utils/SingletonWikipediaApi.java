@@ -30,7 +30,7 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 @Deprecated
 public class SingletonWikipediaApi extends WikipediaApiInterface {

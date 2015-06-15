@@ -1,27 +1,18 @@
-<!--
-
-    The MIT License
-    Copyright (c) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in
-    all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    THE SOFTWARE.
-
--->
+<!-- The MIT License Copyright (c) 2014 Agile Knowledge Engineering and Semantic 
+	Web (AKSW) (usbeck@informatik.uni-leipzig.de) Permission is hereby granted, 
+	free of charge, to any person obtaining a copy of this software and associated 
+	documentation files (the "Software"), to deal in the Software without restriction, 
+	including without limitation the rights to use, copy, modify, merge, publish, 
+	distribute, sublicense, and/or sell copies of the Software, and to permit 
+	persons to whom the Software is furnished to do so, subject to the following 
+	conditions: The above copyright notice and this permission notice shall be 
+	included in all copies or substantial portions of the Software. THE SOFTWARE 
+	IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
+	BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR 
+	PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS 
+	BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION 
+	OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
+	THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -34,7 +25,7 @@
 
 	<properties>
 		<java.version>1.7</java.version>
-		<slf4j.version>1.7.5</slf4j.version>
+		<slf4j.version>1.7.6</slf4j.version>
 		<junit.version>4.11</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.10.RELEASE</spring.version>
@@ -91,59 +82,15 @@
 
 		<!-- BAT-Framework and its dependencies -->
 		<dependency>
-			<groupId>it.unipi.di</groupId>
-			<artifactId>batframework</artifactId>
-			<version>0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.james</groupId>
-			<artifactId>apache-mime4j</artifactId>
-			<version>0.6</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
-		</dependency>
-		<dependency>
-			<groupId>it.unimi.dsi</groupId>
-			<artifactId>fastutil</artifactId>
-			<version>6.4.1</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpmime</artifactId>
-			<version>4.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.googlecode.json-simple</groupId>
-			<artifactId>json-simple</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>it.unimi.dsi</groupId>
-			<artifactId>dsiutils</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>mpi.rmi</groupId>
-			<artifactId>aida-public</artifactId>
-			<version>20130218</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.illinois.dc.cogcomp</groupId>
-			<artifactId>edison</artifactId>
-			<version>0.2.9</version>
-		</dependency>
-		<dependency>
-			<groupId>wikifier</groupId>
-			<artifactId>wikifier</artifactId>
-			<version>0.0.1</version>
+			<groupId>it.unipi.di.acube</groupId>
+			<artifactId>bat-framework</artifactId>
+			<version>1.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- NERD -->
@@ -160,14 +107,25 @@
 			<version>${slf4j.version}</version>
 		</dependency>
 		<!-- slf4j: Logging Binding - is already contained in aida -->
-		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> 
-			<version>${slf4j.version}</version> </dependency> -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
 
 		<!-- HPPC Maps -->
 		<dependency>
 			<groupId>com.carrotsearch</groupId>
 			<artifactId>hppc</artifactId>
 			<version>0.5.3</version>
+		</dependency>
+
+		<!-- JUnit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- BABELFY -->
@@ -380,7 +338,8 @@
 				<configuration>
 					<header>com/mycila/maven/plugin/license/templates/MIT.txt</header>
 					<properties>
-						<owner>Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)</owner>
+						<owner>Agile Knowledge Engineering and Semantic Web (AKSW)
+							(usbeck@informatik.uni-leipzig.de)</owner>
 					</properties>
 					<excludes>
 						<exclude>**/README</exclude>
