@@ -22,7 +22,7 @@
  */
 package org.aksw.gerbil.annotator.impl.nif;
 
-import it.acubelab.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
 
 import java.io.IOException;
 import java.util.List;

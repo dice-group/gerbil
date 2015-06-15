@@ -22,13 +22,13 @@
  */
 package org.aksw.gerbil.dataset.impl.micro;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.A2WDataset;
-import it.acubelab.batframework.utils.AnnotationException;
-import it.acubelab.batframework.utils.ProblemReduction;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.data.Mention;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.problems.A2WDataset;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.utils.ProblemReduction;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.lang.MutableString;
 

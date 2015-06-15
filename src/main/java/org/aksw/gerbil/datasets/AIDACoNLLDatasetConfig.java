@@ -22,12 +22,12 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.datasetPlugins.ConllAidaDataset;
-import it.acubelab.batframework.datasetPlugins.ConllAidaTestADataset;
-import it.acubelab.batframework.datasetPlugins.ConllAidaTestBDataset;
-import it.acubelab.batframework.datasetPlugins.ConllAidaTrainingDataset;
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.datasetPlugins.ConllAidaDataset;
+import it.unipi.di.acube.batframework.datasetPlugins.ConllAidaTestADataset;
+import it.unipi.di.acube.batframework.datasetPlugins.ConllAidaTestBDataset;
+import it.unipi.di.acube.batframework.datasetPlugins.ConllAidaTrainingDataset;
+import it.unipi.di.acube.batframework.problems.TopicDataset;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import java.io.IOException;
 

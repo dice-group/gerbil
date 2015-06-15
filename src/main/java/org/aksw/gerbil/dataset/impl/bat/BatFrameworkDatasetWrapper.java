@@ -1,10 +1,10 @@
 package org.aksw.gerbil.dataset.impl.bat;
 
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.A2WDataset;
-import it.acubelab.batframework.problems.C2WDataset;
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.problems.A2WDataset;
+import it.unipi.di.acube.batframework.problems.C2WDataset;
+import it.unipi.di.acube.batframework.problems.TopicDataset;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -104,10 +104,10 @@ public class BatFrameworkDatasetWrapper {
 	public A2KBDatasetWrapper(T dataset, WikipediaApiInterface wikiApi) {
 	    super(dataset, wikiApi);
 	    // Add the annotations to the documents
-	    List<HashSet<it.acubelab.batframework.data.Annotation>> annotationLists = dataset
+	    List<HashSet<it.unipi.di.acube.batframework.data.Annotation>> annotationLists = dataset
 		    .getA2WGoldStandardList();
 	    int documentId = 0;
-	    for (HashSet<it.acubelab.batframework.data.Annotation> annotations : annotationLists) {
+	    for (HashSet<it.unipi.di.acube.batframework.data.Annotation> annotations : annotationLists) {
 		this.documents.get(documentId).getMarkings()
 			.addAll(translater.translateAnnotations(annotations));
 		++documentId;

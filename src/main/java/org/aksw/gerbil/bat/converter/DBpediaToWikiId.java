@@ -22,7 +22,7 @@
  */
 package org.aksw.gerbil.bat.converter;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
