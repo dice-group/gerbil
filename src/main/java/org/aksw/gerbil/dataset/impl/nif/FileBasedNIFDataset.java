@@ -22,11 +22,13 @@
  */
 package org.aksw.gerbil.dataset.impl.nif;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,27 @@ public class FileBasedNIFDataset extends AbstractNIFDataset {
         super(name);
         this.filePath = filePath;
         this.language = language;
+    }
+
+    public FileBasedNIFDataset(String filePath, String name, String language) {
+        super(name);
+        this.filePath = filePath;
+        this.language = RDFLanguages.nameToLang(language);
+        if (this.language == null) {
+            this.language = fileExtToLang(filePath);
+        }
+        if (this.language == null) {
+            throw new IllegalArgumentException("Couldn't determine language of dataset.");
+        }
+    }
+
+    public FileBasedNIFDataset(String filePath, String name) {
+        super(name);
+        this.filePath = filePath;
+        this.language = fileExtToLang(filePath);
+        if (this.language == null) {
+            throw new IllegalArgumentException("Couldn't determine language of dataset.");
+        }
     }
 
     @Override
@@ -60,4 +83,13 @@ public class FileBasedNIFDataset extends AbstractNIFDataset {
         return language;
     }
 
+    protected static Lang fileExtToLang(String filePath) {
+        File file = new File(filePath);
+        String ext = file.getName();
+        int pos = ext.lastIndexOf('.');
+        if (pos < 0) {
+            return null;
+        }
+        return RDFLanguages.fileExtToLang(ext.substring(pos));
+    }
 }

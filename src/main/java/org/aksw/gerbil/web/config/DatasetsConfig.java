@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotators.AnnotatorConfiguration;
-import org.aksw.gerbil.annotators.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.datasets.DatahubNIFConfig;
+import org.aksw.gerbil.datasets.DatasetConfiguration;
+import org.aksw.gerbil.datasets.DatasetConfigurationImpl;
+import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +21,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AnnotatorsConfig {
+public class DatasetsConfig {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatorsConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasetsConfig.class);
 
-    public static final String ANNOTATOR_CONFIGURATION_PREFIX = "org.aksw.gerbil.annotators";
+    public static final String ANNOTATOR_CONFIGURATION_PREFIX = "org.aksw.gerbil.datasets";
     public static final String ANNOTATOR_CACHE_FLAG_SUFFIX = "cacheable";
     public static final String ANNOTATOR_CLASS_SUFFIX = "class";
     public static final String ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX = "constructorArgs";
@@ -30,74 +33,82 @@ public class AnnotatorsConfig {
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
 
     public static void main(String[] args) {
-        getAnnotators();
+        getDatasets();
     }
 
     @Bean
-    public static AdapterList<AnnotatorConfiguration> getAnnotators() {
-        List<AnnotatorConfiguration> annotatorConfigurations = new ArrayList<AnnotatorConfiguration>();
-        Set<String> annotatorKeys = getAnnotatorKeys();
-        AnnotatorConfiguration configuration;
-        for (String annotatorKey : annotatorKeys) {
+    public static AdapterList<DatasetConfiguration> getDatasets() {
+        List<DatasetConfiguration> datasetConfigurations = new ArrayList<DatasetConfiguration>();
+        Set<String> datasetKeys = getDatasetKeys();
+        DatasetConfiguration configuration;
+        for (String datasetKey : datasetKeys) {
             try {
-                configuration = getConfiguration(annotatorKey);
+                configuration = getConfiguration(datasetKey);
                 if (configuration != null) {
-                    annotatorConfigurations.add(configuration);
-                    LOGGER.info("Found annotator configuration " + configuration.toString());
+                    datasetConfigurations.add(configuration);
+                    LOGGER.info("Found dataset configuration " + configuration.toString());
                 }
             } catch (Exception e) {
-                LOGGER.error("Got an exception while trying to load configuration of \"" + annotatorKey
-                        + "\" annotator: " + e.toString());
+                LOGGER.error("Got an exception while trying to load configuration of \"" + datasetKey + "\" dataset: "
+                        + e.toString());
             }
         }
-        LOGGER.info("Found {} annotators.", annotatorConfigurations.size());
-        return new AdapterList<AnnotatorConfiguration>(annotatorConfigurations);
+
+        // load Datahub data
+        DatahubNIFLoader datahub = new DatahubNIFLoader();
+        Map<String, String> datasets = datahub.getDataSets();
+        for (String datasetName : datasets.keySet()) {
+            datasetConfigurations.add(new DatahubNIFConfig(datasetName, datasets.get(datasetName), true));
+        }
+
+        LOGGER.info("Found {} datasets.", datasetConfigurations.size());
+        return new AdapterList<DatasetConfiguration>(datasetConfigurations);
     }
 
-    private static Set<String> getAnnotatorKeys() {
-        Set<String> annotatorKeys = new HashSet<String>();
+    private static Set<String> getDatasetKeys() {
+        Set<String> datasetKeys = new HashSet<String>();
         @SuppressWarnings("rawtypes")
         Iterator iterator = GerbilConfiguration.getInstance().getKeys(ANNOTATOR_CONFIGURATION_PREFIX);
-        String annotatorKey;
+        String datasetKey;
         int pos;
         while (iterator.hasNext()) {
-            annotatorKey = (String) iterator.next();
-            annotatorKey = annotatorKey.substring(ANNOTATOR_CONFIGURATION_PREFIX.length() + 1);
-            pos = annotatorKey.indexOf('.');
+            datasetKey = (String) iterator.next();
+            datasetKey = datasetKey.substring(ANNOTATOR_CONFIGURATION_PREFIX.length() + 1);
+            pos = datasetKey.indexOf('.');
             if (pos > 0) {
-                annotatorKey = annotatorKey.substring(0, pos);
-                annotatorKeys.add(annotatorKey);
+                datasetKey = datasetKey.substring(0, pos);
+                datasetKeys.add(datasetKey);
             }
         }
-        return annotatorKeys;
+        return datasetKeys;
     }
 
-    private static AnnotatorConfiguration getConfiguration(String annotatorKey) throws ClassNotFoundException,
+    private static DatasetConfiguration getConfiguration(String datasetKey) throws ClassNotFoundException,
             NoSuchMethodException, SecurityException {
         org.apache.commons.configuration.Configuration config = GerbilConfiguration.getInstance();
         StringBuilder keyBuilder = new StringBuilder();
         String key;
 
-        key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_NAME_SUFFIX);
+        key = buildKey(keyBuilder, datasetKey, ANNOTATOR_NAME_SUFFIX);
         if (!config.containsKey(key)) {
-            LOGGER.error("Couldn't get a name for the \"" + annotatorKey + "\" annotator.");
+            LOGGER.error("Couldn't get a name for the \"" + datasetKey + "\" dataset.");
             return null;
         }
         String name = config.getString(key);
 
-        key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_CLASS_SUFFIX);
+        key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CLASS_SUFFIX);
         if (!config.containsKey(key)) {
-            LOGGER.error("Couldn't get a class for the \"" + annotatorKey + "\" annotator.");
+            LOGGER.error("Couldn't get a class for the \"" + datasetKey + "\" dataset.");
             return null;
         }
         String classString = config.getString(key);
         @SuppressWarnings("unchecked")
-        Class<? extends Annotator> annotatorClass = (Class<? extends Annotator>) AnnotatorsConfig.class
-                .getClassLoader().loadClass(classString);
+        Class<? extends Dataset> datasetClass = (Class<? extends Dataset>) DatasetsConfig.class.getClassLoader()
+                .loadClass(classString);
 
-        key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_EXPERIMENT_TYPES_SUFFIX);
+        key = buildKey(keyBuilder, datasetKey, ANNOTATOR_EXPERIMENT_TYPES_SUFFIX);
         if (!config.containsKey(key)) {
-            LOGGER.error("Couldn't get a class for the \"" + annotatorKey + "\" annotator.");
+            LOGGER.error("Couldn't get a class for the \"" + datasetKey + "\" dataset.");
             return null;
         }
         String typeStrings[] = config.getStringArray(key);
@@ -106,13 +117,13 @@ public class AnnotatorsConfig {
             types[i] = ExperimentType.valueOf(typeStrings[i]);
         }
 
-        key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_CACHE_FLAG_SUFFIX);
+        key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CACHE_FLAG_SUFFIX);
         boolean cacheable = true;
         if (config.containsKey(key)) {
             cacheable = config.getBoolean(key);
         }
 
-        key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX);
+        key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX);
         String constructorArgStrings[];
         if (config.containsKey(key)) {
             constructorArgStrings = config.getStringArray(key);
@@ -126,9 +137,9 @@ public class AnnotatorsConfig {
             constructorArgClasses[i] = String.class;
         }
 
-        Constructor<? extends Annotator> constructor = annotatorClass.getConstructor(constructorArgClasses);
+        Constructor<? extends Dataset> constructor = datasetClass.getConstructor(constructorArgClasses);
 
-        return new AnnotatorConfigurationImpl(name, cacheable, constructor, constructorArgs, types);
+        return new DatasetConfigurationImpl(name, cacheable, constructor, constructorArgs, types);
     }
 
     protected static String buildKey(StringBuilder keyBuilder, String annotatorKey, String suffix) {

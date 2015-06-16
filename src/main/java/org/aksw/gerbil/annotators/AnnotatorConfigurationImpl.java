@@ -1,8 +1,9 @@
-package org.aksw.gerbil.annotator;
+package org.aksw.gerbil.annotators;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 
-import org.aksw.gerbil.annotators.AnnotatorConfiguration;
+import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -36,7 +37,9 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
     }
 
     protected Annotator loadAnnotator() throws Exception {
-        return constructor.newInstance(constructorArgs);
+        Annotator instance = constructor.newInstance(constructorArgs);
+        instance.setName(this.getName());
+        return instance;
     }
 
     public ExperimentType[] getApplicableForExperiments() {
@@ -45,5 +48,27 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
 
     public void setApplicableForExperiments(ExperimentType[] applicableForExperiments) {
         this.applicableForExperiments = applicableForExperiments;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("(\"");
+        builder.append(name);
+        builder.append("\",cached=");
+        builder.append(couldBeCached);
+        builder.append(",expTypes={");
+        for (int i = 0; i < applicableForExperiments.length; ++i) {
+            if (i > 0) {
+                builder.append(',');
+            }
+            builder.append(applicableForExperiments[i].name());
+        }
+        builder.append("},constr.=");
+        builder.append(constructor);
+        builder.append(",args=");
+        builder.append(Arrays.toString(constructorArgs));
+        builder.append(')');
+        return builder.toString();
     }
 }

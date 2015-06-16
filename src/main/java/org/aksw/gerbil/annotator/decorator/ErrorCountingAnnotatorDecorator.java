@@ -446,6 +446,11 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         return decoratedAnnotator.getName();
     }
 
+    @Override
+    public void setName(String name) {
+        decoratedAnnotator.setName(name);
+    }
+
     protected Annotator getDecoratedAnnotator() {
         return decoratedAnnotator;
     }

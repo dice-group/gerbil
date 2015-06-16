@@ -35,6 +35,7 @@ import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataid.DataIDGenerator;
+import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -79,7 +80,7 @@ public class MainController {
             isInitialized = true;
         }
         // Simply call the dataset mapping so that it has to be instantiated
-        DatasetMapping.getDatasetsForExperimentType(ExperimentType.EExt);
+//        DatasetMapping.getDatasetsForExperimentType(ExperimentType.EExt);
     }
 
     @PostConstruct
@@ -99,6 +100,9 @@ public class MainController {
 
     @Autowired
     private AdapterList<AnnotatorConfiguration> annotators;
+
+    @Autowired
+    private AdapterList<DatasetConfiguration> datasets;
 
     // DataID URL is generated automatically in the experiment method?
     private DataIDGenerator dataIdGenerator;

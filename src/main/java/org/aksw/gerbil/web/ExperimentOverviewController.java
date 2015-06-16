@@ -31,15 +31,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
-import org.aksw.gerbil.utils.AnnotatorMapping;
 import org.aksw.gerbil.utils.DatasetMapping;
 import org.aksw.gerbil.utils.DatasetMetaData;
 import org.aksw.gerbil.utils.DatasetMetaDataMapping;
 import org.aksw.gerbil.utils.PearsonsSampleCorrelationCoefficient;
+import org.aksw.gerbil.web.config.AdapterList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,9 +68,11 @@ public class ExperimentOverviewController {
     @Qualifier("experimentDAO")
     private ExperimentDAO dao;
 
+    @Autowired
+    private AdapterList<AnnotatorConfiguration> annotators;
+
     @RequestMapping("/experimentoverview")
-    public @ResponseBody
-    String experimentoverview(@RequestParam(value = "experimentType") String experimentType,
+    public @ResponseBody String experimentoverview(@RequestParam(value = "experimentType") String experimentType,
             @RequestParam(value = "matching") String matchingString) {
         LOGGER.debug("Got request on /experimentoverview(experimentType={}, matching={}", experimentType,
                 matchingString);
@@ -118,10 +121,10 @@ public class ExperimentOverviewController {
     }
 
     private String[] loadAnnotators(ExperimentType eType) {
-        Set<String> annotators = AnnotatorMapping.getAnnotatorsForExperimentType(eType);
-        String annotatorNames[] = annotators.toArray(new String[annotators.size()]);
-        Arrays.sort(annotatorNames);
-        return annotatorNames;
+        Set<String> annotatorNames = annotators.getAdapterNamesForExperiment(eType);
+        String annotatorNameArray[] = annotatorNames.toArray(new String[annotatorNames.size()]);
+        Arrays.sort(annotatorNameArray);
+        return annotatorNameArray;
     }
 
     private String[] loadDatasets(ExperimentType eType) {

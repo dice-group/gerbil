@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.annotator.OKETask1Annotator;
+import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -28,7 +29,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FOXAnnotator implements OKETask1Annotator {
+public class FOXAnnotator extends AbstractAnnotator implements OKETask1Annotator {
 
     private static final String FOX_SERVICE_URL_PARAMETER_KEY = "org.aksw.gerbil.annotators.FOXAnnotatorConfig.serviceUrl";
 
@@ -41,6 +42,7 @@ public class FOXAnnotator implements OKETask1Annotator {
     private static final String DOLCE_LOCATION_TYPE_URI = "http://www.ontologydesignpatterns.org/ont/d0.owl#Location";
     private static final String DOLCE_ORGANIZATION_TYPE_URI = "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization";
 
+    @Deprecated
     public static final String NAME = "FOX";
 
     private String serviceUrl;
@@ -65,11 +67,6 @@ public class FOXAnnotator implements OKETask1Annotator {
     @Override
     public List<MeaningSpan> performLinking(Document document) throws GerbilException {
         return requestAnnotations(document).getMarkings(MeaningSpan.class);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 
     @Override
