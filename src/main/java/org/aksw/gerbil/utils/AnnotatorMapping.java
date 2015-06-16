@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  */
+@Deprecated
 public class AnnotatorMapping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatorMapping.class);
@@ -56,7 +57,6 @@ public class AnnotatorMapping {
 
     private static AnnotatorMapping instance = null;
 
-    @SuppressWarnings("deprecation")
     private synchronized static AnnotatorMapping getInstance() {
         if (instance == null) {
             Map<String, AnnotatorConfiguration> mapping = new HashMap<String, AnnotatorConfiguration>();

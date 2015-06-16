@@ -31,8 +31,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import junit.framework.Assert;
-
 import org.aksw.gerbil.semantic.subclass.ClassNode;
 import org.aksw.gerbil.semantic.subclass.ClassSet;
 import org.aksw.gerbil.semantic.subclass.ClassifiedClassNode;
@@ -42,6 +40,7 @@ import org.aksw.gerbil.semantic.subclass.SimpleClassNodeFactory;
 import org.aksw.gerbil.semantic.subclass.SimpleClassSet;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencerFactory;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

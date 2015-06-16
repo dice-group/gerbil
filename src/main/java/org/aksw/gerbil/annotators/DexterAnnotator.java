@@ -1,6 +1,7 @@
 /**
- * The MIT License
- * Copyright (c) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ * The MIT License (MIT)
+ *
+ * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +23,27 @@
  */
 package org.aksw.gerbil.annotators;
 
-import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
-import org.aksw.gerbil.datatypes.ExperimentType;
 
-@Deprecated
-public class NIFWebserviceAnnotatorConfiguration extends AbstractAnnotatorConfiguration {
+//@GerbilAnnotator(name = "Dexter", couldBeCached = true, applicableForExperiments = ExperimentType.D2W)
+public class DexterAnnotator /* extends NIFBasedAnnotatorWebservice */{
 
-    public static final String ANNOTATOR_NAME = "NIF-based Web Service";
-
-    private String annotaturURL;
-
-    public NIFWebserviceAnnotatorConfiguration(String annotaturURL, String annotatorName, boolean couldBeCached,
-            ExperimentType... applicableForExperiment) {
-        super(annotatorName, couldBeCached, applicableForExperiment);
-        this.annotaturURL = annotaturURL;
-    }
-
-    @Override
-    protected Annotator loadAnnotator(ExperimentType type) throws Exception {
-        return new NIFBasedAnnotatorWebservice(annotaturURL, this.getName());
-    }
+    // public static final String ANNOTATOR_NAME = "Dexter";
+    //
+    // private static final String ANNOTATION_URL_PROPERTY_KEY =
+    // "org.aksw.gerbil.annotators.DexterAnnotatorConfig.annotationUrl";
+    //
+    // // @Autowired
+    // // private WikipediaApiInterface wikiApi;
+    //
+    // public DexterAnnotator() throws GerbilException {
+    // super("", ANNOTATOR_NAME);
+    // url =
+    // GerbilConfiguration.getInstance().getString(ANNOTATION_URL_PROPERTY_KEY);
+    // if (url == null) {
+    // throw new GerbilException("Couldn't load the needed property \"" +
+    // ANNOTATION_URL_PROPERTY_KEY + "\".",
+    // ErrorTypes.ANNOTATOR_LOADING_ERROR);
+    // }
+    // }
 
 }

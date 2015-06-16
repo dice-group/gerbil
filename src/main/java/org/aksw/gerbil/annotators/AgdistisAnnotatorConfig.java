@@ -34,8 +34,7 @@ import org.aksw.gerbil.exceptions.GerbilException;
 
 public class AgdistisAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
-    public static final String ANNOTATOR_NAME = "AGDISTIS"
-	    + BatFrameworkAnnotatorWrapper.ANNOTATOR_NAME_SUFFIX;
+    public static final String ANNOTATOR_NAME = "AGDISTIS" + BatFrameworkAnnotatorWrapper.ANNOTATOR_NAME_SUFFIX;
 
     private static final String AGDISTIS_HOST_PROPERTY_NAME = "org.aksw.gerbil.annotators.AgdistisAnnotatorConfig.Host";
     private static final String AGDISTIS_PORT_PROPERTY_NAME = "org.aksw.gerbil.annotators.AgdistisAnnotatorConfig.Port";
@@ -44,37 +43,30 @@ public class AgdistisAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
     @SuppressWarnings("deprecation")
     public AgdistisAnnotatorConfig(WikipediaApiInterface wikiApi) {
-	super(ANNOTATOR_NAME, true, ExperimentType.D2KB);
-	this.wikiApi = wikiApi;
+        super(ANNOTATOR_NAME, true, ExperimentType.D2KB);
+        this.wikiApi = wikiApi;
     }
 
     @SuppressWarnings("deprecation")
     @Override
     protected Annotator loadAnnotator(ExperimentType type) throws Exception {
-	String host = GerbilConfiguration.getInstance().getString(
-		AGDISTIS_HOST_PROPERTY_NAME);
-	if (host == null) {
-	    throw new GerbilException("Couldn't load needed property \""
-		    + AGDISTIS_HOST_PROPERTY_NAME + "\".",
-		    ErrorTypes.ANNOTATOR_LOADING_ERROR);
-	}
-	String portString = GerbilConfiguration.getInstance().getString(
-		AGDISTIS_PORT_PROPERTY_NAME);
-	if (portString == null) {
-	    throw new GerbilException("Couldn't load needed property \""
-		    + AGDISTIS_PORT_PROPERTY_NAME + "\".",
-		    ErrorTypes.ANNOTATOR_LOADING_ERROR);
-	}
-	int port;
-	try {
-	    port = Integer.parseInt(portString);
-	} catch (Exception e) {
-	    throw new GerbilException(
-		    "Couldn't parse the integer of the property \""
-			    + AGDISTIS_PORT_PROPERTY_NAME + "\".", e,
-		    ErrorTypes.ANNOTATOR_LOADING_ERROR);
-	}
-	return BatFrameworkAnnotatorWrapper.create(new AgdistisAnnotator(host,
-		port, wikiApi), wikiApi);
+        String host = GerbilConfiguration.getInstance().getString(AGDISTIS_HOST_PROPERTY_NAME);
+        if (host == null) {
+            throw new GerbilException("Couldn't load needed property \"" + AGDISTIS_HOST_PROPERTY_NAME + "\".",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
+        String portString = GerbilConfiguration.getInstance().getString(AGDISTIS_PORT_PROPERTY_NAME);
+        if (portString == null) {
+            throw new GerbilException("Couldn't load needed property \"" + AGDISTIS_PORT_PROPERTY_NAME + "\".",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
+        int port;
+        try {
+            port = Integer.parseInt(portString);
+        } catch (Exception e) {
+            throw new GerbilException("Couldn't parse the integer of the property \"" + AGDISTIS_PORT_PROPERTY_NAME
+                    + "\".", e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
+        return BatFrameworkAnnotatorWrapper.create(new AgdistisAnnotator(host, port, wikiApi), wikiApi);
     }
 }

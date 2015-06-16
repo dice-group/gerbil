@@ -30,7 +30,7 @@ public class AnnotatorsConfig {
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
 
     @Bean
-    public static List<AnnotatorConfiguration> getAnnotators() {
+    public static AdapterList<AnnotatorConfiguration> getAnnotators() {
         List<AnnotatorConfiguration> annotatorConfigurations = new ArrayList<AnnotatorConfiguration>();
         Set<String> annotatorKeys = getAnnotatorKeys();
         AnnotatorConfiguration configuration;
@@ -47,7 +47,7 @@ public class AnnotatorsConfig {
                 e.printStackTrace();
             }
         }
-        return annotatorConfigurations;
+        return new AdapterList<AnnotatorConfiguration>(annotatorConfigurations);
     }
 
     private static Set<String> getAnnotatorKeys() {

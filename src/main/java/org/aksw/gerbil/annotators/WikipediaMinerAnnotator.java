@@ -1,12 +1,7 @@
 /**
-<<<<<<< HEAD
- * The MIT License
- * Copyright (c) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
-=======
  * The MIT License (MIT)
  *
  * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
->>>>>>> springifyAdapterLoading
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,33 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.dataid;
+package org.aksw.gerbil.annotators;
 
 
-public class DataIDUtils {
-	
-	/**
-	 * Treats string removing slash, spaces, etc. 
-	 * @param str
-	 * @return
-	 */
-    public static String treatsNames(String str){		
-    	// replace slash for underscore
-    	str = str.replace("/", "_");
-    	
-    	// replace empty spaces for underscore
-    	str = str.replace(" ", "_");
-    	
-    	// remove the suffix "-_test* -_train*"
-    	String pattern = "[-_][Tt](([Ee][Ss].*)|([Rr][Aa][Ii][Nn].*).*)";
-    	
-    	str=str.replaceAll(pattern,"");
-    	
-    	return str;
-    }
-    
-    
-    
-    
-    
+public class WikipediaMinerAnnotator {
+
+    // private static final String WIKI_MINER_CONFIG_FILE_PROPERTY_NAME =
+    // "org.aksw.gerbil.annotators.WikipediaMinerAnnotatorConfig.ConfigFile";
+    //
+    // private String configFile;
+    //
+    // public WikipediaMinerAnnotator() throws GerbilException {
+    // configFile =
+    // GerbilConfiguration.getInstance().getString(WIKI_MINER_CONFIG_FILE_PROPERTY_NAME);
+    // if (configFile == null) {
+    // throw new GerbilException("Couldn't load config file path (\"" +
+    // WIKI_MINER_CONFIG_FILE_PROPERTY_NAME
+    // + "\".", ErrorTypes.ANNOTATOR_LOADING_ERROR);
+    // }
+    // }
+    //
+    // @Override
+    // public Sa2WSystem getAnnotator() throws GerbilException {
+    // Sa2WSystem annotator = super.getAnnotator();
+    // if (annotator == null) {
+    // try {
+    // annotator = new
+    // it.acubelab.batframework.systemPlugins.WikipediaMinerAnnotator(configFile);
+    // setAnnotator(annotator);
+    // } catch (Exception e) {
+    // throw new GerbilException("Got an exception while loading annotator.", e,
+    // ErrorTypes.ANNOTATOR_LOADING_ERROR);
+    // }
+    // }
+    // return annotator;
+    // }
 }

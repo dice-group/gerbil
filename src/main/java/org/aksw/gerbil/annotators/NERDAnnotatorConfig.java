@@ -32,7 +32,6 @@
 
 package org.aksw.gerbil.annotators;
 
-
 public class NERDAnnotatorConfig /*extends AbstractAnnotatorConfiguration*/ {
 
 //    public static final String ANNOTATOR_NAME = "NERD-ML";

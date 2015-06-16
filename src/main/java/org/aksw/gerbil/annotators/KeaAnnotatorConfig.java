@@ -31,6 +31,7 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KeaAnnotatorConfig.class);
