@@ -56,7 +56,7 @@ import com.carrotsearch.hppc.ObjectObjectOpenHashMap;
  * Client of DBpedia Spotlight. This implementation is mainly based on the
  * implementations of the BAT-Framework and the HAWK project.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public class SpotlightClient {

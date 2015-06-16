@@ -32,6 +32,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.aksw.gerbil.Experimenter;
+import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataid.DataIDGenerator;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
@@ -95,6 +96,8 @@ public class MainController {
 
     @Autowired
     private EvaluatorFactory evFactory;
+    
+    private List<AnnotatorConfiguration> annotatorConfigs;
 
     // DataID URL is generated automatically in the experiment method?
     private DataIDGenerator dataIdGenerator;
