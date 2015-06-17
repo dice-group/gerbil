@@ -99,9 +99,11 @@ public class MainController {
     private EvaluatorFactory evFactory;
 
     @Autowired
+    @Qualifier("getAnnotators")
     private AdapterList<AnnotatorConfiguration> annotators;
 
     @Autowired
+    @Qualifier("getDatasets")
     private AdapterList<DatasetConfiguration> datasets;
 
     // DataID URL is generated automatically in the experiment method?
