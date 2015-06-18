@@ -317,7 +317,14 @@ public enum ExperimentType implements Describable {
             }
         }
         case OKE_Task1: {
-            return true;
+            switch (type) {
+            case OKE_Task2: {
+                return false;
+            }
+            default: {
+                return true;
+            }
+            }
         }
         case ETyping: {
             return type == ETyping;
