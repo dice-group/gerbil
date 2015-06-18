@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
+import org.aksw.gerbil.dataset.InitializableDataset;
 import org.aksw.gerbil.dataset.RdfModelContainingDataset;
 import org.aksw.gerbil.dataset.impl.AbstractDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-public abstract class AbstractNIFDataset extends AbstractDataset implements RdfModelContainingDataset {
+public abstract class AbstractNIFDataset extends AbstractDataset implements RdfModelContainingDataset, InitializableDataset {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(AbstractNIFDataset.class);
 
@@ -89,6 +90,7 @@ public abstract class AbstractNIFDataset extends AbstractDataset implements RdfM
         }
     }
 
+    @Override
     public synchronized void init() throws GerbilException {
         if (hasBeenInitialized) {
             return;

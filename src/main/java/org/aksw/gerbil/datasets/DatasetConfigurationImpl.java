@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
 import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.InitializableDataset;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -38,6 +39,10 @@ public class DatasetConfigurationImpl extends AbstractAdapterConfiguration imple
     protected Dataset loadDataset() throws Exception {
         Dataset instance = constructor.newInstance(constructorArgs);
         instance.setName(this.getName());
+        // If this dataset should be initialized
+        if (instance instanceof InitializableDataset) {
+            ((InitializableDataset) instance).init();
+        }
         return instance;
     }
 

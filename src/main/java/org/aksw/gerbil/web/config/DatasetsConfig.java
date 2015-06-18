@@ -25,7 +25,7 @@ public class DatasetsConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetsConfig.class);
 
-    public static final String ANNOTATOR_CONFIGURATION_PREFIX = "org.aksw.gerbil.datasets";
+    public static final String ANNOTATOR_CONFIGURATION_PREFIX = "org.aksw.gerbil.datasets.definition";
     public static final String ANNOTATOR_CACHE_FLAG_SUFFIX = "cacheable";
     public static final String ANNOTATOR_CLASS_SUFFIX = "class";
     public static final String ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX = "constructorArgs";

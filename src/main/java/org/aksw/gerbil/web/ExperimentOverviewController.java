@@ -69,11 +69,11 @@ public class ExperimentOverviewController {
 	private ExperimentDAO dao;
 
 	@Autowired
-	@Qualifier("getAnnotators")
+	@Qualifier("annotators")
 	private AdapterList<AnnotatorConfiguration> annotators;
 
 	@Autowired
-	@Qualifier("getDatasets")
+	@Qualifier("datasets")
 	private AdapterList<DatasetConfiguration> datasets;
 
 	@RequestMapping("/experimentoverview")

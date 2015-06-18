@@ -52,13 +52,10 @@ public class AdapterList<T extends AdapterConfiguration> {
         List<T> adapters;
         for (T config : configurations) {
             if (nameToAdapterMapping.containsKey(config.getName())) {
-                // LOGGER.error("Found two adapters with the name \"" +
-                // config.getName() + "\". Ignoring the second one.");
+                adapters = nameToAdapterMapping.get(config.getName());
+            } else {
                 adapters = new ArrayList<T>(2);
                 nameToAdapterMapping.put(config.getName(), adapters);
-            } else {
-                // nameToAdapterMapping.put(config.getName(), config);
-                adapters = nameToAdapterMapping.get(config.getName());
             }
             adapters.add(config);
             Collections.sort(adapters);

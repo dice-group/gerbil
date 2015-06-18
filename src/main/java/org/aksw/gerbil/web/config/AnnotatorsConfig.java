@@ -22,7 +22,7 @@ public class AnnotatorsConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotatorsConfig.class);
 
-    public static final String ANNOTATOR_CONFIGURATION_PREFIX = "org.aksw.gerbil.annotators";
+    public static final String ANNOTATOR_CONFIGURATION_PREFIX = "org.aksw.gerbil.annotators.definition";
     public static final String ANNOTATOR_CACHE_FLAG_SUFFIX = "cacheable";
     public static final String ANNOTATOR_CLASS_SUFFIX = "class";
     public static final String ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX = "constructorArgs";
