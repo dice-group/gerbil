@@ -26,7 +26,6 @@ import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
-@Deprecated
 public class NIFWebserviceAnnotatorConfiguration extends AbstractAnnotatorConfiguration {
 
     public static final String ANNOTATOR_NAME = "NIF-based Web Service";

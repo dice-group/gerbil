@@ -40,9 +40,9 @@ public class DatasetMapping {
     // private static final Logger LOGGER =
     // LoggerFactory.getLogger(DatasetMapping.class);
     //
-    // private static final String UPLOADED_FILES_PATH_PROPERTY_KEY =
-    // "org.aksw.gerbil.UploadPath";
-    // private static final String UPLOADED_DATASET_SUFFIX = " (uploaded)";
+//     private static final String UPLOADED_FILES_PATH_PROPERTY_KEY =
+//     "org.aksw.gerbil.UploadPath";
+//     private static final String UPLOADED_DATASET_SUFFIX = " (uploaded)";
     //
     // private static DatasetMapping instance = null;
     //
@@ -135,41 +135,41 @@ public class DatasetMapping {
     // return names;
     // }
     //
-    // public static DatasetConfiguration getDatasetConfig(String name) {
-    // DatasetMapping datasets = getInstance();
-    // if (datasets.mapping.containsKey(name)) {
-    // return datasets.mapping.get(name);
-    // } else {
-    // if (name.startsWith("NIFDS_")) {
-    // String uploadedFilesPath = GerbilConfiguration.getInstance()
-    // .getString(UPLOADED_FILES_PATH_PROPERTY_KEY);
-    // if (uploadedFilesPath == null) {
-    // LOGGER.error("Couldn't process uploaded file request, because the upload path is not set (\"{}\"",
-    // UPLOADED_FILES_PATH_PROPERTY_KEY);
-    // }
-    // // This describes a NIF based web service
-    // // The name should have the form "NIFDS_name(uri)"
-    // int pos = name.indexOf('(');
-    // if (pos < 0) {
-    // LOGGER.error("Couldn't parse the definition of this NIF based web service \""
-    // + name
-    // + "\". Returning null.");
-    // return null;
-    // }
-    // String uri = uploadedFilesPath + name.substring(pos + 1, name.length() -
-    // 1);
-    // // remove "NIFDS_" from the name
-    // name = name.substring(6, pos) + UPLOADED_DATASET_SUFFIX;
-    // LOGGER.error("name={}, uri={}", name, uri);
-    // return new NIFFileDatasetConfig(name, uri, false, ExperimentType.EExt,
-    // ExperimentType.OKE_Task1,
-    // ExperimentType.OKE_Task2);
-    // }
-    // LOGGER.error("Got an unknown annotator name\"" + name +
-    // "\". Returning null.");
-    // return null;
-    // }
-    // }
+//     public static DatasetConfiguration getDatasetConfig(String name) {
+//     DatasetMapping datasets = getInstance();
+//     if (datasets.mapping.containsKey(name)) {
+//     return datasets.mapping.get(name);
+//     } else {
+//     if (name.startsWith("NIFDS_")) {
+//     String uploadedFilesPath = GerbilConfiguration.getInstance()
+//     .getString(UPLOADED_FILES_PATH_PROPERTY_KEY);
+//     if (uploadedFilesPath == null) {
+//     LOGGER.error("Couldn't process uploaded file request, because the upload path is not set (\"{}\"",
+//     UPLOADED_FILES_PATH_PROPERTY_KEY);
+//     }
+//     // This describes a NIF based web service
+//     // The name should have the form "NIFDS_name(uri)"
+//     int pos = name.indexOf('(');
+//     if (pos < 0) {
+//     LOGGER.error("Couldn't parse the definition of this NIF based web service \""
+//     + name
+//     + "\". Returning null.");
+//     return null;
+//     }
+//     String uri = uploadedFilesPath + name.substring(pos + 1, name.length() -
+//     1);
+//     // remove "NIFDS_" from the name
+//     name = name.substring(6, pos) + UPLOADED_DATASET_SUFFIX;
+//     LOGGER.error("name={}, uri={}", name, uri);
+//     return new NIFFileDatasetConfig(name, uri, false, ExperimentType.EExt,
+//     ExperimentType.OKE_Task1,
+//     ExperimentType.OKE_Task2);
+//     }
+//     LOGGER.error("Got an unknown annotator name\"" + name +
+//     "\". Returning null.");
+//     return null;
+//     }
+//     }
     //
     // public static List<DatasetConfiguration> getDatasetConfigurations() {
     // return getInstance().getDatasetConfigs();

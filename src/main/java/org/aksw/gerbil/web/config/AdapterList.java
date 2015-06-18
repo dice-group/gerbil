@@ -33,18 +33,12 @@ import java.util.Set;
 
 import org.aksw.gerbil.datatypes.AdapterConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AdapterList<T extends AdapterConfiguration> {
 
-    // private static final Logger LOGGER =
-    // LoggerFactory.getLogger(AdapterList.class);
-
     protected List<T> experimentTypesToAdapterMapping[];
     protected Map<String, List<T>> nameToAdapterMapping;
-
-    // protected List<T> configurations;
+    protected List<T> configurations;
 
     public AdapterList(List<T> configurations) {
         setConfigurations(configurations);
@@ -52,7 +46,7 @@ public class AdapterList<T extends AdapterConfiguration> {
 
     @SuppressWarnings("unchecked")
     protected void setConfigurations(List<T> configurations) {
-        // this.configurations = configurations;
+        this.configurations = configurations;
         // udpate mappings
         nameToAdapterMapping = new HashMap<String, List<T>>();
         List<T> adapters;
@@ -101,11 +95,15 @@ public class AdapterList<T extends AdapterConfiguration> {
         return names;
     }
 
-    // public T getAdapterForName(String name) {
-    // if (nameToAdapterMapping.containsKey(name)) {
-    // return nameToAdapterMapping.get(name);
-    // } else {
-    // return null;
-    // }
-    // }
+    public List<T> getAdaptersForName(String name) {
+        if (nameToAdapterMapping.containsKey(name)) {
+            return nameToAdapterMapping.get(name);
+        } else {
+            return null;
+        }
+    }
+
+    public List<T> getConfigurations() {
+        return configurations;
+    }
 }

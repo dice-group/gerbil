@@ -30,11 +30,11 @@ public class AnnotatorsConfig {
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
 
     public static void main(String[] args) {
-        getAnnotators();
+        annotators();
     }
 
     @Bean
-    public static AdapterList<AnnotatorConfiguration> getAnnotators() {
+    public static AdapterList<AnnotatorConfiguration> annotators() {
         List<AnnotatorConfiguration> annotatorConfigurations = new ArrayList<AnnotatorConfiguration>();
         Set<String> annotatorKeys = getAnnotatorKeys();
         AnnotatorConfiguration configuration;

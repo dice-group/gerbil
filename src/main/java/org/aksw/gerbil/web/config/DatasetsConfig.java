@@ -33,11 +33,11 @@ public class DatasetsConfig {
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
 
     public static void main(String[] args) {
-        getDatasets();
+        datasets();
     }
 
     @Bean
-    public static AdapterList<DatasetConfiguration> getDatasets() {
+    public static AdapterList<DatasetConfiguration> datasets() {
         List<DatasetConfiguration> datasetConfigurations = new ArrayList<DatasetConfiguration>();
         Set<String> datasetKeys = getDatasetKeys();
         DatasetConfiguration configuration;

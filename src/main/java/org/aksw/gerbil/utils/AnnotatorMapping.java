@@ -36,8 +36,8 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 @Deprecated
 public class AnnotatorMapping {
 
-    // private static final Logger LOGGER =
-    // LoggerFactory.getLogger(AnnotatorMapping.class);
+//     private static final Logger LOGGER =
+//     LoggerFactory.getLogger(AnnotatorMapping.class);
     //
     // private static final String NIF_WS_SUFFIX = " (NIF WS)";
     //
@@ -74,33 +74,30 @@ public class AnnotatorMapping {
     // return instance;
     // }
     //
-    // public static AnnotatorConfiguration getAnnotatorConfig(String name) {
-    // AnnotatorMapping annotators = getInstance();
-    // if (annotators.mapping.containsKey(name)) {
-    // return annotators.mapping.get(name);
-    // } else {
-    // if (name.startsWith("NIFWS_")) {
-    // // This describes a NIF based web service
-    // // The name should have the form "NIFWS_name(uri)"
-    // int pos = name.indexOf('(');
-    // if (pos < 0) {
-    // LOGGER.error("Couldn't parse the definition of this NIF based web service \""
-    // + name
-    // + "\". Returning null.");
-    // return null;
-    // }
-    // String uri = name.substring(pos + 1, name.length() - 1);
-    // // remove "NIFWS_" from the name
-    // name = name.substring(6, pos) + NIF_WS_SUFFIX;
-    // return new NIFWebserviceAnnotatorConfiguration(uri, name, false,
-    // ExperimentType.OKE_Task1,
-    // ExperimentType.OKE_Task2);
-    // }
-    // LOGGER.error("Got an unknown annotator name\"" + name +
-    // "\". Returning null.");
-    // return null;
-    // }
-    // }
+//    public static AnnotatorConfiguration getAnnotatorConfig(String name) {
+//        AnnotatorMapping annotators = getInstance();
+//        if (annotators.mapping.containsKey(name)) {
+//            return annotators.mapping.get(name);
+//        } else {
+//            if (name.startsWith("NIFWS_")) {
+//                // This describes a NIF based web service
+//                // The name should have the form "NIFWS_name(uri)"
+//                int pos = name.indexOf('(');
+//                if (pos < 0) {
+//                    LOGGER.error("Couldn't parse the definition of this NIF based web service \"" + name
+//                            + "\". Returning null.");
+//                    return null;
+//                }
+//                String uri = name.substring(pos + 1, name.length() - 1);
+//                // remove "NIFWS_" from the name
+//                name = name.substring(6, pos) + NIF_WS_SUFFIX;
+//                return new NIFWebserviceAnnotatorConfiguration(uri, name, false, ExperimentType.OKE_Task1,
+//                        ExperimentType.OKE_Task2);
+//            }
+//            LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
+//            return null;
+//        }
+//    }
     //
     // public static Set<String> getAnnotatorsForExperimentType(ExperimentType
     // type) {

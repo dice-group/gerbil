@@ -32,18 +32,14 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.aksw.gerbil.Experimenter;
-import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataid.DataIDGenerator;
-import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
-import org.aksw.gerbil.utils.DatasetMapping;
 import org.aksw.gerbil.utils.IDCreator;
-import org.aksw.gerbil.web.config.AdapterList;
 import org.aksw.gerbil.web.config.AdapterManager;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.apache.commons.io.FileUtils;
@@ -81,7 +77,7 @@ public class MainController {
             isInitialized = true;
         }
         // Simply call the dataset mapping so that it has to be instantiated
-//        DatasetMapping.getDatasetsForExperimentType(ExperimentType.EExt);
+        // DatasetMapping.getDatasetsForExperimentType(ExperimentType.EExt);
     }
 
     @PostConstruct
@@ -99,14 +95,6 @@ public class MainController {
     @Autowired
     private EvaluatorFactory evFactory;
 
-    @Autowired
-    @Qualifier("getAnnotators")
-    private AdapterList<AnnotatorConfiguration> annotators;
-
-    @Autowired
-    @Qualifier("getDatasets")
-    private AdapterList<DatasetConfiguration> datasets;
-    
     @Autowired
     private AdapterManager adapterManager;
 
@@ -173,8 +161,8 @@ public class MainController {
         ExperimentType expType = ExperimentType.valueOf(type);
         for (String annotator : annotators) {
             for (String dataset : datasets) {
-                configs[count] = new ExperimentTaskConfiguration(getAdapterConfig(annotator, expType),
-                        getDatasetConfig(dataset, expType), expType, getMatching(matching));
+                configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, expType),
+                        adapterManager.getDatasetConfig(dataset, expType), expType, getMatching(matching));
                 LOGGER.debug("Created config: " + configs[count]);
                 ++count;
             }
@@ -184,16 +172,6 @@ public class MainController {
         exp.run();
 
         return experimentId;
-    }
-
-    private DatasetConfiguration getDatasetConfig(String dataset, ExperimentType expType) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    private AnnotatorConfiguration getAdapterConfig(String annotator, ExperimentType expType) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @RequestMapping("/experiment")
@@ -261,7 +239,7 @@ public class MainController {
 
     @RequestMapping("/annotators")
     public @ResponseBody List<String> annotatorsForExpType(@RequestParam(value = "experimentType") String experimentType) {
-        Set<String> annotatorsForExperimentType = annotators.getAdapterNamesForExperiment(ExperimentType
+        Set<String> annotatorsForExperimentType = adapterManager.getAnnotatorNamesForExperiment(ExperimentType
                 .valueOf(experimentType));
         List<String> list = Lists.newArrayList(annotatorsForExperimentType);
         Collections.sort(list);
@@ -270,7 +248,7 @@ public class MainController {
 
     @RequestMapping("/datasets")
     public @ResponseBody List<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
-        Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(ExperimentType.valueOf(experimentType));
+        Set<String> datasets = adapterManager.getDatasetNamesForExperiment(ExperimentType.valueOf(experimentType));
         List<String> list = Lists.newArrayList(datasets);
         Collections.sort(list);
         return list;
