@@ -44,6 +44,7 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.DatasetMapping;
 import org.aksw.gerbil.utils.IDCreator;
 import org.aksw.gerbil.web.config.AdapterList;
+import org.aksw.gerbil.web.config.AdapterManager;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
@@ -103,6 +104,9 @@ public class MainController {
 
     @Autowired
     private AdapterList<DatasetConfiguration> datasets;
+    
+    @Autowired
+    private AdapterManager adapterManager;
 
     // DataID URL is generated automatically in the experiment method?
     private DataIDGenerator dataIdGenerator;
@@ -164,10 +168,11 @@ public class MainController {
         }
         ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[annotators.length * datasets.length];
         int count = 0;
+        ExperimentType expType = ExperimentType.valueOf(type);
         for (String annotator : annotators) {
             for (String dataset : datasets) {
-                configs[count] = new ExperimentTaskConfiguration(this.annotators.getAdapterForName(annotator),
-                        DatasetMapping.getDatasetConfig(dataset), ExperimentType.valueOf(type), getMatching(matching));
+                configs[count] = new ExperimentTaskConfiguration(getAdapterConfig(annotator, expType),
+                        getDatasetConfig(dataset, expType), expType, getMatching(matching));
                 LOGGER.debug("Created config: " + configs[count]);
                 ++count;
             }
@@ -177,6 +182,16 @@ public class MainController {
         exp.run();
 
         return experimentId;
+    }
+
+    private DatasetConfiguration getDatasetConfig(String dataset, ExperimentType expType) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private AnnotatorConfiguration getAdapterConfig(String annotator, ExperimentType expType) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @RequestMapping("/experiment")

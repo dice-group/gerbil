@@ -34,7 +34,7 @@ public class NIFWebserviceAnnotatorConfiguration extends AbstractAnnotatorConfig
     private String annotaturURL;
 
     public NIFWebserviceAnnotatorConfiguration(String annotaturURL, String annotatorName, boolean couldBeCached,
-            ExperimentType... applicableForExperiment) {
+            ExperimentType applicableForExperiment) {
         super(annotatorName, couldBeCached, applicableForExperiment);
         this.annotaturURL = annotaturURL;
     }

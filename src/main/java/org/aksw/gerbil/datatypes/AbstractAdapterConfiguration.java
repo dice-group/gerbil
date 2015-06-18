@@ -22,16 +22,18 @@
  */
 package org.aksw.gerbil.datatypes;
 
+import org.aksw.gerbil.utils.ExperimentTypeComparator;
+
 public abstract class AbstractAdapterConfiguration implements AdapterConfiguration {
 
     protected String name;
     protected boolean couldBeCached;
-    protected ExperimentType applicableForExperiments[];
+    protected ExperimentType applicableForExperiment;
 
-    public AbstractAdapterConfiguration(String name, boolean couldBeCached, ExperimentType... applicableForExperiment) {
+    public AbstractAdapterConfiguration(String name, boolean couldBeCached, ExperimentType applicableForExperiment) {
         this.name = name;
         this.couldBeCached = couldBeCached;
-        this.applicableForExperiments = applicableForExperiment;
+        this.applicableForExperiment = applicableForExperiment;
     }
 
     @Override
@@ -56,12 +58,27 @@ public abstract class AbstractAdapterConfiguration implements AdapterConfigurati
 
     @Override
     public boolean isApplicableForExperiment(ExperimentType type) {
-        for (int i = 0; i < applicableForExperiments.length; i++) {
-            if (applicableForExperiments[i].equalsOrContainsType(type)) {
-                return true;
-            }
-        }
-        return false;
+        // for (int i = 0; i < applicableForExperiments.length; i++) {
+        // if (applicableForExperiments[i].equalsOrContainsType(type)) {
+        // return true;
+        // }
+        // }
+        // return false;
+        return applicableForExperiment.equalsOrContainsType(type);
     }
 
+    @Override
+    public ExperimentType getExperimentType() {
+        return applicableForExperiment;
+    }
+
+    @Override
+    public int compareTo(AdapterConfiguration o) {
+        int result = (new ExperimentTypeComparator()).compare(this.applicableForExperiment, o.getExperimentType());
+        if (result == 0) {
+            return this.getName().compareTo(o.getName());
+        } else {
+            return result;
+        }
+    }
 }

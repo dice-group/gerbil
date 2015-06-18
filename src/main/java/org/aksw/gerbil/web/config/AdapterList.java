@@ -24,6 +24,7 @@
 package org.aksw.gerbil.web.config;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,11 +38,13 @@ import org.slf4j.LoggerFactory;
 
 public class AdapterList<T extends AdapterConfiguration> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdapterList.class);
+    // private static final Logger LOGGER =
+    // LoggerFactory.getLogger(AdapterList.class);
 
     protected List<T> experimentTypesToAdapterMapping[];
-    protected Map<String, T> nameToAdapterMapping;
-    protected List<T> configurations;
+    protected Map<String, List<T>> nameToAdapterMapping;
+
+    // protected List<T> configurations;
 
     public AdapterList(List<T> configurations) {
         setConfigurations(configurations);
@@ -49,25 +52,38 @@ public class AdapterList<T extends AdapterConfiguration> {
 
     @SuppressWarnings("unchecked")
     protected void setConfigurations(List<T> configurations) {
-        this.configurations = configurations;
+        // this.configurations = configurations;
         // udpate mappings
-        ExperimentType types[] = ExperimentType.values();
-        experimentTypesToAdapterMapping = new List[types.length];
-        for (int i = 0; i < types.length; i++) {
-            experimentTypesToAdapterMapping[i] = new ArrayList<T>();
-            for (T config : configurations) {
-                if (config.isApplicableForExperiment(types[i])) {
-                    experimentTypesToAdapterMapping[i].add(config);
-                }
-            }
-        }
-
-        nameToAdapterMapping = new HashMap<String, T>();
+        nameToAdapterMapping = new HashMap<String, List<T>>();
+        List<T> adapters;
         for (T config : configurations) {
             if (nameToAdapterMapping.containsKey(config.getName())) {
-                LOGGER.error("Found two adapters with the name \"" + config.getName() + "\". Ignoring the second one.");
+                // LOGGER.error("Found two adapters with the name \"" +
+                // config.getName() + "\". Ignoring the second one.");
+                adapters = new ArrayList<T>(2);
+                nameToAdapterMapping.put(config.getName(), adapters);
             } else {
-                nameToAdapterMapping.put(config.getName(), config);
+                // nameToAdapterMapping.put(config.getName(), config);
+                adapters = nameToAdapterMapping.get(config.getName());
+            }
+            adapters.add(config);
+            Collections.sort(adapters);
+        }
+
+        ExperimentType types[] = ExperimentType.values();
+        experimentTypesToAdapterMapping = new List[types.length];
+        int id;
+        for (int i = 0; i < types.length; ++i) {
+            experimentTypesToAdapterMapping[i] = new ArrayList<T>();
+            for (String name : nameToAdapterMapping.keySet()) {
+                adapters = nameToAdapterMapping.get(name);
+                id = 0;
+                while ((id < adapters.size()) && (!adapters.get(id).isApplicableForExperiment(types[i]))) {
+                    ++id;
+                }
+                if (id < adapters.size()) {
+                    experimentTypesToAdapterMapping[i].add(adapters.get(id));
+                }
             }
         }
     }
@@ -85,11 +101,11 @@ public class AdapterList<T extends AdapterConfiguration> {
         return names;
     }
 
-    public T getAdapterForName(String name) {
-        if (nameToAdapterMapping.containsKey(name)) {
-            return nameToAdapterMapping.get(name);
-        } else {
-            return null;
-        }
-    }
+    // public T getAdapterForName(String name) {
+    // if (nameToAdapterMapping.containsKey(name)) {
+    // return nameToAdapterMapping.get(name);
+    // } else {
+    // return null;
+    // }
+    // }
 }

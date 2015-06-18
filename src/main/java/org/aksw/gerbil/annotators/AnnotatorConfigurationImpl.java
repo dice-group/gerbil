@@ -16,7 +16,7 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
 
     public AnnotatorConfigurationImpl(String annotatorName, boolean couldBeCached,
             Constructor<? extends Annotator> constructor, Object constructorArgs[],
-            ExperimentType[] applicableForExperiment) {
+            ExperimentType applicableForExperiment) {
         super(annotatorName, couldBeCached, applicableForExperiment);
         this.constructor = constructor;
         this.constructorArgs = constructorArgs;
@@ -24,13 +24,11 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
 
     @Override
     public Annotator getAnnotator(ExperimentType experimentType) throws GerbilException {
-        for (int i = 0; i < applicableForExperiments.length; ++i) {
-            if (applicableForExperiments[i].equalsOrContainsType(experimentType)) {
-                try {
-                    return loadAnnotator();
-                } catch (Exception e) {
-                    throw new GerbilException(e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
-                }
+        if (applicableForExperiment.equalsOrContainsType(experimentType)) {
+            try {
+                return loadAnnotator();
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
             }
         }
         return null;
@@ -42,13 +40,6 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
         return instance;
     }
 
-    public ExperimentType[] getApplicableForExperiments() {
-        return applicableForExperiments;
-    }
-
-    public void setApplicableForExperiments(ExperimentType[] applicableForExperiments) {
-        this.applicableForExperiments = applicableForExperiments;
-    }
 
     @Override
     public String toString() {
@@ -57,13 +48,15 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
         builder.append(name);
         builder.append("\",cached=");
         builder.append(couldBeCached);
-        builder.append(",expTypes={");
-        for (int i = 0; i < applicableForExperiments.length; ++i) {
-            if (i > 0) {
-                builder.append(',');
-            }
-            builder.append(applicableForExperiments[i].name());
-        }
+        // builder.append(",expTypes={");
+        // for (int i = 0; i < applicableForExperiments.length; ++i) {
+        // if (i > 0) {
+        // builder.append(',');
+        // }
+        // builder.append(applicableForExperiments[i].name());
+        // }
+        builder.append(",expType={");
+        builder.append(applicableForExperiment.name());
         builder.append("},constr.=");
         builder.append(constructor);
         builder.append(",args=");

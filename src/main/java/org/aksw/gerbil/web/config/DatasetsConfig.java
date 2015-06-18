@@ -29,7 +29,7 @@ public class DatasetsConfig {
     public static final String ANNOTATOR_CACHE_FLAG_SUFFIX = "cacheable";
     public static final String ANNOTATOR_CLASS_SUFFIX = "class";
     public static final String ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX = "constructorArgs";
-    public static final String ANNOTATOR_EXPERIMENT_TYPES_SUFFIX = "experimentTypes";
+    public static final String ANNOTATOR_EXPERIMENT_TYPE_SUFFIX = "experimentType";
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
 
     public static void main(String[] args) {
@@ -106,16 +106,13 @@ public class DatasetsConfig {
         Class<? extends Dataset> datasetClass = (Class<? extends Dataset>) DatasetsConfig.class.getClassLoader()
                 .loadClass(classString);
 
-        key = buildKey(keyBuilder, datasetKey, ANNOTATOR_EXPERIMENT_TYPES_SUFFIX);
+        key = buildKey(keyBuilder, datasetKey, ANNOTATOR_EXPERIMENT_TYPE_SUFFIX);
         if (!config.containsKey(key)) {
             LOGGER.error("Couldn't get a class for the \"" + datasetKey + "\" dataset.");
             return null;
         }
-        String typeStrings[] = config.getStringArray(key);
-        ExperimentType types[] = new ExperimentType[typeStrings.length];
-        for (int i = 0; i < types.length; ++i) {
-            types[i] = ExperimentType.valueOf(typeStrings[i]);
-        }
+        String typeString = config.getString(key);
+        ExperimentType type = ExperimentType.valueOf(typeString);
 
         key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CACHE_FLAG_SUFFIX);
         boolean cacheable = true;
@@ -139,7 +136,7 @@ public class DatasetsConfig {
 
         Constructor<? extends Dataset> constructor = datasetClass.getConstructor(constructorArgClasses);
 
-        return new DatasetConfigurationImpl(name, cacheable, constructor, constructorArgs, types);
+        return new DatasetConfigurationImpl(name, cacheable, constructor, constructorArgs, type);
     }
 
     protected static String buildKey(StringBuilder keyBuilder, String annotatorKey, String suffix) {

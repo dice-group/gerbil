@@ -29,8 +29,7 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 public class SpotlightAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
     public SpotlightAnnotatorConfig() {
-        super(SpotlightAnnotator.ANNOTATOR_NAME, true, new ExperimentType[] { ExperimentType.EExt,
-                ExperimentType.ETyping, ExperimentType.OKE_Task1 });
+        super(SpotlightAnnotator.ANNOTATOR_NAME, true, ExperimentType.OKE_Task1);
     }
 
     @Override

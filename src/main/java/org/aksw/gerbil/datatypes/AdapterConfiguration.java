@@ -29,7 +29,7 @@ package org.aksw.gerbil.datatypes;
  * @author Michael Röder
  * 
  */
-public interface AdapterConfiguration {
+public interface AdapterConfiguration extends Comparable<AdapterConfiguration>{
 
     /**
      * Getter of the adapters name.
@@ -74,4 +74,6 @@ public interface AdapterConfiguration {
      *         type.
      */
     public boolean isApplicableForExperiment(ExperimentType type);
+    
+    public ExperimentType getExperimentType();
 }

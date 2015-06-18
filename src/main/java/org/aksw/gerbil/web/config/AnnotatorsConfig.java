@@ -26,7 +26,7 @@ public class AnnotatorsConfig {
     public static final String ANNOTATOR_CACHE_FLAG_SUFFIX = "cacheable";
     public static final String ANNOTATOR_CLASS_SUFFIX = "class";
     public static final String ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX = "constructorArgs";
-    public static final String ANNOTATOR_EXPERIMENT_TYPES_SUFFIX = "experimentTypes";
+    public static final String ANNOTATOR_EXPERIMENT_TYPE_SUFFIX = "experimentType";
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
 
     public static void main(String[] args) {
@@ -95,16 +95,13 @@ public class AnnotatorsConfig {
         Class<? extends Annotator> annotatorClass = (Class<? extends Annotator>) AnnotatorsConfig.class
                 .getClassLoader().loadClass(classString);
 
-        key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_EXPERIMENT_TYPES_SUFFIX);
+        key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_EXPERIMENT_TYPE_SUFFIX);
         if (!config.containsKey(key)) {
             LOGGER.error("Couldn't get a class for the \"" + annotatorKey + "\" annotator.");
             return null;
         }
-        String typeStrings[] = config.getStringArray(key);
-        ExperimentType types[] = new ExperimentType[typeStrings.length];
-        for (int i = 0; i < types.length; ++i) {
-            types[i] = ExperimentType.valueOf(typeStrings[i]);
-        }
+        String typeString = config.getString(key);
+        ExperimentType type = ExperimentType.valueOf(typeString);
 
         key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_CACHE_FLAG_SUFFIX);
         boolean cacheable = true;
@@ -128,7 +125,7 @@ public class AnnotatorsConfig {
 
         Constructor<? extends Annotator> constructor = annotatorClass.getConstructor(constructorArgClasses);
 
-        return new AnnotatorConfigurationImpl(name, cacheable, constructor, constructorArgs, types);
+        return new AnnotatorConfigurationImpl(name, cacheable, constructor, constructorArgs, type);
     }
 
     protected static String buildKey(StringBuilder keyBuilder, String annotatorKey, String suffix) {
