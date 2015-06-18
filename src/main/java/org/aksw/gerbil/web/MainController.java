@@ -39,9 +39,8 @@ import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
-import org.aksw.gerbil.utils.AnnotatorMapping;
-import org.aksw.gerbil.utils.DatasetMapping;
 import org.aksw.gerbil.utils.IDCreator;
+import org.aksw.gerbil.web.config.AdapterManager;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
@@ -78,7 +77,7 @@ public class MainController {
             isInitialized = true;
         }
         // Simply call the dataset mapping so that it has to be instantiated
-        DatasetMapping.getDatasetsForExperimentType(ExperimentType.EExt);
+        // DatasetMapping.getDatasetsForExperimentType(ExperimentType.EExt);
     }
 
     @PostConstruct
@@ -95,6 +94,9 @@ public class MainController {
 
     @Autowired
     private EvaluatorFactory evFactory;
+
+    @Autowired
+    private AdapterManager adapterManager;
 
     // DataID URL is generated automatically in the experiment method?
     private DataIDGenerator dataIdGenerator;
@@ -138,8 +140,7 @@ public class MainController {
      */
 
     @RequestMapping("/execute")
-    public @ResponseBody
-    String execute(@RequestParam(value = "experimentData") String experimentData) {
+    public @ResponseBody String execute(@RequestParam(value = "experimentData") String experimentData) {
         LOGGER.debug("Got request on /execute with experimentData=" + experimentData);
         Object obj = JSONValue.parse(experimentData);
         JSONObject configuration = (JSONObject) obj;
@@ -157,10 +158,11 @@ public class MainController {
         }
         ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[annotators.length * datasets.length];
         int count = 0;
+        ExperimentType expType = ExperimentType.valueOf(type);
         for (String annotator : annotators) {
             for (String dataset : datasets) {
-                configs[count] = new ExperimentTaskConfiguration(AnnotatorMapping.getAnnotatorConfig(annotator),
-                        DatasetMapping.getDatasetConfig(dataset), ExperimentType.valueOf(type), getMatching(matching));
+                configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, expType),
+                        adapterManager.getDatasetConfig(dataset, expType), expType, getMatching(matching));
                 LOGGER.debug("Created config: " + configs[count]);
                 ++count;
             }
@@ -186,8 +188,7 @@ public class MainController {
     }
 
     @RequestMapping("/exptypes")
-    public @ResponseBody
-    ModelMap expTypes() {
+    public @ResponseBody ModelMap expTypes() {
         List<ExperimentType> names = Lists.newArrayList();
         for (ExperimentType type : ExperimentType.values()) {
             try {
@@ -209,8 +210,7 @@ public class MainController {
 
     @SuppressWarnings("deprecation")
     @RequestMapping("/matchings")
-    public @ResponseBody
-    ModelMap matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {
+    public @ResponseBody ModelMap matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {
         ExperimentType type = ExperimentType.valueOf(experimentType);
         switch (type) {
         case C2KB:
@@ -238,9 +238,8 @@ public class MainController {
     }
 
     @RequestMapping("/annotators")
-    public @ResponseBody
-    List<String> annotatorsForExpType(@RequestParam(value = "experimentType") String experimentType) {
-        Set<String> annotatorsForExperimentType = AnnotatorMapping.getAnnotatorsForExperimentType(ExperimentType
+    public @ResponseBody List<String> annotatorsForExpType(@RequestParam(value = "experimentType") String experimentType) {
+        Set<String> annotatorsForExperimentType = adapterManager.getAnnotatorNamesForExperiment(ExperimentType
                 .valueOf(experimentType));
         List<String> list = Lists.newArrayList(annotatorsForExperimentType);
         Collections.sort(list);
@@ -248,9 +247,8 @@ public class MainController {
     }
 
     @RequestMapping("/datasets")
-    public @ResponseBody
-    List<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
-        Set<String> datasets = DatasetMapping.getDatasetsForExperimentType(ExperimentType.valueOf(experimentType));
+    public @ResponseBody List<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
+        Set<String> datasets = adapterManager.getDatasetNamesForExperiment(ExperimentType.valueOf(experimentType));
         List<String> list = Lists.newArrayList(datasets);
         Collections.sort(list);
         return list;
@@ -264,8 +262,7 @@ public class MainController {
      *         file couldn't be loaded.
      */
     @RequestMapping(value = "/google*")
-    public @ResponseBody
-    String googleAnalyticsFile() {
+    public @ResponseBody String googleAnalyticsFile() {
         try {
             return FileUtils.readFileToString(new File(GOOGLE_ANALYTICS_FILE_NAME));
         } catch (IOException e) {

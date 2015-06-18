@@ -37,8 +37,8 @@ import java.util.List;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.utils.DatasetMapping;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.WhitespaceTokenizer;
 import org.slf4j.Logger;
@@ -50,7 +50,7 @@ public class DatasetAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetAnalyzer.class);
 
     public static void main(String[] args) {
-        List<DatasetConfiguration> datasetConfigs = DatasetMapping.getDatasetConfigurations();
+        List<DatasetConfiguration> datasetConfigs = DatasetsConfig.datasets().getConfigurations();
         PrintStream output = null;
         try {
             output = new PrintStream("datasetAnalyzation.log");

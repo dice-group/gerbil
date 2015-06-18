@@ -32,5 +32,7 @@ public interface Dataset {
 
     public String getName();
 
+    public void setName(String name);
+
     public List<Document> getInstances();
 }

@@ -29,23 +29,22 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 
+@Deprecated
 public class FOXAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
     private static final String FOX_SERVICE_URL_PARAMETER_KEY = "org.aksw.gerbil.annotators.FOXAnnotatorConfig.serviceUrl";
 
     public FOXAnnotatorConfig() {
-	super(FOXAnnotator.NAME, true, ExperimentType.OKE_Task1);
+        super(FOXAnnotator.NAME, true, ExperimentType.OKE_Task1);
     }
 
     @Override
     protected Annotator loadAnnotator(ExperimentType type) throws Exception {
-	String serviceUrl = GerbilConfiguration.getInstance().getString(
-		FOX_SERVICE_URL_PARAMETER_KEY);
-	if (serviceUrl == null) {
-	    throw new GerbilException("Couldn't load the needed property \""
-		    + FOX_SERVICE_URL_PARAMETER_KEY + "\".",
-		    ErrorTypes.ANNOTATOR_LOADING_ERROR);
-	}
-	return new FOXAnnotator(serviceUrl);
+        String serviceUrl = GerbilConfiguration.getInstance().getString(FOX_SERVICE_URL_PARAMETER_KEY);
+        if (serviceUrl == null) {
+            throw new GerbilException("Couldn't load the needed property \"" + FOX_SERVICE_URL_PARAMETER_KEY + "\".",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
+        return new FOXAnnotator(serviceUrl);
     }
 }

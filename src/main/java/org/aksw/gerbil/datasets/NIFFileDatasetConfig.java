@@ -32,7 +32,7 @@ public class NIFFileDatasetConfig extends AbstractDatasetConfiguration {
     private String file;
 
     public NIFFileDatasetConfig(String name, String file, boolean couldBeCached,
-            ExperimentType... applicableForExperiment) {
+            ExperimentType applicableForExperiment) {
         super(name, couldBeCached, applicableForExperiment);
         this.file = file;
     }

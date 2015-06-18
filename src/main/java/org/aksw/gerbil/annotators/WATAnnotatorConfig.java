@@ -22,7 +22,6 @@
  */
 package org.aksw.gerbil.annotators;
 
-
 public class WATAnnotatorConfig /*extends AbstractAnnotatorConfiguration*/ {
 //    public static final String ANNOTATOR_NAME = "WAT";
 //    private static final String WAT_CONFIG_FILE_PROPERTY_ENDPOINT = "org.aksw.gerbil.annotators.wat.endpoint";

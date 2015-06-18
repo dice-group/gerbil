@@ -37,7 +37,7 @@ public class AbstractTestAnnotator extends AbstractAnnotatorConfiguration implem
     protected Map<String, Document> uriInstanceMapping;
 
     public AbstractTestAnnotator(String annotatorName, boolean couldBeCached, List<Document> instances,
-            ExperimentType... applicableForExperiment) {
+            ExperimentType applicableForExperiment) {
         super(annotatorName, couldBeCached, applicableForExperiment);
         this.uriInstanceMapping = new HashMap<String, Document>(instances.size());
         for (Document document : instances) {
