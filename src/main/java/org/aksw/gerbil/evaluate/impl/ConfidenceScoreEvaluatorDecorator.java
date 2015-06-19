@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.evaluate.AbstractEvaluatorDecorator;
+import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
@@ -18,6 +19,8 @@ import org.aksw.gerbil.utils.filter.MarkingFilter;
 import com.carrotsearch.hppc.DoubleOpenHashSet;
 
 public class ConfidenceScoreEvaluatorDecorator<T extends Marking> extends AbstractEvaluatorDecorator<T> {
+
+	public static final String CONFIDENCE_SCORE_THRESHOLD_RESULT_NAME = "confidence threshold";
 
 	private String resultName;
 	private Comparator<EvaluationResult> resultComparator;
@@ -36,16 +39,24 @@ public class ConfidenceScoreEvaluatorDecorator<T extends Marking> extends Abstra
 		Arrays.sort(scores);
 
 		EvaluationResultContainer currentResult, bestResult = null;
+		int bestScoreId = 0;
 		// go through the confidence scores
 		for (int i = 0; i < scores.length; ++i) {
 			// evaluate the result using the current confidence
 			currentResult = evaluate(annotatorResults, goldStandard, results, scores[i]);
 			bestResult = getBetterResult(currentResult, bestResult);
+			if (bestResult == currentResult) {
+				bestScoreId = i;
+			}
 			// here, the current result could be added to a list of results for
 			// further detailed analysis
 		}
 		// copy best results into result container
 		copyResults(bestResult, results);
+		// add the threshold result
+		if (scores.length > 1) {
+			results.addResult(new DoubleEvaluationResult(CONFIDENCE_SCORE_THRESHOLD_RESULT_NAME, scores[bestScoreId]));
+		}
 	}
 
 	protected double[] getConfidenceScores(List<List<T>> annotatorResults) {
