@@ -27,30 +27,44 @@ import java.util.List;
 
 public class EvaluationResultContainer implements EvaluationResult {
 
-    private List<EvaluationResult> results = new ArrayList<EvaluationResult>();
+	private List<EvaluationResult> results;
 
-    @Override
-    public String getName() {
-        return null;
-    }
+	public EvaluationResultContainer() {
+		results = new ArrayList<EvaluationResult>();
+	}
 
-    @Override
-    public Object getValue() {
-        return results;
-    }
+	/**
+	 * Copy constructor. Makes a shallow copy of the evaluation result list of
+	 * the given container.
+	 * 
+	 * @param container
+	 */
+	public EvaluationResultContainer(EvaluationResultContainer container) {
+		results = new ArrayList<EvaluationResult>(container.results);
+	}
 
-    public void addResult(EvaluationResult result) {
-        results.add(result);
-    }
+	@Override
+	public String getName() {
+		return null;
+	}
 
-    public void addResults(EvaluationResult... results) {
-        for (int i = 0; i < results.length; i++) {
-            this.results.add(results[i]);
-        }
-    }
+	@Override
+	public Object getValue() {
+		return results;
+	}
 
-    public List<EvaluationResult> getResults() {
-        return results;
-    }
+	public void addResult(EvaluationResult result) {
+		results.add(result);
+	}
+
+	public void addResults(EvaluationResult... results) {
+		for (int i = 0; i < results.length; i++) {
+			this.results.add(results[i]);
+		}
+	}
+
+	public List<EvaluationResult> getResults() {
+		return results;
+	}
 
 }
