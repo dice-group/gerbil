@@ -97,7 +97,7 @@ public class AnnotatorsConfig {
 
         key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_EXPERIMENT_TYPE_SUFFIX);
         if (!config.containsKey(key)) {
-            LOGGER.error("Couldn't get a class for the \"" + annotatorKey + "\" annotator.");
+            LOGGER.error("Couldn't get an experiment type for the \"" + annotatorKey + "\" annotator.");
             return null;
         }
         String typeString = config.getString(key);
