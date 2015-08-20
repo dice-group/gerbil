@@ -35,6 +35,7 @@ import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
 import org.aksw.gerbil.database.ExperimentDAO;
+import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
@@ -152,37 +153,53 @@ public class ExperimentTask implements Task {
             case FMeasureCalculator.MACRO_F1_SCORE_NAME: {
                 expResult.results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
                         .getValueAsDouble();
-                break;
+                return;
             }
             case FMeasureCalculator.MACRO_PRECISION_NAME: {
                 expResult.results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
                         .getValueAsDouble();
-                break;
+                return;
             }
             case FMeasureCalculator.MACRO_RECALL_NAME: {
                 expResult.results[ExperimentTaskResult.MACRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
                         .getValueAsDouble();
-                break;
+                return;
             }
             case FMeasureCalculator.MICRO_F1_SCORE_NAME: {
                 expResult.results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
                         .getValueAsDouble();
-                break;
+                return;
             }
             case FMeasureCalculator.MICRO_PRECISION_NAME: {
                 expResult.results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
                         .getValueAsDouble();
-                break;
+                return;
             }
             case FMeasureCalculator.MICRO_RECALL_NAME: {
                 expResult.results[ExperimentTaskResult.MICRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
                         .getValueAsDouble();
-                break;
+                return;
+            }
+            default: {
+                int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
+                if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
+                    LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
+                } else {
+                    expResult.addAdditionalResult(id, ((DoubleEvaluationResult) result).getValueAsDouble());
+                }
             }
             }
+            return;
         } else if (result instanceof IntEvaluationResult) {
             if (result.getName().equals(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME)) {
                 expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
+                return;
+            }
+            int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
+            if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
+                LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
+            } else {
+                expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
             }
         }
     }

@@ -285,30 +285,4 @@ public class SpotlightClient {
             return null;
         }
     }
-
-    // @SuppressWarnings({ "rawtypes", "unchecked" })
-    // public static void main(String args[]) {
-    // SpotlightClient client = new SpotlightClient();
-    // List list;
-    //
-    // list = client
-    // .annotateSavely(new DocumentImpl(
-    // "President Obama called Wednesday on Congress to extend a tax break for students included in last year's economic stimulus package, arguing that the policy provides more generous assistance."));
-    // for (int i = 0; i < list.size(); ++i) {
-    // System.out.println(list.get(i));
-    // }
-    // list = client
-    // .spotSavely(new DocumentImpl(
-    // "President Obama called Wednesday on Congress to extend a tax break for students included in last year's economic stimulus package, arguing that the policy provides more generous assistance."));
-    // for (int i = 0; i < list.size(); ++i) {
-    // System.out.println(list.get(i));
-    // }
-    // list = client
-    // .disambiguateSavely(new DocumentImpl(
-    // "President Obama called Wednesday on Congress to extend a tax break for students included in last year's economic stimulus package, arguing that the policy provides more generous assistance.",
-    // list));
-    // for (int i = 0; i < list.size(); ++i) {
-    // System.out.println(list.get(i));
-    // }
-    // }
 }

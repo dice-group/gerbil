@@ -22,13 +22,24 @@
  */
 package org.aksw.gerbil.database;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.evaluate.impl.InKBClassBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
+import com.carrotsearch.hppc.IntOpenHashSet;
 import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
+/**
+ * Workaround to handle additional results and their names.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ *
+ */
 public class ResultNameToIdMapping {
 
     public static final String ENTITY_IN_KB_CLASS_NAME = "InKB";
@@ -66,6 +77,8 @@ public class ResultNameToIdMapping {
             nameToIdMap.put(InKBClassBasedFMeasureCalculator.EE_MICRO_PRECISION_NAME, 18);
             nameToIdMap.put(InKBClassBasedFMeasureCalculator.EE_MICRO_RECALL_NAME, 19);
 
+            nameToIdMap.put(TimeMeasuringAnnotatorDecorator.AVG_TIME_RESULT_NAME, 20);
+
             instance = new ResultNameToIdMapping(nameToIdMap, IntObjectOpenHashMap.from(nameToIdMap.values().toArray(),
                     nameToIdMap.keys().toArray(String.class)));
         }
@@ -75,7 +88,8 @@ public class ResultNameToIdMapping {
     protected ObjectIntOpenHashMap<String> nameToIdMap;
     protected IntObjectOpenHashMap<String> idToNameMap;
 
-    protected ResultNameToIdMapping(ObjectIntOpenHashMap<String> nameToIdMap, IntObjectOpenHashMap<String> idToNameMap) {
+    protected ResultNameToIdMapping(ObjectIntOpenHashMap<String> nameToIdMap,
+            IntObjectOpenHashMap<String> idToNameMap) {
         this.nameToIdMap = nameToIdMap;
         this.idToNameMap = idToNameMap;
     }
@@ -86,5 +100,25 @@ public class ResultNameToIdMapping {
 
     public String getResultName(int id) {
         return idToNameMap.getOrDefault(id, null);
+    }
+
+    public int[] listAdditionalResultIds(List<ExperimentTaskResult> results) {
+        IntOpenHashSet ids = new IntOpenHashSet();
+        for (ExperimentTaskResult result : results) {
+            if (result.hasAdditionalResults()) {
+                ids.addAll(result.getAdditionalResults().keys());
+            }
+        }
+        int idArray[] = ids.toArray();
+        Arrays.sort(idArray);
+        return idArray;
+    }
+
+    public String[] getNamesOfResultIds(int[] additionalResultIds) {
+        String names[] = new String[additionalResultIds.length];
+        for (int i = 0; i < additionalResultIds.length; ++i) {
+            names[i] = getResultName(additionalResultIds[i]);
+        }
+        return names;
     }
 }

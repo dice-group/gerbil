@@ -87,10 +87,12 @@ public class ExperimentTaskResult {
 
     public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
             double results[], int state, int errorCount) {
-        this(annotator, dataset, type, matching, results, state, errorCount, (new java.util.Date()).getTime(), -1, null);
+        this(annotator, dataset, type, matching, results, state, errorCount, (new java.util.Date()).getTime(), -1,
+                null);
     }
 
-    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state, int errorCount) {
+    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state,
+            int errorCount) {
         this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
                 configuration.matching, results, state, errorCount, (new java.util.Date()).getTime());
     }
@@ -224,6 +226,16 @@ public class ExperimentTaskResult {
         builder.append(results[MACRO_RECALL_INDEX]);
         builder.append(",errors=");
         builder.append(errorCount);
+        if (hasAdditionalResults()) {
+            for (int i = 0; i < additionalResults.allocated.length; ++i) {
+                if (additionalResults.allocated[i]) {
+                    builder.append(',');
+                    builder.append(additionalResults.keys[i]);
+                    builder.append('=');
+                    builder.append(additionalResults.values[i]);
+                }
+            }
+        }
         builder.append(")");
         return builder.toString();
     }
@@ -281,8 +293,28 @@ public class ExperimentTaskResult {
         return (additionalResults != null) && (additionalResults.size() > 0);
     }
 
+    public boolean hasAdditionalResult(int id) {
+        return (additionalResults != null) && (additionalResults.containsKey(id));
+    }
+
     public IntDoubleOpenHashMap getAdditionalResults() {
         return additionalResults;
+    }
+
+    public int[] getAdditionalResultIds() {
+        if (hasAdditionalResults()) {
+            return additionalResults.keys().toArray();
+        } else {
+            return new int[0];
+        }
+    }
+
+    public double getAdditionalResult(int id) {
+        if (additionalResults != null) {
+            return additionalResults.get(id);
+        } else {
+            return 0;
+        }
     }
 
     public void addAdditionalResult(int resultId, double value) {
