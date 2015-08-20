@@ -24,6 +24,7 @@ package org.aksw.gerbil.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.database.ExperimentDAO;
+import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.dataid.DataIDGenerator;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -131,9 +133,9 @@ public class MainController {
     }
 
     /**
-     * expects a string like
-     * {"type":"A2KB","matching":"Mw - weak annotation match"
-     * ,"annotator":["A2KB one","A2KB two"],"dataset":["datasets"]}
+     * expects a string like {"type":"A2KB","matching":
+     * "Mw - weak annotation match" ,"annotator":["A2KB one","A2KB two"
+     * ],"dataset":["datasets"]}
      * 
      * @param experimentData
      * @return
@@ -184,6 +186,21 @@ public class MainController {
         model.setViewName("experiment");
         model.addObject("tasks", results);
         model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
+        int additionalResultIds[] = ResultNameToIdMapping.getInstance().listAdditionalResultIds(results);
+        // we need Double objects to make sure that they can be null
+        Double additionalResults[][] = new Double[results.size()][additionalResultIds.length];
+        ExperimentTaskResult result;
+        for (int i = 0; i < additionalResults.length; ++i) {
+            result = results.get(i);
+            for (int j = 0; j < additionalResultIds.length; ++j) {
+                if (result.hasAdditionalResult(additionalResultIds[j])) {
+                    additionalResults[i][j] = result.getAdditionalResult(additionalResultIds[j]);
+                }
+            }
+        }
+        model.addObject("additionalResultNames",
+                ResultNameToIdMapping.getInstance().getNamesOfResultIds(additionalResultIds));
+        model.addObject("additionalResults", additionalResults);
         return model;
     }
 
@@ -230,17 +247,18 @@ public class MainController {
         case ERec:
         case Sa2KB:
         case A2KB:
-            return new ModelMap("Matching", Lists.newArrayList(Matching.WEAK_ANNOTATION_MATCH,
-                    Matching.STRONG_ANNOTATION_MATCH));
+            return new ModelMap("Matching",
+                    Lists.newArrayList(Matching.WEAK_ANNOTATION_MATCH, Matching.STRONG_ANNOTATION_MATCH));
         default:
             return new ModelMap("Matching", Lists.newArrayList("none"));
         }
     }
 
     @RequestMapping("/annotators")
-    public @ResponseBody List<String> annotatorsForExpType(@RequestParam(value = "experimentType") String experimentType) {
-        Set<String> annotatorsForExperimentType = adapterManager.getAnnotatorNamesForExperiment(ExperimentType
-                .valueOf(experimentType));
+    public @ResponseBody List<String> annotatorsForExpType(
+            @RequestParam(value = "experimentType") String experimentType) {
+        Set<String> annotatorsForExperimentType = adapterManager
+                .getAnnotatorNamesForExperiment(ExperimentType.valueOf(experimentType));
         List<String> list = Lists.newArrayList(annotatorsForExperimentType);
         Collections.sort(list);
         return list;

@@ -7,7 +7,8 @@
 	href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet"
 	href="/gerbil/webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
-<link rel="icon" type="image/png" href="/gerbil/webResources/gerbilicon.png">
+<link rel="icon" type="image/png"
+	href="/gerbil/webResources/gerbilicon.png">
 <style type="text/css">
 /* making the buttons wide enough and right-aligned */
 .btn-group>.btn {
@@ -36,7 +37,8 @@
 
 	<script src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
 	<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-	<script src="/gerbil/webjars/tablesorter/2.15.5/js/jquery.tablesorter.js"></script>
+	<script
+		src="/gerbil/webjars/tablesorter/2.15.5/js/jquery.tablesorter.js"></script>
 
 	<script type="application/ld+json">
 	${dataid}
@@ -45,10 +47,10 @@
 	<%@include file="navbar.jsp"%>
 	<h1>GERBIL Experiment</h1>
 	<c:if test="${not empty tasks}">
-		<c:set var="hasSubTasks" value="false"/>
+		<c:set var="hasSubTasks" value="false" />
 		<c:forEach var="task" items="${tasks}">
 			<c:if test="${task.numberOfSubTasks > 0}">
-				<c:set var="hasSubTasks" value="true"/>
+				<c:set var="hasSubTasks" value="true" />
 			</c:if>
 		</c:forEach>
 
@@ -57,7 +59,7 @@
 	Matching: <c:out value="${tasks[0].matching.label}" />
 		<table id="resultTable"
 			class="table  table-hover table-condensed tableScroll">
-		<!--<table id="resultTable"
+			<!--<table id="resultTable"
 			class="table  table-hover table-condensed tablesorter tableScroll">-->
 			<thead>
 				<tr>
@@ -74,16 +76,18 @@
 					<th>Macro Recall</th>
 					<!-- <th>State</th> -->
 					<th>Error Count</th>
+					<!-- for every additional result -->
+					<c:forEach items="${additionalResultNames}" var="name">
+						<th>${name}</th>
+					</c:forEach>
 					<th>Timestamp</th>
 					<th>GERBIL version</th>
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach var="task" items="${tasks}">
+				<c:forEach var="task" varStatus="taskId" items="${tasks}">
 					<tr>
 						<c:if test="${empty task.stateMsg}">
-							<!--<td rowspan="${task.numberOfSubTasks + 1}">${task.annotator}</td>-->
-							<!--<td rowspan="${task.numberOfSubTasks + 1}">${task.dataset}</td>-->
 							<td>${task.annotator}</td>
 							<td>${task.dataset}</td>
 							<c:if test="${hasSubTasks}">
@@ -103,43 +107,56 @@
 									value="${task.macroRecall}" /></td>
 							<!-- <td>${task.state}</td> -->
 							<td>${task.errorCount}</td>
+							<!-- for every additional result -->
+							<c:forEach items="${additionalResults[taskId.count - 1]}" var="additionalResult">
+								<td>
+								<c:if test="${not empty additionalResult}">
+									<fmt:formatNumber type="number" maxFractionDigits="4" value="${additionalResult}" /></td>
+								</c:if>
+								</td>
+							</c:forEach>
 							<td>${task.timestampstring}</td>
 							<td>${task.gerbilVersion}</td>
 							<c:forEach var="subTask" items="${task.subTasks}">
-								</tr>
-								<tr>	
-									<td>${task.annotator}</td>
-									<td>${task.dataset}</td>
-									<td>${subTask.type.label}</td>
-									<td><fmt:formatNumber type="number" maxFractionDigits="4"
-											value="${subTask.microF1Measure}" /></td>
-									<td><fmt:formatNumber type="number" maxFractionDigits="4"
-											value="${subTask.microPrecision}" /></td>
-									<td><fmt:formatNumber type="number" maxFractionDigits="4"
-											value="${subTask.microRecall}" /></td>
-									<td><fmt:formatNumber type="number" maxFractionDigits="4"
-											value="${subTask.macroF1Measure}" /></td>
-									<td><fmt:formatNumber type="number" maxFractionDigits="4"
-											value="${subTask.macroPrecision}" /></td>
-									<td><fmt:formatNumber type="number" maxFractionDigits="4"
-											value="${subTask.macroRecall}" /></td>
-									<!--<td colspan="3"></td> -->
-									<td>${task.errorCount}</td>
-									<td>${task.timestampstring}</td>
-									<td>${task.gerbilVersion}</td>
+					</tr>
+					<tr>
+						<td>${task.annotator}</td>
+						<td>${task.dataset}</td>
+						<td>${subTask.type.label}</td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4"
+								value="${subTask.microF1Measure}" /></td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4"
+								value="${subTask.microPrecision}" /></td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4"
+								value="${subTask.microRecall}" /></td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4"
+								value="${subTask.macroF1Measure}" /></td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4"
+								value="${subTask.macroPrecision}" /></td>
+						<td><fmt:formatNumber type="number" maxFractionDigits="4"
+								value="${subTask.macroRecall}" /></td>
+						<!--<td colspan="3"></td> -->
+						<td>${task.errorCount}</td>
+							<!-- for every additional result -->
+							<c:forEach items="${additionalResultNames}" var="name">
+								<td>
+								</td>
 							</c:forEach>
-						</c:if>
-						<c:if test="${!empty task.stateMsg}">
-							<td>${task.annotator}</td>
-							<td>${task.dataset}</td>
-							<c:if test="${hasSubTasks}">
-								<td></td>
-							</c:if>
-							<td colspan="7" style="text-align:center">${task.stateMsg}</td>
 						<td>${task.timestampstring}</td>
 						<td>${task.gerbilVersion}</td>
-						</c:if>
-					</tr>
+				</c:forEach>
+				</c:if>
+				<c:if test="${!empty task.stateMsg}">
+					<td>${task.annotator}</td>
+					<td>${task.dataset}</td>
+					<c:if test="${hasSubTasks}">
+						<td></td>
+					</c:if>
+					<td colspan="7" style="text-align: center">${task.stateMsg}</td>
+					<td>${task.timestampstring}</td>
+					<td>${task.gerbilVersion}</td>
+				</c:if>
+				</tr>
 				</c:forEach>
 			</tbody>
 		</table>
@@ -149,9 +166,9 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-	        $("#resultTable").tablesorter({
-		        sortList : [ [ 0, 0 ], [ 1, 0 ] ]
-	        });
-        });
+			$("#resultTable").tablesorter({
+				sortList : [ [ 0, 0 ], [ 1, 0 ] ]
+			});
+		});
 	</script>
 </body>
