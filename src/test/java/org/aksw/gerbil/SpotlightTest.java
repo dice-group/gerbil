@@ -27,12 +27,13 @@ import java.io.IOException;
 
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
-import org.aksw.gerbil.datasets.OKETask1DatasetConfig;
-import org.aksw.gerbil.datasets.OKETask1DatasetConfig.NIFDatasets;
+import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
+import org.aksw.gerbil.web.config.AdapterList;
+import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
 
@@ -40,9 +41,11 @@ import org.junit.Ignore;
 public class SpotlightTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
-        ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new SpotlightAnnotatorConfig(), new OKETask1DatasetConfig(NIFDatasets.OKE_2015_TASK1_EXAMPLE),
-                ExperimentType.OKE_Task1, Matching.WEAK_ANNOTATION_MATCH) };
+        AdapterList<DatasetConfiguration> datasets = DatasetsConfig.datasets();
+        DatasetConfiguration datsetConfig = datasets.getAdaptersForName("OKE 2015 Task 1 example set").get(0);
+        ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
+                new ExperimentTaskConfiguration(new SpotlightAnnotatorConfig(), datsetConfig, ExperimentType.EExt,
+                        Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
                 new EvaluatorFactory(), taskConfigs, "SPOTLIGHT_TEST");
         experimenter.run();
