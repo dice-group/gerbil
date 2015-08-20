@@ -22,8 +22,6 @@
  */
 package org.aksw.gerbil.annotator.decorator;
 
-import it.unipi.di.acube.batframework.utils.AnnotationException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * This behavior makes it possible, that the BAT-Framework doesn't quit the
  * experiment even if an exception is thrown.
  * 
- * @author Michael Röder
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marking>, ErrorCounter, Annotator {
@@ -120,8 +118,8 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         }
     }
 
-    private static class ErrorCountingEntityRecognizer extends ErrorCountingAnnotatorDecorator implements
-            EntityRecognizer {
+    private static class ErrorCountingEntityRecognizer extends ErrorCountingAnnotatorDecorator
+            implements EntityRecognizer {
 
         public ErrorCountingEntityRecognizer(EntityRecognizer decoratedAnnotator, int maxErrors) {
             super(decoratedAnnotator, maxErrors);
@@ -163,8 +161,8 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         }
     }
 
-    private static class ErrorCountingOKETask1Annotator extends ErrorCountingEntityExtractor implements
-            OKETask1Annotator {
+    private static class ErrorCountingOKETask1Annotator extends ErrorCountingEntityExtractor
+            implements OKETask1Annotator {
 
         protected ErrorCountingOKETask1Annotator(OKETask1Annotator decoratedAnnotator, int maxErrors) {
             super(decoratedAnnotator, maxErrors);
@@ -181,8 +179,8 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         }
     }
 
-    private static class ErrorCountingOKETask2Annotator extends ErrorCountingAnnotatorDecorator implements
-            OKETask2Annotator {
+    private static class ErrorCountingOKETask2Annotator extends ErrorCountingAnnotatorDecorator
+            implements OKETask2Annotator {
 
         protected ErrorCountingOKETask2Annotator(OKETask2Annotator decoratedAnnotator, int maxErrors) {
             super(decoratedAnnotator, maxErrors);
@@ -232,8 +230,8 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         return result;
     }
 
-    protected static List<MeaningSpan> performExtraction(ErrorCountingAnnotatorDecorator errorCounter, Document document)
-            throws GerbilException {
+    protected static List<MeaningSpan> performExtraction(ErrorCountingAnnotatorDecorator errorCounter,
+            Document document) throws GerbilException {
         List<MeaningSpan> result = null;
         try {
             result = ((EntityExtractor) errorCounter.getDecoratedAnnotator()).performExtraction(document);
@@ -309,7 +307,7 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
     }
 
     protected static List<Span> performRecognition(ErrorCountingAnnotatorDecorator errorCounter, Document document)
-            throws AnnotationException, GerbilException {
+            throws GerbilException {
         List<Span> result = null;
         try {
             result = ((EntityRecognizer) errorCounter.getDecoratedAnnotator()).performRecognition(document);
@@ -347,7 +345,7 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
     }
 
     protected static List<TypedNamedEntity> performOKETask1(ErrorCountingAnnotatorDecorator errorCounter,
-            Document document) throws AnnotationException, GerbilException {
+            Document document) throws GerbilException {
         List<TypedNamedEntity> result = null;
         try {
             result = ((OKETask1Annotator) errorCounter.getDecoratedAnnotator()).performTask1(document);
@@ -385,7 +383,7 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
     }
 
     protected static List<TypedNamedEntity> performOKETask2(ErrorCountingAnnotatorDecorator errorCounter,
-            Document document) throws AnnotationException, GerbilException {
+            Document document) throws GerbilException {
         List<TypedNamedEntity> result = null;
         try {
             result = ((OKETask2Annotator) errorCounter.getDecoratedAnnotator()).performTask2(document);
