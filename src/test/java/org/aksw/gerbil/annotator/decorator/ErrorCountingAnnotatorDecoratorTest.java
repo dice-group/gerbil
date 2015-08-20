@@ -22,7 +22,7 @@
  */
 package org.aksw.gerbil.annotator.decorator;
 
-import it.acubelab.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +104,10 @@ public class ErrorCountingAnnotatorDecoratorTest {
         }
 
         @Override
+        public void setName(String name) {
+        }
+
+        @Override
         public List<Span> performRecognition(Document document) {
             ++count;
             if (count > 100) {
@@ -159,6 +163,10 @@ public class ErrorCountingAnnotatorDecoratorTest {
         @Override
         public List<Document> getInstances() {
             return instances;
+        }
+
+        @Override
+        public void setName(String name) {
         }
 
     }

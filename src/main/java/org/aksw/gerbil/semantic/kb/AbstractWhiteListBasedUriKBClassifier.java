@@ -35,9 +35,11 @@ public abstract class AbstractWhiteListBasedUriKBClassifier implements UriKBClas
 
     @Override
     public boolean isKBUri(String uri) {
-        for (String namespace : kbNamespaces) {
-            if (uri.startsWith(namespace)) {
-                return true;
+        if (uri != null) {
+            for (String namespace : kbNamespaces) {
+                if (uri.startsWith(namespace)) {
+                    return true;
+                }
             }
         }
         return false;

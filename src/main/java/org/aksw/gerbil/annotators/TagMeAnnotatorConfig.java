@@ -38,5 +38,4 @@ public class TagMeAnnotatorConfig /*extends AbstractAnnotatorConfiguration*/ {
 //        return new TagmeAnnotator(GerbilConfiguration.getInstance().getString(TAGME_CONFIG_FILE_PROPERTY_NAME));
 //    }
 
-    
 }

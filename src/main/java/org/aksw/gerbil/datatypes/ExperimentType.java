@@ -137,11 +137,25 @@ public enum ExperimentType implements Describable {
      * Entity Extraction comprises the two tasks {@link #EntityRecognition} and
      * {@link #EntityLinking}.
      */
-    EExt("Entity Extraction", "Entity Extraction comprises the two steps Entity Recognition and Entity Linking."), ETyping(
-            "Entity Typing",
-            "Entity Typing is the assigning of a class URI from a given Knowledge Base to a given entity inside a given text."), OKE_Task1(
-            "OKE Challenge 2015 - Task 1",
-            "This task comprises the recognition, linking and typing of all entities inside a given text."), OKE_Task2(
+    EExt("Entity Extraction", "Entity Extraction comprises the two steps Entity Recognition and Entity Linking."),
+    /**
+     * Entity Typing is the assigning of a class URI from a given Knowledge Base
+     * to a given entity inside a given text.
+     */
+    ETyping("Entity Typing",
+            "Entity Typing is the assigning of a class URI from a given Knowledge Base to a given entity inside a given text."),
+    /**
+     * This task comprises the recognition, linking and typing of all entities
+     * inside a given text.
+     */
+    OKE_Task1("OKE Challenge 2015 - Task 1",
+            "This task comprises the recognition, linking and typing of all entities inside a given text."),
+    /**
+     * This task comprises the determining of the type of a given entity inside
+     * a given text and the extraction of the part of the text, describing the
+     * type.
+     */
+    OKE_Task2(
             "OKE Challenge 2015 - Task 2",
             "This task comprises the determining of the type of a given entity inside a given text and the extraction of the part of the text, describing the type."), ;
 
@@ -162,7 +176,7 @@ public enum ExperimentType implements Describable {
     public String getDescription() {
         return description;
     }
-    
+
     public String getName() {
         return name();
     }
@@ -303,7 +317,14 @@ public enum ExperimentType implements Describable {
             }
         }
         case OKE_Task1: {
-            return true;
+            switch (type) {
+            case OKE_Task2: {
+                return false;
+            }
+            default: {
+                return true;
+            }
+            }
         }
         case ETyping: {
             return type == ETyping;

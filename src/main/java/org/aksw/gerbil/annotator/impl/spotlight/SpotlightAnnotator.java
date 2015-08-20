@@ -31,6 +31,7 @@ import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
+import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -40,11 +41,12 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 
-public class SpotlightAnnotator implements OKETask1Annotator, EntityRecognizer, EntityLinker, EntityExtractor,
-        EntityTyper {
+public class SpotlightAnnotator extends AbstractAnnotator implements OKETask1Annotator, EntityRecognizer, EntityLinker,
+        EntityExtractor, EntityTyper {
 
     private static final String SERVICE_URL_PARAM_KEY = "org.aksw.gerbil.annotator.impl.spotlight.SpotlightAnnotator.ServieURL";
 
+    @Deprecated
     public static final String ANNOTATOR_NAME = "DBpedia Spotlight";
 
     private SpotlightClient client;
@@ -56,11 +58,6 @@ public class SpotlightAnnotator implements OKETask1Annotator, EntityRecognizer, 
         } else {
             client = new SpotlightClient();
         }
-    }
-
-    @Override
-    public String getName() {
-        return ANNOTATOR_NAME;
     }
 
     @Override

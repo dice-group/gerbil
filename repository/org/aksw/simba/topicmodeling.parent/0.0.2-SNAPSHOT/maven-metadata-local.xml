@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>org.aksw.simba</groupId>
+  <artifactId>topicmodeling.parent</artifactId>
+  <version>0.0.2-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <lastUpdated>20150819181956</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>0.0.2-SNAPSHOT</value>
+        <updated>20150819181956</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>

@@ -22,7 +22,7 @@
  */
 package org.aksw.gerbil.annotator.decorator;
 
-import it.acubelab.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -444,6 +444,11 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
     @Override
     public String getName() {
         return decoratedAnnotator.getName();
+    }
+
+    @Override
+    public void setName(String name) {
+        decoratedAnnotator.setName(name);
     }
 
     protected Annotator getDecoratedAnnotator() {

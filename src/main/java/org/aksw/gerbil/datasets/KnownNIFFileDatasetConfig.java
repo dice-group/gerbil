@@ -30,9 +30,11 @@ import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.apache.jena.riot.Lang;
 
+@Deprecated
 public class KnownNIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
-    private static final String NIF_DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.";
+    private static final String NIF_DATASET_FILE_PROPERTY_NAME_PREFIX = "org.aksw.gerbil.datasets.";
+    private static final String NIF_DATASET_FILE_PROPERTY_NAME_SUFFIX = ".file";
 
     public static enum NIFDatasets {
         KORE50("KORE50"),
@@ -59,7 +61,8 @@ public class KnownNIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
     @Override
     protected Dataset loadDataset() throws Exception {
-        String propertyKey = NIF_DATASET_FILE_PROPERTY_NAME + dataset.name();
+        String propertyKey = NIF_DATASET_FILE_PROPERTY_NAME_PREFIX + dataset.name()
+                + NIF_DATASET_FILE_PROPERTY_NAME_SUFFIX;
         String nifFile = GerbilConfiguration.getInstance().getString(propertyKey);
         if (nifFile == null) {
             throw new IOException("Couldn't load needed Property \"" + propertyKey + "\".");

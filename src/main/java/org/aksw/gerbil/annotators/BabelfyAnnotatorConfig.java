@@ -22,7 +22,6 @@
  */
 package org.aksw.gerbil.annotators;
 
-
 public class BabelfyAnnotatorConfig /*extends AbstractAnnotatorConfiguration*/ {
 
     // public static final String ANNOTATOR_NAME = "Babelfy";

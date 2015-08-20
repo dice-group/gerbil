@@ -22,43 +22,54 @@
  */
 package org.aksw.gerbil.datasets;
 
+import it.unipi.di.acube.batframework.datasetPlugins.MeijDataset;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
-public class MeijDatasetConfig /*extends AbstractDatasetConfiguration*/ {
+import java.io.IOException;
 
-    // public static final String DATASET_NAME = "Meij";
-    //
-    // private static final String MEIJ_TWEETS_FILE_PROPERTY_NAME =
-    // "org.aksw.gerbil.datasets.MeijDatasetConfig.tweetsFile";
-    // private static final String MEIJ_TAGS_FILE_PROPERTY_NAME =
-    // "org.aksw.gerbil.datasets.MeijDatasetConfig.tagsFile";
-    // private static final String MEIJ_RANK_FILE_PROPERTY_NAME =
-    // "org.aksw.gerbil.datasets.MeijDatasetConfig.rankFile";
-    //
-    // public MeijDatasetConfig() {
-    // super(DATASET_NAME, true, ExperimentType.Rc2KB);
-    // }
-    //
-    // @Override
-    // protected TopicDataset loadDataset() throws Exception {
-    // String tweetsFile =
-    // GerbilConfiguration.getInstance().getString(MEIJ_TWEETS_FILE_PROPERTY_NAME);
-    // if (tweetsFile == null) {
-    // throw new IOException("Couldn't load needed Property \"" +
-    // MEIJ_TWEETS_FILE_PROPERTY_NAME + "\".");
-    // }
-    // String tagsFile =
-    // GerbilConfiguration.getInstance().getString(MEIJ_TAGS_FILE_PROPERTY_NAME);
-    // if (tagsFile == null) {
-    // throw new IOException("Couldn't load needed Property \"" +
-    // MEIJ_TAGS_FILE_PROPERTY_NAME + "\".");
-    // }
-    // String rankFile =
-    // GerbilConfiguration.getInstance().getString(MEIJ_RANK_FILE_PROPERTY_NAME);
-    // if (rankFile == null) {
-    // throw new IOException("Couldn't load needed Property \"" +
-    // MEIJ_RANK_FILE_PROPERTY_NAME + "\".");
-    // }
-    // return new MeijDataset(tweetsFile, tagsFile, rankFile);
-    // }
+import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.impl.bat.BatFrameworkDatasetWrapper;
+import org.aksw.gerbil.datatypes.ExperimentType;
 
+public class MeijDatasetConfig extends AbstractDatasetConfiguration {
+
+    public static final String DATASET_NAME = "Meij"
+	    + BatFrameworkDatasetWrapper.DATASET_NAME_SUFFIX;
+
+    private static final String MEIJ_TWEETS_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.MeijDatasetConfig.tweetsFile";
+    private static final String MEIJ_TAGS_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.MeijDatasetConfig.tagsFile";
+    private static final String MEIJ_RANK_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.MeijDatasetConfig.rankFile";
+
+    private WikipediaApiInterface wikiApi;
+
+    @SuppressWarnings("deprecation")
+    public MeijDatasetConfig(WikipediaApiInterface wikiApi) {
+	super(DATASET_NAME, true, ExperimentType.Rc2KB);
+	this.wikiApi = wikiApi;
+    }
+
+    @Override
+    protected Dataset loadDataset() throws Exception {
+	String tweetsFile = GerbilConfiguration.getInstance().getString(
+		MEIJ_TWEETS_FILE_PROPERTY_NAME);
+	if (tweetsFile == null) {
+	    throw new IOException("Couldn't load needed Property \""
+		    + MEIJ_TWEETS_FILE_PROPERTY_NAME + "\".");
+	}
+	String tagsFile = GerbilConfiguration.getInstance().getString(
+		MEIJ_TAGS_FILE_PROPERTY_NAME);
+	if (tagsFile == null) {
+	    throw new IOException("Couldn't load needed Property \""
+		    + MEIJ_TAGS_FILE_PROPERTY_NAME + "\".");
+	}
+	String rankFile = GerbilConfiguration.getInstance().getString(
+		MEIJ_RANK_FILE_PROPERTY_NAME);
+	if (rankFile == null) {
+	    throw new IOException("Couldn't load needed Property \""
+		    + MEIJ_RANK_FILE_PROPERTY_NAME + "\".");
+	}
+	return BatFrameworkDatasetWrapper.create(new MeijDataset(tweetsFile,
+		tagsFile, rankFile), wikiApi);
+    }
 }

@@ -22,7 +22,6 @@
  */
 package org.aksw.gerbil.bat.annotator;
 
-
 @Deprecated
 public class FOXAnnotator /*implements Sa2WSystem*/ {
 

@@ -22,8 +22,8 @@
  */
 package org.aksw.gerbil.bat.annotator;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -42,7 +42,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 @Deprecated
-public class AgdistisAnnotator extends it.acubelab.batframework.systemPlugins.AgdistisAnnotator {
+public class AgdistisAnnotator extends it.unipi.di.acube.batframework.systemPlugins.AgdistisAnnotator {
 
     protected String host;
     protected int port;

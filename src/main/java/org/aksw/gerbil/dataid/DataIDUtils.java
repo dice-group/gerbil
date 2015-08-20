@@ -1,6 +1,12 @@
 /**
+<<<<<<< HEAD
  * The MIT License
  * Copyright (c) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+=======
+ * The MIT License (MIT)
+ *
+ * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+>>>>>>> springifyAdapterLoading
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

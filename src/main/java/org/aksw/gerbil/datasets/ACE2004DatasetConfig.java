@@ -22,37 +22,47 @@
  */
 package org.aksw.gerbil.datasets;
 
+import it.unipi.di.acube.batframework.datasetPlugins.ACE2004Dataset;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
-public class ACE2004DatasetConfig /*extends AbstractDatasetConfiguration*/ {
+import java.io.IOException;
 
-    // public static final String DATASET_NAME = "ACE2004";
-    //
-    // private static final String ACE2004_TEXTS_FOLDER_PROPERTY_NAME =
-    // "org.aksw.gerbil.datasets.ACE2004DatasetConfig.TextsFolder";
-    // private static final String ACE2004_ANNOTATIONS_FOLDER_PROPERTY_NAME =
-    // "org.aksw.gerbil.datasets.ACE2004DatasetConfig.AnnotationsFolder";
-    //
-    // private WikipediaApiInterface wikiAPI;
-    //
-    // public ACE2004DatasetConfig(WikipediaApiInterface wikiAPI) {
-    // super(DATASET_NAME, true, ExperimentType.Sa2KB);
-    // this.wikiAPI = wikiAPI;
-    // }
-    //
-    // @Override
-    // protected TopicDataset loadDataset() throws Exception {
-    // String textsFolder =
-    // GerbilConfiguration.getInstance().getString(ACE2004_TEXTS_FOLDER_PROPERTY_NAME);
-    // if (textsFolder == null) {
-    // throw new IOException("Couldn't load needed Property \"" +
-    // ACE2004_TEXTS_FOLDER_PROPERTY_NAME + "\".");
-    // }
-    // String annotationsFolder = GerbilConfiguration.getInstance()
-    // .getString(ACE2004_ANNOTATIONS_FOLDER_PROPERTY_NAME);
-    // if (annotationsFolder == null) {
-    // throw new IOException("Couldn't load needed Property \"" +
-    // ACE2004_ANNOTATIONS_FOLDER_PROPERTY_NAME + "\".");
-    // }
-    // return new ACE2004Dataset(textsFolder, annotationsFolder, wikiAPI);
-    // }
+import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.impl.bat.BatFrameworkDatasetWrapper;
+import org.aksw.gerbil.datatypes.ExperimentType;
+
+public class ACE2004DatasetConfig extends AbstractDatasetConfiguration {
+
+    public static final String DATASET_NAME = "ACE2004"
+	    + BatFrameworkDatasetWrapper.DATASET_NAME_SUFFIX;
+
+    private static final String ACE2004_TEXTS_FOLDER_PROPERTY_NAME = "org.aksw.gerbil.datasets.ACE2004DatasetConfig.TextsFolder";
+    private static final String ACE2004_ANNOTATIONS_FOLDER_PROPERTY_NAME = "org.aksw.gerbil.datasets.ACE2004DatasetConfig.AnnotationsFolder";
+
+    private WikipediaApiInterface wikiAPI;
+
+    @SuppressWarnings("deprecation")
+    public ACE2004DatasetConfig(WikipediaApiInterface wikiAPI) {
+	super(DATASET_NAME, true, ExperimentType.Sa2KB);
+	this.wikiAPI = wikiAPI;
+    }
+
+    @Override
+    protected Dataset loadDataset() throws Exception {
+	String textsFolder = GerbilConfiguration.getInstance().getString(
+		ACE2004_TEXTS_FOLDER_PROPERTY_NAME);
+	if (textsFolder == null) {
+	    throw new IOException("Couldn't load needed Property \""
+		    + ACE2004_TEXTS_FOLDER_PROPERTY_NAME + "\".");
+	}
+	String annotationsFolder = GerbilConfiguration.getInstance().getString(
+		ACE2004_ANNOTATIONS_FOLDER_PROPERTY_NAME);
+	if (annotationsFolder == null) {
+	    throw new IOException("Couldn't load needed Property \""
+		    + ACE2004_ANNOTATIONS_FOLDER_PROPERTY_NAME + "\".");
+	}
+	return BatFrameworkDatasetWrapper.create(new ACE2004Dataset(
+		textsFolder, annotationsFolder, wikiAPI), wikiAPI);
+    }
 }

@@ -22,11 +22,11 @@
  */
 package org.aksw.gerbil.tools;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.C2WDataset;
-import it.acubelab.batframework.problems.D2WDataset;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.problems.C2WDataset;
+import it.unipi.di.acube.batframework.problems.D2WDataset;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,8 +37,8 @@ import java.util.List;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.utils.DatasetMapping;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.apache.commons.io.IOUtils;
 
 @SuppressWarnings("deprecation")
@@ -47,7 +47,7 @@ public class DatasetWikiIdExporter {
     private static final String EXPORT_FOLDER_NAME = "export";
 
     public static void main(String[] args) {
-        List<DatasetConfiguration> datasetConfigs = DatasetMapping.getDatasetConfigurations();
+        List<DatasetConfiguration> datasetConfigs = DatasetsConfig.datasets().getConfigurations();
         File exportFolder = new File(EXPORT_FOLDER_NAME);
         if (!exportFolder.exists()) {
             exportFolder.mkdirs();

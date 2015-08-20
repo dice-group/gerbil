@@ -25,10 +25,9 @@ package org.aksw.gerbil.utils.filter;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import junit.framework.Assert;
-
 import org.aksw.gerbil.transfer.nif.TypedMarking;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.hp.hpl.jena.vocabulary.OWL;

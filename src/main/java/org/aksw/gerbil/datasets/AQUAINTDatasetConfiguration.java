@@ -22,38 +22,47 @@
  */
 package org.aksw.gerbil.datasets;
 
+import it.unipi.di.acube.batframework.datasetPlugins.AQUAINTDataset;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
-public class AQUAINTDatasetConfiguration /*extends AbstractDatasetConfiguration*/ {
+import java.io.IOException;
 
-    // public static final String DATASET_NAME = "AQUAINT";
-    //
-    // private static final String TEXTS_PATH_PROPERTY_NAME =
-    // "org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration.TextsPath";
-    // private static final String ANNOTATIONS_PATH_PROPERTY_NAME =
-    // "org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration.AnnotationsPath";
-    //
-    // private WikipediaApiInterface wikiApi;
-    //
-    // public AQUAINTDatasetConfiguration(WikipediaApiInterface wikiApi) {
-    // super(DATASET_NAME, true, ExperimentType.Sa2KB);
-    // this.wikiApi = wikiApi;
-    // }
-    //
-    // @Override
-    // protected TopicDataset loadDataset() throws Exception {
-    // String textsPath =
-    // GerbilConfiguration.getInstance().getString(TEXTS_PATH_PROPERTY_NAME);
-    // if (textsPath == null) {
-    // throw new IOException("Couldn't load needed Property \"" +
-    // TEXTS_PATH_PROPERTY_NAME + "\".");
-    // }
-    // String annotationsPath =
-    // GerbilConfiguration.getInstance().getString(ANNOTATIONS_PATH_PROPERTY_NAME);
-    // if (annotationsPath == null) {
-    // throw new IOException("Couldn't load needed Property \"" +
-    // ANNOTATIONS_PATH_PROPERTY_NAME + "\".");
-    // }
-    // return new AQUAINTDataset(textsPath, annotationsPath, wikiApi);
-    // }
+import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.impl.bat.BatFrameworkDatasetWrapper;
+import org.aksw.gerbil.datatypes.ExperimentType;
+
+public class AQUAINTDatasetConfiguration extends AbstractDatasetConfiguration {
+
+    public static final String DATASET_NAME = "AQUAINT" + BatFrameworkDatasetWrapper.DATASET_NAME_SUFFIX;
+
+    private static final String TEXTS_PATH_PROPERTY_NAME = "org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration.TextsPath";
+    private static final String ANNOTATIONS_PATH_PROPERTY_NAME = "org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration.AnnotationsPath";
+
+    private WikipediaApiInterface wikiApi;
+
+    @SuppressWarnings("deprecation")
+    public AQUAINTDatasetConfiguration(WikipediaApiInterface wikiApi) {
+	super(DATASET_NAME, true, ExperimentType.Sa2KB);
+	this.wikiApi = wikiApi;
+    }
+
+    @Override
+    protected Dataset loadDataset() throws Exception {
+	String textsPath = GerbilConfiguration.getInstance().getString(
+		TEXTS_PATH_PROPERTY_NAME);
+	if (textsPath == null) {
+	    throw new IOException("Couldn't load needed Property \""
+		    + TEXTS_PATH_PROPERTY_NAME + "\".");
+	}
+	String annotationsPath = GerbilConfiguration.getInstance().getString(
+		ANNOTATIONS_PATH_PROPERTY_NAME);
+	if (annotationsPath == null) {
+	    throw new IOException("Couldn't load needed Property \""
+		    + ANNOTATIONS_PATH_PROPERTY_NAME + "\".");
+	}
+	return BatFrameworkDatasetWrapper.create(new AQUAINTDataset(textsPath,
+		annotationsPath, wikiApi), wikiApi);
+    }
 
 }

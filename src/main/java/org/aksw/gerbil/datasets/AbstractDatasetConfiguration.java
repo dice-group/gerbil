@@ -31,19 +31,19 @@ import org.aksw.gerbil.exceptions.GerbilException;
 public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfiguration implements DatasetConfiguration {
 
     public AbstractDatasetConfiguration(String datasetName, boolean couldBeCached,
-            ExperimentType... applicableForExperiment) {
+            ExperimentType applicableForExperiment) {
         super(datasetName, couldBeCached, applicableForExperiment);
     }
 
     @Override
     public Dataset getDataset(ExperimentType experimentType) throws GerbilException {
-        for (int i = 0; i < applicableForExperiments.length; ++i) {
-            if (applicableForExperiments[i].equalsOrContainsType(experimentType)) {
-                try {
-                    return loadDataset();
-                } catch (Exception e) {
-                    throw new GerbilException(e, ErrorTypes.DATASET_LOADING_ERROR);
-                }
+        // for (int i = 0; i < applicableForExperiments.length; ++i) {
+        // if (applicableForExperiments[i].equalsOrContainsType(experimentType))
+        if (applicableForExperiment.equalsOrContainsType(experimentType)) {
+            try {
+                return loadDataset();
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.DATASET_LOADING_ERROR);
             }
         }
         return null;

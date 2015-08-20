@@ -22,11 +22,11 @@
  */
 package org.aksw.gerbil.annotator.impl.bat;
 
-import it.acubelab.batframework.problems.A2WSystem;
-import it.acubelab.batframework.problems.D2WSystem;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.problems.A2WSystem;
+import it.unipi.di.acube.batframework.problems.D2WSystem;
+import it.unipi.di.acube.batframework.problems.Sa2WSystem;
+import it.unipi.di.acube.batframework.problems.TopicSystem;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,12 +48,18 @@ public class BatFrameworkAnnotatorWrapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BatFrameworkAnnotatorWrapper.class);
 
-    public static Annotator wrapBatFrameworkTopicSystem(TopicSystem annotator, WikipediaApiInterface wikiApi) {
+    public static final String ANNOTATOR_NAME_SUFFIX = " (BAT)";
+
+    public static Annotator create(TopicSystem annotator, WikipediaApiInterface wikiApi) {
         LOGGER.warn("Using wrappers for BAT framework adapters is not recommended!");
         if ((annotator instanceof Sa2WSystem) || (annotator instanceof A2WSystem)) {
             return new A2KBSystemWrapper((A2WSystem) annotator, wikiApi);
         }
-        return null; // TODO
+        if (annotator instanceof D2WSystem) {
+            return new D2KBSystemWrapper((D2WSystem) annotator, wikiApi);
+        }
+        LOGGER.error("Couldn't find a matching wrapper for \"" + annotator.getClass().getName() + "\". Returning null.");
+        return null;
     }
 
     protected abstract static class AbstractTopicSystemWrapper<T extends TopicSystem> implements Annotator {
@@ -67,7 +73,12 @@ public class BatFrameworkAnnotatorWrapper {
 
         @Override
         public String getName() {
-            return annotator.getName();
+            return annotator.getName() + ANNOTATOR_NAME_SUFFIX;
+        }
+
+        @Override
+        public void setName(String name) {
+            // nothing to do
         }
 
         protected List<Span> performRecognition(A2WSystem annotator, Document document) {

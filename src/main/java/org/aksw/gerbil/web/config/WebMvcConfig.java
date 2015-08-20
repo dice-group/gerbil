@@ -44,12 +44,14 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = { "org.aksw.gerbil.web", "org.aksw.gerbil.datasets.datahub" })
+@ComponentScan(basePackages = { "org.aksw.gerbil.utils", "org.aksw.gerbil.web", "org.aksw.gerbil.datasets.datahub" })
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     private static final transient Logger logger = LoggerFactory.getLogger(WebMvcConfig.class);
 
     /**
+     * <gd
+     * 
      * @return the view resolver
      */
     @Bean
