@@ -128,7 +128,7 @@ public class AgdistisAnnotator implements EntityLinker {
     }
 
     public List<MeaningSpan> getAnnotations(String textWithMentions) throws IOException, ParseException {
-        URL agdistisUrl = new URL("http://" + host + ":" + port + "/AGDISTIS");
+        URL agdistisUrl = new URL("http://" + host + ":" + port + "/AGDISTIS"); // FIXME GET and POST?
         String parameters = "type=agdistis&text=" + URLEncoder.encode(textWithMentions, "UTF-8");
         HttpURLConnection slConnection = (HttpURLConnection) agdistisUrl.openConnection();
         slConnection.setDoOutput(true);

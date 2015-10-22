@@ -6,8 +6,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 
 public abstract class AbstractHttpBasedAnnotator extends AbstractAnnotator {
-    
-    protected static final String CONNECTION_ABORT_INDICATING_EXCPETION_MSG = "Software caused connection abort";
+
+    public static final String CONNECTION_ABORT_INDICATING_EXCPETION_MSG = "Software caused connection abort";
 
     public AbstractHttpBasedAnnotator() {
     }

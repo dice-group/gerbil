@@ -22,15 +22,9 @@
  */
 package org.aksw.gerbil.annotator.impl.spotlight;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -38,11 +32,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
+import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -78,9 +83,21 @@ public class SpotlightClient {
     // private double minConfidence = 0.2;
     // private int minSupport = 20;
     private ObjectObjectOpenHashMap<String, String> typePrefixToUriMapping;
+    private SpotlightAnnotator annotator;
+    private CloseableHttpClient client;
 
-    public SpotlightClient() {
-        this(DEFAULT_REQUEST_URL/* , DEFAULT_MIN_CONFIDENCE, DEFAULT_MIN_SUPPORT */);
+    public SpotlightClient(SpotlightAnnotator annotator) {
+        this(DEFAULT_REQUEST_URL, annotator);
+    }
+
+    public SpotlightClient(String serviceURL, SpotlightAnnotator annotator) {
+        this.serviceURL = serviceURL.endsWith("/") ? serviceURL : (serviceURL + "/");
+        this.annotator = annotator;
+        client = HttpClients.createDefault();
+        typePrefixToUriMapping = new ObjectObjectOpenHashMap<String, String>();
+        for (int i = 0; i < TYPE_PREFIX_URI_MAPPING.length; ++i) {
+            typePrefixToUriMapping.put(TYPE_PREFIX_URI_MAPPING[i][0], TYPE_PREFIX_URI_MAPPING[i][1]);
+        }
     }
 
     // public SpotlightClient(String serviceURL, double minConfidence, int
@@ -98,65 +115,124 @@ public class SpotlightClient {
     // }
     // }
 
-    public SpotlightClient(String serviceURL) {
-        this.serviceURL = serviceURL.endsWith("/") ? serviceURL : (serviceURL + "/");
-
-        typePrefixToUriMapping = new ObjectObjectOpenHashMap<String, String>();
-        for (int i = 0; i < TYPE_PREFIX_URI_MAPPING.length; ++i) {
-            typePrefixToUriMapping.put(TYPE_PREFIX_URI_MAPPING[i][0], TYPE_PREFIX_URI_MAPPING[i][1]);
-        }
-    }
-
-    protected String request(String inputText, String requestUrl) throws IOException {
-        String parameters = "text=" + URLEncoder.encode(inputText, "UTF-8");
-        // parameters += "&confidence=" + minConfidence;
-        // parameters += "&support=" + minSupport;
-
-        URL url = new URL(requestUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setDoOutput(true);
-        connection.setDoInput(true);
-        connection.setUseCaches(false);
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-        connection.setRequestProperty("Content-Length", String.valueOf(parameters.length()));
-
-        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-        wr.writeBytes(parameters);
-        wr.flush();
-
-        StringBuilder sb = new StringBuilder();
-        InputStream is = null;
-        Reader ir = null;
-        BufferedReader br = null;
+    protected String request(String inputText, String requestUrl) throws GerbilException {
+        String parameters;
         try {
-            is = connection.getInputStream();
-            ir = new InputStreamReader(is);
-            br = new BufferedReader(ir);
-
-            while (br.ready()) {
-                sb.append(br.readLine());
+            parameters = "text=" + URLEncoder.encode(inputText, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("Exception while encoding request data.", e);
+            throw new GerbilException("Exception while encoding request data.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
+        HttpPost request = annotator.createPostRequest(requestUrl);
+        HttpEntity entity = new StringEntity(parameters, "UTF-8");
+        request.addHeader("Accept", "application/json");
+        request.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+        request.addHeader("Content-Length", String.valueOf(parameters.length()));
+        request.setEntity(entity);
+        entity = null;
+        CloseableHttpResponse response = null;
+        InputStream is = null;
+        try {
+            try {
+                response = client.execute(request);
+            } catch (java.net.SocketException e) {
+                if (e.getMessage().contains(AbstractHttpBasedAnnotator.CONNECTION_ABORT_INDICATING_EXCPETION_MSG)) {
+                    LOGGER.error("It seems like the annotator has needed too much time and has been interrupted.");
+                    throw new GerbilException(
+                            "It seems like the annotator has needed too much time and has been interrupted.", e,
+                            ErrorTypes.ANNOTATOR_NEEDED_TOO_MUCH_TIME);
+                } else {
+                    LOGGER.error("Exception while sending request.", e);
+                    throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Exception while sending request.", e);
+                throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            StatusLine status = response.getStatusLine();
+            if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
+                LOGGER.error("Response has the wrong status: " + status.toString());
+                throw new GerbilException("Response has the wrong status: " + status.toString(),
+                        ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            entity = response.getEntity();
+            try {
+                return IOUtils.toString(entity.getContent(), "UTF-8");
+            } catch (Exception e) {
+                LOGGER.error("Couldn't parse the response.", e);
+                throw new GerbilException("Couldn't parse the response.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
         } finally {
-            IOUtils.closeQuietly(br);
-            IOUtils.closeQuietly(ir);
             IOUtils.closeQuietly(is);
-            connection.disconnect();
+            if (entity != null) {
+                try {
+                    EntityUtils.consume(entity);
+                } catch (IOException e1) {
+                }
+            }
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                }
+            }
+            annotator.closeRequest(request);
         }
-        return sb.toString();
     }
+
+    // protected String request(String inputText, String requestUrl) throws
+    // IOException {
+    // String parameters = "text=" + URLEncoder.encode(inputText, "UTF-8");
+    // // parameters += "&confidence=" + minConfidence;
+    // // parameters += "&support=" + minSupport;
+    //
+    // URL url = new URL(requestUrl);
+    // HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    // connection.setRequestMethod("POST");
+    // connection.setDoOutput(true);
+    // connection.setDoInput(true);
+    // connection.setUseCaches(false);
+    // connection.setRequestProperty("Accept", "application/json");
+    // connection.setRequestProperty("Content-Type",
+    // "application/x-www-form-urlencoded;charset=UTF-8");
+    // connection.setRequestProperty("Content-Length",
+    // String.valueOf(parameters.length()));
+    //
+    // DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+    // wr.writeBytes(parameters);
+    // wr.flush();
+    //
+    // StringBuilder sb = new StringBuilder();
+    // InputStream is = null;
+    // Reader ir = null;
+    // BufferedReader br = null;
+    // try {
+    // is = connection.getInputStream();
+    // ir = new InputStreamReader(is);
+    // br = new BufferedReader(ir);
+    //
+    // while (br.ready()) {
+    // sb.append(br.readLine());
+    // }
+    // } finally {
+    // IOUtils.closeQuietly(br);
+    // IOUtils.closeQuietly(ir);
+    // IOUtils.closeQuietly(is);
+    // connection.disconnect();
+    // }
+    // return sb.toString();
+    // }
 
     public List<TypedNamedEntity> annotateSavely(Document document) {
         try {
             return annotate(document);
-        } catch (IOException e) {
+        } catch (GerbilException e) {
             LOGGER.error("Error while requesting DBpedia Spotlight to annotate text. Returning null.", e);
             return null;
         }
     }
 
-    public List<TypedNamedEntity> annotate(Document document) throws IOException {
+    public List<TypedNamedEntity> annotate(Document document) throws GerbilException {
         String response = request(document.getText(), serviceURL + ANNOTATE_RESOURCE);
         return parseAnnotationResponse(response);
     }
@@ -213,13 +289,13 @@ public class SpotlightClient {
     public List<Span> spotSavely(Document document) {
         try {
             return spot(document);
-        } catch (IOException e) {
+        } catch (GerbilException e) {
             LOGGER.error("Error while requesting DBpedia Spotlight to spot text. Returning null.", e);
             return null;
         }
     }
 
-    public List<Span> spot(Document document) throws IOException {
+    public List<Span> spot(Document document) throws GerbilException {
         String response = request(document.getText(), serviceURL + SPOT_RESOURCE);
         return parseSpottingResponse(response);
     }
@@ -253,7 +329,7 @@ public class SpotlightClient {
         return markings;
     }
 
-    public List<TypedNamedEntity> disambiguate(Document document) throws IOException {
+    public List<TypedNamedEntity> disambiguate(Document document) throws GerbilException {
         String text = document.getText();
         StringBuilder requestBuilder = new StringBuilder();
         requestBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><annotation text=\"");
@@ -280,7 +356,7 @@ public class SpotlightClient {
     public List<TypedNamedEntity> disambiguateSavely(Document document) {
         try {
             return disambiguate(document);
-        } catch (IOException e) {
+        } catch (GerbilException e) {
             LOGGER.error("Error while requesting DBpedia Spotlight to spot text. Returning null.", e);
             return null;
         }

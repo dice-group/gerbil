@@ -1,12 +1,13 @@
 package org.aksw.gerbil.annotator.impl.fox;
 
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.annotator.OKETask1Annotator;
-import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
+import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -18,18 +19,20 @@ import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.client.fluent.Response;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FOXAnnotator extends AbstractAnnotator implements OKETask1Annotator {
+public class FOXAnnotator extends AbstractHttpBasedAnnotator implements OKETask1Annotator {
 
     private static final String FOX_SERVICE_URL_PARAMETER_KEY = "org.aksw.gerbil.annotators.FOXAnnotatorConfig.serviceUrl";
 
@@ -46,6 +49,7 @@ public class FOXAnnotator extends AbstractAnnotator implements OKETask1Annotator
     public static final String NAME = "FOX";
 
     private String serviceUrl;
+    private CloseableHttpClient client = HttpClients.createDefault();
 
     public FOXAnnotator() throws GerbilException {
         serviceUrl = GerbilConfiguration.getInstance().getString(FOX_SERVICE_URL_PARAMETER_KEY);
@@ -86,38 +90,72 @@ public class FOXAnnotator extends AbstractAnnotator implements OKETask1Annotator
 
     protected Document requestAnnotations(Document document) throws GerbilException {
         Document resultDoc = new DocumentImpl(document.getText(), document.getDocumentURI());
+        HttpEntity entity = new StringEntity(new JSONObject().put("input", document.getText()).put("type", "text")
+                .put("task", "ner").put("output", "JSON-LD").toString(), ContentType.APPLICATION_JSON);
+        // request FOX
+        HttpPost request = createPostRequest(serviceUrl);
+        request.addHeader("Content-type", "application/json");
+        request.addHeader("Accept-Charset", "UTF-8");
+        request.setEntity(entity);
+
+        entity = null;
+        CloseableHttpResponse response = null;
         try {
-            // request FOX
-            Response response = Request
-                    .Post(serviceUrl)
-                    .addHeader("Content-type", "application/json")
-                    .addHeader("Accept-Charset", "UTF-8")
-                    .body(new StringEntity(new JSONObject().put("input", document.getText()).put("type", "text")
-                            .put("task", "ner").put("output", "JSON-LD").toString(), ContentType.APPLICATION_JSON))
-                    .execute();
-
-            HttpResponse httpResponse = response.returnResponse();
-            HttpEntity entry = httpResponse.getEntity();
-
-            String content = IOUtils.toString(entry.getContent(), "UTF-8");
-            EntityUtils.consume(entry);
-
-            // parse results
-            JSONObject outObj = new JSONObject(content);
-            if (outObj.has("@graph")) {
-
-                JSONArray graph = outObj.getJSONArray("@graph");
-                for (int i = 0; i < graph.length(); i++) {
-                    parseType(graph.getJSONObject(i), resultDoc);
+            try {
+                response = client.execute(request);
+            } catch (java.net.SocketException e) {
+                if (e.getMessage().contains(CONNECTION_ABORT_INDICATING_EXCPETION_MSG)) {
+                    LOGGER.error("It seems like the annotator has needed too much time and has been interrupted.");
+                    throw new GerbilException(
+                            "It seems like the annotator has needed too much time and has been interrupted.", e,
+                            ErrorTypes.ANNOTATOR_NEEDED_TOO_MUCH_TIME);
+                } else {
+                    LOGGER.error("Exception while sending request.", e);
+                    throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
                 }
-            } else {
-                parseType(outObj, resultDoc);
+            } catch (Exception e) {
+                LOGGER.error("Exception while sending request.", e);
+                throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
-        } catch (GerbilException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new GerbilException("Got an exception while communicating with the FOX web service.", e,
-                    ErrorTypes.UNEXPECTED_EXCEPTION);
+            StatusLine status = response.getStatusLine();
+            if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
+                LOGGER.error("Response has the wrong status: " + status.toString());
+                throw new GerbilException("Response has the wrong status: " + status.toString(),
+                        ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+
+            entity = response.getEntity();
+            try {
+                String content = IOUtils.toString(entity.getContent(), "UTF-8");
+                // parse results
+                JSONObject outObj = new JSONObject(content);
+                if (outObj.has("@graph")) {
+
+                    JSONArray graph = outObj.getJSONArray("@graph");
+                    for (int i = 0; i < graph.length(); i++) {
+                        parseType(graph.getJSONObject(i), resultDoc);
+                    }
+                } else {
+                    parseType(outObj, resultDoc);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Couldn't parse the response.", e);
+                throw new GerbilException("Couldn't parse the response.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+        } finally {
+            if (entity != null) {
+                try {
+                    EntityUtils.consume(entity);
+                } catch (IOException e1) {
+                }
+            }
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                }
+            }
+            closeRequest(request);
         }
         return resultDoc;
     }
@@ -151,8 +189,8 @@ public class FOXAnnotator extends AbstractAnnotator implements OKETask1Annotator
                                 body.length(), uri, types));
                     }
                 } else if (begin instanceof String) {
-                    resultDoc.addMarking(new TypedNamedEntity(Integer.valueOf((String) begin), body.length(), uri,
-                            types));
+                    resultDoc.addMarking(
+                            new TypedNamedEntity(Integer.valueOf((String) begin), body.length(), uri, types));
                 } else if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Couldn't find index");
                 }
