@@ -52,7 +52,8 @@ import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
-public abstract class TimeMeasuringAnnotatorDecorator implements Evaluator<Marking>, TimeMeasurer, Annotator {
+public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorDecorator
+        implements Evaluator<Marking>, TimeMeasurer {
 
     public static final String AVG_TIME_RESULT_NAME = "avg millis/doc";
 
@@ -231,24 +232,9 @@ public abstract class TimeMeasuringAnnotatorDecorator implements Evaluator<Marki
 
     protected long timeSum = 0;
     protected int callCount = 0;
-    protected Annotator decoratedAnnotator;
 
     protected TimeMeasuringAnnotatorDecorator(Annotator decoratedAnnotator) {
-        this.decoratedAnnotator = decoratedAnnotator;
-    }
-
-    @Override
-    public String getName() {
-        return decoratedAnnotator.getName();
-    }
-
-    @Override
-    public void setName(String name) {
-        decoratedAnnotator.setName(name);
-    }
-
-    protected Annotator getDecoratedAnnotator() {
-        return decoratedAnnotator;
+        super(decoratedAnnotator);
     }
 
     protected void addCallRuntime(long runtime) {

@@ -65,9 +65,13 @@ public enum ErrorTypes {
      */
     SERVER_STOPPED_WHILE_PROCESSING(-107, "The GERBIL server has been stopped while the experiment was running."),
     /**
-     * The annotator caused to many single errors.
+     * The annotator caused too many single errors.
      */
-    TO_MANY_SINGLE_ERRORS(-108, "The annotator caused to many single errors.");
+    TOO_MANY_SINGLE_ERRORS(-108, "The annotator caused too many single errors."),
+    /**
+     * The annotator needed too much time and has been interrupted.
+     */
+    ANNOTATOR_NEEDED_TOO_MUCH_TIME(-109, "The annotator needed too much time and has been interrupted.");
 
     private ErrorTypes(int errorCode, String description) {
         this.errorCode = errorCode;

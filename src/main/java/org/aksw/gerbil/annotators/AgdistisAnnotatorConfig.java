@@ -32,6 +32,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 
+@Deprecated
 public class AgdistisAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
     public static final String ANNOTATOR_NAME = "AGDISTIS" + BatFrameworkAnnotatorWrapper.ANNOTATOR_NAME_SUFFIX;
@@ -41,13 +42,11 @@ public class AgdistisAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
     private WikipediaApiInterface wikiApi;
 
-    @SuppressWarnings("deprecation")
     public AgdistisAnnotatorConfig(WikipediaApiInterface wikiApi) {
         super(ANNOTATOR_NAME, true, ExperimentType.D2KB);
         this.wikiApi = wikiApi;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected Annotator loadAnnotator(ExperimentType type) throws Exception {
         String host = GerbilConfiguration.getInstance().getString(AGDISTIS_HOST_PROPERTY_NAME);

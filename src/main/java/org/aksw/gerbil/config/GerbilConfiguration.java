@@ -32,6 +32,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Contains the properties needed by GERBIL. Implements the Singleton pattern.
  * 
+ * Note that the singleton instance is not an instance of this class but of the
+ * {@link Configuration} class.
+ * 
  * @author m.roeder
  * 
  */

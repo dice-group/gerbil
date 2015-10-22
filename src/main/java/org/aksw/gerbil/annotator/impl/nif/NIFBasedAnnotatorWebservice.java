@@ -22,8 +22,6 @@
  */
 package org.aksw.gerbil.annotator.impl.nif;
 
-import it.unipi.di.acube.batframework.utils.AnnotationException;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -31,7 +29,8 @@ import org.aksw.gerbil.annotator.EntityExtractor;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
-import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
+import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
+import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
@@ -54,8 +53,8 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NIFBasedAnnotatorWebservice extends AbstractAnnotator implements OKETask2Annotator, OKETask1Annotator,
-        EntityExtractor, EntityTyper {
+public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
+        implements OKETask2Annotator, OKETask1Annotator, EntityExtractor, EntityTyper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NIFBasedAnnotatorWebservice.class);
 
@@ -126,6 +125,18 @@ public class NIFBasedAnnotatorWebservice extends AbstractAnnotator implements OK
     // return NIF2BAT_TranslationHelper.createScoredTags(wikiApi, dbpediaApi,
     // document);
     // }
+    //
+    // @Override
+    // public HashSet<ScoredAnnotation> solveSa2W(String text) throws
+    // AnnotationException {
+    // // translate the mentions into an AnnotatedDocument object
+    // Document document =
+    // BAT2NIF_TranslationHelper.createAnnotatedDocument(text);
+    // document = request(document);
+    // // translate the annotated document into a HashSet of BAT Annotations
+    // return NIF2BAT_TranslationHelper.createScoredAnnotations(wikiApi,
+    // dbpediaApi, document);
+    // }
 
     @Override
     public List<MeaningSpan> performLinking(Document document) throws GerbilException {
@@ -157,24 +168,13 @@ public class NIFBasedAnnotatorWebservice extends AbstractAnnotator implements OK
         return performAnnotation(document, TypedNamedEntity.class);
     }
 
-    protected <T extends Marking> List<T> performAnnotation(Document document, Class<T> resultClass) {
+    protected <T extends Marking> List<T> performAnnotation(Document document, Class<T> resultClass)
+            throws GerbilException {
         document = request(document);
         return document.getMarkings(resultClass);
     }
 
-    // @Override
-    // public HashSet<ScoredAnnotation> solveSa2W(String text) throws
-    // AnnotationException {
-    // // translate the mentions into an AnnotatedDocument object
-    // Document document =
-    // BAT2NIF_TranslationHelper.createAnnotatedDocument(text);
-    // document = request(document);
-    // // translate the annotated document into a HashSet of BAT Annotations
-    // return NIF2BAT_TranslationHelper.createScoredAnnotations(wikiApi,
-    // dbpediaApi, document);
-    // }
-
-    protected Document request(Document document) {
+    protected Document request(Document document) throws GerbilException {
         // give the document a URI
         document.setDocumentURI(DOCUMENT_URI + documentCount);
         ++documentCount;
@@ -184,7 +184,8 @@ public class NIFBasedAnnotatorWebservice extends AbstractAnnotator implements OK
         HttpEntity entity = new StringEntity(nifDocument, "UTF-8");
         // send NIF document (start time measure)
         // lastRequestSend = System.currentTimeMillis();
-        HttpPost request = new HttpPost(url);
+        // HttpPost request = new HttpPost(url);
+        HttpPost request = createPostRequest(url);
         request.setEntity(entity);
         request.addHeader("Content-Type", nifCreator.getHttpContentType() + ";charset=UTF-8");
         request.addHeader("Accept", nifParser.getHttpContentType() + ";charset=UTF-8");
@@ -194,14 +195,25 @@ public class NIFBasedAnnotatorWebservice extends AbstractAnnotator implements OK
         try {
             try {
                 response = client.execute(request);
+            } catch (java.net.SocketException e) {
+                if (e.getMessage().contains(CONNECTION_ABORT_INDICATING_EXCPETION_MSG)) {
+                    LOGGER.error("It seems like the annotator has needed too much time and has been interrupted.");
+                    throw new GerbilException(
+                            "It seems like the annotator has needed too much time and has been interrupted.", e,
+                            ErrorTypes.ANNOTATOR_NEEDED_TOO_MUCH_TIME);
+                } else {
+                    LOGGER.error("Exception while sending request.", e);
+                    throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+                }
             } catch (Exception e) {
                 LOGGER.error("Exception while sending request.", e);
-                throw new AnnotationException("Exception while sending request. " + e.getLocalizedMessage());
+                throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
             StatusLine status = response.getStatusLine();
             if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
                 LOGGER.error("Response has the wrong status: " + status.toString());
-                throw new AnnotationException("Response has the wrong status: " + status.toString());
+                throw new GerbilException("Response has the wrong status: " + status.toString(),
+                        ErrorTypes.UNEXPECTED_EXCEPTION);
             }
             // receive NIF document (end time measure and set time)
             entity = response.getEntity();
@@ -211,7 +223,7 @@ public class NIFBasedAnnotatorWebservice extends AbstractAnnotator implements OK
                 document = nifParser.getDocumentFromNIFStream(entity.getContent());
             } catch (Exception e) {
                 LOGGER.error("Couldn't parse the response.", e);
-                throw new AnnotationException("Couldn't parse the response. " + e.getLocalizedMessage());
+                throw new GerbilException("Couldn't parse the response.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
         } finally {
             if (entity != null) {
@@ -226,6 +238,7 @@ public class NIFBasedAnnotatorWebservice extends AbstractAnnotator implements OK
                 } catch (IOException e) {
                 }
             }
+            closeRequest(request);
         }
         LOGGER.info("Finished request for {}", document.getDocumentURI());
         return document;

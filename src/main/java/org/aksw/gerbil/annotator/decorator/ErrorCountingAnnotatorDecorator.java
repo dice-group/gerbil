@@ -56,7 +56,8 @@ import org.slf4j.LoggerFactory;
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
-public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marking>, ErrorCounter, Annotator {
+public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorDecorator
+        implements Evaluator<Marking>, ErrorCounter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorCountingAnnotatorDecorator.class);
 
@@ -422,10 +423,9 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
 
     protected int errorCount = 0;
     protected int maxErrors;
-    protected Annotator decoratedAnnotator;
 
     protected ErrorCountingAnnotatorDecorator(Annotator decoratedAnnotator, int maxErrors) {
-        this.decoratedAnnotator = decoratedAnnotator;
+        super(decoratedAnnotator);
         this.maxErrors = maxErrors;
     }
 
@@ -439,25 +439,11 @@ public abstract class ErrorCountingAnnotatorDecorator implements Evaluator<Marki
         this.errorCount = errorCount;
     }
 
-    @Override
-    public String getName() {
-        return decoratedAnnotator.getName();
-    }
-
-    @Override
-    public void setName(String name) {
-        decoratedAnnotator.setName(name);
-    }
-
-    protected Annotator getDecoratedAnnotator() {
-        return decoratedAnnotator;
-    }
-
     protected void increaseErrorCount() throws GerbilException {
         ++errorCount;
         if (errorCount > maxErrors) {
             throw new GerbilException("Saw to many errors (maximum was set to " + maxErrors + ").",
-                    ErrorTypes.TO_MANY_SINGLE_ERRORS);
+                    ErrorTypes.TOO_MANY_SINGLE_ERRORS);
         }
     }
 

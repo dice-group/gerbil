@@ -40,7 +40,6 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
         return instance;
     }
 
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

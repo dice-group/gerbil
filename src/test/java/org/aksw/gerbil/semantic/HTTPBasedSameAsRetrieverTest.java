@@ -50,9 +50,7 @@ public class HTTPBasedSameAsRetrieverTest {
                         "http://wikidata.dbpedia.org/resource/Q685967", "http://cs.dbpedia.org/resource/Kaufland",
                         "http://nl.dbpedia.org/resource/Kaufland", "http://pl.dbpedia.org/resource/Kaufland",
                         "http://wikidata.org/entity/Q685967", "http://rdf.freebase.com/ns/m.0dwt4w",
-                        "http://yago-knowledge.org/resource/Kaufland", "http://bg.dbpedia.org/resource/Кауфланд",
-                        "http://ro.dbpedia.org/resource/Kaufland", "http://sk.dbpedia.org/resource/Kaufland",
-                        "http://tr.dbpedia.org/resource/Kaufland") });
+                        "http://yago-knowledge.org/resource/Kaufland") });
         return testConfigs;
     }
 

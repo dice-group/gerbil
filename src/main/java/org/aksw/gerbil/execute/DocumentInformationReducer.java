@@ -38,6 +38,14 @@ import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+/**
+ * This class reduces the information contained inside a given document. It is
+ * needed to create tasks using the documents loaded from a dataset, e.i.,
+ * removing the result from the documents before sending them to the annotator.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ *
+ */
 public class DocumentInformationReducer {
 
     public static Document reduceToPlainText(Document document) {

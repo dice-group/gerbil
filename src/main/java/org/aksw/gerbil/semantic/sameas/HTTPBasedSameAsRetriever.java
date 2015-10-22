@@ -68,9 +68,16 @@ public class HTTPBasedSameAsRetriever implements SameAsRetriever {
     }
 
     protected void requestModel(Model model, String uri, int retryCount) throws Exception {
+        if (uri == null) {
+            return;
+        }
         try {
             reader.read(model, uri);
         } catch (HttpException e) {
+            // if this URI is unknown
+            if ((e.getStatusLine() != null) && (e.getStatusLine().equals("Not Found"))) {
+                return;
+            }
             ++retryCount;
             if (retryCount < MAXIMUM_NUMBER_OF_TRIES) {
                 requestModel(model, uri, retryCount);

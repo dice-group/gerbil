@@ -31,6 +31,7 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.junit.Ignore;
 
+@SuppressWarnings("deprecation")
 @Ignore
 public class AbstractTestAnnotator extends AbstractAnnotatorConfiguration implements Annotator {
 

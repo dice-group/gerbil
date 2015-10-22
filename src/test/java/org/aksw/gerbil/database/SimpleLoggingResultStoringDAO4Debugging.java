@@ -22,18 +22,18 @@
  */
 package org.aksw.gerbil.database;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 
+import com.carrotsearch.hppc.IntIntOpenHashMap;
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
+
 public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4Debugging {
 
-    private Int2ObjectOpenHashMap<ExperimentTaskResult> results = new Int2ObjectOpenHashMap<ExperimentTaskResult>();
-    private Int2IntOpenHashMap states = new Int2IntOpenHashMap();
+    private IntObjectOpenHashMap<ExperimentTaskResult> results = new IntObjectOpenHashMap<ExperimentTaskResult>();
+    private IntIntOpenHashMap states = new IntIntOpenHashMap();
 
     @Override
     public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskResult result) {
@@ -73,6 +73,18 @@ public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4De
     protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
             String annotatorName, String datasetName) {
         return null;
+    }
+
+    @Override
+    public List<ExperimentTaskResult> getResultsOfExperiment(String experimentId) {
+        List<ExperimentTaskResult> resultsOfExperiment = new ArrayList<ExperimentTaskResult>(
+                results.size() + states.size());
+        for (int i = 0; i < results.allocated.length; ++i) {
+            if (results.allocated[i]) {
+                resultsOfExperiment.add((ExperimentTaskResult) ((Object[]) results.values)[i]);
+            }
+        }
+        return resultsOfExperiment;
     }
 
 }

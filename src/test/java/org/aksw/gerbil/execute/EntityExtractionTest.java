@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.TestEntityLinker;
+import org.aksw.gerbil.annotator.TestEntityExtractor;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datasets.NIFFileDatasetConfig;
@@ -54,7 +54,7 @@ import org.junit.runners.Parameterized.Parameters;
  * 
  */
 @RunWith(Parameterized.class)
-public class EntityLinkingTest extends AbstractExperimentTaskTest {
+public class EntityExtractionTest extends AbstractExperimentTaskTest {
 
     private static final String TEXTS[] = new String[] {
             "Florence May Harding studied at a school in Sydney, and with Douglas Robert Dundas , but in effect had no formal training in either botany or art.",
@@ -122,7 +122,7 @@ public class EntityLinkingTest extends AbstractExperimentTaskTest {
                                         "http://dbpedia.org/resource/Florence_May_Harding"),
                                 (Marking) new NamedEntity(44, 6, "http://dbpedia.org/resource/Sydney"))),
                 // found 2xDBpedia but missed 2xnull
-                // (TP=2,FP=0,FN=0,P=1,R=1,F1=1)
+                // (TP=2,FP=2,FN=2,P=0.5,R=0.5,F1=0.5)
                 new DocumentImpl(TEXTS[1], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
                         Arrays.asList((Marking) new NamedEntity(22, 14, "http://dbpedia.org/resource/James_Carville"),
                                 (Marking) new NamedEntity(57, 17, "http://dbpedia.org/resource/Political_consulting"),
@@ -136,9 +136,9 @@ public class EntityLinkingTest extends AbstractExperimentTaskTest {
                         Arrays.asList((Marking) new NamedEntity(49, 19,
                                 "http://dbpedia.org/resource/Columbia_University"))) },
                 // found 1xDBpedia but missed 1xnull
-                // (TP=1,FP=0,FN=0,P=1,R=1,F1=1)
+                // (TP=1,FP=1,FN=1,P=0.5,R=0.5,F1=0.5)
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
-                new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+                new double[] { 2.0 / 3.0, 2.0 / 3.0, 2.0 / 3.0, 0.75, 0.75, 0.75, 0 } });
         // The linker linked all entities using dbpedia URIs if they were
         // available or an emtpy URI set.
         testConfigs.add(new Object[] {
@@ -197,7 +197,7 @@ public class EntityLinkingTest extends AbstractExperimentTaskTest {
     private double expectedResults[];
     private Matching matching;
 
-    public EntityLinkingTest(Document[] annotatorResults, DatasetConfiguration dataset, Matching matching,
+    public EntityExtractionTest(Document[] annotatorResults, DatasetConfiguration dataset, Matching matching,
             double[] expectedResults) {
         this.annotatorResults = annotatorResults;
         this.dataset = dataset;
@@ -210,7 +210,7 @@ public class EntityLinkingTest extends AbstractExperimentTaskTest {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                new TestEntityLinker(Arrays.asList(annotatorResults)), dataset, ExperimentType.ELink, matching);
+                new TestEntityExtractor(Arrays.asList(annotatorResults)), dataset, ExperimentType.EExt, matching);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }

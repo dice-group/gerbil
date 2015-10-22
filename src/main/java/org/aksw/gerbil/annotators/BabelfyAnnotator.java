@@ -23,7 +23,6 @@
  */
 package org.aksw.gerbil.annotators;
 
-
 /**
  * The BabelFy Annotator.
  * 
@@ -39,8 +38,9 @@ package org.aksw.gerbil.annotators;
  * {@value #BABELFY_MAX_TEXT_LENGTH}.
  * </p>
  */
-//@GerbilAnnotator(name = "Babelfy", couldBeCached = true, applicableForExperiments = ExperimentType.A2W)
-public class BabelfyAnnotator/* implements A2WSystem */{
+// @GerbilAnnotator(name = "Babelfy", couldBeCached = true,
+// applicableForExperiments = ExperimentType.A2W)
+public class BabelfyAnnotator/* implements A2WSystem */ {
 
     // private static final Logger LOGGER =
     // LoggerFactory.getLogger(BabelfyAnnotator.class);
@@ -155,14 +155,17 @@ public class BabelfyAnnotator/* implements A2WSystem */{
     // } catch (BabelfyKeyNotValidOrLimitReached e) {
     // LOGGER.error("The BabelFy Key is invalid or has reached its limit.", e);
     // throw new
-    // AnnotationException("The BabelFy Key is invalid or has reached its limit: "
+    // AnnotationException("The BabelFy Key is invalid or has reached its limit:
+    // "
     // + e.getLocalizedMessage());
     // } catch (IOException | URISyntaxException e) {
     // //
-    // LOGGER.error("Exception while requesting annotations from BabelFy. Returning empty Annotation set.",
+    // LOGGER.error("Exception while requesting annotations from BabelFy.
+    // Returning empty Annotation set.",
     // // e);
     // throw new
-    // AnnotationException("Exception while requesting annotations from BabelFy: "
+    // AnnotationException("Exception while requesting annotations from BabelFy:
+    // "
     // + e.getLocalizedMessage());
     // }
     // // lastTime = Calendar.getInstance().getTimeInMillis() - lastTime;

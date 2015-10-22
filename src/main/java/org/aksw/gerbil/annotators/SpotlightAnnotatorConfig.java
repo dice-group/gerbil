@@ -26,6 +26,7 @@ import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.impl.spotlight.SpotlightAnnotator;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
+@Deprecated
 public class SpotlightAnnotatorConfig extends AbstractAnnotatorConfiguration {
 
     public SpotlightAnnotatorConfig() {

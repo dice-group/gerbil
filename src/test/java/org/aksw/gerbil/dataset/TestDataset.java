@@ -33,7 +33,11 @@ public class TestDataset extends AbstractDatasetConfiguration implements Dataset
     private List<Document> instances;
 
     public TestDataset(List<Document> instances, ExperimentType applicableForExperiment) {
-        super("TestDataset", false, applicableForExperiment);
+        this("TestDataset", instances, applicableForExperiment);
+    }
+
+    public TestDataset(String name, List<Document> instances, ExperimentType applicableForExperiment) {
+        super(name, false, applicableForExperiment);
         this.instances = instances;
     }
 

@@ -23,13 +23,13 @@
  */
 package org.aksw.gerbil.annotators;
 
-
 //@GerbilAnnotator(name = "AGDISTIS", couldBeCached = true, applicableForExperiments = ExperimentType.D2W)
+@Deprecated
 public class AgdistisAnnotator /*
                                 * extends
                                 * it.acubelab.batframework.systemPlugins.
                                 * AgdistisAnnotator
-                                */{
+                                */ {
 
     // private static final String AGDISTIS_HOST_PROPERTY_NAME =
     // "org.aksw.gerbil.annotators.AgdistisAnnotatorConfig.Host";
@@ -128,7 +128,8 @@ public class AgdistisAnnotator /*
     // String urlDecoded = URLDecoder.decode(url, "UTF-8");
     // int wikiArticle = DBpediaToWikiId.getId(wikiApi, urlDecoded);
     // if (wikiArticle == -1)
-    // System.err.printf("Wiki title of url %s (decoded %s) could not be found.%n",
+    // System.err.printf("Wiki title of url %s (decoded %s) could not be
+    // found.%n",
     // url, urlDecoded);
     // annotations.add(new Annotation(position, length, wikiArticle));
     // }

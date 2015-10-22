@@ -60,6 +60,13 @@ import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This is a single experiment designed as {@link Task} to be able to run
+ * several tasks in parallel.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ *
+ */
 public class ExperimentTask implements Task {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentTask.class);
@@ -68,8 +75,6 @@ public class ExperimentTask implements Task {
     private ExperimentTaskConfiguration configuration;
     private int experimentTaskId;
     private EvaluatorFactory evFactory;
-    // @Deprecated
-    // private WikipediaApiInterface wikiAPI;
     private ExperimentTaskState taskState = null;
 
     public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO,

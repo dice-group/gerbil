@@ -25,8 +25,10 @@ package org.aksw.gerbil.utils;
 import java.io.IOException;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 @Deprecated
 public class SingletonWikipediaApiTest {
 
