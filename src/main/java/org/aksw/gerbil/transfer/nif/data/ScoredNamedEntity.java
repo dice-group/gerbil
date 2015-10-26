@@ -21,8 +21,9 @@ import java.util.Set;
 
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.ScoredMarking;
+import org.aksw.gerbil.transfer.nif.ScoredSpan;
 
-public class ScoredNamedEntity extends NamedEntity implements MeaningSpan, ScoredMarking {
+public class ScoredNamedEntity extends NamedEntity implements MeaningSpan, ScoredSpan, ScoredMarking {
 
     private double confidence;
 

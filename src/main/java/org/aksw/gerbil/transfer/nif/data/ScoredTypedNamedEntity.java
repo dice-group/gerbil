@@ -20,10 +20,10 @@ import java.util.Arrays;
 import java.util.Set;
 
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
-import org.aksw.gerbil.transfer.nif.ScoredMarking;
+import org.aksw.gerbil.transfer.nif.ScoredSpan;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 
-public class ScoredTypedNamedEntity extends TypedNamedEntity implements ScoredMarking, TypedSpan, MeaningSpan {
+public class ScoredTypedNamedEntity extends TypedNamedEntity implements TypedSpan, ScoredSpan, MeaningSpan {
 
     private double confidence;
 
@@ -32,7 +32,8 @@ public class ScoredTypedNamedEntity extends TypedNamedEntity implements ScoredMa
         this.confidence = confidence;
     }
 
-    public ScoredTypedNamedEntity(int startPosition, int length, Set<String> uris, Set<String> types, double confidence) {
+    public ScoredTypedNamedEntity(int startPosition, int length, Set<String> uris, Set<String> types,
+            double confidence) {
         super(startPosition, length, uris, types);
         this.confidence = confidence;
     }
