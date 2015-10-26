@@ -1,11 +1,9 @@
 package org.aksw.gerbil.annotator.impl.agdistis;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -14,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.EntityLinker;
+import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -22,6 +21,15 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.StartPosBasedComparator;
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -29,17 +37,17 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AgdistisAnnotator implements EntityLinker {
+public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements EntityLinker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgdistisAnnotator.class);
 
     private static final String AGDISTIS_HOST_PROPERTY_NAME = "org.aksw.gerbil.annotators.AgdistisAnnotatorConfig.Host";
     private static final String AGDISTIS_PORT_PROPERTY_NAME = "org.aksw.gerbil.annotators.AgdistisAnnotatorConfig.Port";
 
-    protected String name;
     protected String host;
     protected int port;
     protected JSONParser jsonParser = new JSONParser();
+    protected CloseableHttpClient client = HttpClients.createDefault();
 
     public AgdistisAnnotator() throws GerbilException {
         name = "AGDISTIS";
@@ -57,32 +65,31 @@ public class AgdistisAnnotator implements EntityLinker {
         try {
             port = Integer.parseInt(portString);
         } catch (Exception e) {
-            throw new GerbilException("Couldn't parse the integer of the property \"" + AGDISTIS_PORT_PROPERTY_NAME
-                    + "\".", e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
+            throw new GerbilException(
+                    "Couldn't parse the integer of the property \"" + AGDISTIS_PORT_PROPERTY_NAME + "\".", e,
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
         }
         this.host = host;
         this.port = port;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
+    public AgdistisAnnotator(String host, String portString) throws GerbilException {
+        this.host = host;
+        int port;
+        try {
+            port = Integer.parseInt(portString);
+        } catch (Exception e) {
+            throw new GerbilException(
+                    "Couldn't parse the integer of the property \"" + AGDISTIS_PORT_PROPERTY_NAME + "\".", e,
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
+        this.port = port;
     }
 
     @Override
     public List<MeaningSpan> performLinking(Document document) throws GerbilException {
         String textWithMentions = createTextWithMentions(document.getText(), document.getMarkings(Span.class));
-        try {
-            return getAnnotations(textWithMentions);
-        } catch (Exception e) {
-            throw new GerbilException("Got an unexcepted exception while requesting annotations from AGDISTIS.", e,
-                    ErrorTypes.UNEXPECTED_EXCEPTION);
-        }
+        return getAnnotations(textWithMentions);
     }
 
     static String createTextWithMentions(String text, List<Span> mentions) {
@@ -127,25 +134,71 @@ public class AgdistisAnnotator implements EntityLinker {
         return textBuilder.toString();
     }
 
-    public List<MeaningSpan> getAnnotations(String textWithMentions) throws IOException, ParseException {
-        URL agdistisUrl = new URL("http://" + host + ":" + port + "/AGDISTIS"); // FIXME GET and POST?
-        String parameters = "type=agdistis&text=" + URLEncoder.encode(textWithMentions, "UTF-8");
-        HttpURLConnection slConnection = (HttpURLConnection) agdistisUrl.openConnection();
-        slConnection.setDoOutput(true);
-        slConnection.setDoInput(true);
-        slConnection.setRequestMethod("POST");
-        slConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        slConnection.setRequestProperty("charset", "utf-8");
-        slConnection.setRequestProperty("Content-Length", "" + Integer.toString(parameters.getBytes().length));
-        slConnection.setUseCaches(false);
+    public List<MeaningSpan> getAnnotations(String textWithMentions) throws GerbilException {
+        String agdistisUrl = "http://" + host + ":" + port + "/AGDISTIS";
+        String parameters = null;
+        try {
+            parameters = "type=agdistis&text=" + URLEncoder.encode(textWithMentions, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("Couldn't encode request data.", e);
+            throw new GerbilException("Couldn't encode request data.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
 
-        DataOutputStream wr = new DataOutputStream(slConnection.getOutputStream());
-        wr.writeBytes(parameters);
-        wr.flush();
-        wr.close();
+        HttpEntity entity = new StringEntity(parameters, ContentType.APPLICATION_FORM_URLENCODED);
+        HttpPost request = createPostRequest(agdistisUrl);
+        request.addHeader("charset", "utf-8");
+        request.addHeader("Accept-Charset", "UTF-8");
+        request.setEntity(entity);
 
-        InputStream in = slConnection.getInputStream();
-        List<MeaningSpan> annotations = parseJsonStream(in);
+        entity = null;
+        CloseableHttpResponse response = null;
+        List<MeaningSpan> annotations = null;
+        try {
+            try {
+                response = client.execute(request);
+            } catch (java.net.SocketException e) {
+                if (e.getMessage().contains(CONNECTION_ABORT_INDICATING_EXCPETION_MSG)) {
+                    LOGGER.error("It seems like the annotator has needed too much time and has been interrupted.");
+                    throw new GerbilException(
+                            "It seems like the annotator has needed too much time and has been interrupted.", e,
+                            ErrorTypes.ANNOTATOR_NEEDED_TOO_MUCH_TIME);
+                } else {
+                    LOGGER.error("Exception while sending request.", e);
+                    throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Exception while sending request.", e);
+                throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            StatusLine status = response.getStatusLine();
+            if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
+                LOGGER.error("Response has the wrong status: " + status.toString());
+                throw new GerbilException("Response has the wrong status: " + status.toString(),
+                        ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+
+            entity = response.getEntity();
+            try {
+                annotations = parseJsonStream(entity.getContent());
+            } catch (Exception e) {
+                LOGGER.error("Couldn't parse the response.", e);
+                throw new GerbilException("Couldn't parse the response.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+        } finally {
+            if (entity != null) {
+                try {
+                    EntityUtils.consume(entity);
+                } catch (IOException e1) {
+                }
+            }
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                }
+            }
+            closeRequest(request);
+        }
         return annotations;
     }
 
