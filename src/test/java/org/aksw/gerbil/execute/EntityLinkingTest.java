@@ -122,7 +122,7 @@ public class EntityLinkingTest extends AbstractExperimentTaskTest {
                                         "http://dbpedia.org/resource/Florence_May_Harding"),
                                 (Marking) new NamedEntity(44, 6, "http://dbpedia.org/resource/Sydney"))),
                 // found 2xDBpedia but missed 2xnull
-                // (TP=2,FP=0,FN=0,P=1,R=1,F1=1)
+                // (TP=2,FP=0,FN=2,P=1,R=0.5,F1=2/3)
                 new DocumentImpl(TEXTS[1], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
                         Arrays.asList((Marking) new NamedEntity(22, 14, "http://dbpedia.org/resource/James_Carville"),
                                 (Marking) new NamedEntity(57, 17, "http://dbpedia.org/resource/Political_consulting"),
@@ -136,9 +136,9 @@ public class EntityLinkingTest extends AbstractExperimentTaskTest {
                         Arrays.asList((Marking) new NamedEntity(49, 19,
                                 "http://dbpedia.org/resource/Columbia_University"))) },
                 // found 1xDBpedia but missed 1xnull
-                // (TP=1,FP=0,FN=0,P=1,R=1,F1=1)
+                // (TP=1,FP=0,FN=1,P=1,R=0.5,F1=2/3)
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
-                new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+                new double[] { 1.0, 2.0 / 3.0, 7.0 / 9.0, 1.0, 0.75, 1.5 / 1.75, 0 } });
         // The linker linked all entities using dbpedia URIs if they were
         // available or an emtpy URI set.
         testConfigs.add(new Object[] {

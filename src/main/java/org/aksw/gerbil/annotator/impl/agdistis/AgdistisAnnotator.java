@@ -22,13 +22,10 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.StartPosBasedComparator;
 import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -47,7 +44,6 @@ public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements Ent
     protected String host;
     protected int port;
     protected JSONParser jsonParser = new JSONParser();
-    protected CloseableHttpClient client = HttpClients.createDefault();
 
     public AgdistisAnnotator() throws GerbilException {
         name = "AGDISTIS";
@@ -154,29 +150,7 @@ public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements Ent
         CloseableHttpResponse response = null;
         List<MeaningSpan> annotations = null;
         try {
-            try {
-                response = client.execute(request);
-            } catch (java.net.SocketException e) {
-                if (e.getMessage().contains(CONNECTION_ABORT_INDICATING_EXCPETION_MSG)) {
-                    LOGGER.error("It seems like the annotator has needed too much time and has been interrupted.");
-                    throw new GerbilException(
-                            "It seems like the annotator has needed too much time and has been interrupted.", e,
-                            ErrorTypes.ANNOTATOR_NEEDED_TOO_MUCH_TIME);
-                } else {
-                    LOGGER.error("Exception while sending request.", e);
-                    throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
-                }
-            } catch (Exception e) {
-                LOGGER.error("Exception while sending request.", e);
-                throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
-            }
-            StatusLine status = response.getStatusLine();
-            if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
-                LOGGER.error("Response has the wrong status: " + status.toString());
-                throw new GerbilException("Response has the wrong status: " + status.toString(),
-                        ErrorTypes.UNEXPECTED_EXCEPTION);
-            }
-
+            response = sendRequest(request);
             entity = response.getEntity();
             try {
                 annotations = parseJsonStream(entity.getContent());

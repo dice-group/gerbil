@@ -45,8 +45,6 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -84,7 +82,6 @@ public class SpotlightClient {
     // private int minSupport = 20;
     private ObjectObjectOpenHashMap<String, String> typePrefixToUriMapping;
     private SpotlightAnnotator annotator;
-    private CloseableHttpClient client;
 
     public SpotlightClient(SpotlightAnnotator annotator) {
         this(DEFAULT_REQUEST_URL, annotator);
@@ -93,7 +90,6 @@ public class SpotlightClient {
     public SpotlightClient(String serviceURL, SpotlightAnnotator annotator) {
         this.serviceURL = serviceURL.endsWith("/") ? serviceURL : (serviceURL + "/");
         this.annotator = annotator;
-        client = HttpClients.createDefault();
         typePrefixToUriMapping = new ObjectObjectOpenHashMap<String, String>();
         for (int i = 0; i < TYPE_PREFIX_URI_MAPPING.length; ++i) {
             typePrefixToUriMapping.put(TYPE_PREFIX_URI_MAPPING[i][0], TYPE_PREFIX_URI_MAPPING[i][1]);
@@ -127,14 +123,13 @@ public class SpotlightClient {
         HttpEntity entity = new StringEntity(parameters, "UTF-8");
         request.addHeader("Accept", "application/json");
         request.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-        request.addHeader("Content-Length", String.valueOf(parameters.length()));
         request.setEntity(entity);
         entity = null;
         CloseableHttpResponse response = null;
         InputStream is = null;
         try {
             try {
-                response = client.execute(request);
+                response = annotator.getClient().execute(request);
             } catch (java.net.SocketException e) {
                 if (e.getMessage().contains(AbstractHttpBasedAnnotator.CONNECTION_ABORT_INDICATING_EXCPETION_MSG)) {
                     LOGGER.error("It seems like the annotator has needed too much time and has been interrupted.");

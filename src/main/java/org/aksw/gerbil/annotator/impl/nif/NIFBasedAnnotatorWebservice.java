@@ -47,8 +47,6 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +59,6 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
     private static final String DOCUMENT_URI = "http://www.aksw.org/gerbil/NifWebService/request_";
 
     private String url;
-    private CloseableHttpClient client;
     private int documentCount = 0;
     private NIFDocumentCreator nifCreator = new TurtleNIFDocumentCreator();
     private NIFDocumentParser nifParser = new TurtleNIFDocumentParser();
@@ -69,13 +66,11 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
     public NIFBasedAnnotatorWebservice(String url) {
         super();
         this.url = url;
-        client = HttpClients.createDefault();
     }
 
     public NIFBasedAnnotatorWebservice(String url, String name) {
         super(name);
         this.url = url;
-        client = HttpClients.createDefault();
     }
 
     // @Override

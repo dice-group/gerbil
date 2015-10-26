@@ -22,6 +22,8 @@
  */
 package org.aksw.gerbil.execute;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,6 +90,7 @@ public class ExperimentTask implements Task {
     @Override
     public void run() {
         LOGGER.info("Task started " + configuration.toString());
+        Annotator annotator = null;
         try {
             // Create dataset
             Dataset dataset = (Dataset) configuration.datasetConfig.getDataset(configuration.type);
@@ -97,14 +100,15 @@ public class ExperimentTask implements Task {
             }
 
             // Create annotator
-            Annotator annotator = (Annotator) configuration.annotatorConfig.getAnnotator(configuration.type);
+            annotator = (Annotator) configuration.annotatorConfig.getAnnotator(configuration.type);
+            Annotator decoratedAnnotator = annotator;
             // Add decroatoring evaluators
             TimeMeasuringAnnotatorDecorator timeMeasurer = TimeMeasuringAnnotatorDecorator
-                    .createDecorator(configuration.type, annotator);
-            annotator = timeMeasurer;
+                    .createDecorator(configuration.type, decoratedAnnotator);
+            decoratedAnnotator = timeMeasurer;
             ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator
-                    .createDecorator(configuration.type, annotator, dataset.size());
-            annotator = errorCounter;
+                    .createDecorator(configuration.type, decoratedAnnotator, dataset.size());
+            decoratedAnnotator = errorCounter;
             if (annotator == null) {
                 throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
@@ -118,7 +122,7 @@ public class ExperimentTask implements Task {
 
             taskState = new ExperimentTaskState(dataset.size());
             // perform experiment
-            EvaluationResult result = runExperiment(dataset, annotator, evaluators, taskState);
+            EvaluationResult result = runExperiment(dataset, decoratedAnnotator, evaluators, taskState);
 
             // create result object
             // FIXME Fix this workaround
@@ -135,6 +139,14 @@ public class ExperimentTask implements Task {
             experimentDAO.setExperimentState(experimentTaskId, e.getErrorType().getErrorCode());
         } catch (Exception e) {
             LOGGER.error("Error while trying to execute experiment.", e);
+        } finally {
+            if ((annotator != null) && (annotator instanceof Closeable)) {
+                try {
+                    ((Closeable) annotator).close();
+                } catch (IOException e) {
+                    LOGGER.info("Exception while trying to close annotator \"" + annotator.getName() + "\".", e);
+                }
+            }
         }
     }
 

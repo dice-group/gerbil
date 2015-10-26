@@ -1,0 +1,179 @@
+package org.aksw.gerbil.annotator.impl.tagme;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.List;
+
+import org.aksw.gerbil.annotator.EntityExtractor;
+import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
+import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.MeaningSpan;
+import org.aksw.gerbil.transfer.nif.Span;
+import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
+import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.aksw.gerbil.transfer.nif.data.ScoredSpanImpl;
+import org.aksw.gerbil.transfer.nif.data.SpanImpl;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements EntityExtractor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TagMeAnnotator.class);
+
+    private static final String TAGME_KEY_PARAMETER_KEY = "org.aksw.gerbil.annotators.TagMe.key";
+
+    private static final String ANNOTATIONS_LIST_KEY = "detectedTopics";
+    private static final String ANNOTATION_TITLE_KEY = "title";
+    private static final String SPOTTINGS_LIST_KEY = "spots";
+    private static final String LINK_PROBABILITY_KEY = "lp";
+    private static final String START_KEY = "start";
+    private static final String END_KEY = "end";
+
+    private String annotationUrl;
+    private String spotUrl;
+    private String key;
+
+    public TagMeAnnotator(String annotationUrl, String spotUrl) throws GerbilException {
+        this.annotationUrl = annotationUrl;
+        this.spotUrl = spotUrl;
+        key = GerbilConfiguration.getInstance().getString(TAGME_KEY_PARAMETER_KEY);
+        if (key == null) {
+            throw new GerbilException("Couldn't load key from configuration (\"" + TAGME_KEY_PARAMETER_KEY + "\").",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
+    }
+
+    public TagMeAnnotator(String annotationUrl, String spotUrl, String key) throws GerbilException {
+        this.annotationUrl = annotationUrl;
+        this.spotUrl = spotUrl;
+        this.key = key;
+    }
+
+    @Override
+    public List<MeaningSpan> performLinking(Document document) throws GerbilException {
+        return performRequest(document, true).getMarkings(MeaningSpan.class);
+    }
+
+    @Override
+    public List<Span> performRecognition(Document document) throws GerbilException {
+        return performRequest(document, false).getMarkings(Span.class);
+    }
+
+    @Override
+    public List<MeaningSpan> performExtraction(Document document) throws GerbilException {
+        return performRequest(document, true).getMarkings(MeaningSpan.class);
+    }
+
+    protected Document performRequest(Document document, boolean annotate) throws GerbilException {
+        Document resultDoc = new DocumentImpl(document.getText(), document.getDocumentURI());
+        HttpPost request = createPostRequest(annotate ? annotationUrl : spotUrl);
+        StringBuilder parameters = new StringBuilder();
+        parameters.append("key=");
+        parameters.append(key);
+        parameters.append("&text=");
+        try {
+            parameters.append(URLEncoder.encode(document.getText(), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("Couldn't encode request data.", e);
+            throw new GerbilException("Couldn't encode request data.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
+        HttpEntity entity = new StringEntity(parameters.toString(), ContentType.APPLICATION_FORM_URLENCODED);
+        request.addHeader("accept", "application/json");
+        request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.addHeader("charset", "utf-8");
+        request.setEntity(entity);
+
+        entity = null;
+        CloseableHttpResponse response = null;
+        try {
+            response = sendRequest(request);
+            entity = response.getEntity();
+            try {
+                if (annotate) {
+                    parseAnnotations(IOUtils.toString(entity.getContent(), "UTF-8"), resultDoc);
+                } else {
+                    parseSpottings(IOUtils.toString(entity.getContent(), "UTF-8"), resultDoc);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Couldn't parse the response.", e);
+                throw new GerbilException("Couldn't parse the response.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+        } finally {
+            if (entity != null) {
+                try {
+                    EntityUtils.consume(entity);
+                } catch (IOException e1) {
+                }
+            }
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                }
+            }
+            closeRequest(request);
+        }
+        return resultDoc;
+    }
+
+    private String transformTitleToUri(String title) {
+        return "http://dbpedia.org/resource/" + title.replace(' ', '_');
+    }
+
+    private void parseAnnotations(String content, Document resultDoc) {
+        // parse results
+        JSONObject outObj = new JSONObject(content);
+        if (outObj.has(ANNOTATIONS_LIST_KEY)) {
+            JSONArray entities = outObj.getJSONArray(ANNOTATIONS_LIST_KEY);
+            for (int i = 0; i < entities.length(); i++) {
+                parseAnnotation(entities.getJSONObject(i), resultDoc);
+            }
+        }
+    }
+
+    private void parseAnnotation(JSONObject entityObject, Document resultDoc) {
+        if (entityObject.has(ANNOTATION_TITLE_KEY) && entityObject.has(START_KEY) && entityObject.has(END_KEY)) {
+            String uri = transformTitleToUri(entityObject.getString(ANNOTATION_TITLE_KEY));
+            int start = entityObject.getInt(START_KEY);
+            int end = entityObject.getInt(END_KEY);
+            resultDoc.addMarking(new NamedEntity(start, end - start, uri));
+        }
+    }
+
+    private void parseSpottings(String content, Document resultDoc) {
+        // parse results
+        JSONObject outObj = new JSONObject(content);
+        if (outObj.has(SPOTTINGS_LIST_KEY)) {
+            JSONArray entities = outObj.getJSONArray(SPOTTINGS_LIST_KEY);
+            for (int i = 0; i < entities.length(); i++) {
+                parseSpotting(entities.getJSONObject(i), resultDoc);
+            }
+        }
+    }
+
+    private void parseSpotting(JSONObject entityObject, Document resultDoc) {
+        if (entityObject.has(START_KEY) && entityObject.has(END_KEY)) {
+            int start = entityObject.getInt(START_KEY);
+            int end = entityObject.getInt(END_KEY);
+            if (entityObject.has(LINK_PROBABILITY_KEY)) {
+                resultDoc.addMarking(
+                        new ScoredSpanImpl(start, end - start, entityObject.getDouble(LINK_PROBABILITY_KEY)));
+            } else {
+                resultDoc.addMarking(new SpanImpl(start, end - start));
+            }
+        }
+    }
+}

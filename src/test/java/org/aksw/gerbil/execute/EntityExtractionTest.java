@@ -138,7 +138,7 @@ public class EntityExtractionTest extends AbstractExperimentTaskTest {
                 // found 1xDBpedia but missed 1xnull
                 // (TP=1,FP=1,FN=1,P=0.5,R=0.5,F1=0.5)
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
-                new double[] { 2.0 / 3.0, 2.0 / 3.0, 2.0 / 3.0, 0.75, 0.75, 0.75, 0 } });
+                new double[] { 1.0, 2.0 / 3.0, 7.0 / 9.0, 1.0, 0.75, 1.5 / 1.75, 0 } });
         // The linker linked all entities using dbpedia URIs if they were
         // available or an emtpy URI set.
         testConfigs.add(new Object[] {

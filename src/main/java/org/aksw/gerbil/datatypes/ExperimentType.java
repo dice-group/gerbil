@@ -27,137 +27,136 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 /**
  * The type of an experiment.
  * 
- * old hierarchy of experiment types:<br>
- * {@link #Sa2KB} ≻ {@link #Sc2KB}<br>
- * {@link #Sc2KB} ≻ {@link #Rc2KB}<br>
- * {@link #Rc2KB} ≻ {@link #C2KB}<br>
- * {@link #Sa2KB} ≻ {@link #A2KB}<br>
- * {@link #A2KB} ≻ {@link #C2KB}<br>
- * {@link #A2KB} ≻ {@link #D2KB}<br>
- * 
- * 
- * 
- * <p>
- * {@link #Sa2KB} is the hardest problem containing all others while
- * {@link #C2KB} and {@link #D2KB} are the leaves of the hierarchy.
- * </p>
- * 
  * @author m.roeder
  * 
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ExperimentType implements Describable {
     /**
-     * Disambiguate to Wikipedia
+     * Disambiguate to KB
      * <p>
      * Assign to each input mention its pertinent entity (possibly null).
      * </p>
      * Input: text with marked entities <br>
      * Output: mentions for every entity
      */
-    @Deprecated
-    D2KB(
-            "D2KB",
+    @Deprecated D2KB("D2KB",
             "The input for the annotator is a text with entities that already have been marked inside. The annotator should link all these mentioned entities to a knowledge base."),
+
     /**
-     * Annotate to Wikipedia
+     * Annotate to KB
      * <p>
      * Identify the relevant mentions in the input text and assign to each of
      * them the pertinent entities.
      * </p>
-     * Input: text<br>
+     * Input: text <br>
      * Output: marked entities and mentions for their meaning
      */
-    @Deprecated
-    A2KB("A2KB", "The annotator gets a text and shall recognize entities inside and link them to a knowledge base."),
+    @Deprecated A2KB("A2KB",
+            "The annotator gets a text and shall recognize entities inside and link them to a knowledge base."),
+
     /**
-     * Scored-annotate to Wikipedia
+     * Scored - annotate to KB
      * <p>
      * Identify the relevant mentions in the input text and assign to each of
      * them the pertinent entities. Additionally, each annotation is assigned a
      * score representing the likelihood that the annotation is correct.
      * </p>
-     * Input: text<br>
+     * Input: text <br>
      * Output: marked entities and scored mentions for their meaning
      */
-    @Deprecated
-    Sa2KB(
-            "Sa2KB",
+    @Deprecated Sa2KB("Sa2KB",
             "The annotator gets a text and shall recognize entities inside and link them to a knowledge base. Additionally, each annotation is assigned a score representing the likelihood that the annotation is correct."),
+
     /**
-     * Concepts to Wikipedia
+     * Concepts to KB
      * <p>
      * Tags are taken as the set of relevant entities that are mentioned in the
      * input text.
      * </p>
-     * Input: text<br>
+     * Input: text <br>
      * Output: marked entities
      */
-    @Deprecated
-    C2KB("C2KB", "The annotator gets a text and shall return relevant entities that are mentioned inside the text."),
+    @Deprecated C2KB("C2KB",
+            "The annotator gets a text and shall return relevant entities that are mentioned inside the text."),
+
     /**
-     * Scored concepts to Wikipedia
+     * Scored concepts to KB
      * <p>
      * Tags are taken as the set of relevant entities that are mentioned in the
      * input text. Additionally, each tag is assigned a score representing the
      * likelihood that the annotation is correct.
      * </p>
-     * Input: text<br>
+     * Input: text <br>
      * Output: scored markings of entities
      */
-    @Deprecated
-    Sc2KB(
-            "Sc2KB",
+    @Deprecated Sc2KB("Sc2KB",
             "The annotator gets a text and shall return relevant entities that are mentioned inside the text. Additionally, each tag is assigned a score representing the likelihood that the annotation is correct."),
+
     /**
-     * Ranked-concepts to Wikipedia
+     * Ranked - concepts to KB
      * <p>
      * Identify the entities mentioned in a text and rank them in terms of their
      * relevance for the topics dealt with in the input text.
      * </p>
-     * Input: text<br>
+     * Input: text <br>
      * Output: ranked markings of entities
      */
-    @Deprecated
-    Rc2KB(
-            "Sc2KB",
+    @Deprecated Rc2KB("Sc2KB",
             "The annotator gets a text and shall return relevant entities that are mentioned inside the textand rank them in terms of their relevance for the topics dealt with in the input text"),
+
     /**
      * Entity Recognition is the identification of an entity inside a given
      * text.
      */
     ERec("Entity Recognition", "Entity Recognition is the identification of entities inside a given text."),
+
     /**
-     * Entity Linking is the assigning of a URI from a given Knowledge Base to a
-     * given entity.
+     * Disambiguate to KB
+     * <p>
+     * D2KB is the assigning of a URI from a given Knowledge Base to a given
+     * entity or an artificial generated URI if the entity is not present inside
+     * the KB.
+     * </p>
+     * Input: text with marked entities <br>
+     * Output: mentions for every entity
      */
-    ELink("Entity Linking",
-            "Entity Linking is the assigning of a URI from a given Knowledge Base to a given entity inside a given text."),
+    ELink("D2KB",
+            "The input for the annotator is a text with entities that already have been marked inside. The annotator should link all these mentioned entities to a knowledge base."),
+
     /**
-     * Entity Extraction comprises the two tasks {@link #EntityRecognition} and
-     * {@link #EntityLinking}.
+     * Annotate to KB (Entity Extraction)
+     * <p>
+     * Identify the relevant mentions in the input text and assign to each of
+     * them the pertinent entities. Entity Extraction comprises the two tasks
+     * {@link #ERec} and {@link #ELink} .
+     * </p>
+     * Input: text <br>
+     * Output: marked entities and mentions for their meaning
      */
-    EExt("Entity Extraction", "Entity Extraction comprises the two steps Entity Recognition and Entity Linking."),
+    EExt("A2KB", "The annotator gets a text and shall recognize entities inside and link them to a knowledge base."),
+
     /**
      * Entity Typing is the assigning of a class URI from a given Knowledge Base
      * to a given entity inside a given text.
      */
     ETyping("Entity Typing",
             "Entity Typing is the assigning of a class URI from a given Knowledge Base to a given entity inside a given text."),
+
     /**
      * This task comprises the recognition, linking and typing of all entities
      * inside a given text.
      */
     OKE_Task1("OKE Challenge 2015 - Task 1",
             "This task comprises the recognition, linking and typing of all entities inside a given text."),
+
     /**
      * This task comprises the determining of the type of a given entity inside
      * a given text and the extraction of the part of the text, describing the
      * type.
      */
-    OKE_Task2(
-            "OKE Challenge 2015 - Task 2",
-            "This task comprises the determining of the type of a given entity inside a given text and the extraction of the part of the text, describing the type."), ;
+    OKE_Task2("OKE Challenge 2015 - Task 2",
+            "This task comprises the determining of the type of a given entity inside a given text and the extraction of the part of the text, describing the type."),;
 
     private String label;
     private String description;

@@ -16,7 +16,6 @@ import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -100,29 +99,7 @@ public class WikipediaMinerAnnotator extends AbstractHttpBasedAnnotator implemen
         entity = null;
         CloseableHttpResponse response = null;
         try {
-            try {
-                response = client.execute(request);
-            } catch (java.net.SocketException e) {
-                if (e.getMessage().contains(CONNECTION_ABORT_INDICATING_EXCPETION_MSG)) {
-                    LOGGER.error("It seems like the annotator has needed too much time and has been interrupted.");
-                    throw new GerbilException(
-                            "It seems like the annotator has needed too much time and has been interrupted.", e,
-                            ErrorTypes.ANNOTATOR_NEEDED_TOO_MUCH_TIME);
-                } else {
-                    LOGGER.error("Exception while sending request.", e);
-                    throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
-                }
-            } catch (Exception e) {
-                LOGGER.error("Exception while sending request.", e);
-                throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
-            }
-            StatusLine status = response.getStatusLine();
-            if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
-                LOGGER.error("Response has the wrong status: " + status.toString());
-                throw new GerbilException("Response has the wrong status: " + status.toString(),
-                        ErrorTypes.UNEXPECTED_EXCEPTION);
-            }
-
+            response = sendRequest(request);
             entity = response.getEntity();
             try {
                 parseJson(IOUtils.toString(entity.getContent(), "UTF-8"), resultDoc);

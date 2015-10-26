@@ -28,6 +28,7 @@ import java.util.List;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.evaluate.impl.InKBClassBasedFMeasureCalculator;
+import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
@@ -78,6 +79,8 @@ public class ResultNameToIdMapping {
             nameToIdMap.put(InKBClassBasedFMeasureCalculator.EE_MICRO_RECALL_NAME, 19);
 
             nameToIdMap.put(TimeMeasuringAnnotatorDecorator.AVG_TIME_RESULT_NAME, 20);
+
+            nameToIdMap.put(ConfidenceScoreEvaluatorDecorator.CONFIDENCE_SCORE_THRESHOLD_RESULT_NAME, 21);
 
             instance = new ResultNameToIdMapping(nameToIdMap, IntObjectOpenHashMap.from(nameToIdMap.values().toArray(),
                     nameToIdMap.keys().toArray(String.class)));

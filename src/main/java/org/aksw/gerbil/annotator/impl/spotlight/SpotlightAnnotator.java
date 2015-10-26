@@ -40,6 +40,7 @@ import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 public class SpotlightAnnotator extends AbstractHttpBasedAnnotator
         implements OKETask1Annotator, EntityRecognizer, EntityLinker, EntityExtractor, EntityTyper {
@@ -96,5 +97,10 @@ public class SpotlightAnnotator extends AbstractHttpBasedAnnotator
     @Override
     protected void closeRequest(HttpUriRequest request) {
         super.closeRequest(request);
+    }
+    
+    @Override
+    public CloseableHttpClient getClient() {
+        return super.getClient();
     }
 }
