@@ -16,18 +16,13 @@
  */
 package org.aksw.gerbil.bat.annotator;
 
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.C2WDataset;
-import it.acubelab.batframework.problems.C2WSystem;
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.utils.AnnotationException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.problems.C2WDataset;
+import it.unipi.di.acube.batframework.problems.C2WSystem;
+import it.unipi.di.acube.batframework.problems.TopicDataset;
+import it.unipi.di.acube.batframework.problems.TopicSystem;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
 import org.aksw.gerbil.annotators.AbstractAnnotatorConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.datasets.AbstractDatasetConfiguration;
@@ -39,6 +34,11 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 public class ErrorCountingAnnotatorDecoratorTest {
 

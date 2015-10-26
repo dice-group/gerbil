@@ -16,32 +16,17 @@
  */
 package org.aksw.gerbil.utils;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datasets.ACE2004DatasetConfig;
-import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
-import org.aksw.gerbil.datasets.AQUAINTDatasetConfiguration;
-import org.aksw.gerbil.datasets.DatahubNIFConfig;
-import org.aksw.gerbil.datasets.DatasetConfiguration;
-import org.aksw.gerbil.datasets.IITBDatasetConfig;
-import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
+import org.aksw.gerbil.datasets.*;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets;
-import org.aksw.gerbil.datasets.MSNBCDatasetConfig;
-import org.aksw.gerbil.datasets.MeijDatasetConfig;
-import org.aksw.gerbil.datasets.Microposts2014Config;
-import org.aksw.gerbil.datasets.NIFFileDatasetConfig;
 import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * This class is a very ugly workaround performing the mapping from dataset names to {@link DatasetConfiguration}

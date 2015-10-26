@@ -16,8 +16,8 @@
  */
 package org.aksw.gerbil;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.execute.ExperimentTask;

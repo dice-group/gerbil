@@ -16,19 +16,10 @@
  */
 package org.aksw.gerbil.bat.annotator;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.ScoredAnnotation;
-import it.acubelab.batframework.data.ScoredTag;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.A2WSystem;
-import it.acubelab.batframework.problems.C2WSystem;
-import it.acubelab.batframework.problems.D2WSystem;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.problems.Sc2WSystem;
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.systemPlugins.TimingCalibrator;
-import it.acubelab.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.data.*;
+import it.unipi.di.acube.batframework.problems.*;
+import it.unipi.di.acube.batframework.systemPlugins.TimingCalibrator;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
 
 import java.util.Calendar;
 import java.util.HashSet;

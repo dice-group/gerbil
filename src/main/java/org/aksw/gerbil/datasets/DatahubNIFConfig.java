@@ -16,15 +16,9 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-
+import it.unipi.di.acube.batframework.problems.TopicDataset;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.bat.datasets.FileBasedNIFDataset;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -32,6 +26,12 @@ import org.apache.jena.riot.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 public class DatahubNIFConfig extends AbstractDatasetConfiguration {
 

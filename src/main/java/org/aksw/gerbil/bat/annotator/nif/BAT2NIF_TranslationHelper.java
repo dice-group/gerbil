@@ -16,16 +16,16 @@
  */
 package org.aksw.gerbil.bat.annotator.nif;
 
-import it.acubelab.batframework.data.Mention;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
+import it.unipi.di.acube.batframework.data.Mention;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.SpanImpl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class BAT2NIF_TranslationHelper {
 

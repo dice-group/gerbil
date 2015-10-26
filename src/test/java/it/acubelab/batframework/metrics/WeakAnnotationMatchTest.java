@@ -16,24 +16,16 @@
  */
 package it.acubelab.batframework.metrics;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.A2WDataset;
-import it.acubelab.batframework.problems.A2WSystem;
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.utils.AnnotationException;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.data.Mention;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.problems.A2WDataset;
+import it.unipi.di.acube.batframework.problems.A2WSystem;
+import it.unipi.di.acube.batframework.problems.TopicDataset;
+import it.unipi.di.acube.batframework.problems.TopicSystem;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.annotators.AbstractAnnotatorConfiguration;
 import org.aksw.gerbil.bat.datasets.FileBasedNIFDataset;
@@ -48,6 +40,10 @@ import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.apache.jena.riot.Lang;
 import org.junit.Ignore;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
 
 @Ignore
 public class WeakAnnotationMatchTest {

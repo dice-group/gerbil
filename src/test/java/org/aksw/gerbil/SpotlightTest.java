@@ -16,12 +16,9 @@
  */
 package org.aksw.gerbil;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
+import it.unipi.di.acube.batframework.systemPlugins.DBPediaApi;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig;
@@ -32,6 +29,9 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 @Ignore
 public class SpotlightTest {

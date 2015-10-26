@@ -16,38 +16,19 @@
  */
 package org.aksw.gerbil.bat.utils;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.MultipleAnnotation;
-import it.acubelab.batframework.data.ScoredAnnotation;
-import it.acubelab.batframework.data.ScoredTag;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.metrics.MatchRelation;
-import it.acubelab.batframework.metrics.Metrics;
-import it.acubelab.batframework.metrics.MetricsResultSet;
-import it.acubelab.batframework.metrics.StrongAnnotationMatch;
-import it.acubelab.batframework.problems.A2WDataset;
-import it.acubelab.batframework.problems.A2WSystem;
-import it.acubelab.batframework.problems.C2WDataset;
-import it.acubelab.batframework.problems.C2WSystem;
-import it.acubelab.batframework.problems.CandidatesSpotter;
-import it.acubelab.batframework.problems.D2WDataset;
-import it.acubelab.batframework.problems.D2WSystem;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.problems.Sc2WSystem;
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.utils.Pair;
-import it.acubelab.batframework.utils.ProblemReduction;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
-
+import it.unipi.di.acube.batframework.data.*;
+import it.unipi.di.acube.batframework.metrics.MatchRelation;
+import it.unipi.di.acube.batframework.metrics.Metrics;
+import it.unipi.di.acube.batframework.metrics.MetricsResultSet;
+import it.unipi.di.acube.batframework.metrics.StrongAnnotationMatch;
+import it.unipi.di.acube.batframework.problems.*;
+import it.unipi.di.acube.batframework.utils.Pair;
+import it.unipi.di.acube.batframework.utils.ProblemReduction;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.datatypes.ExperimentTaskState;
+
+import java.util.*;
 
 /**
  * Static methods to run the experiments. A set of annotators are run on a set

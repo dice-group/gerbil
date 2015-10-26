@@ -16,26 +16,13 @@
  */
 package org.aksw.gerbil.bat.annotator.nif;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.ScoredAnnotation;
-import it.acubelab.batframework.data.ScoredTag;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-import it.acubelab.batframework.utils.AnnotationException;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
-
-import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.NIFDocumentCreator;
-import org.aksw.gerbil.transfer.nif.NIFDocumentParser;
-import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentCreator;
-import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentParser;
+import it.unipi.di.acube.batframework.data.*;
+import it.unipi.di.acube.batframework.problems.Sa2WSystem;
+import it.unipi.di.acube.batframework.systemPlugins.DBPediaApi;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
+import org.aksw.gerbil.transfer.nif.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -46,6 +33,11 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
 
 public class NIFBasedAnnotatorWebservice implements Sa2WSystem {
 

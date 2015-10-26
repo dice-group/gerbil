@@ -16,22 +16,17 @@
  */
 package org.aksw.gerbil.bat.converter;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.query.ParameterizedSparqlString;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.impl.StatementImpl;
 import com.hp.hpl.jena.shared.PrefixMapping;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 public class DBpediaToWikiId {
 

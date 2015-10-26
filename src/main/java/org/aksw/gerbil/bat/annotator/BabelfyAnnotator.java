@@ -16,36 +16,24 @@
  */
 package org.aksw.gerbil.bat.annotator;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.ScoredAnnotation;
-import it.acubelab.batframework.data.ScoredTag;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.utils.AnnotationException;
-import it.acubelab.batframework.utils.ProblemReduction;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import com.google.common.collect.Sets;
+import it.unipi.di.acube.batframework.data.*;
+import it.unipi.di.acube.batframework.problems.Sa2WSystem;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.utils.ProblemReduction;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import it.uniroma1.lcl.babelfy.commons.BabelfyConstraints;
 import it.uniroma1.lcl.babelfy.commons.BabelfyParameters;
 import it.uniroma1.lcl.babelfy.commons.IBabelfy;
-import it.uniroma1.lcl.babelfy.commons.annotation.CharOffsetFragment;
-import it.uniroma1.lcl.babelfy.commons.annotation.DisambiguationConstraint;
-import it.uniroma1.lcl.babelfy.commons.annotation.MCS;
-import it.uniroma1.lcl.babelfy.commons.annotation.PoStaggingOptions;
-import it.uniroma1.lcl.babelfy.commons.annotation.SemanticAnnotation;
-import it.uniroma1.lcl.babelfy.commons.annotation.SemanticAnnotationResource;
-import it.uniroma1.lcl.babelfy.commons.annotation.SemanticAnnotationType;
+import it.uniroma1.lcl.babelfy.commons.annotation.*;
 import it.uniroma1.lcl.babelfy.core.Babelfy;
 import it.uniroma1.lcl.jlt.util.Language;
+import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.collect.Sets;
 
 /**
  * The Babelfy Annotator.

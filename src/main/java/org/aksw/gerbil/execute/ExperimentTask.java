@@ -16,26 +16,14 @@
  */
 package org.aksw.gerbil.execute;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.metrics.MatchRelation;
-import it.acubelab.batframework.metrics.MetricsResultSet;
-import it.acubelab.batframework.problems.A2WDataset;
-import it.acubelab.batframework.problems.A2WSystem;
-import it.acubelab.batframework.problems.C2WDataset;
-import it.acubelab.batframework.problems.C2WSystem;
-import it.acubelab.batframework.problems.D2WDataset;
-import it.acubelab.batframework.problems.D2WSystem;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.problems.Sc2WSystem;
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.utils.Pair;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.util.HashMap;
-import java.util.Vector;
-
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.metrics.MatchRelation;
+import it.unipi.di.acube.batframework.metrics.MetricsResultSet;
+import it.unipi.di.acube.batframework.problems.*;
+import it.unipi.di.acube.batframework.utils.Pair;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.bat.annotator.ErrorCounter;
 import org.aksw.gerbil.bat.annotator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.bat.utils.RunExperiments;
@@ -49,6 +37,9 @@ import org.aksw.gerbil.matching.MatchingFactory;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Vector;
 
 public class ExperimentTask implements Task {
 

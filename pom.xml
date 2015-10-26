@@ -68,12 +68,12 @@
 		</dependency>
 
 		<!-- BAT-Framework and its dependencies -->
-		<dependency>
-			<groupId>it.unipi.di</groupId>
-			<artifactId>batframework</artifactId>
-			<version>0.1</version>
-		</dependency>
-		<dependency>
+        <dependency>
+            <groupId>it.unipi.di.acube</groupId>
+            <artifactId>bat-framework</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
 			<groupId>org.apache.james</groupId>
 			<artifactId>apache-mime4j</artifactId>
 			<version>0.6</version>

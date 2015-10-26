@@ -16,12 +16,12 @@
  */
 package org.aksw.gerbil.annotators;
 
+import it.unipi.di.acube.batframework.problems.TopicSystem;
+import it.unipi.di.acube.batframework.systemPlugins.DBPediaApi;
+import it.unipi.di.acube.batframework.systemPlugins.SpotlightAnnotator;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-import it.acubelab.batframework.systemPlugins.SpotlightAnnotator;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
 public class SpotlightAnnotatorConfig extends AbstractAnnotatorConfiguration {
     

@@ -16,23 +16,15 @@
  */
 package org.aksw.gerbil.bat.annotator.nif;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.ScoredAnnotation;
-import it.acubelab.batframework.data.ScoredTag;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+
+import it.unipi.di.acube.batframework.data.*;
+import it.unipi.di.acube.batframework.systemPlugins.DBPediaApi;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
+import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
+import org.aksw.gerbil.transfer.nif.*;
 
 import java.util.HashSet;
 import java.util.List;
-
-import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
-import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.Meaning;
-import org.aksw.gerbil.transfer.nif.ScoredMeaning;
-import org.aksw.gerbil.transfer.nif.Span;
 
 public class NIF2BAT_TranslationHelper {
 

@@ -16,8 +16,8 @@
  */
 package org.aksw.gerbil.web;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
 
+import it.unipi.di.acube.batframework.systemPlugins.DBPediaApi;
 import org.aksw.gerbil.bat.annotator.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;

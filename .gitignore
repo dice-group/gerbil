@@ -10,3 +10,5 @@ gerbil_data
 *.log
 google*.html
 export
+*.iml
+.idea
