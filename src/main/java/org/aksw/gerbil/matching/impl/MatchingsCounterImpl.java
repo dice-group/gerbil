@@ -22,9 +22,11 @@
  */
 package org.aksw.gerbil.matching.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.gerbil.matching.EvaluationCounts;
+import org.aksw.gerbil.matching.MatchingsCounter;
+import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +37,6 @@ public class MatchingsCounterImpl<T extends Marking> implements MatchingsCounter
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MatchingsCounterImpl.class);
 
-    protected List<int[]> counts = new ArrayList<int[]>();
     protected MatchingsSearcher<T> searcher;
 
     public MatchingsCounterImpl(MatchingsSearcher<T> searcher) {
@@ -43,30 +44,25 @@ public class MatchingsCounterImpl<T extends Marking> implements MatchingsCounter
     }
 
     @Override
-    public void countMatchings(List<T> annotatorResult, List<T> goldStandard) {
-        int documentCounts[] = new int[3];
+    public EvaluationCounts countMatchings(List<T> annotatorResult, List<T> goldStandard) {
+        EvaluationCounts documentCounts = new EvaluationCounts();
         BitSet matchingElements;
         BitSet alreadyUsedResults = new BitSet(annotatorResult.size());
         for (T expectedElement : goldStandard) {
             matchingElements = searcher.findMatchings(expectedElement, annotatorResult, alreadyUsedResults);
             if (!matchingElements.isEmpty()) {
-                ++documentCounts[TRUE_POSITIVE_COUNT_ID];
+                ++documentCounts.truePositives;
                 alreadyUsedResults.set(matchingElements.nextSetBit(0));
                 LOGGER.debug("Found a true positive (" + expectedElement + ").");
             } else {
-                ++documentCounts[FALSE_NEGATIVE_COUNT_ID];
+                ++documentCounts.falseNegatives;
                 LOGGER.debug("Found a false negative (" + expectedElement + ").");
             }
         }
         // The remaining elements are false positives
-        documentCounts[FALSE_POSITIVE_COUNT_ID] = (int) (annotatorResult.size() - alreadyUsedResults.cardinality());
-        LOGGER.debug("Found " + documentCounts[FALSE_POSITIVE_COUNT_ID] + " false positives.");
-        counts.add(documentCounts);
-    }
-
-    @Override
-    public List<int[]> getCounts() {
-        return counts;
+        documentCounts.falsePositives = (int) (annotatorResult.size() - alreadyUsedResults.cardinality());
+        LOGGER.debug("Found " + documentCounts.falsePositives + " false positives.");
+        return documentCounts;
     }
 
 }

@@ -27,15 +27,16 @@ import java.util.List;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
-import org.aksw.gerbil.matching.impl.MatchingsCounter;
-import org.aksw.gerbil.matching.impl.MatchingsSearcher;
+import org.aksw.gerbil.matching.ClassifiedEvaluationCounts;
+import org.aksw.gerbil.matching.EvaluationCounts;
+import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.matching.impl.clas.ClassConsideringMatchingsCounter;
 import org.aksw.gerbil.matching.impl.clas.MarkingClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.transfer.nif.Meaning;
 
-public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasureCalculator<T> implements
-        MarkingClassifier<T> {
+public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasureCalculator<T>
+        implements MarkingClassifier<T> {
 
     public static final String MACRO_ACCURACY_NAME = "Macro Accuracy";
     public static final String MICRO_ACCURACY_NAME = "Micro Accuracy";
@@ -66,31 +67,46 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasur
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
+            EvaluationResultContainer results) {
         // the super class performs the matching counter calls
-        super.evaluate(annotatorResults, goldStandard, results);
-        results.addResults(calculateAccuracies(matchingsCounter.getCounts(), goldStandard));
-        results.addResults(calculateMicroFMeasure(
-                ((ClassConsideringMatchingsCounter<T>) matchingsCounter).getCounts(IN_KB_CLASS_ID),
-                IN_KB_MICRO_PRECISION_NAME, IN_KB_MICRO_RECALL_NAME, IN_KB_MICRO_F1_SCORE_NAME));
-        results.addResults(calculateMacroFMeasure(
-                ((ClassConsideringMatchingsCounter<T>) matchingsCounter).getCounts(IN_KB_CLASS_ID),
-                IN_KB_MACRO_PRECISION_NAME, IN_KB_MACRO_RECALL_NAME, IN_KB_MACRO_F1_SCORE_NAME));
-        results.addResults(calculateMicroFMeasure(
-                ((ClassConsideringMatchingsCounter<T>) matchingsCounter).getCounts(EE_CLASS_ID),
-                EE_MICRO_PRECISION_NAME, EE_MICRO_RECALL_NAME, EE_MICRO_F1_SCORE_NAME));
-        results.addResults(calculateMacroFMeasure(
-                ((ClassConsideringMatchingsCounter<T>) matchingsCounter).getCounts(EE_CLASS_ID),
-                EE_MACRO_PRECISION_NAME, EE_MACRO_RECALL_NAME, EE_MACRO_F1_SCORE_NAME));
+        EvaluationCounts counts[] = generateMatchingCounts(annotatorResults, goldStandard);
+        results.addResults(calculateMicroFMeasure(counts));
+        results.addResults(calculateMacroFMeasure(counts));
+        results.addResults(calculateAccuracies(counts, goldStandard));
+
+        EvaluationCounts classCounts[] = new EvaluationCounts[counts.length];
+        int sums = 0;
+        for (int i = 0; i < counts.length; ++i) {
+            classCounts[i] = ((ClassifiedEvaluationCounts) counts[i]).classifiedCounts[IN_KB_CLASS_ID];
+            sums += classCounts[i].truePositives + classCounts[i].falseNegatives + classCounts[i].falsePositives;
+        }
+        if (sums > 0) {
+            results.addResults(calculateMicroFMeasure(classCounts, IN_KB_MICRO_PRECISION_NAME, IN_KB_MICRO_RECALL_NAME,
+                    IN_KB_MICRO_F1_SCORE_NAME));
+            results.addResults(calculateMacroFMeasure(classCounts, IN_KB_MACRO_PRECISION_NAME, IN_KB_MACRO_RECALL_NAME,
+                    IN_KB_MACRO_F1_SCORE_NAME));
+        }
+        sums = 0;
+        for (int i = 0; i < counts.length; ++i) {
+            classCounts[i] = ((ClassifiedEvaluationCounts) counts[i]).classifiedCounts[EE_CLASS_ID];
+            sums += classCounts[i].truePositives + classCounts[i].falseNegatives + classCounts[i].falsePositives;
+        }
+        if (sums > 0) {
+            results.addResults(calculateMicroFMeasure(classCounts, IN_KB_MICRO_PRECISION_NAME, IN_KB_MICRO_RECALL_NAME,
+                    IN_KB_MICRO_F1_SCORE_NAME));
+            results.addResults(calculateMacroFMeasure(classCounts, IN_KB_MACRO_PRECISION_NAME, IN_KB_MACRO_RECALL_NAME,
+                    IN_KB_MACRO_F1_SCORE_NAME));
+        }
     }
 
-    private EvaluationResult[] calculateAccuracies(List<int[]> matchingCounts, List<List<T>> goldStandard) {
+    private EvaluationResult[] calculateAccuracies(EvaluationCounts counts[], List<List<T>> goldStandard) {
         int tp, elements, tpSum = 0, elementsSum = 0, docCount = 0;
         double microAcc = 0, macroAcc = 0;
-        for (int i = 0; i < matchingCounts.size(); ++i) {
+        for (int i = 0; i < counts.length; ++i) {
             elements = goldStandard.get(i).size();
             if (elements > 0) {
-                tp = matchingCounts.get(i)[MatchingsCounter.TRUE_POSITIVE_COUNT_ID];
+                tp = counts[i].truePositives;
                 tpSum += tp;
                 elementsSum += elements;
                 macroAcc += (double) tp / (double) elements;

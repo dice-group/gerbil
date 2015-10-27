@@ -32,10 +32,10 @@ import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.matching.Matching;
-import org.aksw.gerbil.matching.MatchingFactory;
+import org.aksw.gerbil.matching.MatchingsSearcher;
+import org.aksw.gerbil.matching.MatchingsSearcherFactory;
 import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounterTest;
-import org.aksw.gerbil.matching.impl.MatchingsSearcher;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencerFactory;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
@@ -141,7 +141,7 @@ public class HierarchicalFMeasureCalculatorTest {
     public void test() {
         @SuppressWarnings("unchecked")
         HierarchicalFMeasureCalculator<TypedSpan> calculator = new HierarchicalFMeasureCalculator<TypedSpan>(
-                new HierarchicalMatchingsCounter<TypedSpan>((MatchingsSearcher<TypedSpan>) MatchingFactory
+                new HierarchicalMatchingsCounter<TypedSpan>((MatchingsSearcher<TypedSpan>) MatchingsSearcherFactory
                         .createSpanMatchingsSearcher(Matching.WEAK_ANNOTATION_MATCH),
                         new SimpleWhiteListBasedUriKBClassifier(HierarchicalMatchingsCounterTest.KNOWN_KB_URIS),
                         inferencer));

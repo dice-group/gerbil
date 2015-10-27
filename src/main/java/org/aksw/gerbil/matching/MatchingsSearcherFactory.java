@@ -20,19 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.matching.impl;
+package org.aksw.gerbil.matching;
 
-import java.util.List;
+import org.aksw.gerbil.matching.impl.StrongSpanMatchingsCounter;
+import org.aksw.gerbil.matching.impl.WeakSpanMatchingsCounter;
+import org.aksw.gerbil.transfer.nif.Span;
 
-import org.aksw.gerbil.transfer.nif.Marking;
+public class MatchingsSearcherFactory {
 
-public interface MatchingsCounter<T extends Marking> {
-
-    public static final int TRUE_POSITIVE_COUNT_ID = 0;
-    public static final int FALSE_POSITIVE_COUNT_ID = 1;
-    public static final int FALSE_NEGATIVE_COUNT_ID = 2;
-
-    public void countMatchings(List<T> annotatorResult, List<T> goldStandard);
-    
-    public List<int[]> getCounts();
+    public static MatchingsSearcher<? extends Span> createSpanMatchingsSearcher(Matching matching) {
+        switch (matching) {
+        case STRONG_ENTITY_MATCH:
+        case WEAK_ANNOTATION_MATCH: {
+            return new WeakSpanMatchingsCounter<>();
+        }
+        case STRONG_ANNOTATION_MATCH: {
+            return new StrongSpanMatchingsCounter<>();
+        }
+        default: {
+            throw new IllegalArgumentException("Got an unknown Matching \"" + matching.toString() + "\".");
+        }
+        }
+    }
 }

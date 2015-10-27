@@ -29,8 +29,8 @@ import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
-import org.aksw.gerbil.matching.impl.MatchingsCounter;
 import org.aksw.gerbil.transfer.nif.TypedMarking;
 
 public class HierarchicalFMeasureCalculator<T extends TypedMarking> implements Evaluator<T> {
@@ -41,36 +41,35 @@ public class HierarchicalFMeasureCalculator<T extends TypedMarking> implements E
     private static final int RECALL_ID = 1;
 
     public HierarchicalFMeasureCalculator(HierarchicalMatchingsCounter<T> matchingsCounter) {
-        super();
         this.matchingsCounter = matchingsCounter;
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
+            EvaluationResultContainer results) {
+        List<List<EvaluationCounts>> matchingCounts = new ArrayList<List<EvaluationCounts>>(annotatorResults.size());
         for (int i = 0; i < annotatorResults.size(); ++i) {
-            matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i));
+            matchingCounts.add(matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i)));
         }
-        List<List<int[]>> matchingCounts = matchingsCounter.getCounts();
         List<List<double[]>> measures = calculateMeasures(matchingCounts);
 
         results.addResults(calculateMicroFMeasure(measures));
         results.addResults(calculateMacroFMeasure(measures));
     }
 
-    private List<List<double[]>> calculateMeasures(List<List<int[]>> matchingCounts) {
+    private List<List<double[]>> calculateMeasures(List<List<EvaluationCounts>> matchingCounts) {
         List<List<double[]>> measures = new ArrayList<List<double[]>>(matchingCounts.size());
         List<double[]> localMeasures;
         double[] singleMeasures;
-        for (List<int[]> counts : matchingCounts) {
+        for (List<EvaluationCounts> counts : matchingCounts) {
             if (counts.size() > 0) {
                 localMeasures = new ArrayList<double[]>(counts.size());
-                for (int[] singleCounts : counts) {
+                for (EvaluationCounts singleCounts : counts) {
                     singleMeasures = new double[2];
                     // If no matching was correct
-                    if (singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] == 0) {
+                    if (singleCounts.truePositives == 0) {
                         // check whether a matching was false
-                        if ((singleCounts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID] == 0)
-                                && (singleCounts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID] == 0)) {
+                        if ((singleCounts.falsePositives == 0) && (singleCounts.falseNegatives == 0)) {
                             singleMeasures[PRECISION_ID] = 1.0;
                             singleMeasures[RECALL_ID] = 1.0;
                         } else {
@@ -78,10 +77,10 @@ public class HierarchicalFMeasureCalculator<T extends TypedMarking> implements E
                             singleMeasures[RECALL_ID] = 0.0;
                         }
                     } else {
-                        singleMeasures[PRECISION_ID] = (double) singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID]
-                                / (double) (singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] + singleCounts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID]);
-                        singleMeasures[RECALL_ID] = (double) singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID]
-                                / (double) (singleCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] + singleCounts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID]);
+                        singleMeasures[PRECISION_ID] = (double) singleCounts.truePositives
+                                / (double) (singleCounts.truePositives + singleCounts.falsePositives);
+                        singleMeasures[RECALL_ID] = (double) singleCounts.truePositives
+                                / (double) (singleCounts.truePositives + singleCounts.falseNegatives);
                     }
                     localMeasures.add(singleMeasures);
                 }

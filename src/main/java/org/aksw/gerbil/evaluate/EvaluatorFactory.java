@@ -39,11 +39,11 @@ import org.aksw.gerbil.evaluate.impl.SpanMergingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.SubTaskAverageCalculator;
 import org.aksw.gerbil.evaluate.impl.filter.MarkingFilteringEvaluatorDecorator;
 import org.aksw.gerbil.matching.Matching;
-import org.aksw.gerbil.matching.MatchingFactory;
+import org.aksw.gerbil.matching.MatchingsSearcher;
+import org.aksw.gerbil.matching.MatchingsSearcherFactory;
 import org.aksw.gerbil.matching.impl.CompoundMatchingsCounter;
 import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
-import org.aksw.gerbil.matching.impl.MatchingsSearcher;
 import org.aksw.gerbil.matching.impl.MeaningMatchingsSearcher;
 import org.aksw.gerbil.semantic.kb.ExactWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
@@ -140,7 +140,7 @@ public class EvaluatorFactory {
             return new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
                     new FMeasureCalculator<NamedEntity>(
                             new MatchingsCounterImpl<NamedEntity>(new CompoundMatchingsCounter<NamedEntity>(
-                                    (MatchingsSearcher<NamedEntity>) MatchingFactory
+                                    (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
                                             .createSpanMatchingsSearcher(configuration.matching),
                                     new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever,
                                             localRetriever, null)))),
@@ -149,7 +149,7 @@ public class EvaluatorFactory {
         case ERec: {
             return new ConfidenceScoreEvaluatorDecorator<Span>(
                     new FMeasureCalculator<Span>(
-                            new MatchingsCounterImpl<Span>((MatchingsSearcher<Span>) MatchingFactory
+                            new MatchingsCounterImpl<Span>((MatchingsSearcher<Span>) MatchingsSearcherFactory
                                     .createSpanMatchingsSearcher(configuration.matching))),
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
@@ -159,7 +159,7 @@ public class EvaluatorFactory {
             SameAsRetriever localRetriever = getSameAsRetriever(dataset);
             return new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
                     new InKBClassBasedFMeasureCalculator<NamedEntity>(new CompoundMatchingsCounter<NamedEntity>(
-                            (MatchingsSearcher<NamedEntity>) MatchingFactory
+                            (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
                                     .createSpanMatchingsSearcher(configuration.matching),
                             new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever, localRetriever,
                                     null)),
@@ -169,7 +169,7 @@ public class EvaluatorFactory {
         case ETyping: {
             return new ConfidenceScoreEvaluatorDecorator<TypedSpan>(
                     new HierarchicalFMeasureCalculator<TypedSpan>(new HierarchicalMatchingsCounter<TypedSpan>(
-                            (MatchingsSearcher<TypedSpan>) MatchingFactory
+                            (MatchingsSearcher<TypedSpan>) MatchingsSearcherFactory
                                     .createSpanMatchingsSearcher(configuration.matching),
                             globalClassifier, inferencer)),
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());

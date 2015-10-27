@@ -20,31 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.matching.impl;
+package org.aksw.gerbil.matching;
 
 import java.util.List;
 
-import org.aksw.gerbil.matching.MatchingsSearcher;
-import org.aksw.gerbil.transfer.nif.Span;
+import org.aksw.gerbil.transfer.nif.Marking;
 
 import com.carrotsearch.hppc.BitSet;
 
-public class StrongSpanMatchingsCounter<T extends Span> implements MatchingsSearcher<T> {
-
-    @Override
-    public BitSet findMatchings(T expectedElement, List<T> annotatorResult, BitSet alreadyUsedResults) {
-        int eStart = expectedElement.getStartPosition();
-        int eLength = expectedElement.getLength();
-        BitSet matching = new BitSet(alreadyUsedResults.size());
-        for (int i = 0; i < annotatorResult.size(); ++i) {
-            if ((!alreadyUsedResults.get(i)) && (eStart == annotatorResult.get(i).getStartPosition())
-                    && (eLength == annotatorResult.get(i).getLength())) {
-                matching.set(i);
-                // yes, we have found a matching position, but note, that we
-                // have to find all matching positions!
-            }
-        }
-        return matching;
-    }
-
+public interface MatchingsSearcher<T extends Marking> {
+    public abstract BitSet findMatchings(T expectedElement, List<T> annotatorResult, BitSet alreadyUsedResults);
 }

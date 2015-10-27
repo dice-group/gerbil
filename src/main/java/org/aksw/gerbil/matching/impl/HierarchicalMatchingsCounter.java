@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.matching.EvaluationCounts;
+import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.ClassNode;
 import org.aksw.gerbil.semantic.subclass.ClassSet;
@@ -64,9 +66,9 @@ public class HierarchicalMatchingsCounter<T extends TypedMarking> {
         this.inferencer = inferencer;
     }
 
-    public void countMatchings(List<T> annotatorResult, List<T> goldStandard) {
-        int documentCounts[];
-        List<int[]> localCounts = new ArrayList<int[]>();
+    public List<EvaluationCounts> countMatchings(List<T> annotatorResult, List<T> goldStandard) {
+        EvaluationCounts documentCounts;
+        List<EvaluationCounts> localCounts = new ArrayList<EvaluationCounts>();
         BitSet matchingElements;
         BitSet alreadyUsedResults = new BitSet(annotatorResult.size());
         T matchedResult;
@@ -99,31 +101,28 @@ public class HierarchicalMatchingsCounter<T extends TypedMarking> {
                 }
                 // Count the matchings
                 documentCounts = countMatchings(classes);
-                LOGGER.debug("Type matching found {} tp, {} fp and {} fn (classes={}).",
-                        documentCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID],
-                        documentCounts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID],
-                        documentCounts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID], classes);
+                LOGGER.debug("Type matching found {} (classes={}).", documentCounts, classes);
 
                 // If the annotator did not return a type of a known KB and the
-                // gold standard did not contained a type of a known KB
-                if ((documentCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] == 0)
-                        && (documentCounts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID] == 0)
-                        && (documentCounts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID] == 0)) {
-                    documentCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID] = 1;
-                    LOGGER.info("Got an entity with a type that is not inside a known KB in the annotator and in the dataset.");
+                // gold standard did not contain a type of a known KB
+                if ((documentCounts.truePositives == 0) && (documentCounts.falseNegatives == 0)
+                        && (documentCounts.falsePositives == 0)) {
+                    documentCounts.truePositives = 1;
+                    LOGGER.info(
+                            "Got an entity with a type that is not inside a known KB in the annotator and in the dataset.");
                 }
             } else {
-                documentCounts = new int[3];
-                documentCounts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID] = 1;
-                documentCounts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID] = 1;
+                documentCounts = new EvaluationCounts();
+                documentCounts.falseNegatives = 1;
+                documentCounts.falsePositives = 1;
             }
             localCounts.add(documentCounts);
         }
-        counts.add(localCounts);
+        return localCounts;
     }
 
-    private int[] countMatchings(ClassSet classes) {
-        int documentCounts[] = new int[3];
+    private EvaluationCounts countMatchings(ClassSet classes) {
+        EvaluationCounts documentCounts = new EvaluationCounts();
         Iterator<ClassNode> iterator = classes.iterator();
         ClassifiedClassNode node;
         while (iterator.hasNext()) {
@@ -132,20 +131,16 @@ public class HierarchicalMatchingsCounter<T extends TypedMarking> {
             if (uriKBClassifier.containsKBUri(node.getUris())) {
                 if (node.getClassIds().contains(EXPECTED_CLASSES_CLASS_ID)) {
                     if (node.getClassIds().contains(ANNOTATOR_CLASSES_CLASS_ID)) {
-                        ++documentCounts[MatchingsCounter.TRUE_POSITIVE_COUNT_ID];
+                        ++documentCounts.truePositives;
                     } else {
-                        ++documentCounts[MatchingsCounter.FALSE_NEGATIVE_COUNT_ID];
+                        ++documentCounts.falseNegatives;
                     }
                 } else if (node.getClassIds().contains(ANNOTATOR_CLASSES_CLASS_ID)) {
-                    ++documentCounts[MatchingsCounter.FALSE_POSITIVE_COUNT_ID];
+                    ++documentCounts.falsePositives;
                 }
             }
         }
         return documentCounts;
-    }
-
-    public List<List<int[]>> getCounts() {
-        return counts;
     }
 
     public static int getIntersectionSize(Set<String> set1, Set<String> set2) {

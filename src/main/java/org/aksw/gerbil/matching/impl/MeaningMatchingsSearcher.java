@@ -25,6 +25,7 @@ package org.aksw.gerbil.matching.impl;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;

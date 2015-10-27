@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencerFactory;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
@@ -67,7 +68,8 @@ public class HierarchicalMatchingsCounterTest {
      * annotator = C
      * </p>
      * <p>
-     * Test 2: Underspecialization (figure 2 b) (reusing the model from above)<br>
+     * Test 2: Underspecialization (figure 2 b) (reusing the model from above)
+     * <br>
      * gold standard = C <br>
      * annotator = B
      * </p>
@@ -264,14 +266,14 @@ public class HierarchicalMatchingsCounterTest {
     private Model typeHierarchy;
     private String goldStandardTypes[];
     private String annotatorResults[];
-    private int expectedCounts[];
+    private EvaluationCounts expectedCounts;
 
     public HierarchicalMatchingsCounterTest(Model typeHierarchy, String[] goldStandardTypes, String[] annotatorResults,
             int[] expectedCounts) {
         this.typeHierarchy = typeHierarchy;
         this.goldStandardTypes = goldStandardTypes;
         this.annotatorResults = annotatorResults;
-        this.expectedCounts = expectedCounts;
+        this.expectedCounts = new EvaluationCounts(expectedCounts[0], expectedCounts[1], expectedCounts[2]);
     }
 
     @Test
@@ -285,21 +287,17 @@ public class HierarchicalMatchingsCounterTest {
         annotatorResult.add(createTypedNamedEntities(annotatorResults, 0));
         List<TypedNamedEntity> goldStandard = new ArrayList<TypedNamedEntity>();
         goldStandard.add(createTypedNamedEntities(goldStandardTypes, 0));
-        counter.countMatchings(annotatorResult, goldStandard);
+        List<EvaluationCounts> evalCounts = counter.countMatchings(annotatorResult, goldStandard);
 
-        List<List<int[]>> listOfLists = counter.getCounts();
-        Assert.assertNotNull(listOfLists);
-        Assert.assertTrue(listOfLists.size() > 0);
-        Assert.assertNotNull(listOfLists.get(0));
-        Assert.assertTrue(listOfLists.get(0).size() > 0);
-        Assert.assertArrayEquals(
-                "Arrays do not equal exp=" + Arrays.toString(expectedCounts) + " calculated="
-                        + Arrays.toString(listOfLists.get(0).get(0)), expectedCounts, listOfLists.get(0).get(0));
+        Assert.assertNotNull(evalCounts);
+        Assert.assertTrue(evalCounts.size() > 0);
+        Assert.assertEquals("Arrays do not equal exp=" + expectedCounts + " calculated=" + evalCounts.get(0),
+                expectedCounts, evalCounts.get(0));
     }
 
     public static TypedNamedEntity createTypedNamedEntities(String types[], int id) {
-        return new TypedNamedEntity(id * 2, (id * 2) + 1, KNOWN_KB_URIS[0] + "entity_" + id, new HashSet<String>(
-                Arrays.asList(types)));
+        return new TypedNamedEntity(id * 2, (id * 2) + 1, KNOWN_KB_URIS[0] + "entity_" + id,
+                new HashSet<String>(Arrays.asList(types)));
     }
 
     public static Resource[] createResources(int numberOfResources, Model classModel) {

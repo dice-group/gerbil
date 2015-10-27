@@ -23,10 +23,10 @@
 package org.aksw.gerbil.matching.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencerFactory;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
@@ -161,25 +161,22 @@ public class HierarchicalMatchingsCounterTest2 {
         resources = HierarchicalMatchingsCounterTest.createResources(3, classModel);
         classModel.add(resources[1], RDFS.subClassOf, resources[0]);
         classModel.add(resources[2], RDFS.subClassOf, resources[1]);
-        testConfigs
-                .add(new Object[] {
-                        classModel,
-                        new Object[][] {
-                                new Object[] { new String[] { resources[1].getURI() },
-                                        new String[] { resources[2].getURI() }, new int[] { 1, 0, 1 } },
-                                new Object[] { new String[] { resources[2].getURI() },
-                                        new String[] { resources[1].getURI() }, new int[] { 1, 1, 0 } },
-                                new Object[] { new String[] { resources[1].getURI(), resources[2].getURI() },
-                                        new String[] { resources[2].getURI() }, new int[] { 1, 0, 1 } },
-                                new Object[] { new String[] { resources[1].getURI(), resources[2].getURI() },
-                                        new String[] { resources[0].getURI() }, new int[] { 2, 1, 0 } },
-                                new Object[] { new String[] { resources[1].getURI() },
-                                        new String[] { resources[1].getURI() }, new int[] { 2, 0, 0 } },
-                                new Object[] { new String[] { resources[1].getURI(), resources[2].getURI() },
-                                        new String[] { resources[1].getURI() }, new int[] { 2, 0, 0 } },
-                                new Object[] { new String[] { resources[1].getURI() },
-                                        new String[] { resources[1].getURI(), resources[2].getURI() },
-                                        new int[] { 2, 0, 0 } } } });
+        testConfigs.add(new Object[] { classModel,
+                new Object[][] {
+                        new Object[] { new String[] { resources[1].getURI() }, new String[] { resources[2].getURI() },
+                                new int[] { 1, 0, 1 } },
+                        new Object[] { new String[] { resources[2].getURI() }, new String[] { resources[1].getURI() },
+                                new int[] { 1, 1, 0 } },
+                new Object[] { new String[] { resources[1].getURI(), resources[2].getURI() },
+                        new String[] { resources[2].getURI() }, new int[] { 1, 0, 1 } },
+                new Object[] { new String[] { resources[1].getURI(), resources[2].getURI() },
+                        new String[] { resources[0].getURI() }, new int[] { 2, 1, 0 } },
+                new Object[] { new String[] { resources[1].getURI() }, new String[] { resources[1].getURI() },
+                        new int[] { 2, 0, 0 } },
+                new Object[] { new String[] { resources[1].getURI(), resources[2].getURI() },
+                        new String[] { resources[1].getURI() }, new int[] { 2, 0, 0 } },
+                new Object[] { new String[] { resources[1].getURI() },
+                        new String[] { resources[1].getURI(), resources[2].getURI() }, new int[] { 2, 0, 0 } } } });
         /*
          * test 2
          */
@@ -190,13 +187,12 @@ public class HierarchicalMatchingsCounterTest2 {
         classModel.add(resources[3], RDFS.subClassOf, resources[1]);
         classModel.add(resources[4], RDFS.subClassOf, resources[1]);
         classModel.add(resources[5], RDFS.subClassOf, resources[2]);
-        testConfigs.add(new Object[] {
-                classModel,
+        testConfigs.add(new Object[] { classModel,
                 new Object[][] {
                         new Object[] { new String[] { resources[1].getURI(), resources[5].getURI() },
                                 new String[] { resources[3].getURI(), resources[4].getURI() }, new int[] { 2, 0, 2 } },
-                        new Object[] { new String[] { "http://example.org/D" },
-                                new String[] { "http://example.org/F" }, new int[] { 0, 1, 1 } } } });
+                        new Object[] { new String[] { "http://example.org/D" }, new String[] { "http://example.org/F" },
+                                new int[] { 0, 1, 1 } } } });
         /*
          * test 3
          */
@@ -215,15 +211,12 @@ public class HierarchicalMatchingsCounterTest2 {
         classModel.add(resources[10], RDFS.subClassOf, resources[8]);
         classModel.add(resources[11], RDFS.subClassOf, resources[3]);
         classModel.add(resources[11], RDFS.subClassOf, resources[8]);
-        testConfigs.add(new Object[] {
-                classModel,
-                new Object[][] {
-                        new Object[] {
-                                new String[] { resources[6].getURI(), resources[9].getURI(), resources[10].getURI() },
-                                new String[] { resources[7].getURI(), resources[10].getURI(), resources[11].getURI() },
-                                new int[] { 1, 2, 2 } },
-                        new Object[] { new String[] { resources[3].getURI() }, new String[] { resources[2].getURI() },
-                                new int[] { 1, 1, 6 } } } });
+        testConfigs.add(new Object[] { classModel, new Object[][] {
+                new Object[] { new String[] { resources[6].getURI(), resources[9].getURI(), resources[10].getURI() },
+                        new String[] { resources[7].getURI(), resources[10].getURI(), resources[11].getURI() },
+                        new int[] { 1, 2, 2 } },
+                new Object[] { new String[] { resources[3].getURI() }, new String[] { resources[2].getURI() },
+                        new int[] { 1, 1, 6 } } } });
 
         return testConfigs;
     }
@@ -244,24 +237,27 @@ public class HierarchicalMatchingsCounterTest2 {
                 SimpleSubClassInferencerFactory.createInferencer(typeHierarchy));
 
         List<TypedNamedEntity> annotatorResult, goldStandard;
+        List<List<EvaluationCounts>> counts = new ArrayList<List<EvaluationCounts>>();
         for (int i = 0; i < testCases.length; ++i) {
             annotatorResult = new ArrayList<TypedNamedEntity>();
-            annotatorResult.add(HierarchicalMatchingsCounterTest
-                    .createTypedNamedEntities((String[]) testCases[i][1], 0));
+            annotatorResult
+                    .add(HierarchicalMatchingsCounterTest.createTypedNamedEntities((String[]) testCases[i][1], 0));
             goldStandard = new ArrayList<TypedNamedEntity>();
             goldStandard.add(HierarchicalMatchingsCounterTest.createTypedNamedEntities((String[]) testCases[i][0], 0));
-            counter.countMatchings(annotatorResult, goldStandard);
+            counts.add(counter.countMatchings(annotatorResult, goldStandard));
         }
 
-        List<List<int[]>> listOfLists = counter.getCounts();
-        Assert.assertNotNull(listOfLists);
-        Assert.assertEquals(testCases.length, listOfLists.size());
-        for (int i = 0; i < listOfLists.size(); ++i) {
-            Assert.assertNotNull(listOfLists.get(i));
-            Assert.assertTrue(listOfLists.get(i).size() > 0);
-            Assert.assertArrayEquals("Arrays do not equal exp=" + Arrays.toString((int[]) testCases[i][2])
-                    + " calculated=" + Arrays.toString(listOfLists.get(i).get(0)), (int[]) testCases[i][2], listOfLists
-                    .get(i).get(0));
+        Assert.assertNotNull(counts);
+        Assert.assertEquals(testCases.length, counts.size());
+        int expectedArray[];
+        EvaluationCounts expectedCounts;
+        for (int i = 0; i < counts.size(); ++i) {
+            Assert.assertNotNull(counts.get(i));
+            Assert.assertTrue(counts.get(i).size() > 0);
+            expectedArray = (int[]) testCases[i][2];
+            expectedCounts = new EvaluationCounts(expectedArray[0], expectedArray[1], expectedArray[2]);
+            Assert.assertEquals("Arrays do not equal exp=" + expectedCounts + " calculated=" + counts.get(i).get(0),
+                    expectedCounts, counts.get(i).get(0));
         }
     }
 

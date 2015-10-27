@@ -20,14 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.matching.impl;
+package org.aksw.gerbil.matching;
 
 import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.Marking;
 
-import com.carrotsearch.hppc.BitSet;
+public interface MatchingsCounter<T extends Marking> {
 
-public interface MatchingsSearcher<T extends Marking> {
-    public abstract BitSet findMatchings(T expectedElement, List<T> annotatorResult, BitSet alreadyUsedResults);
+    @Deprecated
+    public static final int TRUE_POSITIVE_COUNT_ID = 0;
+    @Deprecated
+    public static final int FALSE_POSITIVE_COUNT_ID = 1;
+    @Deprecated
+    public static final int FALSE_NEGATIVE_COUNT_ID = 2;
+
+    public EvaluationCounts countMatchings(List<T> annotatorResult, List<T> goldStandard);
+
 }

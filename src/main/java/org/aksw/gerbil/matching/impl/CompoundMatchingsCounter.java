@@ -24,6 +24,7 @@ package org.aksw.gerbil.matching.impl;
 
 import java.util.List;
 
+import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.transfer.nif.Marking;
 
 import com.carrotsearch.hppc.BitSet;
