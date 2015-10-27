@@ -16,15 +16,15 @@
  */
 package org.aksw.gerbil.utils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 
 public class SingletonWikipediaApi extends WikipediaApiInterface {
 

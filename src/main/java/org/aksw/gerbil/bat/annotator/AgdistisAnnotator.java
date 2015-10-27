@@ -16,8 +16,14 @@
  */
 package org.aksw.gerbil.bat.annotator;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
+import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -29,13 +35,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashSet;
 
-import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-public class AgdistisAnnotator extends it.acubelab.batframework.systemPlugins.AgdistisAnnotator {
+public class AgdistisAnnotator extends it.unipi.di.acube.batframework.systemPlugins.AgdistisAnnotator {
 
     protected String host;
     protected int port;

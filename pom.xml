@@ -68,32 +68,12 @@
 		</dependency>
 
 		<!-- BAT-Framework and its dependencies -->
-		<dependency>
-			<groupId>it.unipi.di</groupId>
-			<artifactId>batframework</artifactId>
-			<version>0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.james</groupId>
-			<artifactId>apache-mime4j</artifactId>
-			<version>0.6</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
-		</dependency>
-		<dependency>
-			<groupId>it.unimi.dsi</groupId>
-			<artifactId>fastutil</artifactId>
-			<version>6.4.1</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
-		<dependency>
+        <dependency>
+            <groupId>it.unipi.di.acube</groupId>
+            <artifactId>bat-framework</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.3.5</version>
@@ -102,36 +82,6 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
 			<version>4.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpmime</artifactId>
-			<version>4.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.googlecode.json-simple</groupId>
-			<artifactId>json-simple</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>it.unimi.dsi</groupId>
-			<artifactId>dsiutils</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>mpi.rmi</groupId>
-			<artifactId>aida-public</artifactId>
-			<version>20130218</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.illinois.dc.cogcomp</groupId>
-			<artifactId>edison</artifactId>
-			<version>0.2.9</version>
-		</dependency>
-		<dependency>
-			<groupId>wikifier</groupId>
-			<artifactId>wikifier</artifactId>
-			<version>0.0.1</version>
 		</dependency>
 
 		<!-- NERD -->

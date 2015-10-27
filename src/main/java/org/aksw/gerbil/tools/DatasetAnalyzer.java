@@ -16,18 +16,11 @@
  */
 package org.aksw.gerbil.tools;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.C2WDataset;
-import it.acubelab.batframework.problems.D2WDataset;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.StringReader;
-import java.util.HashSet;
-import java.util.List;
-
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.problems.C2WDataset;
+import it.unipi.di.acube.batframework.problems.D2WDataset;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -37,6 +30,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.WhitespaceTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.HashSet;
+import java.util.List;
 
 public class DatasetAnalyzer {
 

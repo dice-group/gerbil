@@ -16,28 +16,17 @@
  */
 package org.aksw.gerbil.utils;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
+
+import it.unipi.di.acube.batframework.systemPlugins.DBPediaApi;
+import org.aksw.gerbil.annotators.*;
+import org.aksw.gerbil.datatypes.ExperimentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.aksw.gerbil.annotators.AgdistisAnnotatorConfig;
-import org.aksw.gerbil.annotators.AnnotatorConfiguration;
-import org.aksw.gerbil.annotators.BabelfyAnnotatorConfig;
-import org.aksw.gerbil.annotators.DexterAnnotatorConfig;
-import org.aksw.gerbil.annotators.EntityclassifierEUConfig;
-import org.aksw.gerbil.annotators.KeaAnnotatorConfig;
-import org.aksw.gerbil.annotators.NERDAnnotatorConfig;
-import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
-import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
-import org.aksw.gerbil.annotators.TagMeAnnotatorConfig;
-import org.aksw.gerbil.annotators.WATAnnotatorConfig;
-import org.aksw.gerbil.annotators.WikipediaMinerAnnotatorConfig;
-import org.aksw.gerbil.datatypes.ExperimentType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is a very ugly workaround performing the mapping from annotator

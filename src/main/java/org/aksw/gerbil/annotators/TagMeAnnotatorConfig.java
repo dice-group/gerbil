@@ -16,9 +16,8 @@
  */
 package org.aksw.gerbil.annotators;
 
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.systemPlugins.TagmeAnnotator;
-
+import it.unipi.di.acube.batframework.problems.TopicSystem;
+import it.unipi.di.acube.batframework.systemPlugins.TagmeAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 

@@ -16,8 +16,8 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.problems.TopicDataset;
 
+import it.unipi.di.acube.batframework.problems.TopicDataset;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;

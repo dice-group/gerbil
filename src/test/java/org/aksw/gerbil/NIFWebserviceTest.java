@@ -16,16 +16,12 @@
  */
 package org.aksw.gerbil;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.problems.A2WDataset;
-import it.acubelab.batframework.problems.A2WSystem;
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashSet;
-
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.problems.A2WDataset;
+import it.unipi.di.acube.batframework.problems.A2WSystem;
+import it.unipi.di.acube.batframework.systemPlugins.DBPediaApi;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.bat.annotator.ErrorCountingAnnotatorDecorator;
@@ -39,6 +35,10 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.junit.Ignore;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashSet;
 
 @Ignore
 public class NIFWebserviceTest {

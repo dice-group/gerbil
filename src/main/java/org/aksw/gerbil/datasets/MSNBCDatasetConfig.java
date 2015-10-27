@@ -16,14 +16,13 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.acubelab.batframework.datasetPlugins.MSNBCDataset;
-import it.acubelab.batframework.problems.TopicDataset;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
-import java.io.IOException;
-
+import it.unipi.di.acube.batframework.datasetPlugins.MSNBCDataset;
+import it.unipi.di.acube.batframework.problems.TopicDataset;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+
+import java.io.IOException;
 
 public class MSNBCDatasetConfig extends AbstractDatasetConfiguration {
 

@@ -16,8 +16,8 @@
  */
 package org.aksw.gerbil;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.annotators.NERDAnnotatorConfig;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.datasets.Microposts2014Config;

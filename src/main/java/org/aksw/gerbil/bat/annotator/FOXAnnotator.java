@@ -16,20 +16,12 @@
  */
 package org.aksw.gerbil.bat.annotator;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.ScoredAnnotation;
-import it.acubelab.batframework.data.ScoredTag;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.utils.AnnotationException;
-import it.acubelab.batframework.utils.ProblemReduction;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
 
-import java.net.URLDecoder;
-import java.util.HashSet;
-import java.util.Set;
-
+import it.unipi.di.acube.batframework.data.*;
+import it.unipi.di.acube.batframework.problems.Sa2WSystem;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.utils.ProblemReduction;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.fox.binding.java.FoxApi;
 import org.aksw.fox.binding.java.FoxParameter;
 import org.aksw.fox.binding.java.FoxResponse;
@@ -40,6 +32,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URLDecoder;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FOXAnnotator implements Sa2WSystem {
 

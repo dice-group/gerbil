@@ -25,31 +25,25 @@
 //   Licensed under ...
 package org.aksw.gerbil.bat.annotator;
 
+import com.google.common.collect.Sets;
 import fr.eurecom.nerd.client.NERD;
 import fr.eurecom.nerd.client.schema.Entity;
 import fr.eurecom.nerd.client.type.DocumentType;
 import fr.eurecom.nerd.client.type.ExtractorType;
 import fr.eurecom.nerd.client.type.GranularityType;
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.ScoredAnnotation;
-import it.acubelab.batframework.data.ScoredTag;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.utils.AnnotationException;
-import it.acubelab.batframework.utils.ProblemReduction;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
-
-import java.util.HashSet;
-import java.util.List;
-
+import it.unipi.di.acube.batframework.data.*;
+import it.unipi.di.acube.batframework.problems.Sa2WSystem;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.utils.ProblemReduction;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import org.aksw.gerbil.bat.converter.DBpediaToWikiId;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.collect.Sets;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * NERD Annotator - It triggers queries to the NERD framework http://nerd.eurecom.fr and it parses the results
