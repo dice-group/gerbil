@@ -3,8 +3,9 @@ package org.aksw.gerbil.web.config;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.annotators.AnnotatorConfiguration;
-import org.aksw.gerbil.annotators.NIFWebserviceAnnotatorConfiguration;
+import org.aksw.gerbil.annotators.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datasets.NIFFileDatasetConfig;
@@ -65,7 +66,17 @@ public class AdapterManager {
                 String uri = name.substring(pos + 1, name.length() - 1);
                 // remove "NIFWS_" from the name
                 name = name.substring(NIF_WS_PREFIX.length(), pos) + NIF_WS_SUFFIX;
-                return new NIFWebserviceAnnotatorConfiguration(uri, name, false, type);
+                try {
+                    return new AnnotatorConfigurationImpl(name, false,
+                            NIFBasedAnnotatorWebservice.class.getConstructor(String.class), new Object[] { uri }, type);
+                } catch (Exception e) {
+                    LOGGER.error(
+                            "Exception while trying to create an annotator configuration for a NIF based webservice. Returning null.",
+                            e);
+                    return null;
+                }
+                // return new NIFWebserviceAnnotatorConfiguration(uri, name,
+                // false, type);
             }
             LOGGER.error("Got an unknown annotator name \"" + name + "\". Returning null.");
         }

@@ -22,6 +22,8 @@
  */
 package org.aksw.gerbil.web;
 
+import java.io.IOException;
+
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -53,8 +55,7 @@ public class NIFWSTestingController {
 
     @SuppressWarnings({ "unchecked", "deprecation" })
     @RequestMapping("/testNifWs")
-    public @ResponseBody
-    String testWebService(@RequestParam(value = "experimentType") String experimentType,
+    public @ResponseBody String testWebService(@RequestParam(value = "experimentType") String experimentType,
             @RequestParam(value = "url") String url) {
         LOGGER.info("Testing {} for an {} experiment.", url, experimentType);
         NIFBasedAnnotatorWebservice annotator = new NIFBasedAnnotatorWebservice(url, "TEST");
@@ -103,6 +104,11 @@ public class NIFWSTestingController {
             LOGGER.error("Got an exception while testing {}. e = {}", url, e);
             result.put(RETURN_STATUS_NAME, false);
             result.put(RETURN_ERROR_MSG_NAME, e.getMessage());
+        } finally {
+            try {
+                annotator.close();
+            } catch (IOException e) {
+            }
         }
         return JSONValue.toJSONString(result);
     }
