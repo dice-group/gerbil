@@ -23,6 +23,7 @@
 package org.aksw.gerbil.annotator.impl.bat;
 
 import it.unipi.di.acube.batframework.problems.A2WSystem;
+import it.unipi.di.acube.batframework.problems.C2WSystem;
 import it.unipi.di.acube.batframework.problems.D2WSystem;
 import it.unipi.di.acube.batframework.problems.Sa2WSystem;
 import it.unipi.di.acube.batframework.problems.TopicSystem;
@@ -37,6 +38,7 @@ import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.utils.bat.BAT2NIF_TranslationHelper;
@@ -58,7 +60,8 @@ public class BatFrameworkAnnotatorWrapper {
         if (annotator instanceof D2WSystem) {
             return new D2KBSystemWrapper((D2WSystem) annotator, wikiApi);
         }
-        LOGGER.error("Couldn't find a matching wrapper for \"" + annotator.getClass().getName() + "\". Returning null.");
+        LOGGER.error(
+                "Couldn't find a matching wrapper for \"" + annotator.getClass().getName() + "\". Returning null.");
         return null;
     }
 
@@ -90,16 +93,25 @@ public class BatFrameworkAnnotatorWrapper {
         }
 
         protected List<MeaningSpan> performLinking(D2WSystem annotator, Document document) {
-            return translater.translateAnnotations(annotator.solveD2W(document.getText(),
-                    NIF2BAT_TranslationHelper.createMentions(document)));
+            return translater.translateAnnotations(
+                    annotator.solveD2W(document.getText(), NIF2BAT_TranslationHelper.createMentions(document)));
+        }
+
+        protected List<Meaning> performC2KB(C2WSystem annotator, Document document) throws GerbilException {
+            return translater.translateTags(annotator.solveC2W(document.getText()));
         }
     }
 
-    protected static class A2KBSystemWrapper extends AbstractTopicSystemWrapper<A2WSystem> implements EntityRecognizer,
-            EntityLinker, EntityExtractor {
+    protected static class A2KBSystemWrapper extends AbstractTopicSystemWrapper<A2WSystem>
+            implements EntityRecognizer, EntityLinker, EntityExtractor {
 
         public A2KBSystemWrapper(A2WSystem annotator, WikipediaApiInterface wikiApi) {
             super(annotator, wikiApi);
+        }
+
+        @Override
+        public List<Meaning> performC2KB(Document document) throws GerbilException {
+            return performC2KB(annotator, document);
         }
 
         @Override
@@ -118,7 +130,7 @@ public class BatFrameworkAnnotatorWrapper {
         }
     }
 
-    protected static class D2KBSystemWrapper extends AbstractTopicSystemWrapper<D2WSystem> implements EntityLinker {
+    protected static class D2KBSystemWrapper extends AbstractTopicSystemWrapper<D2WSystem>implements EntityLinker {
 
         public D2KBSystemWrapper(D2WSystem annotator, WikipediaApiInterface wikiApi) {
             super(annotator, wikiApi);

@@ -139,7 +139,6 @@ public class MainController {
      * @param experimentData
      * @return
      */
-
     @RequestMapping("/execute")
     public @ResponseBody String execute(@RequestParam(value = "experimentData") String experimentData) {
         LOGGER.debug("Got request on /execute with experimentData=" + experimentData);

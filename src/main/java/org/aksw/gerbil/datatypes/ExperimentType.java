@@ -32,6 +32,43 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ExperimentType implements Describable {
+
+    /**
+     * Annotate to KB (Entity Extraction)
+     * <p>
+     * Identify the relevant mentions in the input text and assign to each of
+     * them the pertinent entities. Entity Extraction comprises the two tasks
+     * {@link #ERec} and {@link #ELink} .
+     * </p>
+     * Input: text <br>
+     * Output: marked entities and mentions for their meaning
+     */
+    EExt("A2KB", "The annotator gets a text and shall recognize entities inside and link them to a knowledge base."),
+
+    /**
+     * Concepts to KB
+     * <p>
+     * Tags are taken as the set of relevant entities that are mentioned in the
+     * input text.
+     * </p>
+     * Input: text <br>
+     * Output: marked entities
+     */
+    C2KB("C2KB", "The annotator gets a text and shall return relevant entities that are mentioned inside the text."),
+
+    /**
+     * Disambiguate to KB
+     * <p>
+     * D2KB is the assigning of a URI from a given Knowledge Base to a given
+     * entity or an artificial generated URI if the entity is not present inside
+     * the KB.
+     * </p>
+     * Input: text with marked entities <br>
+     * Output: mentions for every entity
+     */
+    ELink("D2KB",
+            "The input for the annotator is a text with entities that already have been marked inside. The annotator should link all these mentioned entities to a knowledge base."),
+
     /**
      * Disambiguate to KB
      * <p>
@@ -69,18 +106,6 @@ public enum ExperimentType implements Describable {
             "The annotator gets a text and shall recognize entities inside and link them to a knowledge base. Additionally, each annotation is assigned a score representing the likelihood that the annotation is correct."),
 
     /**
-     * Concepts to KB
-     * <p>
-     * Tags are taken as the set of relevant entities that are mentioned in the
-     * input text.
-     * </p>
-     * Input: text <br>
-     * Output: marked entities
-     */
-    @Deprecated C2KB("C2KB",
-            "The annotator gets a text and shall return relevant entities that are mentioned inside the text."),
-
-    /**
      * Scored concepts to KB
      * <p>
      * Tags are taken as the set of relevant entities that are mentioned in the
@@ -110,31 +135,6 @@ public enum ExperimentType implements Describable {
      * text.
      */
     ERec("Entity Recognition", "Entity Recognition is the identification of entities inside a given text."),
-
-    /**
-     * Disambiguate to KB
-     * <p>
-     * D2KB is the assigning of a URI from a given Knowledge Base to a given
-     * entity or an artificial generated URI if the entity is not present inside
-     * the KB.
-     * </p>
-     * Input: text with marked entities <br>
-     * Output: mentions for every entity
-     */
-    ELink("D2KB",
-            "The input for the annotator is a text with entities that already have been marked inside. The annotator should link all these mentioned entities to a knowledge base."),
-
-    /**
-     * Annotate to KB (Entity Extraction)
-     * <p>
-     * Identify the relevant mentions in the input text and assign to each of
-     * them the pertinent entities. Entity Extraction comprises the two tasks
-     * {@link #ERec} and {@link #ELink} .
-     * </p>
-     * Input: text <br>
-     * Output: marked entities and mentions for their meaning
-     */
-    EExt("A2KB", "The annotator gets a text and shall recognize entities inside and link them to a knowledge base."),
 
     /**
      * Entity Typing is the assigning of a class URI from a given Knowledge Base

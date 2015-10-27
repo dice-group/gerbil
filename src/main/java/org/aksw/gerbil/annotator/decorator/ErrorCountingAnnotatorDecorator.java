@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.C2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityExtractor;
 import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
@@ -40,6 +41,7 @@ import org.aksw.gerbil.evaluate.IntEvaluationResult;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
@@ -73,7 +75,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         case A2KB:
             break;
         case C2KB:
-            break;
+            return new ErrorCountingC2KBAnnotator((C2KBAnnotator) annotator, maxErrors);
         case D2KB:
             break;
         case EExt:
@@ -107,6 +109,18 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         return null;
     }
 
+    private static class ErrorCountingC2KBAnnotator extends ErrorCountingAnnotatorDecorator implements C2KBAnnotator {
+
+        public ErrorCountingC2KBAnnotator(C2KBAnnotator decoratedAnnotator, int maxErrors) {
+            super(decoratedAnnotator, maxErrors);
+        }
+
+        @Override
+        public List<Meaning> performC2KB(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performC2KB(this, document);
+        }
+    }
+
     private static class ErrorCountingEntityLinker extends ErrorCountingAnnotatorDecorator implements EntityLinker {
 
         public ErrorCountingEntityLinker(EntityLinker decoratedAnnotator, int maxErrors) {
@@ -136,6 +150,11 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
 
         public ErrorCountingEntityExtractor(EntityExtractor decoratedAnnotator, int maxErrors) {
             super(decoratedAnnotator, maxErrors);
+        }
+
+        @Override
+        public List<Meaning> performC2KB(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performC2KB(this, document);
         }
 
         @Override
@@ -193,6 +212,48 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
+    protected static void logResult(List<? extends Marking> result, String annotatorName, String markingName) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        builder.append(annotatorName);
+        builder.append("] result=[");
+        boolean first = true;
+        for (Marking m : result) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append(',');
+            }
+            builder.append(markingName);
+            builder.append(m.toString());
+        }
+        builder.append(']');
+        LOGGER.debug(builder.toString());
+    }
+
+    protected static List<Meaning> performC2KB(ErrorCountingAnnotatorDecorator errorCounter, Document document)
+            throws GerbilException {
+        List<Meaning> result = null;
+        try {
+            result = ((C2KBAnnotator) errorCounter.getDecoratedAnnotator()).performC2KB(document);
+        } catch (Exception e) {
+            if (errorCounter.getErrorCount() == 0) {
+                // Log only the first exception completely
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + ")", e);
+            } else {
+                // Log only the Exception message without the stack trace
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + "): "
+                        + e.getLocalizedMessage());
+            }
+            errorCounter.increaseErrorCount();
+            return new ArrayList<Meaning>(0);
+        }
+        if (LOGGER.isDebugEnabled()) {
+            logResult(result, errorCounter.getName(), "Meaning");
+        }
+        return result;
+    }
+
     protected static List<MeaningSpan> performLinking(ErrorCountingAnnotatorDecorator errorCounter, Document document)
             throws GerbilException {
         List<MeaningSpan> result = null;
@@ -211,22 +272,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             return new ArrayList<MeaningSpan>(0);
         }
         if (LOGGER.isDebugEnabled()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append('[');
-            builder.append(errorCounter.getName());
-            builder.append("] result=[");
-            boolean first = true;
-            for (MeaningSpan ne : result) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(',');
-                }
-                builder.append("NamedEntity");
-                builder.append(ne.toString());
-            }
-            builder.append(']');
-            LOGGER.debug(builder.toString());
+            logResult(result, errorCounter.getName(), "MeaningSpan");
         }
         return result;
     }
@@ -249,22 +295,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             return new ArrayList<MeaningSpan>(0);
         }
         if (LOGGER.isDebugEnabled()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append('[');
-            builder.append(errorCounter.getName());
-            builder.append("] result=[");
-            boolean first = true;
-            for (MeaningSpan ne : result) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(',');
-                }
-                builder.append("NamedEntity");
-                builder.append(ne.toString());
-            }
-            builder.append(']');
-            LOGGER.debug(builder.toString());
+            logResult(result, errorCounter.getName(), "MeaningSpan");
         }
         return result;
     }
@@ -287,22 +318,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             return new ArrayList<TypedSpan>(0);
         }
         if (LOGGER.isDebugEnabled()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append('[');
-            builder.append(errorCounter.getName());
-            builder.append("] result=[");
-            boolean first = true;
-            for (TypedSpan ts : result) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(',');
-                }
-                builder.append("NamedEntity");
-                builder.append(ts.toString());
-            }
-            builder.append(']');
-            LOGGER.debug(builder.toString());
+            logResult(result, errorCounter.getName(), "TypedSpan");
         }
         return result;
     }
@@ -325,22 +341,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             return new ArrayList<Span>(0);
         }
         if (LOGGER.isDebugEnabled()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append('[');
-            builder.append(errorCounter.getName());
-            builder.append("] result=[");
-            boolean first = true;
-            for (Span s : result) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(',');
-                }
-                builder.append("Span");
-                builder.append(s.toString());
-            }
-            builder.append(']');
-            LOGGER.debug(builder.toString());
+            logResult(result, errorCounter.getName(), "Span");
         }
         return result;
     }
@@ -363,22 +364,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             return new ArrayList<TypedNamedEntity>(0);
         }
         if (LOGGER.isDebugEnabled()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append('[');
-            builder.append(errorCounter.getName());
-            builder.append("] result=[");
-            boolean first = true;
-            for (Span s : result) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(',');
-                }
-                builder.append("Span");
-                builder.append(s.toString());
-            }
-            builder.append(']');
-            LOGGER.debug(builder.toString());
+            logResult(result, errorCounter.getName(), "TypedNamedEntity");
         }
         return result;
     }
@@ -401,22 +387,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             return new ArrayList<TypedNamedEntity>(0);
         }
         if (LOGGER.isDebugEnabled()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append('[');
-            builder.append(errorCounter.getName());
-            builder.append("] result=[");
-            boolean first = true;
-            for (Span s : result) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(',');
-                }
-                builder.append("Span");
-                builder.append(s.toString());
-            }
-            builder.append(']');
-            LOGGER.debug(builder.toString());
+            logResult(result, errorCounter.getName(), "TypedNamedEntity");
         }
         return result;
     }

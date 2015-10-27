@@ -10,10 +10,12 @@ import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
+import org.aksw.gerbil.utils.Wikipedia2DBPediaTransformer;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -63,6 +65,11 @@ public class WikipediaMinerAnnotator extends AbstractHttpBasedAnnotator implemen
 
     public WikipediaMinerAnnotator(String serviceUrl) {
         this.serviceUrl = serviceUrl;
+    }
+
+    @Override
+    public List<Meaning> performC2KB(Document document) throws GerbilException {
+        return requestAnnotations(document).getMarkings(Meaning.class);
     }
 
     @Override
@@ -139,7 +146,7 @@ public class WikipediaMinerAnnotator extends AbstractHttpBasedAnnotator implemen
     private void parseEntity(JSONObject entityObject, Document resultDoc) {
         if (entityObject.has(DETECTED_ENTITY_TITLE_KEY) && entityObject.has(DETECTED_ENTITY_WEIGHT_KEY)
                 && entityObject.has(DETECTED_ENTITY_POSITIONS_KEY)) {
-            String uri = transformTitleToUri(entityObject.getString(DETECTED_ENTITY_TITLE_KEY));
+            String uri = Wikipedia2DBPediaTransformer.getDBPediaUri(entityObject.getString(DETECTED_ENTITY_TITLE_KEY));
             double probability = entityObject.getDouble(DETECTED_ENTITY_WEIGHT_KEY);
             JSONArray positions = entityObject.getJSONArray(DETECTED_ENTITY_POSITIONS_KEY);
             JSONObject position;
@@ -153,10 +160,6 @@ public class WikipediaMinerAnnotator extends AbstractHttpBasedAnnotator implemen
                 }
             }
         }
-    }
-
-    private String transformTitleToUri(String title) {
-        return "http://dbpedia.org/resource/" + title.replace(' ', '_');
     }
 
 }

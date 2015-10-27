@@ -34,6 +34,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.NIFDocumentCreator;
 import org.aksw.gerbil.transfer.nif.NIFDocumentParser;
@@ -132,6 +133,11 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
     // return NIF2BAT_TranslationHelper.createScoredAnnotations(wikiApi,
     // dbpediaApi, document);
     // }
+
+    @Override
+    public List<Meaning> performC2KB(Document document) throws GerbilException {
+        return performAnnotation(document, Meaning.class);
+    }
 
     @Override
     public List<MeaningSpan> performLinking(Document document) throws GerbilException {

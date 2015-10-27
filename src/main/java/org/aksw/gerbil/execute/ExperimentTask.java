@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.C2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityExtractor;
 import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
@@ -54,6 +55,7 @@ import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
@@ -266,7 +268,23 @@ public class ExperimentTask implements Task {
             break;
         }
         case C2KB: {
-            throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
+            try {
+                List<List<Meaning>> results = new ArrayList<List<Meaning>>(dataset.size());
+                List<List<Meaning>> goldStandard = new ArrayList<List<Meaning>>(dataset.size());
+                C2KBAnnotator c2KBAnnotator = ((C2KBAnnotator) annotator);
+
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a text and a list of Spans
+                    results.add(c2KBAnnotator.performC2KB(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings(Meaning.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                // FIXME expand URIs to sets of URIs
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
         }
         case Sc2KB: // Falls through
         case Rc2KB: {

@@ -34,6 +34,7 @@ import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
@@ -63,6 +64,11 @@ public class SpotlightAnnotator extends AbstractHttpBasedAnnotator
 
     public SpotlightAnnotator(String url) {
         client = new SpotlightClient(url, this);
+    }
+
+    @Override
+    public List<Meaning> performC2KB(Document document) throws GerbilException {
+        return new ArrayList<Meaning>(client.annotate(document));
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
@@ -57,6 +58,11 @@ public class FOXAnnotator extends AbstractHttpBasedAnnotator implements OKETask1
 
     public FOXAnnotator(String serviceUrl) {
         this.serviceUrl = serviceUrl;
+    }
+
+    @Override
+    public List<Meaning> performC2KB(Document document) throws GerbilException {
+        return requestAnnotations(document).getMarkings(Meaning.class);
     }
 
     @Override

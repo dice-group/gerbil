@@ -28,6 +28,7 @@ import java.util.List;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.junit.Ignore;
@@ -64,6 +65,15 @@ public class TestEntityExtractor extends AbstractTestAnnotator implements Entity
             return new ArrayList<MeaningSpan>(0);
         }
         return result.getMarkings(MeaningSpan.class);
+    }
+
+    @Override
+    public List<Meaning> performC2KB(Document document) throws GerbilException {
+        Document result = this.getDocument(document.getDocumentURI());
+        if (result == null) {
+            return new ArrayList<Meaning>(0);
+        }
+        return result.getMarkings(Meaning.class);
     }
 
 }

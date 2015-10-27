@@ -25,6 +25,7 @@ package org.aksw.gerbil.annotator.decorator;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.C2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityExtractor;
 import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
@@ -38,6 +39,7 @@ import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
@@ -63,7 +65,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         case A2KB:
             break;
         case C2KB:
-            break;
+            return new TimeMeasuringC2KBAnnotator((C2KBAnnotator) annotator);
         case D2KB:
             break;
         case EExt:
@@ -88,6 +90,19 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
             break;
         }
         return null;
+    }
+
+    private static class TimeMeasuringC2KBAnnotator extends TimeMeasuringAnnotatorDecorator implements C2KBAnnotator {
+
+        public TimeMeasuringC2KBAnnotator(C2KBAnnotator decoratedAnnotator) {
+            super(decoratedAnnotator);
+        }
+
+        @Override
+        public List<Meaning> performC2KB(Document document) throws GerbilException {
+            return TimeMeasuringAnnotatorDecorator.performC2KB(this, document);
+        }
+
     }
 
     private static class TimeMeasuringEntityLinker extends TimeMeasuringAnnotatorDecorator implements EntityLinker {
@@ -119,6 +134,11 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
 
         public TimeMeasuringEntityExtractor(EntityExtractor decoratedAnnotator) {
             super(decoratedAnnotator);
+        }
+
+        @Override
+        public List<Meaning> performC2KB(Document document) throws GerbilException {
+            return TimeMeasuringAnnotatorDecorator.performC2KB(this, document);
         }
 
         @Override
@@ -174,6 +194,15 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         public List<TypedNamedEntity> performTask2(Document document) throws GerbilException {
             return TimeMeasuringAnnotatorDecorator.performOKETask2(this, document);
         }
+    }
+
+    protected static List<Meaning> performC2KB(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
+            throws GerbilException {
+        long startTime = System.currentTimeMillis();
+        List<Meaning> result = null;
+        result = ((C2KBAnnotator) timeMeasurer.getDecoratedAnnotator()).performC2KB(document);
+        timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
+        return result;
     }
 
     protected static List<MeaningSpan> performLinking(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)

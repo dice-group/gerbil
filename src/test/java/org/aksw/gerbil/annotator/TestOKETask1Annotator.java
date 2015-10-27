@@ -29,6 +29,7 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
@@ -73,6 +74,11 @@ public class TestOKETask1Annotator extends AbstractTestAnnotator implements OKET
     @Override
     public List<TypedNamedEntity> performTask1(Document document) throws GerbilException {
         return performAnnotation(document, TypedNamedEntity.class);
+    }
+
+    @Override
+    public List<Meaning> performC2KB(Document document) throws GerbilException {
+        return performAnnotation(document, Meaning.class);
     }
 
 }

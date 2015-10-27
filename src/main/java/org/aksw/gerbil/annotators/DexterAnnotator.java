@@ -23,9 +23,8 @@
  */
 package org.aksw.gerbil.annotators;
 
-
 //@GerbilAnnotator(name = "Dexter", couldBeCached = true, applicableForExperiments = ExperimentType.D2W)
-public class DexterAnnotator /* extends NIFBasedAnnotatorWebservice */{
+public class DexterAnnotator /* extends NIFBasedAnnotatorWebservice */ {
 
     // public static final String ANNOTATOR_NAME = "Dexter";
     //

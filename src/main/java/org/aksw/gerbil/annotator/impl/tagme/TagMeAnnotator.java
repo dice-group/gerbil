@@ -11,6 +11,7 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
@@ -60,6 +61,11 @@ public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements Entity
         this.annotationUrl = annotationUrl;
         this.spotUrl = spotUrl;
         this.key = key;
+    }
+
+    @Override
+    public List<Meaning> performC2KB(Document document) throws GerbilException {
+        return performRequest(document, true).getMarkings(Meaning.class);
     }
 
     @Override

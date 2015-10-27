@@ -53,6 +53,7 @@ import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
@@ -125,6 +126,13 @@ public class EvaluatorFactory {
     protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
             SameAsRetriever globalRetriever, UriKBClassifier globalClassifier, SubClassInferencer inferencer) {
         switch (type) {
+        case C2KB: {
+            SameAsRetriever localRetriever = getSameAsRetriever(dataset);
+            return new ConfidenceScoreEvaluatorDecorator<Meaning>(
+                    new InKBClassBasedFMeasureCalculator<Meaning>(new MeaningMatchingsSearcher<Meaning>(
+                            globalClassifier, globalRetriever, localRetriever, null), globalClassifier),
+                    FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
+        }
         case Sa2KB:
         case A2KB:
         case EExt: {
@@ -239,6 +247,7 @@ public class EvaluatorFactory {
         case ELink:
         case ETyping:
         case D2KB:
+        case C2KB:
         case OKE_Task1:
         case OKE_Task2: {
             return;

@@ -22,13 +22,29 @@
  */
 package org.aksw.gerbil.annotator;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.MeaningSpan;
+import org.aksw.gerbil.transfer.nif.Meaning;
+import org.junit.Ignore;
 
-public interface EntityExtractor extends EntityLinker, EntityRecognizer, C2KBAnnotator {
+@Ignore
+public class TestC2KBAnnotator extends AbstractTestAnnotator implements C2KBAnnotator {
 
-    public List<MeaningSpan> performExtraction(Document document) throws GerbilException;
+    public TestC2KBAnnotator(List<Document> instances) {
+        super("TestC2KBAnnotator", false, instances, ExperimentType.C2KB);
+    }
+
+    @Override
+    public List<Meaning> performC2KB(Document document) throws GerbilException {
+        Document result = this.getDocument(document.getDocumentURI());
+        if (result == null) {
+            return new ArrayList<Meaning>(0);
+        }
+        return result.getMarkings(Meaning.class);
+    }
+
 }

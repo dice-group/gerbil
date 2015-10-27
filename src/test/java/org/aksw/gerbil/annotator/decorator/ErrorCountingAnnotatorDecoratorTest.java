@@ -22,8 +22,6 @@
  */
 package org.aksw.gerbil.annotator.decorator;
 
-import it.unipi.di.acube.batframework.utils.AnnotationException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +43,8 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.junit.Assert;
 import org.junit.Test;
+
+import it.unipi.di.acube.batframework.utils.AnnotationException;
 
 public class ErrorCountingAnnotatorDecoratorTest {
 

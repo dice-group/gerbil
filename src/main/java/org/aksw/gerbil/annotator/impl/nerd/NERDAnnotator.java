@@ -8,6 +8,7 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
@@ -30,9 +31,7 @@ import fr.eurecom.nerd.client.type.GranularityType;
 public class NERDAnnotator extends AbstractAnnotator implements EntityExtractor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NERDAnnotator.class);
-    //
-    // public static final String ANNOTATOR_NAME = "NERD-ML";
-    //
+
     private static final String NERD_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.NERD.key";
     private static final String NERD_API_PROPERTY_NAME = "org.aksw.gerbil.annotators.NERD.host";
 
@@ -67,6 +66,11 @@ public class NERDAnnotator extends AbstractAnnotator implements EntityExtractor 
 
     public NERDAnnotator(String host, String key) {
         nerd = new NERD(host, key);
+    }
+
+    @Override
+    public List<Meaning> performC2KB(Document document) throws GerbilException {
+        return getNERDAnnotations(document).getMarkings(Meaning.class);
     }
 
     @Override

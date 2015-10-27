@@ -66,6 +66,21 @@ public class FileBasedNIFDataset extends AbstractNIFDataset {
         }
     }
 
+    public FileBasedNIFDataset(String filePath, Lang language) {
+        super("");
+        this.filePath = filePath;
+        this.language = language;
+    }
+
+    public FileBasedNIFDataset(String filePath) {
+        super("");
+        this.filePath = filePath;
+        this.language = fileExtToLang(filePath);
+        if (this.language == null) {
+            throw new IllegalArgumentException("Couldn't determine language of dataset.");
+        }
+    }
+
     @Override
     protected InputStream getDataAsInputStream() {
         FileInputStream fin = null;
