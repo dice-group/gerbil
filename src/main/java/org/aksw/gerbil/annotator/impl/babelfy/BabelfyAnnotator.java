@@ -92,15 +92,14 @@ public class BabelfyAnnotator extends AbstractAnnotator implements EntityExtract
         BabelfyConfiguration.getInstance().setRFkey(key);
     }
 
-    public BabelfyAnnotator(String key) throws GerbilException {
-        this.key = key;
-        String configFile = GerbilConfiguration.getInstance().getString(BABELNET_CONFIG_FILE_PROPERTY_NAME);
-        if (configFile == null) {
-            throw new GerbilException("Couldn't load needed Property \"" + BABELNET_CONFIG_FILE_PROPERTY_NAME + "\".",
-                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
-        }
+    public BabelfyAnnotator(String configFile) throws GerbilException {
         // Load the configuration
         BabelfyConfiguration.getInstance().setConfigurationFile(new File(configFile));
+        // Load and use the key if there is one
+        key = GerbilConfiguration.getInstance().getString(BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME);
+        if (key == null) {
+            key = "";
+        }
         BabelfyConfiguration.getInstance().setRFkey(key);
     }
 

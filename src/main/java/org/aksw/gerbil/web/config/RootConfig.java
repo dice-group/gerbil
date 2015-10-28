@@ -32,7 +32,7 @@ import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.aksw.gerbil.utils.ConsoleLogger;
-import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
+import org.aksw.simba.topicmodeling.concurrent.overseers.pool.DefeatableOverseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.ExecutorBasedOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
 import org.aksw.simba.topicmodeling.concurrent.reporter.Reporter;
@@ -88,27 +88,24 @@ public class RootConfig {
         System.setErr(new PrintStream(new ConsoleLogger(true), true));
     }
 
-    static @Bean
-    public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
+    static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
         Resource[] resourceLocations = new Resource[] { new ClassPathResource("gerbil.properties"), };
         p.setLocations(resourceLocations);
         return p;
     }
 
-    public static @Bean
-    Overseer createOverseer() {
-        Overseer overseer = new ExecutorBasedOverseer(DEFAULT_NUMBER_OF_WORKERS);
+    public static @Bean DefeatableOverseer createOverseer() {
+        DefeatableOverseer overseer = new ExecutorBasedOverseer(DEFAULT_NUMBER_OF_WORKERS);
         @SuppressWarnings("unused")
         Reporter reporter = new LogReporter(overseer);
         return overseer;
     }
 
-    public static @Bean
-    SubClassInferencer createSubClassInferencer() {
+    public static @Bean SubClassInferencer createSubClassInferencer() {
         Model classModel = ModelFactory.createDefaultModel();
-        String hierarchyFiles[] = GerbilConfiguration.getInstance().getStringArray(
-                "org.aksw.gerbil.semantic.subclass.SubClassInferencer.classHierarchyFiles");
+        String hierarchyFiles[] = GerbilConfiguration.getInstance()
+                .getStringArray("org.aksw.gerbil.semantic.subclass.SubClassInferencer.classHierarchyFiles");
         ClassHierarchyLoader loader = new ClassHierarchyLoader();
         for (int i = 0; i < hierarchyFiles.length; i += 3) {
             try {
@@ -123,8 +120,7 @@ public class RootConfig {
         return new SimpleSubClassInferencer(classModel);
     }
 
-    public static @Bean
-    EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer) {
+    public static @Bean EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer) {
         return new EvaluatorFactory(null, null, inferencer);
     }
 

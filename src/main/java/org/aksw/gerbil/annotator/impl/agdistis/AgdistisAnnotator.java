@@ -105,7 +105,7 @@ public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements Ent
             if (begin < lastPos) {
                 // we have two overlapping mentions --> take the larger one
                 Span prev = mentions.get(i - 1);
-                LOGGER.warn("\"%s\" at pos %d overlaps with \"%s\" at pos %d%n",
+                LOGGER.warn("\"{}\" at pos {} overlaps with \"{}\" at pos {}",
                         text.substring(span.getStartPosition(), span.getStartPosition() + span.getLength()),
                         span.getStartPosition(),
                         text.substring(prev.getStartPosition(), prev.getStartPosition() + prev.getLength()),

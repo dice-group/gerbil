@@ -119,4 +119,21 @@ public class AdapterManager {
         }
         return null;
     }
+
+    public AdapterList<AnnotatorConfiguration> getAnnotators() {
+        return annotators;
+    }
+
+    public void setAnnotators(AdapterList<AnnotatorConfiguration> annotators) {
+        this.annotators = annotators;
+    }
+
+    public AdapterList<DatasetConfiguration> getDatasets() {
+        return datasets;
+    }
+
+    public void setDatasets(AdapterList<DatasetConfiguration> datasets) {
+        this.datasets = datasets;
+    }
+
 }

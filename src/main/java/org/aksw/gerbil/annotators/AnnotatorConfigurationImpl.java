@@ -27,6 +27,8 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
         if (applicableForExperiment.equalsOrContainsType(experimentType)) {
             try {
                 return loadAnnotator();
+            } catch (GerbilException e) {
+                throw e;
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
             }

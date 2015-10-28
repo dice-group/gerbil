@@ -16,7 +16,8 @@ public class DatasetConfigurationImpl extends AbstractAdapterConfiguration imple
     protected Object constructorArgs[];
 
     public DatasetConfigurationImpl(String datasetName, boolean couldBeCached,
-            Constructor<? extends Dataset> constructor, Object constructorArgs[], ExperimentType applicableForExperiment) {
+            Constructor<? extends Dataset> constructor, Object constructorArgs[],
+            ExperimentType applicableForExperiment) {
         super(datasetName, couldBeCached, applicableForExperiment);
         this.constructor = constructor;
         this.constructorArgs = constructorArgs;
@@ -29,8 +30,10 @@ public class DatasetConfigurationImpl extends AbstractAdapterConfiguration imple
         if (applicableForExperiment.equalsOrContainsType(experimentType)) {
             try {
                 return loadDataset();
+            } catch (GerbilException e) {
+                throw e;
             } catch (Exception e) {
-                throw new GerbilException(e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
+                throw new GerbilException(e, ErrorTypes.DATASET_LOADING_ERROR);
             }
         }
         return null;

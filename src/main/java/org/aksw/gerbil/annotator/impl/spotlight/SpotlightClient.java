@@ -96,21 +96,6 @@ public class SpotlightClient {
         }
     }
 
-    // public SpotlightClient(String serviceURL, double minConfidence, int
-    // minSupport) {
-    // super();
-    // this.serviceURL = serviceURL.endsWith("/") ? serviceURL : (serviceURL +
-    // "/");
-    // this.minConfidence = minConfidence;
-    // this.minSupport = minSupport;
-    //
-    // typePrefixToUriMapping = new ObjectObjectOpenHashMap<String, String>();
-    // for (int i = 0; i < TYPE_PREFIX_URI_MAPPING.length; ++i) {
-    // typePrefixToUriMapping.put(TYPE_PREFIX_URI_MAPPING[i][0],
-    // TYPE_PREFIX_URI_MAPPING[i][1]);
-    // }
-    // }
-
     protected String request(String inputText, String requestUrl) throws GerbilException {
         String parameters;
         try {
@@ -174,49 +159,6 @@ public class SpotlightClient {
             annotator.closeRequest(request);
         }
     }
-
-    // protected String request(String inputText, String requestUrl) throws
-    // IOException {
-    // String parameters = "text=" + URLEncoder.encode(inputText, "UTF-8");
-    // // parameters += "&confidence=" + minConfidence;
-    // // parameters += "&support=" + minSupport;
-    //
-    // URL url = new URL(requestUrl);
-    // HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    // connection.setRequestMethod("POST");
-    // connection.setDoOutput(true);
-    // connection.setDoInput(true);
-    // connection.setUseCaches(false);
-    // connection.setRequestProperty("Accept", "application/json");
-    // connection.setRequestProperty("Content-Type",
-    // "application/x-www-form-urlencoded;charset=UTF-8");
-    // connection.setRequestProperty("Content-Length",
-    // String.valueOf(parameters.length()));
-    //
-    // DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-    // wr.writeBytes(parameters);
-    // wr.flush();
-    //
-    // StringBuilder sb = new StringBuilder();
-    // InputStream is = null;
-    // Reader ir = null;
-    // BufferedReader br = null;
-    // try {
-    // is = connection.getInputStream();
-    // ir = new InputStreamReader(is);
-    // br = new BufferedReader(ir);
-    //
-    // while (br.ready()) {
-    // sb.append(br.readLine());
-    // }
-    // } finally {
-    // IOUtils.closeQuietly(br);
-    // IOUtils.closeQuietly(ir);
-    // IOUtils.closeQuietly(is);
-    // connection.disconnect();
-    // }
-    // return sb.toString();
-    // }
 
     public List<TypedNamedEntity> annotateSavely(Document document) {
         try {
@@ -328,7 +270,12 @@ public class SpotlightClient {
         String text = document.getText();
         StringBuilder requestBuilder = new StringBuilder();
         requestBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><annotation text=\"");
-        requestBuilder.append(text.replace('"', '\''));
+        try {
+            requestBuilder.append(URLEncoder.encode(document.getText(), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("Exception while encoding request data.", e);
+            throw new GerbilException("Exception while encoding request data.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
         requestBuilder.append("\">");
 
         List<Span> spans = document.getMarkings(Span.class);
@@ -344,7 +291,6 @@ public class SpotlightClient {
         requestBuilder.append("</annotation>");
 
         String response = request(requestBuilder.toString(), serviceURL + DISAMBIGUATE_RESOURCE);
-        LOGGER.error(response);
         return parseAnnotationResponse(response);
     }
 
