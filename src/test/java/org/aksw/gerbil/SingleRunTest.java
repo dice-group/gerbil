@@ -66,6 +66,7 @@ public class SingleRunTest implements TaskObserver {
         Assert.assertNotNull(datasetConfig);
 
         DefeatableOverseer overseer = RootConfig.createOverseer();
+        overseer.addObserver(this);
 
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
                 new ExperimentTaskConfiguration(annotatorConfig, datasetConfig, EXPERIMENT_TYPE, MATCHING) };

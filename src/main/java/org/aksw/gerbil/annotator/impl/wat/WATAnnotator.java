@@ -142,11 +142,11 @@ public class WATAnnotator extends AbstractHttpBasedAnnotator implements EntityEx
                         start = js_ann.getInt(ENTITY_START_KEY);
                         if (js_ann.has(ENTITY_CONFIDENCE_KEY)) {
                             resultDoc.addMarking(new ScoredNamedEntity(start, js_ann.getInt(ENTITY_END_KEY) - start,
-                                    Wikipedia2DBPediaTransformer.getDBPediaUri(js_ann.getString(ENTITY_TITLE_KEY)),
+                                    Wikipedia2DBPediaTransformer.generateUriSet(js_ann.getString(ENTITY_TITLE_KEY)),
                                     js_ann.getDouble(ENTITY_CONFIDENCE_KEY)));
                         } else {
                             resultDoc.addMarking(new NamedEntity(start, js_ann.getInt(ENTITY_END_KEY) - start,
-                                    Wikipedia2DBPediaTransformer.getDBPediaUri(js_ann.getString(ENTITY_TITLE_KEY))));
+                                    Wikipedia2DBPediaTransformer.generateUriSet(js_ann.getString(ENTITY_TITLE_KEY))));
                         }
                     }
                 }

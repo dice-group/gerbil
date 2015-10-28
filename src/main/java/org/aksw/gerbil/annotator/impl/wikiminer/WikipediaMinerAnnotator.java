@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Set;
 
 import org.aksw.gerbil.annotator.EntityExtractor;
 import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
@@ -146,7 +147,8 @@ public class WikipediaMinerAnnotator extends AbstractHttpBasedAnnotator implemen
     private void parseEntity(JSONObject entityObject, Document resultDoc) {
         if (entityObject.has(DETECTED_ENTITY_TITLE_KEY) && entityObject.has(DETECTED_ENTITY_WEIGHT_KEY)
                 && entityObject.has(DETECTED_ENTITY_POSITIONS_KEY)) {
-            String uri = Wikipedia2DBPediaTransformer.getDBPediaUri(entityObject.getString(DETECTED_ENTITY_TITLE_KEY));
+            Set<String> uris = Wikipedia2DBPediaTransformer
+                    .generateUriSet(entityObject.getString(DETECTED_ENTITY_TITLE_KEY));
             double probability = entityObject.getDouble(DETECTED_ENTITY_WEIGHT_KEY);
             JSONArray positions = entityObject.getJSONArray(DETECTED_ENTITY_POSITIONS_KEY);
             JSONObject position;
@@ -156,7 +158,7 @@ public class WikipediaMinerAnnotator extends AbstractHttpBasedAnnotator implemen
                 if (position.has(DETECTED_ENTITY_START_KEY) && position.has(DETECTED_ENTITY_END_KEY)) {
                     start = position.getInt(DETECTED_ENTITY_START_KEY);
                     end = position.getInt(DETECTED_ENTITY_END_KEY);
-                    resultDoc.addMarking(new ScoredNamedEntity(start, end - start, uri, probability));
+                    resultDoc.addMarking(new ScoredNamedEntity(start, end - start, uris, probability));
                 }
             }
         }

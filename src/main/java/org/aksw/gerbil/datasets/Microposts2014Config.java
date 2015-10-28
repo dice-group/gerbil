@@ -44,7 +44,6 @@ public class Microposts2014Config extends AbstractDatasetConfiguration {
     private static final String DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.Microposts2014DatasetConfig";
 
     private Microposts2014Chunk chunk;
-    private WikipediaApiInterface wikiApi;
 
     public static enum Microposts2014Chunk {
         TRAIN, TEST
@@ -54,7 +53,6 @@ public class Microposts2014Config extends AbstractDatasetConfiguration {
     public Microposts2014Config(Microposts2014Chunk chunk, WikipediaApiInterface wikiApi) {
         super(DATASET_NAME_START, true, ExperimentType.Sa2KB);
         this.chunk = chunk;
-        this.wikiApi = wikiApi;
         // Set the correct name
         switch (chunk) {
         case TRAIN: {
