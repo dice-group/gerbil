@@ -27,7 +27,9 @@ import java.io.IOException;
 
 import org.aksw.gerbil.annotators.SpotlightAnnotatorConfig;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
+import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
+import org.aksw.gerbil.datasets.AIDACoNLLDatasetConfig.AIDACoNLLChunk;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
@@ -43,8 +45,9 @@ public class SpotlightTest {
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         AdapterList<DatasetConfiguration> datasets = DatasetsConfig.datasets();
         DatasetConfiguration datsetConfig = datasets.getAdaptersForName("OKE 2015 Task 1 example set").get(0);
+        AIDACoNLLDatasetConfig datasetConfig =  new AIDACoNLLDatasetConfig(AIDACoNLLChunk.TEST_A, null);
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
-                new ExperimentTaskConfiguration(new SpotlightAnnotatorConfig(), datsetConfig, ExperimentType.EExt,
+                new ExperimentTaskConfiguration(new SpotlightAnnotatorConfig(), datasetConfig, ExperimentType.EExt,
                         Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
                 new EvaluatorFactory(), taskConfigs, "SPOTLIGHT_TEST");
