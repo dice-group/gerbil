@@ -22,15 +22,14 @@
  */
 package org.aksw.gerbil.datasets;
 
-import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
-
 import java.io.IOException;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.impl.bat.BatFrameworkDatasetWrapper;
-import org.aksw.gerbil.dataset.impl.micro.Microposts2014Dataset;
 import org.aksw.gerbil.datatypes.ExperimentType;
+
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 /**
  * Configuration class that is able to load the Micropost2014 datasets (train
@@ -48,54 +47,49 @@ public class Microposts2014Config extends AbstractDatasetConfiguration {
     private WikipediaApiInterface wikiApi;
 
     public static enum Microposts2014Chunk {
-	TRAIN, TEST
+        TRAIN, TEST
     }
 
     @SuppressWarnings("deprecation")
-    public Microposts2014Config(Microposts2014Chunk chunk,
-	    WikipediaApiInterface wikiApi) {
-	super(DATASET_NAME_START, true, ExperimentType.Sa2KB);
-	this.chunk = chunk;
-	this.wikiApi = wikiApi;
-	// Set the correct name
-	switch (chunk) {
-	case TRAIN: {
-	    setName(getName() + "-Train"
-		    + BatFrameworkDatasetWrapper.DATASET_NAME_SUFFIX);
-	    break;
-	}
-	case TEST: {
-	    setName(getName() + "-Test"
-		    + BatFrameworkDatasetWrapper.DATASET_NAME_SUFFIX);
-	    break;
-	}
-	}
+    public Microposts2014Config(Microposts2014Chunk chunk, WikipediaApiInterface wikiApi) {
+        super(DATASET_NAME_START, true, ExperimentType.Sa2KB);
+        this.chunk = chunk;
+        this.wikiApi = wikiApi;
+        // Set the correct name
+        switch (chunk) {
+        case TRAIN: {
+            setName(getName() + "-Train" + BatFrameworkDatasetWrapper.DATASET_NAME_SUFFIX);
+            break;
+        }
+        case TEST: {
+            setName(getName() + "-Test" + BatFrameworkDatasetWrapper.DATASET_NAME_SUFFIX);
+            break;
+        }
+        }
     }
 
     @Override
     protected Dataset loadDataset() throws Exception {
-	String file = null;
-	switch (chunk) {
-	case TRAIN: {
-	    file = GerbilConfiguration.getInstance().getString(
-		    DATASET_FILE_PROPERTY_NAME.concat(".Train"));
-	    break;
-	}
-	case TEST: {
-	    file = GerbilConfiguration.getInstance().getString(
-		    DATASET_FILE_PROPERTY_NAME.concat(".Test"));
-	    break;
-	}
-	default: {
-	    return null;
-	}
-	}
-	if (file == null) {
-	    throw new IOException("Couldn't load needed Property \""
-		    + DATASET_FILE_PROPERTY_NAME + "\".");
-	}
-	return BatFrameworkDatasetWrapper.create(new Microposts2014Dataset(
-		file, wikiApi), wikiApi);
+        String file = null;
+        switch (chunk) {
+        case TRAIN: {
+            file = GerbilConfiguration.getInstance().getString(DATASET_FILE_PROPERTY_NAME.concat(".Train"));
+            break;
+        }
+        case TEST: {
+            file = GerbilConfiguration.getInstance().getString(DATASET_FILE_PROPERTY_NAME.concat(".Test"));
+            break;
+        }
+        default: {
+            return null;
+        }
+        }
+        if (file == null) {
+            throw new IOException("Couldn't load needed Property \"" + DATASET_FILE_PROPERTY_NAME + "\".");
+        }
+        // return BatFrameworkDatasetWrapper.create(new Microposts2014Dataset(
+        // file, wikiApi), wikiApi);
+        return null;
     }
 
 }
