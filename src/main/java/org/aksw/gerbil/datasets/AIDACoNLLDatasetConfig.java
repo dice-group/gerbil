@@ -33,6 +33,7 @@ import java.io.IOException;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.impl.aida.AIDACoNLLDataset;
 import org.aksw.gerbil.dataset.impl.bat.BatFrameworkDatasetWrapper;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
@@ -95,8 +96,7 @@ public class AIDACoNLLDatasetConfig extends AbstractDatasetConfiguration {
 	    break;
 	}
 	case TEST_A: {
-	    dataset = new ConllAidaTestADataset2(file, wikiApi);
-	    break;
+	    return new AIDACoNLLDataset(file);
 	}
 	case TEST_B: {
 	    dataset = new ConllAidaTestBDataset(file, wikiApi);
