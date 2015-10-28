@@ -95,7 +95,7 @@ public class AIDACoNLLDatasetConfig extends AbstractDatasetConfiguration {
 	    break;
 	}
 	case TEST_A: {
-	    dataset = new ConllAidaTestADataset(file, wikiApi);
+	    dataset = new ConllAidaTestADataset2(file, wikiApi);
 	    break;
 	}
 	case TEST_B: {
