@@ -41,6 +41,7 @@ import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -106,8 +107,9 @@ public class SpotlightClient {
         }
         HttpPost request = annotator.createPostRequest(requestUrl);
         HttpEntity entity = new StringEntity(parameters, "UTF-8");
-        request.addHeader("Accept", "application/json");
-        request.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=UTF-8");
+        request.addHeader(HttpHeaders.ACCEPT, "application/json");
+        request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
         request.setEntity(entity);
         entity = null;
         CloseableHttpResponse response = null;

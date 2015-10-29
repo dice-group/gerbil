@@ -47,7 +47,7 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    private static final String ANNOTATOR_NAME = "DBpedia Spotlight";
+    private static final String ANNOTATOR_NAME = "Entityclassifier.eu NER";
     private static final String DATASET_NAME = "Microposts2014-Train";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.ELink;
     private static final Matching MATCHING = Matching.WEAK_ANNOTATION_MATCH;

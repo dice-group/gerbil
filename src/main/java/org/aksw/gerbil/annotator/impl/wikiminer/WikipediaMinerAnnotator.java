@@ -19,6 +19,7 @@ import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
 import org.aksw.gerbil.utils.Wikipedia2DBPediaTransformer;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -99,9 +100,9 @@ public class WikipediaMinerAnnotator extends AbstractHttpBasedAnnotator implemen
             throw new GerbilException("Couldn't encode request data.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
         }
         HttpEntity entity = new StringEntity(parameters, ContentType.APPLICATION_FORM_URLENCODED);
-        request.addHeader("accept", "application/json");
-        request.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        request.addHeader("charset", "utf-8");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=UTF-8");
+        request.addHeader(HttpHeaders.ACCEPT, "application/json");
+        request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
         request.setEntity(entity);
 
         entity = null;

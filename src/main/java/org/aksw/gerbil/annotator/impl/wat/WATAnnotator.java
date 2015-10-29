@@ -41,6 +41,7 @@ import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
 import org.aksw.gerbil.utils.Wikipedia2DBPediaTransformer;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -121,9 +122,10 @@ public class WATAnnotator extends AbstractHttpBasedAnnotator implements EntityEx
         parameters.put(TEXT_REQUEST_PARAMETER_KEY, document.getText());
 
         HttpPost request = createPostRequest(disambiguate ? disambiguateUrl : annotateUrl);
-        request.addHeader("Content-Type", "application/json");
         request.setEntity(new StringEntity(parameters.toString(), "UTF8"));
-        request.addHeader("Accept", "application/json");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
+        request.addHeader(HttpHeaders.ACCEPT, "application/json");
+        request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
 
         HttpEntity entity = null;
         CloseableHttpResponse response = null;

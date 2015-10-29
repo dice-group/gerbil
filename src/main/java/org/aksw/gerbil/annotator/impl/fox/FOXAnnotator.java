@@ -20,6 +20,7 @@ import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -96,8 +97,9 @@ public class FOXAnnotator extends AbstractHttpBasedAnnotator implements OKETask1
                 .put("task", "ner").put("output", "JSON-LD").toString(), ContentType.APPLICATION_JSON);
         // request FOX
         HttpPost request = createPostRequest(serviceUrl);
-        request.addHeader("Content-type", "application/json");
-        request.addHeader("Accept-Charset", "UTF-8");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
+        request.addHeader(HttpHeaders.ACCEPT, "application/json");
+        request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
         request.setEntity(entity);
 
         entity = null;

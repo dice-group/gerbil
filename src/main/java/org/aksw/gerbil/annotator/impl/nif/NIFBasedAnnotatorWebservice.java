@@ -44,6 +44,7 @@ import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentParser;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -73,66 +74,6 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
         super(name);
         this.url = url;
     }
-
-    // @Override
-    // public HashSet<Annotation> solveD2W(String text, HashSet<Mention>
-    // mentions)
-    // throws AnnotationException {
-    // // translate the mentions into an AnnotatedDocument object
-    // Document document = BAT2NIF_TranslationHelper
-    // .createAnnotatedDocument(text, mentions);
-    // document = request(document);
-    // // translate the annotated document into a HashSet of BAT Annotations
-    // return NIF2BAT_TranslationHelper.createAnnotations(wikiApi, dbpediaApi,
-    // document);
-    // }
-    //
-    // @Override
-    // public HashSet<Annotation> solveA2W(String text) throws
-    // AnnotationException {
-    // // translate the mentions into an AnnotatedDocument object
-    // Document document = BAT2NIF_TranslationHelper
-    // .createAnnotatedDocument(text);
-    // document = request(document);
-    // // translate the annotated document into a HashSet of BAT Annotations
-    // return NIF2BAT_TranslationHelper.createAnnotations(wikiApi, dbpediaApi,
-    // document);
-    // }
-    //
-    // @Override
-    // public HashSet<Tag> solveC2W(String text) throws AnnotationException {
-    // // translate the mentions into an AnnotatedDocument object
-    // Document document = BAT2NIF_TranslationHelper
-    // .createAnnotatedDocument(text);
-    // document = request(document);
-    // // translate the annotated document into a HashSet of BAT Annotations
-    // return NIF2BAT_TranslationHelper.createTags(wikiApi, dbpediaApi,
-    // document);
-    // }
-    //
-    // @Override
-    // public HashSet<ScoredTag> solveSc2W(String text) throws
-    // AnnotationException {
-    // // translate the mentions into an AnnotatedDocument object
-    // Document document = BAT2NIF_TranslationHelper
-    // .createAnnotatedDocument(text);
-    // document = request(document);
-    // // translate the annotated document into a HashSet of BAT Annotations
-    // return NIF2BAT_TranslationHelper.createScoredTags(wikiApi, dbpediaApi,
-    // document);
-    // }
-    //
-    // @Override
-    // public HashSet<ScoredAnnotation> solveSa2W(String text) throws
-    // AnnotationException {
-    // // translate the mentions into an AnnotatedDocument object
-    // Document document =
-    // BAT2NIF_TranslationHelper.createAnnotatedDocument(text);
-    // document = request(document);
-    // // translate the annotated document into a HashSet of BAT Annotations
-    // return NIF2BAT_TranslationHelper.createScoredAnnotations(wikiApi,
-    // dbpediaApi, document);
-    // }
 
     @Override
     public List<Meaning> performC2KB(Document document) throws GerbilException {
@@ -183,13 +124,12 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
         // create NIF document
         String nifDocument = nifCreator.getDocumentAsNIFString(document);
         HttpEntity entity = new StringEntity(nifDocument, "UTF-8");
-        // send NIF document (start time measure)
-        // lastRequestSend = System.currentTimeMillis();
-        // HttpPost request = new HttpPost(url);
+        // send NIF document
         HttpPost request = createPostRequest(url);
         request.setEntity(entity);
-        request.addHeader("Content-Type", nifCreator.getHttpContentType() + ";charset=UTF-8");
-        request.addHeader("Accept", nifParser.getHttpContentType() + ";charset=UTF-8");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, nifCreator.getHttpContentType() + ";charset=UTF-8");
+        request.addHeader(HttpHeaders.ACCEPT, nifParser.getHttpContentType());
+        request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
 
         entity = null;
         CloseableHttpResponse response = null;
@@ -216,9 +156,8 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
                 throw new GerbilException("Response has the wrong status: " + status.toString(),
                         ErrorTypes.UNEXPECTED_EXCEPTION);
             }
-            // receive NIF document (end time measure and set time)
+            // receive NIF document
             entity = response.getEntity();
-            // lastResponseReceived = System.currentTimeMillis();
             // read response and parse NIF
             try {
                 document = nifParser.getDocumentFromNIFStream(entity.getContent());
