@@ -83,7 +83,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>19.0</version>
+			<version>18.0</version>
 		</dependency>
 
 		<!-- BAT-Framework and its dependencies -->
@@ -210,12 +210,6 @@
 			<version>3.4.1</version>
 		</dependency>
 
-
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>18.0</version>
-		</dependency>
 		<!-- File Upload -->
 		<dependency>
 			<groupId>commons-fileupload</groupId>

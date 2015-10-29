@@ -2,6 +2,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%
+    request.setAttribute("additionalResultsCount", ((String[])request.getAttribute("additionalResultNames")).length);
+%>
 <head>
 <link rel="stylesheet"
 	href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
@@ -152,7 +155,7 @@
 					<c:if test="${hasSubTasks}">
 						<td></td>
 					</c:if>
-					<td colspan="7" style="text-align: center">${task.stateMsg}</td>
+					<td colspan="${additionalResultsCount + 7}" style="text-align: center">${task.stateMsg}</td>
 					<td>${task.timestampstring}</td>
 					<td>${task.gerbilVersion}</td>
 				</c:if>
