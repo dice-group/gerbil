@@ -42,16 +42,16 @@ import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.IntOpenHashSet;
 import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
-public class CachingSameAsRetriever implements SameAsRetrieverDecorator {
+public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDecorator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CachingSameAsRetriever.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileBasedCachingSameAsRetriever.class);
 
     private static final int MAX_CONCURRENT_READERS = 1000;
 
     private static final int ENTITY_NOT_FOUND = -1;
 
     @SuppressWarnings("unchecked")
-    public static CachingSameAsRetriever create(SameAsRetriever decoratedRetriever, boolean requestEntitiesNotFound,
+    public static FileBasedCachingSameAsRetriever create(SameAsRetriever decoratedRetriever, boolean requestEntitiesNotFound,
             File cacheFile) {
         File tempCacheFile = new File(cacheFile.getAbsolutePath() + "_temp");
 
@@ -84,13 +84,12 @@ public class CachingSameAsRetriever implements SameAsRetrieverDecorator {
             uriSetIdMapping = (ObjectIntOpenHashMap<String>) objects[0];
             sets = (List<Set<String>>) objects[1];
         }
-        return new CachingSameAsRetriever(decoratedRetriever, uriSetIdMapping, sets, requestEntitiesNotFound,
+        return new FileBasedCachingSameAsRetriever(decoratedRetriever, uriSetIdMapping, sets, requestEntitiesNotFound,
                 cacheFile, tempCacheFile);
     }
 
     private ObjectIntOpenHashMap<String> uriSetIdMapping;
     private List<Set<String>> sets;
-    private SameAsRetriever decoratedRetriever;
     private int cacheChanges = 0;
     private int forceStorageAfterChanges = 1000;
     private Semaphore cacheReadMutex = new Semaphore(MAX_CONCURRENT_READERS);
@@ -99,9 +98,9 @@ public class CachingSameAsRetriever implements SameAsRetrieverDecorator {
     private File cacheFile;
     private File tempCacheFile;
 
-    protected CachingSameAsRetriever(SameAsRetriever decoratedRetriever, ObjectIntOpenHashMap<String> uriSetIdMapping,
+    protected FileBasedCachingSameAsRetriever(SameAsRetriever decoratedRetriever, ObjectIntOpenHashMap<String> uriSetIdMapping,
             List<Set<String>> sets, boolean requestEntitiesNotFound, File cacheFile, File tempCacheFile) {
-        this.decoratedRetriever = decoratedRetriever;
+        super(decoratedRetriever);
         this.uriSetIdMapping = uriSetIdMapping;
         this.sets = sets;
         this.requestEntitiesNotFound = requestEntitiesNotFound;
@@ -187,11 +186,6 @@ public class CachingSameAsRetriever implements SameAsRetrieverDecorator {
         for (String uri : result) {
             uriSetIdMapping.put(uri, setId);
         }
-    }
-
-    @Override
-    public SameAsRetriever getDecorated() {
-        return decoratedRetriever;
     }
 
     public void storeCache() {
@@ -319,18 +313,5 @@ public class CachingSameAsRetriever implements SameAsRetrieverDecorator {
             IOUtils.closeQuietly(fin);
         }
         return null;
-    }
-
-    @Override
-    public void addSameURIs(Set<String> uris) {
-        Set<String> temp = new HashSet<String>();
-        Set<String> result;
-        for (String uri : uris) {
-            result = retrieveSameURIs(uri);
-            if (result != null) {
-                temp.addAll(retrieveSameURIs(uri));
-            }
-        }
-        uris.addAll(temp);
     }
 }

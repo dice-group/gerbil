@@ -34,6 +34,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFReader;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.OWL;
 
@@ -51,20 +52,42 @@ public class HTTPBasedSameAsRetriever implements SameAsRetriever {
         try {
             requestModel(model, uri, 0);
         } catch (Exception e) {
-            LOGGER.info("Exception while requesting uri \"" + uri + "\". Returning null.", e);
+            LOGGER.debug("Exception while requesting uri \"" + uri + "\". Returning null.", e);
             return null;
         }
-        Set<String> result = null;
+        Set<String> result = new HashSet<String>();
+        result.add(uri);
+        findLinks(uri, result, model);
+        if (result.size() > 1) {
+            return result;
+        } else {
+            return null;
+        }
+    }
+
+    protected void findLinks(String uri, Set<String> uris, Model model) {
         Resource resource = model.getResource(uri);
+        String foundUri;
         if (model.contains(resource, OWL.sameAs)) {
-            result = new HashSet<String>();
-            result.add(uri);
             NodeIterator iterator = model.listObjectsOfProperty(resource, OWL.sameAs);
             while (iterator.hasNext()) {
-                result.add(iterator.next().asResource().getURI());
+                foundUri = iterator.next().asResource().getURI();
+                if (!uris.contains(foundUri)) {
+                    uris.add(foundUri);
+                    findLinks(foundUri, uris, model);
+                }
             }
         }
-        return result;
+        if (model.contains(null, OWL.sameAs, resource)) {
+            ResIterator iterator = model.listSubjectsWithProperty(OWL.sameAs, resource);
+            while (iterator.hasNext()) {
+                foundUri = iterator.next().getURI();
+                if (!uris.contains(foundUri)) {
+                    uris.add(foundUri);
+                    findLinks(foundUri, uris, model);
+                }
+            }
+        }
     }
 
     protected void requestModel(Model model, String uri, int retryCount) throws Exception {

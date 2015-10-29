@@ -24,10 +24,13 @@ package org.aksw.gerbil.web.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.semantic.sameas.FileBasedCachingSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.HTTPBasedSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.InMemoryCachingSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
@@ -36,6 +39,7 @@ import org.aksw.simba.topicmodeling.concurrent.overseers.pool.DefeatableOverseer
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.ExecutorBasedOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
 import org.aksw.simba.topicmodeling.concurrent.reporter.Reporter;
+import org.apache.commons.configuration.ConversionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -77,16 +81,19 @@ public class RootConfig {
 
     private static final int DEFAULT_NUMBER_OF_WORKERS = 20;
 
-    {
-        // FIXME this is an extremely ugly workaround to be able to log the
-        // stuff coming from the BAT-Framework
-        replaceSystemStreams();
-    }
+    private static final String SAME_AS_CACHE_FILE_KEY = "org.aksw.gerbil.semantic.sameas.CachingSameAsRetriever.cacheFile";
+    private static final String SAME_AS_IN_MEMORY_CACHE_SIZE_KEY = "org.aksw.gerbil.semantic.sameas.InMemoryCachingSameAsRetriever.cacheSize";
 
-    protected static void replaceSystemStreams() {
-        System.setOut(new PrintStream(new ConsoleLogger(false), true));
-        System.setErr(new PrintStream(new ConsoleLogger(true), true));
-    }
+    // {
+    // // FIXME this is an extremely ugly workaround to be able to log the
+    // // stuff coming from the BAT-Framework
+    // replaceSystemStreams();
+    // }
+    //
+    // protected static void replaceSystemStreams() {
+    // System.setOut(new PrintStream(new ConsoleLogger(false), true));
+    // System.setErr(new PrintStream(new ConsoleLogger(true), true));
+    // }
 
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
@@ -120,8 +127,42 @@ public class RootConfig {
         return new SimpleSubClassInferencer(classModel);
     }
 
-    public static @Bean EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer) {
-        return new EvaluatorFactory(null, null, inferencer);
+    public static @Bean SameAsRetriever createSameAsRetriever() {
+        SameAsRetriever sameAsRetriever = new HTTPBasedSameAsRetriever();
+        SameAsRetriever decoratedRetriever = null;
+        if (GerbilConfiguration.getInstance().containsKey(SAME_AS_CACHE_FILE_KEY)) {
+            decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, true,
+                    new File(GerbilConfiguration.getInstance().getString(SAME_AS_CACHE_FILE_KEY)));
+        }
+        if (decoratedRetriever == null) {
+            LOGGER.warn("Couldn't create file based cache for sameAs retrieving.");
+        } else {
+            sameAsRetriever = decoratedRetriever;
+            decoratedRetriever = null;
+        }
+        if (GerbilConfiguration.getInstance().containsKey(SAME_AS_IN_MEMORY_CACHE_SIZE_KEY)) {
+            try {
+                int cacheSize = GerbilConfiguration.getInstance().getInt(SAME_AS_IN_MEMORY_CACHE_SIZE_KEY);
+                decoratedRetriever = new InMemoryCachingSameAsRetriever(sameAsRetriever, cacheSize);
+            } catch (ConversionException e) {
+                LOGGER.warn("Exception while trying to load parameter \"" + SAME_AS_IN_MEMORY_CACHE_SIZE_KEY + "\".",
+                        e);
+            }
+        }
+        if (decoratedRetriever == null) {
+            LOGGER.info("Using default cache size for sameAs link in memory cache.");
+            sameAsRetriever = new InMemoryCachingSameAsRetriever(sameAsRetriever);
+        } else {
+            sameAsRetriever = decoratedRetriever;
+            decoratedRetriever = null;
+        }
+        
+        return sameAsRetriever;
+    }
+
+    public static @Bean EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer,
+            SameAsRetriever sameAsRetriever) {
+        return new EvaluatorFactory(sameAsRetriever, null, inferencer);
     }
 
 }
