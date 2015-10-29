@@ -25,6 +25,7 @@ package org.aksw.gerbil;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.execute.ExperimentTask;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.slf4j.Logger;
@@ -39,6 +40,7 @@ public class Experimenter implements Runnable {
     private ExperimentDAO experimentDAO;
     private Overseer overseer;
     private EvaluatorFactory evFactory;
+    private AnnotatorOutputWriter annotatorOutputWriter = null;
 
     /**
      * Constructor
@@ -83,6 +85,7 @@ public class Experimenter implements Runnable {
                 if (taskId != ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED) {
                     // Create an executer which performs the task
                     ExperimentTask task = new ExperimentTask(taskId, experimentDAO, evFactory, configs[i]);
+                    task.setAnnotatorOutputWriter(annotatorOutputWriter);
                     overseer.startTask(task);
                 }
             }
@@ -98,5 +101,9 @@ public class Experimenter implements Runnable {
                 config.annotatorConfig.getName(), config.annotatorConfig.couldBeCached(),
                 config.datasetConfig.getName(), config.datasetConfig.couldBeCached(), couldBeCached);
         return couldBeCached;
+    }
+    
+    public void setAnnotatorOutputWriter(AnnotatorOutputWriter annotatorOutputWriter) {
+        this.annotatorOutputWriter = annotatorOutputWriter;
     }
 }

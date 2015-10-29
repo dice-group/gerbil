@@ -100,7 +100,7 @@ public abstract class AbstractExperimentTaskTest {
         public static int MICRO_REC_INDEX = 4;
         public static int MICRO_F1_INDEX = 5;
         public static int ERROR_COUNT_INDEX = 6;
-        
+
         private static final double DELTA = 0.0000001;
 
         private int experimentTaskId;

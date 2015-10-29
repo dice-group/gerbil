@@ -39,9 +39,11 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.IDCreator;
 import org.aksw.gerbil.web.config.AdapterManager;
+import org.aksw.gerbil.web.config.RootConfig;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
@@ -103,7 +105,9 @@ public class MainController {
     private DataIDGenerator dataIdGenerator;
 
     @Autowired
-    HttpServletRequest request;
+    protected HttpServletRequest request;
+
+    private AnnotatorOutputWriter annotatorOutputWriter = RootConfig.getAnnotatorOutputWriter();
 
     @RequestMapping("/config")
     public ModelAndView config() {
@@ -169,6 +173,7 @@ public class MainController {
         }
         String experimentId = IDCreator.getInstance().createID();
         Experimenter exp = new Experimenter(overseer, dao, evFactory, configs, experimentId);
+        exp.setAnnotatorOutputWriter(annotatorOutputWriter);
         exp.run();
 
         return experimentId;

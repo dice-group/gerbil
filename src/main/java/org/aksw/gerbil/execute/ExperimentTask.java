@@ -80,6 +80,7 @@ public class ExperimentTask implements Task {
     private int experimentTaskId;
     private EvaluatorFactory evFactory;
     private ExperimentTaskState taskState = null;
+    private AnnotatorOutputWriter annotatorOutputWriter = null;
 
     public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO,
             org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration) {
@@ -241,6 +242,9 @@ public class ExperimentTask implements Task {
                     goldStandard.add(document.getMarkings(MeaningSpan.class));
                     taskState.increaseExperimentStepCount();
                 }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
@@ -260,7 +264,9 @@ public class ExperimentTask implements Task {
                     goldStandard.add(document.getMarkings(MeaningSpan.class));
                     taskState.increaseExperimentStepCount();
                 }
-                // FIXME expand URIs to sets of URIs
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
@@ -279,7 +285,9 @@ public class ExperimentTask implements Task {
                     goldStandard.add(document.getMarkings(Meaning.class));
                     taskState.increaseExperimentStepCount();
                 }
-                // FIXME expand URIs to sets of URIs
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
@@ -301,6 +309,9 @@ public class ExperimentTask implements Task {
                     goldStandard.add(document.getMarkings(Span.class));
                     taskState.increaseExperimentStepCount();
                 }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
@@ -318,6 +329,9 @@ public class ExperimentTask implements Task {
                     results.add(typer.performTyping(DocumentInformationReducer.reduceToTextAndSpans(document)));
                     goldStandard.add(document.getMarkings(TypedSpan.class));
                     taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (Exception e) {
@@ -338,6 +352,9 @@ public class ExperimentTask implements Task {
                     goldStandard.add(document.getMarkings(TypedNamedEntity.class));
                     taskState.increaseExperimentStepCount();
                 }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
@@ -356,6 +373,9 @@ public class ExperimentTask implements Task {
                             .performTask2(DocumentInformationReducer.reduceToTextAndEntities(document)));
                     goldStandard.add(document.getMarkings(TypedNamedEntity.class));
                     taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (Exception e) {
@@ -394,4 +414,7 @@ public class ExperimentTask implements Task {
         }
     }
 
+    public void setAnnotatorOutputWriter(AnnotatorOutputWriter annotatorOutputWriter) {
+        this.annotatorOutputWriter = annotatorOutputWriter;
+    }
 }

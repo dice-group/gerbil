@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.semantic.sameas.FileBasedCachingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.HTTPBasedSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.InMemoryCachingSameAsRetriever;
@@ -83,6 +84,9 @@ public class RootConfig {
 
     private static final String SAME_AS_CACHE_FILE_KEY = "org.aksw.gerbil.semantic.sameas.CachingSameAsRetriever.cacheFile";
     private static final String SAME_AS_IN_MEMORY_CACHE_SIZE_KEY = "org.aksw.gerbil.semantic.sameas.InMemoryCachingSameAsRetriever.cacheSize";
+
+    private static final String ANNOTATOR_OUTPUT_WRITER_USAGE_KEY = "org.aksw.gerbil.execute.AnnotatorOutputWriter.printAnnotatorResults";
+    private static final String ANNOTATOR_OUTPUT_WRITER_DIRECTORY_KEY = "org.aksw.gerbil.execute.AnnotatorOutputWriter.outputDirectory";
 
     // {
     // // FIXME this is an extremely ugly workaround to be able to log the
@@ -156,13 +160,24 @@ public class RootConfig {
             sameAsRetriever = decoratedRetriever;
             decoratedRetriever = null;
         }
-        
+
         return sameAsRetriever;
     }
 
     public static @Bean EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer,
             SameAsRetriever sameAsRetriever) {
         return new EvaluatorFactory(sameAsRetriever, null, inferencer);
+    }
+
+    public static AnnotatorOutputWriter getAnnotatorOutputWriter() {
+        if (GerbilConfiguration.getInstance().containsKey(ANNOTATOR_OUTPUT_WRITER_USAGE_KEY)
+                && GerbilConfiguration.getInstance().getBoolean(ANNOTATOR_OUTPUT_WRITER_USAGE_KEY)
+                && GerbilConfiguration.getInstance().containsKey(ANNOTATOR_OUTPUT_WRITER_DIRECTORY_KEY)) {
+            return new AnnotatorOutputWriter(
+                    GerbilConfiguration.getInstance().getString(ANNOTATOR_OUTPUT_WRITER_DIRECTORY_KEY));
+        } else {
+            return null;
+        }
     }
 
 }
