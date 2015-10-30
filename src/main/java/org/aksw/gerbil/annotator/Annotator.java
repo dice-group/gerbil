@@ -22,7 +22,9 @@
  */
 package org.aksw.gerbil.annotator;
 
-public interface Annotator {
+import java.io.Closeable;
+
+public interface Annotator extends Closeable {
 
     public String getName();
     

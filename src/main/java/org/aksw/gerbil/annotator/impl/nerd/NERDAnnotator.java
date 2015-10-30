@@ -1,5 +1,6 @@
 package org.aksw.gerbil.annotator.impl.nerd;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.EntityExtractor;
@@ -109,5 +110,9 @@ public class NERDAnnotator extends AbstractAnnotator implements EntityExtractor 
             throw new GerbilException("Exception while querying NERD-ML.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
         }
         return resultDoc;
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 }

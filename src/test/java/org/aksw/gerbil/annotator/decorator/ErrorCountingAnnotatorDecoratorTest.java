@@ -22,6 +22,7 @@
  */
 package org.aksw.gerbil.annotator.decorator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,6 +122,10 @@ public class ErrorCountingAnnotatorDecoratorTest {
                 throw new AnnotationException("Test exception.");
             }
             return new ArrayList<Span>(0);
+        }
+
+        @Override
+        public void close() throws IOException {
         }
 
     }

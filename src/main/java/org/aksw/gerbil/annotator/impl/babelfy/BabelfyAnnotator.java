@@ -24,6 +24,7 @@
 package org.aksw.gerbil.annotator.impl.babelfy;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -197,5 +198,9 @@ public class BabelfyAnnotator extends AbstractAnnotator implements EntityExtract
         // Add the last chunk
         chunks.add(text.substring(start));
         return chunks;
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 }

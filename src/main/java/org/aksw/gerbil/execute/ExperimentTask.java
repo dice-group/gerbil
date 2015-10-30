@@ -61,6 +61,7 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,13 +144,7 @@ public class ExperimentTask implements Task {
         } catch (Exception e) {
             LOGGER.error("Error while trying to execute experiment.", e);
         } finally {
-            if ((annotator != null) && (annotator instanceof Closeable)) {
-                try {
-                    ((Closeable) annotator).close();
-                } catch (IOException e) {
-                    LOGGER.info("Exception while trying to close annotator \"" + annotator.getName() + "\".", e);
-                }
-            }
+            IOUtils.closeQuietly(annotator);
         }
     }
 

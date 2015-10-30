@@ -22,6 +22,7 @@
  */
 package org.aksw.gerbil.annotator;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,5 +58,9 @@ public class AbstractTestAnnotator extends AbstractAnnotatorConfiguration implem
         } else {
             return null;
         }
+    }
+
+    @Override
+    public void close() throws IOException {
     }
 }

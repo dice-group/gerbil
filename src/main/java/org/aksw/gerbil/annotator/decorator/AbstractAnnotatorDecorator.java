@@ -1,5 +1,7 @@
 package org.aksw.gerbil.annotator.decorator;
 
+import java.io.IOException;
+
 import org.aksw.gerbil.annotator.Annotator;
 
 /**
@@ -31,4 +33,8 @@ public class AbstractAnnotatorDecorator implements AnnotatorDecorator {
         return decoratedAnnotator;
     }
 
+    @Override
+    public void close() throws IOException {
+        decoratedAnnotator.close();
+    }
 }

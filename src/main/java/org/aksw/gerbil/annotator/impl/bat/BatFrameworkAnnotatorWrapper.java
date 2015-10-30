@@ -29,10 +29,12 @@ import it.unipi.di.acube.batframework.problems.Sa2WSystem;
 import it.unipi.di.acube.batframework.problems.TopicSystem;
 import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.C2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityExtractor;
 import org.aksw.gerbil.annotator.EntityLinker;
 import org.aksw.gerbil.annotator.EntityRecognizer;
@@ -100,6 +102,10 @@ public class BatFrameworkAnnotatorWrapper {
         protected List<Meaning> performC2KB(C2WSystem annotator, Document document) throws GerbilException {
             return translater.translateTags(annotator.solveC2W(document.getText()));
         }
+
+        @Override
+        public void close() throws IOException {
+        }
     }
 
     protected static class A2KBSystemWrapper extends AbstractTopicSystemWrapper<A2WSystem>
@@ -130,7 +136,7 @@ public class BatFrameworkAnnotatorWrapper {
         }
     }
 
-    protected static class D2KBSystemWrapper extends AbstractTopicSystemWrapper<D2WSystem>implements EntityLinker {
+    protected static class D2KBSystemWrapper extends AbstractTopicSystemWrapper<D2WSystem> implements EntityLinker {
 
         public D2KBSystemWrapper(D2WSystem annotator, WikipediaApiInterface wikiApi) {
             super(annotator, wikiApi);
@@ -139,6 +145,19 @@ public class BatFrameworkAnnotatorWrapper {
         @Override
         public List<MeaningSpan> performLinking(Document document) throws GerbilException {
             return performLinking(annotator, document);
+        }
+
+    }
+
+    protected static class C2KBSystemWrapper extends AbstractTopicSystemWrapper<C2WSystem> implements C2KBAnnotator {
+
+        public C2KBSystemWrapper(C2WSystem annotator, WikipediaApiInterface wikiApi) {
+            super(annotator, wikiApi);
+        }
+
+        @Override
+        public List<Meaning> performC2KB(Document document) throws GerbilException {
+            return performC2KB(annotator, document);
         }
 
     }

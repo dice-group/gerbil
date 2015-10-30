@@ -1,6 +1,5 @@
 package org.aksw.gerbil.annotator.http;
 
-import java.io.Closeable;
 import java.io.IOException;
 
 import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
@@ -16,7 +15,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractHttpBasedAnnotator extends AbstractAnnotator implements Closeable {
+public abstract class AbstractHttpBasedAnnotator extends AbstractAnnotator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHttpBasedAnnotator.class);
 
