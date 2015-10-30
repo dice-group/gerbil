@@ -39,23 +39,34 @@ import org.aksw.simba.topicmodeling.concurrent.overseers.pool.DefeatableOverseer
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.aksw.simba.topicmodeling.concurrent.tasks.TaskObserver;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Ignore
 public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    private static final String ANNOTATOR_NAME = "Entityclassifier.eu NER";
-    private static final String DATASET_NAME = "Microposts2014-Train";
+    private static final String ANNOTATOR_NAME = "Babelfy";
+    private static final String DATASET_NAME = "MSNBC";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.D2KB;
     private static final Matching MATCHING = Matching.WEAK_ANNOTATION_MATCH;
+
+    public static void main(String[] args) throws Exception {
+        SingleRunTest test = new SingleRunTest();
+        test.run();
+    }
 
     private Semaphore mutex = new Semaphore(0);
 
     @Test
     public void runTest() throws Exception {
+        run();
+    }
+
+    public void run() throws Exception {
         AdapterManager adapterManager = new AdapterManager();
         adapterManager.setAnnotators(AnnotatorsConfig.annotators());
         adapterManager.setDatasets(DatasetsConfig.datasets());

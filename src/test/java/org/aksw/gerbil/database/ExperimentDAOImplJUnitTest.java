@@ -185,7 +185,7 @@ public class ExperimentDAOImplJUnitTest {
                 { "annotator1", "dataset1", ExperimentType.A2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() },
                 { "annotator1", "dataset2", ExperimentType.A2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() },
                 { "annotator1", "dataset1", ExperimentType.A2KB.name(), Matching.STRONG_ANNOTATION_MATCH.name() },
-                { "annotator2", "dataset1", ExperimentType.A2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() } };
+                { "annotator2", "dataset1", ExperimentType.D2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() } };
         int taskId;
         for (int i = 0; i < tasks.length; ++i) {
             taskId = this.dao.createTask(tasks[i][0], tasks[i][1], tasks[i][2], tasks[i][3], "id-" + i);

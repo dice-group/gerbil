@@ -45,7 +45,6 @@ import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
-import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -134,28 +133,7 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
         entity = null;
         CloseableHttpResponse response = null;
         try {
-            try {
-                response = client.execute(request);
-            } catch (java.net.SocketException e) {
-                if (e.getMessage().contains(CONNECTION_ABORT_INDICATING_EXCPETION_MSG)) {
-                    LOGGER.error("It seems like the annotator has needed too much time and has been interrupted.");
-                    throw new GerbilException(
-                            "It seems like the annotator has needed too much time and has been interrupted.", e,
-                            ErrorTypes.ANNOTATOR_NEEDED_TOO_MUCH_TIME);
-                } else {
-                    LOGGER.error("Exception while sending request.", e);
-                    throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
-                }
-            } catch (Exception e) {
-                LOGGER.error("Exception while sending request.", e);
-                throw new GerbilException("Exception while sending request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
-            }
-            StatusLine status = response.getStatusLine();
-            if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
-                LOGGER.error("Response has the wrong status: " + status.toString());
-                throw new GerbilException("Response has the wrong status: " + status.toString(),
-                        ErrorTypes.UNEXPECTED_EXCEPTION);
-            }
+            response = sendRequest(request);
             // receive NIF document
             entity = response.getEntity();
             // read response and parse NIF

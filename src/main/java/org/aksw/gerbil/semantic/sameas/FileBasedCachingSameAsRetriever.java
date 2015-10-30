@@ -48,11 +48,11 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
 
     private static final int MAX_CONCURRENT_READERS = 1000;
 
-    private static final int ENTITY_NOT_FOUND = -1;
+    protected static final int ENTITY_NOT_FOUND = -1;
 
     @SuppressWarnings("unchecked")
-    public static FileBasedCachingSameAsRetriever create(SameAsRetriever decoratedRetriever, boolean requestEntitiesNotFound,
-            File cacheFile) {
+    public static FileBasedCachingSameAsRetriever create(SameAsRetriever decoratedRetriever,
+            boolean requestEntitiesNotFound, File cacheFile) {
         File tempCacheFile = new File(cacheFile.getAbsolutePath() + "_temp");
 
         Object objects[] = null;
@@ -88,18 +88,19 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
                 cacheFile, tempCacheFile);
     }
 
-    private ObjectIntOpenHashMap<String> uriSetIdMapping;
-    private List<Set<String>> sets;
+    protected ObjectIntOpenHashMap<String> uriSetIdMapping;
+    protected List<Set<String>> sets;
     private int cacheChanges = 0;
     private int forceStorageAfterChanges = 1000;
     private Semaphore cacheReadMutex = new Semaphore(MAX_CONCURRENT_READERS);
     private Semaphore cacheWriteMutex = new Semaphore(1);
     private boolean requestEntitiesNotFound;
-    private File cacheFile;
-    private File tempCacheFile;
+    protected File cacheFile;
+    protected File tempCacheFile;
 
-    protected FileBasedCachingSameAsRetriever(SameAsRetriever decoratedRetriever, ObjectIntOpenHashMap<String> uriSetIdMapping,
-            List<Set<String>> sets, boolean requestEntitiesNotFound, File cacheFile, File tempCacheFile) {
+    protected FileBasedCachingSameAsRetriever(SameAsRetriever decoratedRetriever,
+            ObjectIntOpenHashMap<String> uriSetIdMapping, List<Set<String>> sets, boolean requestEntitiesNotFound,
+            File cacheFile, File tempCacheFile) {
         super(decoratedRetriever);
         this.uriSetIdMapping = uriSetIdMapping;
         this.sets = sets;
@@ -139,15 +140,30 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
                 LOGGER.error("Exception while waiting for read mutex. Returning null.", e);
                 return null;
             }
-            if (result != null) {
-                mergeSetIntoCache(result);
+            // Check again that nobody already added the uri
+            if (uriSetIdMapping.containsKey(uri)) {
+                // use the cached result
+                int setId = uriSetIdMapping.get(uri);
+                if (setId != ENTITY_NOT_FOUND) {
+                    result = sets.get(setId);
+                } else {
+                    result = null;
+                }
             } else {
-                uriSetIdMapping.put(uri, ENTITY_NOT_FOUND);
-            }
-            ++cacheChanges;
-            if ((forceStorageAfterChanges > 0) && (cacheChanges >= forceStorageAfterChanges)) {
-                LOGGER.info("Storing the cache has been forced...");
-                storeCache();
+                if (result != null) {
+                    mergeSetIntoCache(result);
+                } else {
+                    uriSetIdMapping.put(uri, ENTITY_NOT_FOUND);
+                }
+                ++cacheChanges;
+                if ((forceStorageAfterChanges > 0) && (cacheChanges >= forceStorageAfterChanges)) {
+                    LOGGER.info("Storing the cache has been forced...");
+                    try {
+                        performCacheStorage();
+                    } catch (IOException e) {
+                        LOGGER.error("Exception while writing cache to file. Aborting.", e);
+                    }
+                }
             }
             // The last one will be released at the end
             cacheReadMutex.release(MAX_CONCURRENT_READERS - 1);
@@ -157,7 +173,7 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
         return result;
     }
 
-    private void mergeSetIntoCache(Set<String> result) {
+    protected void mergeSetIntoCache(Set<String> result) {
         // In most cases we shouldn't need this objects
         IntOpenHashSet alreadyExistingSets = null;
         int setId;
@@ -175,7 +191,7 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
         // if a joining is needed
         if (alreadyExistingSets != null) {
             for (int i = 0; i < alreadyExistingSets.allocated.length; i++) {
-                if (alreadyExistingSets.allocated[i]) {
+                if (alreadyExistingSets.allocated[i] && (alreadyExistingSets.keys[i] != ENTITY_NOT_FOUND)) {
                     result.addAll(sets.get(alreadyExistingSets.keys[i]));
                     sets.set(alreadyExistingSets.keys[i], null);
                 }
@@ -209,7 +225,7 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
         ObjectOutputStream oout = null;
         try {
             fout = new FileOutputStream(tempCacheFile);
-            oout = new ObjectOutputStream(oout);
+            oout = new ObjectOutputStream(fout);
             // first, serialize the number of URIs
             oout.writeInt(uriSetIdMapping.assigned);
             // go over the mapping and serialize all existing pairs
@@ -232,7 +248,7 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
             IOUtils.closeQuietly(oout);
             IOUtils.closeQuietly(fout);
         }
-        if (!cacheFile.delete()) {
+        if (cacheFile.exists() && !cacheFile.delete()) {
             LOGGER.error("Cache file couldn't be deleted. Aborting.");
             return;
         }
@@ -304,6 +320,7 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
                 for (int j = 0; j < setSize; ++j) {
                     set.add((String) oin.readObject());
                 }
+                sets.add(set);
             }
             return new Object[] { uriSetIdMapping, sets };
         } catch (Exception e) {

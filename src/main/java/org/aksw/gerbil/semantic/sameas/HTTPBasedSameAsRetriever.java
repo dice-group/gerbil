@@ -26,33 +26,67 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.jena.atlas.web.HttpException;
+import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.adapters.RDFReaderRIOT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFReader;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.OWL;
 
-public class HTTPBasedSameAsRetriever implements SameAsRetriever {
+public class HTTPBasedSameAsRetriever/* extends AbstractHttpBasedAnnotator */ implements SameAsRetriever {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HTTPBasedSameAsRetriever.class);
 
     private static final int MAXIMUM_NUMBER_OF_TRIES = 3;
 
+    // private static final String REQUEST_ACCEPT_HEADER_VALUE =
+    // RDFLanguages.TURTLE.getContentType().getContentType()
+    // + ", " + RDFLanguages.RDFXML.getContentType().getContentType() + ";q=0.6,
+    // "
+    // + RDFLanguages.N3.getContentType().getContentType() + ";q=0.8, "
+    // + RDFLanguages.NQ.getContentType().getContentType() + ";q=0.8, "
+    // + RDFLanguages.JSONLD.getContentType().getContentType() + ";q=0.7";
+
+    // protected CloseableHttpClient client;
     private RDFReader reader = new RDFReaderRIOT();
+
+    // public HTTPBasedSameAsRetriever() {
+    // this(HttpClients.createDefault());
+    // }
+    //
+    // public HTTPBasedSameAsRetriever(CloseableHttpClient client) {
+    // this.client = client;
+    // }
 
     @Override
     public Set<String> retrieveSameURIs(String uri) {
-        Model model = ModelFactory.createDefaultModel();
+        if (uri == null) {
+            return null;
+        }
+        Model model = null;
         try {
-            requestModel(model, uri, 0);
+            Dataset uriDataset = RDFDataMgr.loadDataset(uri);
+            model = uriDataset.getDefaultModel();
+            // model = requestModel(uri);
+        } catch (org.apache.jena.atlas.web.HttpException e) {
+            LOGGER.debug("HTTP Exception while requesting uri \"" + uri + "\". Returning null. Exception: "
+                    + e.getMessage());
+            return null;
+        } catch (org.apache.jena.riot.RiotException e) {
+            LOGGER.debug("Riot Exception while parsing requested model of uri \"" + uri
+                    + "\". Returning null. Exception: " + e.getMessage());
+            return null;
         } catch (Exception e) {
             LOGGER.debug("Exception while requesting uri \"" + uri + "\". Returning null.", e);
+            return null;
+        }
+        if (model == null) {
             return null;
         }
         Set<String> result = new HashSet<String>();
@@ -90,6 +124,7 @@ public class HTTPBasedSameAsRetriever implements SameAsRetriever {
         }
     }
 
+    @Deprecated
     protected void requestModel(Model model, String uri, int retryCount) throws Exception {
         if (uri == null) {
             return;
@@ -109,6 +144,82 @@ public class HTTPBasedSameAsRetriever implements SameAsRetriever {
             }
         }
     }
+
+    // protected Model requestModel(String uri) {
+    // HttpGet request = createGetRequest(uri);
+    // request.addHeader(HttpHeaders.ACCEPT, REQUEST_ACCEPT_HEADER_VALUE);
+    // request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
+    //
+    // HttpEntity entity = null;
+    // CloseableHttpResponse response = null;
+    // Model model = null;
+    // try {
+    //
+    // try {
+    // response = client.execute(request);
+    // } catch (java.net.SocketException e) {
+    // if (e.getMessage().contains(CONNECTION_ABORT_INDICATING_EXCPETION_MSG)) {
+    // LOGGER.error(
+    // "It seems like the HTTP client has needed too much time and has been
+    // interrupted. Returning null.");
+    // return null;
+    // } else {
+    // LOGGER.error("Exception while sending request. Returning null.", e);
+    // return null;
+    // }
+    // } catch (Exception e) {
+    // LOGGER.error("Exception while sending request. Returning null.", e);
+    // return null;
+    // }
+    // StatusLine status = response.getStatusLine();
+    // if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
+    // LOGGER.error("Response has the wrong status ({}). Returning null.",
+    // status.toString());
+    // return null;
+    // }
+    // // receive NIF document
+    // entity = response.getEntity();
+    // Header contentTypeHeader =
+    // response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
+    // if (contentTypeHeader == null) {
+    // LOGGER.error("The response did not contain a content type header.
+    // Returning null.");
+    // return null;
+    // }
+    // ContentType contentType =
+    // ContentType.create(contentTypeHeader.getValue());
+    // Lang language = RDFLanguages.contentTypeToLang(contentType);
+    // if (language == null) {
+    // LOGGER.error("Couldn't find an RDF language for the content type header
+    // value \"{}\". Returning null.",
+    // contentTypeHeader.getValue());
+    // return null;
+    // }
+    // // read response and parse NIF
+    // try {
+    // model = ModelFactory.createDefaultModel();
+    // RDFDataMgr.read(model, entity.getContent(), language);
+    // } catch (Exception e) {
+    // LOGGER.error("Couldn't parse the response for the URI \"" + uri + "\".
+    // Returning null", e);
+    // }
+    // } finally {
+    // if (entity != null) {
+    // try {
+    // EntityUtils.consume(entity);
+    // } catch (IOException e1) {
+    // }
+    // }
+    // if (response != null) {
+    // try {
+    // response.close();
+    // } catch (IOException e) {
+    // }
+    // }
+    // closeRequest(request);
+    // }
+    // return model;
+    // }
 
     @Override
     public void addSameURIs(Set<String> uris) {

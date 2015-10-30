@@ -135,27 +135,28 @@ public class RootConfig {
         SameAsRetriever sameAsRetriever = new HTTPBasedSameAsRetriever();
         SameAsRetriever decoratedRetriever = null;
         if (GerbilConfiguration.getInstance().containsKey(SAME_AS_CACHE_FILE_KEY)) {
-            decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, true,
+            decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, false,
                     new File(GerbilConfiguration.getInstance().getString(SAME_AS_CACHE_FILE_KEY)));
         }
         if (decoratedRetriever == null) {
-            LOGGER.warn("Couldn't create file based cache for sameAs retrieving.");
-        } else {
-            sameAsRetriever = decoratedRetriever;
-            decoratedRetriever = null;
-        }
-        if (GerbilConfiguration.getInstance().containsKey(SAME_AS_IN_MEMORY_CACHE_SIZE_KEY)) {
-            try {
-                int cacheSize = GerbilConfiguration.getInstance().getInt(SAME_AS_IN_MEMORY_CACHE_SIZE_KEY);
-                decoratedRetriever = new InMemoryCachingSameAsRetriever(sameAsRetriever, cacheSize);
-            } catch (ConversionException e) {
-                LOGGER.warn("Exception while trying to load parameter \"" + SAME_AS_IN_MEMORY_CACHE_SIZE_KEY + "\".",
-                        e);
+            LOGGER.warn("Couldn't create file based cache for sameAs retrieving. Trying to create in Memory cache.");
+            if (GerbilConfiguration.getInstance().containsKey(SAME_AS_IN_MEMORY_CACHE_SIZE_KEY)) {
+                try {
+                    int cacheSize = GerbilConfiguration.getInstance().getInt(SAME_AS_IN_MEMORY_CACHE_SIZE_KEY);
+                    decoratedRetriever = new InMemoryCachingSameAsRetriever(sameAsRetriever, cacheSize);
+                } catch (ConversionException e) {
+                    LOGGER.warn(
+                            "Exception while trying to load parameter \"" + SAME_AS_IN_MEMORY_CACHE_SIZE_KEY + "\".",
+                            e);
+                }
             }
-        }
-        if (decoratedRetriever == null) {
-            LOGGER.info("Using default cache size for sameAs link in memory cache.");
-            sameAsRetriever = new InMemoryCachingSameAsRetriever(sameAsRetriever);
+            if (decoratedRetriever == null) {
+                LOGGER.info("Using default cache size for sameAs link in memory cache.");
+                sameAsRetriever = new InMemoryCachingSameAsRetriever(sameAsRetriever);
+            } else {
+                sameAsRetriever = decoratedRetriever;
+                decoratedRetriever = null;
+            }
         } else {
             sameAsRetriever = decoratedRetriever;
             decoratedRetriever = null;
