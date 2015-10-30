@@ -26,8 +26,8 @@ import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.C2KBAnnotator;
-import org.aksw.gerbil.annotator.EntityExtractor;
-import org.aksw.gerbil.annotator.EntityLinker;
+import org.aksw.gerbil.annotator.A2KBAnnotator;
+import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
@@ -62,16 +62,12 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
     @SuppressWarnings("deprecation")
     public static TimeMeasuringAnnotatorDecorator createDecorator(ExperimentType type, Annotator annotator) {
         switch (type) {
-        case A2KB:
-            break;
         case C2KB:
             return new TimeMeasuringC2KBAnnotator((C2KBAnnotator) annotator);
+        case A2KB:
+            return new TimeMeasuringA2KBAnnotator((A2KBAnnotator) annotator);
         case D2KB:
-            break;
-        case EExt:
-            return new TimeMeasuringEntityExtractor((EntityExtractor) annotator);
-        case ELink:
-            return new TimeMeasuringEntityLinker((EntityLinker) annotator);
+            return new TimeMeasuringD2KBAnnotator((D2KBAnnotator) annotator);
         case ERec:
             return new TimeMeasuringEntityRecognizer((EntityRecognizer) annotator);
         case ETyping:
@@ -105,15 +101,15 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
 
     }
 
-    private static class TimeMeasuringEntityLinker extends TimeMeasuringAnnotatorDecorator implements EntityLinker {
+    private static class TimeMeasuringD2KBAnnotator extends TimeMeasuringAnnotatorDecorator implements D2KBAnnotator {
 
-        public TimeMeasuringEntityLinker(EntityLinker decoratedAnnotator) {
+        public TimeMeasuringD2KBAnnotator(D2KBAnnotator decoratedAnnotator) {
             super(decoratedAnnotator);
         }
 
         @Override
-        public List<MeaningSpan> performLinking(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performLinking(this, document);
+        public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
+            return TimeMeasuringAnnotatorDecorator.performD2KBTask(this, document);
         }
     }
 
@@ -130,9 +126,9 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
-    private static class TimeMeasuringEntityExtractor extends TimeMeasuringEntityLinker implements EntityExtractor {
+    private static class TimeMeasuringA2KBAnnotator extends TimeMeasuringD2KBAnnotator implements A2KBAnnotator {
 
-        public TimeMeasuringEntityExtractor(EntityExtractor decoratedAnnotator) {
+        public TimeMeasuringA2KBAnnotator(A2KBAnnotator decoratedAnnotator) {
             super(decoratedAnnotator);
         }
 
@@ -147,7 +143,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         }
 
         @Override
-        public List<MeaningSpan> performExtraction(Document document) throws GerbilException {
+        public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
             return TimeMeasuringAnnotatorDecorator.performExtraction(this, document);
         }
 
@@ -165,7 +161,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
-    private static class TimeMeasuringOKETask1Annotator extends TimeMeasuringEntityExtractor
+    private static class TimeMeasuringOKETask1Annotator extends TimeMeasuringA2KBAnnotator
             implements OKETask1Annotator {
 
         protected TimeMeasuringOKETask1Annotator(OKETask1Annotator decoratedAnnotator) {
@@ -205,11 +201,11 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         return result;
     }
 
-    protected static List<MeaningSpan> performLinking(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
+    protected static List<MeaningSpan> performD2KBTask(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
             throws GerbilException {
         long startTime = System.currentTimeMillis();
         List<MeaningSpan> result = null;
-        result = ((EntityLinker) timeMeasurer.getDecoratedAnnotator()).performLinking(document);
+        result = ((D2KBAnnotator) timeMeasurer.getDecoratedAnnotator()).performD2KBTask(document);
         timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
         return result;
     }
@@ -218,7 +214,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
             Document document) throws GerbilException {
         long startTime = System.currentTimeMillis();
         List<MeaningSpan> result = null;
-        result = ((EntityExtractor) timeMeasurer.getDecoratedAnnotator()).performExtraction(document);
+        result = ((A2KBAnnotator) timeMeasurer.getDecoratedAnnotator()).performA2KBTask(document);
         timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
         return result;
     }

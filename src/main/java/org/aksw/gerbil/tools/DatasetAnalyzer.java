@@ -45,6 +45,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("deprecation")
+/**
+ * FIXME update this tool.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ *
+ */
 public class DatasetAnalyzer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetAnalyzer.class);

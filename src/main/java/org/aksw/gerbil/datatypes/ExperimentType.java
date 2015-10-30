@@ -34,16 +34,16 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public enum ExperimentType implements Describable {
 
     /**
-     * Annotate to KB (Entity Extraction)
+     * Annotate to KB
      * <p>
      * Identify the relevant mentions in the input text and assign to each of
      * them the pertinent entities. Entity Extraction comprises the two tasks
-     * {@link #ERec} and {@link #ELink} .
+     * {@link #ERec} and {@link #D2KB} .
      * </p>
      * Input: text <br>
      * Output: marked entities and mentions for their meaning
      */
-    EExt("A2KB", "The annotator gets a text and shall recognize entities inside and link them to a knowledge base."),
+    A2KB("A2KB", "The annotator gets a text and shall recognize entities inside and link them to a knowledge base."),
 
     /**
      * Concepts to KB
@@ -66,31 +66,34 @@ public enum ExperimentType implements Describable {
      * Input: text with marked entities <br>
      * Output: mentions for every entity
      */
-    ELink("D2KB",
+    D2KB("D2KB",
             "The input for the annotator is a text with entities that already have been marked inside. The annotator should link all these mentioned entities to a knowledge base."),
 
-    /**
-     * Disambiguate to KB
-     * <p>
-     * Assign to each input mention its pertinent entity (possibly null).
-     * </p>
-     * Input: text with marked entities <br>
-     * Output: mentions for every entity
-     */
-    @Deprecated D2KB("D2KB",
-            "The input for the annotator is a text with entities that already have been marked inside. The annotator should link all these mentioned entities to a knowledge base."),
-
-    /**
-     * Annotate to KB
-     * <p>
-     * Identify the relevant mentions in the input text and assign to each of
-     * them the pertinent entities.
-     * </p>
-     * Input: text <br>
-     * Output: marked entities and mentions for their meaning
-     */
-    @Deprecated A2KB("A2KB",
-            "The annotator gets a text and shall recognize entities inside and link them to a knowledge base."),
+    // /**
+    // * Disambiguate to KB
+    // * <p>
+    // * Assign to each input mention its pertinent entity (possibly null).
+    // * </p>
+    // * Input: text with marked entities <br>
+    // * Output: mentions for every entity
+    // */
+    // @Deprecated D2KB_OLD("D2KB",
+    // "The input for the annotator is a text with entities that already have
+    // been marked inside. The annotator should link all these mentioned
+    // entities to a knowledge base."),
+    //
+    // /**
+    // * Annotate to KB
+    // * <p>
+    // * Identify the relevant mentions in the input text and assign to each of
+    // * them the pertinent entities.
+    // * </p>
+    // * Input: text <br>
+    // * Output: marked entities and mentions for their meaning
+    // */
+    // @Deprecated A2KB_OLD("A2KB",
+    // "The annotator gets a text and shall recognize entities inside and link
+    // them to a knowledge base."),
 
     /**
      * Scored - annotate to KB
@@ -197,9 +200,7 @@ public enum ExperimentType implements Describable {
             switch (type) {
             case ERec:
             case Sa2KB: // falls through
-            case EExt:
             case A2KB:
-            case ELink:
             case D2KB:
             case ETyping:
             case OKE_Task1:
@@ -218,9 +219,7 @@ public enum ExperimentType implements Describable {
             case ERec:
             case Sa2KB: // falls through
             case Sc2KB:
-            case EExt:
             case A2KB:
-            case ELink:
             case D2KB:
             case ETyping:
             case OKE_Task1:
@@ -233,7 +232,6 @@ public enum ExperimentType implements Describable {
             }
             }
         }
-        case EExt: // falls through
         case A2KB: {
             switch (type) {
             case Sa2KB: // falls through
@@ -245,11 +243,9 @@ public enum ExperimentType implements Describable {
                 return false;
             }
             case A2KB: // falls through
-            case EExt:
-            case ELink:
+            case D2KB:
             case ERec:
-            case C2KB:
-            case D2KB: {
+            case C2KB: {
                 return true;
             }
             }
@@ -260,9 +256,7 @@ public enum ExperimentType implements Describable {
             case Sa2KB: // falls through
             case Sc2KB:
             case Rc2KB:
-            case EExt:
             case A2KB:
-            case ELink:
             case D2KB:
             case ETyping:
             case OKE_Task1:
@@ -274,14 +268,12 @@ public enum ExperimentType implements Describable {
             }
             }
         }
-        case ELink:// falls through
         case D2KB: {
             switch (type) {
             case ERec:
             case Sa2KB: // falls through
             case Sc2KB:
             case Rc2KB:
-            case EExt:
             case A2KB:
             case C2KB:
             case ETyping:
@@ -289,7 +281,6 @@ public enum ExperimentType implements Describable {
             case OKE_Task2: {
                 return false;
             }
-            case ELink:
             case D2KB: {
                 return true;
             }
@@ -300,10 +291,8 @@ public enum ExperimentType implements Describable {
             case Sa2KB: // falls through
             case Sc2KB:
             case Rc2KB:
-            case EExt:
             case A2KB:
             case C2KB:
-            case ELink:
             case D2KB:
             case ETyping:
             case OKE_Task1:
@@ -336,6 +325,14 @@ public enum ExperimentType implements Describable {
     }
 
     public String toString() {
-        return "{name:" + name() + " ,label:" + getLabel() + ", description:" + getDescription() + "}";
+        StringBuilder builder = new StringBuilder();
+        builder.append("{name:");
+        builder.append(name());
+        builder.append(", label:");
+        builder.append(getLabel());
+        builder.append(", description:");
+        builder.append(getDescription());
+        builder.append('}');
+        return builder.toString();
     }
 }

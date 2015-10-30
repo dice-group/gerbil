@@ -65,6 +65,8 @@ public class GERBIL {
     public static final Resource Sc2KB = resource("Sc2KB");
     public static final Resource OKE2015_Task1 = resource("OKE2015_Task1");
     public static final Resource OKE2015_Task2 = resource("OKE2015_Task2");
+    public static final Resource ERec = resource("ERec");
+    public static final Resource ETyping = resource("ETyping");
 
     public static final Resource StrongAnnoMatch = resource("StrongAnnoMatch");
     public static final Resource WeakAnnoMatch = resource("WeakAnnoMatch");
@@ -121,7 +123,11 @@ public class GERBIL {
             return OKE2015_Task1;
         case OKE_Task2:
             return OKE2015_Task2;
-            // FIXME add missing experiment types
+        case ERec:
+            return ERec;
+        case ETyping:
+            return ETyping;
+        // FIXME add missing experiment types
         default:
             ;
         }

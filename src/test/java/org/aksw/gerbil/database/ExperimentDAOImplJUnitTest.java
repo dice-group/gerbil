@@ -101,7 +101,6 @@ public class ExperimentDAOImplJUnitTest {
         Assert.assertFalse(thirdTaskId == fourthTaskId);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testExperimentCreationAndSelection() throws InterruptedException {
         final String EXPERIMENT_ID = "id-999";
@@ -178,7 +177,6 @@ public class ExperimentDAOImplJUnitTest {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testGetLatestResultsOfExperiments() {
         // Only the first task should be retrieved, the second is not finished, the third has the wrong matching and the
@@ -187,7 +185,7 @@ public class ExperimentDAOImplJUnitTest {
                 { "annotator1", "dataset1", ExperimentType.A2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() },
                 { "annotator1", "dataset2", ExperimentType.A2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() },
                 { "annotator1", "dataset1", ExperimentType.A2KB.name(), Matching.STRONG_ANNOTATION_MATCH.name() },
-                { "annotator2", "dataset1", ExperimentType.D2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() } };
+                { "annotator2", "dataset1", ExperimentType.A2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() } };
         int taskId;
         for (int i = 0; i < tasks.length; ++i) {
             taskId = this.dao.createTask(tasks[i][0], tasks[i][1], tasks[i][2], tasks[i][3], "id-" + i);

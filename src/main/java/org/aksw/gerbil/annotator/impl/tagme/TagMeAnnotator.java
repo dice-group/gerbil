@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.EntityExtractor;
+import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -30,7 +30,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements EntityExtractor {
+public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnnotator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TagMeAnnotator.class);
 
@@ -69,7 +69,7 @@ public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements Entity
     }
 
     @Override
-    public List<MeaningSpan> performLinking(Document document) throws GerbilException {
+    public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
         return performRequest(document, true).getMarkings(MeaningSpan.class);
     }
 
@@ -79,7 +79,7 @@ public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements Entity
     }
 
     @Override
-    public List<MeaningSpan> performExtraction(Document document) throws GerbilException {
+    public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
         return performRequest(document, true).getMarkings(MeaningSpan.class);
     }
 

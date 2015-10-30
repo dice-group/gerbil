@@ -44,7 +44,7 @@ public class SpotlightTest {
         AdapterList<DatasetConfiguration> datasets = DatasetsConfig.datasets();
         DatasetConfiguration datasetConfig = datasets.getAdaptersForName("AIDA/CoNLL-Training").get(0);
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
-                new ExperimentTaskConfiguration(new SpotlightAnnotatorConfig(), datasetConfig, ExperimentType.EExt,
+                new ExperimentTaskConfiguration(new SpotlightAnnotatorConfig(), datasetConfig, ExperimentType.A2KB,
                         Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
                 new EvaluatorFactory(), taskConfigs, "SPOTLIGHT_TEST");

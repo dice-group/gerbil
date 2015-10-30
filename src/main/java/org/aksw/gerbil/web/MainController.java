@@ -236,7 +236,6 @@ public class MainController {
         case C2KB:
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
         case D2KB:
-        case ELink:
         case ETyping:
             // Mw will not be shown since the positions are always exact and
             // thus it works like Ma
@@ -246,10 +245,9 @@ public class MainController {
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
         case OKE_Task1:
         case OKE_Task2:
-        case EExt:
+        case A2KB:
         case ERec:
         case Sa2KB:
-        case A2KB:
             return new ModelMap("Matching",
                     Lists.newArrayList(Matching.WEAK_ANNOTATION_MATCH, Matching.STRONG_ANNOTATION_MATCH));
         default:

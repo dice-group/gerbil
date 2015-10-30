@@ -25,8 +25,8 @@ package org.aksw.gerbil.execute;
 import java.util.Arrays;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.TestEntityExtractor;
-import org.aksw.gerbil.annotator.TestEntityLinker;
+import org.aksw.gerbil.annotator.TestA2KBAnnotator;
+import org.aksw.gerbil.annotator.TestD2KBAnnotator;
 import org.aksw.gerbil.annotator.TestEntityRecognizer;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.TestDataset;
@@ -72,13 +72,13 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 3;
-        configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(INSTANCES), new TestDataset(INSTANCES,
+        configuration = new ExperimentTaskConfiguration(new TestA2KBAnnotator(INSTANCES), new TestDataset(INSTANCES,
                 ExperimentType.ERec), ExperimentType.ERec, Matching.STRONG_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 4;
-        configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(INSTANCES), new TestDataset(INSTANCES,
+        configuration = new ExperimentTaskConfiguration(new TestA2KBAnnotator(INSTANCES), new TestDataset(INSTANCES,
                 ExperimentType.ERec), ExperimentType.ERec, Matching.WEAK_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
@@ -88,14 +88,14 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
     public void testEntityLinking() {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
-        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestEntityLinker(INSTANCES),
-                new TestDataset(INSTANCES, ExperimentType.ELink), ExperimentType.ELink, Matching.STRONG_ENTITY_MATCH);
+        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestD2KBAnnotator(INSTANCES),
+                new TestDataset(INSTANCES, ExperimentType.D2KB), ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 2;
-        configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(INSTANCES), new TestDataset(INSTANCES,
-                ExperimentType.ELink), ExperimentType.ELink, Matching.STRONG_ENTITY_MATCH);
+        configuration = new ExperimentTaskConfiguration(new TestA2KBAnnotator(INSTANCES), new TestDataset(INSTANCES,
+                ExperimentType.D2KB), ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
     }
@@ -104,14 +104,14 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
     public void testEntityExtraction() {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
-        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(INSTANCES),
-                new TestDataset(INSTANCES, ExperimentType.EExt), ExperimentType.EExt, Matching.STRONG_ANNOTATION_MATCH);
+        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestA2KBAnnotator(INSTANCES),
+                new TestDataset(INSTANCES, ExperimentType.A2KB), ExperimentType.A2KB, Matching.STRONG_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 2;
-        configuration = new ExperimentTaskConfiguration(new TestEntityExtractor(INSTANCES), new TestDataset(INSTANCES,
-                ExperimentType.EExt), ExperimentType.EExt, Matching.WEAK_ANNOTATION_MATCH);
+        configuration = new ExperimentTaskConfiguration(new TestA2KBAnnotator(INSTANCES), new TestDataset(INSTANCES,
+                ExperimentType.A2KB), ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
     }

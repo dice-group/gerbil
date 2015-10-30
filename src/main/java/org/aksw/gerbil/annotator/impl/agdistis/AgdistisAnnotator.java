@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.EntityLinker;
+import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -35,7 +35,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements EntityLinker {
+public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements D2KBAnnotator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgdistisAnnotator.class);
 
@@ -84,7 +84,7 @@ public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements Ent
     }
 
     @Override
-    public List<MeaningSpan> performLinking(Document document) throws GerbilException {
+    public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
         String textWithMentions = createTextWithMentions(document.getText(), document.getMarkings(Span.class));
         return getAnnotations(textWithMentions);
     }

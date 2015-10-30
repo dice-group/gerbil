@@ -37,7 +37,7 @@ public class DexterAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private static final String ANNOTATION_URL_PROPERTY_KEY = "org.aksw.gerbil.annotators.DexterAnnotatorConfig.annotationUrl";
 
     public DexterAnnotatorConfig() {
-        super(ANNOTATOR_NAME, true, ExperimentType.EExt);
+        super(ANNOTATOR_NAME, true, ExperimentType.A2KB);
     }
 
     @Override

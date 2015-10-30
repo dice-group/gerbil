@@ -43,9 +43,9 @@ public class AgdistisTest {
             NoSuchMethodException, SecurityException {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new AnnotatorConfigurationImpl("AGDISTIS", true, AgdistisAnnotator.class.getConstructor(),
-                        new String[0], ExperimentType.ELink), new KnownNIFFileDatasetConfig(
+                        new String[0], ExperimentType.D2KB), new KnownNIFFileDatasetConfig(
                         org.aksw.gerbil.datasets.KnownNIFFileDatasetConfig.NIFDatasets.N3_REUTERS_128),
-                ExperimentType.ELink, Matching.STRONG_ENTITY_MATCH) };
+                ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
                 new EvaluatorFactory(), taskConfigs, "AGDISTIS_TEST");
         experimenter.run();

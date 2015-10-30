@@ -27,8 +27,8 @@ import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.C2KBAnnotator;
-import org.aksw.gerbil.annotator.EntityExtractor;
-import org.aksw.gerbil.annotator.EntityLinker;
+import org.aksw.gerbil.annotator.A2KBAnnotator;
+import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
@@ -72,16 +72,12 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             int numberOfExpectedCalls) {
         int maxErrors = (int) Math.ceil(AMOUNT_OF_TOLERATED_ERRORS * numberOfExpectedCalls);
         switch (type) {
-        case A2KB:
-            break;
         case C2KB:
             return new ErrorCountingC2KBAnnotator((C2KBAnnotator) annotator, maxErrors);
+        case A2KB:
+            return new ErrorCountingA2KBAnnotator((A2KBAnnotator) annotator, maxErrors);
         case D2KB:
-            break;
-        case EExt:
-            return new ErrorCountingEntityExtractor((EntityExtractor) annotator, maxErrors);
-        case ELink:
-            return new ErrorCountingEntityLinker((EntityLinker) annotator, maxErrors);
+            return new ErrorCountingD2KBAnnotator((D2KBAnnotator) annotator, maxErrors);
         case ERec:
             return new ErrorCountingEntityRecognizer((EntityRecognizer) annotator, maxErrors);
         case ETyping:
@@ -121,15 +117,15 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
-    private static class ErrorCountingEntityLinker extends ErrorCountingAnnotatorDecorator implements EntityLinker {
+    private static class ErrorCountingD2KBAnnotator extends ErrorCountingAnnotatorDecorator implements D2KBAnnotator {
 
-        public ErrorCountingEntityLinker(EntityLinker decoratedAnnotator, int maxErrors) {
+        public ErrorCountingD2KBAnnotator(D2KBAnnotator decoratedAnnotator, int maxErrors) {
             super(decoratedAnnotator, maxErrors);
         }
 
         @Override
-        public List<MeaningSpan> performLinking(Document document) throws GerbilException {
-            return ErrorCountingAnnotatorDecorator.performLinking(this, document);
+        public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performD2KBTask(this, document);
         }
     }
 
@@ -146,9 +142,9 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
-    private static class ErrorCountingEntityExtractor extends ErrorCountingEntityLinker implements EntityExtractor {
+    private static class ErrorCountingA2KBAnnotator extends ErrorCountingD2KBAnnotator implements A2KBAnnotator {
 
-        public ErrorCountingEntityExtractor(EntityExtractor decoratedAnnotator, int maxErrors) {
+        public ErrorCountingA2KBAnnotator(A2KBAnnotator decoratedAnnotator, int maxErrors) {
             super(decoratedAnnotator, maxErrors);
         }
 
@@ -163,7 +159,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
 
         @Override
-        public List<MeaningSpan> performExtraction(Document document) throws GerbilException {
+        public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
             return ErrorCountingAnnotatorDecorator.performExtraction(this, document);
         }
 
@@ -181,7 +177,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
-    private static class ErrorCountingOKETask1Annotator extends ErrorCountingEntityExtractor
+    private static class ErrorCountingOKETask1Annotator extends ErrorCountingA2KBAnnotator
             implements OKETask1Annotator {
 
         protected ErrorCountingOKETask1Annotator(OKETask1Annotator decoratedAnnotator, int maxErrors) {
@@ -254,11 +250,11 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         return result;
     }
 
-    protected static List<MeaningSpan> performLinking(ErrorCountingAnnotatorDecorator errorCounter, Document document)
+    protected static List<MeaningSpan> performD2KBTask(ErrorCountingAnnotatorDecorator errorCounter, Document document)
             throws GerbilException {
         List<MeaningSpan> result = null;
         try {
-            result = ((EntityLinker) errorCounter.getDecoratedAnnotator()).performLinking(document);
+            result = ((D2KBAnnotator) errorCounter.getDecoratedAnnotator()).performD2KBTask(document);
         } catch (Exception e) {
             if (errorCounter.getErrorCount() == 0) {
                 // Log only the first exception completely
@@ -281,7 +277,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             Document document) throws GerbilException {
         List<MeaningSpan> result = null;
         try {
-            result = ((EntityExtractor) errorCounter.getDecoratedAnnotator()).performExtraction(document);
+            result = ((A2KBAnnotator) errorCounter.getDecoratedAnnotator()).performA2KBTask(document);
         } catch (Exception e) {
             if (errorCounter.getErrorCount() == 0) {
                 // Log only the first exception completely

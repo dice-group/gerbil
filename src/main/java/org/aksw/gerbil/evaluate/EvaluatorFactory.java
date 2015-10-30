@@ -134,8 +134,7 @@ public class EvaluatorFactory {
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
         case Sa2KB:
-        case A2KB:
-        case EExt: {
+        case A2KB: {
             SameAsRetriever localRetriever = getSameAsRetriever(dataset);
             return new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
                     new FMeasureCalculator<NamedEntity>(
@@ -153,8 +152,7 @@ public class EvaluatorFactory {
                                     .createSpanMatchingsSearcher(configuration.matching))),
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
-        case D2KB:
-        case ELink: { // FIXME define whether the problem reduction to D2KB
+        case D2KB: { // FIXME define whether the problem reduction to D2KB
             // should use a weak or strong matching
             SameAsRetriever localRetriever = getSameAsRetriever(dataset);
             return new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
@@ -189,9 +187,9 @@ public class EvaluatorFactory {
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
                     (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ERec, subTaskConfig, dataset)));
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.ELink, Matching.STRONG_ENTITY_MATCH);
+                    ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
-                    (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ELink, subTaskConfig, dataset)));
+                    (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.D2KB, subTaskConfig, dataset)));
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
@@ -244,27 +242,26 @@ public class EvaluatorFactory {
         ExperimentTaskConfiguration subTaskConfig;
         switch (configuration.type) {
         case ERec:
-        case ELink:
-        case ETyping:
         case D2KB:
+        case ETyping:
         case C2KB:
-        case OKE_Task1:
+        case OKE_Task1: // FIXME shouldn't the subtasks of OKE Task1 be added,
+                        // too?
         case OKE_Task2: {
             return;
         }
         case Sa2KB: // falls through
-        case A2KB:
-        case EExt: {
+        case A2KB: {
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.ERec, configuration.matching);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
                     createEvaluator(ExperimentType.ERec, subTaskConfig, dataset)));
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.ELink, Matching.STRONG_ENTITY_MATCH);
+                    ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
             // evaluators.add(createEvaluator(ExperimentType.ELink,
             // configuration, dataset));
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
-                    createEvaluator(ExperimentType.ELink, subTaskConfig, dataset)));
+                    createEvaluator(ExperimentType.D2KB, subTaskConfig, dataset)));
             return;
         }
         default: {

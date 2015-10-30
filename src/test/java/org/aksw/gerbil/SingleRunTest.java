@@ -49,7 +49,7 @@ public class SingleRunTest implements TaskObserver {
 
     private static final String ANNOTATOR_NAME = "Entityclassifier.eu NER";
     private static final String DATASET_NAME = "Microposts2014-Train";
-    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.ELink;
+    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.D2KB;
     private static final Matching MATCHING = Matching.WEAK_ANNOTATION_MATCH;
 
     private Semaphore mutex = new Semaphore(0);

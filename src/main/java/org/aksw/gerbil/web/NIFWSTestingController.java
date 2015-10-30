@@ -68,19 +68,16 @@ public class NIFWSTestingController {
             case Rc2KB: // falls through
             case Sc2KB:
             case C2KB: {
-                // annotator.solveA2W(NIF_WS_TEST_TEXT);
-                // FIXME
+                annotator.performC2KB(document);
                 break;
             }
-            case ELink:
             case D2KB: {
-                annotator.performLinking(document);
+                annotator.performD2KBTask(document);
                 break;
             }
-            case EExt:
-            case Sa2KB:
-            case A2KB: {
-                annotator.performExtraction(document);
+            case A2KB:
+            case Sa2KB: {
+                annotator.performA2KBTask(document);
                 break;
             }
             case ERec: {

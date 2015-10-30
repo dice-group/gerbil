@@ -55,7 +55,7 @@ public class KnownNIFFileDatasetConfig extends AbstractDatasetConfiguration {
     private NIFDatasets dataset;
 
     public KnownNIFFileDatasetConfig(NIFDatasets dataset) {
-        super(dataset.getDatasetName(), true, ExperimentType.EExt);
+        super(dataset.getDatasetName(), true, ExperimentType.A2KB);
         this.dataset = dataset;
     }
 

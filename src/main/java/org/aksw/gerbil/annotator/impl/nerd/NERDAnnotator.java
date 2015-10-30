@@ -3,7 +3,7 @@ package org.aksw.gerbil.annotator.impl.nerd;
 import java.io.IOException;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.EntityExtractor;
+import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -29,7 +29,7 @@ import fr.eurecom.nerd.client.type.GranularityType;
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  *
  */
-public class NERDAnnotator extends AbstractAnnotator implements EntityExtractor {
+public class NERDAnnotator extends AbstractAnnotator implements A2KBAnnotator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NERDAnnotator.class);
 
@@ -75,7 +75,7 @@ public class NERDAnnotator extends AbstractAnnotator implements EntityExtractor 
     }
 
     @Override
-    public List<MeaningSpan> performLinking(Document document) throws GerbilException {
+    public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
         return getNERDAnnotations(document).getMarkings(MeaningSpan.class);
     }
 
@@ -85,7 +85,7 @@ public class NERDAnnotator extends AbstractAnnotator implements EntityExtractor 
     }
 
     @Override
-    public List<MeaningSpan> performExtraction(Document document) throws GerbilException {
+    public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
         return getNERDAnnotations(document).getMarkings(MeaningSpan.class);
     }
 

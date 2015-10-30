@@ -22,15 +22,13 @@
  */
 package org.aksw.gerbil.execute;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.C2KBAnnotator;
-import org.aksw.gerbil.annotator.EntityExtractor;
-import org.aksw.gerbil.annotator.EntityLinker;
+import org.aksw.gerbil.annotator.A2KBAnnotator;
+import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
@@ -224,16 +222,15 @@ public class ExperimentTask implements Task {
             List<Evaluator<? extends Marking>> evaluators, ExperimentTaskState state) throws GerbilException {
         EvaluationResult evalResult = null;
         switch (configuration.type) {
-        case D2KB:
-        case ELink: {
+        case D2KB: {
             try {
                 List<List<MeaningSpan>> results = new ArrayList<List<MeaningSpan>>(dataset.size());
                 List<List<MeaningSpan>> goldStandard = new ArrayList<List<MeaningSpan>>(dataset.size());
-                EntityLinker linker = ((EntityLinker) annotator);
+                D2KBAnnotator linker = ((D2KBAnnotator) annotator);
 
                 for (Document document : dataset.getInstances()) {
                     // reduce the document to a text and a list of Spans
-                    results.add(linker.performLinking(DocumentInformationReducer.reduceToTextAndSpans(document)));
+                    results.add(linker.performD2KBTask(DocumentInformationReducer.reduceToTextAndSpans(document)));
                     goldStandard.add(document.getMarkings(MeaningSpan.class));
                     taskState.increaseExperimentStepCount();
                 }
@@ -246,16 +243,15 @@ public class ExperimentTask implements Task {
             }
             break;
         }
-        case A2KB:
         case Sa2KB:
-        case EExt: {
+        case A2KB: {
             try {
                 List<List<MeaningSpan>> results = new ArrayList<List<MeaningSpan>>(dataset.size());
                 List<List<MeaningSpan>> goldStandard = new ArrayList<List<MeaningSpan>>(dataset.size());
-                EntityExtractor extractor = ((EntityExtractor) annotator);
+                A2KBAnnotator extractor = ((A2KBAnnotator) annotator);
                 for (Document document : dataset.getInstances()) {
                     // reduce the document to a single text
-                    results.add(extractor.performExtraction(DocumentInformationReducer.reduceToPlainText(document)));
+                    results.add(extractor.performA2KBTask(DocumentInformationReducer.reduceToPlainText(document)));
                     goldStandard.add(document.getMarkings(MeaningSpan.class));
                     taskState.increaseExperimentStepCount();
                 }

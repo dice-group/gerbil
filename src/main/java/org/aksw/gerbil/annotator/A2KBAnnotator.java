@@ -28,7 +28,7 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 
-public interface EntityLinker extends Annotator {
+public interface A2KBAnnotator extends D2KBAnnotator, EntityRecognizer, C2KBAnnotator {
 
-    public List<MeaningSpan> performLinking(Document document) throws GerbilException;
+    public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException;
 }

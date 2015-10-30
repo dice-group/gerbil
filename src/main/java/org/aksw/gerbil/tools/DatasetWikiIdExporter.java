@@ -41,7 +41,7 @@ import org.aksw.gerbil.utils.SingletonWikipediaApi;
 import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.apache.commons.io.IOUtils;
 
-@SuppressWarnings("deprecation")
+@Deprecated
 public class DatasetWikiIdExporter {
 
     private static final String EXPORT_FOLDER_NAME = "export";

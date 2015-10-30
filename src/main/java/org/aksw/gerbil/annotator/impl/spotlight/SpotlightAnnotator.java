@@ -25,8 +25,8 @@ package org.aksw.gerbil.annotator.impl.spotlight;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.EntityExtractor;
-import org.aksw.gerbil.annotator.EntityLinker;
+import org.aksw.gerbil.annotator.A2KBAnnotator;
+import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
@@ -44,7 +44,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 public class SpotlightAnnotator extends AbstractHttpBasedAnnotator
-        implements OKETask1Annotator, EntityRecognizer, EntityLinker, EntityExtractor, EntityTyper {
+        implements OKETask1Annotator, EntityRecognizer, D2KBAnnotator, A2KBAnnotator, EntityTyper {
 
     private static final String SERVICE_URL_PARAM_KEY = "org.aksw.gerbil.annotator.impl.spotlight.SpotlightAnnotator.ServieURL";
 
@@ -77,12 +77,12 @@ public class SpotlightAnnotator extends AbstractHttpBasedAnnotator
     }
 
     @Override
-    public List<MeaningSpan> performExtraction(Document document) throws GerbilException {
+    public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
         return new ArrayList<MeaningSpan>(client.annotate(document));
     }
 
     @Override
-    public List<MeaningSpan> performLinking(Document document) throws GerbilException {
+    public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
         return new ArrayList<MeaningSpan>(client.disambiguate(document));
     }
 

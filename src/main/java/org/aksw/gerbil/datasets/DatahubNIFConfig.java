@@ -46,7 +46,7 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
     private RestTemplate rt;
 
     public DatahubNIFConfig(String datasetName, String datasetUrl, boolean couldBeCached) {
-        super(datasetName, couldBeCached, ExperimentType.EExt);
+        super(datasetName, couldBeCached, ExperimentType.A2KB);
         this.datasetUrl = datasetUrl;
         rt = new RestTemplate();
     }

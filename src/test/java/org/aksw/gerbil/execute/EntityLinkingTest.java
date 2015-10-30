@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.TestEntityLinker;
+import org.aksw.gerbil.annotator.TestD2KBAnnotator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.datasets.DatasetConfiguration;
 import org.aksw.gerbil.datasets.NIFFileDatasetConfig;
@@ -62,7 +62,7 @@ public class EntityLinkingTest extends AbstractExperimentTaskTest {
             "Such notables include James Carville, who was the senior political adviser to Bill Clinton, and Donna Brazile, the campaign manager of the 2000 presidential campaign of Vice-President Al Gore.",
             "The senator received a Bachelor of Laws from the Columbia University." };
     private static final DatasetConfiguration GOLD_STD = new NIFFileDatasetConfig("OKE_Task1",
-            "src/test/resources/OKE_Challenge/example_data/task1.ttl", false, ExperimentType.EExt);
+            "src/test/resources/OKE_Challenge/example_data/task1.ttl", false, ExperimentType.A2KB);
     private static final UriKBClassifier URI_KB_CLASSIFIER = new SimpleWhiteListBasedUriKBClassifier(
             "http://dbpedia.org/resource/");
     private static final EvaluatorFactory EVALUATOR_FACTORY = new EvaluatorFactory(RootConfig.createSameAsRetriever(),
@@ -238,7 +238,7 @@ public class EntityLinkingTest extends AbstractExperimentTaskTest {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                new TestEntityLinker(Arrays.asList(annotatorResults)), dataset, ExperimentType.ELink, matching);
+                new TestD2KBAnnotator(Arrays.asList(annotatorResults)), dataset, ExperimentType.D2KB, matching);
         runTest(experimentTaskId, experimentDAO, EVALUATOR_FACTORY, configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }

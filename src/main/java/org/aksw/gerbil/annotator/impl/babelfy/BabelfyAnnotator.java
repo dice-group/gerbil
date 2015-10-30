@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.EntityExtractor;
+import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -69,7 +69,7 @@ import it.uniroma1.lcl.jlt.util.Language;
  * {@value #BABELFY_MAX_TEXT_LENGTH}.
  * </p>
  */
-public class BabelfyAnnotator extends AbstractAnnotator implements EntityExtractor {
+public class BabelfyAnnotator extends AbstractAnnotator implements A2KBAnnotator {
 
     private static final String BABELNET_CONFIG_FILE_PROPERTY_NAME = "org.aksw.gerbil.annotators.Babelfy.configFile";
     private static final String BABELFY_WEB_SERVICE_KEY_PROPERTY_NAME = "org.aksw.gerbil.annotators.Babelfy.key";
@@ -116,12 +116,12 @@ public class BabelfyAnnotator extends AbstractAnnotator implements EntityExtract
     }
 
     @Override
-    public List<MeaningSpan> performExtraction(Document document) throws GerbilException {
+    public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
         return sendRequest(document, false).getMarkings(MeaningSpan.class);
     }
 
     @Override
-    public List<MeaningSpan> performLinking(Document document) throws GerbilException {
+    public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
         return sendRequest(document, true).getMarkings(MeaningSpan.class);
     }
 

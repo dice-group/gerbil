@@ -34,14 +34,14 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.junit.Ignore;
 
 @Ignore
-public class TestEntityExtractor extends AbstractTestAnnotator implements EntityExtractor {
+public class TestA2KBAnnotator extends AbstractTestAnnotator implements A2KBAnnotator {
 
-    public TestEntityExtractor(List<Document> instances) {
+    public TestA2KBAnnotator(List<Document> instances) {
         super("TestEntityExtractor", false, instances, ExperimentType.OKE_Task1);
     }
 
     @Override
-    public List<MeaningSpan> performLinking(Document document) throws GerbilException {
+    public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
         Document result = this.getDocument(document.getDocumentURI());
         if (result == null) {
             return new ArrayList<MeaningSpan>(0);
@@ -59,7 +59,7 @@ public class TestEntityExtractor extends AbstractTestAnnotator implements Entity
     }
 
     @Override
-    public List<MeaningSpan> performExtraction(Document document) {
+    public List<MeaningSpan> performA2KBTask(Document document) {
         Document result = this.getDocument(document.getDocumentURI());
         if (result == null) {
             return new ArrayList<MeaningSpan>(0);

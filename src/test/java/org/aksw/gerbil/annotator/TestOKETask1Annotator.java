@@ -57,12 +57,12 @@ public class TestOKETask1Annotator extends AbstractTestAnnotator implements OKET
     }
 
     @Override
-    public List<MeaningSpan> performExtraction(Document document) throws GerbilException {
+    public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
         return performAnnotation(document, MeaningSpan.class);
     }
 
     @Override
-    public List<MeaningSpan> performLinking(Document document) throws GerbilException {
+    public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
         return performAnnotation(document, MeaningSpan.class);
     }
 

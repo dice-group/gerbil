@@ -41,7 +41,7 @@ public class KeaTest {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
-                new KeaAnnotatorConfig(), new KnownNIFFileDatasetConfig(NIFDatasets.KORE50), ExperimentType.EExt,
+                new KeaAnnotatorConfig(), new KnownNIFFileDatasetConfig(NIFDatasets.KORE50), ExperimentType.A2KB,
                 Matching.STRONG_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
                 new EvaluatorFactory(), taskConfigs, "AGDISTIS_TEST");

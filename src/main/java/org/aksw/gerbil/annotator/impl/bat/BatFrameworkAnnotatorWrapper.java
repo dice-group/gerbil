@@ -35,8 +35,8 @@ import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.C2KBAnnotator;
-import org.aksw.gerbil.annotator.EntityExtractor;
-import org.aksw.gerbil.annotator.EntityLinker;
+import org.aksw.gerbil.annotator.A2KBAnnotator;
+import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -109,7 +109,7 @@ public class BatFrameworkAnnotatorWrapper {
     }
 
     protected static class A2KBSystemWrapper extends AbstractTopicSystemWrapper<A2WSystem>
-            implements EntityRecognizer, EntityLinker, EntityExtractor {
+            implements EntityRecognizer, D2KBAnnotator, A2KBAnnotator {
 
         public A2KBSystemWrapper(A2WSystem annotator, WikipediaApiInterface wikiApi) {
             super(annotator, wikiApi);
@@ -126,24 +126,24 @@ public class BatFrameworkAnnotatorWrapper {
         }
 
         @Override
-        public List<MeaningSpan> performExtraction(Document document) {
+        public List<MeaningSpan> performA2KBTask(Document document) {
             return performExtraction(annotator, document);
         }
 
         @Override
-        public List<MeaningSpan> performLinking(Document document) throws GerbilException {
+        public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
             return performLinking(annotator, document);
         }
     }
 
-    protected static class D2KBSystemWrapper extends AbstractTopicSystemWrapper<D2WSystem> implements EntityLinker {
+    protected static class D2KBSystemWrapper extends AbstractTopicSystemWrapper<D2WSystem> implements D2KBAnnotator {
 
         public D2KBSystemWrapper(D2WSystem annotator, WikipediaApiInterface wikiApi) {
             super(annotator, wikiApi);
         }
 
         @Override
-        public List<MeaningSpan> performLinking(Document document) throws GerbilException {
+        public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
             return performLinking(annotator, document);
         }
 

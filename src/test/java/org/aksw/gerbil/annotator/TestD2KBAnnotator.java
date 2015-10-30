@@ -32,14 +32,14 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.junit.Ignore;
 
 @Ignore
-public class TestEntityLinker extends AbstractTestAnnotator implements EntityLinker {
+public class TestD2KBAnnotator extends AbstractTestAnnotator implements D2KBAnnotator {
 
-    public TestEntityLinker(List<Document> instances) {
-        super("TestEntityLinker", false, instances, ExperimentType.ELink);
+    public TestD2KBAnnotator(List<Document> instances) {
+        super("TestEntityLinker", false, instances, ExperimentType.D2KB);
     }
 
     @Override
-    public List<MeaningSpan> performLinking(Document document) throws GerbilException {
+    public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
         Document result = this.getDocument(document.getDocumentURI());
         if (result == null) {
             return new ArrayList<MeaningSpan>(0);

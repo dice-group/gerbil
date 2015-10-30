@@ -123,18 +123,18 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
     public void test() throws NoSuchMethodException, SecurityException, InterruptedException {
         TestDataset datasets[] = new TestDataset[NUMBER_OF_DATASETS];
         for (int i = 0; i < datasets.length; ++i) {
-            datasets[i] = new TestDataset("test dataset " + i, Arrays.asList(DOCUMENTS), ExperimentType.ELink);
+            datasets[i] = new TestDataset("test dataset " + i, Arrays.asList(DOCUMENTS), ExperimentType.D2KB);
         }
         AnnotatorConfigurationImpl fastAnnotator = new AnnotatorConfigurationImpl(FAST_ANNOTATOR_NAME, false,
                 NIFBasedAnnotatorWebservice.class.getConstructor(String.class, String.class),
-                new Object[] { FAST_HTTP_SERVER_ADDRESS, FAST_ANNOTATOR_NAME }, ExperimentType.ELink);
+                new Object[] { FAST_HTTP_SERVER_ADDRESS, FAST_ANNOTATOR_NAME }, ExperimentType.D2KB);
         AnnotatorConfigurationImpl slowAnnotator = new AnnotatorConfigurationImpl(SLOW_ANNOTATOR_NAME, false,
                 NIFBasedAnnotatorWebservice.class.getConstructor(String.class, String.class),
-                new Object[] { SLOW_HTTP_SERVER_ADDRESS, SLOW_ANNOTATOR_NAME }, ExperimentType.ELink);
+                new Object[] { SLOW_HTTP_SERVER_ADDRESS, SLOW_ANNOTATOR_NAME }, ExperimentType.D2KB);
         ExperimentTaskConfiguration configs[] = new ExperimentTaskConfiguration[2 * NUMBER_OF_DATASETS];
         for (int i = 0; i < configs.length; ++i) {
             configs[i] = new ExperimentTaskConfiguration((((i & 1) == 0) ? fastAnnotator : slowAnnotator),
-                    datasets[i >> 1], ExperimentType.ELink, Matching.WEAK_ANNOTATION_MATCH);
+                    datasets[i >> 1], ExperimentType.D2KB, Matching.WEAK_ANNOTATION_MATCH);
         }
 
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();

@@ -44,14 +44,14 @@ public class KeaAnnotatorConfig extends AbstractAnnotatorConfiguration {
     private static final String PASSWORD_PROPERTY_KEY = "org.aksw.gerbil.annotators.KeaAnnotatorConfig.password";
 
     public KeaAnnotatorConfig() {
-        super(ANNOTATOR_NAME, true, ExperimentType.EExt);
+        super(ANNOTATOR_NAME, true, ExperimentType.A2KB);
     }
 
     @Override
     protected Annotator loadAnnotator(ExperimentType type) throws Exception {
         String propertyKey;
         // If we need a D2KB system
-        if (ExperimentType.ELink.equalsOrContainsType(type)) {
+        if (ExperimentType.D2KB.equalsOrContainsType(type)) {
             propertyKey = DISAMBIGATION_URL_PROPERTY_KEY;
         } else {
             propertyKey = ANNOTATION_URL_PROPERTY_KEY;

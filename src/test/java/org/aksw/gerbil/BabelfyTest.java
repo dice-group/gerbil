@@ -45,13 +45,13 @@ public class BabelfyTest {
             NoSuchMethodException, SecurityException {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] { new ExperimentTaskConfiguration(
                 new AnnotatorConfigurationImpl("", true, BabelfyAnnotator.class.getConstructor(), new Object[0],
-                        ExperimentType.EExt),
+                        ExperimentType.A2KB),
                 new DatasetConfigurationImpl("OKE 2015 Task 1 example set", true,
                         FileBasedNIFDataset.class.getConstructor(String.class),
                         new Object[] { GerbilConfiguration.getInstance()
                                 .getString("org.aksw.gerbil.datasets.OKE_2015_TASK1_EXAMPLE.file") },
                         ExperimentType.OKE_Task1),
-                ExperimentType.EExt, Matching.WEAK_ANNOTATION_MATCH) };
+                ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH) };
         Experimenter experimenter = new Experimenter(new SimpleOverseer(), new SimpleLoggingDAO4Debugging(),
                 new EvaluatorFactory(), taskConfigs, "Babelfy_TEST");
         experimenter.run();
