@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.aksw.gerbil.annotator.TestA2KBAnnotator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
-import org.aksw.gerbil.datasets.DatasetConfiguration;
-import org.aksw.gerbil.datasets.NIFFileDatasetConfig;
+import org.aksw.gerbil.dataset.DatasetConfiguration;
+import org.aksw.gerbil.dataset.impl.nif.NIFFileDatasetConfig;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;

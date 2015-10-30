@@ -22,8 +22,8 @@
  */
 package org.aksw.gerbil.datatypes;
 
-import org.aksw.gerbil.annotators.AnnotatorConfiguration;
-import org.aksw.gerbil.datasets.DatasetConfiguration;
+import org.aksw.gerbil.annotator.AnnotatorConfiguration;
+import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.matching.Matching;
 
 public class ExperimentTaskConfiguration {

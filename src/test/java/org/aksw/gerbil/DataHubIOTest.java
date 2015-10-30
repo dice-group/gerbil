@@ -24,7 +24,7 @@ package org.aksw.gerbil;
 
 import java.util.Map;
 
-import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
+import org.aksw.gerbil.dataset.datahub.DatahubNIFLoader;
 import org.junit.Ignore;
 
 @Ignore

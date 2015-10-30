@@ -20,27 +20,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.datasets;
+package org.aksw.gerbil.annotator;
 
-import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.AdapterConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 
-public interface DatasetConfiguration extends AdapterConfiguration {
+public interface AnnotatorConfiguration extends AdapterConfiguration {
 
     /**
-     * Returns the dataset implementing the interface needed for the given
-     * {@link ExperimentType} or null if the dataset can not be used for this
-     * experiment.
+     * Returns the annotator or null if the annotator can't be used for the
+     * given {@link ExperimentType}.
      * 
-     * @param experimentType
-     *            The type of experiment the user wants to run with this dataset
-     * @return the dataset or null if the dataset is not applicable to the given
-     *         experiment type
+     * @param type
+     * @return
      * @throws GerbilException
-     *             throws an exception if an error occurs during the dataset
-     *             generation
+     *             if an error occurs while loading the annotator
      */
-    public Dataset getDataset(ExperimentType experimentType) throws GerbilException;
+    public Annotator getAnnotator(ExperimentType type) throws GerbilException;
 }

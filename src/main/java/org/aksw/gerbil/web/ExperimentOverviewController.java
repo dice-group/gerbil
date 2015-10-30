@@ -31,9 +31,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.aksw.gerbil.annotators.AnnotatorConfiguration;
+import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
-import org.aksw.gerbil.datasets.DatasetConfiguration;
+import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;

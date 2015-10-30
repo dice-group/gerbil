@@ -20,27 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.datasets;
+package org.aksw.gerbil.dataset;
 
-import org.aksw.gerbil.dataset.Dataset;
-import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
+import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
+import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.apache.jena.riot.Lang;
+import org.aksw.gerbil.exceptions.GerbilException;
 
-public class NIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
-    private String file;
+public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfiguration implements DatasetConfiguration {
 
-    public NIFFileDatasetConfig(String name, String file, boolean couldBeCached,
+    public AbstractDatasetConfiguration(String datasetName, boolean couldBeCached,
             ExperimentType applicableForExperiment) {
-        super(name, couldBeCached, applicableForExperiment);
-        this.file = file;
+        super(datasetName, couldBeCached, applicableForExperiment);
     }
 
     @Override
-    protected Dataset loadDataset() throws Exception {
-        FileBasedNIFDataset dataset = new FileBasedNIFDataset(file, getName(), Lang.TTL);
-        dataset.init();
-        return dataset;
+    public Dataset getDataset(ExperimentType experimentType) throws GerbilException {
+        // for (int i = 0; i < applicableForExperiments.length; ++i) {
+        // if (applicableForExperiments[i].equalsOrContainsType(experimentType))
+        if (applicableForExperiment.equalsOrContainsType(experimentType)) {
+            try {
+                return loadDataset();
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.DATASET_LOADING_ERROR);
+            }
+        }
+        return null;
     }
+
+    protected abstract Dataset loadDataset() throws Exception;
+
 }

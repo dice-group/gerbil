@@ -27,14 +27,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.aksw.gerbil.annotators.AbstractAnnotatorConfiguration;
+import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
+import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.junit.Ignore;
 
-@SuppressWarnings("deprecation")
 @Ignore
-public class AbstractTestAnnotator extends AbstractAnnotatorConfiguration implements Annotator {
+public class AbstractTestAnnotator extends AbstractAdapterConfiguration implements Annotator, AnnotatorConfiguration {
 
     protected Map<String, Document> uriInstanceMapping;
 
@@ -48,6 +49,17 @@ public class AbstractTestAnnotator extends AbstractAnnotatorConfiguration implem
     }
 
     @Override
+    public Annotator getAnnotator(ExperimentType experimentType) throws GerbilException {
+        if (applicableForExperiment.equalsOrContainsType(experimentType)) {
+            try {
+                return loadAnnotator(experimentType);
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
+            }
+        }
+        return null;
+    }
+
     protected Annotator loadAnnotator(ExperimentType type) throws Exception {
         return this;
     }

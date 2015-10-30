@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.datasets;
+package org.aksw.gerbil.dataset.datahub;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.dataset.AbstractDatasetConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
 import org.aksw.gerbil.datatypes.ExperimentType;

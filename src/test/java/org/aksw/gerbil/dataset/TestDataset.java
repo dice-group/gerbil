@@ -24,7 +24,6 @@ package org.aksw.gerbil.dataset;
 
 import java.util.List;
 
-import org.aksw.gerbil.datasets.AbstractDatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.transfer.nif.Document;
 

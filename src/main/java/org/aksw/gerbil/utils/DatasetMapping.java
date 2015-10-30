@@ -22,7 +22,7 @@
  */
 package org.aksw.gerbil.utils;
 
-import org.aksw.gerbil.datasets.DatasetConfiguration;
+import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 /**

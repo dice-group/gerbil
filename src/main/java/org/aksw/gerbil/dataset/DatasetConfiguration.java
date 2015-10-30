@@ -20,28 +20,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.annotators;
+package org.aksw.gerbil.dataset;
 
-import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
+import org.aksw.gerbil.datatypes.AdapterConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.exceptions.GerbilException;
 
-@Deprecated
-public class NIFWebserviceAnnotatorConfiguration extends AbstractAnnotatorConfiguration {
+public interface DatasetConfiguration extends AdapterConfiguration {
 
-    public static final String ANNOTATOR_NAME = "NIF-based Web Service";
-
-    private String annotaturURL;
-
-    public NIFWebserviceAnnotatorConfiguration(String annotaturURL, String annotatorName, boolean couldBeCached,
-            ExperimentType applicableForExperiment) {
-        super(annotatorName, couldBeCached, applicableForExperiment);
-        this.annotaturURL = annotaturURL;
-    }
-
-    @Override
-    protected Annotator loadAnnotator(ExperimentType type) throws Exception {
-        return new NIFBasedAnnotatorWebservice(annotaturURL, this.getName());
-    }
-
+    /**
+     * Returns the dataset implementing the interface needed for the given
+     * {@link ExperimentType} or null if the dataset can not be used for this
+     * experiment.
+     * 
+     * @param experimentType
+     *            The type of experiment the user wants to run with this dataset
+     * @return the dataset or null if the dataset is not applicable to the given
+     *         experiment type
+     * @throws GerbilException
+     *             throws an exception if an error occurs during the dataset
+     *             generation
+     */
+    public Dataset getDataset(ExperimentType experimentType) throws GerbilException;
 }

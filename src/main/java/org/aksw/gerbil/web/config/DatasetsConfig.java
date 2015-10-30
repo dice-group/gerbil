@@ -10,10 +10,10 @@ import java.util.Set;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
-import org.aksw.gerbil.datasets.DatahubNIFConfig;
-import org.aksw.gerbil.datasets.DatasetConfiguration;
-import org.aksw.gerbil.datasets.DatasetConfigurationImpl;
-import org.aksw.gerbil.datasets.datahub.DatahubNIFLoader;
+import org.aksw.gerbil.dataset.DatasetConfiguration;
+import org.aksw.gerbil.dataset.DatasetConfigurationImpl;
+import org.aksw.gerbil.dataset.datahub.DatahubNIFConfig;
+import org.aksw.gerbil.dataset.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

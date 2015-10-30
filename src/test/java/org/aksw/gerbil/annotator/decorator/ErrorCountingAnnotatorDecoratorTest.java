@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.annotator.EntityRecognizer;
-import org.aksw.gerbil.annotators.AnnotatorConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
+import org.aksw.gerbil.dataset.AbstractDatasetConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
-import org.aksw.gerbil.datasets.AbstractDatasetConfiguration;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;

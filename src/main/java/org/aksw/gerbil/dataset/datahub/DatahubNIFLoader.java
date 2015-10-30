@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.datasets.datahub;
+package org.aksw.gerbil.dataset.datahub;
 
 import java.util.List;
 import java.util.Map;
@@ -28,8 +28,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datasets.datahub.model.Dataset;
-import org.aksw.gerbil.datasets.datahub.model.Resource;
+import org.aksw.gerbil.dataset.datahub.model.Dataset;
+import org.aksw.gerbil.dataset.datahub.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;

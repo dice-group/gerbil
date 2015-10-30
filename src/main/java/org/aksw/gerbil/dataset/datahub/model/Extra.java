@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.datasets.datahub.model;
+package org.aksw.gerbil.dataset.datahub.model;
 
 /**
  * Represents an extra metadata field in a dataset or group

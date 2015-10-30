@@ -9,8 +9,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import org.aksw.gerbil.Experimenter;
+import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
-import org.aksw.gerbil.annotators.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.TestDataset;

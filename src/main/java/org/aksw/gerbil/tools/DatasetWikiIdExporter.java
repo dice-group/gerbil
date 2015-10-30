@@ -34,7 +34,7 @@ import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.List;
 
-import org.aksw.gerbil.datasets.DatasetConfiguration;
+import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.utils.SingletonWikipediaApi;

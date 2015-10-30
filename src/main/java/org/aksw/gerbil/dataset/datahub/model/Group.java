@@ -20,42 +20,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.datasets.datahub.model;
-
-import java.util.Date;
+package org.aksw.gerbil.dataset.datahub.model;
 
 /**
- * Represents a tag
+ * Represents a CKAN group
  * 
  * @author Ross Jones <ross.jones@okfn.org>
  * @version 1.7
  * @since 2012-05-01
  */
-public class Tag {
+public class Group {
+
+    private String description;
 
     private String display_name;
 
     private String id;
 
+    private String image_display_url;
+
     private String name;
 
-    private Date revision_timestamp;
+    private String title;
 
-    private String state;
-
-    private String vocabulary_id;
-
-    public Tag() {
+    public Group() {
     }
 
-    public Tag(String display_name, String id, String name, Date revision_timestamp, String state, String vocabulary_id) {
+    public Group(String description, String display_name, String id, String image_display_url, String name, String title) {
         super();
+        this.description = description;
         this.display_name = display_name;
         this.id = id;
+        this.image_display_url = image_display_url;
         this.name = name;
-        this.revision_timestamp = revision_timestamp;
-        this.state = state;
-        this.vocabulary_id = vocabulary_id;
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getDisplay_name() {
@@ -74,6 +80,14 @@ public class Tag {
         this.id = id;
     }
 
+    public String getImage_display_url() {
+        return image_display_url;
+    }
+
+    public void setImage_display_url(String image_display_url) {
+        this.image_display_url = image_display_url;
+    }
+
     public String getName() {
         return name;
     }
@@ -82,40 +96,24 @@ public class Tag {
         this.name = name;
     }
 
-    public Date getRevision_timestamp() {
-        return revision_timestamp;
+    public String getTitle() {
+        return title;
     }
 
-    public void setRevision_timestamp(Date revision_timestamp) {
-        this.revision_timestamp = revision_timestamp;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getVocabulary_id() {
-        return vocabulary_id;
-    }
-
-    public void setVocabulary_id(String vocabulary_id) {
-        this.vocabulary_id = vocabulary_id;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((display_name == null) ? 0 : display_name.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((image_display_url == null) ? 0 : image_display_url.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((revision_timestamp == null) ? 0 : revision_timestamp.hashCode());
-        result = prime * result + ((state == null) ? 0 : state.hashCode());
-        result = prime * result + ((vocabulary_id == null) ? 0 : vocabulary_id.hashCode());
+        result = prime * result + ((title == null) ? 0 : title.hashCode());
         return result;
     }
 
@@ -127,7 +125,12 @@ public class Tag {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Tag other = (Tag) obj;
+        Group other = (Group) obj;
+        if (description == null) {
+            if (other.description != null)
+                return false;
+        } else if (!description.equals(other.description))
+            return false;
         if (display_name == null) {
             if (other.display_name != null)
                 return false;
@@ -138,25 +141,20 @@ public class Tag {
                 return false;
         } else if (!id.equals(other.id))
             return false;
+        if (image_display_url == null) {
+            if (other.image_display_url != null)
+                return false;
+        } else if (!image_display_url.equals(other.image_display_url))
+            return false;
         if (name == null) {
             if (other.name != null)
                 return false;
         } else if (!name.equals(other.name))
             return false;
-        if (revision_timestamp == null) {
-            if (other.revision_timestamp != null)
+        if (title == null) {
+            if (other.title != null)
                 return false;
-        } else if (!revision_timestamp.equals(other.revision_timestamp))
-            return false;
-        if (state == null) {
-            if (other.state != null)
-                return false;
-        } else if (!state.equals(other.state))
-            return false;
-        if (vocabulary_id == null) {
-            if (other.vocabulary_id != null)
-                return false;
-        } else if (!vocabulary_id.equals(other.vocabulary_id))
+        } else if (!title.equals(other.title))
             return false;
         return true;
     }
@@ -164,18 +162,18 @@ public class Tag {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Tag [display_name=");
+        builder.append("Group [description=");
+        builder.append(description);
+        builder.append(", display_name=");
         builder.append(display_name);
         builder.append(", id=");
         builder.append(id);
+        builder.append(", image_display_url=");
+        builder.append(image_display_url);
         builder.append(", name=");
         builder.append(name);
-        builder.append(", revision_timestamp=");
-        builder.append(revision_timestamp);
-        builder.append(", state=");
-        builder.append(state);
-        builder.append(", vocabulary_id=");
-        builder.append(vocabulary_id);
+        builder.append(", title=");
+        builder.append(title);
         builder.append("]");
         return builder.toString();
     }

@@ -24,9 +24,9 @@ package org.aksw.gerbil;
 
 import java.util.concurrent.Semaphore;
 
-import org.aksw.gerbil.annotators.AnnotatorConfiguration;
+import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
-import org.aksw.gerbil.datasets.DatasetConfiguration;
+import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;

@@ -20,31 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.aksw.gerbil.annotators;
+package org.aksw.gerbil.dataset.impl.nif;
 
-import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotator.impl.fox.FOXAnnotator;
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.dataset.AbstractDatasetConfiguration;
+import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.exceptions.GerbilException;
+import org.apache.jena.riot.Lang;
 
-@Deprecated
-public class FOXAnnotatorConfig extends AbstractAnnotatorConfiguration {
+public class NIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
-    private static final String FOX_SERVICE_URL_PARAMETER_KEY = "org.aksw.gerbil.annotators.FOXAnnotatorConfig.serviceUrl";
+    private String file;
 
-    public FOXAnnotatorConfig() {
-        super(FOXAnnotator.NAME, true, ExperimentType.OKE_Task1);
+    public NIFFileDatasetConfig(String name, String file, boolean couldBeCached,
+            ExperimentType applicableForExperiment) {
+        super(name, couldBeCached, applicableForExperiment);
+        this.file = file;
     }
 
     @Override
-    protected Annotator loadAnnotator(ExperimentType type) throws Exception {
-        String serviceUrl = GerbilConfiguration.getInstance().getString(FOX_SERVICE_URL_PARAMETER_KEY);
-        if (serviceUrl == null) {
-            throw new GerbilException("Couldn't load the needed property \"" + FOX_SERVICE_URL_PARAMETER_KEY + "\".",
-                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
-        }
-        return new FOXAnnotator(serviceUrl);
+    protected Dataset loadDataset() throws Exception {
+        FileBasedNIFDataset dataset = new FileBasedNIFDataset(file, getName(), Lang.TTL);
+        dataset.init();
+        return dataset;
     }
 }

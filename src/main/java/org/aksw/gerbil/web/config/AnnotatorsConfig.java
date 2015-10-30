@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotators.AnnotatorConfiguration;
-import org.aksw.gerbil.annotators.AnnotatorConfigurationImpl;
+import org.aksw.gerbil.annotator.AnnotatorConfiguration;
+import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;

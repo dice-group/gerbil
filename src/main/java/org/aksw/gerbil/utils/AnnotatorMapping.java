@@ -22,7 +22,7 @@
  */
 package org.aksw.gerbil.utils;
 
-import org.aksw.gerbil.annotators.AnnotatorConfiguration;
+import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
 /**

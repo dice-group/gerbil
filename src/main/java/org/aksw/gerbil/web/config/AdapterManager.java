@@ -3,12 +3,12 @@ package org.aksw.gerbil.web.config;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.annotator.AnnotatorConfiguration;
+import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
-import org.aksw.gerbil.annotators.AnnotatorConfiguration;
-import org.aksw.gerbil.annotators.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datasets.DatasetConfiguration;
-import org.aksw.gerbil.datasets.NIFFileDatasetConfig;
+import org.aksw.gerbil.dataset.DatasetConfiguration;
+import org.aksw.gerbil.dataset.impl.nif.NIFFileDatasetConfig;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
