@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFReader;
 import com.hp.hpl.jena.rdf.model.ResIterator;
@@ -71,8 +72,9 @@ public class HTTPBasedSameAsRetriever/* extends AbstractHttpBasedAnnotator */ im
         }
         Model model = null;
         try {
-            Dataset uriDataset = RDFDataMgr.loadDataset(uri);
-            model = uriDataset.getDefaultModel();
+            // Dataset uriDataset = RDFDataMgr.loadDataset(uri);
+            // model = uriDataset.getDefaultModel();
+            model = RDFDataMgr.loadModel(uri);
             // model = requestModel(uri);
         } catch (org.apache.jena.atlas.web.HttpException e) {
             LOGGER.debug("HTTP Exception while requesting uri \"" + uri + "\". Returning null. Exception: "
@@ -80,7 +82,7 @@ public class HTTPBasedSameAsRetriever/* extends AbstractHttpBasedAnnotator */ im
             return null;
         } catch (org.apache.jena.riot.RiotException e) {
             LOGGER.debug("Riot Exception while parsing requested model of uri \"" + uri
-                    + "\". Returning null. Exception: " + e.getMessage());
+                    + "\". Returning null. Exception: " + e.getMessage(), e);
             return null;
         } catch (Exception e) {
             LOGGER.debug("Exception while requesting uri \"" + uri + "\". Returning null.", e);

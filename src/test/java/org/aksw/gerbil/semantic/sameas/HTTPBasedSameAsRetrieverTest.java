@@ -50,9 +50,8 @@ public class HTTPBasedSameAsRetrieverTest {
                         "http://nl.dbpedia.org/resource/Kaufland", "http://pl.dbpedia.org/resource/Kaufland",
                         "http://wikidata.org/entity/Q685967", "http://rdf.freebase.com/ns/m.0dwt4w",
                         "http://yago-knowledge.org/resource/Kaufland") });
-        // testConfigs.add(new Object[] {
-        // "http://dbpedia.org/resource/Malaysia",
-        // Arrays.asList("http://de.dbpedia.org/resource/Malaysia") });
+        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Malaysia",
+                Arrays.asList("http://de.dbpedia.org/resource/Malaysia") });
         return testConfigs;
     }
 
