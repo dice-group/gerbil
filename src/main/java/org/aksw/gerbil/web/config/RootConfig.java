@@ -28,9 +28,11 @@ import java.io.IOException;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
+import org.aksw.gerbil.semantic.sameas.ErrorFixingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.FileBasedCachingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.HTTPBasedSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.InMemoryCachingSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
@@ -132,7 +134,8 @@ public class RootConfig {
     }
 
     public static @Bean SameAsRetriever createSameAsRetriever() {
-        SameAsRetriever sameAsRetriever = new HTTPBasedSameAsRetriever();
+        SameAsRetriever sameAsRetriever = new MultipleSameAsRetriever(new ErrorFixingSameAsRetriever(),
+                new HTTPBasedSameAsRetriever());
         SameAsRetriever decoratedRetriever = null;
         if (GerbilConfiguration.getInstance().containsKey(SAME_AS_CACHE_FILE_KEY)) {
             decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, false,

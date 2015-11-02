@@ -23,6 +23,7 @@
 package org.aksw.gerbil.semantic.sameas;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,7 +57,7 @@ public class HTTPBasedSameAsRetriever extends AbstractHttpRequestEmitter impleme
 
     @Override
     public Set<String> retrieveSameURIs(String uri) {
-        if (uri == null) {
+        if ((uri == null) || (uri.isEmpty())) {
             return null;
         }
         Model model = null;
@@ -126,20 +127,23 @@ public class HTTPBasedSameAsRetriever extends AbstractHttpRequestEmitter impleme
                 response = client.execute(request);
             } catch (java.net.SocketException e) {
                 if (e.getMessage().contains(CONNECTION_ABORT_INDICATING_EXCPETION_MSG)) {
-                    LOGGER.error(
-                            "It seems like the HTTP client has needed too much time and has been interrupted. Returning null.");
+                    LOGGER.error("It seems like requesting the model of \"" + uri
+                            + "\" needed too much time and was interrupted. Returning null.");
                     return null;
                 } else {
-                    LOGGER.error("Exception while sending request. Returning null.", e);
+                    LOGGER.error("Exception while sending request to \"" + uri + "\". Returning null.", e);
                     return null;
                 }
+            } catch (UnknownHostException e) {
+                LOGGER.info("Couldn't find host of \"" + uri + "\". Returning null.");
+                return null;
             } catch (Exception e) {
-                LOGGER.error("Exception while sending request. Returning null.", e);
+                LOGGER.error("Exception while sending request to \"" + uri + "\". Returning null.", e);
                 return null;
             }
             StatusLine status = response.getStatusLine();
             if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
-                LOGGER.error("Response has the wrong status ({}). Returning null.", status.toString());
+                LOGGER.warn("Response of \"{}\" has the wrong status ({}). Returning null.", uri, status.toString());
                 return null;
             }
             // receive NIF document
