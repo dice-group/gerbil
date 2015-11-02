@@ -1,4 +1,4 @@
-package org.aksw.gerbil.annotator.http;
+package org.aksw.gerbil.http;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -19,7 +19,7 @@ public class HttpManagement {
 
     private static HttpManagement instance;
 
-    protected synchronized static HttpManagement getInstance() {
+    public synchronized static HttpManagement getInstance() {
         if (instance == null) {
             long maxWaitingTime = DEFAULT_WAITING_TIME;
             try {
@@ -52,12 +52,12 @@ public class HttpManagement {
         this.interruptingObserver = interruptingObserver;
     }
 
-    public void reportStart(AbstractHttpBasedAnnotator annotator, HttpUriRequest request) {
-        interruptingObserver.reportStart(annotator, request);
+    public void reportStart(HttpRequestEmitter emitter, HttpUriRequest request) {
+        interruptingObserver.reportStart(emitter, request);
     }
 
-    public void reportEnd(AbstractHttpBasedAnnotator annotator, HttpUriRequest request) {
-        interruptingObserver.reportEnd(annotator, request);
+    public void reportEnd(HttpRequestEmitter emitter, HttpUriRequest request) {
+        interruptingObserver.reportEnd(emitter, request);
     }
 
     public void setMaxWaitingTime(long maxWaitingTime) {

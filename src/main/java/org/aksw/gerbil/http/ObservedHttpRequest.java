@@ -1,22 +1,22 @@
-package org.aksw.gerbil.annotator.http;
+package org.aksw.gerbil.http;
 
 import org.apache.http.client.methods.HttpUriRequest;
 
 public class ObservedHttpRequest {
 
     public HttpUriRequest request;
-    public AbstractHttpBasedAnnotator annotator;
+    public HttpRequestEmitter emitter;
 
-    public ObservedHttpRequest(HttpUriRequest request, AbstractHttpBasedAnnotator annotator) {
+    public ObservedHttpRequest(HttpUriRequest request, HttpRequestEmitter emitter) {
         this.request = request;
-        this.annotator = annotator;
+        this.emitter = emitter;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((annotator == null) ? 0 : annotator.hashCode());
+        result = prime * result + ((emitter == null) ? 0 : emitter.hashCode());
         result = prime * result + ((request == null) ? 0 : request.hashCode());
         return result;
     }
@@ -30,10 +30,10 @@ public class ObservedHttpRequest {
         if (getClass() != obj.getClass())
             return false;
         ObservedHttpRequest other = (ObservedHttpRequest) obj;
-        if (annotator == null) {
-            if (other.annotator != null)
+        if (emitter == null) {
+            if (other.emitter != null)
                 return false;
-        } else if (!annotator.equals(other.annotator))
+        } else if (!emitter.equals(other.emitter))
             return false;
         if (request == null) {
             if (other.request != null)

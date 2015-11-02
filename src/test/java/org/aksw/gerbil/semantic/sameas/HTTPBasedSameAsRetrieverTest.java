@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.semantic.sameas.HTTPBasedSameAsRetriever;
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,5 +77,6 @@ public class HTTPBasedSameAsRetrieverTest {
             Assert.assertNotNull(uris);
             Assert.assertTrue(uris.containsAll(expectedURIs));
         }
+        IOUtils.closeQuietly(retriever);
     }
 }

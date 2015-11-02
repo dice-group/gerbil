@@ -1,4 +1,4 @@
-package org.aksw.gerbil.annotator.http;
+package org.aksw.gerbil.http;
 
 import java.util.concurrent.Semaphore;
 
@@ -14,7 +14,7 @@ public class InterruptingObserver implements Runnable {
 
     private long maxWaitingTime;
     private long checkInterval;
-    private final ObjectLongOpenHashMap<ObservedHttpRequest> observedAnnotators = new ObjectLongOpenHashMap<ObservedHttpRequest>();
+    private final ObjectLongOpenHashMap<ObservedHttpRequest> observedRequests = new ObjectLongOpenHashMap<ObservedHttpRequest>();
     private final Semaphore observedMappingMutex = new Semaphore(1);
 
     public InterruptingObserver(long maxWaitingTime, long checkInterval) {
@@ -44,18 +44,19 @@ public class InterruptingObserver implements Runnable {
         long waitingTime;
         long currentTime = System.currentTimeMillis();
         ObservedHttpRequest observedRequest;
-        for (int i = 0; i < observedAnnotators.allocated.length; ++i) {
-            if (observedAnnotators.allocated[i]) {
-                waitingTime = currentTime - observedAnnotators.values[i];
+        for (int i = 0; i < observedRequests.allocated.length; ++i) {
+            if (observedRequests.allocated[i]) {
+                waitingTime = currentTime - observedRequests.values[i];
                 if (waitingTime > maxWaitingTime) {
-                    observedRequest = ((ObservedHttpRequest) ((Object[]) observedAnnotators.keys)[i]);
-                    LOGGER.info("The annotator \"{}\" already runs for {} ms. Trying to interrupt it.",
-                            observedRequest.annotator.getName(), waitingTime);
+                    observedRequest = ((ObservedHttpRequest) ((Object[]) observedRequests.keys)[i]);
+                    LOGGER.info("The HTTP request emitter \"{}\" already runs for {} ms. Trying to interrupt it.",
+                            observedRequest.emitter.getName(), waitingTime);
                     try {
-                        observedRequest.annotator.interrupt(observedRequest.request);
+                        observedRequest.emitter.interrupt(observedRequest.request);
                     } catch (UnsupportedOperationException e) {
-                        LOGGER.error("Couldn't interrupt request of annotator \"" + observedRequest.annotator.getName()
-                                + "\" that is already running for " + waitingTime + " ms.");
+                        LOGGER.error("Couldn't interrupt request of HTTP request emitter \""
+                                + observedRequest.emitter.getName() + "\" that is already running for " + waitingTime
+                                + " ms.");
                     }
                 }
             }
@@ -63,23 +64,23 @@ public class InterruptingObserver implements Runnable {
         observedMappingMutex.release();
     }
 
-    public void reportStart(AbstractHttpBasedAnnotator annotator, HttpUriRequest request) {
+    public void reportStart(HttpRequestEmitter emitter, HttpUriRequest request) {
         try {
             observedMappingMutex.acquire();
         } catch (InterruptedException e) {
             LOGGER.error("Interrupted while waiting for mutex. Aborting.");
         }
-        observedAnnotators.put(new ObservedHttpRequest(request, annotator), System.currentTimeMillis());
+        observedRequests.put(new ObservedHttpRequest(request, emitter), System.currentTimeMillis());
         observedMappingMutex.release();
     }
 
-    public void reportEnd(AbstractHttpBasedAnnotator annotator, HttpUriRequest request) {
+    public void reportEnd(HttpRequestEmitter emitter, HttpUriRequest request) {
         try {
             observedMappingMutex.acquire();
         } catch (InterruptedException e) {
             LOGGER.error("Interrupted while waiting for mutex. Aborting.");
         }
-        observedAnnotators.remove(new ObservedHttpRequest(request, annotator));
+        observedRequests.remove(new ObservedHttpRequest(request, emitter));
         observedMappingMutex.release();
     }
 
