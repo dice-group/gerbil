@@ -98,7 +98,7 @@ public class FOXAnnotator extends AbstractHttpBasedAnnotator implements OKETask1
         // request FOX
         HttpPost request = createPostRequest(serviceUrl);
         request.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
-        // FOX does not like the Accept header, so which should avoid it.
+        // FOX does not like the Accept header. So which should avoid it.
         // request.addHeader(HttpHeaders.ACCEPT,
         // ContentType.APPLICATION_JSON.getMimeType());
         request.addHeader(HttpHeaders.ACCEPT_CHARSET, ContentType.APPLICATION_JSON.getCharset().name());

@@ -22,35 +22,23 @@
  */
 package org.aksw.gerbil.tools;
 
-import it.unipi.di.acube.batframework.data.Annotation;
-import it.unipi.di.acube.batframework.data.Tag;
-import it.unipi.di.acube.batframework.problems.C2WDataset;
-import it.unipi.di.acube.batframework.problems.D2WDataset;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
-import java.util.HashSet;
 import java.util.List;
 
+import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.WhitespaceTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("deprecation")
-/**
- * FIXME update this tool.
- * 
- * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
- *
- */
 public class DatasetAnalyzer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetAnalyzer.class);
@@ -60,14 +48,13 @@ public class DatasetAnalyzer {
         PrintStream output = null;
         try {
             output = new PrintStream("datasetAnalyzation.log");
+            output.println(
+                    "name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
             DatasetAnalyzer analyzer = new DatasetAnalyzer(output);
             for (DatasetConfiguration config : datasetConfigs) {
                 try {
                     analyzer.analyzeDataset(config);
-                    SingletonWikipediaApi.getInstance().flush();
                 } catch (GerbilException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -86,31 +73,41 @@ public class DatasetAnalyzer {
 
     public void analyzeDataset(DatasetConfiguration config) throws GerbilException {
         analyzeAsD2W(config);
-        analyzeAsC2W(config);
+        // analyzeAsC2W(config);
     }
 
-    private void analyzeAsC2W(DatasetConfiguration config) throws GerbilException {
-        D2WDataset dataset = (D2WDataset) config.getDataset(ExperimentType.D2KB);
+    private void analyzeAsD2W(DatasetConfiguration config) throws GerbilException {
+        Dataset dataset = config.getDataset(ExperimentType.D2KB);
         if (dataset == null) {
             return;
         }
-        output.print("D2W dataset: " + config.getName());
-        output.print(" size=" + dataset.getSize());
-        List<HashSet<Annotation>> goldStandard = dataset.getD2WGoldStandardList();
-        double annotationsSum = 0;
-        for (HashSet<Annotation> annotations : goldStandard) {
-            annotationsSum += annotations.size();
-        }
-        // analyze texts
+        output.print(config.getName());
+        output.print(',');
+        List<Document> documents = dataset.getInstances();
+        int annotationsSum = 0;
         int tokensSum = 0;
-        for (String text : dataset.getTextInstanceList()) {
-            tokensSum += countTokensInText(text);
+        for (Document document : documents) {
+            annotationsSum += document.getMarkings().size();
+            tokensSum += countTokensInText(document.getText());
         }
-        output.print(" Annotations=" + annotationsSum);
-        output.print(" Annotations/doc=" + (annotationsSum / dataset.getSize()));
-        output.print(" tokens=" + tokensSum);
-        output.print(" tokens/doc=" + ((double) tokensSum / (double) dataset.getSize()));
-        output.println(" Annotations/tokens=" + ((double) annotationsSum / (double) tokensSum));
+        // average entities per document
+        output.print((double) annotationsSum / (double) documents.size());
+        output.print(',');
+        // average entities per token
+        output.print(((double) annotationsSum / (double) tokensSum));
+        output.print(',');
+        // average document length
+        output.print(((double) tokensSum / (double) documents.size()));
+        output.print(',');
+        // number of documents
+        output.print(documents.size());
+        output.print(',');
+        // number of entities
+        output.print(annotationsSum);
+        output.print(',');
+//        output.print(" tokens=" + tokensSum);
+
+        output.println();
     }
 
     private int countTokensInText(String text) {
@@ -126,27 +123,30 @@ public class DatasetAnalyzer {
         return tokens;
     }
 
-    private void analyzeAsD2W(DatasetConfiguration config) throws GerbilException {
-        C2WDataset dataset = (C2WDataset) config.getDataset(ExperimentType.C2KB);
-        if (dataset == null) {
-            return;
-        }
-        output.print("C2W dataset: " + config.getName());
-        output.print(" size=" + dataset.getSize());
-        List<HashSet<Tag>> goldStandard = dataset.getC2WGoldStandardList();
-        double annotationsSum = 0;
-        for (HashSet<Tag> annotations : goldStandard) {
-            annotationsSum += annotations.size();
-        }
-        // analyze texts
-        int tokensSum = 0;
-        for (String text : dataset.getTextInstanceList()) {
-            tokensSum += countTokensInText(text);
-        }
-        output.print(" Tags=" + annotationsSum);
-        output.print(" Tags/doc=" + (annotationsSum / dataset.getSize()));
-        output.print(" tokens=" + tokensSum);
-        output.print(" tokens/doc=" + ((double) tokensSum / (double) dataset.getSize()));
-        output.println(" Tags/tokens=" + ((double) annotationsSum / (double) tokensSum));
-    }
+    // private void analyzeAsC2W(DatasetConfiguration config) throws
+    // GerbilException {
+    // C2WDataset dataset = (C2WDataset) config.getDataset(ExperimentType.C2KB);
+    // if (dataset == null) {
+    // return;
+    // }
+    // output.print("C2W dataset: " + config.getName());
+    // output.print(" size=" + dataset.getSize());
+    // List<HashSet<Tag>> goldStandard = dataset.getC2WGoldStandardList();
+    // double annotationsSum = 0;
+    // for (HashSet<Tag> annotations : goldStandard) {
+    // annotationsSum += annotations.size();
+    // }
+    // // analyze texts
+    // int tokensSum = 0;
+    // for (String text : dataset.getTextInstanceList()) {
+    // tokensSum += countTokensInText(text);
+    // }
+    // output.print(" Tags=" + annotationsSum);
+    // output.print(" Tags/doc=" + (annotationsSum / dataset.getSize()));
+    // output.print(" tokens=" + tokensSum);
+    // output.print(" tokens/doc=" + ((double) tokensSum / (double)
+    // dataset.getSize()));
+    // output.println(" Tags/tokens=" + ((double) annotationsSum / (double)
+    // tokensSum));
+    // }
 }
