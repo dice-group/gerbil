@@ -16,6 +16,7 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
 import org.aksw.gerbil.transfer.nif.data.ScoredSpanImpl;
 import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 import org.apache.commons.io.IOUtils;
@@ -36,10 +37,11 @@ public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements A2KBAn
 
     private static final String TAGME_KEY_PARAMETER_KEY = "org.aksw.gerbil.annotators.TagMe.key";
 
-    private static final String ANNOTATIONS_LIST_KEY = "detectedTopics";
+    private static final String ANNOTATIONS_LIST_KEY = "annotations";
     private static final String ANNOTATION_TITLE_KEY = "title";
     private static final String SPOTTINGS_LIST_KEY = "spots";
     private static final String LINK_PROBABILITY_KEY = "lp";
+    private static final String ANNOTATION_GOODNESS_KEY = "rho";
     private static final String START_KEY = "start";
     private static final String END_KEY = "end";
 
@@ -155,7 +157,12 @@ public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements A2KBAn
             String uri = transformTitleToUri(entityObject.getString(ANNOTATION_TITLE_KEY));
             int start = entityObject.getInt(START_KEY);
             int end = entityObject.getInt(END_KEY);
-            resultDoc.addMarking(new NamedEntity(start, end - start, uri));
+            if (entityObject.has(ANNOTATION_GOODNESS_KEY)) {
+                resultDoc.addMarking(new ScoredNamedEntity(start, end - start, uri,
+                        entityObject.getDouble(ANNOTATION_GOODNESS_KEY)));
+            } else {
+                resultDoc.addMarking(new NamedEntity(start, end - start, uri));
+            }
         }
     }
 

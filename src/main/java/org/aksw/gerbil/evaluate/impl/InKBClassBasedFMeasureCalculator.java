@@ -93,10 +93,10 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasur
             sums += classCounts[i].truePositives + classCounts[i].falseNegatives + classCounts[i].falsePositives;
         }
         if (sums > 0) {
-            results.addResults(calculateMicroFMeasure(classCounts, IN_KB_MICRO_PRECISION_NAME, IN_KB_MICRO_RECALL_NAME,
-                    IN_KB_MICRO_F1_SCORE_NAME));
-            results.addResults(calculateMacroFMeasure(classCounts, IN_KB_MACRO_PRECISION_NAME, IN_KB_MACRO_RECALL_NAME,
-                    IN_KB_MACRO_F1_SCORE_NAME));
+            results.addResults(calculateMicroFMeasure(classCounts, EE_MICRO_PRECISION_NAME, EE_MICRO_RECALL_NAME,
+                    EE_MICRO_F1_SCORE_NAME));
+            results.addResults(calculateMacroFMeasure(classCounts, EE_MACRO_PRECISION_NAME, EE_MACRO_RECALL_NAME,
+                    EE_MACRO_F1_SCORE_NAME));
         }
     }
 

@@ -97,9 +97,11 @@ public class FOXAnnotator extends AbstractHttpBasedAnnotator implements OKETask1
                 .put("task", "ner").put("output", "JSON-LD").toString(), ContentType.APPLICATION_JSON);
         // request FOX
         HttpPost request = createPostRequest(serviceUrl);
-        request.addHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
-        request.addHeader(HttpHeaders.ACCEPT, "application/json");
-        request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
+        // FOX does not like the Accept header, so which should avoid it.
+        // request.addHeader(HttpHeaders.ACCEPT,
+        // ContentType.APPLICATION_JSON.getMimeType());
+        request.addHeader(HttpHeaders.ACCEPT_CHARSET, ContentType.APPLICATION_JSON.getCharset().name());
         request.setEntity(entity);
 
         entity = null;
@@ -109,7 +111,8 @@ public class FOXAnnotator extends AbstractHttpBasedAnnotator implements OKETask1
 
             entity = response.getEntity();
             try {
-                String content = IOUtils.toString(entity.getContent(), "UTF-8");
+                String content = IOUtils.toString(entity.getContent(),
+                        ContentType.APPLICATION_JSON.getCharset().name());
                 // parse results
                 JSONObject outObj = new JSONObject(content);
                 if (outObj.has("@graph")) {

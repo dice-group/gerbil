@@ -8,6 +8,13 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 
+/**
+ * Contains all information needed to load an annotator for a specific
+ * experiment type.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ *
+ */
 public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration implements AnnotatorConfiguration {
 
     protected Constructor<? extends Annotator> constructor;

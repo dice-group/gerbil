@@ -56,11 +56,10 @@ public class NERDAnnotator extends AbstractAnnotator implements A2KBAnnotator {
 
     public NERDAnnotator(String host) throws GerbilException {
         // Load and use the key if there is one
-        String key = GerbilConfiguration.getInstance().getString(NERD_API_PROPERTY_NAME);
+        String key = GerbilConfiguration.getInstance().getString(NERD_WEB_SERVICE_KEY_PROPERTY_NAME);
         if (key == null) {
-            throw new GerbilException(
-                    "Couldn't load the NERD API key (\"" + NERD_API_PROPERTY_NAME + "\") from properties file.",
-                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+            throw new GerbilException("Couldn't load the NERD-ML API key (\"" + NERD_WEB_SERVICE_KEY_PROPERTY_NAME
+                    + "\") from properties file.", ErrorTypes.ANNOTATOR_LOADING_ERROR);
         }
         nerd = new NERD(host, key);
     }
