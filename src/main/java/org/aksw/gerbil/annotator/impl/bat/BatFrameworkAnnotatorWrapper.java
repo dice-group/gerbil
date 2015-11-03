@@ -22,22 +22,15 @@
  */
 package org.aksw.gerbil.annotator.impl.bat;
 
-import it.unipi.di.acube.batframework.problems.A2WSystem;
-import it.unipi.di.acube.batframework.problems.C2WSystem;
-import it.unipi.di.acube.batframework.problems.D2WSystem;
-import it.unipi.di.acube.batframework.problems.Sa2WSystem;
-import it.unipi.di.acube.batframework.problems.TopicSystem;
-import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.C2KBAnnotator;
-import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
+import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Meaning;
@@ -47,6 +40,13 @@ import org.aksw.gerbil.utils.bat.BAT2NIF_TranslationHelper;
 import org.aksw.gerbil.utils.bat.NIF2BAT_TranslationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.unipi.di.acube.batframework.problems.A2WSystem;
+import it.unipi.di.acube.batframework.problems.C2WSystem;
+import it.unipi.di.acube.batframework.problems.D2WSystem;
+import it.unipi.di.acube.batframework.problems.Sa2WSystem;
+import it.unipi.di.acube.batframework.problems.TopicSystem;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 
 public class BatFrameworkAnnotatorWrapper {
 
@@ -67,7 +67,7 @@ public class BatFrameworkAnnotatorWrapper {
         return null;
     }
 
-    protected abstract static class AbstractTopicSystemWrapper<T extends TopicSystem> implements Annotator {
+    protected abstract static class AbstractTopicSystemWrapper<T extends TopicSystem> extends AbstractAnnotator {
         protected T annotator;
         protected BAT2NIF_TranslationHelper translater;
 
@@ -79,11 +79,6 @@ public class BatFrameworkAnnotatorWrapper {
         @Override
         public String getName() {
             return annotator.getName() + ANNOTATOR_NAME_SUFFIX;
-        }
-
-        @Override
-        public void setName(String name) {
-            // nothing to do
         }
 
         protected List<Span> performRecognition(A2WSystem annotator, Document document) {
@@ -103,9 +98,6 @@ public class BatFrameworkAnnotatorWrapper {
             return translater.translateTags(annotator.solveC2W(document.getText()));
         }
 
-        @Override
-        public void close() throws IOException {
-        }
     }
 
     protected static class A2KBSystemWrapper extends AbstractTopicSystemWrapper<A2WSystem>

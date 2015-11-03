@@ -3,6 +3,7 @@ package org.aksw.gerbil.annotator.decorator;
 import java.io.IOException;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.ClosePermitionGranter;
 
 /**
  * Abstract implementation of an {@link AnnotatorDecorator}.
@@ -36,5 +37,10 @@ public class AbstractAnnotatorDecorator implements AnnotatorDecorator {
     @Override
     public void close() throws IOException {
         decoratedAnnotator.close();
+    }
+
+    @Override
+    public void setClosePermitionGranter(ClosePermitionGranter granter) {
+        decoratedAnnotator.setClosePermitionGranter(granter);
     }
 }

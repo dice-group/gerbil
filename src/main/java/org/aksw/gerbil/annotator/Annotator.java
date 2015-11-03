@@ -29,4 +29,6 @@ public interface Annotator extends Closeable {
     public String getName();
     
     public void setName(String name);
+    
+    public void setClosePermitionGranter(ClosePermitionGranter granter);
 }

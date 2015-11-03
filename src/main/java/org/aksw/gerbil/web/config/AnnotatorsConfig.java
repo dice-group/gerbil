@@ -10,6 +10,7 @@ import java.util.Set;
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
+import org.aksw.gerbil.annotator.SingletonAnnotatorConfigImpl;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ public class AnnotatorsConfig {
     public static final String ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX = "constructorArgs";
     public static final String ANNOTATOR_EXPERIMENT_TYPE_SUFFIX = "experimentType";
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
+    public static final String ANNOTATOR_SINGLETON_FLAG_SUFFIX = "singleton";
 
     public static void main(String[] args) {
         annotators();
@@ -72,8 +74,8 @@ public class AnnotatorsConfig {
         return annotatorKeys;
     }
 
-    private static AnnotatorConfiguration getConfiguration(String annotatorKey) throws ClassNotFoundException,
-            NoSuchMethodException, SecurityException {
+    private static AnnotatorConfiguration getConfiguration(String annotatorKey)
+            throws ClassNotFoundException, NoSuchMethodException, SecurityException {
         org.apache.commons.configuration.Configuration config = GerbilConfiguration.getInstance();
         StringBuilder keyBuilder = new StringBuilder();
         String key;
@@ -92,8 +94,8 @@ public class AnnotatorsConfig {
         }
         String classString = config.getString(key);
         @SuppressWarnings("unchecked")
-        Class<? extends Annotator> annotatorClass = (Class<? extends Annotator>) AnnotatorsConfig.class
-                .getClassLoader().loadClass(classString);
+        Class<? extends Annotator> annotatorClass = (Class<? extends Annotator>) AnnotatorsConfig.class.getClassLoader()
+                .loadClass(classString);
 
         key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_EXPERIMENT_TYPE_SUFFIX);
         if (!config.containsKey(key)) {
@@ -109,6 +111,9 @@ public class AnnotatorsConfig {
             cacheable = config.getBoolean(key);
         }
 
+        key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_SINGLETON_FLAG_SUFFIX);
+        boolean isSingleton = config.containsKey(key) && config.getBoolean(key);
+
         key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX);
         String constructorArgStrings[];
         if (config.containsKey(key)) {
@@ -122,10 +127,13 @@ public class AnnotatorsConfig {
             constructorArgs[i] = constructorArgStrings[i];
             constructorArgClasses[i] = String.class;
         }
-
         Constructor<? extends Annotator> constructor = annotatorClass.getConstructor(constructorArgClasses);
 
-        return new AnnotatorConfigurationImpl(name, cacheable, constructor, constructorArgs, type);
+        if (isSingleton) {
+            return new SingletonAnnotatorConfigImpl(name, cacheable, constructor, constructorArgs, type);
+        } else {
+            return new AnnotatorConfigurationImpl(name, cacheable, constructor, constructorArgs, type);
+        }
     }
 
     protected static String buildKey(StringBuilder keyBuilder, String annotatorKey, String suffix) {

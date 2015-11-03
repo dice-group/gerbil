@@ -22,13 +22,13 @@
  */
 package org.aksw.gerbil.annotator.decorator;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.annotator.EntityRecognizer;
+import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.AbstractDatasetConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
@@ -90,24 +90,15 @@ public class ErrorCountingAnnotatorDecoratorTest {
         }
     }
 
-    public static class ErrorCausingAnnotator implements EntityRecognizer {
+    public static class ErrorCausingAnnotator extends AbstractAnnotator implements EntityRecognizer {
 
         private int errorsPerHundred;
         private int errorsInThisHundred = 0;
         private int count = 0;
 
         public ErrorCausingAnnotator(int errorsPerHundred) {
-            super();
+            super("Error causing annotator");
             this.errorsPerHundred = errorsPerHundred;
-        }
-
-        @Override
-        public String getName() {
-            return "Error causing annotator";
-        }
-
-        @Override
-        public void setName(String name) {
         }
 
         @Override
@@ -122,10 +113,6 @@ public class ErrorCountingAnnotatorDecoratorTest {
                 throw new AnnotationException("Test exception.");
             }
             return new ArrayList<Span>(0);
-        }
-
-        @Override
-        public void close() throws IOException {
         }
 
     }

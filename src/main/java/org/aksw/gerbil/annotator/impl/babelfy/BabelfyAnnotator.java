@@ -24,7 +24,6 @@
 package org.aksw.gerbil.annotator.impl.babelfy;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -200,7 +199,4 @@ public class BabelfyAnnotator extends AbstractAnnotator implements A2KBAnnotator
         return chunks;
     }
 
-    @Override
-    public void close() throws IOException {
-    }
 }

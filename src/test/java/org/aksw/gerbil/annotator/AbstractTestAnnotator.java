@@ -74,5 +74,12 @@ public class AbstractTestAnnotator extends AbstractAdapterConfiguration implemen
 
     @Override
     public void close() throws IOException {
+        // nothing to do
     }
+
+    @Override
+    public void setClosePermitionGranter(ClosePermitionGranter granter) {
+        // nothing to do
+    }
+
 }

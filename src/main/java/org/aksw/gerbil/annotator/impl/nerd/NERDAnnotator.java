@@ -1,6 +1,5 @@
 package org.aksw.gerbil.annotator.impl.nerd;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.A2KBAnnotator;
@@ -111,7 +110,4 @@ public class NERDAnnotator extends AbstractAnnotator implements A2KBAnnotator {
         return resultDoc;
     }
 
-    @Override
-    public void close() throws IOException {
-    }
 }
