@@ -3,7 +3,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%
-    request.setAttribute("additionalResultsCount", ((String[])request.getAttribute("additionalResultNames")).length);
+	request.setAttribute("additionalResultsCount",
+			((String[]) request.getAttribute("additionalResultNames")).length);
 %>
 <head>
 <link rel="stylesheet"
@@ -11,7 +12,7 @@
 <link rel="stylesheet"
 	href="/gerbil/webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
 <link rel="icon" type="image/png"
-	href="/gerbil/webResources/gerbilicon.png">
+	href="/gerbil/webResources/gerbilicon_transparent.png">
 <style type="text/css">
 /* making the buttons wide enough and right-aligned */
 .btn-group>.btn {
@@ -58,7 +59,7 @@
 		</c:forEach>
 
 	Type: <c:out value="${tasks[0].type.label}" />
-		</br>
+		<br>
 	Matching: <c:out value="${tasks[0].matching.label}" />
 		<table id="resultTable"
 			class="table  table-hover table-condensed tableScroll">
@@ -89,8 +90,8 @@
 			</thead>
 			<tbody>
 				<c:forEach var="task" varStatus="taskId" items="${tasks}">
-					<tr>
-						<c:if test="${empty task.stateMsg}">
+					<c:if test="${empty task.stateMsg}">
+						<tr>
 							<td>${task.annotator}</td>
 							<td>${task.dataset}</td>
 							<c:if test="${hasSubTasks}">
@@ -111,55 +112,57 @@
 							<!-- <td>${task.state}</td> -->
 							<td>${task.errorCount}</td>
 							<!-- for every additional result -->
-							<c:forEach items="${additionalResults[taskId.count - 1]}" var="additionalResult">
-								<td>
-								<c:if test="${not empty additionalResult}">
-									<fmt:formatNumber type="number" maxFractionDigits="4" value="${additionalResult}" /></td>
-								</c:if>
-								</td>
+							<c:forEach items="${additionalResults[taskId.count - 1]}"
+								var="additionalResult">
+								<td><c:if test="${not empty additionalResult}">
+										<fmt:formatNumber type="number" maxFractionDigits="4"
+											value="${additionalResult}" />
+									</c:if></td>
 							</c:forEach>
 							<td>${task.timestampstring}</td>
 							<td>${task.gerbilVersion}</td>
-							<c:forEach var="subTask" items="${task.subTasks}">
-					</tr>
-					<tr>
-						<td>${task.annotator}</td>
-						<td>${task.dataset}</td>
-						<td>${subTask.type.label}</td>
-						<td><fmt:formatNumber type="number" maxFractionDigits="4"
-								value="${subTask.microF1Measure}" /></td>
-						<td><fmt:formatNumber type="number" maxFractionDigits="4"
-								value="${subTask.microPrecision}" /></td>
-						<td><fmt:formatNumber type="number" maxFractionDigits="4"
-								value="${subTask.microRecall}" /></td>
-						<td><fmt:formatNumber type="number" maxFractionDigits="4"
-								value="${subTask.macroF1Measure}" /></td>
-						<td><fmt:formatNumber type="number" maxFractionDigits="4"
-								value="${subTask.macroPrecision}" /></td>
-						<td><fmt:formatNumber type="number" maxFractionDigits="4"
-								value="${subTask.macroRecall}" /></td>
-						<!--<td colspan="3"></td> -->
-						<td>${task.errorCount}</td>
-							<!-- for every additional result -->
-							<c:forEach items="${additionalResultNames}" var="name">
-								<td>
-								</td>
-							</c:forEach>
-						<td>${task.timestampstring}</td>
-						<td>${task.gerbilVersion}</td>
-				</c:forEach>
-				</c:if>
-				<c:if test="${!empty task.stateMsg}">
-					<td>${task.annotator}</td>
-					<td>${task.dataset}</td>
-					<c:if test="${hasSubTasks}">
-						<td></td>
+						</tr>
+						<c:forEach var="subTask" items="${task.subTasks}">
+							<tr>
+								<td>${task.annotator}</td>
+								<td>${task.dataset}</td>
+								<td>${subTask.type.label}</td>
+								<td><fmt:formatNumber type="number" maxFractionDigits="4"
+										value="${subTask.microF1Measure}" /></td>
+								<td><fmt:formatNumber type="number" maxFractionDigits="4"
+										value="${subTask.microPrecision}" /></td>
+								<td><fmt:formatNumber type="number" maxFractionDigits="4"
+										value="${subTask.microRecall}" /></td>
+								<td><fmt:formatNumber type="number" maxFractionDigits="4"
+										value="${subTask.macroF1Measure}" /></td>
+								<td><fmt:formatNumber type="number" maxFractionDigits="4"
+										value="${subTask.macroPrecision}" /></td>
+								<td><fmt:formatNumber type="number" maxFractionDigits="4"
+										value="${subTask.macroRecall}" /></td>
+								<!--<td colspan="3"></td> -->
+								<td>${task.errorCount}</td>
+								<!-- for every additional result -->
+								<c:forEach items="${additionalResultNames}" var="name">
+									<td></td>
+								</c:forEach>
+								<td>${task.timestampstring}</td>
+								<td>${task.gerbilVersion}</td>
+							</tr>
+						</c:forEach>
 					</c:if>
-					<td colspan="${additionalResultsCount + 7}" style="text-align: center">${task.stateMsg}</td>
-					<td>${task.timestampstring}</td>
-					<td>${task.gerbilVersion}</td>
-				</c:if>
-				</tr>
+					<c:if test="${!empty task.stateMsg}">
+						<tr>
+							<td>${task.annotator}</td>
+							<td>${task.dataset}</td>
+							<c:if test="${hasSubTasks}">
+								<td></td>
+							</c:if>
+							<td colspan="${additionalResultsCount + 7}"
+								style="text-align: center">${task.stateMsg}</td>
+							<td>${task.timestampstring}</td>
+							<td>${task.gerbilVersion}</td>
+						</tr>
+					</c:if>
 				</c:forEach>
 			</tbody>
 		</table>

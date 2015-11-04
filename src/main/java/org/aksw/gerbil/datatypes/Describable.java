@@ -16,9 +16,16 @@
  */
 package org.aksw.gerbil.datatypes;
 
+/**
+ * The interface of something that can describe itself by giving a label and a
+ * description.
+ * 
+ * @author Micha
+ *
+ */
 public interface Describable {
 
-    public String getLabel();
+	public String getLabel();
 
-    public String getDescription();
+	public String getDescription();
 }
