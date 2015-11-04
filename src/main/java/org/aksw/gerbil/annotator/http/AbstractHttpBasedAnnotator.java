@@ -50,7 +50,7 @@ public abstract class AbstractHttpBasedAnnotator extends AbstractHttpRequestEmit
 
     @Override
     public final void close() throws IOException {
-        if (granter.givePermissionToClose()) {
+        if ((granter == null) || (granter.givePermissionToClose())) {
             performClose();
         }
     }
