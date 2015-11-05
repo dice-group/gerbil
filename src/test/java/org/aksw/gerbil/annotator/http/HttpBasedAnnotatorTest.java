@@ -106,7 +106,7 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
     private static final long MAX_WAITING_TIME = 2000;
     private static final long CHECK_INERVAL = 1000;
     private static final long SLOW_SERVER_WAITING_TIME = 10000;
-    private static final long TEST_WAITING_TIME = DOCUMENTS.length * MAX_WAITING_TIME;
+    private static final long TEST_WAITING_TIME = 2 * DOCUMENTS.length * MAX_WAITING_TIME;
     private static final String EXPERIMENT_ID = "HttpBasedAnnotatorTest";
 
     private static final int NUMBER_OF_DATASETS = 3;
