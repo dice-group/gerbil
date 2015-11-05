@@ -59,4 +59,15 @@ public class ObservedHttpRequest {
         return true;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ObservedHttpRequest [request=");
+        builder.append(request);
+        builder.append(", emitter=");
+        builder.append(emitter);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

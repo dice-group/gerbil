@@ -81,22 +81,33 @@ public class InterruptingObserver implements Runnable {
     }
 
     public void reportStart(HttpRequestEmitter emitter, HttpUriRequest request) {
+        ObservedHttpRequest observedRequest = new ObservedHttpRequest(request, emitter);
         try {
             observedMappingMutex.acquire();
         } catch (InterruptedException e) {
             LOGGER.error("Interrupted while waiting for mutex. Aborting.");
         }
-        observedRequests.put(new ObservedHttpRequest(request, emitter), System.currentTimeMillis());
+        if (observedRequests.containsKey(observedRequest)) {
+            LOGGER.error("There already is an observed request equal to this new one (" + observedRequest.toString()
+                    + "). Note that this is a fatal error and the old request will be overwritten.");
+        }
+        observedRequests.put(observedRequest, System.currentTimeMillis());
         observedMappingMutex.release();
     }
 
     public void reportEnd(HttpRequestEmitter emitter, HttpUriRequest request) {
+        ObservedHttpRequest observedRequest = new ObservedHttpRequest(request, emitter);
         try {
             observedMappingMutex.acquire();
         } catch (InterruptedException e) {
             LOGGER.error("Interrupted while waiting for mutex. Aborting.");
         }
-        observedRequests.remove(new ObservedHttpRequest(request, emitter));
+        if (observedRequests.containsKey(observedRequest)) {
+            observedRequests.remove(observedRequest);
+        } else {
+            LOGGER.error("Tried to remove an observed request that is not existing (" + observedRequest.toString()
+                    + "). This is a fatal error.");
+        }
         observedMappingMutex.release();
     }
 
