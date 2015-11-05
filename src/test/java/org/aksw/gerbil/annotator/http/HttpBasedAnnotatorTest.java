@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
+import org.aksw.gerbil.annotator.SingletonAnnotatorConfigImpl;
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
@@ -52,6 +53,7 @@ import org.aksw.simba.topicmodeling.concurrent.tasks.TaskObserver;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.simpleframework.http.core.ContainerServer;
 import org.simpleframework.transport.Server;
@@ -147,6 +149,49 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
                 NIFBasedAnnotatorWebservice.class.getConstructor(String.class, String.class),
                 new Object[] { FAST_HTTP_SERVER_ADDRESS, FAST_ANNOTATOR_NAME }, ExperimentType.D2KB);
         AnnotatorConfigurationImpl slowAnnotator = new AnnotatorConfigurationImpl(SLOW_ANNOTATOR_NAME, false,
+                NIFBasedAnnotatorWebservice.class.getConstructor(String.class, String.class),
+                new Object[] { SLOW_HTTP_SERVER_ADDRESS, SLOW_ANNOTATOR_NAME }, ExperimentType.D2KB);
+        ExperimentTaskConfiguration configs[] = new ExperimentTaskConfiguration[2 * NUMBER_OF_DATASETS];
+        for (int i = 0; i < configs.length; ++i) {
+            configs[i] = new ExperimentTaskConfiguration((((i & 1) == 0) ? fastAnnotator : slowAnnotator),
+                    datasets[i >> 1], ExperimentType.D2KB, Matching.WEAK_ANNOTATION_MATCH);
+        }
+
+        SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
+        Overseer overseer = new SimpleOverseer();
+        overseer.addObserver(this);
+        @SuppressWarnings("unused")
+        Reporter reporter = new LogReporter(overseer);
+        Experimenter experimenter = new Experimenter(overseer, experimentDAO, RootConfig.createSameAsRetriever(),
+                new EvaluatorFactory(URI_KB_CLASSIFIER), configs, EXPERIMENT_ID);
+        experimenter.run();
+
+        // Try to wait for the tasks to finish
+        Assert.assertTrue("Expected all experiments to have been finished.",
+                taskEndedMutex.tryAcquire(configs.length, TEST_WAITING_TIME, TimeUnit.MILLISECONDS));
+
+        List<ExperimentTaskResult> results = experimentDAO.getResultsOfExperiment(EXPERIMENT_ID);
+        for (ExperimentTaskResult result : results) {
+            Assert.assertFalse(result.annotator.equals(SLOW_ANNOTATOR_NAME));
+            Assert.assertEquals(ExperimentDAO.TASK_FINISHED, result.state);
+            Assert.assertEquals(1.0, result.results[0], 0.000001);
+        }
+        // make sure that the fast server didn't throw anything (the slow server
+        // might has thrown something)
+        Assert.assertNull(fastServerContainer.getThrowable());
+    }
+
+    @Test
+    @Ignore
+    public void testWithSingletonAnnotators() throws NoSuchMethodException, SecurityException, InterruptedException {
+        TestDataset datasets[] = new TestDataset[NUMBER_OF_DATASETS];
+        for (int i = 0; i < datasets.length; ++i) {
+            datasets[i] = new TestDataset("test dataset " + i, Arrays.asList(DOCUMENTS), ExperimentType.D2KB);
+        }
+        AnnotatorConfigurationImpl fastAnnotator = new SingletonAnnotatorConfigImpl(FAST_ANNOTATOR_NAME, false,
+                NIFBasedAnnotatorWebservice.class.getConstructor(String.class, String.class),
+                new Object[] { FAST_HTTP_SERVER_ADDRESS, FAST_ANNOTATOR_NAME }, ExperimentType.D2KB);
+        AnnotatorConfigurationImpl slowAnnotator = new SingletonAnnotatorConfigImpl(SLOW_ANNOTATOR_NAME, false,
                 NIFBasedAnnotatorWebservice.class.getConstructor(String.class, String.class),
                 new Object[] { SLOW_HTTP_SERVER_ADDRESS, SLOW_ANNOTATOR_NAME }, ExperimentType.D2KB);
         ExperimentTaskConfiguration configs[] = new ExperimentTaskConfiguration[2 * NUMBER_OF_DATASETS];

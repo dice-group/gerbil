@@ -18,6 +18,9 @@ package org.aksw.gerbil.http;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,9 +66,11 @@ public class HttpManagement {
     }
 
     protected InterruptingObserver interruptingObserver;
+    protected CloseableHttpClient client;
 
     protected HttpManagement(InterruptingObserver interruptingObserver) {
         this.interruptingObserver = interruptingObserver;
+        this.client = HttpClientBuilder.create().setConnectionManager(new PoolingHttpClientConnectionManager()).build();
     }
 
     public void reportStart(HttpRequestEmitter emitter, HttpUriRequest request) {
@@ -82,5 +87,9 @@ public class HttpManagement {
 
     public void setCheckInterval(long checkInterval) {
         interruptingObserver.setCheckInterval(checkInterval);
+    }
+
+    public CloseableHttpClient getDefaultClient() {
+        return client;
     }
 }

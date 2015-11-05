@@ -37,6 +37,7 @@ import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentCreator;
 import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentParser;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -138,19 +139,14 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
                 throw new GerbilException("Couldn't parse the response.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
             }
         } finally {
+            closeRequest(request);
             if (entity != null) {
                 try {
                     EntityUtils.consume(entity);
                 } catch (IOException e1) {
                 }
             }
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                }
-            }
-            closeRequest(request);
+            IOUtils.closeQuietly(response);
         }
         LOGGER.info("Finished request for {}", document.getDocumentURI());
         return document;
