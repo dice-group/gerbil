@@ -26,6 +26,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.execchain.RequestAbortedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +107,10 @@ public class AbstractHttpRequestEmitter implements HttpRequestEmitter {
         CloseableHttpResponse response = null;
         try {
             response = client.execute(request);
+        } catch (RequestAbortedException e) {
+            LOGGER.error("It seems like the annotator has needed too much time and has been interrupted.");
+            throw new GerbilException("It seems like the annotator has needed too much time and has been interrupted.",
+                    e, ErrorTypes.ANNOTATOR_NEEDED_TOO_MUCH_TIME);
         } catch (java.net.SocketException e) {
             if (e.getMessage().contains(CONNECTION_ABORT_INDICATING_EXCPETION_MSG)) {
                 LOGGER.error("It seems like the annotator has needed too much time and has been interrupted.");

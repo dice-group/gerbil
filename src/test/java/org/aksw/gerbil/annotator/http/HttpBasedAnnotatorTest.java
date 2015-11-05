@@ -109,7 +109,7 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
     private static final long MAX_WAITING_TIME = 2000;
     private static final long CHECK_INERVAL = 1000;
     private static final long SLOW_SERVER_WAITING_TIME = 10000;
-    private static final long TEST_WAITING_TIME = 2 * DOCUMENTS.length * MAX_WAITING_TIME;
+    private static final long TEST_WAITING_TIME = 3 * DOCUMENTS.length * MAX_WAITING_TIME;
     private static final String EXPERIMENT_ID = "HttpBasedAnnotatorTest";
 
     private static final int NUMBER_OF_DATASETS = 3;
@@ -151,10 +151,10 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         AnnotatorConfigurationImpl slowAnnotator = new AnnotatorConfigurationImpl(SLOW_ANNOTATOR_NAME, false,
                 NIFBasedAnnotatorWebservice.class.getConstructor(String.class, String.class),
                 new Object[] { SLOW_HTTP_SERVER_ADDRESS, SLOW_ANNOTATOR_NAME }, ExperimentType.D2KB);
-        ExperimentTaskConfiguration configs[] = new ExperimentTaskConfiguration[2 * NUMBER_OF_DATASETS];
+        ExperimentTaskConfiguration configs[] = new ExperimentTaskConfiguration[10 * NUMBER_OF_DATASETS];
         for (int i = 0; i < configs.length; ++i) {
             configs[i] = new ExperimentTaskConfiguration((((i & 1) == 0) ? fastAnnotator : slowAnnotator),
-                    datasets[i >> 1], ExperimentType.D2KB, Matching.WEAK_ANNOTATION_MATCH);
+                    datasets[i / 10], ExperimentType.D2KB, Matching.WEAK_ANNOTATION_MATCH);
         }
 
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
