@@ -16,11 +16,14 @@
  */
 package org.aksw.gerbil;
 
+import java.util.Arrays;
+
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.execute.ExperimentTask;
+import org.aksw.gerbil.utils.ExpTaskConfigComparator;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +66,7 @@ public class Experimenter implements Runnable {
 
     @Override
     public void run() {
+        Arrays.sort(configs, new ExpTaskConfigComparator());
         try {
             int taskId;
             for (int i = 0; i < configs.length; ++i) {
@@ -96,7 +100,7 @@ public class Experimenter implements Runnable {
                 config.datasetConfig.getName(), config.datasetConfig.couldBeCached(), couldBeCached);
         return couldBeCached;
     }
-    
+
     public void setAnnotatorOutputWriter(AnnotatorOutputWriter annotatorOutputWriter) {
         this.annotatorOutputWriter = annotatorOutputWriter;
     }
