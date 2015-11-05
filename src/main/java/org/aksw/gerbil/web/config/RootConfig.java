@@ -162,9 +162,8 @@ public class RootConfig {
         return sameAsRetriever;
     }
 
-    public static @Bean EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer,
-            SameAsRetriever sameAsRetriever) {
-        return new EvaluatorFactory(sameAsRetriever, null, inferencer);
+    public static @Bean EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer) {
+        return new EvaluatorFactory(inferencer);
     }
 
     public static AnnotatorOutputWriter getAnnotatorOutputWriter() {

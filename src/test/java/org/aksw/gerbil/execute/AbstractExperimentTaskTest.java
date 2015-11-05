@@ -23,6 +23,8 @@ import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.web.config.RootConfig;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
@@ -40,7 +42,14 @@ public abstract class AbstractExperimentTaskTest {
 
     public void runTest(int experimentTaskId, ExperimentDAO experimentDAO, EvaluatorFactory evFactory,
             ExperimentTaskConfiguration configuration, TaskObserver observer) {
-        ExperimentTask task = new ExperimentTask(experimentTaskId, experimentDAO, evFactory, configuration);
+        runTest(experimentTaskId, experimentDAO, RootConfig.createSameAsRetriever(), evFactory, configuration,
+                observer);
+    }
+
+    public void runTest(int experimentTaskId, ExperimentDAO experimentDAO, SameAsRetriever sameAsRetriever,
+            EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration, TaskObserver observer) {
+        ExperimentTask task = new ExperimentTask(experimentTaskId, experimentDAO, sameAsRetriever, evFactory,
+                configuration);
         Overseer overseer = new SimpleOverseer();
         overseer.addObserver(observer);
         @SuppressWarnings("unused")

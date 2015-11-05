@@ -42,9 +42,6 @@ import org.aksw.gerbil.matching.impl.MeaningMatchingsSearcher;
 import org.aksw.gerbil.semantic.kb.ExactWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
-import org.aksw.gerbil.semantic.sameas.DatasetBasedSameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.aksw.gerbil.transfer.nif.Meaning;
@@ -67,12 +64,11 @@ public class EvaluatorFactory {
     private static final String DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY = "org.aksw.gerbil.evaluate.DefaultWellKnownKBs";
     private static final String DEFAULT_WELL_KNOWN_KBS[] = loadDefaultKBs();
 
-    protected SameAsRetriever globalRetriever = null;
     protected UriKBClassifier globalClassifier = null;
     protected SubClassInferencer inferencer = null;
 
     public EvaluatorFactory() {
-        this(null, null, null);
+        this(null, null);
     }
 
     private static String[] loadDefaultKBs() {
@@ -83,21 +79,15 @@ public class EvaluatorFactory {
         return kbs;
     }
 
-    public EvaluatorFactory(SameAsRetriever globalRetriever) {
-        this(globalRetriever, null, null);
-    }
-
     public EvaluatorFactory(UriKBClassifier globalClassifier) {
-        this(null, globalClassifier, null);
+        this(globalClassifier, null);
     }
 
-    public EvaluatorFactory(SameAsRetriever globalRetriever, UriKBClassifier globalClassifier) {
-        this(globalRetriever, globalClassifier, null);
+    public EvaluatorFactory(SubClassInferencer inferencer) {
+        this(null, inferencer);
     }
 
-    public EvaluatorFactory(SameAsRetriever globalRetriever, UriKBClassifier globalClassifier,
-            SubClassInferencer inferencer) {
-        this.globalRetriever = globalRetriever;
+    public EvaluatorFactory(UriKBClassifier globalClassifier, SubClassInferencer inferencer) {
         if (globalClassifier != null) {
             this.globalClassifier = globalClassifier;
         } else {
@@ -113,30 +103,27 @@ public class EvaluatorFactory {
     @SuppressWarnings("rawtypes")
     protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration,
             Dataset dataset) {
-        return createEvaluator(type, configuration, dataset, globalRetriever, globalClassifier, inferencer);
+        return createEvaluator(type, configuration, dataset, globalClassifier, inferencer);
     }
 
     @SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
     protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
-            SameAsRetriever globalRetriever, UriKBClassifier globalClassifier, SubClassInferencer inferencer) {
+            UriKBClassifier globalClassifier, SubClassInferencer inferencer) {
         switch (type) {
         case C2KB: {
-            SameAsRetriever localRetriever = getSameAsRetriever(dataset);
             return new ConfidenceScoreEvaluatorDecorator<Meaning>(
-                    new InKBClassBasedFMeasureCalculator<Meaning>(new MeaningMatchingsSearcher<Meaning>(
-                            globalClassifier, globalRetriever, localRetriever, null), globalClassifier),
+                    new InKBClassBasedFMeasureCalculator<Meaning>(
+                            new MeaningMatchingsSearcher<Meaning>(globalClassifier), globalClassifier),
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
         case Sa2KB:
         case A2KB: {
-            SameAsRetriever localRetriever = getSameAsRetriever(dataset);
             return new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
                     new FMeasureCalculator<NamedEntity>(
                             new MatchingsCounterImpl<NamedEntity>(new CompoundMatchingsCounter<NamedEntity>(
                                     (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
                                             .createSpanMatchingsSearcher(configuration.matching),
-                                    new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever,
-                                            localRetriever, null)))),
+                                    new MeaningMatchingsSearcher<NamedEntity>(globalClassifier)))),
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
         case ERec: {
@@ -146,16 +133,12 @@ public class EvaluatorFactory {
                                     .createSpanMatchingsSearcher(configuration.matching))),
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
-        case D2KB: { // FIXME define whether the problem reduction to D2KB
-            // should use a weak or strong matching
-            SameAsRetriever localRetriever = getSameAsRetriever(dataset);
+        case D2KB: {
             return new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
                     new InKBClassBasedFMeasureCalculator<NamedEntity>(new CompoundMatchingsCounter<NamedEntity>(
                             (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
                                     .createSpanMatchingsSearcher(configuration.matching),
-                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier, globalRetriever, localRetriever,
-                                    null)),
-                            globalClassifier),
+                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier)), globalClassifier),
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
         case ETyping: {
@@ -188,7 +171,7 @@ public class EvaluatorFactory {
                     ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
                     (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ETyping, subTaskConfig, dataset,
-                            globalRetriever, okeClassifierTask1, inferencer)));
+                            okeClassifierTask1, inferencer)));
             return new ConfidenceScoreEvaluatorDecorator<TypedNamedEntity>(
                     new SubTaskAverageCalculator<TypedNamedEntity>(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
                     new DoubleResultComparator());
@@ -209,7 +192,7 @@ public class EvaluatorFactory {
                     new MarkingFilteringEvaluatorDecorator<>(
                             new TypeBasedMarkingFilter<TypedNamedEntity>(false, classTypes),
                             (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ETyping, subTaskConfig,
-                                    dataset, globalRetriever, okeClassifierTask2, inferencer))));
+                                    dataset, okeClassifierTask2, inferencer))));
             // sub task 2, find the correct position of the type in the text
             // (use only entities with a class type!)
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
@@ -239,8 +222,10 @@ public class EvaluatorFactory {
         case D2KB:
         case ETyping:
         case C2KB:
-        case OKE_Task1: // FIXME shouldn't the subtasks of OKE Task1 be added,
-                        // too?
+            // Since the OKE challenge tasks are using the results of their
+            // subtasks, the definition of subtasks is part of their evaluation
+            // creation
+        case OKE_Task1:
         case OKE_Task2: {
             return;
         }
@@ -261,19 +246,6 @@ public class EvaluatorFactory {
         default: {
             throw new RuntimeException();
         }
-        }
-    }
-
-    protected SameAsRetriever getSameAsRetriever(Dataset dataset) {
-        SameAsRetriever localRetriever = DatasetBasedSameAsRetriever.create(dataset);
-        if (localRetriever != null) {
-            if (globalRetriever != null) {
-                return new MultipleSameAsRetriever(localRetriever, globalRetriever);
-            } else {
-                return localRetriever;
-            }
-        } else {
-            return globalRetriever;
         }
     }
 

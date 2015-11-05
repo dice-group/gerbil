@@ -36,6 +36,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
+import org.aksw.gerbil.web.config.RootConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -208,7 +209,7 @@ public class C2KBTest extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
                 new TestC2KBAnnotator(Arrays.asList(annotatorResults)), dataset, ExperimentType.C2KB, matching);
-        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
+        runTest(experimentTaskId, experimentDAO, RootConfig.createSameAsRetriever(), new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }
 }

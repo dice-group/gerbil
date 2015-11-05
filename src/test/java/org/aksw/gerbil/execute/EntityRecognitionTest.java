@@ -107,7 +107,7 @@ public class EntityRecognitionTest extends AbstractExperimentTaskTest {
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestEntityRecognizer(
                 Arrays.asList(annotatorResults)), new TestDataset(Arrays.asList(goldStandards), ExperimentType.ERec),
                 ExperimentType.ERec, matching);
-        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration, new F1MeasureTestingObserver(
+        runTest(experimentTaskId, experimentDAO, null, new EvaluatorFactory(), configuration, new F1MeasureTestingObserver(
                 this, experimentTaskId, experimentDAO, expectedResults));
     }
 

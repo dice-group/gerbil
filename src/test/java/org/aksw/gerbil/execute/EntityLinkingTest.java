@@ -36,7 +36,6 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
-import org.aksw.gerbil.web.config.RootConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -59,15 +58,15 @@ public class EntityLinkingTest extends AbstractExperimentTaskTest {
             "src/test/resources/OKE_Challenge/example_data/task1.ttl", false, ExperimentType.A2KB);
     private static final UriKBClassifier URI_KB_CLASSIFIER = new SimpleWhiteListBasedUriKBClassifier(
             "http://dbpedia.org/resource/");
-    private static final EvaluatorFactory EVALUATOR_FACTORY = new EvaluatorFactory(RootConfig.createSameAsRetriever(),
-            URI_KB_CLASSIFIER);
+    private static final EvaluatorFactory EVALUATOR_FACTORY = new EvaluatorFactory(URI_KB_CLASSIFIER);
 
     @Parameters
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
-//      // The extractor returns nothing
-//        testConfigs.add(new Object[] { new Document[] {}, GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
-//                new double[] { 0, 0, 0, 0, 0, 0, 0 } });
+        // // The extractor returns nothing
+        // testConfigs.add(new Object[] { new Document[] {}, GOLD_STD,
+        // Matching.WEAK_ANNOTATION_MATCH,
+        // new double[] { 0, 0, 0, 0, 0, 0, 0 } });
         // The extractor found everything and marked all entities using the OKE
         // URI --> some of them should be wrong, because they are not linked to
         // the DBpedia

@@ -375,7 +375,7 @@ public class OKEChallengeTask2Test extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestOKETask2Annotator(
                 Arrays.asList(annotatorResults)), dataset, ExperimentType.OKE_Task2, matching);
-        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(null, null, inferencer), configuration,
+        runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(inferencer), configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }
 }

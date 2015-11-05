@@ -19,9 +19,9 @@ package org.aksw.gerbil.execute;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.C2KBAnnotator;
-import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
@@ -45,6 +45,9 @@ import org.aksw.gerbil.evaluate.IntEvaluationResult;
 import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.semantic.sameas.DatasetBasedSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
@@ -74,13 +77,15 @@ public class ExperimentTask implements Task {
     private EvaluatorFactory evFactory;
     private ExperimentTaskState taskState = null;
     private AnnotatorOutputWriter annotatorOutputWriter = null;
+    private SameAsRetriever globalRetriever = null;
 
-    public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO,
+    public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever,
             org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration) {
         this.experimentDAO = experimentDAO;
         this.configuration = configuration;
         this.experimentTaskId = experimentTaskId;
         this.evFactory = evFactory;
+        this.globalRetriever = globalRetriever;
     }
 
     @Override
@@ -116,6 +121,9 @@ public class ExperimentTask implements Task {
             evaluators.add(timeMeasurer);
             evaluators.add(errorCounter);
 
+            // Prepare dataset for the experiment
+            prepareDataset(dataset);
+
             taskState = new ExperimentTaskState(dataset.size());
             // perform experiment
             EvaluationResult result = runExperiment(dataset, decoratedAnnotator, evaluators, taskState);
@@ -140,7 +148,84 @@ public class ExperimentTask implements Task {
         }
     }
 
-    private void transformResults(EvaluationResult result, ExperimentTaskResult expResult) {
+    /**
+     * Prepares the given dataset for the experiment, i.e., performs a sameAs
+     * retrieval if it is needed for the experiment type.
+     * 
+     * @param dataset
+     */
+    @SuppressWarnings("deprecation")
+    protected void prepareDataset(Dataset dataset) {
+        switch (configuration.type) {
+        case A2KB:// falls through
+        case C2KB:
+        case D2KB:
+        case Rc2KB:
+        case Sa2KB:
+        case Sc2KB:
+        case OKE_Task1: // falls through
+        case OKE_Task2:
+        case ETyping: {
+            SameAsRetriever retriever = DatasetBasedSameAsRetriever.create(dataset);
+            if (retriever != null) {
+                if (globalRetriever != null) {
+                    retriever = new MultipleSameAsRetriever(retriever, globalRetriever);
+                }
+            } else {
+                retriever = globalRetriever;
+            }
+            if (retriever != null) {
+                for (Document document : dataset.getInstances()) {
+                    for (Meaning meaning : document.getMarkings(Meaning.class)) {
+                        retriever.addSameURIs(meaning.getUris());
+                    }
+                }
+            }
+            return;
+        }
+        case ERec:// falls through
+        default:
+            // nothing to do
+            return;
+        }
+    }
+
+    /**
+     * Prepares the given annotator results for the evaluation, i.e., performs a
+     * sameAs retrieval if it is needed for the experiment type.
+     * 
+     * @param dataset
+     */
+    @SuppressWarnings("deprecation")
+    protected void prepareAnnotatorResults(List<? extends List<? extends Meaning>> results,
+            SameAsRetriever annotatorSameAsRetriever) {
+        switch (configuration.type) {
+        case A2KB:// falls through
+        case C2KB:
+        case D2KB:
+        case Rc2KB:
+        case Sa2KB:
+        case Sc2KB:
+        case OKE_Task1: // falls through
+        case OKE_Task2:
+        case ETyping: {
+            if (annotatorSameAsRetriever != null) {
+                for (List<? extends Meaning> result : results) {
+                    for (Meaning meaning : result) {
+                        annotatorSameAsRetriever.addSameURIs(meaning.getUris());
+                    }
+                }
+            }
+            return;
+        }
+        case ERec:// falls through
+        default:
+            // nothing to do
+            return;
+        }
+    }
+
+    protected void transformResults(EvaluationResult result, ExperimentTaskResult expResult) {
         if (result instanceof SubTaskResult) {
             ExperimentTaskResult subTask = new ExperimentTaskResult(((SubTaskResult) result).getConfiguration(),
                     new double[6], ExperimentDAO.TASK_FINISHED, 0);
@@ -212,7 +297,7 @@ public class ExperimentTask implements Task {
     }
 
     @SuppressWarnings({ "deprecation" })
-    private EvaluationResult runExperiment(Dataset dataset, Annotator annotator,
+    protected EvaluationResult runExperiment(Dataset dataset, Annotator annotator,
             List<Evaluator<? extends Marking>> evaluators, ExperimentTaskState state) throws GerbilException {
         EvaluationResult evalResult = null;
         switch (configuration.type) {
@@ -231,6 +316,7 @@ public class ExperimentTask implements Task {
                 if (annotatorOutputWriter != null) {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
+                prepareAnnotatorResults(results, globalRetriever);
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
@@ -254,6 +340,7 @@ public class ExperimentTask implements Task {
                 if (annotatorOutputWriter != null) {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
+                prepareAnnotatorResults(results, globalRetriever);
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
@@ -277,6 +364,7 @@ public class ExperimentTask implements Task {
                 if (annotatorOutputWriter != null) {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
+                prepareAnnotatorResults(results, globalRetriever);
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
@@ -350,6 +438,7 @@ public class ExperimentTask implements Task {
                 if (annotatorOutputWriter != null) {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
+                prepareAnnotatorResults(results, globalRetriever);
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
@@ -374,6 +463,7 @@ public class ExperimentTask implements Task {
                 if (annotatorOutputWriter != null) {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
+                prepareAnnotatorResults(results, globalRetriever);
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
@@ -387,6 +477,7 @@ public class ExperimentTask implements Task {
                     ErrorTypes.UNEXPECTED_EXCEPTION);
         }
         return evalResult;
+
     }
 
     @SuppressWarnings("unchecked")

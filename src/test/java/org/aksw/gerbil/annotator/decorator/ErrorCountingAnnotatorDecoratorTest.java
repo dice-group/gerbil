@@ -48,7 +48,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
     @Test
     public void testErrorCount() {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
-        ExperimentTask task = new ExperimentTask(1, db, new EvaluatorFactory(),
+        ExperimentTask task = new ExperimentTask(1, db, null, new EvaluatorFactory(),
                 new ExperimentTaskConfiguration(new ErrorCausingAnnotatorConfig(5), new SimpleTestDatasetConfig(100),
                         ExperimentType.ERec, Matching.STRONG_ENTITY_MATCH));
         task.run();
@@ -61,7 +61,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
     @Test
     public void testTaskCanceling() {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
-        ExperimentTask task = new ExperimentTask(2, db, new EvaluatorFactory(),
+        ExperimentTask task = new ExperimentTask(2, db, null, new EvaluatorFactory(),
                 new ExperimentTaskConfiguration(new ErrorCausingAnnotatorConfig(30), new SimpleTestDatasetConfig(1000),
                         ExperimentType.ERec, Matching.STRONG_ENTITY_MATCH));
         task.run();
