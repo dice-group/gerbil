@@ -21,13 +21,14 @@ import java.io.IOException;
 import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,7 @@ public class AbstractHttpRequestEmitter implements HttpRequestEmitter {
     protected String name;
 
     public AbstractHttpRequestEmitter() {
-        this(null, HttpClients.createDefault());
+        this(null, HttpClientBuilder.create().build());
         closeClient = true;
     }
 
@@ -51,7 +52,7 @@ public class AbstractHttpRequestEmitter implements HttpRequestEmitter {
     }
 
     public AbstractHttpRequestEmitter(String name) {
-        this(name, HttpClients.createDefault());
+        this(name, HttpClientBuilder.create().build());
         closeClient = true;
     }
 
@@ -134,8 +135,14 @@ public class AbstractHttpRequestEmitter implements HttpRequestEmitter {
     @Override
     public void close() throws IOException {
         if (closeClient) {
-            client.close();
+            // client.close();
         }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        IOUtils.closeQuietly(client);
+        super.finalize();
     }
 
     @Override
