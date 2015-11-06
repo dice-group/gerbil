@@ -21,17 +21,21 @@ import java.util.List;
 
 public abstract class AbstractWhiteListBasedUriKBClassifier implements UriKBClassifier {
 
-    protected List<String> kbNamespaces;
+    protected String kbNamespaces[];
+
+    public AbstractWhiteListBasedUriKBClassifier(String kbNamespaces[]) {
+        this.kbNamespaces = kbNamespaces;
+    }
 
     public AbstractWhiteListBasedUriKBClassifier(List<String> kbNamespaces) {
-        this.kbNamespaces = kbNamespaces;
+        this.kbNamespaces = kbNamespaces.toArray(new String[kbNamespaces.size()]);
     }
 
     @Override
     public boolean isKBUri(String uri) {
         if (uri != null) {
-            for (String namespace : kbNamespaces) {
-                if (uri.startsWith(namespace)) {
+            for (int i = 0; i < kbNamespaces.length; ++i) {
+                if (uri.startsWith(kbNamespaces[i])) {
                     return true;
                 }
             }
