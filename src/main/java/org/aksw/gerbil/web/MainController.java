@@ -143,7 +143,7 @@ public class MainController {
      */
     @RequestMapping("/execute")
     public @ResponseBody String execute(@RequestParam(value = "experimentData") String experimentData) {
-        LOGGER.debug("Got request on /execute with experimentData=" + experimentData);
+        LOGGER.debug("Got request on /execute with experimentData={}", experimentData);
         Object obj = JSONValue.parse(experimentData);
         JSONObject configuration = (JSONObject) obj;
         String type = (String) configuration.get("type");
@@ -165,7 +165,7 @@ public class MainController {
             for (String dataset : datasets) {
                 configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, expType),
                         adapterManager.getDatasetConfig(dataset, expType), expType, getMatching(matching));
-                LOGGER.debug("Created config: " + configs[count]);
+                LOGGER.debug("Created config: {}", configs[count]);
                 ++count;
             }
         }
@@ -179,7 +179,7 @@ public class MainController {
 
     @RequestMapping("/experiment")
     public ModelAndView experiment(@RequestParam(value = "id") String id) {
-        LOGGER.debug("Got request on /experiment with id=" + id);
+        LOGGER.debug("Got request on /experiment with id={}", id);
         dataIdGenerator = new DataIDGenerator(getURLBase(), getFullURL());
         List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
         ExperimentTaskStateHelper.setStatusLines(results);

@@ -194,7 +194,7 @@ public class FOXAnnotator extends AbstractHttpBasedAnnotator implements OKETask1
                     resultDoc.addMarking(
                             new TypedNamedEntity(Integer.valueOf((String) begin), body.length(), uri, types));
                 } else if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Couldn't find index");
+                    LOGGER.debug("Couldn't find start position for annotation.");
                 }
             }
         } catch (Exception e) {

@@ -101,7 +101,7 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
         if (experimentTaskId == EXPERIMENT_TASK_NOT_CACHED) {
             return createTask(annotatorName, datasetName, experimentType, matching, experimentId);
         } else {
-            LOGGER.debug("Could reuse cached task (id=" + experimentTaskId + ").");
+            LOGGER.debug("Could reuse cached task (id={}).", experimentTaskId);
             connectExistingTaskWithExperiment(experimentTaskId, experimentId);
             return CACHED_EXPERIMENT_TASK_CAN_BE_USED;
         }

@@ -52,11 +52,11 @@ public class ClassConsideringMatchingsCounter<T extends Marking> extends Matchin
                 ++documentCounts.truePositives;
                 ++documentCounts.classifiedCounts[classId].truePositives;
                 alreadyUsedResults.set(matchingElements.nextSetBit(0));
-                LOGGER.debug("Found a true positive (" + expectedElement + ").");
+                LOGGER.debug("Found a true positive ({}).", expectedElement);
             } else {
                 ++documentCounts.falseNegatives;
                 ++documentCounts.classifiedCounts[classId].falseNegatives;
-                LOGGER.debug("Found a false negative (" + expectedElement + ").");
+                LOGGER.debug("Found a false negative ({}).", expectedElement);
             }
         }
         // The remaining elements are false positives
@@ -67,7 +67,7 @@ public class ClassConsideringMatchingsCounter<T extends Marking> extends Matchin
                 ++documentCounts.classifiedCounts[classId].falsePositives;
             }
         }
-        LOGGER.debug("Found " + documentCounts.falsePositives + " false positives.");
+        LOGGER.debug("Found {} false positives.", documentCounts.falsePositives);
         return documentCounts;
     }
 

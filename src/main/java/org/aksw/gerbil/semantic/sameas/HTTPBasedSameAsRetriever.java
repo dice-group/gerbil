@@ -58,15 +58,17 @@ public class HTTPBasedSameAsRetriever extends AbstractHttpRequestEmitter impleme
         try {
             model = requestModel(uri);
         } catch (org.apache.jena.atlas.web.HttpException e) {
-            LOGGER.debug("HTTP Exception while requesting uri \"" + uri + "\". Returning null. Exception: "
-                    + e.getMessage());
+            LOGGER.debug("HTTP Exception while requesting uri \"{}\". Returning null. Exception: {}", uri,
+                    e.getMessage());
             return null;
         } catch (org.apache.jena.riot.RiotException e) {
-            LOGGER.debug("Riot Exception while parsing requested model of uri \"" + uri
-                    + "\". Returning null. Exception: " + e.getMessage(), e);
+            LOGGER.debug("Riot Exception while parsing requested model of uri \"{}\". Returning null. Exception: {}",
+                    uri, e.getMessage());
             return null;
         } catch (Exception e) {
-            LOGGER.debug("Exception while requesting uri \"" + uri + "\". Returning null.", e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Exception while requesting uri \"" + uri + "\". Returning null.", e);
+            }
             return null;
         }
         if (model == null) {
