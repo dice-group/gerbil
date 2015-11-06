@@ -118,12 +118,20 @@ public class EvaluatorFactory {
         }
         case Sa2KB:
         case A2KB: {
+            // return new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
+            // new FMeasureCalculator<NamedEntity>(
+            // new MatchingsCounterImpl<NamedEntity>(new
+            // CompoundMatchingsCounter<NamedEntity>(
+            // (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
+            // .createSpanMatchingsSearcher(configuration.matching),
+            // new MeaningMatchingsSearcher<NamedEntity>(globalClassifier)))),
+            // FMeasureCalculator.MICRO_F1_SCORE_NAME, new
+            // DoubleResultComparator());
             return new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
-                    new FMeasureCalculator<NamedEntity>(
-                            new MatchingsCounterImpl<NamedEntity>(new CompoundMatchingsCounter<NamedEntity>(
-                                    (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
-                                            .createSpanMatchingsSearcher(configuration.matching),
-                                    new MeaningMatchingsSearcher<NamedEntity>(globalClassifier)))),
+                    new InKBClassBasedFMeasureCalculator<NamedEntity>(new CompoundMatchingsCounter<NamedEntity>(
+                            (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
+                                    .createSpanMatchingsSearcher(configuration.matching),
+                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier)), globalClassifier),
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
         case ERec: {

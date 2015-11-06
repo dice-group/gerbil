@@ -234,8 +234,7 @@ public class ExperimentTask implements Task {
                 transformResults(tempResult, subTask);
             }
             expResult.addSubTask(subTask);
-        }
-        if (result instanceof EvaluationResultContainer) {
+        } else if (result instanceof EvaluationResultContainer) {
             List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
             for (EvaluationResult tempResult : tempResults) {
                 transformResults(tempResult, expResult);

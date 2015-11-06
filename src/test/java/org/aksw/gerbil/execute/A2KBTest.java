@@ -48,7 +48,7 @@ import org.junit.runners.Parameterized.Parameters;
  * 
  */
 @RunWith(Parameterized.class)
-public class EntityExtractionTest extends AbstractExperimentTaskTest {
+public class A2KBTest extends AbstractExperimentTaskTest {
 
     private static final String TEXTS[] = new String[] {
             "Florence May Harding studied at a school in Sydney, and with Douglas Robert Dundas , but in effect had no formal training in either botany or art.",
@@ -191,7 +191,7 @@ public class EntityExtractionTest extends AbstractExperimentTaskTest {
     private double expectedResults[];
     private Matching matching;
 
-    public EntityExtractionTest(Document[] annotatorResults, DatasetConfiguration dataset, Matching matching,
+    public A2KBTest(Document[] annotatorResults, DatasetConfiguration dataset, Matching matching,
             double[] expectedResults) {
         this.annotatorResults = annotatorResults;
         this.dataset = dataset;

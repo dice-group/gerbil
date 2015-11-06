@@ -1,0 +1,104 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+@prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2#char=0,192>
+        a               nif:RFC5147String , nif:String , nif:Context ;
+        nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex    "192"^^xsd:nonNegativeInteger ;
+        nif:isString    "Such notables include James Carville, who was the senior political adviser to Bill Clinton, and Donna Brazile, the campaign manager of the 2000 presidential campaign of Vice-President Al Gore."^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2#char=96,109>
+        a                     nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Donna Brazile"^^xsd:string ;
+        nif:beginIndex        "96"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "109"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2#char=0,192> ;
+        itsrdf:taClassRef     <Schema:Person> , <http://dbpedia.org/ontology/OfficeHolder> , <http://dbpedia.org/ontology/Agent> , <Http://xmlns.com/foaf/0.1/Person> , <http://dbpedia.org/ontology/Person> ;
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/Donna_Brazile> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2#char=78,90>
+        a                     nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Bill Clinton"^^xsd:string ;
+        nif:beginIndex        "78"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "90"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2#char=0,192> ;
+        itsrdf:taClassRef     <http://dbpedia.org/ontology/Agent> , <Http://xmlns.com/foaf/0.1/Person> , <http://dbpedia.org/ontology/Person> , <Schema:Person> , <http://dbpedia.org/ontology/Politician> , <http://dbpedia.org/ontology/President> ;
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/Bill_Clinton> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2#char=184,191>
+        a                     nif:String , nif:RFC5147String ;
+        nif:anchorOf          "Al Gore"^^xsd:string ;
+        nif:beginIndex        "184"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "191"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2#char=0,192> ;
+        itsrdf:taClassRef     <Schema:Person> , <http://dbpedia.org/ontology/Person> , <Http://xmlns.com/foaf/0.1/Person> , <http://dbpedia.org/ontology/OfficeHolder> , <http://dbpedia.org/ontology/Agent> ;
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/Al_Gore> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=132,138>
+        a                     nif:RFC5147String , nif:String ;
+        nif:anchorOf          "botany"^^xsd:string ;
+        nif:beginIndex        "132"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "138"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,146> ;
+        itsrdf:taClassRef     <> ;
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/Botany> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3#char=0,69>
+        a               nif:RFC5147String , nif:String , nif:Context ;
+        nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex    "69"^^xsd:nonNegativeInteger ;
+        nif:isString    "The senator received a Bachelor of Laws from the Columbia University."^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,8>
+        a                     nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Florence"^^xsd:string ;
+        nif:beginIndex        "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "8"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,146> ;
+        itsrdf:taClassRef     <http://dbpedia.org/ontology/Place> , <Schema:Place> , <http://dbpedia.org/ontology/Settlement> , <http://dbpedia.org/ontology/PopulatedPlace> ;
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/Florence> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,146>
+        a               nif:RFC5147String , nif:String , nif:Context ;
+        nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex    "146"^^xsd:nonNegativeInteger ;
+        nif:isString    "Florence May Harding studied at a school in Sydney, and with Douglas Robert Dundas , but in effect had no formal training in either botany or art."^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=44,50>
+        a                     nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Sydney"^^xsd:string ;
+        nif:beginIndex        "44"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "50"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,146> ;
+        itsrdf:taClassRef     <http://dbpedia.org/ontology/PopulatedPlace> , <http://dbpedia.org/ontology/Place> , <http://dbpedia.org/ontology/Settlement> , <Schema:City> , <Schema:Place> , <http://dbpedia.org/ontology/City> ;
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/Sydney> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=69,82>
+        a                     nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Robert Dundas"^^xsd:string ;
+        nif:beginIndex        "69"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "82"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,146> ;
+        itsrdf:taClassRef     <Schema:Person> , <http://dbpedia.org/ontology/Agent> , <Http://xmlns.com/foaf/0.1/Person> , <http://dbpedia.org/ontology/OfficeHolder> , <http://dbpedia.org/ontology/Person> ;
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/Robert_Dundas,_2nd_Viscount_Melville> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2#char=22,36>
+        a                     nif:RFC5147String , nif:String ;
+        nif:anchorOf          "James Carville"^^xsd:string ;
+        nif:beginIndex        "22"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "36"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2#char=0,192> ;
+        itsrdf:taClassRef     <Schema:Person> , <http://dbpedia.org/ontology/Agent> , <Http://xmlns.com/foaf/0.1/Person> , <http://dbpedia.org/ontology/Person> ;
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/James_Carville> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3#char=49,68>
+        a                     nif:RFC5147String , nif:String ;
+        nif:anchorOf          "Columbia University"^^xsd:string ;
+        nif:beginIndex        "49"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "68"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3#char=0,69> ;
+        itsrdf:taClassRef     <http://dbpedia.org/ontology/EducationalInstitution> , <http://dbpedia.org/ontology/Organisation> , <http://dbpedia.org/ontology/University> , <http://dbpedia.org/ontology/Agent> , <Schema:EducationalOrganization> , <Schema:CollegeOrUniversity> , <Schema:Organization> ;
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/Columbia_University> .

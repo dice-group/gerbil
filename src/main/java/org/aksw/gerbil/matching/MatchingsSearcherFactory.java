@@ -24,10 +24,10 @@ public class MatchingsSearcherFactory {
 
     public static MatchingsSearcher<? extends Span> createSpanMatchingsSearcher(Matching matching) {
         switch (matching) {
-        case STRONG_ENTITY_MATCH:
         case WEAK_ANNOTATION_MATCH: {
             return new WeakSpanMatchingsCounter<>();
         }
+        case STRONG_ENTITY_MATCH:
         case STRONG_ANNOTATION_MATCH: {
             return new StrongSpanMatchingsCounter<>();
         }
