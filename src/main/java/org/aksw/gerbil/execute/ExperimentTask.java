@@ -45,6 +45,8 @@ import org.aksw.gerbil.evaluate.IntEvaluationResult;
 import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.matching.filter.SearcherBasedNotMatchingMarkingFilter;
+import org.aksw.gerbil.matching.impl.StrongSpanMatchingsSearcher;
 import org.aksw.gerbil.semantic.sameas.DatasetBasedSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
@@ -305,11 +307,19 @@ public class ExperimentTask implements Task {
                 List<List<MeaningSpan>> results = new ArrayList<List<MeaningSpan>>(dataset.size());
                 List<List<MeaningSpan>> goldStandard = new ArrayList<List<MeaningSpan>>(dataset.size());
                 D2KBAnnotator linker = ((D2KBAnnotator) annotator);
+                // For D2KB we have to filter the results to get those results
+                // that are matching the positions
+                SearcherBasedNotMatchingMarkingFilter<MeaningSpan> filter = new SearcherBasedNotMatchingMarkingFilter<MeaningSpan>(
+                        new StrongSpanMatchingsSearcher<MeaningSpan>());
+                List<MeaningSpan> documentGS;
 
                 for (Document document : dataset.getInstances()) {
+                    documentGS = document.getMarkings(MeaningSpan.class);
                     // reduce the document to a text and a list of Spans
-                    results.add(linker.performD2KBTask(DocumentInformationReducer.reduceToTextAndSpans(document)));
-                    goldStandard.add(document.getMarkings(MeaningSpan.class));
+                    results.add(filter.filterMarkings(
+                            linker.performD2KBTask(DocumentInformationReducer.reduceToTextAndSpans(document)),
+                            documentGS));
+                    goldStandard.add(documentGS);
                     taskState.increaseExperimentStepCount();
                 }
                 if (annotatorOutputWriter != null) {
@@ -403,11 +413,20 @@ public class ExperimentTask implements Task {
                 List<List<TypedSpan>> results = new ArrayList<List<TypedSpan>>(dataset.size());
                 List<List<TypedSpan>> goldStandard = new ArrayList<List<TypedSpan>>(dataset.size());
                 EntityTyper typer = ((EntityTyper) annotator);
+                // For ETyping we have to filter the results to get those
+                // results
+                // that are matching the positions
+                SearcherBasedNotMatchingMarkingFilter<TypedSpan> filter = new SearcherBasedNotMatchingMarkingFilter<TypedSpan>(
+                        new StrongSpanMatchingsSearcher<TypedSpan>());
+                List<TypedSpan> documentGS;
 
                 for (Document document : dataset.getInstances()) {
+                    documentGS = document.getMarkings(TypedSpan.class);
                     // reduce the document to a text and a list of Spans
-                    results.add(typer.performTyping(DocumentInformationReducer.reduceToTextAndSpans(document)));
-                    goldStandard.add(document.getMarkings(TypedSpan.class));
+                    results.add(filter.filterMarkings(
+                            typer.performTyping(DocumentInformationReducer.reduceToTextAndSpans(document)),
+                            documentGS));
+                    goldStandard.add(documentGS);
                     taskState.increaseExperimentStepCount();
                 }
                 if (annotatorOutputWriter != null) {

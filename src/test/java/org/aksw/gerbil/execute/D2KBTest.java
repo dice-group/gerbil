@@ -203,12 +203,42 @@ public class D2KBTest extends AbstractExperimentTaskTest {
                                         "http://yago-knowledge.org/resource/Political_consulting"),
                                 (Marking) new NamedEntity(78, 12, "http://nl.dbpedia.org/resource/Bill_Clinton"),
                                 (Marking) new NamedEntity(96, 13, "http://fr.dbpedia.org/resource/Donna_Brazile"),
-                                (Marking) new NamedEntity(115, 16, "http://dbpedia.org/resource/Campaign_manager"), // TODO
-                                (Marking) new NamedEntity(184, 7, "http://dbpedia.org/resource/Al_Gore"))), // TODO
+                                (Marking) new NamedEntity(115, 16, "http://dbpedia.org/resource/Campaign_manager"),
+                                (Marking) new NamedEntity(184, 7, "http://dbpedia.org/resource/Al_Gore"))),
                 new DocumentImpl(TEXTS[2], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
                         Arrays.asList((Marking) new NamedEntity(4, 7, "http://aksw.org/notInWiki/Senator_1"),
                                 (Marking) new NamedEntity(49, 19,
                                         "http://dbpedia.org/resource/Columbia_University"))) },
+                GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+        // The extractor found everything and marked all entities using other
+        // KBs than the main dbpedia (if they were available) or own URIs, but
+        // it added additional results.
+        testConfigs.add(new Object[] { new Document[] {
+                new DocumentImpl(TEXTS[0], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1",
+                        Arrays.asList((Marking) new NamedEntity(0, 8, "http://dbpedia.org/resource/Florence"),
+                                (Marking) new NamedEntity(0, 20,
+                                        "http://yago-knowledge.org/resource/Florence_May_Harding"),
+                        (Marking) new NamedEntity(34, 6, "http://aksw.org/notInWiki/National_Art_School"),
+                        (Marking) new NamedEntity(44, 6, "http://de.dbpedia.org/resource/Sydney"),
+                        (Marking) new NamedEntity(61, 21, "http://akws.org/notInWiki/Douglas_Robert_Dundas"),
+                        (Marking) new NamedEntity(132, 6, "http://de.dbpedia.org/resource/Botany"),
+                        (Marking) new NamedEntity(142, 3, "http://de.dbpedia.org/resource/Art"))),
+                new DocumentImpl(TEXTS[1], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
+                        Arrays.asList(
+                                (Marking) new NamedEntity(22, 14, "http://yago-knowledge.org/resource/James_Carville"),
+                                (Marking) new NamedEntity(57, 17,
+                                        "http://yago-knowledge.org/resource/Political_consulting"),
+                                (Marking) new NamedEntity(78, 12, "http://nl.dbpedia.org/resource/Bill_Clinton"),
+                                (Marking) new NamedEntity(96, 13, "http://fr.dbpedia.org/resource/Donna_Brazile"),
+                                (Marking) new NamedEntity(115, 16, "http://dbpedia.org/resource/Campaign_manager"),
+                                (Marking) new NamedEntity(184, 7, "http://dbpedia.org/resource/Al_Gore"),
+                                (Marking) new NamedEntity(139, 16,
+                                        "http://dbpedia.org/resource/United_States_presidential_election,_2000"))),
+                new DocumentImpl(TEXTS[2], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
+                        Arrays.asList((Marking) new NamedEntity(4, 7, "http://aksw.org/notInWiki/Senator_1"),
+                                (Marking) new NamedEntity(49, 19, "http://dbpedia.org/resource/Columbia_University"),
+                                (Marking) new NamedEntity(23, 16, "http://dbpedia.org/resource/Bachelor_of_Laws"))) },
+
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
         return testConfigs;
     }
