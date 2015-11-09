@@ -226,7 +226,7 @@ public class HierarchicalMatchingsCounterTest2 {
     @Test
     public void test() {
         HierarchicalMatchingsCounter<TypedNamedEntity> counter = new HierarchicalMatchingsCounter<TypedNamedEntity>(
-                new WeakSpanMatchingsCounter<TypedNamedEntity>(),
+                new WeakSpanMatchingsSearcher<TypedNamedEntity>(),
                 new SimpleWhiteListBasedUriKBClassifier(KNOWN_KB_URIS),
                 SimpleSubClassInferencerFactory.createInferencer(typeHierarchy));
 

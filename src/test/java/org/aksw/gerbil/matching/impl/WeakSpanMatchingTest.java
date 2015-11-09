@@ -49,6 +49,6 @@ public class WeakSpanMatchingTest extends AbstractMatchingsCounterTest<Span> {
 
     @SuppressWarnings("unchecked")
     public WeakSpanMatchingTest() {
-        super(new WeakSpanMatchingsCounter<Span>(), EXAMPLES);
+        super(new WeakSpanMatchingsSearcher<Span>(), EXAMPLES);
     }
 }

@@ -16,8 +16,8 @@
  */
 package org.aksw.gerbil.matching;
 
-import org.aksw.gerbil.matching.impl.StrongSpanMatchingsCounter;
-import org.aksw.gerbil.matching.impl.WeakSpanMatchingsCounter;
+import org.aksw.gerbil.matching.impl.StrongSpanMatchingsSearcher;
+import org.aksw.gerbil.matching.impl.WeakSpanMatchingsSearcher;
 import org.aksw.gerbil.transfer.nif.Span;
 
 public class MatchingsSearcherFactory {
@@ -25,11 +25,11 @@ public class MatchingsSearcherFactory {
     public static MatchingsSearcher<? extends Span> createSpanMatchingsSearcher(Matching matching) {
         switch (matching) {
         case WEAK_ANNOTATION_MATCH: {
-            return new WeakSpanMatchingsCounter<>();
+            return new WeakSpanMatchingsSearcher<>();
         }
         case STRONG_ENTITY_MATCH:
         case STRONG_ANNOTATION_MATCH: {
-            return new StrongSpanMatchingsCounter<>();
+            return new StrongSpanMatchingsSearcher<>();
         }
         default: {
             throw new IllegalArgumentException("Got an unknown Matching \"" + matching.toString() + "\".");

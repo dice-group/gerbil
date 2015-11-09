@@ -86,7 +86,7 @@ public class CompoundMatchingsCounterTest extends AbstractMatchingsCounterTest<N
 
     @SuppressWarnings("unchecked")
     public CompoundMatchingsCounterTest() {
-        super(new CompoundMatchingsCounter<NamedEntity>(new StrongSpanMatchingsCounter<NamedEntity>(),
+        super(new CompoundMatchingsCounter<NamedEntity>(new StrongSpanMatchingsSearcher<NamedEntity>(),
                 new MeaningMatchingsSearcher<NamedEntity>()), EXAMPLES);
     }
 }

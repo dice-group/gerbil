@@ -23,7 +23,7 @@ import org.aksw.gerbil.transfer.nif.Span;
 
 import com.carrotsearch.hppc.BitSet;
 
-public class StrongSpanMatchingsCounter<T extends Span> implements MatchingsSearcher<T> {
+public class StrongSpanMatchingsSearcher<T extends Span> implements MatchingsSearcher<T> {
 
     @Override
     public BitSet findMatchings(T expectedElement, List<T> annotatorResult, BitSet alreadyUsedResults) {
