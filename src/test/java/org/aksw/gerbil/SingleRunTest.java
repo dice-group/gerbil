@@ -43,10 +43,10 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    private static final String ANNOTATOR_NAME = "FOX";
-    private static final String DATASET_NAME = "N3-Reuters-128";
+    private static final String ANNOTATOR_NAME = "TagMe 2";
+    private static final String DATASET_NAME = "ACE2004";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.D2KB;
-    private static final Matching MATCHING = Matching.WEAK_ANNOTATION_MATCH;
+    private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
 
     public static void main(String[] args) throws Exception {
         SingleRunTest test = new SingleRunTest();

@@ -22,8 +22,20 @@ import org.aksw.gerbil.transfer.nif.Marking;
 
 public interface MarkingFilter<T extends Marking> {
 
+    /**
+     * Returns true if the marking is good and does not have to be filtered out.
+     * 
+     * @param marking
+     * @return
+     */
     public boolean isMarkingGood(T marking);
 
+    /**
+     * Returns a filtered list based on the given list.
+     * 
+     * @param markings
+     * @return
+     */
     public List<T> filterList(List<T> markings);
 
     public List<List<T>> filterListOfLists(List<List<T>> markings);

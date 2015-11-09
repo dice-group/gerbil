@@ -32,6 +32,7 @@ import org.aksw.gerbil.evaluate.impl.InKBClassBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.SpanMergingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.SubTaskAverageCalculator;
 import org.aksw.gerbil.evaluate.impl.filter.MarkingFilteringEvaluatorDecorator;
+import org.aksw.gerbil.evaluate.impl.filter.SearcherBasedNotMatchingMarkingFilter;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.matching.MatchingsSearcherFactory;
@@ -39,6 +40,7 @@ import org.aksw.gerbil.matching.impl.CompoundMatchingsCounter;
 import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.matching.impl.MeaningMatchingsSearcher;
+import org.aksw.gerbil.matching.impl.StrongSpanMatchingsSearcher;
 import org.aksw.gerbil.semantic.kb.ExactWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
@@ -142,20 +144,25 @@ public class EvaluatorFactory {
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
         case D2KB: {
-            return new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
-                    new InKBClassBasedFMeasureCalculator<NamedEntity>(new CompoundMatchingsCounter<NamedEntity>(
-                            (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
-                                    .createSpanMatchingsSearcher(configuration.matching),
-                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier)), globalClassifier),
-                    FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
+            return new SearcherBasedNotMatchingMarkingFilter<NamedEntity>(
+                    new StrongSpanMatchingsSearcher<NamedEntity>(),
+                    new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
+                            new InKBClassBasedFMeasureCalculator<NamedEntity>(
+                                    new CompoundMatchingsCounter<NamedEntity>(
+                                            (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
+                                                    .createSpanMatchingsSearcher(configuration.matching),
+                                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier)),
+                                    globalClassifier),
+                            FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator()));
         }
         case ETyping: {
-            return new ConfidenceScoreEvaluatorDecorator<TypedSpan>(
-                    new HierarchicalFMeasureCalculator<TypedSpan>(new HierarchicalMatchingsCounter<TypedSpan>(
-                            (MatchingsSearcher<TypedSpan>) MatchingsSearcherFactory
-                                    .createSpanMatchingsSearcher(configuration.matching),
-                            globalClassifier, inferencer)),
-                    FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
+            return new SearcherBasedNotMatchingMarkingFilter<TypedSpan>(new StrongSpanMatchingsSearcher<TypedSpan>(),
+                    new ConfidenceScoreEvaluatorDecorator<TypedSpan>(
+                            new HierarchicalFMeasureCalculator<TypedSpan>(new HierarchicalMatchingsCounter<TypedSpan>(
+                                    (MatchingsSearcher<TypedSpan>) MatchingsSearcherFactory
+                                            .createSpanMatchingsSearcher(configuration.matching),
+                                    globalClassifier, inferencer)),
+                            FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator()));
         }
         case OKE_Task1: {
             ExperimentTaskConfiguration subTaskConfig;
