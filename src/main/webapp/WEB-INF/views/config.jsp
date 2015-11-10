@@ -228,7 +228,7 @@
 										.each(
 												function(index) {
 													for (var i = 0; i < data.ExperimentType.length; i++) {
-														if (data.ExperimentType[i].label == $(
+														if (data.ExperimentType[i].name == $(
 																this).find(
 																'input').val()) {
 															$(this)
