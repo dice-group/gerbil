@@ -279,7 +279,12 @@ public class SpotlightClient {
         for (Span span : spans) {
             start = span.getStartPosition();
             requestBuilder.append("<surfaceForm name=\"");
-            requestBuilder.append(text.substring(start, start + span.getLength()));
+            try {
+                requestBuilder.append(URLEncoder.encode(text.substring(start, start + span.getLength()), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                LOGGER.error("Exception while encoding request data.", e);
+                throw new GerbilException("Exception while encoding request data.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
             requestBuilder.append("\" offset=\"");
             requestBuilder.append(start);
             requestBuilder.append("\" />");

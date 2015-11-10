@@ -56,4 +56,12 @@ public class MultipleSameAsRetriever implements SameAsRetriever {
         uris.addAll(temp);
     }
 
+    public SameAsRetriever[] getRetriever() {
+        return retriever;
+    }
+
+    public void setRetriever(SameAsRetriever[] retriever) {
+        this.retriever = retriever;
+    }
+
 }
