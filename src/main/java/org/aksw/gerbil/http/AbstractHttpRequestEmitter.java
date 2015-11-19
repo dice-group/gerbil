@@ -23,6 +23,7 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -54,7 +55,7 @@ public class AbstractHttpRequestEmitter implements HttpRequestEmitter {
     public AbstractHttpRequestEmitter(String name) {
         // this(name, HttpClientBuilder.create().build());
         // closeClient = true;
-        this(null, HttpManagement.getInstance().getDefaultClient());
+        this(name, HttpManagement.getInstance().getDefaultClient());
     }
 
     public AbstractHttpRequestEmitter(String name, CloseableHttpClient client) {
@@ -78,6 +79,12 @@ public class AbstractHttpRequestEmitter implements HttpRequestEmitter {
 
     protected HttpGet createGetRequest(String url) {
         HttpGet request = new HttpGet(url);
+        HttpManagement.getInstance().reportStart(this, request);
+        return request;
+    }
+
+    protected HttpHead createHeadRequest(String url) {
+        HttpHead request = new HttpHead(url);
         HttpManagement.getInstance().reportStart(this, request);
         return request;
     }

@@ -26,6 +26,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.utils.ClosePermitionGranter;
 import org.junit.Ignore;
 
 @Ignore

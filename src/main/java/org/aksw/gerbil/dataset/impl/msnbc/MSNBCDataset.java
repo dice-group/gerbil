@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.dataset.InitializableDataset;
+import org.aksw.gerbil.dataset.impl.AbstractDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -32,12 +33,11 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MSNBCDataset implements InitializableDataset {
+public class MSNBCDataset extends AbstractDataset implements InitializableDataset {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MSNBCDataset.class);
 
     protected List<Document> documents;
-    protected String name;
     protected String textsDirectory;
     protected String annotationsDirectory;
 
@@ -52,16 +52,6 @@ public class MSNBCDataset implements InitializableDataset {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
     public List<Document> getInstances() {
         return documents;
     }
@@ -73,8 +63,9 @@ public class MSNBCDataset implements InitializableDataset {
 
     protected List<Document> loadDocuments(File textDir, File annoDir) throws GerbilException {
         if ((!textDir.exists()) || (!textDir.isDirectory())) {
-            throw new GerbilException("The given text directory (" + textDir.getAbsolutePath()
-                    + ") is not existing or not a directory.", ErrorTypes.DATASET_LOADING_ERROR);
+            throw new GerbilException(
+                    "The given text directory (" + textDir.getAbsolutePath() + ") is not existing or not a directory.",
+                    ErrorTypes.DATASET_LOADING_ERROR);
         }
         String textDirPath = textDir.getAbsolutePath();
         if (!textDirPath.endsWith(File.separator)) {
@@ -93,8 +84,9 @@ public class MSNBCDataset implements InitializableDataset {
             try {
                 parsedResult = parser.parseAnnotationsFile(annoFile);
             } catch (Exception e) {
-                throw new GerbilException("Couldn't parse given annotation file (\"" + annoFile.getAbsolutePath()
-                        + "\".", e, ErrorTypes.DATASET_LOADING_ERROR);
+                throw new GerbilException(
+                        "Couldn't parse given annotation file (\"" + annoFile.getAbsolutePath() + "\".", e,
+                        ErrorTypes.DATASET_LOADING_ERROR);
             }
             if (parsedResult.getTextFileName() == null) {
                 throw new GerbilException("The parsed annotation file (\"" + annoFile.getAbsolutePath()
@@ -104,9 +96,10 @@ public class MSNBCDataset implements InitializableDataset {
             try {
                 text = FileUtils.readFileToString(new File(textDirPath + parsedResult.getTextFileName()));
             } catch (IOException e) {
-                throw new GerbilException("Couldn't read text file \"" + textDirPath + parsedResult.getTextFileName()
-                        + "\" mentioned in the annotations file \"" + annoFile.getAbsolutePath() + "\".", e,
-                        ErrorTypes.DATASET_LOADING_ERROR);
+                throw new GerbilException(
+                        "Couldn't read text file \"" + textDirPath + parsedResult.getTextFileName()
+                                + "\" mentioned in the annotations file \"" + annoFile.getAbsolutePath() + "\".",
+                        e, ErrorTypes.DATASET_LOADING_ERROR);
             }
             // create document
             documents.add(createDocument(parsedResult.getTextFileName(), text, parsedResult));

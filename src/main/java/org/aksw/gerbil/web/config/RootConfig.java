@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.semantic.sameas.ErrorFixingSameAsRetriever;
@@ -175,6 +176,11 @@ public class RootConfig {
         } else {
             return null;
         }
+    }
+
+    public static @Bean EntityCheckerManager getEntityCheckerManager() {
+        // TODO
+        return null;
     }
 
 }

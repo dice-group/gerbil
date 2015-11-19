@@ -19,7 +19,7 @@ package org.aksw.gerbil.annotator.impl;
 import java.io.IOException;
 
 import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotator.ClosePermitionGranter;
+import org.aksw.gerbil.utils.ClosePermitionGranter;
 
 public abstract class AbstractAnnotator implements Annotator {
 

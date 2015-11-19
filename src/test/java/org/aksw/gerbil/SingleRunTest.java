@@ -68,7 +68,7 @@ public class SingleRunTest implements TaskObserver {
     public void run() throws Exception {
         AdapterManager adapterManager = new AdapterManager();
         adapterManager.setAnnotators(AnnotatorsConfig.annotators());
-        adapterManager.setDatasets(DatasetsConfig.datasets());
+        adapterManager.setDatasets(DatasetsConfig.datasets(RootConfig.getEntityCheckerManager()));
 
         AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE);
         Assert.assertNotNull(annotatorConfig);

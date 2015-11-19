@@ -92,9 +92,10 @@ public class ExperimentTask implements Task {
     public void run() {
         LOGGER.info("Task started " + configuration.toString());
         Annotator annotator = null;
+        Dataset dataset = null;
         try {
             // Create dataset
-            Dataset dataset = configuration.datasetConfig.getDataset(configuration.type);
+            dataset = configuration.datasetConfig.getDataset(configuration.type);
             if (dataset == null) {
                 throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
                         + configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
@@ -145,6 +146,7 @@ public class ExperimentTask implements Task {
             LOGGER.error("Error while trying to execute experiment.", e);
         } finally {
             IOUtils.closeQuietly(annotator);
+            IOUtils.closeQuietly(dataset);
         }
     }
 

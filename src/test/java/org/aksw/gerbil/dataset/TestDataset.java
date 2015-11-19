@@ -16,10 +16,12 @@
  */
 package org.aksw.gerbil.dataset;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.utils.ClosePermitionGranter;
 
 public class TestDataset extends AbstractDatasetConfiguration implements Dataset {
 
@@ -47,6 +49,16 @@ public class TestDataset extends AbstractDatasetConfiguration implements Dataset
     @Override
     protected Dataset loadDataset() throws Exception {
         return this;
+    }
+
+    @Override
+    public void close() throws IOException {
+        // nothing to do
+    }
+
+    @Override
+    public void setClosePermitionGranter(ClosePermitionGranter granter) {
+        // nothing to do
     }
 
 }

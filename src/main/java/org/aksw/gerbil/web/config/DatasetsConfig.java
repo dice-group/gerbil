@@ -27,7 +27,8 @@ import java.util.Set;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
-import org.aksw.gerbil.dataset.DatasetConfigurationImpl;
+import org.aksw.gerbil.dataset.SingletonDatasetConfigImpl;
+import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.dataset.datahub.DatahubNIFConfig;
 import org.aksw.gerbil.dataset.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -48,18 +49,14 @@ public class DatasetsConfig {
     public static final String ANNOTATOR_EXPERIMENT_TYPE_SUFFIX = "experimentType";
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
 
-    public static void main(String[] args) {
-        datasets();
-    }
-
     @Bean
-    public static AdapterList<DatasetConfiguration> datasets() {
+    public static AdapterList<DatasetConfiguration> datasets(EntityCheckerManager entityCheckerManager) {
         List<DatasetConfiguration> datasetConfigurations = new ArrayList<DatasetConfiguration>();
         Set<String> datasetKeys = getDatasetKeys();
         DatasetConfiguration configuration;
         for (String datasetKey : datasetKeys) {
             try {
-                configuration = getConfiguration(datasetKey);
+                configuration = getConfiguration(datasetKey, entityCheckerManager);
                 if (configuration != null) {
                     datasetConfigurations.add(configuration);
                     LOGGER.info("Found dataset configuration " + configuration.toString());
@@ -99,8 +96,8 @@ public class DatasetsConfig {
         return datasetKeys;
     }
 
-    private static DatasetConfiguration getConfiguration(String datasetKey) throws ClassNotFoundException,
-            NoSuchMethodException, SecurityException {
+    private static DatasetConfiguration getConfiguration(String datasetKey, EntityCheckerManager entityCheckerManager)
+            throws ClassNotFoundException, NoSuchMethodException, SecurityException {
         org.apache.commons.configuration.Configuration config = GerbilConfiguration.getInstance();
         StringBuilder keyBuilder = new StringBuilder();
         String key;
@@ -152,7 +149,10 @@ public class DatasetsConfig {
 
         Constructor<? extends Dataset> constructor = datasetClass.getConstructor(constructorArgClasses);
 
-        return new DatasetConfigurationImpl(name, cacheable, constructor, constructorArgs, type);
+        // return new DatasetConfigurationImpl(name, cacheable, constructor,
+        // constructorArgs, type, entityCheckerManager);
+        return new SingletonDatasetConfigImpl(name, cacheable, constructor, constructorArgs, type,
+                entityCheckerManager);
     }
 
     protected static String buildKey(StringBuilder keyBuilder, String annotatorKey, String suffix) {

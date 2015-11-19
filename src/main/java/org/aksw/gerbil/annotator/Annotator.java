@@ -18,6 +18,8 @@ package org.aksw.gerbil.annotator;
 
 import java.io.Closeable;
 
+import org.aksw.gerbil.utils.ClosePermitionGranter;
+
 public interface Annotator extends Closeable {
 
     public String getName();

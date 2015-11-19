@@ -16,11 +16,13 @@
  */
 package org.aksw.gerbil.dataset;
 
+import java.io.Closeable;
 import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.utils.ClosePermitionGranter;
 
-public interface Dataset {
+public interface Dataset extends Closeable {
 
     public int size();
 
@@ -29,4 +31,6 @@ public interface Dataset {
     public void setName(String name);
 
     public List<Document> getInstances();
+    
+    public void setClosePermitionGranter(ClosePermitionGranter granter);
 }

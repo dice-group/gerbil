@@ -18,29 +18,29 @@ package org.aksw.gerbil.tools;
 
 import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.apache.commons.io.IOUtils;
 import org.apache.jena.riot.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NIFDatasetLoadingTest {
 
-    private static final Logger LOGGER = LoggerFactory
-	    .getLogger(NIFDatasetLoadingTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NIFDatasetLoadingTest.class);
 
     public static void main(String[] args) {
-	if (args.length != 1) {
-	    LOGGER.error("Wrong usage. Need exactly one single argument. Correct usage: 'NIFDatasetLoadingTest <path-to-nif-file>'.");
-	    return;
-	}
-	LOGGER.info("Starting loading of given test dataset \"" + args[0] + "\"...");
-	FileBasedNIFDataset dataset = new FileBasedNIFDataset(args[0],
-		"Test dataset", Lang.TTL);
-	try {
-	    dataset.init();
-	} catch (GerbilException e) {
-	    LOGGER.error("Got an exception while trying to load the dataset.",
-		    e);
-	}
-	LOGGER.info("Finished loading of given test dataset.");
+        if (args.length != 1) {
+            LOGGER.error(
+                    "Wrong usage. Need exactly one single argument. Correct usage: 'NIFDatasetLoadingTest <path-to-nif-file>'.");
+            return;
+        }
+        LOGGER.info("Starting loading of given test dataset \"" + args[0] + "\"...");
+        FileBasedNIFDataset dataset = new FileBasedNIFDataset(args[0], "Test dataset", Lang.TTL);
+        try {
+            dataset.init();
+        } catch (GerbilException e) {
+            LOGGER.error("Got an exception while trying to load the dataset.", e);
+        }
+        IOUtils.closeQuietly(dataset);
+        LOGGER.info("Finished loading of given test dataset.");
     }
 }

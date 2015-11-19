@@ -24,6 +24,7 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,21 +37,24 @@ public class MSNBCDatasetTest {
     private static final String EXPECTED_DOCUMENT_URI = "http://testDataset/test.txt";
     private static final String EXPECTED_TEXT = "Home Depot CEO Nardelli quits \nHome-improvement retailer's chief executive had been criticized over pay \n \nATLANTA - Bob Nardelli abruptly resigned Wednesday as chairman and chief executive of The Home Depot Inc. after a six-year tenure that saw the world’s largest home improvement store chain post big profits but left investors disheartened by poor stock performance.";
     private static final Marking EXPECTED_MARKINGS[] = new Marking[] {
-            (Marking) new NamedEntity(0, 10, new HashSet<String>(Arrays.asList(
-                    "http://en.wikipedia.org/wiki/Home_Depot", "http://en.dbpedia.org/resource/Home_Depot",
-                    "http://dbpedia.org/resource/Home_Depot"))),
-            (Marking) new NamedEntity(15, 8, new HashSet<String>(Arrays.asList(
-                    "http://en.wikipedia.org/wiki/Robert_Nardelli", "http://en.dbpedia.org/resource/Robert_Nardelli",
-                    "http://dbpedia.org/resource/Robert_Nardelli"))),
-            (Marking) new NamedEntity(107, 7, new HashSet<String>(Arrays.asList(
-                    "http://en.wikipedia.org/wiki/Atlanta,_Georgia", "http://en.dbpedia.org/resource/Atlanta,_Georgia",
-                    "http://dbpedia.org/resource/Atlanta,_Georgia"))),
-            (Marking) new NamedEntity(117, 12, new HashSet<String>(Arrays.asList(
-                    "http://en.wikipedia.org/wiki/Robert_Nardelli", "http://en.dbpedia.org/resource/Robert_Nardelli",
-                    "http://dbpedia.org/resource/Robert_Nardelli"))),
-            (Marking) new NamedEntity(193, 19, new HashSet<String>(Arrays.asList(
-                    "http://en.wikipedia.org/wiki/Home_Depot", "http://en.dbpedia.org/resource/Home_Depot",
-                    "http://dbpedia.org/resource/Home_Depot"))) };
+            (Marking) new NamedEntity(0, 10,
+                    new HashSet<String>(Arrays.asList("http://en.wikipedia.org/wiki/Home_Depot",
+                            "http://en.dbpedia.org/resource/Home_Depot", "http://dbpedia.org/resource/Home_Depot"))),
+            (Marking) new NamedEntity(15, 8,
+                    new HashSet<String>(Arrays.asList("http://en.wikipedia.org/wiki/Robert_Nardelli",
+                            "http://en.dbpedia.org/resource/Robert_Nardelli",
+                            "http://dbpedia.org/resource/Robert_Nardelli"))),
+            (Marking) new NamedEntity(107, 7,
+                    new HashSet<String>(Arrays.asList("http://en.wikipedia.org/wiki/Atlanta,_Georgia",
+                            "http://en.dbpedia.org/resource/Atlanta,_Georgia",
+                            "http://dbpedia.org/resource/Atlanta,_Georgia"))),
+            (Marking) new NamedEntity(117, 12,
+                    new HashSet<String>(Arrays.asList("http://en.wikipedia.org/wiki/Robert_Nardelli",
+                            "http://en.dbpedia.org/resource/Robert_Nardelli",
+                            "http://dbpedia.org/resource/Robert_Nardelli"))),
+            (Marking) new NamedEntity(193, 19,
+                    new HashSet<String>(Arrays.asList("http://en.wikipedia.org/wiki/Home_Depot",
+                            "http://en.dbpedia.org/resource/Home_Depot", "http://dbpedia.org/resource/Home_Depot"))) };
 
     @Test
     public void test() throws GerbilException {
@@ -69,5 +73,6 @@ public class MSNBCDatasetTest {
                     expectedNEs.contains(marking));
         }
         Assert.assertEquals(expectedNEs.size(), document.getMarkings().size());
+        IOUtils.closeQuietly(dataset);
     }
 }

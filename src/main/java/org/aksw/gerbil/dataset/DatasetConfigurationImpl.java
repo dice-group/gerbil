@@ -18,23 +18,29 @@ package org.aksw.gerbil.dataset;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
+import java.util.List;
 
+import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Meaning;
 
 public class DatasetConfigurationImpl extends AbstractAdapterConfiguration implements DatasetConfiguration {
 
     protected Constructor<? extends Dataset> constructor;
     protected Object constructorArgs[];
+    protected EntityCheckerManager entityCheckerManager;
 
     public DatasetConfigurationImpl(String datasetName, boolean couldBeCached,
             Constructor<? extends Dataset> constructor, Object constructorArgs[],
-            ExperimentType applicableForExperiment) {
+            ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager) {
         super(datasetName, couldBeCached, applicableForExperiment);
         this.constructor = constructor;
         this.constructorArgs = constructorArgs;
+        this.entityCheckerManager = entityCheckerManager;
     }
 
     @Override
@@ -59,6 +65,12 @@ public class DatasetConfigurationImpl extends AbstractAdapterConfiguration imple
         // If this dataset should be initialized
         if (instance instanceof InitializableDataset) {
             ((InitializableDataset) instance).init();
+        }
+        // Check the URIs of the dataset
+        List<Meaning> meanings;
+        for (Document document : instance.getInstances()) {
+            meanings = document.getMarkings(Meaning.class);
+            entityCheckerManager.checkMeanings(meanings);
         }
         return instance;
     }

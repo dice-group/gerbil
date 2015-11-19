@@ -16,11 +16,15 @@
  */
 package org.aksw.gerbil.dataset.impl;
 
+import java.io.IOException;
+
 import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.utils.ClosePermitionGranter;
 
 public abstract class AbstractDataset implements Dataset {
 
     protected String name;
+    protected ClosePermitionGranter granter;
 
     public AbstractDataset() {
     }
@@ -39,4 +43,19 @@ public abstract class AbstractDataset implements Dataset {
         this.name = name;
     }
 
+    @Override
+    public void setClosePermitionGranter(ClosePermitionGranter granter) {
+        this.granter = granter;
+    }
+
+    @Override
+    public final void close() throws IOException {
+        if ((granter == null) || (granter.givePermissionToClose())) {
+            performClose();
+        }
+    }
+
+    protected void performClose() throws IOException {
+        // nothing to do
+    }
 }

@@ -17,6 +17,7 @@
 package org.aksw.gerbil;
 
 import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
+import org.apache.commons.io.IOUtils;
 import org.apache.jena.riot.Lang;
 import org.junit.Ignore;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public class OKEChallengeNIFTest {
             } catch (Exception e) {
                 LOGGER.error("Exception while reading dataset.", e);
             }
+            IOUtils.closeQuietly(dataset);
         }
     }
 }

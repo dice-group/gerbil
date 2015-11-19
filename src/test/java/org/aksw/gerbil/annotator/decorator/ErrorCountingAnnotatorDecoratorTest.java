@@ -26,6 +26,7 @@ import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.AbstractDatasetConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.impl.AbstractDataset;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -127,7 +128,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
 
     }
 
-    public static class SimpleTestDataset implements Dataset {
+    public static class SimpleTestDataset extends AbstractDataset implements Dataset {
 
         private List<Document> instances;
 
@@ -151,10 +152,6 @@ public class ErrorCountingAnnotatorDecoratorTest {
         @Override
         public List<Document> getInstances() {
             return instances;
-        }
-
-        @Override
-        public void setName(String name) {
         }
 
     }

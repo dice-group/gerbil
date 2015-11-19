@@ -19,8 +19,8 @@ package org.aksw.gerbil.annotator.http;
 import java.io.IOException;
 
 import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotator.ClosePermitionGranter;
 import org.aksw.gerbil.http.AbstractHttpRequestEmitter;
+import org.aksw.gerbil.utils.ClosePermitionGranter;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 public abstract class AbstractHttpBasedAnnotator extends AbstractHttpRequestEmitter implements Annotator {

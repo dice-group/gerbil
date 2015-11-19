@@ -14,39 +14,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.annotator;
+package org.aksw.gerbil.dataset;
 
 import java.lang.reflect.Constructor;
 import java.util.concurrent.Semaphore;
 
+import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.utils.ClosePermitionGranter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SingletonAnnotatorConfigImpl extends AnnotatorConfigurationImpl implements ClosePermitionGranter {
+public class SingletonDatasetConfigImpl extends DatasetConfigurationImpl implements ClosePermitionGranter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SingletonAnnotatorConfigImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SingletonDatasetConfigImpl.class);
 
-    protected Annotator instance = null;
+    protected Dataset instance = null;
     protected int instanceUsages = 0;
     protected Semaphore instanceMutex = new Semaphore(1);
 
-    public SingletonAnnotatorConfigImpl(String annotatorName, boolean couldBeCached,
-            Constructor<? extends Annotator> constructor, Object constructorArgs[],
-            ExperimentType applicableForExperiment) {
-        super(annotatorName, couldBeCached, constructor, constructorArgs, applicableForExperiment);
+    public SingletonDatasetConfigImpl(String annotatorName, boolean couldBeCached,
+            Constructor<? extends Dataset> constructor, Object constructorArgs[],
+            ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager) {
+        super(annotatorName, couldBeCached, constructor, constructorArgs, applicableForExperiment,
+                entityCheckerManager);
     }
 
-    protected Annotator loadAnnotator() throws Exception {
+    @Override
+    protected Dataset loadDataset() throws Exception {
         instanceMutex.acquire();
         try {
-            LOGGER.error("Instance requested. usages:" + instanceUsages);
             if (instance == null) {
-                instance = constructor.newInstance(constructorArgs);
-                instance.setName(this.getName());
+                instance = super.loadDataset();
                 instance.setClosePermitionGranter(this);
-                LOGGER.error("Instance created. usages:" + instanceUsages);
             }
             ++instanceUsages;
             return instance;
@@ -64,11 +64,9 @@ public class SingletonAnnotatorConfigImpl extends AnnotatorConfigurationImpl imp
             return false;
         }
         try {
-            LOGGER.error("Close requested. usages:" + instanceUsages);
             --instanceUsages;
             if (instanceUsages == 0) {
                 instance = null;
-                LOGGER.error("Close permitted. usages:" + instanceUsages);
                 return true;
             } else {
                 return false;
