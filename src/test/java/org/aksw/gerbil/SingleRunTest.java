@@ -49,7 +49,7 @@ public class SingleRunTest implements TaskObserver {
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
     private static final String ANNOTATOR_NAME = "DBpedia Spotlight";
-    private static final String DATASET_NAME = "IITB";
+    private static final String DATASET_NAME = "MSNBC";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.D2KB;
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
 

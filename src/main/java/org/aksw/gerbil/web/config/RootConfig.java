@@ -21,6 +21,8 @@ import java.io.IOException;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
+import org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl;
+import org.aksw.gerbil.dataset.check.HttpBasedEntityChecker;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.semantic.sameas.ErrorFixingSameAsRetriever;
@@ -179,8 +181,10 @@ public class RootConfig {
     }
 
     public static @Bean EntityCheckerManager getEntityCheckerManager() {
-        // TODO
-        return null;
+        EntityCheckerManager manager = new EntityCheckerManagerImpl();
+        // FIXME
+        manager.registerEntityChecker("http://dbpedia.org/resource/", new HttpBasedEntityChecker());
+        return manager;
     }
 
 }
