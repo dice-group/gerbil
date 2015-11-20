@@ -18,6 +18,7 @@ package org.aksw.gerbil.web.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
@@ -86,6 +87,8 @@ public class RootConfig {
 
     private static final String ANNOTATOR_OUTPUT_WRITER_USAGE_KEY = "org.aksw.gerbil.execute.AnnotatorOutputWriter.printAnnotatorResults";
     private static final String ANNOTATOR_OUTPUT_WRITER_DIRECTORY_KEY = "org.aksw.gerbil.execute.AnnotatorOutputWriter.outputDirectory";
+
+    private static final String HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY = "org.aksw.gerbil.dataset.check.HttpBasedEntityChecker.namespace";
 
     // {
     // // FIXME this is an extremely ugly workaround to be able to log the
@@ -182,8 +185,14 @@ public class RootConfig {
 
     public static @Bean EntityCheckerManager getEntityCheckerManager() {
         EntityCheckerManager manager = new EntityCheckerManagerImpl();
-        // FIXME
-        manager.registerEntityChecker("http://dbpedia.org/resource/", new HttpBasedEntityChecker());
+        @SuppressWarnings("unchecked")
+        List<String> namespaces = GerbilConfiguration.getInstance().getList(HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY);
+        if (!namespaces.isEmpty()) {
+            HttpBasedEntityChecker checker = new HttpBasedEntityChecker();
+            for (String namespace : namespaces) {
+                manager.registerEntityChecker(namespace.toString(), checker);
+            }
+        }
         return manager;
     }
 
