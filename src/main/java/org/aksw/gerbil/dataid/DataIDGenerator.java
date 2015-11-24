@@ -22,9 +22,9 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import org.aksw.gerbil.dataid.vocabs.CUBE;
-import org.aksw.gerbil.dataid.vocabs.GERBIL;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.semantic.vocabs.CUBE;
+import org.aksw.gerbil.semantic.vocabs.GERBIL;
 import org.aksw.gerbil.web.ExperimentTaskStateHelper;
 import org.apache.jena.riot.RDFDataMgr;
 

@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.aksw.gerbil.http.AbstractHttpRequestEmitter;
+import org.aksw.gerbil.semantic.vocabs.DBO;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -39,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.OWL;
@@ -48,6 +50,8 @@ public class HTTPBasedSameAsRetriever extends AbstractHttpRequestEmitter impleme
     private static final Logger LOGGER = LoggerFactory.getLogger(HTTPBasedSameAsRetriever.class);
 
     private static final String REQUEST_ACCEPT_HEADER_VALUE = RDFLanguages.RDFXML.getContentType().getContentType();
+
+    private static final Property SAME_AS_PROPERTIES[] = new Property[] { OWL.sameAs, DBO.wikiPageRedirects };
 
     @Override
     public Set<String> retrieveSameURIs(String uri) {
@@ -86,9 +90,15 @@ public class HTTPBasedSameAsRetriever extends AbstractHttpRequestEmitter impleme
 
     protected void findLinks(String uri, Set<String> uris, Model model) {
         Resource resource = model.getResource(uri);
+        for (int i = 0; i < SAME_AS_PROPERTIES.length; ++i) {
+            findLinks(resource, uris, model, SAME_AS_PROPERTIES[i]);
+        }
+    }
+
+    protected void findLinks(Resource resource, Set<String> uris, Model model, Property sameAsProperty) {
         String foundUri;
-        if (model.contains(resource, OWL.sameAs)) {
-            NodeIterator iterator = model.listObjectsOfProperty(resource, OWL.sameAs);
+        if (model.contains(resource, sameAsProperty)) {
+            NodeIterator iterator = model.listObjectsOfProperty(resource, sameAsProperty);
             while (iterator.hasNext()) {
                 foundUri = iterator.next().asResource().getURI();
                 if (!uris.contains(foundUri)) {
@@ -97,8 +107,8 @@ public class HTTPBasedSameAsRetriever extends AbstractHttpRequestEmitter impleme
                 }
             }
         }
-        if (model.contains(null, OWL.sameAs, resource)) {
-            ResIterator iterator = model.listSubjectsWithProperty(OWL.sameAs, resource);
+        if (model.contains(null, sameAsProperty, resource)) {
+            ResIterator iterator = model.listSubjectsWithProperty(sameAsProperty, resource);
             while (iterator.hasNext()) {
                 foundUri = iterator.next().getURI();
                 if (!uris.contains(foundUri)) {
