@@ -26,12 +26,16 @@ import org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl;
 import org.aksw.gerbil.dataset.check.HttpBasedEntityChecker;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
-import org.aksw.gerbil.semantic.sameas.ErrorFixingSameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.FileBasedCachingSameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.HTTPBasedSameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.InMemoryCachingSameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.SingleUriSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.CrawlingSameAsRetrieverDecorator;
+import org.aksw.gerbil.semantic.sameas.impl.DomainBasedSameAsRetrieverManager;
+import org.aksw.gerbil.semantic.sameas.impl.ErrorFixingSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.cache.FileBasedCachingSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.cache.InMemoryCachingSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.wiki.WikiDbPediaBridgingSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.wiki.WikipediaApiBasedSingleUriSameAsRetriever;
 import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
@@ -88,18 +92,9 @@ public class RootConfig {
     private static final String ANNOTATOR_OUTPUT_WRITER_USAGE_KEY = "org.aksw.gerbil.execute.AnnotatorOutputWriter.printAnnotatorResults";
     private static final String ANNOTATOR_OUTPUT_WRITER_DIRECTORY_KEY = "org.aksw.gerbil.execute.AnnotatorOutputWriter.outputDirectory";
 
-    private static final String HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY = "org.aksw.gerbil.dataset.check.HttpBasedEntityChecker.namespace";
+    private static final String HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY = "org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever.domain";
 
-    // {
-    // // FIXME this is an extremely ugly workaround to be able to log the
-    // // stuff coming from the BAT-Framework
-    // replaceSystemStreams();
-    // }
-    //
-    // protected static void replaceSystemStreams() {
-    // System.setOut(new PrintStream(new ConsoleLogger(false), true));
-    // System.setErr(new PrintStream(new ConsoleLogger(true), true));
-    // }
+    private static final String HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY = "org.aksw.gerbil.dataset.check.HttpBasedEntityChecker.namespace";
 
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
@@ -134,8 +129,23 @@ public class RootConfig {
     }
 
     public static @Bean SameAsRetriever createSameAsRetriever() {
-        SameAsRetriever sameAsRetriever = new MultipleSameAsRetriever(new ErrorFixingSameAsRetriever(),
-                new HTTPBasedSameAsRetriever());
+        DomainBasedSameAsRetrieverManager retrieverManager = new DomainBasedSameAsRetrieverManager();
+        retrieverManager.addStaticRetriever(new ErrorFixingSameAsRetriever());
+
+        if (GerbilConfiguration.getInstance().containsKey(HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
+            HTTPBasedSameAsRetriever httpRetriever = new HTTPBasedSameAsRetriever();
+            for (String domain : GerbilConfiguration.getInstance().getStringArray(HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
+                retrieverManager.addDomainSpecificRetriever(domain, httpRetriever);
+            }
+        }
+
+        SingleUriSameAsRetriever singleRetriever = new WikipediaApiBasedSingleUriSameAsRetriever();
+        retrieverManager.addDomainSpecificRetriever("en.wikipedia.org", singleRetriever);
+        retrieverManager.addDomainSpecificRetriever("de.wikipedia.org", singleRetriever);
+        retrieverManager.addDomainSpecificRetriever("fr.wikipedia.org", singleRetriever);
+        (new WikiDbPediaBridgingSameAsRetriever()).addToManager(retrieverManager);
+        SameAsRetriever sameAsRetriever = retrieverManager;
+        sameAsRetriever = new CrawlingSameAsRetrieverDecorator(sameAsRetriever);
         SameAsRetriever decoratedRetriever = null;
         if (GerbilConfiguration.getInstance().containsKey(SAME_AS_CACHE_FILE_KEY)) {
             decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, false,

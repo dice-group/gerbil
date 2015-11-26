@@ -31,7 +31,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
-import org.aksw.gerbil.utils.Wikipedia2DBPediaTransformer;
+import org.aksw.gerbil.utils.WikipediaHelper;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +134,7 @@ public class IITBDataset extends AbstractDataset implements InitializableDataset
                         + text.substring(annotation.offset, annotation.offset + annotation.length)
                         + "\" ends with a whitespace.");
             }
-            uris = Wikipedia2DBPediaTransformer.generateUriSet(annotation.wikiTitle);
+            uris = WikipediaHelper.generateUriSet(annotation.wikiTitle);
             if (uris.size() == 0) {
                 uris.add(generateEntityUri());
             }

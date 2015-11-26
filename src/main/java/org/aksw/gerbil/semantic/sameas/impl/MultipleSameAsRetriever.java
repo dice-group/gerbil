@@ -14,10 +14,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.semantic.sameas;
+package org.aksw.gerbil.semantic.sameas.impl;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 
 public class MultipleSameAsRetriever implements SameAsRetriever {
 
@@ -62,6 +64,22 @@ public class MultipleSameAsRetriever implements SameAsRetriever {
 
     public void setRetriever(SameAsRetriever[] retriever) {
         this.retriever = retriever;
+    }
+
+    @Override
+    public Set<String> retrieveSameURIs(String domain, String uri) {
+        Set<String> result = null, newResult = null;
+        for (int i = 0; i < retriever.length; ++i) {
+            newResult = retriever[i].retrieveSameURIs(domain, uri);
+            if (newResult != null) {
+                if (result != null) {
+                    result.addAll(newResult);
+                } else {
+                    result = newResult;
+                }
+            }
+        }
+        return result;
     }
 
 }

@@ -19,6 +19,10 @@ package org.aksw.gerbil.dataset.impl.msnbc;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -28,12 +32,14 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
+import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MSNBCDataset extends AbstractDataset implements InitializableDataset {
+public class MSNBCDataset extends AbstractDataset implements InitializableDataset, Comparator<Span> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MSNBCDataset.class);
 
@@ -120,7 +126,46 @@ public class MSNBCDataset extends AbstractDataset implements InitializableDatase
             addDBpediaUris(ne.getUris());
             markings.add(ne.toNamedEntity());
         }
-        return new DocumentImpl(text, documentUri, markings);
+        Document document = new DocumentImpl(text, documentUri, markings);
+        mergeSubNamedEntity(document);
+        return document;
+    }
+
+    /**
+     * Merge {@link NamedEntity}s that are sub spans of another named entity and
+     * that have the same URIs.
+     * 
+     * @param document
+     */
+    private void mergeSubNamedEntity(Document document) {
+        List<NamedEntity> spanList = document.getMarkings(NamedEntity.class);
+        NamedEntity nes[] = spanList.toArray(new NamedEntity[spanList.size()]);
+        Arrays.sort(nes, this);
+        Set<Marking> markingsToRemove = new HashSet<Marking>();
+        boolean uriOverlapping;
+        Iterator<String> uriIterator;
+        for (int i = 0; i < nes.length; ++i) {
+            uriOverlapping = false;
+            for (int j = i + 1; (j < nes.length) && (!uriOverlapping); ++j) {
+                // if nes[i] is a "sub span" of nes[j]
+                if ((nes[i].getStartPosition() >= nes[j].getStartPosition()) && ((nes[i].getStartPosition()
+                        + nes[i].getLength()) <= (nes[j].getStartPosition() + nes[j].getLength()))) {
+                    uriOverlapping = false;
+                    uriIterator = nes[i].getUris().iterator();
+                    while ((!uriOverlapping) && (uriIterator.hasNext())) {
+                        uriOverlapping = nes[j].containsUri(uriIterator.next());
+                    }
+                    if (uriOverlapping) {
+                        nes[j].getUris().addAll(nes[j].getUris());
+                        markingsToRemove.add(nes[i]);
+                    } else {
+                        LOGGER.debug("There are two overlapping named entities with different URI sets. {}, {}", nes[i],
+                                nes[j]);
+                    }
+                }
+            }
+        }
+        document.getMarkings().removeAll(markingsToRemove);
     }
 
     protected String generateDocumentUri(String fileName) {
@@ -139,5 +184,18 @@ public class MSNBCDataset extends AbstractDataset implements InitializableDatase
             dbpediaUris.add(uri.replace("wikipedia.org/wiki", "dbpedia.org/resource"));
         }
         uris.addAll(dbpediaUris);
+    }
+
+    @Override
+    public int compare(Span s1, Span s2) {
+        // sort them based on their length
+        int diff = s1.getLength() - s2.getLength();
+        if (diff == 0) {
+            return 0;
+        } else if (diff < 0) {
+            return -1;
+        } else {
+            return 1;
+        }
     }
 }

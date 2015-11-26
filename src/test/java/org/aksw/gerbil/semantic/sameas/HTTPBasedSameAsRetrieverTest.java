@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.aksw.gerbil.semantic.sameas.HTTPBasedSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,6 +47,10 @@ public class HTTPBasedSameAsRetrieverTest {
                         "http://yago-knowledge.org/resource/Kaufland") });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Malaysia",
                 Arrays.asList("http://de.dbpedia.org/resource/Malaysia") });
+        testConfigs.add(new Object[] {"http://dbpedia.org/resource/People's_Republic_of_China",
+                Arrays.asList( "http://dbpedia.org/resource/China") });
+        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Home_Depot",
+                Arrays.asList("http://dbpedia.org/resource/The_Home_Depot") });
         return testConfigs;
     }
 
@@ -69,7 +73,8 @@ public class HTTPBasedSameAsRetrieverTest {
             Assert.assertNull(uris);
         } else {
             Assert.assertNotNull(uris);
-            Assert.assertTrue(uris.containsAll(expectedURIs));
+            Assert.assertTrue(uris.toString() + " does not contain all of " + uris.toString(),
+                    uris.containsAll(expectedURIs));
         }
         IOUtils.closeQuietly(retriever);
     }

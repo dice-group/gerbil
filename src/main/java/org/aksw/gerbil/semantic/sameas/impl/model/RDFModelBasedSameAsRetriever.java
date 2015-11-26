@@ -14,11 +14,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.semantic.sameas;
+package org.aksw.gerbil.semantic.sameas.impl.model;
 
-import java.util.Set;
+import com.hp.hpl.jena.rdf.model.Model;
 
-public interface SameAsRetriever extends SingleUriSameAsRetriever {
+public class RDFModelBasedSameAsRetriever extends AbstractRDFModelBasedSameAsRetriever {
 
-    public void addSameURIs(Set<String> uris);
+    private Model model;
+
+    public RDFModelBasedSameAsRetriever(Model model) {
+        this.model = model;
+    }
+
+    @Override
+    protected Model getModel(String uri) {
+        return model;
+    }
+
 }

@@ -14,12 +14,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.semantic.sameas;
+package org.aksw.gerbil.semantic.sameas.impl.cache;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.SameAsRetrieverDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +53,7 @@ public class InMemoryCachingSameAsRetriever extends CacheLoader<String, Set<Stri
     public Set<String> retrieveSameURIs(String uri) {
         try {
             Set<String> result = cache.get(uri);
-            if(result == NULL_SENTINEL) {
+            if (result == NULL_SENTINEL) {
                 return null;
             } else {
                 return result;
@@ -60,6 +62,11 @@ public class InMemoryCachingSameAsRetriever extends CacheLoader<String, Set<Stri
             LOGGER.error("Couldn't retrieve sameAs links. Returning null.", e);
             return null;
         }
+    }
+
+    @Override
+    public Set<String> retrieveSameURIs(String domain, String uri) {
+        return retrieveSameURIs(uri);
     }
 
     @Override

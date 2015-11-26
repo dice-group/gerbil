@@ -39,7 +39,7 @@ public class DatasetAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetAnalyzer.class);
 
     public static void main(String[] args) {
-        List<DatasetConfiguration> datasetConfigs = DatasetsConfig.datasets(RootConfig.getEntityCheckerManager()).getConfigurations();
+        List<DatasetConfiguration> datasetConfigs = DatasetsConfig.datasets(RootConfig.getEntityCheckerManager(), RootConfig.createSameAsRetriever()).getConfigurations();
         PrintStream output = null;
         try {
             output = new PrintStream("datasetAnalyzation.log");

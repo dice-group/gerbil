@@ -23,6 +23,7 @@ import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,14 +53,31 @@ public class ClassConsideringMatchingsCounter<T extends Marking> extends Matchin
                 ++documentCounts.truePositives;
                 ++documentCounts.classifiedCounts[classId].truePositives;
                 alreadyUsedResults.set(matchingElements.nextSetBit(0));
-                LOGGER.debug("Found a true positive ({}).", expectedElement);
+                // LOGGER.debug("Found a true positive ({}).", expectedElement);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("1.2.1|" + getUri((NamedEntity) expectedElement) + "|"
+                            + getUri((NamedEntity) expectedElement) + "|tp");
+                }
             } else {
                 ++documentCounts.falseNegatives;
                 ++documentCounts.classifiedCounts[classId].falseNegatives;
-                LOGGER.debug("Found a false negative ({}).", expectedElement);
+                // LOGGER.debug("Found a false negative ({}).",
+                // expectedElement);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("1.2.1|" + getUri((NamedEntity) expectedElement) + "||||fn");
+                }
             }
         }
         // The remaining elements are false positives
+        if (LOGGER.isDebugEnabled()) {
+            int id = 0;
+            for (T element : annotatorResult) {
+                if (!alreadyUsedResults.get(id)) {
+                    LOGGER.debug("1.2.1||||" + getUri((NamedEntity) element) + "|fp");
+                }
+                ++id;
+            }
+        }
         documentCounts.falsePositives = (int) (annotatorResult.size() - alreadyUsedResults.cardinality());
         for (int i = 0; i < annotatorResult.size(); ++i) {
             if (!alreadyUsedResults.get(i)) {
@@ -67,8 +85,21 @@ public class ClassConsideringMatchingsCounter<T extends Marking> extends Matchin
                 ++documentCounts.classifiedCounts[classId].falsePositives;
             }
         }
-        LOGGER.debug("Found {} false positives.", documentCounts.falsePositives);
+        // LOGGER.debug("Found {} false positives.",
+        // documentCounts.falsePositives);
         return documentCounts;
+    }
+
+    protected String getUri(NamedEntity ne) {
+        if (ne.getUris().size() == 0) {
+            return ne.getStartPosition() + "|" + ne.getLength() + "|null";
+        }
+        for (String uri : ne.getUris()) {
+            if (uri.startsWith("http://dbpedia.org")) {
+                return ne.getStartPosition() + "|" + ne.getLength() + "|" + uri;
+            }
+        }
+        return ne.getStartPosition() + "|" + ne.getLength() + "|" + ne.getUris().iterator().next();
     }
 
 }

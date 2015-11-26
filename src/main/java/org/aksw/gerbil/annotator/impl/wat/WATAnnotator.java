@@ -31,7 +31,7 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
-import org.aksw.gerbil.utils.Wikipedia2DBPediaTransformer;
+import org.aksw.gerbil.utils.WikipediaHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -137,11 +137,11 @@ public class WATAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnno
                         start = js_ann.getInt(ENTITY_START_KEY);
                         if (js_ann.has(ENTITY_CONFIDENCE_KEY)) {
                             resultDoc.addMarking(new ScoredNamedEntity(start, js_ann.getInt(ENTITY_END_KEY) - start,
-                                    Wikipedia2DBPediaTransformer.generateUriSet(js_ann.getString(ENTITY_TITLE_KEY)),
+                                    WikipediaHelper.generateUriSet(js_ann.getString(ENTITY_TITLE_KEY)),
                                     js_ann.getDouble(ENTITY_CONFIDENCE_KEY)));
                         } else {
                             resultDoc.addMarking(new NamedEntity(start, js_ann.getInt(ENTITY_END_KEY) - start,
-                                    Wikipedia2DBPediaTransformer.generateUriSet(js_ann.getString(ENTITY_TITLE_KEY))));
+                                    WikipediaHelper.generateUriSet(js_ann.getString(ENTITY_TITLE_KEY))));
                         }
                     }
                 }

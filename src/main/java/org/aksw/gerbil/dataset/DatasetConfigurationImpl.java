@@ -25,6 +25,9 @@ import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.model.DatasetBasedSameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Meaning;
 
@@ -33,14 +36,17 @@ public class DatasetConfigurationImpl extends AbstractAdapterConfiguration imple
     protected Constructor<? extends Dataset> constructor;
     protected Object constructorArgs[];
     protected EntityCheckerManager entityCheckerManager;
+    protected SameAsRetriever globalRetriever;
 
     public DatasetConfigurationImpl(String datasetName, boolean couldBeCached,
             Constructor<? extends Dataset> constructor, Object constructorArgs[],
-            ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager) {
+            ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
+            SameAsRetriever globalRetriever) {
         super(datasetName, couldBeCached, applicableForExperiment);
         this.constructor = constructor;
         this.constructorArgs = constructorArgs;
         this.entityCheckerManager = entityCheckerManager;
+        this.globalRetriever = globalRetriever;
     }
 
     @Override
@@ -66,10 +72,24 @@ public class DatasetConfigurationImpl extends AbstractAdapterConfiguration imple
         if (instance instanceof InitializableDataset) {
             ((InitializableDataset) instance).init();
         }
-        // Check the URIs of the dataset
+        // Expand and check the URIs of the dataset
+        SameAsRetriever retriever = DatasetBasedSameAsRetriever.create(instance);
+        if (retriever != null) {
+            if (globalRetriever != null) {
+                retriever = new MultipleSameAsRetriever(retriever, globalRetriever);
+            }
+        } else {
+            retriever = globalRetriever;
+        }
         List<Meaning> meanings;
         for (Document document : instance.getInstances()) {
             meanings = document.getMarkings(Meaning.class);
+            if (retriever != null) {
+                for (Meaning meaning : document.getMarkings(Meaning.class)) {
+                    retriever.addSameURIs(meaning.getUris());
+                }
+            }
+            // check the meanings
             entityCheckerManager.checkMeanings(meanings);
         }
         return instance;

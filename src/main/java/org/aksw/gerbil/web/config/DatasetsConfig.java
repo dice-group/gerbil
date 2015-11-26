@@ -32,6 +32,7 @@ import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.dataset.datahub.DatahubNIFConfig;
 import org.aksw.gerbil.dataset.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -50,13 +51,14 @@ public class DatasetsConfig {
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
 
     @Bean
-    public static AdapterList<DatasetConfiguration> datasets(EntityCheckerManager entityCheckerManager) {
+    public static AdapterList<DatasetConfiguration> datasets(EntityCheckerManager entityCheckerManager,
+            SameAsRetriever globalRetriever) {
         List<DatasetConfiguration> datasetConfigurations = new ArrayList<DatasetConfiguration>();
         Set<String> datasetKeys = getDatasetKeys();
         DatasetConfiguration configuration;
         for (String datasetKey : datasetKeys) {
             try {
-                configuration = getConfiguration(datasetKey, entityCheckerManager);
+                configuration = getConfiguration(datasetKey, entityCheckerManager, globalRetriever);
                 if (configuration != null) {
                     datasetConfigurations.add(configuration);
                     LOGGER.info("Found dataset configuration " + configuration.toString());
@@ -96,8 +98,8 @@ public class DatasetsConfig {
         return datasetKeys;
     }
 
-    private static DatasetConfiguration getConfiguration(String datasetKey, EntityCheckerManager entityCheckerManager)
-            throws ClassNotFoundException, NoSuchMethodException, SecurityException {
+    private static DatasetConfiguration getConfiguration(String datasetKey, EntityCheckerManager entityCheckerManager,
+            SameAsRetriever globalRetriever) throws ClassNotFoundException, NoSuchMethodException, SecurityException {
         org.apache.commons.configuration.Configuration config = GerbilConfiguration.getInstance();
         StringBuilder keyBuilder = new StringBuilder();
         String key;
@@ -151,8 +153,8 @@ public class DatasetsConfig {
 
         // return new DatasetConfigurationImpl(name, cacheable, constructor,
         // constructorArgs, type, entityCheckerManager);
-        return new SingletonDatasetConfigImpl(name, cacheable, constructor, constructorArgs, type,
-                entityCheckerManager);
+        return new SingletonDatasetConfigImpl(name, cacheable, constructor, constructorArgs, type, entityCheckerManager,
+                globalRetriever);
     }
 
     protected static String buildKey(StringBuilder keyBuilder, String annotatorKey, String suffix) {

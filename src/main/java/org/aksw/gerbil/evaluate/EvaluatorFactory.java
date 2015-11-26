@@ -63,7 +63,7 @@ public class EvaluatorFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EvaluatorFactory.class);
 
-    private static final String DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY = "org.aksw.gerbil.evaluate.DefaultWellKnownKBs";
+    private static final String DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY = "org.aksw.gerbil.evaluate.DefaultWellKnownKB";
     private static final String DEFAULT_WELL_KNOWN_KBS[] = loadDefaultKBs();
 
     protected UriKBClassifier globalClassifier = null;
@@ -110,12 +110,12 @@ public class EvaluatorFactory {
 
     @SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
     protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
-            UriKBClassifier globalClassifier, SubClassInferencer inferencer) {
+            UriKBClassifier classifier, SubClassInferencer inferencer) {
         switch (type) {
         case C2KB: {
             return new ConfidenceScoreEvaluatorDecorator<Meaning>(
                     new InKBClassBasedFMeasureCalculator<Meaning>(
-                            new MeaningMatchingsSearcher<Meaning>(globalClassifier), globalClassifier),
+                            new MeaningMatchingsSearcher<Meaning>(classifier), classifier),
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
         case Sa2KB:
@@ -133,7 +133,7 @@ public class EvaluatorFactory {
                     new InKBClassBasedFMeasureCalculator<NamedEntity>(new CompoundMatchingsCounter<NamedEntity>(
                             (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
                                     .createSpanMatchingsSearcher(configuration.matching),
-                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier)), globalClassifier),
+                            new MeaningMatchingsSearcher<NamedEntity>(classifier)), classifier),
                     FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
         case ERec: {
@@ -151,8 +151,8 @@ public class EvaluatorFactory {
                                     new CompoundMatchingsCounter<NamedEntity>(
                                             (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
                                                     .createSpanMatchingsSearcher(configuration.matching),
-                                            new MeaningMatchingsSearcher<NamedEntity>(globalClassifier)),
-                                    globalClassifier),
+                                            new MeaningMatchingsSearcher<NamedEntity>(classifier)),
+                                    classifier),
                             FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator()));
         }
         case ETyping: {
@@ -161,7 +161,7 @@ public class EvaluatorFactory {
                             new HierarchicalFMeasureCalculator<TypedSpan>(new HierarchicalMatchingsCounter<TypedSpan>(
                                     (MatchingsSearcher<TypedSpan>) MatchingsSearcherFactory
                                             .createSpanMatchingsSearcher(configuration.matching),
-                                    globalClassifier, inferencer)),
+                                    classifier, inferencer)),
                             FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator()));
         }
         case OKE_Task1: {

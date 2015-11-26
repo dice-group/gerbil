@@ -68,7 +68,7 @@ public class EntityCheckerManagerImpl extends CacheLoader<String, Boolean> imple
         for (String uri : uris) {
             try {
                 // If the URI does not exist
-                if (!cache.get(uri)) {
+                if ((uri != null) && (!cache.get(uri))) {
                     if (wrongUris == null) {
                         wrongUris = new ArrayList<String>(3);
                         newUris = new ArrayList<String>(3);

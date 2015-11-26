@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.semantic.sameas;
+package org.aksw.gerbil.semantic.sameas.impl.model;
 
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.RdfModelContainingDataset;

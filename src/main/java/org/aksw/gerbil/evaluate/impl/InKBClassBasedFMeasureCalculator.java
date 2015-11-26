@@ -18,8 +18,6 @@ package org.aksw.gerbil.evaluate.impl;
 
 import java.util.List;
 
-import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
-import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.matching.ClassifiedEvaluationCounts;
 import org.aksw.gerbil.matching.EvaluationCounts;
@@ -32,7 +30,9 @@ import org.aksw.gerbil.transfer.nif.Meaning;
 public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasureCalculator<T>
         implements MarkingClassifier<T> {
 
+    @Deprecated
     public static final String MACRO_ACCURACY_NAME = "Macro Accuracy";
+    @Deprecated
     public static final String MICRO_ACCURACY_NAME = "Micro Accuracy";
 
     public static final String IN_KB_MACRO_F1_SCORE_NAME = "InKB Macro F1 score";
@@ -67,7 +67,6 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasur
         EvaluationCounts counts[] = generateMatchingCounts(annotatorResults, goldStandard);
         results.addResults(calculateMicroFMeasure(counts));
         results.addResults(calculateMacroFMeasure(counts));
-        results.addResults(calculateAccuracies(counts, goldStandard));
 
         EvaluationCounts classCounts[] = new EvaluationCounts[counts.length];
         int sums = 0;
@@ -92,25 +91,6 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends FMeasur
             results.addResults(calculateMacroFMeasure(classCounts, EE_MACRO_PRECISION_NAME, EE_MACRO_RECALL_NAME,
                     EE_MACRO_F1_SCORE_NAME));
         }
-    }
-
-    private EvaluationResult[] calculateAccuracies(EvaluationCounts counts[], List<List<T>> goldStandard) {
-        int tp, elements, tpSum = 0, elementsSum = 0, docCount = 0;
-        double microAcc = 0, macroAcc = 0;
-        for (int i = 0; i < counts.length; ++i) {
-            elements = goldStandard.get(i).size();
-            if (elements > 0) {
-                tp = counts[i].truePositives;
-                tpSum += tp;
-                elementsSum += elements;
-                macroAcc += (double) tp / (double) elements;
-                ++docCount;
-            }
-        }
-        macroAcc /= docCount;
-        microAcc = (double) tpSum / (double) elementsSum;
-        return new EvaluationResult[] { new DoubleEvaluationResult(MACRO_ACCURACY_NAME, macroAcc),
-                new DoubleEvaluationResult(MICRO_ACCURACY_NAME, microAcc) };
     }
 
     @Override

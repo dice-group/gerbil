@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.semantic.sameas;
+package org.aksw.gerbil.semantic.sameas.impl.cache;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +24,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.cache.FileBasedCachingSameAsRetriever;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -187,6 +189,11 @@ public class FileBasedCachingSameAsRetrieverTest extends FileBasedCachingSameAsR
                 }
             }
             uris.addAll(temp);
+        }
+
+        @Override
+        public Set<String> retrieveSameURIs(String domain, String uri) {
+            return retrieveSameURIs(uri);
         }
     }
 

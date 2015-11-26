@@ -32,6 +32,7 @@ import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -45,9 +46,9 @@ import org.aksw.gerbil.evaluate.IntEvaluationResult;
 import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.semantic.sameas.DatasetBasedSameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.model.DatasetBasedSameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
@@ -123,7 +124,7 @@ public class ExperimentTask implements Task {
             evaluators.add(errorCounter);
 
             // Prepare dataset for the experiment
-            prepareDataset(dataset);
+            // prepareDataset(dataset);
 
             taskState = new ExperimentTaskState(dataset.size());
             // perform experiment
@@ -155,8 +156,10 @@ public class ExperimentTask implements Task {
      * retrieval if it is needed for the experiment type.
      * 
      * @param dataset
+     * @deprecated This should be done by the {@link DatasetConfiguration} class
+     *             that has loaded the dataset
      */
-    @SuppressWarnings("deprecation")
+    @Deprecated
     protected void prepareDataset(Dataset dataset) {
         switch (configuration.type) {
         case A2KB:// falls through

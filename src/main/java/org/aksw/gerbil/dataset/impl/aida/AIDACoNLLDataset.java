@@ -37,7 +37,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
-import org.aksw.gerbil.utils.Wikipedia2DBPediaTransformer;
+import org.aksw.gerbil.utils.WikipediaHelper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +145,7 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
                                         uris = generateArtificialUri(documentUriPrefix,
                                                 line[ANNOTATION_SURFACE_FORM_INDEX]);
                                     } else {
-                                        uris = Wikipedia2DBPediaTransformer
+                                        uris = WikipediaHelper
                                                 .generateUriSet(line[ANNOTATION_TITLE_INDEX]);
                                     }
                                     lastNE = new NamedEntity(textBuilder.length(), 0, uris);

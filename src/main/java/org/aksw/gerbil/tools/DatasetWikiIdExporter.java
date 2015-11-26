@@ -42,7 +42,7 @@ public class DatasetWikiIdExporter {
     private static final String EXPORT_FOLDER_NAME = "export";
 
     public static void main(String[] args) {
-        List<DatasetConfiguration> datasetConfigs = DatasetsConfig.datasets(RootConfig.getEntityCheckerManager())
+        List<DatasetConfiguration> datasetConfigs = DatasetsConfig.datasets(RootConfig.getEntityCheckerManager(), RootConfig.createSameAsRetriever())
                 .getConfigurations();
         File exportFolder = new File(EXPORT_FOLDER_NAME);
         if (!exportFolder.exists()) {

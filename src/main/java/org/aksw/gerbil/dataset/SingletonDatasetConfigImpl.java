@@ -21,6 +21,7 @@ import java.util.concurrent.Semaphore;
 
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.utils.ClosePermitionGranter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +36,10 @@ public class SingletonDatasetConfigImpl extends DatasetConfigurationImpl impleme
 
     public SingletonDatasetConfigImpl(String annotatorName, boolean couldBeCached,
             Constructor<? extends Dataset> constructor, Object constructorArgs[],
-            ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager) {
-        super(annotatorName, couldBeCached, constructor, constructorArgs, applicableForExperiment,
-                entityCheckerManager);
+            ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
+            SameAsRetriever globalRetriever) {
+        super(annotatorName, couldBeCached, constructor, constructorArgs, applicableForExperiment, entityCheckerManager,
+                globalRetriever);
     }
 
     @Override

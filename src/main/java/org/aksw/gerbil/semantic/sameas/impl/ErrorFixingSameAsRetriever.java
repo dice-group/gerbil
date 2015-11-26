@@ -14,22 +14,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.semantic.sameas;
+package org.aksw.gerbil.semantic.sameas.impl;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class AbstractSameAsRetrieverDecorator implements SameAsRetrieverDecorator {
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 
-    protected SameAsRetriever decoratedRetriever;
+/**
+ * This {@link SameAsRetriever} is used to fix common problems with URIs, e.g.,
+ * if a URI has the domain <code>en.dbpedia.org</code> (which is not existing) a
+ * URI with the correct domain (<code>dbpedia.org</code>) is added.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ *
+ */
+public class ErrorFixingSameAsRetriever implements SameAsRetriever {
 
-    public AbstractSameAsRetrieverDecorator(SameAsRetriever decoratedRetriever) {
-        this.decoratedRetriever = decoratedRetriever;
-    }
+    private static final String WRONG_EN_DBPEDIA_DOMAIN = "en.dbpedia.org";
+    private static final String DBPEDIA_DOMAIN = "dbpedia.org";
 
     @Override
-    public SameAsRetriever getDecorated() {
-        return decoratedRetriever;
+    public Set<String> retrieveSameURIs(String uri) {
+        return retrieveSameURIs(SimpleDomainExtractor.extractDomain(uri), uri);
     }
 
     @Override
@@ -44,4 +51,16 @@ public abstract class AbstractSameAsRetrieverDecorator implements SameAsRetrieve
         }
         uris.addAll(temp);
     }
+
+    @Override
+    public Set<String> retrieveSameURIs(String domain, String uri) {
+        Set<String> uris = null;
+        if (WRONG_EN_DBPEDIA_DOMAIN.equals(domain)) {
+            uris = new HashSet<String>();
+            uris.add(uri);
+            uris.add(uri.replace(WRONG_EN_DBPEDIA_DOMAIN, DBPEDIA_DOMAIN));
+        }
+        return uris;
+    }
+
 }

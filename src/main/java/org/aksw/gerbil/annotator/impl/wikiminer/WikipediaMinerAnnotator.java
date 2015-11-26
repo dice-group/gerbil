@@ -32,7 +32,7 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
-import org.aksw.gerbil.utils.Wikipedia2DBPediaTransformer;
+import org.aksw.gerbil.utils.WikipediaHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -164,7 +164,7 @@ public class WikipediaMinerAnnotator extends AbstractHttpBasedAnnotator implemen
     private void parseEntity(JSONObject entityObject, Document resultDoc) {
         if (entityObject.has(DETECTED_ENTITY_TITLE_KEY) && entityObject.has(DETECTED_ENTITY_WEIGHT_KEY)
                 && entityObject.has(DETECTED_ENTITY_POSITIONS_KEY)) {
-            Set<String> uris = Wikipedia2DBPediaTransformer
+            Set<String> uris = WikipediaHelper
                     .generateUriSet(entityObject.getString(DETECTED_ENTITY_TITLE_KEY));
             double probability = entityObject.getDouble(DETECTED_ENTITY_WEIGHT_KEY);
             JSONArray positions = entityObject.getJSONArray(DETECTED_ENTITY_POSITIONS_KEY);

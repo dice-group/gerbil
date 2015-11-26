@@ -44,6 +44,7 @@ public class ResultNameToIdMapping {
 
     private static ResultNameToIdMapping instance;
 
+    @SuppressWarnings("deprecation")
     public static ResultNameToIdMapping getInstance() {
         if (instance == null) {
             ObjectIntOpenHashMap<String> nameToIdMap = new ObjectIntOpenHashMap<String>();
