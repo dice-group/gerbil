@@ -47,4 +47,14 @@ public abstract class AbstractSameAsRetrieverDecorator implements SameAsRetrieve
         }
         uris.addAll(temp);
     }
+
+    @Override
+    public Set<String> retrieveSameURIs(String uri) {
+        return decoratedRetriever.retrieveSameURIs(uri);
+    }
+
+    @Override
+    public Set<String> retrieveSameURIs(String domain, String uri) {
+        return decoratedRetriever.retrieveSameURIs(domain, uri);
+    }
 }

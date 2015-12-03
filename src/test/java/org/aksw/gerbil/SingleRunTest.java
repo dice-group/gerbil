@@ -29,6 +29,8 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetrieverDecorator;
 import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
+import org.aksw.gerbil.test.EntityCheckerManagerSingleton4Tests;
+import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
 import org.aksw.gerbil.web.config.AdapterManager;
 import org.aksw.gerbil.web.config.AnnotatorsConfig;
 import org.aksw.gerbil.web.config.DatasetsConfig;
@@ -68,8 +70,8 @@ public class SingleRunTest implements TaskObserver {
     public void run() throws Exception {
         AdapterManager adapterManager = new AdapterManager();
         adapterManager.setAnnotators(AnnotatorsConfig.annotators());
-        SameAsRetriever retriever = RootConfig.createSameAsRetriever();
-        adapterManager.setDatasets(DatasetsConfig.datasets(RootConfig.getEntityCheckerManager(), retriever));
+        SameAsRetriever retriever = SameAsRetrieverSingleton4Tests.getInstance();
+        adapterManager.setDatasets(DatasetsConfig.datasets(EntityCheckerManagerSingleton4Tests.getInstance(), retriever));
 
         AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE);
         Assert.assertNotNull(annotatorConfig);

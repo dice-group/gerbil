@@ -24,7 +24,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
-import org.aksw.gerbil.web.config.RootConfig;
+import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
@@ -42,7 +42,7 @@ public abstract class AbstractExperimentTaskTest {
 
     public void runTest(int experimentTaskId, ExperimentDAO experimentDAO, EvaluatorFactory evFactory,
             ExperimentTaskConfiguration configuration, TaskObserver observer) {
-        runTest(experimentTaskId, experimentDAO, RootConfig.createSameAsRetriever(), evFactory, configuration,
+        runTest(experimentTaskId, experimentDAO, SameAsRetrieverSingleton4Tests.getInstance(), evFactory, configuration,
                 observer);
     }
 

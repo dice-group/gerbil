@@ -6,13 +6,12 @@ import java.util.Collection;
 import java.util.List;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
-import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.test.EntityCheckerManagerSingleton4Tests;
+import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
-import org.aksw.gerbil.web.config.RootConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,13 +25,11 @@ public class FilteringWhileLoadingTest {
      * @see org.aksw.gerbil.evaluate.EvaluatorFactory
      */
     private static UriKBClassifier loadInKBClassifier() {
-        String kbs[] = GerbilConfiguration.getInstance().getStringArray("org.aksw.gerbil.evaluate.DefaultWellKnownKBs");
+        String kbs[] = GerbilConfiguration.getInstance().getStringArray("org.aksw.gerbil.evaluate.DefaultWellKnownKB");
         return new SimpleWhiteListBasedUriKBClassifier(kbs);
     }
 
     private static final UriKBClassifier GLOBAL_CLASSIFIER = loadInKBClassifier();
-    private static final SameAsRetriever GLOBAL_RETRIEVER = RootConfig.createSameAsRetriever();
-    private static final EntityCheckerManager ENTITY_CHECKER = RootConfig.getEntityCheckerManager();
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -58,9 +55,9 @@ public class FilteringWhileLoadingTest {
     public void run() {
         Meaning meaning = new Annotation(uri);
         // sameAs retrieval
-        GLOBAL_RETRIEVER.addSameURIs(meaning.getUris());
+        SameAsRetrieverSingleton4Tests.getInstance().addSameURIs(meaning.getUris());
         // check for URI existance
-        ENTITY_CHECKER.checkMeanings(Arrays.asList(meaning));
+        EntityCheckerManagerSingleton4Tests.getInstance().checkMeanings(Arrays.asList(meaning));
         // check whether the set contains URIs of the KB
         Assert.assertEquals(expectedInKb, GLOBAL_CLASSIFIER.containsKBUri(meaning.getUris()));
     }

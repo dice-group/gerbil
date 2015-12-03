@@ -16,6 +16,8 @@
  */
 package org.aksw.gerbil.http;
 
+import java.util.concurrent.Semaphore;
+
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -24,6 +26,8 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.carrotsearch.hppc.ObjectLongOpenHashMap;
+
 public class HttpManagement {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpManagement.class);
@@ -31,10 +35,30 @@ public class HttpManagement {
     public static final String MAXIMUM_TIME_TO_WAIT_KEY = "org.aksw.gerbil.annotator.http.HttpManagement.maxWaitingTime";
     public static final String CHECK_INTERVAL_KEY = "org.aksw.gerbil.annotator.http.HttpManagement.checkInterval";
 
+    /**
+     * TODO move this list into the property files.
+     */
+    private static final String BLOCKING_DOMAINS[] = new String[] { "bg.dbpedia.org", "ca.dbpedia.org",
+            "cs.dbpedia.org", "de.dbpedia.org", "dbpedia.org", "es.dbpedia.org", "eu.dbpedia.org", "fr.dbpedia.org",
+            "hu.dbpedia.org", "id.dbpedia.org", "it.dbpedia.org", "ja.dbpedia.org", "ko.dbpedia.org", "nl.dbpedia.org",
+            "pl.dbpedia.org", "pt.dbpedia.org", "ru.dbpedia.org", "tr.dbpedia.org", "bg.wikipedia.org",
+            "ca.wikipedia.org", "cs.wikipedia.org", "de.wikipedia.org", "en.wikipedia.org", "es.wikipedia.org",
+            "eu.wikipedia.org", "fr.wikipedia.org", "hu.wikipedia.org", "id.wikipedia.org", "it.wikipedia.org",
+            "ja.wikipedia.org", "ko.wikipedia.org", "nl.wikipedia.org", "pl.wikipedia.org", "pt.wikipedia.org",
+            "ru.wikipedia.org", "tr.wikipedia.org" };
+
     public static final long DEFAULT_WAITING_TIME = 60000;
     public static final long DEFAULT_CHECK_INTERVAL = 10000;
 
+    /**
+     * The time the system should wait before sending a new request to a domain
+     * that could block the system.
+     */
+    private static final long BLOCKING_DOMAIN_WAITING_TIME = 500;
+
     private static final String INTERRUPTER_THREAD_NAME = "HttpInterrupter";
+    private static final String USER_AGENT_STRING = "GERBIL/" + GerbilConfiguration.getGerbilVersion()
+            + " (http://aksw.org/Projects/GERBIL.html)";
 
     private static HttpManagement instance;
 
@@ -60,21 +84,65 @@ public class HttpManagement {
             t.setName(INTERRUPTER_THREAD_NAME);
             t.start();
 
-            instance = new HttpManagement(interruptingObserver);
+            instance = new HttpManagement(interruptingObserver, USER_AGENT_STRING);
+            for (int i = 0; i < BLOCKING_DOMAINS.length; ++i) {
+                instance.addBlockingDomain(BLOCKING_DOMAINS[i]);
+            }
         }
         return instance;
     }
 
     protected InterruptingObserver interruptingObserver;
     protected CloseableHttpClient client;
+    protected Semaphore blockingDomainMappingMutex = new Semaphore(1);
+    protected ObjectLongOpenHashMap<String> blockingDomainTimestampMapping = new ObjectLongOpenHashMap<String>();
 
-    protected HttpManagement(InterruptingObserver interruptingObserver) {
+    protected HttpManagement(InterruptingObserver interruptingObserver, String userAgent) {
         this.interruptingObserver = interruptingObserver;
-        this.client = HttpClientBuilder.create().setConnectionManager(new PoolingHttpClientConnectionManager()).build();
+        this.client = HttpClientBuilder.create().setConnectionManager(new PoolingHttpClientConnectionManager())
+                .setUserAgent(userAgent).build();
     }
 
     public void reportStart(HttpRequestEmitter emitter, HttpUriRequest request) {
+        // get the permission to send
+        getStartPermission(request);
         interruptingObserver.reportStart(emitter, request);
+    }
+
+    protected void getStartPermission(HttpUriRequest request) {
+        try {
+            blockingDomainMappingMutex.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.error("Interrupted while waiting for mutex to access the list of blocking domains. Aborting.");
+            return;
+        }
+        long timeToSleep = 0;
+        try {
+            String host = request.getURI().getHost();
+            if ((host == null) || (!blockingDomainTimestampMapping.containsKey(host))) {
+                return;
+            }
+            // we are allowed to use lget and lset since the mutex is securing
+            // the hashmap
+            long lastRequestTimeStamp = blockingDomainTimestampMapping.lget();
+            long currentTime = System.currentTimeMillis();
+            timeToSleep = BLOCKING_DOMAIN_WAITING_TIME - (currentTime - lastRequestTimeStamp);
+            if (timeToSleep > 0) {
+                blockingDomainTimestampMapping.lset(currentTime + timeToSleep);
+            } else {
+                blockingDomainTimestampMapping.lset(currentTime);
+            }
+        } finally {
+            blockingDomainMappingMutex.release();
+        }
+
+        if (timeToSleep > 0) {
+            try {
+                Thread.sleep(BLOCKING_DOMAIN_WAITING_TIME);
+            } catch (InterruptedException e) {
+                LOGGER.error("Interrupted while waiting for permission. Sending will start now.");
+            }
+        }
     }
 
     public void reportEnd(HttpRequestEmitter emitter, HttpUriRequest request) {
@@ -89,7 +157,34 @@ public class HttpManagement {
         interruptingObserver.setCheckInterval(checkInterval);
     }
 
+    public long getMaxWaitingTime() {
+        return interruptingObserver.getMaxWaitingTime();
+    }
+
+    public long getCheckInterval() {
+        return interruptingObserver.getCheckInterval();
+    }
+
     public CloseableHttpClient getDefaultClient() {
         return client;
     }
+
+    /**
+     * Adds a domain that might block HTTP clients if they are sending too many
+     * requests.
+     */
+    public void addBlockingDomain(String domain) {
+        try {
+            blockingDomainMappingMutex.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.error("Interrupted while waiting for mutex to access the list of blocking domains. Aborting.");
+            return;
+        }
+        try {
+            blockingDomainTimestampMapping.put(domain, 0);
+        } finally {
+            blockingDomainMappingMutex.release();
+        }
+    }
+
 }

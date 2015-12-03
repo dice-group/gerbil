@@ -35,7 +35,7 @@ public class EntityCheckerManagerImpl extends CacheLoader<String, Boolean> imple
     private static final int DEFAULT_CACHE_SIZE = 10000;
     private static final int DEFAULT_CACHE_LIFETIME = 2 * 24 * 60 * 60 * 1000;
 
-    private static final String SYNTETIC_URI_NAME_SPACE = "http://aksw.org/unknown_entity/";
+    private static final String SYNTHETIC_URI_NAME_SPACE = "http://aksw.org/unknown_entity/";
 
     private ObjectObjectOpenHashMap<String, EntityChecker> registeredCheckers = new ObjectObjectOpenHashMap<String, EntityChecker>();
     private LoadingCache<String, Boolean> cache;
@@ -89,7 +89,7 @@ public class EntityCheckerManagerImpl extends CacheLoader<String, Boolean> imple
 
     protected String generateNewUri(String uri) {
         StringBuilder newUri = new StringBuilder();
-        newUri.append(SYNTETIC_URI_NAME_SPACE);
+        newUri.append(SYNTHETIC_URI_NAME_SPACE);
         char chars[] = uri.toCharArray();
         for (int i = 0; i < chars.length; ++i) {
             switch (chars[i]) {

@@ -39,11 +39,11 @@ import org.aksw.gerbil.http.HttpManagement;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
+import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
-import org.aksw.gerbil.web.config.RootConfig;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
@@ -51,8 +51,10 @@ import org.aksw.simba.topicmodeling.concurrent.reporter.Reporter;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.aksw.simba.topicmodeling.concurrent.tasks.TaskObserver;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.simpleframework.http.core.ContainerServer;
@@ -114,6 +116,8 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
 
     private static final int NUMBER_OF_DATASETS = 3;
 
+    private static long maxWaitingTimeBackup, checkIntervalBackup;
+
     protected WaitingDocumentReturningServerMock fastServerContainer;
     protected Server fastServer;
     protected Connection fastConnection;
@@ -124,10 +128,24 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
     public HttpBasedAnnotatorTest() {
     }
 
+    @BeforeClass
+    public static void setHttpConfig() {
+        HttpManagement mngmt = HttpManagement.getInstance();
+        maxWaitingTimeBackup = mngmt.getMaxWaitingTime();
+        checkIntervalBackup = mngmt.getCheckInterval();
+        mngmt.setMaxWaitingTime(MAX_WAITING_TIME);
+        mngmt.setCheckInterval(CHECK_INERVAL);
+    }
+
+    @AfterClass
+    public static void resetHttpConfig() {
+        HttpManagement mngmt = HttpManagement.getInstance();
+        mngmt.setMaxWaitingTime(maxWaitingTimeBackup);
+        mngmt.setCheckInterval(checkIntervalBackup);
+    }
+
     @Before
     public void startServer() throws IOException {
-        HttpManagement.getInstance().setMaxWaitingTime(MAX_WAITING_TIME);
-        HttpManagement.getInstance().setCheckInterval(CHECK_INERVAL);
         fastServerContainer = new WaitingDocumentReturningServerMock(DOCUMENTS, 0);
         fastServer = new ContainerServer(fastServerContainer);
         fastConnection = new SocketConnection(fastServer);
@@ -162,8 +180,9 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         overseer.addObserver(this);
         @SuppressWarnings("unused")
         Reporter reporter = new LogReporter(overseer);
-        Experimenter experimenter = new Experimenter(overseer, experimentDAO, RootConfig.createSameAsRetriever(),
-                new EvaluatorFactory(URI_KB_CLASSIFIER), configs, EXPERIMENT_ID);
+        Experimenter experimenter = new Experimenter(overseer, experimentDAO,
+                SameAsRetrieverSingleton4Tests.getInstance(), new EvaluatorFactory(URI_KB_CLASSIFIER), configs,
+                EXPERIMENT_ID);
         experimenter.run();
 
         // Try to wait for the tasks to finish
@@ -205,8 +224,9 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         overseer.addObserver(this);
         @SuppressWarnings("unused")
         Reporter reporter = new LogReporter(overseer);
-        Experimenter experimenter = new Experimenter(overseer, experimentDAO, RootConfig.createSameAsRetriever(),
-                new EvaluatorFactory(URI_KB_CLASSIFIER), configs, EXPERIMENT_ID);
+        Experimenter experimenter = new Experimenter(overseer, experimentDAO,
+                SameAsRetrieverSingleton4Tests.getInstance(), new EvaluatorFactory(URI_KB_CLASSIFIER), configs,
+                EXPERIMENT_ID);
         experimenter.run();
 
         // Try to wait for the tasks to finish

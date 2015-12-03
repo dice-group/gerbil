@@ -18,12 +18,14 @@ package org.aksw.gerbil.matching.impl.clas;
 
 import java.util.List;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.matching.ClassifiedEvaluationCounts;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.Span;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +57,8 @@ public class ClassConsideringMatchingsCounter<T extends Marking> extends Matchin
                 alreadyUsedResults.set(matchingElements.nextSetBit(0));
                 // LOGGER.debug("Found a true positive ({}).", expectedElement);
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("1.2.1|" + getUri((NamedEntity) expectedElement) + "|"
-                            + getUri((NamedEntity) expectedElement) + "|tp");
+                    LOGGER.debug(GerbilConfiguration.getGerbilVersion() + "|" + getUri(expectedElement) + "|"
+                            + getUri(expectedElement) + "|tp");
                 }
             } else {
                 ++documentCounts.falseNegatives;
@@ -64,7 +66,7 @@ public class ClassConsideringMatchingsCounter<T extends Marking> extends Matchin
                 // LOGGER.debug("Found a false negative ({}).",
                 // expectedElement);
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("1.2.1|" + getUri((NamedEntity) expectedElement) + "||||fn");
+                    LOGGER.debug(GerbilConfiguration.getGerbilVersion() + "|" + getUri(expectedElement) + "||||fn");
                 }
             }
         }
@@ -73,7 +75,7 @@ public class ClassConsideringMatchingsCounter<T extends Marking> extends Matchin
             int id = 0;
             for (T element : annotatorResult) {
                 if (!alreadyUsedResults.get(id)) {
-                    LOGGER.debug("1.2.1||||" + getUri((NamedEntity) element) + "|fp");
+                    LOGGER.debug(GerbilConfiguration.getGerbilVersion() + "||||" + getUri(element) + "|fp");
                 }
                 ++id;
             }
@@ -90,16 +92,33 @@ public class ClassConsideringMatchingsCounter<T extends Marking> extends Matchin
         return documentCounts;
     }
 
-    protected String getUri(NamedEntity ne) {
-        if (ne.getUris().size() == 0) {
-            return ne.getStartPosition() + "|" + ne.getLength() + "|null";
+    protected String getUri(Marking ne) {
+        StringBuilder builder = new StringBuilder();
+        if (ne instanceof Span) {
+            builder.append(((Span) ne).getStartPosition());
+            builder.append('|');
+            builder.append(((Span) ne).getLength());
+            builder.append('|');
+        } else {
+            builder.append("||");
         }
-        for (String uri : ne.getUris()) {
-            if (uri.startsWith("http://dbpedia.org")) {
-                return ne.getStartPosition() + "|" + ne.getLength() + "|" + uri;
+        if (ne instanceof Meaning) {
+            if (((Meaning) ne).getUris().size() == 0) {
+                builder.append("null");
+            } else {
+                boolean uriFound = false;
+                for (String uri : ((Meaning) ne).getUris()) {
+                    if (uri.startsWith("http://dbpedia.org") && !uriFound) {
+                        builder.append(uri);
+                        uriFound = true;
+                    }
+                }
+                if (!uriFound) {
+                    builder.append(((Meaning) ne).getUris().iterator().next());
+                }
             }
         }
-        return ne.getStartPosition() + "|" + ne.getLength() + "|" + ne.getUris().iterator().next();
+        return builder.toString();
     }
 
 }

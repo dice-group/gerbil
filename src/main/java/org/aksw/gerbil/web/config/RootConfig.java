@@ -94,6 +94,8 @@ public class RootConfig {
 
     private static final String HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY = "org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever.domain";
 
+    private static final String ENTITY_CHECKING_MANAGER_CACHE_SIZE_KEY = "org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl.cacheSize";
+    private static final String ENTITY_CHECKING_MANAGER_CACHE_DURATION_KEY = "org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl.cacheLifeTime";
     private static final String HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY = "org.aksw.gerbil.dataset.check.HttpBasedEntityChecker.namespace";
 
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
@@ -140,9 +142,13 @@ public class RootConfig {
         }
 
         SingleUriSameAsRetriever singleRetriever = new WikipediaApiBasedSingleUriSameAsRetriever();
+        // TODO move the definition of wikipedia domains into the properties
+        // file
         retrieverManager.addDomainSpecificRetriever("en.wikipedia.org", singleRetriever);
-        retrieverManager.addDomainSpecificRetriever("de.wikipedia.org", singleRetriever);
-        retrieverManager.addDomainSpecificRetriever("fr.wikipedia.org", singleRetriever);
+        // retrieverManager.addDomainSpecificRetriever("de.wikipedia.org",
+        // singleRetriever);
+        // retrieverManager.addDomainSpecificRetriever("fr.wikipedia.org",
+        // singleRetriever);
         (new WikiDbPediaBridgingSameAsRetriever()).addToManager(retrieverManager);
         SameAsRetriever sameAsRetriever = retrieverManager;
         sameAsRetriever = new CrawlingSameAsRetrieverDecorator(sameAsRetriever);
@@ -194,7 +200,20 @@ public class RootConfig {
     }
 
     public static @Bean EntityCheckerManager getEntityCheckerManager() {
-        EntityCheckerManager manager = new EntityCheckerManagerImpl();
+        EntityCheckerManager manager = null;
+        if (GerbilConfiguration.getInstance().containsKey(ENTITY_CHECKING_MANAGER_CACHE_SIZE_KEY)
+                && GerbilConfiguration.getInstance().containsKey(ENTITY_CHECKING_MANAGER_CACHE_DURATION_KEY)) {
+            try {
+                int cacheSize = GerbilConfiguration.getInstance().getInt(ENTITY_CHECKING_MANAGER_CACHE_SIZE_KEY);
+                long duration = GerbilConfiguration.getInstance().getLong(ENTITY_CHECKING_MANAGER_CACHE_DURATION_KEY);
+                manager = new EntityCheckerManagerImpl(cacheSize, duration);
+            } catch (Exception e) {
+                LOGGER.error("Exception while parsing parameter. Creating default EntityCheckerManagerImpl.", e);
+                manager = new EntityCheckerManagerImpl();
+            }
+        } else {
+            manager = new EntityCheckerManagerImpl();
+        }
         @SuppressWarnings("unchecked")
         List<String> namespaces = GerbilConfiguration.getInstance().getList(HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY);
         if (!namespaces.isEmpty()) {
