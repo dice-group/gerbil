@@ -31,6 +31,7 @@ import org.aksw.gerbil.semantic.sameas.SingleUriSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.CrawlingSameAsRetrieverDecorator;
 import org.aksw.gerbil.semantic.sameas.impl.DomainBasedSameAsRetrieverManager;
 import org.aksw.gerbil.semantic.sameas.impl.ErrorFixingSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.UriEncodingHandlingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.cache.FileBasedCachingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.cache.InMemoryCachingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
@@ -133,6 +134,7 @@ public class RootConfig {
     public static @Bean SameAsRetriever createSameAsRetriever() {
         DomainBasedSameAsRetrieverManager retrieverManager = new DomainBasedSameAsRetrieverManager();
         retrieverManager.addStaticRetriever(new ErrorFixingSameAsRetriever());
+        retrieverManager.addStaticRetriever(new UriEncodingHandlingSameAsRetriever());
 
         if (GerbilConfiguration.getInstance().containsKey(HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
             HTTPBasedSameAsRetriever httpRetriever = new HTTPBasedSameAsRetriever();
