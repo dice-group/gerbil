@@ -119,7 +119,12 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
         String nifDocument = nifCreator.getDocumentAsNIFString(document);
         HttpEntity entity = new StringEntity(nifDocument, "UTF-8");
         // send NIF document
-        HttpPost request = createPostRequest(url);
+        HttpPost request = null;
+        try {
+            request = createPostRequest(url);
+        } catch (IllegalArgumentException e) {
+            throw new GerbilException("Couldn't create HTTP request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
         request.setEntity(entity);
         request.addHeader(HttpHeaders.CONTENT_TYPE, nifCreator.getHttpContentType() + ";charset=UTF-8");
         request.addHeader(HttpHeaders.ACCEPT, nifParser.getHttpContentType());

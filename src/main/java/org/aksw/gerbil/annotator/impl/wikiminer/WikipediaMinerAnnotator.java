@@ -107,7 +107,12 @@ public class WikipediaMinerAnnotator extends AbstractHttpBasedAnnotator implemen
 
     protected Document requestAnnotations(Document document) throws GerbilException {
         Document resultDoc = new DocumentImpl(document.getText(), document.getDocumentURI());
-        HttpPost request = createPostRequest(serviceUrl);
+        HttpPost request = null;
+        try {
+            request = createPostRequest(serviceUrl);
+        } catch (IllegalArgumentException e) {
+            throw new GerbilException("Couldn't create HTTP request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
         String parameters = null;
         try {
             parameters = PARAMETERS + URLEncoder.encode(document.getText(), "UTF-8");
@@ -164,8 +169,7 @@ public class WikipediaMinerAnnotator extends AbstractHttpBasedAnnotator implemen
     private void parseEntity(JSONObject entityObject, Document resultDoc) {
         if (entityObject.has(DETECTED_ENTITY_TITLE_KEY) && entityObject.has(DETECTED_ENTITY_WEIGHT_KEY)
                 && entityObject.has(DETECTED_ENTITY_POSITIONS_KEY)) {
-            Set<String> uris = WikipediaHelper
-                    .generateUriSet(entityObject.getString(DETECTED_ENTITY_TITLE_KEY));
+            Set<String> uris = WikipediaHelper.generateUriSet(entityObject.getString(DETECTED_ENTITY_TITLE_KEY));
             double probability = entityObject.getDouble(DETECTED_ENTITY_WEIGHT_KEY);
             JSONArray positions = entityObject.getJSONArray(DETECTED_ENTITY_POSITIONS_KEY);
             JSONObject position;

@@ -103,7 +103,14 @@ public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements A2KBAn
 
     protected Document performRequest(Document document, boolean annotate) throws GerbilException {
         Document resultDoc = new DocumentImpl(document.getText(), document.getDocumentURI());
-        HttpPost request = createPostRequest(annotate ? annotationUrl : spotUrl);
+
+        HttpPost request = null;
+        try {
+            request = createPostRequest(annotate ? annotationUrl : spotUrl);
+        } catch (IllegalArgumentException e) {
+            throw new GerbilException("Couldn't create HTTP request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
+        
         StringBuilder parameters = new StringBuilder();
         parameters.append("key=");
         parameters.append(key);

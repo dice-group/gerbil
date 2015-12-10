@@ -114,7 +114,12 @@ public class WATAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnno
         }
         parameters.put(TEXT_REQUEST_PARAMETER_KEY, document.getText());
 
-        HttpPost request = createPostRequest(disambiguate ? disambiguateUrl : annotateUrl);
+        HttpPost request = null;
+        try {
+            request = createPostRequest(disambiguate ? disambiguateUrl : annotateUrl);
+        } catch (IllegalArgumentException e) {
+            throw new GerbilException("Couldn't create HTTP request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
         request.setEntity(new StringEntity(parameters.toString(), "UTF8"));
         request.addHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
         request.addHeader(HttpHeaders.ACCEPT, "application/json");

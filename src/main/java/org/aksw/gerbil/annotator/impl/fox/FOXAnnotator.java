@@ -112,7 +112,12 @@ public class FOXAnnotator extends AbstractHttpBasedAnnotator implements OKETask1
         HttpEntity entity = new StringEntity(new JSONObject().put("input", document.getText()).put("type", "text")
                 .put("task", "ner").put("output", "JSON-LD").toString(), ContentType.APPLICATION_JSON);
         // request FOX
-        HttpPost request = createPostRequest(serviceUrl);
+        HttpPost request = null;
+        try {
+            request = createPostRequest(serviceUrl);
+        } catch (IllegalArgumentException e) {
+            throw new GerbilException("Couldn't create HTTP request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
         request.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
         // FOX does not like the Accept header. So which should avoid it.
         // request.addHeader(HttpHeaders.ACCEPT,

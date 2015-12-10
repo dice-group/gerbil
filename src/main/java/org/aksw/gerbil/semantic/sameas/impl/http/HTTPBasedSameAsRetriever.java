@@ -83,7 +83,13 @@ public class HTTPBasedSameAsRetriever extends AbstractHttpRequestEmitter impleme
     }
 
     protected Model requestModel(String uri) {
-        HttpGet request = createGetRequest(uri);
+        HttpGet request = null;
+        try {
+            request = createGetRequest(uri);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Exception while sending request for \"" + uri + "\". Returning null.", e);
+            return null;
+        }
         request.addHeader(HttpHeaders.ACCEPT, REQUEST_ACCEPT_HEADER_VALUE);
         request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
 

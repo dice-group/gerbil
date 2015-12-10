@@ -29,14 +29,20 @@ public class HttpBasedEntityChecker extends AbstractHttpRequestEmitter implement
 
     @Override
     public boolean entityExists(String uri) {
-        HttpHead request = createHeadRequest(uri);
+        HttpHead request = null;
+        try {
+            request = createHeadRequest(uri);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Exception while creating HTTP request. Returning false.", e);
+            return false;
+        }
         CloseableHttpResponse response = null;
         try {
             response = client.execute(request);
             StatusLine status = response.getStatusLine();
             return (status.getStatusCode() >= 200) && (status.getStatusCode() < 300);
         } catch (Exception e) {
-            LOGGER.error("Exception while sending request. Returning false.", e);
+            LOGGER.error("Exception while sending HTTP request. Returning false.", e);
             return false;
         } finally {
             closeRequest(request);

@@ -71,19 +71,49 @@ public class AbstractHttpRequestEmitter implements HttpRequestEmitter {
         request.abort();
     }
 
-    protected HttpPost createPostRequest(String url) {
+    /**
+     * Creates a POST request and registers it with the {@link HttpManagement}
+     * instance.
+     * 
+     * @param url
+     *            the URL to which the request will be send
+     * @return the request object
+     * @throws IllegalArgumentException
+     *             if the url is not valid
+     */
+    protected HttpPost createPostRequest(String url) throws IllegalArgumentException {
         HttpPost request = new HttpPost(url);
         HttpManagement.getInstance().reportStart(this, request);
         return request;
     }
 
-    protected HttpGet createGetRequest(String url) {
+    /**
+     * Creates a GET request and registers it with the {@link HttpManagement}
+     * instance.
+     * 
+     * @param url
+     *            the URL to which the request will be send
+     * @return the request object
+     * @throws IllegalArgumentException
+     *             if the url is not valid
+     */
+    protected HttpGet createGetRequest(String url) throws IllegalArgumentException {
         HttpGet request = new HttpGet(url);
         HttpManagement.getInstance().reportStart(this, request);
         return request;
     }
 
-    protected HttpHead createHeadRequest(String url) {
+    /**
+     * Creates a HEAD request and registers it with the {@link HttpManagement}
+     * instance.
+     * 
+     * @param url
+     *            the URL to which the request will be send
+     * @return the request object
+     * @throws IllegalArgumentException
+     *             if the url is not valid
+     */
+    protected HttpHead createHeadRequest(String url) throws IllegalArgumentException {
         HttpHead request = new HttpHead(url);
         HttpManagement.getInstance().reportStart(this, request);
         return request;

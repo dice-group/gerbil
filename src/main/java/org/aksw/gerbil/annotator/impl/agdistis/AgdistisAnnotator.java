@@ -40,6 +40,7 @@ import org.aksw.gerbil.transfer.nif.data.StartPosBasedComparator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -158,7 +159,12 @@ public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements D2K
         }
 
         HttpEntity entity = new StringEntity(parameters, ContentType.APPLICATION_FORM_URLENCODED);
-        HttpPost request = createPostRequest(agdistisUrl);
+        HttpPost request = null;
+        try {
+            request = createPostRequest(agdistisUrl);
+        } catch (IllegalArgumentException e) {
+            throw new GerbilException("Couldn't create HTTP request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
         request.addHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=UTF-8");
         request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
         request.setEntity(entity);

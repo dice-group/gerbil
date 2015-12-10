@@ -99,7 +99,12 @@ public class SpotlightClient {
             LOGGER.error("Exception while encoding request data.", e);
             throw new GerbilException("Exception while encoding request data.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
         }
-        HttpPost request = annotator.createPostRequest(requestUrl);
+        HttpPost request = null;
+        try {
+            request = annotator.createPostRequest(requestUrl);
+        } catch (IllegalArgumentException e) {
+            throw new GerbilException("Couldn't create HTTP request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
         HttpEntity entity = new StringEntity(parameters, "UTF-8");
         request.addHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=UTF-8");
         request.addHeader(HttpHeaders.ACCEPT, "application/json");

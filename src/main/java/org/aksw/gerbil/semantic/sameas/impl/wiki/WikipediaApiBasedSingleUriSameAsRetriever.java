@@ -73,7 +73,14 @@ public class WikipediaApiBasedSingleUriSameAsRetriever extends AbstractHttpReque
         urlBuilder.append(URL_QUERY_PART);
         urlBuilder.append(TITLE_ESCAPER.escape(title));
 
-        HttpGet request = createGetRequest(urlBuilder.toString());
+        HttpGet request = null;
+        try {
+            request = createGetRequest(urlBuilder.toString());
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Got an exception while creating a request querying the wiki api of \"" + domain
+                    + "\". Returning null.", e);
+            return null;
+        }
         CloseableHttpResponse response = null;
         HttpEntity entity = null;
         try {
