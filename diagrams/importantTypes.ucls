@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<class-diagram version="1.1.8" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
-  realizations="true" associations="true" dependencies="true" nesting-relationships="true">  
+<class-diagram version="1.1.9" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="true" nesting-relationships="true" router="FAN">  
   <interface id="1" language="java" name="org.aksw.gerbil.transfer.nif.Marking" project="gerbil.nif.transfer" 
     file="/gerbil.nif.transfer/src/main/java/org/aksw/gerbil/transfer/nif/Marking.java" binary="false" 
     corner="BOTTOM_RIGHT">    
@@ -24,7 +24,7 @@
   <interface id="3" language="java" name="org.aksw.gerbil.transfer.nif.MeaningSpan" project="gerbil.nif.transfer" 
     file="/gerbil.nif.transfer/src/main/java/org/aksw/gerbil/transfer/nif/MeaningSpan.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="275" y="383"/>    
+    <position height="-1" width="-1" x="250" y="409"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -64,7 +64,7 @@
   <interface id="7" language="java" name="org.aksw.gerbil.transfer.nif.TypedSpan" project="gerbil.nif.transfer" 
     file="/gerbil.nif.transfer/src/main/java/org/aksw/gerbil/transfer/nif/TypedSpan.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="546" y="383"/>    
+    <position height="-1" width="-1" x="573" y="431"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -126,7 +126,7 @@
   <class id="13" language="java" name="org.aksw.gerbil.transfer.nif.data.SpanImpl" project="gerbil.nif.transfer" 
     file="/gerbil.nif.transfer/src/main/java/org/aksw/gerbil/transfer/nif/data/SpanImpl.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="428" y="551"/>    
+    <position height="-1" width="-1" x="400" y="563"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -136,7 +136,7 @@
   <class id="14" language="java" name="org.aksw.gerbil.transfer.nif.data.TypedSpanImpl" project="gerbil.nif.transfer" 
     file="/gerbil.nif.transfer/src/main/java/org/aksw/gerbil/transfer/nif/data/TypedSpanImpl.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="562" y="842"/>    
+    <position height="-1" width="-1" x="573" y="854"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -146,107 +146,100 @@
   <class id="15" language="java" name="org.aksw.gerbil.transfer.nif.data.TypedNamedEntity" project="gerbil.nif.transfer" 
     file="/gerbil.nif.transfer/src/main/java/org/aksw/gerbil/transfer/nif/data/TypedNamedEntity.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="750" y="1071"/>    
+    <position height="-1" width="-1" x="800" y="1131"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <realization id="16">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="2"/>  
-  </realization>  
+  <generalization id="16">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="4"/>  
+  </generalization>  
   <generalization id="17">    
     <end type="SOURCE" refId="7"/>    
     <end type="TARGET" refId="4"/>  
   </generalization>  
-  <generalization id="18">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="13"/>  
-  </generalization>  
-  <realization id="19">    
-    <end type="SOURCE" refId="9"/>    
-    <end type="TARGET" refId="3"/>  
-  </realization>  
-  <generalization id="20">    
+  <realization id="18">    
+    <bendpoint x="684" y="726"/>    
     <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="7"/>  
+  </realization>  
+  <generalization id="19">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <generalization id="20">    
+    <end type="SOURCE" refId="11"/>    
     <end type="TARGET" refId="9"/>  
   </generalization>  
   <realization id="21">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="7"/>  
+  </realization>  
+  <realization id="22">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="5"/>  
+  </realization>  
+  <generalization id="23">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="9"/>  
+  </generalization>  
+  <generalization id="24">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="25">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="13"/>  
+  </generalization>  
+  <generalization id="26">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="27">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="13"/>  
+  </generalization>  
+  <realization id="28">    
     <bendpoint x="82" y="814"/>    
     <bendpoint x="-12" y="768"/>    
     <end type="SOURCE" refId="11"/>    
     <end type="TARGET" refId="5"/>  
   </realization>  
-  <generalization id="22">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="8"/>  
-  </generalization>  
-  <realization id="23">    
-    <end type="SOURCE" refId="10"/>    
-    <end type="TARGET" refId="5"/>  
-  </realization>  
-  <generalization id="24">    
-    <end type="SOURCE" refId="5"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <generalization id="25">    
+  <generalization id="29">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="1"/>  
   </generalization>  
-  <realization id="26">    
-    <bendpoint x="684" y="726"/>    
-    <end type="SOURCE" refId="15"/>    
-    <end type="TARGET" refId="7"/>  
+  <realization id="30">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="3"/>  
   </realization>  
-  <generalization id="27">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="13"/>  
-  </generalization>  
-  <generalization id="28">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="4"/>  
-  </generalization>  
-  <realization id="29">    
-    <bendpoint x="181" y="1100"/>    
-    <bendpoint x="99" y="810"/>    
-    <bendpoint x="5" y="757"/>    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="5"/>  
-  </realization>  
-  <generalization id="30">    
-    <end type="SOURCE" refId="2"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
   <realization id="31">    
     <end type="SOURCE" refId="13"/>    
     <end type="TARGET" refId="4"/>  
   </realization>  
   <generalization id="32">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="8"/>  
+  </generalization>  
+  <generalization id="33">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="34">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <realization id="35">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="2"/>  
+  </realization>  
+  <generalization id="36">    
     <end type="SOURCE" refId="3"/>    
     <end type="TARGET" refId="2"/>  
   </generalization>  
-  <generalization id="33">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="9"/>  
-  </generalization>  
-  <generalization id="34">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="1"/>  
-  </generalization>  
-  <generalization id="35">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="6"/>  
-  </generalization>  
-  <generalization id="36">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="15"/>  
-  </generalization>  
-  <realization id="37">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="7"/>  
-  </realization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    

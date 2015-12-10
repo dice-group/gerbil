@@ -40,6 +40,11 @@ public class NamedEntity extends SpanImpl implements MeaningSpan {
         setUris(uris);
     }
 
+    public NamedEntity(NamedEntity namedEntity) {
+        super(namedEntity);
+        setUris(namedEntity.getUris());
+    }
+
     @Deprecated
     @Override
     public String getUri() {
@@ -120,4 +125,8 @@ public class NamedEntity extends SpanImpl implements MeaningSpan {
         return builder.toString();
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new NamedEntity(this);
+    }
 }

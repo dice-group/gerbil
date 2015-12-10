@@ -42,6 +42,11 @@ public class ScoredAnnotation extends Annotation implements Meaning, ScoredMarki
         this.confidence = confidence;
     }
 
+    public ScoredAnnotation(ScoredAnnotation scoredAnnotation) {
+        super(scoredAnnotation);
+        this.confidence = scoredAnnotation.getConfidence();
+    }
+
     public double getConfidence() {
         return confidence;
     }
@@ -85,4 +90,8 @@ public class ScoredAnnotation extends Annotation implements Meaning, ScoredMarki
         return builder.toString();
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new ScoredAnnotation(this);
+    }
 }

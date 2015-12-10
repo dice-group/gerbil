@@ -17,22 +17,28 @@
 package org.aksw.gerbil.transfer.nif.data;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 
 public class TypedNamedEntity extends NamedEntity implements TypedSpan {
 
-    protected Set<String> types;
+    protected Set<String> types = new HashSet<String>();
 
     public TypedNamedEntity(int startPosition, int length, String uri, Set<String> types) {
         super(startPosition, length, uri);
-        this.types = types;
+        setTypes(types);
     }
 
     public TypedNamedEntity(int startPosition, int length, Set<String> uris, Set<String> types) {
         super(startPosition, length, uris);
-        this.types = types;
+        setTypes(types);
+    }
+
+    public TypedNamedEntity(TypedNamedEntity typedNamedEntity) {
+        super(typedNamedEntity);
+        setTypes(types);
     }
 
     public Set<String> getTypes() {
@@ -40,7 +46,8 @@ public class TypedNamedEntity extends NamedEntity implements TypedSpan {
     }
 
     public void setTypes(Set<String> types) {
-        this.types = types;
+        this.types.clear();
+        this.types.addAll(types);
     }
 
     @Override
@@ -81,6 +88,11 @@ public class TypedNamedEntity extends NamedEntity implements TypedSpan {
         } else if (!types.equals(other.types))
             return false;
         return true;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new TypedNamedEntity(this);
     }
 
 }

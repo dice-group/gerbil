@@ -38,6 +38,11 @@ public class ScoredTypedNamedEntity extends TypedNamedEntity implements TypedSpa
         this.confidence = confidence;
     }
 
+    public ScoredTypedNamedEntity(ScoredTypedNamedEntity scoredTypedNamedEntity) {
+        super(scoredTypedNamedEntity);
+        this.confidence = scoredTypedNamedEntity.confidence;
+    }
+
     public double getConfidence() {
         return confidence;
     }
@@ -85,5 +90,10 @@ public class ScoredTypedNamedEntity extends TypedNamedEntity implements TypedSpa
         builder.append(confidence);
         builder.append(')');
         return builder.toString();
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new ScoredTypedNamedEntity(this);
     }
 }

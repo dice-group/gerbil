@@ -81,10 +81,10 @@ public class NIFTransferTest {
                 Arrays.asList(
                         (Marking) new TypedNamedEntity(0, 7, "http://dbpedia.org/resource/Štvrtok", new HashSet<String>(
                                 Arrays.asList("http://www.aksw.org/notInWiki/Village"))),
-                        (Marking) new TypedNamedEntity(14, 7, new HashSet<String>(Arrays.asList(
+                        (Marking) new TypedNamedEntity(13, 7, new HashSet<String>(Arrays.asList(
                                 "http://www.aksw.org/notInWiki/village")),
                                 new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Location"))),
-                        (Marking) new ScoredTypedNamedEntity(79, 8, "http://dbpedia.org/resource/Slovakia",
+                        (Marking) new ScoredTypedNamedEntity(80, 8, "http://dbpedia.org/resource/Slovakia",
                                 new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Country")), 0.25))) });
         return tests;
     }

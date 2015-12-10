@@ -24,24 +24,37 @@ import org.aksw.gerbil.transfer.nif.TypedSpan;
 
 public class TypedSpanImpl extends SpanImpl implements TypedSpan {
 
-    protected Set<String> types;
+    protected Set<String> types = new HashSet<String>();
 
     public TypedSpanImpl(int startPosition, int length, Set<String> types) {
         super(startPosition, length);
-        this.types = types;
+        setTypes(types);
     }
 
     public TypedSpanImpl(int startPosition, int length, String... types) {
         super(startPosition, length);
-        this.types = new HashSet<String>(Arrays.asList(types));
+        setTypes(types);
+    }
+
+    public TypedSpanImpl(TypedSpanImpl typedSpanImpl) {
+        super(typedSpanImpl);
+        setTypes(typedSpanImpl.getTypes());
     }
 
     public Set<String> getTypes() {
         return types;
     }
 
+    public void setTypes(String... types) {
+        this.types.clear();
+        for (int i = 0; i < types.length; ++i) {
+            this.types.add(types[i]);
+        }
+    }
+
     public void setTypes(Set<String> types) {
-        this.types = types;
+        this.types.clear();
+        this.types.addAll(types);
     }
 
     @Override
@@ -80,5 +93,10 @@ public class TypedSpanImpl extends SpanImpl implements TypedSpan {
         } else if (!types.equals(other.types))
             return false;
         return true;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new TypedSpanImpl(this);
     }
 }

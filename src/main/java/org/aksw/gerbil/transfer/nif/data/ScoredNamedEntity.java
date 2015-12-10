@@ -37,6 +37,11 @@ public class ScoredNamedEntity extends NamedEntity implements MeaningSpan, Score
         this.confidence = confidence;
     }
 
+    public ScoredNamedEntity(ScoredNamedEntity scoredNamedEntity) {
+        super(scoredNamedEntity);
+        this.confidence = scoredNamedEntity.confidence;
+    }
+
     public double getConfidence() {
         return confidence;
     }
@@ -84,4 +89,8 @@ public class ScoredNamedEntity extends NamedEntity implements MeaningSpan, Score
         return builder.toString();
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new ScoredNamedEntity(this);
+    }
 }

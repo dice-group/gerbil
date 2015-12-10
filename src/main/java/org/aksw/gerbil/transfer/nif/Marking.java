@@ -23,8 +23,10 @@ package org.aksw.gerbil.transfer.nif;
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
-public interface Marking {
+public interface Marking extends Cloneable {
 
     @Override
     public String toString();
+    
+    public Object clone() throws CloneNotSupportedException;
 }

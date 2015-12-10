@@ -44,6 +44,10 @@ public class Annotation implements Meaning {
         setUris(uris);
     }
 
+    public Annotation(Annotation annotation) {
+        setUris(annotation.getUris());
+    }
+
     @Deprecated
     @Override
     public String getUri() {
@@ -116,4 +120,8 @@ public class Annotation implements Meaning {
         return true;
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new Annotation(this);
+    }
 }

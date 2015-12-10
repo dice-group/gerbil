@@ -79,4 +79,9 @@ public class SpanImpl implements Span {
     public String toString() {
         return "(" + startPosition + ", " + length + ")";
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new SpanImpl(this);
+    }
 }
