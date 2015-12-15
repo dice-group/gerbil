@@ -27,6 +27,29 @@ Home Depot
 </ReferenceInstance>
 <ReferenceInstance>
 <SurfaceForm>
+CEO
+</SurfaceForm>
+<Offset>
+11
+</Offset>
+<Length>
+3
+</Length>
+<ChosenAnnotation>
+*null*
+</ChosenAnnotation>
+<NumAnnotators>
+1
+</NumAnnotators>
+<AnnotatorId>
+Silviu Cucerzan
+</AnnotatorId>
+<Annotation>
+CEO
+</Annotation>
+</ReferenceInstance>
+<ReferenceInstance>
+<SurfaceForm>
 Nardelli
 </SurfaceForm>
 <Offset>
@@ -103,6 +126,29 @@ The Home Depot Inc.
 </Offset>
 <Length>
 19
+</Length>
+<ChosenAnnotation>
+http://en.wikipedia.org/wiki/Home_Depot
+</ChosenAnnotation>
+<NumAnnotators>
+1
+</NumAnnotators>
+<AnnotatorId>
+Silviu Cucerzan
+</AnnotatorId>
+<Annotation>
+Home Depot
+</Annotation>
+</ReferenceInstance>
+<ReferenceInstance>
+<SurfaceForm>
+Home Depot
+</SurfaceForm>
+<Offset>
+197
+</Offset>
+<Length>
+10
 </Length>
 <ChosenAnnotation>
 http://en.wikipedia.org/wiki/Home_Depot

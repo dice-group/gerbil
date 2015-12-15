@@ -47,18 +47,19 @@ public class ClassConsideringMatchingsCounter<T extends Marking> extends Matchin
         ClassifiedEvaluationCounts documentCounts = new ClassifiedEvaluationCounts(classifier.getNumberOfClasses());
         BitSet matchingElements;
         BitSet alreadyUsedResults = new BitSet(annotatorResult.size());
-        int classId;
+        int classId, matchingElementId;
         for (T expectedElement : goldStandard) {
             matchingElements = searcher.findMatchings(expectedElement, annotatorResult, alreadyUsedResults);
             classId = classifier.getClass(expectedElement);
             if (!matchingElements.isEmpty()) {
                 ++documentCounts.truePositives;
                 ++documentCounts.classifiedCounts[classId].truePositives;
-                alreadyUsedResults.set(matchingElements.nextSetBit(0));
+                matchingElementId = matchingElements.nextSetBit(0);
+                alreadyUsedResults.set(matchingElementId);
                 // LOGGER.debug("Found a true positive ({}).", expectedElement);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(GerbilConfiguration.getGerbilVersion() + "|" + getUri(expectedElement) + "|"
-                            + getUri(expectedElement) + "|tp");
+                            + getUri(annotatorResult.get(matchingElementId)) + "|tp");
                 }
             } else {
                 ++documentCounts.falseNegatives;

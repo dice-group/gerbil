@@ -177,11 +177,19 @@ public class MSNBCDataset extends AbstractDataset implements InitializableDatase
         return builder.toString();
     }
 
+    /**
+     * Adds DBpedia URIs by transforming Wikipeda URIs.
+     * 
+     * @param uris
+     */
     protected static void addDBpediaUris(Set<String> uris) {
         List<String> dbpediaUris = new ArrayList<String>(uris.size());
         for (String uri : uris) {
-            dbpediaUris.add(uri.replace("en.wikipedia.org/wiki", "dbpedia.org/resource"));
-            dbpediaUris.add(uri.replace("wikipedia.org/wiki", "dbpedia.org/resource"));
+            if (uri.contains("en.wikipedia.org/wiki")) {
+                dbpediaUris.add(uri.replace("en.wikipedia.org/wiki", "dbpedia.org/resource"));
+            } else {
+                dbpediaUris.add(uri.replace("wikipedia.org/wiki", "dbpedia.org/resource"));
+            }
         }
         uris.addAll(dbpediaUris);
     }

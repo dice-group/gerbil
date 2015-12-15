@@ -32,6 +32,7 @@ import org.aksw.gerbil.semantic.sameas.impl.CrawlingSameAsRetrieverDecorator;
 import org.aksw.gerbil.semantic.sameas.impl.DomainBasedSameAsRetrieverManager;
 import org.aksw.gerbil.semantic.sameas.impl.ErrorFixingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.UriEncodingHandlingSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.UriFilteringSameAsRetrieverDecorator;
 import org.aksw.gerbil.semantic.sameas.impl.cache.FileBasedCachingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.cache.InMemoryCachingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
@@ -40,7 +41,6 @@ import org.aksw.gerbil.semantic.sameas.impl.wiki.WikipediaApiBasedSingleUriSameA
 import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
-import org.aksw.gerbil.utils.ConsoleLogger;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.DefeatableOverseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.ExecutorBasedOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
@@ -77,7 +77,6 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
  * @author Didier Cherix
  * 
  */
-@SuppressWarnings("deprecation")
 @Configuration
 @ComponentScan(basePackages = "org.aksw.gerbil.web.config")
 @PropertySource("gerbil.properties")
@@ -98,6 +97,8 @@ public class RootConfig {
     private static final String ENTITY_CHECKING_MANAGER_CACHE_SIZE_KEY = "org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl.cacheSize";
     private static final String ENTITY_CHECKING_MANAGER_CACHE_DURATION_KEY = "org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl.cacheLifeTime";
     private static final String HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY = "org.aksw.gerbil.dataset.check.HttpBasedEntityChecker.namespace";
+    private static final String WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY = "org.aksw.gerbil.semantic.sameas.impl.wiki.WikipediaApiBasedSingleUriSameAsRetriever.domain";
+    private static final String SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY = "org.aksw.gerbil.semantic.sameas.impl.UriFilteringSameAsRetrieverDecorator.domainBlacklist";
 
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
@@ -136,6 +137,7 @@ public class RootConfig {
         retrieverManager.addStaticRetriever(new ErrorFixingSameAsRetriever());
         retrieverManager.addStaticRetriever(new UriEncodingHandlingSameAsRetriever());
 
+        // HTTP based same as retrieval
         if (GerbilConfiguration.getInstance().containsKey(HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
             HTTPBasedSameAsRetriever httpRetriever = new HTTPBasedSameAsRetriever();
             for (String domain : GerbilConfiguration.getInstance().getStringArray(HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
@@ -143,17 +145,30 @@ public class RootConfig {
             }
         }
 
-        SingleUriSameAsRetriever singleRetriever = new WikipediaApiBasedSingleUriSameAsRetriever();
-        // TODO move the definition of wikipedia domains into the properties
-        // file
-        retrieverManager.addDomainSpecificRetriever("en.wikipedia.org", singleRetriever);
-        // retrieverManager.addDomainSpecificRetriever("de.wikipedia.org",
-        // singleRetriever);
-        // retrieverManager.addDomainSpecificRetriever("fr.wikipedia.org",
-        // singleRetriever);
+        // Wikipedia API based same as retrieval
+        if (GerbilConfiguration.getInstance().containsKey(WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
+            SingleUriSameAsRetriever singleRetriever = new WikipediaApiBasedSingleUriSameAsRetriever();
+            for (String domain : GerbilConfiguration.getInstance()
+                    .getStringArray(WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
+                retrieverManager.addDomainSpecificRetriever(domain, singleRetriever);
+            }
+        }
+
+        // Wikipedia to DBpedia URI translation
         (new WikiDbPediaBridgingSameAsRetriever()).addToManager(retrieverManager);
+
+        // The manager is ready
         SameAsRetriever sameAsRetriever = retrieverManager;
+
+        // same as retrieval domain blacklist
+        if (GerbilConfiguration.getInstance().containsKey(SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY)) {
+            sameAsRetriever = new UriFilteringSameAsRetrieverDecorator(sameAsRetriever,
+                    GerbilConfiguration.getInstance().getStringArray(SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY));
+        }
+
+        // same as crawling
         sameAsRetriever = new CrawlingSameAsRetrieverDecorator(sameAsRetriever);
+
         SameAsRetriever decoratedRetriever = null;
         if (GerbilConfiguration.getInstance().containsKey(SAME_AS_CACHE_FILE_KEY)) {
             decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, false,

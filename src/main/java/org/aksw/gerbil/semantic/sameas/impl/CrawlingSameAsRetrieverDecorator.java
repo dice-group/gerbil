@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetrieverDecorator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This {@link SameAsRetrieverDecorator} implements a crawling strategy for
@@ -17,6 +19,10 @@ import org.aksw.gerbil.semantic.sameas.SameAsRetrieverDecorator;
  *
  */
 public class CrawlingSameAsRetrieverDecorator extends AbstractSameAsRetrieverDecorator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CrawlingSameAsRetrieverDecorator.class);
+
+    private boolean debugCrawling = false;
 
     public CrawlingSameAsRetrieverDecorator(SameAsRetriever decoratedRetriever) {
         super(decoratedRetriever);
@@ -54,12 +60,23 @@ public class CrawlingSameAsRetrieverDecorator extends AbstractSameAsRetrieverDec
                     // check whether the URI was really not known before and add
                     // it to the queue and the result set
                     if (!uris.contains(newUri)) {
+                        if (debugCrawling && LOGGER.isDebugEnabled()) {
+                            LOGGER.debug(uri + " -> " + newUri);
+                        }
                         queue.add(newUri);
                         uris.add(newUri);
                     }
                 }
             }
         }
+    }
+
+    public boolean isDebugCrawling() {
+        return debugCrawling;
+    }
+
+    public void setDebugCrawling(boolean debugCrawling) {
+        this.debugCrawling = debugCrawling;
     }
 
 }

@@ -23,6 +23,7 @@ import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetrieverDecorator;
 import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.cache.FileBasedCachingSameAsRetriever;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.aksw.gerbil.test.EntityCheckerManagerSingleton4Tests;
 import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
@@ -47,12 +48,12 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSingleD2KBRun.class);
 
     private static final String ANNOTATOR_NAME = "WAT";
-    private static final String DATASET_NAME = "MSNBC";
+    private static final String DATASET_NAME = "ACE2004";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.D2KB;
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
 
     public static void main(String[] args) throws Exception {
-        SingleRunTest test = new SingleRunTest();
+        SimpleSingleD2KBRun test = new SimpleSingleD2KBRun();
         test.run();
     }
 
@@ -99,6 +100,8 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
                 for (SameAsRetriever decorated : ((MultipleSameAsRetriever) retriever).getRetriever()) {
                     closeHttpRetriever(decorated);
                 }
+            } else if (retriever instanceof FileBasedCachingSameAsRetriever) {
+                ((FileBasedCachingSameAsRetriever) retriever).storeCache();
             }
             if (retriever instanceof Closeable) {
                 IOUtils.closeQuietly((Closeable) retriever);
