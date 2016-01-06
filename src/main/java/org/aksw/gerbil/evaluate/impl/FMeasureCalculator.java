@@ -18,6 +18,7 @@ package org.aksw.gerbil.evaluate.impl;
 
 import java.util.List;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
@@ -25,8 +26,12 @@ import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FMeasureCalculator.class);
 
     public static final String MACRO_F1_SCORE_NAME = "Macro F1 score";
     public static final String MACRO_PRECISION_NAME = "Macro Precision";
@@ -53,6 +58,9 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     protected EvaluationCounts[] generateMatchingCounts(List<List<T>> annotatorResults, List<List<T>> goldStandard) {
         EvaluationCounts counts[] = new EvaluationCounts[annotatorResults.size()];
         for (int i = 0; i < counts.length; ++i) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("${pom_version} " + i + "|||||||||");
+            }
             counts[i] = matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i));
         }
         return counts;
