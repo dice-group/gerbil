@@ -63,32 +63,6 @@ public enum ExperimentType implements Describable {
     D2KB("D2KB",
             "The input for the annotator is a text with entities that already have been marked inside. The annotator should link all these mentioned entities to a knowledge base."),
 
-    // /**
-    // * Disambiguate to KB
-    // * <p>
-    // * Assign to each input mention its pertinent entity (possibly null).
-    // * </p>
-    // * Input: text with marked entities <br>
-    // * Output: mentions for every entity
-    // */
-    // @Deprecated D2KB_OLD("D2KB",
-    // "The input for the annotator is a text with entities that already have
-    // been marked inside. The annotator should link all these mentioned
-    // entities to a knowledge base."),
-    //
-    // /**
-    // * Annotate to KB
-    // * <p>
-    // * Identify the relevant mentions in the input text and assign to each of
-    // * them the pertinent entities.
-    // * </p>
-    // * Input: text <br>
-    // * Output: marked entities and mentions for their meaning
-    // */
-    // @Deprecated A2KB_OLD("A2KB",
-    // "The annotator gets a text and shall recognize entities inside and link
-    // them to a knowledge base."),
-
     /**
      * Scored - annotate to KB
      * <p>
@@ -177,23 +151,31 @@ public enum ExperimentType implements Describable {
         return name();
     }
 
-    // public Class<? extends Marking> getInputType() {
-    // return null;
-    // }
-    //
-    // public Class<? extends Marking> getOutputType() {
-    // return null;
-    // }
-
     public boolean equalsOrContainsType(ExperimentType type) {
         switch (this) {
-        case Sa2KB: {
-            return true;
+        case Sa2KB: // falls through
+        case A2KB: {
+            switch (type) {
+            case C2KB: // falls through
+            case A2KB:
+            case D2KB:
+            case ERec:
+            case Sa2KB:
+            case Sc2KB:
+            case Rc2KB: {
+                return true;
+            }
+            case ETyping: // falls through
+            case OKE_Task1:
+            case OKE_Task2: {
+                return false;
+            }
+            }
         }
         case Sc2KB: {
             switch (type) {
-            case ERec:
-            case Sa2KB: // falls through
+            case ERec: // falls through
+            case Sa2KB:
             case A2KB:
             case D2KB:
             case ETyping:
@@ -210,8 +192,8 @@ public enum ExperimentType implements Describable {
         }
         case Rc2KB: {
             switch (type) {
-            case ERec:
-            case Sa2KB: // falls through
+            case ERec: // falls through
+            case Sa2KB:
             case Sc2KB:
             case A2KB:
             case D2KB:
@@ -226,77 +208,17 @@ public enum ExperimentType implements Describable {
             }
             }
         }
-        case A2KB: {
-            switch (type) {
-            case Sa2KB: // falls through
-            case Sc2KB:
-            case Rc2KB:
-            case ETyping:
-            case OKE_Task1:
-            case OKE_Task2: {
-                return false;
-            }
-            case A2KB: // falls through
-            case D2KB:
-            case ERec:
-            case C2KB: {
-                return true;
-            }
-            }
-        }
         case C2KB: {
-            switch (type) {
-            case ERec:
-            case Sa2KB: // falls through
-            case Sc2KB:
-            case Rc2KB:
-            case A2KB:
-            case D2KB:
-            case ETyping:
-            case OKE_Task1:
-            case OKE_Task2: {
-                return false;
-            }
-            case C2KB: {
-                return true;
-            }
-            }
+            return type == C2KB;
         }
         case D2KB: {
-            switch (type) {
-            case ERec:
-            case Sa2KB: // falls through
-            case Sc2KB:
-            case Rc2KB:
-            case A2KB:
-            case C2KB:
-            case ETyping:
-            case OKE_Task1:
-            case OKE_Task2: {
-                return false;
-            }
-            case D2KB: {
-                return true;
-            }
-            }
+            return type == D2KB;
         }
         case ERec: {
-            switch (type) {
-            case Sa2KB: // falls through
-            case Sc2KB:
-            case Rc2KB:
-            case A2KB:
-            case C2KB:
-            case D2KB:
-            case ETyping:
-            case OKE_Task1:
-            case OKE_Task2: {
-                return false;
-            }
-            case ERec: {
-                return true;
-            }
-            }
+            return type == ERec;
+        }
+        case ETyping: {
+            return type == ETyping;
         }
         case OKE_Task1: {
             switch (type) {
@@ -307,9 +229,6 @@ public enum ExperimentType implements Describable {
                 return true;
             }
             }
-        }
-        case ETyping: {
-            return type == ETyping;
         }
         case OKE_Task2: {
             return type == OKE_Task2;

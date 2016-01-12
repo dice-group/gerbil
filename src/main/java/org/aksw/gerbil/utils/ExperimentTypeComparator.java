@@ -35,9 +35,9 @@ public class ExperimentTypeComparator implements Comparator<ExperimentType> {
         } else {
             // if type2 >= type1
             if (type2.equalsOrContainsType(type1)) {
-                return type1.name().compareTo(type2.name());
-            } else {
                 return -1;
+            } else {
+                return type1.name().compareTo(type2.name());
             }
         }
     }

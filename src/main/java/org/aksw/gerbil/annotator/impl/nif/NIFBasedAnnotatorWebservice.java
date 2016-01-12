@@ -156,4 +156,8 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
         LOGGER.info("Finished request for {}", document.getDocumentURI());
         return document;
     }
+    
+    public String getUrl() {
+        return url;
+    }
 }

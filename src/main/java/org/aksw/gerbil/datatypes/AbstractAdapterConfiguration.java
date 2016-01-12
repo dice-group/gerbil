@@ -20,6 +20,8 @@ import org.aksw.gerbil.utils.ExperimentTypeComparator;
 
 public abstract class AbstractAdapterConfiguration implements AdapterConfiguration {
 
+    private static final ExperimentTypeComparator EXP_TYPE_COMPARATOR = new ExperimentTypeComparator();
+
     protected String name;
     protected boolean couldBeCached;
     protected ExperimentType applicableForExperiment;
@@ -52,12 +54,6 @@ public abstract class AbstractAdapterConfiguration implements AdapterConfigurati
 
     @Override
     public boolean isApplicableForExperiment(ExperimentType type) {
-        // for (int i = 0; i < applicableForExperiments.length; i++) {
-        // if (applicableForExperiments[i].equalsOrContainsType(type)) {
-        // return true;
-        // }
-        // }
-        // return false;
         return applicableForExperiment.equalsOrContainsType(type);
     }
 
@@ -68,7 +64,7 @@ public abstract class AbstractAdapterConfiguration implements AdapterConfigurati
 
     @Override
     public int compareTo(AdapterConfiguration o) {
-        int result = (new ExperimentTypeComparator()).compare(this.applicableForExperiment, o.getExperimentType());
+        int result = EXP_TYPE_COMPARATOR.compare(this.applicableForExperiment, o.getExperimentType());
         if (result == 0) {
             return this.getName().compareTo(o.getName());
         } else {
