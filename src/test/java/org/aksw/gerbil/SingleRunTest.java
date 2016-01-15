@@ -22,6 +22,7 @@ import java.util.concurrent.Semaphore;
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
+import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
@@ -50,10 +51,18 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    private static final String ANNOTATOR_NAME = "DBpedia Spotlight";
+    private static final String ANNOTATOR_NAME = "FREME NER";
     private static final String DATASET_NAME = "MSNBC";
-    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.D2KB;
+    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.A2KB;
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
+
+    private static final boolean USE_SAME_AS_RETRIEVAL = true;
+    private static final boolean USE_ENTITY_CHECKING = false;
+
+    private static final SameAsRetriever SAME_AS_RETRIEVER = USE_SAME_AS_RETRIEVAL
+            ? SameAsRetrieverSingleton4Tests.getInstance() : null;
+    private static final EntityCheckerManager ENTITY_CHECKER_MANAGER = USE_ENTITY_CHECKING
+            ? EntityCheckerManagerSingleton4Tests.getInstance() : null;
 
     public static void main(String[] args) throws Exception {
         SingleRunTest test = new SingleRunTest();
@@ -70,8 +79,7 @@ public class SingleRunTest implements TaskObserver {
     public void run() throws Exception {
         AdapterManager adapterManager = new AdapterManager();
         adapterManager.setAnnotators(AnnotatorsConfig.annotators());
-        SameAsRetriever retriever = SameAsRetrieverSingleton4Tests.getInstance();
-        adapterManager.setDatasets(DatasetsConfig.datasets(EntityCheckerManagerSingleton4Tests.getInstance(), retriever));
+        adapterManager.setDatasets(DatasetsConfig.datasets(ENTITY_CHECKER_MANAGER, SAME_AS_RETRIEVER));
 
         AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE);
         Assert.assertNotNull(annotatorConfig);
@@ -84,13 +92,13 @@ public class SingleRunTest implements TaskObserver {
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
                 new ExperimentTaskConfiguration(annotatorConfig, datasetConfig, EXPERIMENT_TYPE, MATCHING) };
 
-        Experimenter experimenter = new Experimenter(overseer, new SimpleLoggingDAO4Debugging(), retriever,
+        Experimenter experimenter = new Experimenter(overseer, new SimpleLoggingDAO4Debugging(), SAME_AS_RETRIEVER,
                 new EvaluatorFactory(), taskConfigs, "SingleRunTest");
         experimenter.run();
 
         mutex.acquire();
 
-        closeHttpRetriever(retriever);
+        closeHttpRetriever(SAME_AS_RETRIEVER);
         overseer.shutdown();
     }
 
