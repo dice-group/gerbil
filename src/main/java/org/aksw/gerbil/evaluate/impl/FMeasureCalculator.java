@@ -18,7 +18,6 @@ package org.aksw.gerbil.evaluate.impl;
 
 import java.util.List;
 
-import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;

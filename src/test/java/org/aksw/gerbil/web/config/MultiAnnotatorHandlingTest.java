@@ -1,4 +1,4 @@
-package org.aksw.gerbil;
+package org.aksw.gerbil.web.config;
 
 import java.util.ArrayList;
 import java.util.Collection;

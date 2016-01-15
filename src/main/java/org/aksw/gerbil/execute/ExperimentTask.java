@@ -28,6 +28,7 @@ import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
+import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.ResultNameToIdMapping;
@@ -117,6 +118,7 @@ public class ExperimentTask implements Task {
             ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator
                     .createDecorator(configuration.type, decoratedAnnotator, dataset.size());
             decoratedAnnotator = errorCounter;
+            decoratedAnnotator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type, decoratedAnnotator);
 
             List<Evaluator<?>> evaluators = new ArrayList<Evaluator<?>>();
             evFactory.addEvaluators(evaluators, configuration, dataset);
