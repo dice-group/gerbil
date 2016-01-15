@@ -90,7 +90,9 @@ public class DatasetConfigurationImpl extends AbstractAdapterConfiguration imple
                 }
             }
             // check the meanings
-            entityCheckerManager.checkMeanings(meanings);
+            if (entityCheckerManager != null) {
+                entityCheckerManager.checkMeanings(meanings);
+            }
         }
         return instance;
     }
