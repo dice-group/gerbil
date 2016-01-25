@@ -31,6 +31,8 @@ public class MatchingsCounterImpl<T extends Marking> implements MatchingsCounter
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MatchingsCounterImpl.class);
 
+    private static boolean printDebugMsg = true;
+
     protected MatchingsSearcher<T> searcher;
 
     public MatchingsCounterImpl(MatchingsSearcher<T> searcher) {
@@ -47,16 +49,26 @@ public class MatchingsCounterImpl<T extends Marking> implements MatchingsCounter
             if (!matchingElements.isEmpty()) {
                 ++documentCounts.truePositives;
                 alreadyUsedResults.set(matchingElements.nextSetBit(0));
-                LOGGER.debug("Found a true positive ({}).", expectedElement);
+                if (printDebugMsg && LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Found a true positive ({}).", expectedElement);
+                }
             } else {
                 ++documentCounts.falseNegatives;
-                LOGGER.debug("Found a false negative ({}).",expectedElement);
+                if (printDebugMsg && LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Found a false negative ({}).", expectedElement);
+                }
             }
         }
         // The remaining elements are false positives
         documentCounts.falsePositives = (int) (annotatorResult.size() - alreadyUsedResults.cardinality());
-        LOGGER.debug("Found {} false positives.", documentCounts.falsePositives);
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Found {} false positives.", documentCounts.falsePositives);
+        }
         return documentCounts;
+    }
+
+    public static synchronized void setPrintDebugMsg(boolean flag) {
+        printDebugMsg = flag;
     }
 
 }

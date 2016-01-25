@@ -28,13 +28,20 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
+import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
+
+    @BeforeClass
+    public static void setMatchingsCounterDebugFlag() {
+        MatchingsCounterImpl.setPrintDebugMsg(false);
+    }
 
     private static final List<Document> INSTANCES = Arrays
             .asList((Document) new DocumentImpl(

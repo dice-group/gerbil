@@ -39,36 +39,46 @@ public class MeaningMatchingsSearcherTest extends AbstractMatchingsCounterTest<M
             new MatchingTestExample<Meaning>(new Meaning[] { new Annotation("http://kb/1") },
                     new Meaning[] { new Annotation("http://kb/1") }, new int[] { 1, 0, 0 }),
             // test case with several exact matching Meanings
-            new MatchingTestExample<Meaning>(new Meaning[] { new Annotation("http://kb/1"),
-                    new Annotation("http://kb/2"), new Annotation("http://kb/3") }, new Meaning[] {
-                    new Annotation("http://kb/1"), new Annotation("http://kb/2"), new Annotation("http://kb/3") },
+            new MatchingTestExample<Meaning>(
+                    new Meaning[] { new Annotation("http://kb/1"), new Annotation("http://kb/2"),
+                            new Annotation("http://kb/3") },
+                    new Meaning[] { new Annotation("http://kb/1"), new Annotation("http://kb/2"),
+                            new Annotation("http://kb/3") },
                     new int[] { 3, 0, 0 }),
             // test case with several exact matching Meanings with a different
             // order
-            new MatchingTestExample<Meaning>(new Meaning[] { new Annotation("http://kb/1"),
-                    new Annotation("http://kb/2"), new Annotation("http://kb/3") }, new Meaning[] {
-                    new Annotation("http://kb/2"), new Annotation("http://kb/3"), new Annotation("http://kb/1") },
+            new MatchingTestExample<Meaning>(
+                    new Meaning[] { new Annotation("http://kb/1"), new Annotation("http://kb/2"),
+                            new Annotation("http://kb/3") },
+                    new Meaning[] { new Annotation("http://kb/2"), new Annotation("http://kb/3"),
+                            new Annotation("http://kb/1") },
                     new int[] { 3, 0, 0 }),
             // test case with several exact matching Meanings with the same URIs
-            new MatchingTestExample<Meaning>(new Meaning[] { new Annotation("http://kb/1"),
-                    new Annotation("http://kb/1"), new Annotation("http://kb/1") }, new Meaning[] {
-                    new Annotation("http://kb/1"), new Annotation("http://kb/1"), new Annotation("http://kb/1") },
+            new MatchingTestExample<Meaning>(
+                    new Meaning[] { new Annotation("http://kb/1"), new Annotation("http://kb/1"),
+                            new Annotation("http://kb/1") },
+                    new Meaning[] { new Annotation("http://kb/1"), new Annotation("http://kb/1"),
+                            new Annotation("http://kb/1") },
                     new int[] { 3, 0, 0 }),
             // test case with several exact matching Meanings with two of them
             // that couldn't be mapped to the KB
-            new MatchingTestExample<Meaning>(new Meaning[] { new Annotation("http://kb/1"),
-                    new Annotation("http://ukb/2"), new Annotation("http://ukb/3") }, new Meaning[] {
-                    new Annotation("http://aukb/2"), new Annotation("http://aukb/3"), new Annotation("http://kb/1") },
+            new MatchingTestExample<Meaning>(
+                    new Meaning[] { new Annotation("http://kb/1"), new Annotation("http://ukb/2"),
+                            new Annotation("http://ukb/3") },
+                    new Meaning[] { new Annotation("http://aukb/2"), new Annotation("http://aukb/3"),
+                            new Annotation("http://kb/1") },
                     new int[] { 3, 0, 0 }),
             // test case with one exact matching Meanings, one wrong matching
             // and a missing matching
-            new MatchingTestExample<Meaning>(new Meaning[] { new Annotation("http://kb/1"),
-                    new Annotation("http://ukb/2") }, new Meaning[] { new Annotation("http://kb/1"),
-                    new Annotation("http://kb/2"), new Annotation("http://kb/3") }, new int[] { 1, 1, 2 }) };
+            new MatchingTestExample<Meaning>(
+                    new Meaning[] { new Annotation("http://kb/1"), new Annotation("http://ukb/2") },
+                    new Meaning[] { new Annotation("http://kb/1"), new Annotation("http://kb/2"),
+                            new Annotation("http://kb/3") },
+                    new int[] { 1, 1, 2 }) };
 
     @SuppressWarnings("unchecked")
     public MeaningMatchingsSearcherTest() {
-        super(new MeaningMatchingsSearcher<Meaning>(CLASSIFIER), EXAMPLES);
+        super(new ClassifierBasedMeaningMatchingsSearcher<Meaning>(CLASSIFIER), EXAMPLES);
     }
 
 }

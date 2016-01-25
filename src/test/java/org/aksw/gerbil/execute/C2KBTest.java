@@ -30,6 +30,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
+import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
@@ -37,6 +38,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -50,6 +52,11 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class C2KBTest extends AbstractExperimentTaskTest {
+
+    @BeforeClass
+    public static void setMatchingsCounterDebugFlag() {
+        MatchingsCounterImpl.setPrintDebugMsg(true);
+    }
 
     private static final String TEXTS[] = new String[] {
             "Florence May Harding studied at a school in Sydney, and with Douglas Robert Dundas , but in effect had no formal training in either botany or art.",

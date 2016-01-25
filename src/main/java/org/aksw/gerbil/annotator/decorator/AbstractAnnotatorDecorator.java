@@ -27,7 +27,7 @@ import org.aksw.gerbil.utils.ClosePermitionGranter;
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  *
  */
-public class AbstractAnnotatorDecorator implements AnnotatorDecorator {
+public abstract class AbstractAnnotatorDecorator implements AnnotatorDecorator {
 
     protected Annotator decoratedAnnotator;
 

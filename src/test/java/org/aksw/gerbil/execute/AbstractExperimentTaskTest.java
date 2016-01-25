@@ -62,6 +62,7 @@ public abstract class AbstractExperimentTaskTest {
             e.printStackTrace();
         }
         Assert.assertNull("Got an exception: " + testError, testError);
+        SameAsRetrieverSingleton4Tests.storeCache();
     }
 
     protected static abstract class AbstractJUnitTestTaskObserver implements TaskObserver {

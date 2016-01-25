@@ -26,15 +26,22 @@ import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class OKEChallengeTask1DatasetTest {
+
+    @BeforeClass
+    public static void setMatchingsCounterDebugFlag() {
+        MatchingsCounterImpl.setPrintDebugMsg(false);
+    }
 
     private static final String TASK1_FILE = "src/test/resources/OKE_Challenge/example_data/task1.ttl";
     private static final Document EXPECTED_DOCUMENTS[] = new Document[] {

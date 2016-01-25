@@ -16,11 +16,9 @@
  */
 package org.aksw.gerbil.matching.impl.clas;
 
-import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.datatypes.marking.ClassifiedMarking;
 
-public interface MarkingClassifier<T extends Marking> {
+public interface MarkingClassifier<T extends ClassifiedMarking> {
 
-    public int getNumberOfClasses();
-
-    public int getClass(T marking);
+    public void classify(T marking);
 }

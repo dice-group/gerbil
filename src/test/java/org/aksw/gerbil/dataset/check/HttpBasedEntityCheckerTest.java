@@ -28,8 +28,12 @@ public class HttpBasedEntityCheckerTest {
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Jerry_Shields", false });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/James_Senn", false });
 
-        testConfigs.add(new Object[] { "http://de.dbpedia.org/resource/Berlin", true });
-        testConfigs.add(new Object[] { "http://de.dbpedia.org/resource/Joe_DeAngelo", false });
+        // It does not seem to make sense to test using the German DBpedia,
+        // since its server does not seem to be as reliable as expected.
+        // testConfigs.add(new Object[] {
+        // "http://de.dbpedia.org/resource/Berlin", true });
+        // testConfigs.add(new Object[] {
+        // "http://de.dbpedia.org/resource/Joe_DeAngelo", false });
 
         // Wikipedia examples
         testConfigs.add(new Object[] { "http://wikipedia.org/wiki/Berlin", true });

@@ -1,6 +1,8 @@
 package org.aksw.gerbil.test;
 
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.SameAsRetrieverDecorator;
+import org.aksw.gerbil.semantic.sameas.impl.cache.FileBasedCachingSameAsRetriever;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.junit.Ignore;
 
@@ -24,4 +26,13 @@ public class SameAsRetrieverSingleton4Tests {
         return instance;
     }
 
+    public static void storeCache() {
+        SameAsRetriever retriever = getInstance();
+        while (retriever instanceof SameAsRetrieverDecorator) {
+            if (retriever instanceof FileBasedCachingSameAsRetriever) {
+                ((FileBasedCachingSameAsRetriever) retriever).storeCache();
+            }
+            retriever = ((SameAsRetrieverDecorator) retriever).getDecorated();
+        }
+    }
 }

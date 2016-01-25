@@ -18,8 +18,7 @@ package org.aksw.gerbil.matching.impl.clas;
 
 import java.util.List;
 
-import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.matching.ClassifiedEvaluationCounts;
+import org.aksw.gerbil.datatypes.marking.ClassifiedMarking;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
@@ -29,10 +28,10 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.carrotsearch.hppc.BitSet;
+@Deprecated
+public class ClassConsideringMatchingsCounter<T extends ClassifiedMarking> extends MatchingsCounterImpl<T> {
 
-public class ClassConsideringMatchingsCounter<T extends Marking> extends MatchingsCounterImpl<T> {
-
+    @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassConsideringMatchingsCounter.class);
 
     protected MarkingClassifier<T> classifier;
@@ -44,53 +43,60 @@ public class ClassConsideringMatchingsCounter<T extends Marking> extends Matchin
 
     @Override
     public EvaluationCounts countMatchings(List<T> annotatorResult, List<T> goldStandard) {
-        ClassifiedEvaluationCounts documentCounts = new ClassifiedEvaluationCounts(classifier.getNumberOfClasses());
-        BitSet matchingElements;
-        BitSet alreadyUsedResults = new BitSet(annotatorResult.size());
-        int classId, matchingElementId;
-        for (T expectedElement : goldStandard) {
-            matchingElements = searcher.findMatchings(expectedElement, annotatorResult, alreadyUsedResults);
-            classId = classifier.getClass(expectedElement);
-            if (!matchingElements.isEmpty()) {
-                ++documentCounts.truePositives;
-                ++documentCounts.classifiedCounts[classId].truePositives;
-                matchingElementId = matchingElements.nextSetBit(0);
-                alreadyUsedResults.set(matchingElementId);
-                // LOGGER.debug("Found a true positive ({}).", expectedElement);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(GerbilConfiguration.getGerbilVersion() + "|" + getUri(expectedElement) + "|"
-                            + getUri(annotatorResult.get(matchingElementId)) + "|tp");
-                }
-            } else {
-                ++documentCounts.falseNegatives;
-                ++documentCounts.classifiedCounts[classId].falseNegatives;
-                // LOGGER.debug("Found a false negative ({}).",
-                // expectedElement);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(GerbilConfiguration.getGerbilVersion() + "|" + getUri(expectedElement) + "||||fn");
-                }
-            }
-        }
-        // The remaining elements are false positives
-        if (LOGGER.isDebugEnabled()) {
-            int id = 0;
-            for (T element : annotatorResult) {
-                if (!alreadyUsedResults.get(id)) {
-                    LOGGER.debug(GerbilConfiguration.getGerbilVersion() + "||||" + getUri(element) + "|fp");
-                }
-                ++id;
-            }
-        }
-        documentCounts.falsePositives = (int) (annotatorResult.size() - alreadyUsedResults.cardinality());
-        for (int i = 0; i < annotatorResult.size(); ++i) {
-            if (!alreadyUsedResults.get(i)) {
-                classId = classifier.getClass(annotatorResult.get(i));
-                ++documentCounts.classifiedCounts[classId].falsePositives;
-            }
-        }
-        // LOGGER.debug("Found {} false positives.",
-        // documentCounts.falsePositives);
-        return documentCounts;
+        // ClassifiedEvaluationCounts documentCounts = new
+        // ClassifiedEvaluationCounts(classifier.getNumberOfClasses());
+        // BitSet matchingElements;
+        // BitSet alreadyUsedResults = new BitSet(annotatorResult.size());
+        // int classId, matchingElementId;
+        // for (T expectedElement : goldStandard) {
+        // matchingElements = searcher.findMatchings(expectedElement,
+        // annotatorResult, alreadyUsedResults);
+        // classId = classifier.getClass(expectedElement);
+        // if (!matchingElements.isEmpty()) {
+        // ++documentCounts.truePositives;
+        // ++documentCounts.classifiedCounts[classId].truePositives;
+        // matchingElementId = matchingElements.nextSetBit(0);
+        // alreadyUsedResults.set(matchingElementId);
+        // // LOGGER.debug("Found a true positive ({}).", expectedElement);
+        // if (LOGGER.isDebugEnabled()) {
+        // LOGGER.debug(GerbilConfiguration.getGerbilVersion() + "|" +
+        // getUri(expectedElement) + "|"
+        // + getUri(annotatorResult.get(matchingElementId)) + "|tp");
+        // }
+        // } else {
+        // ++documentCounts.falseNegatives;
+        // ++documentCounts.classifiedCounts[classId].falseNegatives;
+        // // LOGGER.debug("Found a false negative ({}).",
+        // // expectedElement);
+        // if (LOGGER.isDebugEnabled()) {
+        // LOGGER.debug(GerbilConfiguration.getGerbilVersion() + "|" +
+        // getUri(expectedElement) + "||||fn");
+        // }
+        // }
+        // }
+        // // The remaining elements are false positives
+        // if (LOGGER.isDebugEnabled()) {
+        // int id = 0;
+        // for (T element : annotatorResult) {
+        // if (!alreadyUsedResults.get(id)) {
+        // LOGGER.debug(GerbilConfiguration.getGerbilVersion() + "||||" +
+        // getUri(element) + "|fp");
+        // }
+        // ++id;
+        // }
+        // }
+        // documentCounts.falsePositives = (int) (annotatorResult.size() -
+        // alreadyUsedResults.cardinality());
+        // for (int i = 0; i < annotatorResult.size(); ++i) {
+        // if (!alreadyUsedResults.get(i)) {
+        // classId = classifier.getClass(annotatorResult.get(i));
+        // ++documentCounts.classifiedCounts[classId].falsePositives;
+        // }
+        // }
+        // // LOGGER.debug("Found {} false positives.",
+        // // documentCounts.falsePositives);
+        // return documentCounts;
+        return null;
     }
 
     protected String getUri(Marking ne) {

@@ -36,8 +36,10 @@ import org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.matching.Matching;
+import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.ErrorFixingSameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -45,6 +47,7 @@ import org.aksw.gerbil.web.config.AdapterList;
 import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -65,6 +68,12 @@ public class GoldStdEvalTest extends AbstractExperimentTaskTest {
     private static final SameAsRetriever SAME_AS_RETRIEVER = new ErrorFixingSameAsRetriever();
     private static final EntityCheckerManager ENTITY_CHECKER_MANAGER = new EntityCheckerManagerImpl();
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
+
+    @BeforeClass
+    public static void setMatchingsCounterDebugFlag() {
+        MatchingsCounterImpl.setPrintDebugMsg(false);
+        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(false);
+    }
 
     @Parameters
     public static Collection<Object[]> data() throws NoSuchFieldException, SecurityException {

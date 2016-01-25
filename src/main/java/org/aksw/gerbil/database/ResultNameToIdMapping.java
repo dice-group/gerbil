@@ -21,9 +21,9 @@ import java.util.List;
 
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
-import org.aksw.gerbil.evaluate.impl.InKBClassBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
+import org.aksw.gerbil.evaluate.impl.InKBClassBasedFMeasureCalculator;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
@@ -35,6 +35,7 @@ import com.carrotsearch.hppc.ObjectIntOpenHashMap;
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  *
  */
+@SuppressWarnings("deprecation")
 public class ResultNameToIdMapping {
 
     public static final String ENTITY_IN_KB_CLASS_NAME = "InKB";
@@ -44,7 +45,6 @@ public class ResultNameToIdMapping {
 
     private static ResultNameToIdMapping instance;
 
-    @SuppressWarnings("deprecation")
     public static ResultNameToIdMapping getInstance() {
         if (instance == null) {
             ObjectIntOpenHashMap<String> nameToIdMap = new ObjectIntOpenHashMap<String>();

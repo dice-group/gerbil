@@ -296,7 +296,7 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         try {
             result = ((OKETask1Annotator) decorator.getDecoratedAnnotator()).performTask1(document);
         } finally {
-
+            decorator.semaphore.release();
         }
         return result;
     }
