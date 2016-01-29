@@ -15,6 +15,7 @@ import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.evaluate.impl.ClassConsideringFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.ClassifyingEvaluatorDecorator;
+import org.aksw.gerbil.evaluate.impl.GSInKBClassifyingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.filter.SearcherBasedNotMatchingMarkingFilter;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.MatchingsSearcher;
@@ -143,21 +144,19 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
             return new SearcherBasedNotMatchingMarkingFilter<MeaningSpan>(
                     new StrongSpanMatchingsSearcher<MeaningSpan>(),
                     new ClassifyingEvaluatorDecorator<MeaningSpan, ClassifiedSpanMeaning>(
-                            new ClassConsideringFMeasureCalculator<ClassifiedSpanMeaning>(
-                                    new MatchingsCounterImpl<ClassifiedSpanMeaning>(
-                                            new CompoundMatchingsSearcher<ClassifiedSpanMeaning>(
-                                                    (MatchingsSearcher<ClassifiedSpanMeaning>) MatchingsSearcherFactory
-                                                            .createSpanMatchingsSearcher(configuration.matching),
-                                                    new ClassifiedMeaningMatchingsSearcher<ClassifiedSpanMeaning>())),
-                                    MarkingClasses.IN_KB, MarkingClasses.EE),
+                            new GSInKBClassifyingEvaluatorDecorator<ClassifiedSpanMeaning>(
+                                    new ClassConsideringFMeasureCalculator<ClassifiedSpanMeaning>(
+                                            new MatchingsCounterImpl<ClassifiedSpanMeaning>(
+                                                    new CompoundMatchingsSearcher<ClassifiedSpanMeaning>(
+                                                            (MatchingsSearcher<ClassifiedSpanMeaning>) MatchingsSearcherFactory
+                                                                    .createSpanMatchingsSearcher(
+                                                                            configuration.matching),
+                                                            new ClassifiedMeaningMatchingsSearcher<ClassifiedSpanMeaning>())),
+                                            MarkingClasses.IN_KB, MarkingClasses.EE, MarkingClasses.GS_IN_KB),
+                                    new StrongSpanMatchingsSearcher<ClassifiedSpanMeaning>()),
                             new UriBasedMeaningClassifier<ClassifiedSpanMeaning>(globalClassifier, MarkingClasses.IN_KB),
-                            new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>()));
-//            return new SearcherBasedNotMatchingMarkingFilter<NamedEntity>(
-//                    new StrongSpanMatchingsSearcher<NamedEntity>(),
-//                    new InKBClassBasedFMeasureCalculator<NamedEntity>(new CompoundMatchingsSearcher<NamedEntity>(
-//                            (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
-//                                    .createSpanMatchingsSearcher(configuration.matching),
-//                            new AbstractMeaningMatchingsSearcher<NamedEntity>(globalClassifier)), globalClassifier));
+                            new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>()),
+                    true);
         }
         case Sa2KB:
         case A2KB:

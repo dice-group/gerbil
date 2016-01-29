@@ -2,7 +2,7 @@ package org.aksw.gerbil.datatypes.marking;
 
 public enum MarkingClasses {
 
-    IN_KB("InKB"), EE("EE"), IN_KB_GS("GSInKB");
+    IN_KB("InKB"), EE("EE"), GS_IN_KB("GSInKB");
     
     public static final int NUMBER_OF_CLASSES = MarkingClasses.values().length;
     

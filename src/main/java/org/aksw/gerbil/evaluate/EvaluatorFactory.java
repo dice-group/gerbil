@@ -32,6 +32,7 @@ import org.aksw.gerbil.evaluate.impl.ClassifyingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.DoubleResultComparator;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
+import org.aksw.gerbil.evaluate.impl.GSInKBClassifyingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.HierarchicalFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.SpanMergingEvaluatorDecorator;
@@ -127,71 +128,44 @@ public class EvaluatorFactory {
                             MarkingClasses.IN_KB, MarkingClasses.EE),
                     new UriBasedMeaningClassifier<ClassifiedMeaning>(classifier, MarkingClasses.IN_KB),
                     new EmergingEntityMeaningClassifier<ClassifiedMeaning>());
-            // return new ConfidenceScoreEvaluatorDecorator<Meaning>(
-            // new InKBClassBasedFMeasureCalculator<Meaning>(new
-            // MeaningMatchingsSearcher<Meaning>(classifier),
-            // classifier),
-            // FMeasureCalculator.MICRO_F1_SCORE_NAME, new
-            // DoubleResultComparator());
         }
         case Sa2KB:
         case A2KB: {
+            MatchingsSearcher<ClassifiedSpanMeaning> searcher = (MatchingsSearcher<ClassifiedSpanMeaning>) MatchingsSearcherFactory
+                    .createSpanMatchingsSearcher(configuration.matching);
             return new ClassifyingEvaluatorDecorator<MeaningSpan, ClassifiedSpanMeaning>(
-                    new ClassConsideringFMeasureCalculator<ClassifiedSpanMeaning>(
-                            new MatchingsCounterImpl<ClassifiedSpanMeaning>(
-                                    new CompoundMatchingsSearcher<ClassifiedSpanMeaning>(
-                                            (MatchingsSearcher<ClassifiedSpanMeaning>) MatchingsSearcherFactory
-                                                    .createSpanMatchingsSearcher(configuration.matching),
-                                            new ClassifiedMeaningMatchingsSearcher<ClassifiedSpanMeaning>())),
-                            MarkingClasses.IN_KB, MarkingClasses.EE),
+                    new GSInKBClassifyingEvaluatorDecorator<ClassifiedSpanMeaning>(
+                            new ClassConsideringFMeasureCalculator<ClassifiedSpanMeaning>(
+                                    new MatchingsCounterImpl<ClassifiedSpanMeaning>(
+                                            new CompoundMatchingsSearcher<ClassifiedSpanMeaning>(searcher,
+                                                    new ClassifiedMeaningMatchingsSearcher<ClassifiedSpanMeaning>())),
+                                    MarkingClasses.IN_KB, MarkingClasses.EE, MarkingClasses.GS_IN_KB),
+                            searcher),
                     new UriBasedMeaningClassifier<ClassifiedSpanMeaning>(classifier, MarkingClasses.IN_KB),
                     new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>());
-            // return new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
-            // new InKBClassBasedFMeasureCalculator<NamedEntity>(new
-            // CompoundMatchingsCounter<NamedEntity>(
-            // (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
-            // .createSpanMatchingsSearcher(configuration.matching),
-            // new MeaningMatchingsSearcher<NamedEntity>(classifier)),
-            // classifier),
-            // FMeasureCalculator.MICRO_F1_SCORE_NAME, new
-            // DoubleResultComparator());
         }
         case ERec: {
             return new ConfidenceBasedFMeasureCalculator<Span>(
                     new MatchingsCounterImpl<Span>((MatchingsSearcher<Span>) MatchingsSearcherFactory
                             .createSpanMatchingsSearcher(configuration.matching)));
-            // return new ConfidenceScoreEvaluatorDecorator<Span>(
-            // new FMeasureCalculator<Span>(
-            // new MatchingsCounterImpl<Span>((MatchingsSearcher<Span>)
-            // MatchingsSearcherFactory
-            // .createSpanMatchingsSearcher(configuration.matching))),
-            // FMeasureCalculator.MICRO_F1_SCORE_NAME, new
-            // DoubleResultComparator());
         }
         case D2KB: {
             return new SearcherBasedNotMatchingMarkingFilter<MeaningSpan>(
                     new StrongSpanMatchingsSearcher<MeaningSpan>(),
                     new ClassifyingEvaluatorDecorator<MeaningSpan, ClassifiedSpanMeaning>(
-                            new ClassConsideringFMeasureCalculator<ClassifiedSpanMeaning>(
-                                    new MatchingsCounterImpl<ClassifiedSpanMeaning>(
-                                            new CompoundMatchingsSearcher<ClassifiedSpanMeaning>(
-                                                    (MatchingsSearcher<ClassifiedSpanMeaning>) MatchingsSearcherFactory
-                                                            .createSpanMatchingsSearcher(configuration.matching),
-                                                    new ClassifiedMeaningMatchingsSearcher<ClassifiedSpanMeaning>())),
-                                    MarkingClasses.IN_KB, MarkingClasses.EE),
+                            new GSInKBClassifyingEvaluatorDecorator<ClassifiedSpanMeaning>(
+                                    new ClassConsideringFMeasureCalculator<ClassifiedSpanMeaning>(
+                                            new MatchingsCounterImpl<ClassifiedSpanMeaning>(
+                                                    new CompoundMatchingsSearcher<ClassifiedSpanMeaning>(
+                                                            (MatchingsSearcher<ClassifiedSpanMeaning>) MatchingsSearcherFactory
+                                                                    .createSpanMatchingsSearcher(
+                                                                            configuration.matching),
+                                                            new ClassifiedMeaningMatchingsSearcher<ClassifiedSpanMeaning>())),
+                                            MarkingClasses.IN_KB, MarkingClasses.EE, MarkingClasses.GS_IN_KB),
+                                    new StrongSpanMatchingsSearcher<ClassifiedSpanMeaning>()),
                             new UriBasedMeaningClassifier<ClassifiedSpanMeaning>(classifier, MarkingClasses.IN_KB),
-                            new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>()));
-            // return new SearcherBasedNotMatchingMarkingFilter<NamedEntity>(
-            // new StrongSpanMatchingsSearcher<NamedEntity>(),
-            // new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
-            // new InKBClassBasedFMeasureCalculator<NamedEntity>(new
-            // CompoundMatchingsCounter<NamedEntity>(
-            // (MatchingsSearcher<NamedEntity>) MatchingsSearcherFactory
-            // .createSpanMatchingsSearcher(configuration.matching),
-            // new MeaningMatchingsSearcher<NamedEntity>(classifier)),
-            // classifier),
-            // FMeasureCalculator.MICRO_F1_SCORE_NAME, new
-            // DoubleResultComparator()));
+                            new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>()),
+                    true);
         }
         case ETyping: {
             return new SearcherBasedNotMatchingMarkingFilter<TypedSpan>(new StrongSpanMatchingsSearcher<TypedSpan>(),
@@ -200,7 +174,8 @@ public class EvaluatorFactory {
                                     (MatchingsSearcher<TypedSpan>) MatchingsSearcherFactory
                                             .createSpanMatchingsSearcher(configuration.matching),
                                     classifier, inferencer)),
-                            FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator()));
+                            FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator()),
+                    true);
         }
         case OKE_Task1: {
             ExperimentTaskConfiguration subTaskConfig;
@@ -271,7 +246,7 @@ public class EvaluatorFactory {
             Dataset dataset) {
         ExperimentTaskConfiguration subTaskConfig;
         switch (configuration.type) {
-        case ERec:
+        case ERec: // falls through
         case D2KB:
         case ETyping:
         case C2KB:

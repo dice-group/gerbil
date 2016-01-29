@@ -6,6 +6,7 @@ import java.util.List;
 import org.aksw.gerbil.evaluate.AbstractEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.evaluate.EvaluatorDecorator;
 import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.transfer.nif.Marking;
 
@@ -21,11 +22,34 @@ import com.carrotsearch.hppc.BitSet;
  */
 public class SearcherBasedNotMatchingMarkingFilter<T extends Marking> extends AbstractEvaluatorDecorator<T> {
 
+    /**
+     * The MatchingsSearcher that is used to identify matching {@link Marking}s.
+     */
     protected MatchingsSearcher<T> searcher;
+    /**
+     * This flag indicates whether a marking of the gold standard is allowed to
+     * match several markings or only a single one.
+     */
+    protected boolean multiMatchingAllowed;
 
-    public SearcherBasedNotMatchingMarkingFilter(MatchingsSearcher<T> searcher, Evaluator<T> evaluator) {
+    /**
+     * Constructor.
+     * 
+     * @param searcher
+     *            The MatchingsSearcher that is used to identify matching
+     *            {@link Marking}s.
+     * @param evaluator
+     *            The {@link Evaluator} that is decorated by this
+     *            {@link EvaluatorDecorator}.
+     * @param multiMatchingAllowed
+     *            This flag indicates whether a marking of the gold standard is
+     *            allowed to match several markings or only a single one.
+     */
+    public SearcherBasedNotMatchingMarkingFilter(MatchingsSearcher<T> searcher, Evaluator<T> evaluator,
+            boolean multiMatchingAllowed) {
         super(evaluator);
         this.searcher = searcher;
+        this.multiMatchingAllowed = multiMatchingAllowed;
     }
 
     protected List<List<T>> filterListOfMarkings(List<List<T>> markings, List<List<T>> goldStandard) {
@@ -44,7 +68,11 @@ public class SearcherBasedNotMatchingMarkingFilter<T extends Marking> extends Ab
             matchingElements = searcher.findMatchings(marking, goldStandard, alreadyUsedResults);
             if (!matchingElements.isEmpty()) {
                 filteredMarkings.add(marking);
-                alreadyUsedResults.set(matchingElements.nextSetBit(0));
+                // if a multiple matching is not allowed, we have to mark the
+                // Marking of the gold standard
+                if (!multiMatchingAllowed) {
+                    alreadyUsedResults.set(matchingElements.nextSetBit(0));
+                }
             }
         }
         return filteredMarkings;

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.marking.MarkingClasses;
 import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.InKBClassBasedFMeasureCalculator;
@@ -37,9 +38,6 @@ import com.carrotsearch.hppc.ObjectIntOpenHashMap;
  */
 @SuppressWarnings("deprecation")
 public class ResultNameToIdMapping {
-
-    public static final String ENTITY_IN_KB_CLASS_NAME = "InKB";
-    public static final String EMERGING_ENTITY_CLASS_NAME = "EE";
 
     public static final int UKNOWN_RESULT_TYPE = -1;
 
@@ -76,6 +74,13 @@ public class ResultNameToIdMapping {
             nameToIdMap.put(TimeMeasuringAnnotatorDecorator.AVG_TIME_RESULT_NAME, 20);
 
             nameToIdMap.put(ConfidenceScoreEvaluatorDecorator.CONFIDENCE_SCORE_THRESHOLD_RESULT_NAME, 21);
+
+            nameToIdMap.put(MarkingClasses.GS_IN_KB.getLabel() + " " + FMeasureCalculator.MACRO_F1_SCORE_NAME, 22);
+            nameToIdMap.put(MarkingClasses.GS_IN_KB.getLabel() + " " + FMeasureCalculator.MACRO_PRECISION_NAME, 23);
+            nameToIdMap.put(MarkingClasses.GS_IN_KB.getLabel() + " " + FMeasureCalculator.MACRO_RECALL_NAME, 24);
+            nameToIdMap.put(MarkingClasses.GS_IN_KB.getLabel() + " " + FMeasureCalculator.MICRO_F1_SCORE_NAME, 25);
+            nameToIdMap.put(MarkingClasses.GS_IN_KB.getLabel() + " " + FMeasureCalculator.MICRO_PRECISION_NAME, 26);
+            nameToIdMap.put(MarkingClasses.GS_IN_KB.getLabel() + " " + FMeasureCalculator.MICRO_RECALL_NAME, 27);
 
             instance = new ResultNameToIdMapping(nameToIdMap, IntObjectOpenHashMap.from(nameToIdMap.values().toArray(),
                     nameToIdMap.keys().toArray(String.class)));
