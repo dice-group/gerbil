@@ -1,4 +1,4 @@
-Gerbil
+GERBIL
 ========
 <i>General Entity Annotator Benchmark</i>
 
