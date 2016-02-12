@@ -28,7 +28,6 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.web.config.DatasetsConfig;
-import org.aksw.gerbil.web.config.RootConfig;
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.WhitespaceTokenizer;
 import org.slf4j.Logger;
@@ -39,7 +38,10 @@ public class DatasetAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetAnalyzer.class);
 
     public static void main(String[] args) {
-        List<DatasetConfiguration> datasetConfigs = DatasetsConfig.datasets(RootConfig.getEntityCheckerManager(), RootConfig.createSameAsRetriever()).getConfigurations();
+        // List<DatasetConfiguration> datasetConfigs =
+        // DatasetsConfig.datasets(RootConfig.getEntityCheckerManager(),
+        // RootConfig.createSameAsRetriever()).getConfigurations();
+        List<DatasetConfiguration> datasetConfigs = DatasetsConfig.datasets(null, null).getConfigurations();
         PrintStream output = null;
         try {
             output = new PrintStream("datasetAnalyzation.log");
@@ -67,12 +69,32 @@ public class DatasetAnalyzer {
     }
 
     public void analyzeDataset(DatasetConfiguration config) throws GerbilException {
-        analyzeAsD2W(config);
-        // analyzeAsC2W(config);
+        if (config.isApplicableForExperiment(ExperimentType.D2KB)) {
+            analyze(config, ExperimentType.D2KB);
+        } else if (config.isApplicableForExperiment(ExperimentType.OKE_Task2)) {
+            analyze(config, ExperimentType.OKE_Task2);
+        } else if (config.isApplicableForExperiment(ExperimentType.C2KB)) {
+            analyze(config, ExperimentType.C2KB);
+        } else {
+            LOGGER.error("Can not analyze the dataset with the following config: " + config.toString());
+        }
     }
 
-    private void analyzeAsD2W(DatasetConfiguration config) throws GerbilException {
-        Dataset dataset = config.getDataset(ExperimentType.D2KB);
+    private int countTokensInText(String text) {
+        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(new StringReader(text));
+        int tokens = 0;
+        try {
+            while (tokenizer.incrementToken()) {
+                ++tokens;
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error while tokenizing text. Returning.", e);
+        }
+        return tokens;
+    }
+
+    private void analyze(DatasetConfiguration config, ExperimentType type) throws GerbilException {
+        Dataset dataset = config.getDataset(type);
         if (dataset == null) {
             return;
         }
@@ -100,48 +122,8 @@ public class DatasetAnalyzer {
         // number of entities
         output.print(annotationsSum);
         output.print(',');
-//        output.print(" tokens=" + tokensSum);
+        // output.print(" tokens=" + tokensSum);
 
         output.println();
     }
-
-    private int countTokensInText(String text) {
-        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(new StringReader(text));
-        int tokens = 0;
-        try {
-            while (tokenizer.incrementToken()) {
-                ++tokens;
-            }
-        } catch (IOException e) {
-            LOGGER.error("Error while tokenizing text. Returning.", e);
-        }
-        return tokens;
-    }
-
-    // private void analyzeAsC2W(DatasetConfiguration config) throws
-    // GerbilException {
-    // C2WDataset dataset = (C2WDataset) config.getDataset(ExperimentType.C2KB);
-    // if (dataset == null) {
-    // return;
-    // }
-    // output.print("C2W dataset: " + config.getName());
-    // output.print(" size=" + dataset.getSize());
-    // List<HashSet<Tag>> goldStandard = dataset.getC2WGoldStandardList();
-    // double annotationsSum = 0;
-    // for (HashSet<Tag> annotations : goldStandard) {
-    // annotationsSum += annotations.size();
-    // }
-    // // analyze texts
-    // int tokensSum = 0;
-    // for (String text : dataset.getTextInstanceList()) {
-    // tokensSum += countTokensInText(text);
-    // }
-    // output.print(" Tags=" + annotationsSum);
-    // output.print(" Tags/doc=" + (annotationsSum / dataset.getSize()));
-    // output.print(" tokens=" + tokensSum);
-    // output.print(" tokens/doc=" + ((double) tokensSum / (double)
-    // dataset.getSize()));
-    // output.println(" Tags/tokens=" + ((double) annotationsSum / (double)
-    // tokensSum));
-    // }
 }
