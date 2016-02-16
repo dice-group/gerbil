@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import org.aksw.gerbil.dataset.check.impl.EntityCheckerManagerImpl;
+import org.aksw.gerbil.dataset.check.impl.HttpBasedEntityChecker;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.junit.Assert;
 import org.junit.Test;

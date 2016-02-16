@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
-import org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl;
-import org.aksw.gerbil.dataset.check.HttpBasedEntityChecker;
+import org.aksw.gerbil.dataset.check.impl.EntityCheckerManagerImpl;
+import org.aksw.gerbil.dataset.check.impl.HttpBasedEntityChecker;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
