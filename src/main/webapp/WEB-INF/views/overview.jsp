@@ -164,7 +164,7 @@ table {
 										.each(
 												function(index) {
 													for (var i = 0; i < data.Matching.length; i++) {
-														if (data.Matching[i].label == $(
+														if (data.Matching[i].name == $(
 																this).find(
 																'input').val()) {
 															$(this)
@@ -193,6 +193,7 @@ table {
 								ajax : 'false'
 							},
 							function(data) {
+								console.log(data);
 								var htmlExperimentTypes = "";
 								for (var i = 0; i < data.ExperimentType.length; i++) {
 									htmlExperimentTypes += "<label class=\"btn btn-primary\" >";
@@ -210,7 +211,7 @@ table {
 										.each(
 												function(index) {
 													for (var i = 0; i < data.ExperimentType.length; i++) {
-														if (data.ExperimentType[i].label == $(
+														if (data.ExperimentType[i].name == $(
 																this).find(
 																'input').val()) {
 															$(this)

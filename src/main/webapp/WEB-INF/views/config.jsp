@@ -278,7 +278,7 @@
 										.each(
 												function(index) {
 													for (var i = 0; i < data.Matching.length; i++) {
-														if (data.Matching[i].label == $(
+														if (data.Matching[i].name == $(
 																this).find(
 																'input').val()) {
 															$(this)
