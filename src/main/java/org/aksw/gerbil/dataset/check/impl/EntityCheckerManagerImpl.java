@@ -1,4 +1,4 @@
-package org.aksw.gerbil.dataset.check;
+package org.aksw.gerbil.dataset.check.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.aksw.gerbil.dataset.check.EntityChecker;
+import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

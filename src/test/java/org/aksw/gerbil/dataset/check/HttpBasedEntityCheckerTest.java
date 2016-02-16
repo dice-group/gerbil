@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.aksw.gerbil.dataset.check.impl.HttpBasedEntityChecker;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;

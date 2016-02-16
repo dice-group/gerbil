@@ -58,7 +58,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         EvaluationCounts counts[] = new EvaluationCounts[annotatorResults.size()];
         for (int i = 0; i < counts.length; ++i) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("${pom_version} " + i + "|||||||||");
+                LOGGER.debug("doc " + i + "|||||||||");
             }
             counts[i] = matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i));
         }

@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
-import org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl;
-import org.aksw.gerbil.dataset.check.HttpBasedEntityChecker;
+import org.aksw.gerbil.dataset.check.impl.EntityCheckerManagerImpl;
+import org.aksw.gerbil.dataset.check.impl.HttpBasedEntityChecker;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
@@ -86,6 +86,8 @@ public class RootConfig {
 
     private static final int DEFAULT_NUMBER_OF_WORKERS = 20;
 
+    private static final String NUMBER_OF_WORKERS_KEY = "org.aksw.gerbil.web.config.overseerWorkers";
+
     private static final String SAME_AS_CACHE_FILE_KEY = "org.aksw.gerbil.semantic.sameas.CachingSameAsRetriever.cacheFile";
     private static final String SAME_AS_IN_MEMORY_CACHE_SIZE_KEY = "org.aksw.gerbil.semantic.sameas.InMemoryCachingSameAsRetriever.cacheSize";
 
@@ -108,7 +110,17 @@ public class RootConfig {
     }
 
     public static @Bean DefeatableOverseer createOverseer() {
-        DefeatableOverseer overseer = new ExecutorBasedOverseer(DEFAULT_NUMBER_OF_WORKERS);
+        int numberOfWorkers = DEFAULT_NUMBER_OF_WORKERS;
+        if (GerbilConfiguration.getInstance().containsKey(NUMBER_OF_WORKERS_KEY)) {
+            try {
+                numberOfWorkers = GerbilConfiguration.getInstance().getInt(NUMBER_OF_WORKERS_KEY);
+            } catch (Exception e) {
+                LOGGER.warn("Couldn't load number of workers from config. Using the default number.", e);
+            }
+        } else {
+            LOGGER.warn("Couldn't load number of workers from config. Using the default number.");
+        }
+        DefeatableOverseer overseer = new ExecutorBasedOverseer(numberOfWorkers);
         @SuppressWarnings("unused")
         Reporter reporter = new LogReporter(overseer);
         return overseer;

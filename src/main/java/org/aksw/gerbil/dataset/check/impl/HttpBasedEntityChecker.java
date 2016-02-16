@@ -1,5 +1,6 @@
-package org.aksw.gerbil.dataset.check;
+package org.aksw.gerbil.dataset.check.impl;
 
+import org.aksw.gerbil.dataset.check.EntityChecker;
 import org.aksw.gerbil.http.AbstractHttpRequestEmitter;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
