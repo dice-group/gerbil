@@ -61,6 +61,8 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
 
     public static final String ERROR_COUNT_RESULT_NAME = "error count";
 
+    private static boolean printDebugMsg = true;
+
     @SuppressWarnings("deprecation")
     public static ErrorCountingAnnotatorDecorator createDecorator(ExperimentType type, Annotator annotator,
             int numberOfExpectedCalls) {
@@ -238,7 +240,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             errorCounter.increaseErrorCount();
             return new ArrayList<Meaning>(0);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
             logResult(result, errorCounter.getName(), "Meaning");
         }
         return result;
@@ -261,7 +263,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             errorCounter.increaseErrorCount();
             return new ArrayList<MeaningSpan>(0);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
             logResult(result, errorCounter.getName(), "MeaningSpan");
         }
         return result;
@@ -284,7 +286,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             errorCounter.increaseErrorCount();
             return new ArrayList<MeaningSpan>(0);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
             logResult(result, errorCounter.getName(), "MeaningSpan");
         }
         return result;
@@ -307,7 +309,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             errorCounter.increaseErrorCount();
             return new ArrayList<TypedSpan>(0);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
             logResult(result, errorCounter.getName(), "TypedSpan");
         }
         return result;
@@ -330,7 +332,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             errorCounter.increaseErrorCount();
             return new ArrayList<Span>(0);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
             logResult(result, errorCounter.getName(), "Span");
         }
         return result;
@@ -353,7 +355,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             errorCounter.increaseErrorCount();
             return new ArrayList<TypedNamedEntity>(0);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
             logResult(result, errorCounter.getName(), "TypedNamedEntity");
         }
         return result;
@@ -376,7 +378,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             errorCounter.increaseErrorCount();
             return new ArrayList<TypedNamedEntity>(0);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
             logResult(result, errorCounter.getName(), "TypedNamedEntity");
         }
         return result;
@@ -412,5 +414,9 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
     public void evaluate(List<List<Marking>> annotatorResults, List<List<Marking>> goldStandard,
             EvaluationResultContainer results) {
         results.addResult(new IntEvaluationResult(ERROR_COUNT_RESULT_NAME, errorCount));
+    }
+
+    public static synchronized void setPrintDebugMsg(boolean flag) {
+        printDebugMsg = flag;
     }
 }

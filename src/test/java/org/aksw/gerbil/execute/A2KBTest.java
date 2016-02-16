@@ -23,12 +23,14 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.TestA2KBAnnotator;
+import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.impl.nif.NIFFileDatasetConfig;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
@@ -55,6 +57,9 @@ public class A2KBTest extends AbstractExperimentTaskTest {
     @BeforeClass
     public static void setMatchingsCounterDebugFlag() {
         MatchingsCounterImpl.setPrintDebugMsg(true);
+        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
+        ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
+    
     }
 
     private static final String TEXTS[] = new String[] {

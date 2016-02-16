@@ -28,6 +28,7 @@ import org.aksw.gerbil.annotator.TestEntityRecognizer;
 import org.aksw.gerbil.annotator.TestEntityTyper;
 import org.aksw.gerbil.annotator.TestOKETask1Annotator;
 import org.aksw.gerbil.annotator.TestOKETask2Annotator;
+import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
@@ -73,6 +74,7 @@ public class GoldStdEvalTest extends AbstractExperimentTaskTest {
     public static void setMatchingsCounterDebugFlag() {
         MatchingsCounterImpl.setPrintDebugMsg(false);
         ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(false);
+        ErrorCountingAnnotatorDecorator.setPrintDebugMsg(false);
     }
 
     @Parameters

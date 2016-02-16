@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.TestA2KBAnnotator;
+import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
@@ -62,6 +63,7 @@ public class FileBasedA2KBTest extends AbstractExperimentTaskTest {
     public static void setMatchingsCounterDebugFlag() {
         MatchingsCounterImpl.setPrintDebugMsg(true);
         ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
+        ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
     }
 
     @Parameters

@@ -22,9 +22,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -41,6 +43,9 @@ public class OKEChallengeTask1DatasetTest {
     @BeforeClass
     public static void setMatchingsCounterDebugFlag() {
         MatchingsCounterImpl.setPrintDebugMsg(false);
+        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(false);
+        ErrorCountingAnnotatorDecorator.setPrintDebugMsg(false);
+    
     }
 
     private static final String TASK1_FILE = "src/test/resources/OKE_Challenge/example_data/task1.ttl";

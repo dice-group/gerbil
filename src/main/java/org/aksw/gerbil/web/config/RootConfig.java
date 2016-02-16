@@ -23,7 +23,9 @@ import java.util.List;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.dataset.check.impl.EntityCheckerManagerImpl;
+import org.aksw.gerbil.dataset.check.impl.FileBasedCachingEntityCheckerManager;
 import org.aksw.gerbil.dataset.check.impl.HttpBasedEntityChecker;
+import org.aksw.gerbil.dataset.check.impl.InMemoryCachingEntityCheckerManager;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
@@ -41,16 +43,17 @@ import org.aksw.gerbil.semantic.sameas.impl.wiki.WikipediaApiBasedSingleUriSameA
 import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
+import org.aksw.gerbil.utils.ConsoleLogger;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.DefeatableOverseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.ExecutorBasedOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
 import org.aksw.simba.topicmodeling.concurrent.reporter.Reporter;
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConversionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
@@ -77,7 +80,8 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
  * @author Didier Cherix
  * 
  */
-@Configuration
+@SuppressWarnings("deprecation")
+@org.springframework.context.annotation.Configuration
 @ComponentScan(basePackages = "org.aksw.gerbil.web.config")
 @PropertySource("gerbil.properties")
 public class RootConfig {
@@ -96,8 +100,11 @@ public class RootConfig {
 
     private static final String HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY = "org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever.domain";
 
-    private static final String ENTITY_CHECKING_MANAGER_CACHE_SIZE_KEY = "org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl.cacheSize";
-    private static final String ENTITY_CHECKING_MANAGER_CACHE_DURATION_KEY = "org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl.cacheLifeTime";
+    private static final String ENTITY_CHECKING_MANAGER_USE_PERSISTENT_CACHE_KEY = "org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl.usePersistentCache";
+    private static final String ENTITY_CHECKING_MANAGER_PERSISTENT_CACHE_FILE_NAME_KEY = "org.aksw.gerbil.dataset.check.FileBasedCachingEntityCheckerManager.cacheFile";
+    private static final String ENTITY_CHECKING_MANAGER_PERSISTENT_CACHE_DURATION_KEY = "org.aksw.gerbil.dataset.check.FileBasedCachingEntityCheckerManager.cacheDuration";
+    private static final String ENTITY_CHECKING_MANAGER_IN_MEM_CACHE_SIZE_KEY = "org.aksw.gerbil.dataset.check.InMemoryCachingEntityCheckerManager.cacheSize";
+    private static final String ENTITY_CHECKING_MANAGER_IN_MEM_CACHE_DURATION_KEY = "org.aksw.gerbil.dataset.check.InMemoryCachingEntityCheckerManager.cacheDuration";
     private static final String HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY = "org.aksw.gerbil.dataset.check.HttpBasedEntityChecker.namespace";
     private static final String WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY = "org.aksw.gerbil.semantic.sameas.impl.wiki.WikipediaApiBasedSingleUriSameAsRetriever.domain";
     private static final String SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY = "org.aksw.gerbil.semantic.sameas.impl.UriFilteringSameAsRetrieverDecorator.domainBlacklist";
@@ -230,21 +237,36 @@ public class RootConfig {
 
     public static @Bean EntityCheckerManager getEntityCheckerManager() {
         EntityCheckerManager manager = null;
-        if (GerbilConfiguration.getInstance().containsKey(ENTITY_CHECKING_MANAGER_CACHE_SIZE_KEY)
-                && GerbilConfiguration.getInstance().containsKey(ENTITY_CHECKING_MANAGER_CACHE_DURATION_KEY)) {
+        Configuration config = GerbilConfiguration.getInstance();
+        if (config.containsKey(ENTITY_CHECKING_MANAGER_USE_PERSISTENT_CACHE_KEY)
+                && config.getBoolean(ENTITY_CHECKING_MANAGER_USE_PERSISTENT_CACHE_KEY)
+                && config.containsKey(ENTITY_CHECKING_MANAGER_PERSISTENT_CACHE_DURATION_KEY)) {
+            LOGGER.info("Using file based cache for entity checking.");
             try {
-                int cacheSize = GerbilConfiguration.getInstance().getInt(ENTITY_CHECKING_MANAGER_CACHE_SIZE_KEY);
-                long duration = GerbilConfiguration.getInstance().getLong(ENTITY_CHECKING_MANAGER_CACHE_DURATION_KEY);
-                manager = new EntityCheckerManagerImpl(cacheSize, duration);
+                long duration = config.getLong(ENTITY_CHECKING_MANAGER_PERSISTENT_CACHE_DURATION_KEY);
+                String cacheFile = config.getString(ENTITY_CHECKING_MANAGER_PERSISTENT_CACHE_FILE_NAME_KEY);
+                manager = FileBasedCachingEntityCheckerManager.create(duration, new File(cacheFile));
+            } catch (ConversionException e) {
+                LOGGER.error("Exception while parsing parameter.", e);
+            }
+        }
+        if ((manager == null) && config.containsKey(ENTITY_CHECKING_MANAGER_IN_MEM_CACHE_SIZE_KEY)
+                && config.containsKey(ENTITY_CHECKING_MANAGER_IN_MEM_CACHE_DURATION_KEY)) {
+            LOGGER.info("Using in-memory based cache for entity checking.");
+            try {
+                int cacheSize = config.getInt(ENTITY_CHECKING_MANAGER_IN_MEM_CACHE_SIZE_KEY);
+                long duration = config.getLong(ENTITY_CHECKING_MANAGER_IN_MEM_CACHE_DURATION_KEY);
+                manager = new InMemoryCachingEntityCheckerManager(cacheSize, duration);
             } catch (Exception e) {
                 LOGGER.error("Exception while parsing parameter. Creating default EntityCheckerManagerImpl.", e);
                 manager = new EntityCheckerManagerImpl();
             }
-        } else {
+        }
+        if (manager == null) {
             manager = new EntityCheckerManagerImpl();
         }
         @SuppressWarnings("unchecked")
-        List<String> namespaces = GerbilConfiguration.getInstance().getList(HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY);
+        List<String> namespaces = config.getList(HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY);
         if (!namespaces.isEmpty()) {
             HttpBasedEntityChecker checker = new HttpBasedEntityChecker();
             for (String namespace : namespaces) {

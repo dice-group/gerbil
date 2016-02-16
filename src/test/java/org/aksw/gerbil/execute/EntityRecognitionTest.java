@@ -22,11 +22,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.TestEntityRecognizer;
+import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.TestDataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -46,6 +48,9 @@ public class EntityRecognitionTest extends AbstractExperimentTaskTest {
     @BeforeClass
     public static void setMatchingsCounterDebugFlag() {
         MatchingsCounterImpl.setPrintDebugMsg(true);
+        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
+        ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
+    
     }
 
     private static final String TEXTS[] = new String[] { "Amy Winehouse is dead after a suspected drug overdose",

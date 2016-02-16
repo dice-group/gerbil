@@ -3,8 +3,6 @@ package org.aksw.gerbil.dataset.check.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import org.aksw.gerbil.dataset.check.EntityChecker;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
@@ -13,9 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.carrotsearch.hppc.ObjectObjectOpenHashMap;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 /**
  * <p>
@@ -23,33 +18,20 @@ import com.google.common.cache.LoadingCache;
  * Internally it uses a cache for storing the results of the
  * {@link EntityChecker}.
  * </p>
- * TODO The current implementation is no thread safe if
+ * TODO The current implementation is not thread safe if
  * {@link #registerEntityChecker(String, EntityChecker)} is called while another
  * thread already is inside the {@link #checkMeanings(List)} method.
  * 
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  *
  */
-public class EntityCheckerManagerImpl extends CacheLoader<String, Boolean> implements EntityCheckerManager {
+public class EntityCheckerManagerImpl implements EntityCheckerManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityCheckerManagerImpl.class);
-
-    private static final int DEFAULT_CACHE_SIZE = 10000;
-    private static final int DEFAULT_CACHE_LIFETIME = 2 * 24 * 60 * 60 * 1000;
 
     private static final String SYNTHETIC_URI_NAME_SPACE = "http://aksw.org/unknown_entity/";
 
     private ObjectObjectOpenHashMap<String, EntityChecker> registeredCheckers = new ObjectObjectOpenHashMap<String, EntityChecker>();
-    private LoadingCache<String, Boolean> cache;
-
-    public EntityCheckerManagerImpl() {
-        this(DEFAULT_CACHE_SIZE, DEFAULT_CACHE_LIFETIME);
-    }
-
-    public EntityCheckerManagerImpl(int cacheSize, long cacheLifeTime) {
-        cache = CacheBuilder.newBuilder().maximumSize(cacheSize).expireAfterWrite(cacheLifeTime, TimeUnit.MILLISECONDS)
-                .build(this);
-    }
 
     @Override
     public void registerEntityChecker(String namespace, EntityChecker checker) {
@@ -68,18 +50,14 @@ public class EntityCheckerManagerImpl extends CacheLoader<String, Boolean> imple
         List<String> wrongUris = null;
         List<String> newUris = null;
         for (String uri : uris) {
-            try {
-                // If the URI does not exist
-                if ((uri != null) && (!cache.get(uri))) {
-                    if (wrongUris == null) {
-                        wrongUris = new ArrayList<String>(3);
-                        newUris = new ArrayList<String>(3);
-                    }
-                    wrongUris.add(uri);
-                    newUris.add(generateNewUri(uri));
+            // If the URI does not exist
+            if ((uri != null) && (!checkUri(uri))) {
+                if (wrongUris == null) {
+                    wrongUris = new ArrayList<String>(3);
+                    newUris = new ArrayList<String>(3);
                 }
-            } catch (ExecutionException e) {
-                LOGGER.info("Couldn't check the existing .", e);
+                wrongUris.add(uri);
+                newUris.add(generateNewUri(uri));
             }
         }
         if (wrongUris != null) {
@@ -109,8 +87,7 @@ public class EntityCheckerManagerImpl extends CacheLoader<String, Boolean> imple
         return newUri.toString();
     }
 
-    @Override
-    public Boolean load(String uri) throws Exception {
+    public boolean checkUri(String uri) {
         String namespace;
         int matchingId = -1;
         for (int i = 0; (i < registeredCheckers.allocated.length) && (matchingId < 0); ++i) {

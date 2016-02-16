@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.util.concurrent.Semaphore;
 
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
+import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
@@ -15,6 +16,7 @@ import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.evaluate.impl.ClassConsideringFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.ClassifyingEvaluatorDecorator;
+import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.GSInKBClassifyingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.filter.SearcherBasedNotMatchingMarkingFilter;
 import org.aksw.gerbil.matching.Matching;
@@ -63,6 +65,8 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
     @BeforeClass
     public static void setMatchingsCounterDebugFlag() {
         MatchingsCounterImpl.setPrintDebugMsg(true);
+        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
+        ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
     }
 
     public static void main(String[] args) throws Exception {
