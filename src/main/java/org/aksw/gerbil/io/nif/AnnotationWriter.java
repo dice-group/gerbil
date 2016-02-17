@@ -74,6 +74,7 @@ public class AnnotationWriter {
 
         String spanUri = NIFUriHelper.getNifUri(documentURI, start, end);
         Resource spanAsResource = nifModel.createResource(spanUri);
+        nifModel.add(spanAsResource, RDF.type, NIF.Phrase);
         nifModel.add(spanAsResource, RDF.type, NIF.String);
         nifModel.add(spanAsResource, RDF.type, NIF.RFC5147String);
         // TODO add language to String

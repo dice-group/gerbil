@@ -43,6 +43,7 @@ public class NIF {
 
     public static final Resource Annotation = resource("Annotation");
     public static final Resource Context = resource("Context");
+    public static final Resource Phrase = resource("Phrase");
     public static final Resource String = resource("String");
     public static final Resource RFC5147String = resource("RFC5147String");
 
