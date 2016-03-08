@@ -134,13 +134,11 @@ public class EvaluatorFactory {
             MatchingsSearcher<ClassifiedSpanMeaning> searcher = (MatchingsSearcher<ClassifiedSpanMeaning>) MatchingsSearcherFactory
                     .createSpanMatchingsSearcher(configuration.matching);
             return new ClassifyingEvaluatorDecorator<MeaningSpan, ClassifiedSpanMeaning>(
-                    new GSInKBClassifyingEvaluatorDecorator<ClassifiedSpanMeaning>(
-                            new ClassConsideringFMeasureCalculator<ClassifiedSpanMeaning>(
-                                    new MatchingsCounterImpl<ClassifiedSpanMeaning>(
-                                            new CompoundMatchingsSearcher<ClassifiedSpanMeaning>(searcher,
-                                                    new ClassifiedMeaningMatchingsSearcher<ClassifiedSpanMeaning>())),
-                                    MarkingClasses.IN_KB, MarkingClasses.EE, MarkingClasses.GS_IN_KB),
-                            searcher),
+                    new ClassConsideringFMeasureCalculator<ClassifiedSpanMeaning>(
+                            new MatchingsCounterImpl<ClassifiedSpanMeaning>(
+                                    new CompoundMatchingsSearcher<ClassifiedSpanMeaning>(searcher,
+                                            new ClassifiedMeaningMatchingsSearcher<ClassifiedSpanMeaning>())),
+                            MarkingClasses.IN_KB, MarkingClasses.EE, MarkingClasses.GS_IN_KB),
                     new UriBasedMeaningClassifier<ClassifiedSpanMeaning>(classifier, MarkingClasses.IN_KB),
                     new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>());
         }

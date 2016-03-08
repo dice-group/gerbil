@@ -66,6 +66,7 @@ public class WaitingDocumentReturningServerMock implements Container {
         }
         String responseString;
         if (documents.containsKey(requestDoc.getDocumentURI())) {
+            LOGGER.error("Couldn't find document with URI \"{}\". Returning request document.", requestDoc.getDocumentURI());
             responseString = nifCreator.getDocumentAsNIFString(documents.get(requestDoc.getDocumentURI()));
         } else {
             responseString = nifCreator.getDocumentAsNIFString(requestDoc);
