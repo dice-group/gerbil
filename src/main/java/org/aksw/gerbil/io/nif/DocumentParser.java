@@ -37,12 +37,20 @@ public class DocumentParser {
     private boolean removeUsedProperties;
 
     public DocumentParser() {
-        this(false);
+        this(new AnnotationParser(false), false);
     }
 
     public DocumentParser(boolean removeUsedProperties) {
+        this(new AnnotationParser(removeUsedProperties), removeUsedProperties);
+    }
+
+    public DocumentParser(AnnotationParser annotationParser) {
+        this(annotationParser, false);
+    }
+
+    public DocumentParser(AnnotationParser annotationParser, boolean removeUsedProperties) {
         this.removeUsedProperties = removeUsedProperties;
-        annotationParser = new AnnotationParser(removeUsedProperties);
+        this.annotationParser = new AnnotationParser(removeUsedProperties);
     }
 
     public Document getDocument(Model nifModel, Resource documentResource) {

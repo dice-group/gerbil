@@ -46,7 +46,11 @@ public class DocumentListParser {
     }
 
     public DocumentListParser(boolean removeUsedProperties) {
-        documentParser = new DocumentParser(removeUsedProperties);
+        this(new DocumentParser(removeUsedProperties));
+    }
+
+    public DocumentListParser(DocumentParser documentParser) {
+        this.documentParser = documentParser;
     }
 
     public List<Document> parseDocuments(Model nifModel) {

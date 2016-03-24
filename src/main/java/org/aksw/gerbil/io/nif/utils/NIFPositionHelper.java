@@ -77,21 +77,21 @@ public class NIFPositionHelper {
             end = start + s.getLength();
             // make sure that the start position is not a whitespace
             if (Character.isWhitespace(text.charAt(start))) {
-                printWarning(text, start, end, "Found an anormal marking that starts with a whitespace");
+                printWarning(text, start, end, "Found an abnormal marking that starts with a whitespace");
             }
             // make sure that the character directly in front of the span is no
             // letter
             if ((start > 0) && (Character.isAlphabetic(text.charAt(start - 1)))) {
-                printWarning(text, start, end, "Found an anormal marking that has a letter in front of it");
+                printWarning(text, start, end, "Found an abnormal marking that has a letter in front of it");
             }
             // make sure that the last character is not a whitespace
             if (Character.isWhitespace(text.charAt(end - 1))) {
-                printWarning(text, start, end, "Found an anormal marking that ends with a whitespace");
+                printWarning(text, start, end, "Found an abnormal marking that ends with a whitespace");
             }
             // make sure that the character directly behind the span is not a
             // letter
             if ((end < text.length()) && (Character.isAlphabetic(text.charAt(end)))) {
-                printWarning(text, start, end, "Found an anormal marking that has a letter directly behind it");
+                printWarning(text, start, end, "Found an abnormal marking that has a letter directly behind it");
             }
         }
     }

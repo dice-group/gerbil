@@ -91,19 +91,20 @@ public class AnnotationParser {
                         nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
                         if (nodeIter.hasNext()) {
                             confidence = nodeIter.next().asLiteral().getDouble();
-                            markings.add(addTypeInformation(new ScoredTypedNamedEntity(start, end - start, entityUris,
-                                    types, confidence), nifModel));
+                            markings.add(addTypeInformation(
+                                    new ScoredTypedNamedEntity(start, end - start, entityUris, types, confidence),
+                                    nifModel));
                         } else {
                             // It has been typed without a confidence
-                            markings.add(addTypeInformation(
-                                    new TypedNamedEntity(start, end - start, entityUris, types), nifModel));
+                            markings.add(addTypeInformation(new TypedNamedEntity(start, end - start, entityUris, types),
+                                    nifModel));
                         }
                     } else {
                         nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
                         if (nodeIter.hasNext()) {
                             confidence = nodeIter.next().asLiteral().getDouble();
-                            markings.add(addTypeInformationIfPossible(new ScoredNamedEntity(start, end - start,
-                                    entityUris, confidence), nifModel));
+                            markings.add(addTypeInformationIfPossible(
+                                    new ScoredNamedEntity(start, end - start, entityUris, confidence), nifModel));
                         } else {
                             // It has been disambiguated without a confidence
                             markings.add(addTypeInformationIfPossible(new NamedEntity(start, end - start, entityUris),
@@ -156,8 +157,8 @@ public class AnnotationParser {
     }
 
     private MeaningSpan addTypeInformationIfPossible(ScoredNamedEntity ne, Model nifModel) {
-        ScoredTypedNamedEntity typedNE = new ScoredTypedNamedEntity(ne.getStartPosition(), ne.getLength(),
-                ne.getUris(), new HashSet<String>(), ne.getConfidence());
+        ScoredTypedNamedEntity typedNE = new ScoredTypedNamedEntity(ne.getStartPosition(), ne.getLength(), ne.getUris(),
+                new HashSet<String>(), ne.getConfidence());
         addTypeInformation(typedNE, nifModel);
         if (typedNE.getTypes().size() > 0) {
             return typedNE;
