@@ -338,6 +338,13 @@
 			<artifactId>json</artifactId>
 			<version>20140107</version>
 		</dependency>
+
+		<!-- Question Answering -->
+		<dependency>
+			<groupId>org.aksw.qa</groupId>
+			<artifactId>commons</artifactId>
+			<version>0.0.6</version>
+		</dependency>
 	</dependencies>
 
 	<build>
