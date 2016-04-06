@@ -29,11 +29,11 @@ import org.aksw.gerbil.datatypes.marking.ClassifiedSpanMeaning;
 import org.aksw.gerbil.datatypes.marking.MarkingClasses;
 import org.aksw.gerbil.evaluate.impl.ClassConsideringFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.ClassifyingEvaluatorDecorator;
+import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.DoubleResultComparator;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.GSInKBClassifyingEvaluatorDecorator;
-import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.HierarchicalFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.SpanMergingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.SubTaskAverageCalculator;
@@ -49,6 +49,8 @@ import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.matching.impl.StrongSpanMatchingsSearcher;
 import org.aksw.gerbil.matching.impl.clas.EmergingEntityMeaningClassifier;
 import org.aksw.gerbil.matching.impl.clas.UriBasedMeaningClassifier;
+import org.aksw.gerbil.qa.datatypes.AnswerItemType;
+import org.aksw.gerbil.qa.datatypes.Property;
 import org.aksw.gerbil.semantic.kb.ExactWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
@@ -59,6 +61,7 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.aksw.gerbil.utils.filter.InstanceClassBasedMarkingFilter;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,6 +235,30 @@ public class EvaluatorFactory {
             return new ConfidenceScoreEvaluatorDecorator<TypedNamedEntity>(
                     new SubTaskAverageCalculator<TypedNamedEntity>(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
                     new DoubleResultComparator());
+        }
+
+            // -------- QA Experiments --------
+
+        case ATKB: {
+            return null;
+            // FIXME @Ricardo
+        }
+        case AIT2KB: {
+            return new MarkingFilteringEvaluatorDecorator<Meaning>(
+                    new InstanceClassBasedMarkingFilter(AnswerItemType.class),
+                    createEvaluator(ExperimentType.C2KB, configuration, dataset));
+        }
+        case P2KB: {
+            return new MarkingFilteringEvaluatorDecorator<Meaning>(new InstanceClassBasedMarkingFilter(Property.class),
+                    createEvaluator(ExperimentType.C2KB, configuration, dataset));
+        }
+        case QA: {
+            return null;
+            // FIXME @Ricardo
+        }
+        case RE2KB: {
+            return null;
+            // FIXME @Ricardo
         }
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");

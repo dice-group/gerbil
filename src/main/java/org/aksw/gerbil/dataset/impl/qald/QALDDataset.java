@@ -1,5 +1,8 @@
 package org.aksw.gerbil.dataset.impl.qald;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.dataset.Dataset;
@@ -7,6 +10,7 @@ import org.aksw.gerbil.dataset.InitializableDataset;
 import org.aksw.gerbil.dataset.impl.AbstractDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.qa.QAUtils;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.commons.load.QALD_Loader;
@@ -34,7 +38,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
 
     @Override
     public int size() {
-        return 0;
+        return instances.size();
     }
 
     @Override
@@ -64,7 +68,19 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
                 throw new GerbilException("Couldn't load questions of QALD dataset " + datasetId.toString() + ".",
                         ErrorTypes.DATASET_LOADING_ERROR);
             }
-            
+
+            String questionUriPrefix;
+            try {
+                questionUriPrefix = "htt://qa.gerbil.aksw.org/" + URLEncoder.encode(getName(), "UTF-8") + "/question#";
+            } catch (UnsupportedEncodingException e) {
+                throw new GerbilException("Severe error while trying to encode dataset name.", e,
+                        ErrorTypes.DATASET_LOADING_ERROR);
+            }
+
+            instances = new ArrayList<Document>(questions.size());
+            for (IQuestion question : questions) {
+                instances.add(QAUtils.translateQuestion(question, questionUriPrefix + question.getId()));
+            }
         }
     }
 
