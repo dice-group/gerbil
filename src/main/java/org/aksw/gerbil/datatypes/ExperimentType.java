@@ -40,6 +40,16 @@ public enum ExperimentType implements Describable {
     A2KB("A2KB", "The annotator gets a text and shall recognize entities inside and link them to a knowledge base."),
 
     /**
+     * Answer Type 2 KB
+     */
+    ATKB("Answer Type 2KB", "The annotator gets a question and shall recognize its answer type."),
+
+    /**
+     * Answer Item Type 2 KB
+     */
+    AIT2KB("Answer Ite, Type 2KB", "The annotator gets a question and shall recognize its answer item type."),
+
+    /**
      * Concepts to KB
      * <p>
      * Tags are taken as the set of relevant entities that are mentioned in the
@@ -127,7 +137,22 @@ public enum ExperimentType implements Describable {
      * type.
      */
     OKE_Task2("OKE Challenge 2015 - Task 2",
-            "This task comprises the determining of the type of a given entity inside a given text and the extraction of the part of the text, describing the type."),;
+            "This task comprises the determining of the type of a given entity inside a given text and the extraction of the part of the text, describing the type."),
+
+    /**
+     * Property tagging 2KB.
+     */
+    P2KB("P2KB", "The system gets a question and shall identify all properties that are present."),
+
+    /**
+     * Question Answering.
+     */
+    QA("QA", "The system gets a question and shall return its answer(s)."),
+
+    /**
+     * Relation Extraction 2KB.
+     */
+    RE2KB("RE2KB", "The system gets a quesiton and shall extract all triples that are present.");
 
     private String label;
     private String description;
