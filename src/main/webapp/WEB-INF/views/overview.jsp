@@ -19,7 +19,7 @@
 <script type="text/javascript"
 	src="/gerbil/webResources/js/script_radar_overview.js"></script>
 <link rel="icon" type="image/png"
-	href="/gerbil/webResources/gerbilicon.png">
+	href="/gerbil/webResources/gerbilicon_transparent.png">
 </head>
 <style>
 table {
@@ -53,7 +53,7 @@ table {
 	top: 50px;
 	left: 100px;
 	vertical-align: center;
-	text-align:center;
+	text-align: center;
 }
 
 .chartBody {
@@ -101,7 +101,8 @@ table {
 				<p>The table as well as the diagram contain the micro
 					F1-measure.</p>
 			</div>
-			<div class="container-fluid">
+			<!-- <div class="container-fluid"> -->
+			<div class="col-md-12">
 				<div id="resultsChartBody" class="chartBody">
 					<div id="resultsChart" class="chartDiv"></div>
 				</div>
@@ -118,9 +119,13 @@ table {
 		<div class="form-horizontal">
 			<div class="col-md-12">
 				<h2>Annotator &ndash; Dataset feature correlations</h2>
-				<p>The table as well as the diagram contain the pearson correlations between the annotators and the dataset features. Note that the diagram only shows the absolute values of the correlation. For the correlation type, you should take a look at the table.</p>
+				<p>The table as well as the diagram contain the pearson
+					correlations between the annotators and the dataset features. Note
+					that the diagram only shows the absolute values of the correlation.
+					For the correlation type, you should take a look at the table.</p>
 			</div>
-			<div class="container-fluid">
+			<!-- <div class="container-fluid"> -->
+			<div class="col-md-12">
 				<div id="correlationsChartBody" class="chartBody">
 					<div id="correlationsChart" class="chartDiv"></div>
 				</div>
@@ -128,7 +133,8 @@ table {
 		</div>
 	</div>
 	<div class="container-fluid">
-		<table id="correlationsTable" class="table table-hover table-condensed">
+		<table id="correlationsTable"
+			class="table table-hover table-condensed">
 			<thead></thead>
 			<tbody></tbody>
 		</table>
@@ -136,158 +142,188 @@ table {
 
 	<script type="text/javascript">
 		function loadMatchings() {
-	        $
-	                .getJSON(
-	                        '${matchings}',
-	                        {
-	                            experimentType : $('#expTypes input:checked').val(),
-	                            ajax : 'false'
-	                        },
-	                        function(data) {
-		                        var htmlMatchings = "";
-		                        for ( var i = 0; i < data.Matching.length; i++) {
-			                        htmlMatchings += "<label class=\"btn btn-primary\" >";
-			                        htmlMatchings += " <input class=\"toggle\" type=\"radio\" name=\"matchingType\" id=\"" + data.Matching[i].label + "\" value=\"" + data.Matching[i].label + "\" >"
-			                                + data.Matching[i].label;
-			                        htmlMatchings += "</label>";
-		                        }
-		                        $('#matching').html(htmlMatchings);
-		                        $('#matching input')[0].checked = true;
-		                        $('#matching label').each(function( index ) {
-						        	for ( var i = 0; i < data.Matching.length; i++) {
-							        	if(data.Matching[i].label==$( this ).find('input').val()){
-					 						$( this ).attr('data-toggle',		'tooltip')
-					 									.attr('data-placement',	'top')
-					 									.attr('title',			data.Matching[i].description);
-				 						}
-						       	 	}
-								});
-					        
-			               		$('[data-toggle="tooltip"]').tooltip();
-	                        });
-        };
+			$
+					.getJSON(
+							'${matchings}',
+							{
+								experimentType : $('#expTypes input:checked')
+										.val(),
+								ajax : 'false'
+							},
+							function(data) {
+								var htmlMatchings = "";
+								for (var i = 0; i < data.Matching.length; i++) {
+									htmlMatchings += "<label class=\"btn btn-primary\" >";
+									htmlMatchings += " <input class=\"toggle\" type=\"radio\" name=\"matchingType\" id=\"" + data.Matching[i].name + "\" value=\"" + data.Matching[i].name + "\" >"
+											+ data.Matching[i].label;
+									htmlMatchings += "</label>";
+								}
+								$('#matching').html(htmlMatchings);
+								$('#matching input')[0].checked = true;
+								$('#matching label')
+										.each(
+												function(index) {
+													for (var i = 0; i < data.Matching.length; i++) {
+														if (data.Matching[i].name == $(
+																this).find(
+																'input').val()) {
+															$(this)
+																	.attr(
+																			'data-toggle',
+																			'tooltip')
+																	.attr(
+																			'data-placement',
+																			'top')
+																	.attr(
+																			'title',
+																			data.Matching[i].description);
+														}
+													}
+												});
 
-        function loadExperimentTypes() {
-	        $
-	                .getJSON(
-	                        '${exptypes}',
-	                        {
-		                        ajax : 'false'
-	                        },
-	                        function(data) {
-		                        var htmlExperimentTypes = "";
-		                        for ( var i = 0; i < data.ExperimentType.length; i++) {
-			                        htmlExperimentTypes += "<label class=\"btn btn-primary\" >";
-			                        htmlExperimentTypes += " <input class=\"toggle\" type=\"radio\" name=\"experimentType\" id=\"" + data.ExperimentType[i].label + "\" value=\"" + data.ExperimentType[i].label + "\" >"
-			                                + data.ExperimentType[i].label;
-			                        htmlExperimentTypes += "</label>";
-		                        }
-		                        $('#expTypes').html(htmlExperimentTypes);
-		                        $('#expTypes input')[0].checked = true;
-		                        // Add the listener for loading the matchings
-		                        $("#expTypes input").change(loadMatchings);
-		                        loadMatchings();
-		                        
-		                        $('#expTypes label').each(function( index ) {
-		        					for ( var i = 0; i < data.ExperimentType.length; i++) {
-		        					if(data.ExperimentType[i].label==$( this ).find('input').val()){
- 										$( this ).attr('data-toggle',		'tooltip')
- 													.attr('data-placement',	'top')
- 													.attr('title',			data.ExperimentType[i].description);
- 									}
-		       	 				}});
-		        
-                				$('[data-toggle="tooltip"]').tooltip();
-                
-	                        });
-        };
-        
-        function loadTables() {
-	        $.getJSON('${experimentoverview}', {
-	            experimentType : $('#expTypes input:checked').val(),
-	            matching : $('#matching input:checked').val(),
-	            ajax : 'false'
-	        }, function(data){
+								$('[data-toggle="tooltip"]').tooltip();
+							});
+		};
+
+		function loadExperimentTypes() {
+			$
+					.getJSON(
+							'${exptypes}',
+							{
+								ajax : 'false'
+							},
+							function(data) {
+								console.log(data);
+								var htmlExperimentTypes = "";
+								for (var i = 0; i < data.ExperimentType.length; i++) {
+									htmlExperimentTypes += "<label class=\"btn btn-primary\" >";
+									htmlExperimentTypes += " <input class=\"toggle\" type=\"radio\" name=\"experimentType\" id=\"" + data.ExperimentType[i].name + "\" value=\"" + data.ExperimentType[i].name + "\" >"
+											+ data.ExperimentType[i].label;
+									htmlExperimentTypes += "</label>";
+								}
+								$('#expTypes').html(htmlExperimentTypes);
+								$('#expTypes input')[0].checked = true;
+								// Add the listener for loading the matchings
+								$("#expTypes input").change(loadMatchings);
+								loadMatchings();
+
+								$('#expTypes label')
+										.each(
+												function(index) {
+													for (var i = 0; i < data.ExperimentType.length; i++) {
+														if (data.ExperimentType[i].name == $(
+																this).find(
+																'input').val()) {
+															$(this)
+																	.attr(
+																			'data-toggle',
+																			'tooltip')
+																	.attr(
+																			'data-placement',
+																			'top')
+																	.attr(
+																			'title',
+																			data.ExperimentType[i].description);
+														}
+													}
+												});
+
+								$('[data-toggle="tooltip"]').tooltip();
+
+							});
+		};
+
+		function loadTables() {
+			$.getJSON('${experimentoverview}', {
+				experimentType : $('#expTypes input:checked').val(),
+				matching : $('#matching input:checked').val(),
+				ajax : 'false'
+			}, function(data) {
 				var tableData = data[0];
-				showTable(tableData,"resultsTable");
+				showTable(tableData, "resultsTable");
 				drawSpiderDiagram(tableData, "resultsChart");
 				tableData = data[1];
-				showTable(tableData,"correlationsTable");
+				showTable(tableData, "correlationsTable");
 				drawSpiderDiagram(tableData, "correlationsChart");
 			}).fail(function() {
-		        console.log("error loading data for table");
-	        });
-        };
-		
+				console.log("error loading data for table");
+			});
+		};
+
 		function showTable(tableData, tableElementId) {
-		        //http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
-		        var tbl_body = "";
-		        var tbl_hd = "";
+			//http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
+			var tbl_body = "";
+			var tbl_hd = "";
 
-		        $.each(tableData, function(i) {
-			        var tbl_row = "";
-			        if (i > 0) {
-				        $.each(this, function(k, v) {
-					        tbl_row += "<td>" + v + "</td>";
-				        });
-				        tbl_body += "<tr>" + tbl_row + "</tr>";
-			        } else {
-				        $.each(this, function(k, v) {
-					        tbl_row += "<th class=\"rotated_cell\"><div >" + v + "</div></th>";
-				        });
-				        tbl_hd += "<tr>" + tbl_row + "</tr>";
-			        }
-		        });
-		        $("#" + tableElementId + " thead").html(tbl_hd);
-		        $("#" + tableElementId + " tbody").html(tbl_body);
+			$.each(tableData, function(i) {
+				var tbl_row = "";
+				if (i > 0) {
+					$.each(this, function(k, v) {
+						tbl_row += "<td>" + v + "</td>";
+					});
+					tbl_body += "<tr>" + tbl_row + "</tr>";
+				} else {
+					$.each(this, function(k, v) {
+						tbl_row += "<th class=\"rotated_cell\"><div >" + v
+								+ "</div></th>";
+					});
+					tbl_hd += "<tr>" + tbl_row + "</tr>";
+				}
+			});
+			$("#" + tableElementId + " thead").html(tbl_hd);
+			$("#" + tableElementId + " tbody").html(tbl_body);
 		}
-		
+
 		function drawSpiderDiagram(tableData, chartElementId) {
-		        //draw spider chart
-		        var chartData = [];
-		        //Legend titles  ['Smartphone','Tablet'];
-		        var LegendOptions = [];
-		        $.each(tableData, function(i) {
-			        //iterate over rows
-			        if (i > 0) {
-				        var annotatorResults = [];
-				        $.each(this, function(k, v) {
-					        if (k == 0) {
-						        //annotator
-						        LegendOptions.push(v);
-					        } else {
-						        //results like {axis:"Email",value:0.71},
-						        var tmp = {};
-						        tmp.axis = tableData[0][k];
-						        if (v == "n.a." || v.indexOf("error") > -1) {
-							        tmp.value = 0;
-						        } else {
-									// if the number is negative make it poositive
-									if(v.indexOf("-") > -1) {
-										v = v.replace("-","+");
-									}
-							        tmp.value = v;
-						        }
-						        annotatorResults.push(tmp);
-					        }
-				        });
-				        chartData.push(annotatorResults);
-			        }
-		        });
-		        //[[{axis:"Email",value:0.71},{axis:"aa",value:0}],[{axis:"Email",value:0.71},{axis:"aa",value:0.1},]];
-				console.log("start drawing into " + chartElementId);
-		        drawChart(chartData, LegendOptions, chartElementId);
-	        }
+			//draw spider chart
+			var chartData = [];
+			//Legend titles  ['Smartphone','Tablet'];
+			var LegendOptions = [];
+			$.each(tableData, function(i) {
+				//iterate over rows
+				if (i > 0) {
+					var annotatorResults = [];
+					$.each(this, function(k, v) {
+						if (k == 0) {
+							//annotator
+							LegendOptions.push(v);
+						} else {
+							//results like {axis:"Email",value:0.71},
+							var tmp = {};
+							tmp.axis = tableData[0][k];
+							if (v == "n.a." || v.indexOf("error") > -1) {
+								tmp.value = 0;
+							} else {
+								// if the number is negative make it poositive
+								if (v.indexOf("-") > -1) {
+									v = v.replace("-", "+");
+								}
+								tmp.value = v;
+							}
+							annotatorResults.push(tmp);
+						}
+					});
+					chartData.push(annotatorResults);
+				}
+			});
+			//[[{axis:"Email",value:0.71},{axis:"aa",value:0}],[{axis:"Email",value:0.71},{axis:"aa",value:0.1},]];
+			console.log("start drawing into " + chartElementId);
+			drawChart(chartData, LegendOptions, chartElementId);
+			// add the svg namespace
+			//$('#' + chartElementId + ' svg').attr("xmlns:svg",
+			//		"http://www.w3.org/2000/svg").attr("xmlns",
+			//		"http://www.w3.org/2000/svg");
+		}
 
-        $(document).ready(function() {
-	        //++++++++++++
-	        //creating the radioboxes
-	        //++++++++++++
-	        loadExperimentTypes();
+		$(document).ready(function() {
+			//++++++++++++
+			//creating the radioboxes
+			//++++++++++++
+			loadExperimentTypes();
 
-	        $("#show").click(function(e) {
-		        loadTables();
-	        });
-        });
+			$("#show").click(function(e) {
+				loadTables();
+			});
+		});
 	</script>
 </body>

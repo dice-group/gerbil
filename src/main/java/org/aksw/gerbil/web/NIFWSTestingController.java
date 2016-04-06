@@ -1,10 +1,27 @@
+/**
+ * This file is part of General Entity Annotator Benchmark.
+ *
+ * General Entity Annotator Benchmark is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * General Entity Annotator Benchmark is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.aksw.gerbil.web;
 
-import it.acubelab.batframework.systemPlugins.DBPediaApi;
+import java.io.IOException;
 
-import org.aksw.gerbil.bat.annotator.nif.NIFBasedAnnotatorWebservice;
+import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.utils.SingletonWikipediaApi;
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
@@ -15,7 +32,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * This controller tests the connectivity of a NIF based web service with the given URL.
+ * This controller tests the connectivity of a NIF based web service with the
+ * given URL.
  * 
  * @author Michael Röder
  * 
@@ -27,39 +45,45 @@ public class NIFWSTestingController {
 
     private static final String RETURN_STATUS_NAME = "testOk";
     private static final String RETURN_ERROR_MSG_NAME = "errorMsg";
-    private static final String NIF_WS_TEST_TEXT = "This simple text is for texting the communication between the given web service and the GERBIL web service.";
+    private static final String NIF_WS_TEST_TEXT = "This simple text is for testing the communication between the given web service and the GERBIL web service.";
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
     @RequestMapping("/testNifWs")
-    public @ResponseBody
-    String testWebService(@RequestParam(value = "experimentType") String experimentType,
+    public @ResponseBody String testWebService(@RequestParam(value = "experimentType") String experimentType,
             @RequestParam(value = "url") String url) {
         LOGGER.info("Testing {} for an {} experiment.", url, experimentType);
-        NIFBasedAnnotatorWebservice annotator = new NIFBasedAnnotatorWebservice(url, "TEST",
-                SingletonWikipediaApi.getInstance(), new DBPediaApi());
+        NIFBasedAnnotatorWebservice annotator = new NIFBasedAnnotatorWebservice(url, "TEST");
         JSONObject result = new JSONObject();
-        experimentType = experimentType.toUpperCase();
+        // experimentType = experimentType.toUpperCase();
+        Document document = new DocumentImpl();
+        document.setText(NIF_WS_TEST_TEXT);
         try {
             switch (ExperimentType.valueOf(experimentType)) {
-            case A2KB: {
-                annotator.solveA2W(NIF_WS_TEST_TEXT);
-                break;
-            }
+            case Rc2KB: // falls through
+            case Sc2KB:
             case C2KB: {
-                annotator.solveA2W(NIF_WS_TEST_TEXT);
+                annotator.performC2KB(document);
                 break;
             }
             case D2KB: {
-                annotator.solveA2W(NIF_WS_TEST_TEXT);
+                annotator.performD2KBTask(document);
                 break;
             }
+            case A2KB:
             case Sa2KB: {
-                annotator.solveA2W(NIF_WS_TEST_TEXT);
+                annotator.performA2KBTask(document);
                 break;
             }
-            case Rc2KB: // falls through
-            case Sc2KB: {
-                annotator.solveA2W(NIF_WS_TEST_TEXT);
+            case ERec: {
+                annotator.performRecognition(document);
+                break;
+            }
+            case OKE_Task1: {
+                annotator.performTask1(document);
+                break;
+            }
+            case OKE_Task2: {
+                annotator.performTask2(document);
                 break;
             }
             default: {
@@ -71,6 +95,11 @@ public class NIFWSTestingController {
             LOGGER.error("Got an exception while testing {}. e = {}", url, e);
             result.put(RETURN_STATUS_NAME, false);
             result.put(RETURN_ERROR_MSG_NAME, e.getMessage());
+        } finally {
+            try {
+                annotator.close();
+            } catch (IOException e) {
+            }
         }
         return JSONValue.toJSONString(result);
     }

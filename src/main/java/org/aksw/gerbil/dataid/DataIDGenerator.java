@@ -1,25 +1,18 @@
 /**
- * The MIT License (MIT)
+ * This file is part of General Entity Annotator Benchmark.
  *
- * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ * General Entity Annotator Benchmark is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * General Entity Annotator Benchmark is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.aksw.gerbil.dataid;
 
@@ -29,13 +22,13 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import org.aksw.gerbil.dataid.vocabs.CUBE;
-import org.aksw.gerbil.dataid.vocabs.GERBIL;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.semantic.vocabs.CUBE;
+import org.aksw.gerbil.semantic.vocabs.GERBIL;
 import org.aksw.gerbil.web.ExperimentTaskStateHelper;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFFormat;
 
+import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -109,7 +102,7 @@ public class DataIDGenerator {
         OutputStream o = new ByteArrayOutputStream();
 
         // creating json-ld output format
-        RDFDataMgr.write(o, model, RDFFormat.JSONLD);
+        RDFDataMgr.write(o, model, JenaJSONLD.JSONLD);
 
         return o.toString();
     }
@@ -142,6 +135,7 @@ public class DataIDGenerator {
 
         // If this task has been finished
         if (ExperimentTaskStateHelper.taskFinished(result)) {
+        	model.add(experimentTask, CUBE.dataset, model.createResource(experiment.getURI()));
             // creating and setting literals for the current experiment
             model.add(experimentTask, GERBIL.microF1, model.createTypedLiteral(String.valueOf(result.getMicroF1Measure()),XSDDatatype.XSDdecimal));
             model.add(experimentTask, GERBIL.microPrecision, model.createTypedLiteral(String.valueOf(result.getMicroPrecision()),XSDDatatype.XSDdecimal));

@@ -2,20 +2,21 @@
 
 echo "Checking dependencies..."
 file="gerbil_data/gerbil_data.zip"
-url="http://github.com/AKSW/gerbil/releases/download/v1.0.0/gerbil_data.zip"
+url="https://github.com/AKSW/gerbil/releases/download/v1.2.2/gerbil_data.zip"
 
-mkdir -p "gerbil_data" || exit 1
-
-if [ ! -f "$file" ]; then
-    echo "Downloading dependencies ... ($url)"
-    curl --retry 4 -L -o "$file" "$url"
-
+if [ ! -d "gerbil_data" ]; then
+    mkdir -p "gerbil_data" || exit 1
     if [ ! -f "$file" ]; then
-        echo "Couldn't downloading dependency data: $file"
-    else
-        echo "Extracting dependencies ... "
-        unzip "$file"
-    fi
+        echo "Downloading dependencies ... ($url)"
+        curl --retry 4 -L -o "$file" "$url"
+
+        if [ ! -f "$file" ]; then
+            echo "Couldn't downloading dependency data: $file"
+        else
+            echo "Extracting dependencies ... "
+            unzip "$file"
+       fi
+   fi
 fi
 
 echo "Checking properties files..."

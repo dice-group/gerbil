@@ -1,33 +1,30 @@
 /**
- * The MIT License (MIT)
+ * This file is part of General Entity Annotator Benchmark.
  *
- * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ * General Entity Annotator Benchmark is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * General Entity Annotator Benchmark is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.aksw.gerbil;
 
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import java.util.Arrays;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.execute.ExperimentTask;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.utils.ExpTaskConfigComparator;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,20 +36,40 @@ public class Experimenter implements Runnable {
     private ExperimentTaskConfiguration configs[];
     private String experimentId;
     private ExperimentDAO experimentDAO;
-    private WikipediaApiInterface wikiAPI;
     private Overseer overseer;
+    private EvaluatorFactory evFactory;
+    private AnnotatorOutputWriter annotatorOutputWriter = null;
+    private SameAsRetriever globalRetriever = null;
 
-    public Experimenter(WikipediaApiInterface wikiAPI, Overseer overseer, ExperimentDAO experimentDAO,
-            ExperimentTaskConfiguration configs[], String experimentId) {
+    /**
+     * Constructor
+     * 
+     * @deprecated Please use the other constructor and provide an
+     *             {@link EvaluatorFactory}.
+     */
+    @Deprecated
+    public Experimenter(Overseer overseer, ExperimentDAO experimentDAO, ExperimentTaskConfiguration configs[],
+            String experimentId) {
         this.configs = configs;
         this.experimentId = experimentId;
         this.experimentDAO = experimentDAO;
-        this.wikiAPI = wikiAPI;
         this.overseer = overseer;
+        this.evFactory = new EvaluatorFactory();
+    }
+
+    public Experimenter(Overseer overseer, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever, EvaluatorFactory evFactory,
+             ExperimentTaskConfiguration configs[], String experimentId) {
+        this.configs = configs;
+        this.experimentId = experimentId;
+        this.experimentDAO = experimentDAO;
+        this.overseer = overseer;
+        this.evFactory = evFactory;
+        this.globalRetriever = globalRetriever;
     }
 
     @Override
     public void run() {
+        Arrays.sort(configs, new ExpTaskConfigComparator());
         try {
             int taskId;
             for (int i = 0; i < configs.length; ++i) {
@@ -68,14 +85,10 @@ public class Experimenter implements Runnable {
                 // If there is no experiment task result in the database
                 if (taskId != ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED) {
                     // Create an executer which performs the task
-                    ExperimentTask task = new ExperimentTask(taskId, experimentDAO, configs[i], wikiAPI);
+                    ExperimentTask task = new ExperimentTask(taskId, experimentDAO, globalRetriever, evFactory,
+                            configs[i]);
+                    task.setAnnotatorOutputWriter(annotatorOutputWriter);
                     overseer.startTask(task);
-                    // Thread t = new Thread(executer);
-                    // t.start();
-                    // if (SimpleThreadObserver.canObserveThread()) {
-                    // t = new Thread(new SimpleThreadObserver(t));
-                    // t.start();
-                    // }
                 }
             }
             LOGGER.info("Experimenter finished the creation of tasks for experiment \"" + experimentId + "\"");
@@ -90,5 +103,9 @@ public class Experimenter implements Runnable {
                 config.annotatorConfig.getName(), config.annotatorConfig.couldBeCached(),
                 config.datasetConfig.getName(), config.datasetConfig.couldBeCached(), couldBeCached);
         return couldBeCached;
+    }
+
+    public void setAnnotatorOutputWriter(AnnotatorOutputWriter annotatorOutputWriter) {
+        this.annotatorOutputWriter = annotatorOutputWriter;
     }
 }

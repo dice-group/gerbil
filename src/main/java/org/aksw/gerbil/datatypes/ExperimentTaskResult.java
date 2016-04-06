@@ -1,34 +1,31 @@
 /**
- * The MIT License (MIT)
+ * This file is part of General Entity Annotator Benchmark.
  *
- * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ * General Entity Annotator Benchmark is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * General Entity Annotator Benchmark is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.aksw.gerbil.datatypes;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.matching.Matching;
+
+import com.carrotsearch.hppc.IntDoubleOpenHashMap;
 
 public class ExperimentTaskResult {
 
@@ -49,9 +46,12 @@ public class ExperimentTaskResult {
     public Matching matching;
     public int idInDb;
     public String gerbilVersion;
+    public IntDoubleOpenHashMap additionalResults = null;
+    public List<ExperimentTaskResult> subTasks;
 
     /**
-     * Contains the error message if {@link #state} != {@link ExperimentDAO#TASK_FINISHED}, else this should be null.
+     * Contains the error message if {@link #state} !=
+     * {@link ExperimentDAO#TASK_FINISHED}, else this should be null.
      */
     public String stateMsg = null;
 
@@ -81,13 +81,14 @@ public class ExperimentTaskResult {
 
     public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
             double results[], int state, int errorCount) {
-        this(annotator, dataset, type, matching, results, state, errorCount, (new java.util.Date()).getTime(), -1, null);
+        this(annotator, dataset, type, matching, results, state, errorCount, (new java.util.Date()).getTime(), -1,
+                null);
     }
 
-    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state, int errorCount) {
-        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(),
-                configuration.type, configuration.matching, results, state, errorCount, (new java.util.Date())
-                        .getTime());
+    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state,
+            int errorCount) {
+        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
+                configuration.matching, results, state, errorCount, (new java.util.Date()).getTime());
     }
 
     public double[] getResults() {
@@ -219,6 +220,16 @@ public class ExperimentTaskResult {
         builder.append(results[MACRO_RECALL_INDEX]);
         builder.append(",errors=");
         builder.append(errorCount);
+        if (hasAdditionalResults()) {
+            for (int i = 0; i < additionalResults.allocated.length; ++i) {
+                if (additionalResults.allocated[i]) {
+                    builder.append(',');
+                    builder.append(additionalResults.keys[i]);
+                    builder.append('=');
+                    builder.append(additionalResults.values[i]);
+                }
+            }
+        }
         builder.append(")");
         return builder.toString();
     }
@@ -270,5 +281,71 @@ public class ExperimentTaskResult {
         if (type != other.type)
             return false;
         return true;
+    }
+
+    public boolean hasAdditionalResults() {
+        return (additionalResults != null) && (additionalResults.size() > 0);
+    }
+
+    public boolean hasAdditionalResult(int id) {
+        return (additionalResults != null) && (additionalResults.containsKey(id));
+    }
+
+    public IntDoubleOpenHashMap getAdditionalResults() {
+        return additionalResults;
+    }
+
+    public int[] getAdditionalResultIds() {
+        if (hasAdditionalResults()) {
+            return additionalResults.keys().toArray();
+        } else {
+            return new int[0];
+        }
+    }
+
+    public double getAdditionalResult(int id) {
+        if (additionalResults != null) {
+            return additionalResults.get(id);
+        } else {
+            return 0;
+        }
+    }
+
+    public void addAdditionalResult(int resultId, double value) {
+        if (additionalResults == null) {
+            additionalResults = new IntDoubleOpenHashMap();
+        }
+        additionalResults.put(resultId, value);
+    }
+
+    public void setAdditionalResults(IntDoubleOpenHashMap additionalResults) {
+        this.additionalResults = additionalResults;
+    }
+
+    public boolean hasSubTasks() {
+        return (subTasks != null) && (subTasks.size() > 0);
+    }
+
+    public List<ExperimentTaskResult> getSubTasks() {
+        return subTasks;
+    }
+
+    public void addSubTask(ExperimentTaskResult subTaskResult) {
+        if (subTasks == null) {
+            subTasks = new ArrayList<ExperimentTaskResult>();
+        }
+        subTasks.add(subTaskResult);
+    }
+
+    public void setSubTasks(List<ExperimentTaskResult> subTasks) {
+        this.subTasks = subTasks;
+    }
+
+    public int getNumberOfSubTasks() {
+        if (subTasks == null) {
+            return 0;
+        } else {
+            return subTasks.size();
+        }
     }
 }

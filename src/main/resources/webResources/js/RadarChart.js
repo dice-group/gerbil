@@ -46,6 +46,8 @@ var RadarChart = {
 	
 	var g = d3.select(id)
 			.append("svg")
+			.attr("xmlns:svg","http://www.w3.org/2000/svg")
+			.attr("xmlns","http://www.w3.org/2000/svg")
 			.attr("width", cfg.w+cfg.ExtraWidthX)
 			.attr("height", cfg.h+cfg.ExtraWidthY)
 			.append("g")

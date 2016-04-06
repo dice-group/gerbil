@@ -28,6 +28,8 @@ function drawChart(data, LegendOptions, chartElementId){
 	var svg = d3.select('#' + chartElementId + 'body')
 		.selectAll('svg')
 		.append('svg')
+		.attr("xmlns:svg","http://www.w3.org/2000/svg")
+		.attr("xmlns","http://www.w3.org/2000/svg")
 		.attr("width", w+300)
 		.attr("height", h)
 	

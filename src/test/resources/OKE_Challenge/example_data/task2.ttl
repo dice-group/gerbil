@@ -1,0 +1,99 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix d0: <http://ontologydesignpatterns.org/ont/wikipedia/d0.owl#>
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+@prefix oke: <http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/> . 
+@prefix dbpedia: <http://dbpedia.org/resource/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-1#char=0,150>
+     a                     nif:RFC5147String , nif:String , nif:Context ;
+     nif:isString          "Brian Banner is a fictional villain from the Marvel Comics Universe created by Bill Mantlo and Mike Mignola and first appearing in print in late 1985." ;
+     nif:beginIndex        "0"^^xsd:int ;
+     nif:endIndex          "150"^^xsd:int .
+
+dbpedia:Brian_Banner
+      a                    oke:FictionalVillain, oke:Villain ; 
+      rdfs:label           "Brian Banner"@en .  
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-1#char=0,12>
+     a                     nif:RFC5147String , nif:String ;
+     nif:anchorOf          "Brian Banner"@en ;
+     nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-1#char=0,150> ;
+     nif:beginIndex        "0"^^xsd:int ;
+     nif:endIndex          "12"^^xsd:int ;
+     itsrdf:taIdentRef     dbpedia:Brian_Banner .
+     
+oke:FictionalVillain
+     a                     owl:Class ;
+     rdfs:label            "fictional villain"@en ;
+     rdfs:subClassOf       dul:Personification .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/sentence-1#char=18,35>
+     a                     nif:RFC5147String , nif:String ;
+     nif:anchorOf          "fictional villain"@en ;
+     nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-1#char=0,150> ;
+     nif:beginIndex        "18"^^xsd:int ;
+     nif:endIndex          "35"^^xsd:int ;
+     itsrdf:taIdentRef     oke:FictionalVillain .
+     
+oke:Villain
+     a                     owl:Class ;
+     rdfs:label            "villain"@en ;
+     rdfs:subClassOf       dul:Person .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/sentence-1#char=28,35>
+     a                     nif:RFC5147String , nif:String ;
+     nif:anchorOf          "villain"@en ;
+     nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-1#char=0,150> ;
+     nif:beginIndex        "28"^^xsd:int ;
+     nif:endIndex          "35"^^xsd:int ;
+     itsrdf:taIdentRef     oke:Villain .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-2#char=0,182>
+     a                     nif:RFC5147String , nif:String , nif:Context ;
+     nif:isString          "Avex Group Holdings Inc., listed in the Tokyo Stock Exchange as 7860 and abbreviated as AGHD, is the holding company for a group of entertainment-related subsidiaries based in Japan." ;
+     nif:beginIndex        "0"^^xsd:int ;
+     nif:endIndex          "182"^^xsd:int .
+
+dbpedia:AVEX_Records
+     a                     oke:HoldingCompany, oke:Company ;
+     rdfs:label            "Avex Group Holdings Inc." .
+      
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-2#char=0,24>
+     a                     nif:RFC5147String , nif:String ;
+     nif:anchorOf          "Avex Group Holdings Inc."@en ;
+     nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-2#char=0,182> ;
+     nif:beginIndex        "0"^^xsd:int ;
+     nif:endIndex          "24"^^xsd:int ;
+     itsrdf:taIdentRef     dbpedia:AVEX_Records .
+
+oke:HoldingCompany
+     a                     owl:Class ;
+     rdfs:label            "holding company"@en ;
+     rdfs:subClassOf       dul:Organization .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/taks-2/sentence-2#char=101,116>
+     a                     nif:RFC5147String , nif:String ;
+     nif:anchorOf          "holding company"@en ;
+     nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-2#char=0,182> ;
+     nif:beginIndex        "101"^^xsd:int ;
+     nif:endIndex          "116"^^xsd:int ;
+     itsrdf:taIdentRef     oke:HoldingCompany .
+     
+oke:Company
+     a                     owl:Class ;
+     rdfs:label            "company"@en ;
+     rdfs:subClassOf       dul:Organization .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/sentence-2#char=109,116>
+     a                     nif:RFC5147String , nif:String ;
+     nif:anchorOf          "company"@en ;
+     nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-2/sentence-2#char=0,182> ;
+     nif:beginIndex        "109"^^xsd:int ;
+     nif:endIndex          "116"^^xsd:int ;
+     itsrdf:taIdentRef     oke:Company .

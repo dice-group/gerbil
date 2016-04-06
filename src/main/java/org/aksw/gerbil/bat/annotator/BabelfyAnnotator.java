@@ -1,37 +1,30 @@
 /**
- * The MIT License (MIT)
+ * This file is part of General Entity Annotator Benchmark.
  *
- * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ * General Entity Annotator Benchmark is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * General Entity Annotator Benchmark is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.aksw.gerbil.bat.annotator;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.ScoredAnnotation;
-import it.acubelab.batframework.data.ScoredTag;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.utils.AnnotationException;
-import it.acubelab.batframework.utils.ProblemReduction;
-import it.acubelab.batframework.utils.WikipediaApiInterface;
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.data.Mention;
+import it.unipi.di.acube.batframework.data.ScoredAnnotation;
+import it.unipi.di.acube.batframework.data.ScoredTag;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.problems.Sa2WSystem;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.utils.ProblemReduction;
+import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import it.uniroma1.lcl.babelfy.commons.BabelfyConstraints;
 import it.uniroma1.lcl.babelfy.commons.BabelfyParameters;
 import it.uniroma1.lcl.babelfy.commons.IBabelfy;
@@ -66,6 +59,7 @@ import com.google.common.collect.Sets;
  * we have to set {@link #BABELFY_MAX_TEXT_LENGTH}={@value #BABELFY_MAX_TEXT_LENGTH}.
  * </p>
  */
+@Deprecated
 public class BabelfyAnnotator implements Sa2WSystem {
 
 //	private static final Logger LOGGER = LoggerFactory.getLogger(BabelfyAnnotator.class);

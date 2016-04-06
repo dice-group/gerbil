@@ -1,0 +1,2 @@
+http://dbpedia.org/resource/
+http://yago-knowledge.org/resource/

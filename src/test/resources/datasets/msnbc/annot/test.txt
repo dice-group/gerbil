@@ -1,0 +1,166 @@
+<ReferenceProblem>
+<ReferenceFileName>
+test.txt
+</ReferenceFileName>
+<ReferenceInstance>
+<SurfaceForm>
+Home Depot
+</SurfaceForm>
+<Offset>
+0
+</Offset>
+<Length>
+10
+</Length>
+<ChosenAnnotation>
+http://en.wikipedia.org/wiki/Home_Depot
+</ChosenAnnotation>
+<NumAnnotators>
+1
+</NumAnnotators>
+<AnnotatorId>
+Silviu Cucerzan
+</AnnotatorId>
+<Annotation>
+Home Depot
+</Annotation>
+</ReferenceInstance>
+<ReferenceInstance>
+<SurfaceForm>
+CEO
+</SurfaceForm>
+<Offset>
+11
+</Offset>
+<Length>
+3
+</Length>
+<ChosenAnnotation>
+*null*
+</ChosenAnnotation>
+<NumAnnotators>
+1
+</NumAnnotators>
+<AnnotatorId>
+Silviu Cucerzan
+</AnnotatorId>
+<Annotation>
+CEO
+</Annotation>
+</ReferenceInstance>
+<ReferenceInstance>
+<SurfaceForm>
+Nardelli
+</SurfaceForm>
+<Offset>
+15
+</Offset>
+<Length>
+8
+</Length>
+<ChosenAnnotation>
+http://en.wikipedia.org/wiki/Robert_Nardelli
+</ChosenAnnotation>
+<NumAnnotators>
+1
+</NumAnnotators>
+<AnnotatorId>
+Silviu Cucerzan
+</AnnotatorId>
+<Annotation>
+Robert Nardelli
+</Annotation>
+</ReferenceInstance>
+<ReferenceInstance>
+<SurfaceForm>
+ATLANTA
+</SurfaceForm>
+<Offset>
+107
+</Offset>
+<Length>
+7
+</Length>
+<ChosenAnnotation>
+http://en.wikipedia.org/wiki/Atlanta,_Georgia
+</ChosenAnnotation>
+<NumAnnotators>
+1
+</NumAnnotators>
+<AnnotatorId>
+Silviu Cucerzan
+</AnnotatorId>
+<Annotation>
+Atlanta, Georgia
+</Annotation>
+</ReferenceInstance>
+<ReferenceInstance>
+<SurfaceForm>
+Bob Nardelli
+</SurfaceForm>
+<Offset>
+117
+</Offset>
+<Length>
+12
+</Length>
+<ChosenAnnotation>
+http://en.wikipedia.org/wiki/Robert_Nardelli
+</ChosenAnnotation>
+<NumAnnotators>
+1
+</NumAnnotators>
+<AnnotatorId>
+Silviu Cucerzan
+</AnnotatorId>
+<Annotation>
+Robert Nardelli
+</Annotation>
+</ReferenceInstance>
+<ReferenceInstance>
+<SurfaceForm>
+The Home Depot Inc.
+</SurfaceForm>
+<Offset>
+193
+</Offset>
+<Length>
+19
+</Length>
+<ChosenAnnotation>
+http://en.wikipedia.org/wiki/Home_Depot
+</ChosenAnnotation>
+<NumAnnotators>
+1
+</NumAnnotators>
+<AnnotatorId>
+Silviu Cucerzan
+</AnnotatorId>
+<Annotation>
+Home Depot
+</Annotation>
+</ReferenceInstance>
+<ReferenceInstance>
+<SurfaceForm>
+Home Depot
+</SurfaceForm>
+<Offset>
+197
+</Offset>
+<Length>
+10
+</Length>
+<ChosenAnnotation>
+http://en.wikipedia.org/wiki/Home_Depot
+</ChosenAnnotation>
+<NumAnnotators>
+1
+</NumAnnotators>
+<AnnotatorId>
+Silviu Cucerzan
+</AnnotatorId>
+<Annotation>
+Home Depot
+</Annotation>
+</ReferenceInstance>
+</ReferenceProblem>

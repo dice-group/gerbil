@@ -1,40 +1,33 @@
 /**
- * The MIT License (MIT)
+ * This file is part of General Entity Annotator Benchmark.
  *
- * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ * General Entity Annotator Benchmark is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * General Entity Annotator Benchmark is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.aksw.gerbil.database;
-
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 
+import com.carrotsearch.hppc.IntIntOpenHashMap;
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
+
 public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4Debugging {
 
-    private Int2ObjectOpenHashMap<ExperimentTaskResult> results = new Int2ObjectOpenHashMap<ExperimentTaskResult>();
-    private Int2IntOpenHashMap states = new Int2IntOpenHashMap();
+    private IntObjectOpenHashMap<ExperimentTaskResult> results = new IntObjectOpenHashMap<ExperimentTaskResult>();
+    private IntIntOpenHashMap states = new IntIntOpenHashMap();
 
     @Override
     public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskResult result) {
@@ -74,6 +67,18 @@ public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4De
     protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
             String annotatorName, String datasetName) {
         return null;
+    }
+
+    @Override
+    public List<ExperimentTaskResult> getResultsOfExperiment(String experimentId) {
+        List<ExperimentTaskResult> resultsOfExperiment = new ArrayList<ExperimentTaskResult>(
+                results.size() + states.size());
+        for (int i = 0; i < results.allocated.length; ++i) {
+            if (results.allocated[i]) {
+                resultsOfExperiment.add((ExperimentTaskResult) ((Object[]) results.values)[i]);
+            }
+        }
+        return resultsOfExperiment;
     }
 
 }

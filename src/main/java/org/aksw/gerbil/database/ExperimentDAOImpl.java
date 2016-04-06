@@ -1,25 +1,18 @@
 /**
- * The MIT License (MIT)
+ * This file is part of General Entity Annotator Benchmark.
  *
- * Copyright (C) 2014 Agile Knowledge Engineering and Semantic Web (AKSW) (usbeck@informatik.uni-leipzig.de)
+ * General Entity Annotator Benchmark is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * General Entity Annotator Benchmark is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.aksw.gerbil.database;
 
@@ -70,7 +63,13 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
     private final static String SHUTDOWN = "SHUTDOWN";
 
-    // FIXME remove the following two statements by removing the experiment task version workaround
+    private final static String GET_ADDITIONAL_RESULTS = "SELECT resultId, value FROM ExperimentTasks_AdditionalResults WHERE taskId=:taskId";
+    private final static String INSERT_ADDITIONAL_RESULT = "INSERT INTO ExperimentTasks_AdditionalResults(taskId, resultId, value) VALUES (:taskId, :resultId, :value)";
+    private final static String GET_SUB_TASK_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, taskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
+    private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
+
+    // FIXME remove the following two statements by removing the experiment task
+    // version workaround
     private final static String GET_VERSION_OF_EXPERIMENT_TASK = "SELECT version FROM ExperimentTasks_Version WHERE id=:id";
     private final static String INSERT_VERSION_OF_EXPERIMENT_TASK = "INSERT INTO ExperimentTasks_Version (id, version) VALUES(:id,:version)";
 
@@ -91,9 +90,12 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("id", experimentId);
         List<ExperimentTaskResult> result = this.template.query(GET_EXPERIMENT_RESULTS, parameters,
                 new ExperimentTaskResultRowMapper());
-        // FIXME remove this ugly workaround regarding the version of an experiment task
+        // FIXME remove this ugly workaround regarding the version of an
+        // experiment task
         for (ExperimentTaskResult e : result) {
             addVersion(e);
+            addAdditionalResults(e);
+            addSubTasks(e);
         }
         return result;
     }
@@ -110,8 +112,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private String getVersion(int experimentTaskId) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", experimentTaskId);
-        List<String> result = this.template.query(GET_VERSION_OF_EXPERIMENT_TASK, parameters,
-                new StringRowMapper());
+        List<String> result = this.template.query(GET_VERSION_OF_EXPERIMENT_TASK, parameters, new StringRowMapper());
         if (result.size() > 0) {
             return result.get(0);
         } else {
@@ -144,7 +145,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         this.template.update(INSERT_TASK, params, keyHolder);
         Integer generatedKey = (Integer) keyHolder.getKey();
-        connectToExperiment(experimentId, generatedKey);
+        if (experimentId != null) {
+            connectToExperiment(experimentId, generatedKey);
+        }
         // FIXME remove this method and implement a better version handling
         setVersion(generatedKey);
         return generatedKey;
@@ -186,6 +189,27 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("lastChanged", new java.sql.Timestamp(result.timestamp));
 
         this.template.update(SET_EXPERIMENT_TASK_RESULT, parameters);
+        if (result.hasAdditionalResults()) {
+            for (int i = 0; i < result.additionalResults.allocated.length; ++i) {
+                if ((result.additionalResults.allocated[i]) && (result.additionalResults.keys[i] >= 6)) {
+                    addAdditionaResult(experimentTaskId, result.additionalResults.keys[i],
+                            result.additionalResults.values[i]);
+                }
+            }
+        }
+        if (result.hasSubTasks()) {
+            for (ExperimentTaskResult subTask : result.getSubTasks()) {
+                insertSubTask(subTask, experimentTaskId);
+            }
+        }
+    }
+
+    protected void addAdditionaResult(int taskId, int resultId, double value) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", taskId);
+        parameters.addValue("resultId", resultId);
+        parameters.addValue("value", value);
+        this.template.update(INSERT_ADDITIONAL_RESULT, parameters);
     }
 
     @Override
@@ -287,14 +311,56 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("experimentType", experimentType);
         parameters.addValue("matching", matching);
         parameters.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
-        List<ExperimentTaskResult> result = this.template.query(GET_LATEST_EXPERIMENT_TASK_RESULTS, parameters,
+        List<ExperimentTaskResult> results = this.template.query(GET_LATEST_EXPERIMENT_TASK_RESULTS, parameters,
                 new ExperimentTaskResultRowMapper());
-        // FIXME remove this ugly workaround regarding the version of an experiment task
-        // We had to took this part out, because it needs to much time and the version isn't used inside the overview
+        // FIXME remove this ugly workaround regarding the version of an
+        // experiment task
+        // We had to took this part out, because it needs to much time and the
+        // version isn't used inside the overview
         // for (ExperimentTaskResult e : result) {
         // addVersion(e);
         // }
-        return result;
+
+        for (ExperimentTaskResult result : results) {
+            addAdditionalResults(result);
+        }
+        return results;
+    }
+
+    protected void addAdditionalResults(ExperimentTaskResult result) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", result.idInDb);
+        List<IntDoublePair> addResults = this.template.query(GET_ADDITIONAL_RESULTS, parameters,
+                new IntDoublePairRowMapper());
+        for (IntDoublePair a : addResults) {
+            result.addAdditionalResult(a.first, a.second);
+        }
+    }
+
+    protected void insertSubTask(ExperimentTaskResult subTask, int experimentTaskId) {
+        subTask.idInDb = createTask(subTask.annotator, subTask.dataset, subTask.type.name(), subTask.matching.name(),
+                null);
+        setExperimentTaskResult(subTask.idInDb, subTask);
+        addSubTaskRelation(experimentTaskId, subTask.idInDb);
+    }
+
+    protected void addSubTaskRelation(int taskId, int subTaskId) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", taskId);
+        parameters.addValue("subTaskId", subTaskId);
+        this.template.update(INSERT_SUB_TASK_RELATION, parameters);
+    }
+
+    protected void addSubTasks(ExperimentTaskResult expTask) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", expTask.idInDb);
+        List<ExperimentTaskResult> subTasks = this.template.query(GET_SUB_TASK_RESULTS, parameters,
+                new ExperimentTaskResultRowMapper());
+        expTask.setSubTasks(subTasks);
+        for (ExperimentTaskResult subTask : subTasks) {
+            subTask.gerbilVersion = expTask.gerbilVersion;
+            addAdditionalResults(subTask);
+        }
     }
 
     @Override

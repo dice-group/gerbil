@@ -8,7 +8,7 @@
 <link rel='stylesheet' href='/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css'>
 <script	src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
 <script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-<link rel="icon" type="image/png" href="/gerbil/webResources/gerbilicon.png">
+<link rel="icon" type="image/png" href="/gerbil/webResources/gerbilicon_transparent.png">
 </head>
 <body class="container">
 	<%@include file="navbar.jsp"%>
@@ -24,7 +24,7 @@
 			to its tool which abides by a given specification. The 
 			integration and benchmarking of the tool against user-specified 
 			datasets is then carried out automatically by the GERBIL platform. 
-			Currently, out platform provides results for 9 annotators and 
+			Currently, our platform provides results for 9 annotators and 
 			11 datasets with more coming. Internally, GERBIL is based on 
 			the Natural Language Programming Interchange Format (NIF) and 
 			provide Java classes for implementing APIs for datasets and 

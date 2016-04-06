@@ -1,18 +1,34 @@
+/**
+ * This file is part of General Entity Annotator Benchmark.
+ *
+ * General Entity Annotator Benchmark is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * General Entity Annotator Benchmark is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.aksw.gerbil.bat.annotator;
 
-import it.acubelab.batframework.data.Annotation;
-import it.acubelab.batframework.data.Mention;
-import it.acubelab.batframework.data.ScoredAnnotation;
-import it.acubelab.batframework.data.ScoredTag;
-import it.acubelab.batframework.data.Tag;
-import it.acubelab.batframework.problems.A2WSystem;
-import it.acubelab.batframework.problems.C2WSystem;
-import it.acubelab.batframework.problems.D2WSystem;
-import it.acubelab.batframework.problems.Sa2WSystem;
-import it.acubelab.batframework.problems.Sc2WSystem;
-import it.acubelab.batframework.problems.TopicSystem;
-import it.acubelab.batframework.systemPlugins.TimingCalibrator;
-import it.acubelab.batframework.utils.AnnotationException;
+import it.unipi.di.acube.batframework.data.Annotation;
+import it.unipi.di.acube.batframework.data.Mention;
+import it.unipi.di.acube.batframework.data.ScoredAnnotation;
+import it.unipi.di.acube.batframework.data.ScoredTag;
+import it.unipi.di.acube.batframework.data.Tag;
+import it.unipi.di.acube.batframework.problems.A2WSystem;
+import it.unipi.di.acube.batframework.problems.C2WSystem;
+import it.unipi.di.acube.batframework.problems.D2WSystem;
+import it.unipi.di.acube.batframework.problems.Sa2WSystem;
+import it.unipi.di.acube.batframework.problems.Sc2WSystem;
+import it.unipi.di.acube.batframework.problems.TopicSystem;
+import it.unipi.di.acube.batframework.systemPlugins.TimingCalibrator;
+import it.unipi.di.acube.batframework.utils.AnnotationException;
 
 import java.util.Calendar;
 import java.util.HashSet;
