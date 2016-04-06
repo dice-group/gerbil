@@ -46,10 +46,12 @@ import org.aksw.gerbil.matching.impl.ClassifiedMeaningMatchingsSearcher;
 import org.aksw.gerbil.matching.impl.CompoundMatchingsSearcher;
 import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
+import org.aksw.gerbil.matching.impl.QAMatchingsCounter;
 import org.aksw.gerbil.matching.impl.StrongSpanMatchingsSearcher;
 import org.aksw.gerbil.matching.impl.clas.EmergingEntityMeaningClassifier;
 import org.aksw.gerbil.matching.impl.clas.UriBasedMeaningClassifier;
 import org.aksw.gerbil.qa.datatypes.AnswerItemType;
+import org.aksw.gerbil.qa.datatypes.AnswerSet;
 import org.aksw.gerbil.qa.datatypes.Property;
 import org.aksw.gerbil.semantic.kb.ExactWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
@@ -253,8 +255,7 @@ public class EvaluatorFactory {
                     createEvaluator(ExperimentType.C2KB, configuration, dataset));
         }
         case QA: {
-            return null;
-            // FIXME @Ricardo
+            return new FMeasureCalculator<AnswerSet>(new QAMatchingsCounter());
         }
         case RE2KB: {
             return null;
