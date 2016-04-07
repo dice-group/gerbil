@@ -229,15 +229,19 @@ public class MainController {
             return null;
         }
         switch (type) {
-        case C2KB:
-            return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
         case D2KB:
         case ETyping:
             // Mw will not be shown since the positions are always exact and
             // thus it works like Ma
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ANNOTATION_MATCH));
+        case C2KB:
         case Rc2KB:
         case Sc2KB:
+        case QA:
+        case AIT2KB:
+        case AT2KB:
+        case P2KB:
+        case RE2KB:
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
         case OKE_Task1:
         case OKE_Task2:

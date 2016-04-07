@@ -1,6 +1,5 @@
 package org.aksw.gerbil.qa.datatypes;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.aksw.gerbil.transfer.nif.Marking;

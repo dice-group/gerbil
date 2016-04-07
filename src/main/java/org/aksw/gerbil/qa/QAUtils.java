@@ -1,7 +1,8 @@
 package org.aksw.gerbil.qa;
 
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import org.aksw.gerbil.qa.datatypes.AnswerItemType;
 import org.aksw.gerbil.qa.datatypes.AnswerType;
@@ -63,7 +64,7 @@ public class QAUtils {
      */
     protected static void deriveMarkingsFromSparqlQuery(final Document document, final String sparqlQueryString) {
         Query sparqlQuery = QueryFactory.create(sparqlQueryString);
-        final List<String> projectionVariables = sparqlQuery.getResultVars();
+        final Set<String> projectionVariables = new HashSet<String>(sparqlQuery.getResultVars());
         ElementVisitorBase ELB = new ElementVisitorBase() {
             public void visit(ElementPathBlock el) {
                 Iterator<TriplePath> triples = el.patternElts();
@@ -87,7 +88,6 @@ public class QAUtils {
                         oAnnotation = null;
                         // it is only an AnswerItemType if the subject is a
                         // variable and contained in the projection variables
-                        // FIXME @RicardoOrMicha test this contains
                         if (subject.isVariable() && projectionVariables.contains(subject) && object.isURI()) {
                             oAnnotation = new AnswerItemType(object.getURI());
                             document.addMarking(oAnnotation);
@@ -110,7 +110,12 @@ public class QAUtils {
                         }
                     }
                     // Add the triple
-                    document.addMarking(new Relation(sAnnotation, pAnnotation, oAnnotation));
+                    if (object.isLiteral()) {
+                        document.addMarking(
+                                new Relation(sAnnotation, pAnnotation, object.getLiteralValue().toString()));
+                    } else {
+                        document.addMarking(new Relation(sAnnotation, pAnnotation, oAnnotation));
+                    }
                 }
             }
         };

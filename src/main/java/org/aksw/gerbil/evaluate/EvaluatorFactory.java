@@ -44,6 +44,7 @@ import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.matching.MatchingsSearcherFactory;
 import org.aksw.gerbil.matching.impl.ClassifiedMeaningMatchingsSearcher;
 import org.aksw.gerbil.matching.impl.CompoundMatchingsSearcher;
+import org.aksw.gerbil.matching.impl.EqualsBasedMatchingsSearcher;
 import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.matching.impl.QAMatchingsCounter;
@@ -243,31 +244,25 @@ public class EvaluatorFactory {
 
             // -------- QA Experiments --------
 
-        case ATKB: {
-        	//FIXME @Micha@QA führt das hier immer zu einer binären Entscheidung?
-            return new MarkingFilteringEvaluatorDecorator<Meaning>(
-                    new InstanceClassBasedMarkingFilter(AnswerType.class),
-                    createEvaluator(ExperimentType.C2KB, configuration, dataset));
+        case AT2KB: {
+            return new FMeasureCalculator<AnswerType>(
+                    new MatchingsCounterImpl<AnswerType>(new EqualsBasedMatchingsSearcher<AnswerType>()));
         }
         case AIT2KB: {
-        	//FIXME @Micha@QA hierarisches F-measure für Typen?
             return new MarkingFilteringEvaluatorDecorator<Meaning>(
                     new InstanceClassBasedMarkingFilter(AnswerItemType.class),
                     createEvaluator(ExperimentType.C2KB, configuration, dataset));
         }
         case P2KB: {
-            return new MarkingFilteringEvaluatorDecorator<Meaning>(
-            		new InstanceClassBasedMarkingFilter(Property.class),
+            return new MarkingFilteringEvaluatorDecorator<Meaning>(new InstanceClassBasedMarkingFilter(Property.class),
                     createEvaluator(ExperimentType.C2KB, configuration, dataset));
         }
         case QA: {
             return new FMeasureCalculator<AnswerSet>(new QAMatchingsCounter());
         }
         case RE2KB: {
-        	//FIXME @Micha@QA Warum nicht einfach so messen?
-        	 return new MarkingFilteringEvaluatorDecorator<Meaning>(
-             		new InstanceClassBasedMarkingFilter(Relation.class),
-                     createEvaluator(ExperimentType.C2KB, configuration, dataset));
+            return new FMeasureCalculator<Relation>(
+                    new MatchingsCounterImpl<Relation>(new EqualsBasedMatchingsSearcher<Relation>()));
         }
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");

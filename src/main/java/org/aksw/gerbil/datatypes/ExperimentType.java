@@ -42,7 +42,7 @@ public enum ExperimentType implements Describable {
     /**
      * Answer Type 2 KB
      */
-    ATKB("Answer Type 2KB", "The annotator gets a question and shall recognize its answer type."),
+    AT2KB("Answer Type 2KB", "The annotator gets a question and shall recognize its answer type."),
 
     /**
      * Answer Item Type 2 KB
@@ -190,76 +190,69 @@ public enum ExperimentType implements Describable {
             case Rc2KB: {
                 return true;
             }
-            case ETyping: // falls through
-            case OKE_Task1:
-            case OKE_Task2: {
+            default: {
                 return false;
             }
             }
         }
         case Sc2KB: {
             switch (type) {
-            case ERec: // falls through
-            case Sa2KB:
-            case A2KB:
-            case D2KB:
-            case ETyping:
-            case OKE_Task1:
-            case OKE_Task2: {
-                return false;
-            }
             case Sc2KB: // falls through
             case Rc2KB:
             case C2KB: {
                 return true;
             }
+            default: {
+                return false;
+            }
             }
         }
         case Rc2KB: {
             switch (type) {
-            case ERec: // falls through
-            case Sa2KB:
-            case Sc2KB:
-            case A2KB:
-            case D2KB:
-            case ETyping:
-            case OKE_Task1:
-            case OKE_Task2: {
-                return false;
-            }
             case Rc2KB: // falls through
             case C2KB: {
                 return true;
             }
+            default: {
+                return false;
             }
-        }
-        case C2KB: {
-            return type == C2KB;
-        }
-        case D2KB: {
-            return type == D2KB;
-        }
-        case ERec: {
-            return type == ERec;
-        }
-        case ETyping: {
-            return type == ETyping;
+            }
         }
         case OKE_Task1: {
             switch (type) {
-            case OKE_Task2: {
-                return false;
-            }
-            default: {
+            case C2KB: // falls through
+            case A2KB:
+            case D2KB:
+            case ERec:
+            case ETyping:
+            case Sa2KB:
+            case Sc2KB:
+            case Rc2KB:
+            case OKE_Task1: {
                 return true;
             }
+            default: {
+                return false;
+            }
             }
         }
-        case OKE_Task2: {
-            return type == OKE_Task2;
+        case QA: {
+            switch (type) {
+            case AT2KB: // falls through
+            case AIT2KB:
+            case P2KB:
+            case QA:
+            case RE2KB: {
+                return true;
+            }
+            default: {
+                return false;
+            }
+            }
         }
+        default:
+            return this == type;
         }
-        return false;
     }
 
     public String toString() {
