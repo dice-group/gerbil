@@ -23,6 +23,7 @@ import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
 import com.hp.hpl.jena.sparql.syntax.ElementVisitorBase;
 import com.hp.hpl.jena.sparql.syntax.ElementWalker;
 
+//FIXME Micha@QA Was machen wir mit der Datei
 public class QuestionAnsweringPipeline {
 	private static Logger log = LoggerFactory.getLogger(QuestionAnsweringPipeline.class);
 

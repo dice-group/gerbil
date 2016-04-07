@@ -1,6 +1,7 @@
 package org.aksw.gerbil.qa;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.aksw.gerbil.qa.datatypes.AnswerItemType;
 import org.aksw.gerbil.qa.datatypes.AnswerType;
@@ -33,11 +34,13 @@ public class QAUtils {
 
     public static Document translateQuestion(IQuestion question, String questionUri) {
         Document document = new DocumentImpl(question.getLanguageToQuestion().get(QUESTION_LANGUAGE), questionUri);
-        // FIXME Ricardo, add the needed markings to the document
         String sparqlQueryString = question.getSparqlQuery();
+        // FIXME @Ricardo, add the needed markings to the document
+        // properties, answerItemType, relations, entities
         if (sparqlQueryString != null) {
             deriveMarkingsFromSparqlQuery(document, sparqlQueryString);
         }
+        // answerType
         String answerTypeLabel = question.getAnswerType();
         if (answerTypeLabel != null) {
             AnswerTypes answerType = AnswerTypes.valueOf(answerTypeLabel);
@@ -60,6 +63,7 @@ public class QAUtils {
      */
     protected static void deriveMarkingsFromSparqlQuery(final Document document, final String sparqlQueryString) {
         Query sparqlQuery = QueryFactory.create(sparqlQueryString);
+        final List<String> projectionVariables = sparqlQuery.getResultVars();
         ElementVisitorBase ELB = new ElementVisitorBase() {
             public void visit(ElementPathBlock el) {
                 Iterator<TriplePath> triples = el.patternElts();
@@ -80,18 +84,19 @@ public class QAUtils {
                     }
                     // If the predicate is rdf:type
                     if (predicate.equals(RDF.type)) {
-                        // FIXME @Ricardo do we have to check for the ?uri in
-                        // the subject?
-
-                        if (object.isURI()) {
+                        oAnnotation = null;
+                        // it is only an AnswerItemType if the subject is a
+                        // variable and contained in the projection variables
+                        // FIXME @RicardoOrMicha test this contains
+                        if (subject.isVariable() && projectionVariables.contains(subject) && object.isURI()) {
                             oAnnotation = new AnswerItemType(object.getURI());
                             document.addMarking(oAnnotation);
-                        } else {
-                            oAnnotation = null;
                         }
-
-                        // the object is an Answer Item Type
-                        document.addMarking(new AnswerItemType(object.getURI()));
+                        // If the object is not an AnswerItemType but contains a
+                        // URI
+                        if ((oAnnotation == null) && object.isURI()) {
+                            oAnnotation = new Annotation(object.getURI());
+                        }
                         pAnnotation = RDF_TYPE_PROPERTY;
                     } else {
                         // we have found a property
@@ -104,9 +109,8 @@ public class QAUtils {
                             oAnnotation = null;
                         }
                     }
-                    if (subject.isVariable() || object.isVariable()) {
-                        document.addMarking(new Relation(sAnnotation, pAnnotation, oAnnotation));
-                    }
+                    // Add the triple
+                    document.addMarking(new Relation(sAnnotation, pAnnotation, oAnnotation));
                 }
             }
         };

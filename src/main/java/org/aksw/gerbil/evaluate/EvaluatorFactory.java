@@ -52,7 +52,9 @@ import org.aksw.gerbil.matching.impl.clas.EmergingEntityMeaningClassifier;
 import org.aksw.gerbil.matching.impl.clas.UriBasedMeaningClassifier;
 import org.aksw.gerbil.qa.datatypes.AnswerItemType;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
+import org.aksw.gerbil.qa.datatypes.AnswerType;
 import org.aksw.gerbil.qa.datatypes.Property;
+import org.aksw.gerbil.qa.datatypes.Relation;
 import org.aksw.gerbil.semantic.kb.ExactWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
@@ -242,24 +244,30 @@ public class EvaluatorFactory {
             // -------- QA Experiments --------
 
         case ATKB: {
-            return null;
-            // FIXME @Ricardo
+        	//FIXME @Micha@QA führt das hier immer zu einer binären Entscheidung?
+            return new MarkingFilteringEvaluatorDecorator<Meaning>(
+                    new InstanceClassBasedMarkingFilter(AnswerType.class),
+                    createEvaluator(ExperimentType.C2KB, configuration, dataset));
         }
         case AIT2KB: {
+        	//FIXME @Micha@QA hierarisches F-measure für Typen?
             return new MarkingFilteringEvaluatorDecorator<Meaning>(
                     new InstanceClassBasedMarkingFilter(AnswerItemType.class),
                     createEvaluator(ExperimentType.C2KB, configuration, dataset));
         }
         case P2KB: {
-            return new MarkingFilteringEvaluatorDecorator<Meaning>(new InstanceClassBasedMarkingFilter(Property.class),
+            return new MarkingFilteringEvaluatorDecorator<Meaning>(
+            		new InstanceClassBasedMarkingFilter(Property.class),
                     createEvaluator(ExperimentType.C2KB, configuration, dataset));
         }
         case QA: {
             return new FMeasureCalculator<AnswerSet>(new QAMatchingsCounter());
         }
         case RE2KB: {
-            return null;
-            // FIXME @Ricardo
+        	//FIXME @Micha@QA Warum nicht einfach so messen?
+        	 return new MarkingFilteringEvaluatorDecorator<Meaning>(
+             		new InstanceClassBasedMarkingFilter(Relation.class),
+                     createEvaluator(ExperimentType.C2KB, configuration, dataset));
         }
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
