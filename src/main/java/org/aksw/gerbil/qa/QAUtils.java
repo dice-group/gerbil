@@ -3,12 +3,16 @@ package org.aksw.gerbil.qa;
 import java.util.Iterator;
 
 import org.aksw.gerbil.qa.datatypes.AnswerItemType;
+import org.aksw.gerbil.qa.datatypes.AnswerType;
+import org.aksw.gerbil.qa.datatypes.AnswerTypes;
 import org.aksw.gerbil.qa.datatypes.Property;
 import org.aksw.gerbil.qa.datatypes.Relation;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.qa.commons.datastructure.IQuestion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
@@ -21,6 +25,8 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class QAUtils {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(QAUtils.class);
+
     public static final String QUESTION_LANGUAGE = "en";
 
     protected static final Property RDF_TYPE_PROPERTY = new Property(RDF.type.getURI());
@@ -31,6 +37,15 @@ public class QAUtils {
         String sparqlQueryString = question.getSparqlQuery();
         if (sparqlQueryString != null) {
             deriveMarkingsFromSparqlQuery(document, sparqlQueryString);
+        }
+        String answerTypeLabel = question.getAnswerType();
+        if (answerTypeLabel != null) {
+            AnswerTypes answerType = AnswerTypes.valueOf(answerTypeLabel);
+            if (answerType != null) {
+                document.addMarking(new AnswerType(answerType));
+            } else {
+                LOGGER.error("Couldn't parse AnswerType {}. It will be ignored.", answerTypeLabel);
+            }
         }
         return document;
     }
