@@ -1,6 +1,13 @@
 package org.aksw.gerbil.qa.datatypes;
 
-public enum AnswerType {
+import java.util.Set;
 
-	RESOURCE, STRING, NUMBER, DATE; 
+import org.aksw.gerbil.transfer.nif.data.Annotation;
+
+public class AnswerType extends Annotation {
+
+	public AnswerType(Set<String> uris) {
+		super(uris);
+	}
+
 }

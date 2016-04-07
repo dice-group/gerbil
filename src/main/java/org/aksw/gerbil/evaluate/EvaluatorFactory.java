@@ -54,6 +54,7 @@ import org.aksw.gerbil.qa.datatypes.AnswerItemType;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
 import org.aksw.gerbil.qa.datatypes.AnswerType;
 import org.aksw.gerbil.qa.datatypes.Property;
+import org.aksw.gerbil.qa.datatypes.Relation;
 import org.aksw.gerbil.semantic.kb.ExactWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
@@ -263,8 +264,10 @@ public class EvaluatorFactory {
             return new FMeasureCalculator<AnswerSet>(new QAMatchingsCounter());
         }
         case RE2KB: {
-            return null;
-            // FIXME @Ricardo
+        	//FIXME @Micha@QA Warum nicht einfach so messen?
+        	 return new MarkingFilteringEvaluatorDecorator<Meaning>(
+             		new InstanceClassBasedMarkingFilter(Relation.class),
+                     createEvaluator(ExperimentType.C2KB, configuration, dataset));
         }
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");

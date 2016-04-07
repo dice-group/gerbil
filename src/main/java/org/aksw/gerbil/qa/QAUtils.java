@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.aksw.gerbil.qa.datatypes.AnswerItemType;
+import org.aksw.gerbil.qa.datatypes.AnswerType;
 import org.aksw.gerbil.qa.datatypes.Property;
 import org.aksw.gerbil.qa.datatypes.Relation;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -11,6 +12,7 @@ import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.qa.commons.datastructure.IQuestion;
 
+import com.google.common.collect.Sets;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryFactory;
@@ -28,11 +30,18 @@ public class QAUtils {
 
     public static Document translateQuestion(IQuestion question, String questionUri) {
         Document document = new DocumentImpl(question.getLanguageToQuestion().get(QUESTION_LANGUAGE), questionUri);
-        // FIXME Ricardo, add the needed markings to the document
         String sparqlQueryString = question.getSparqlQuery();
+        // FIXME @Ricardo, add the needed markings to the document 
+        //properties, answerItemType, relations, entities
         if (sparqlQueryString != null) {
             deriveMarkingsFromSparqlQuery(document, sparqlQueryString);
         }
+        //answerType
+        Annotation answerType = new AnswerType(Sets.newHashSet(question.getAnswerType()));
+        document.addMarking(answerType);
+        //FIXME @ Micha@QA add answers?
+//        question.getGoldenAnswers();
+        
         return document;
     }
 
@@ -69,7 +78,7 @@ public class QAUtils {
                     if (predicate.equals(RDF.type)) {
                         // it is only an AnswerItemType if the subject is a
                         // variable and contained in the projection variables
-                        // TODO RicardoOrMicha test this contains
+                        // FIXME @RicardoOrMicha test this contains
                         if (subject.isVariable() && projectionVariables.contains(subject) && object.isURI()) {
 	                        oAnnotation = new AnswerItemType(object.getURI());
 	                        document.addMarking(oAnnotation);
@@ -90,6 +99,7 @@ public class QAUtils {
                             oAnnotation = null;
                         }
                     }
+                    // FIXME @Micha@QA Warum nur wenn es Variablen sind?
                     if (subject.isVariable() || object.isVariable()) {
                         document.addMarking(new Relation(sAnnotation, pAnnotation, oAnnotation));
                     }
