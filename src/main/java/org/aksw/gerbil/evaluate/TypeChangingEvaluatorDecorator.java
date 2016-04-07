@@ -19,21 +19,26 @@ package org.aksw.gerbil.evaluate;
 import org.aksw.gerbil.transfer.nif.Marking;
 
 /**
- * Decorator interface of an {@link Evaluator} for implementing the decorator
- * pattern.
+ * This decorator implements the {@link Evaluator} interface for the type
+ * &lt;U&gt; but transforms the lists internally into lists of &lt;V&gt; before
+ * calling the
+ * {@link Evaluator#evaluate(java.util.List, java.util.List, EvaluationResultContainer)}
+ * method of the decorated {@link Evaluator}. The way how it is transformed
+ * depends on the implementation of this interface.
  * 
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  *
- * @param <T>
- *            the {@link Marking} type of the decorated and, thus, of this
- *            {@link Evaluator}
+ * @param <U>
+ *            external {@link Marking} type
+ * @param <V>
+ *            internal {@link Marking} type
  */
-public interface EvaluatorDecorator<T extends Marking> extends Evaluator<T> {
+public interface TypeChangingEvaluatorDecorator<U extends Marking, V extends Marking> extends Evaluator<U> {
 
     /**
      * Returns the decorated {@link Evaluator}.
      * 
      * @return the decorated {@link Evaluator}
      */
-    public Evaluator<T> getDecorated();
+    public Evaluator<V> getDecorated();
 }
