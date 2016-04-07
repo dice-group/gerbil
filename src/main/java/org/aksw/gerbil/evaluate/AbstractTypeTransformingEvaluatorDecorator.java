@@ -21,12 +21,12 @@ import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.Marking;
 
-public abstract class AbstractTypeChangingEvaluatorDecorator<U extends Marking, V extends Marking>
-        implements TypeChangingEvaluatorDecorator<U, V> {
+public abstract class AbstractTypeTransformingEvaluatorDecorator<U extends Marking, V extends Marking>
+        implements TypeTransformingEvaluatorDecorator<U, V> {
 
     protected Evaluator<V> evaluator;
 
-    public AbstractTypeChangingEvaluatorDecorator(Evaluator<V> evaluator) {
+    public AbstractTypeTransformingEvaluatorDecorator(Evaluator<V> evaluator) {
         this.evaluator = evaluator;
     }
 
