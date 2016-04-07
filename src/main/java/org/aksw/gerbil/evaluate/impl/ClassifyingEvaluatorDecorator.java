@@ -21,46 +21,42 @@ import java.util.List;
 
 import org.aksw.gerbil.datatypes.marking.ClassifiedMarking;
 import org.aksw.gerbil.datatypes.marking.ClassifiedMarkingFactory;
-import org.aksw.gerbil.evaluate.EvaluationResultContainer;
+import org.aksw.gerbil.evaluate.AbstractTypeChangingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.evaluate.TypeChangingEvaluatorDecorator;
 import org.aksw.gerbil.matching.impl.clas.MarkingClassifier;
 import org.aksw.gerbil.transfer.nif.Marking;
 
-public class ClassifyingEvaluatorDecorator<T extends Marking, U extends ClassifiedMarking> implements Evaluator<T> {
+/**
+ * This {@link TypeChangingEvaluatorDecorator} transforms {@link Marking}
+ * instances into {@link ClassifiedMarking} instances based on the given
+ * {@link MarkingClassifier} instances.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ *
+ * @param <U>
+ *            The {@link Marking} class
+ * @param <V>
+ *            The {@link ClassifiedMarking} class
+ */
+public class ClassifyingEvaluatorDecorator<U extends Marking, V extends ClassifiedMarking>
+        extends AbstractTypeChangingEvaluatorDecorator<U, V> {
 
-    protected Evaluator<U> evaluator;
-    protected MarkingClassifier<U> classifiers[];
+    protected MarkingClassifier<V> classifiers[];
 
-    public ClassifyingEvaluatorDecorator(Evaluator<U> evaluator,
-            @SuppressWarnings("unchecked") MarkingClassifier<U>... classifiers) {
-        this.evaluator = evaluator;
+    public ClassifyingEvaluatorDecorator(Evaluator<V> evaluator,
+            @SuppressWarnings("unchecked") MarkingClassifier<V>... classifiers) {
+        super(evaluator);
         this.classifiers = classifiers;
     }
 
-    public Evaluator<U> getDecorated() {
-        return evaluator;
-    }
-
-    @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
-        evaluator.evaluate(classify(annotatorResults), classify(goldStandard), results);
-    }
-
-    protected List<List<U>> classify(List<List<T>> markings) {
-        List<List<U>> classifiedMarkings = new ArrayList<List<U>>(markings.size());
-        for (List<T> markingsList : markings) {
-            classifiedMarkings.add(classifyList(markingsList));
-        }
-        return classifiedMarkings;
-    }
-
     @SuppressWarnings("unchecked")
-    private List<U> classifyList(List<T> markings) {
-        List<U> classifiedMarkings = new ArrayList<U>(markings.size());
-        U classifiedMarking;
-        for (T marking : markings) {
-            classifiedMarking = (U) ClassifiedMarkingFactory.createClassifiedMeaning(marking);
+    @Override
+    protected List<V> changeType(List<U> markings) {
+        List<V> classifiedMarkings = new ArrayList<V>(markings.size());
+        V classifiedMarking;
+        for (U marking : markings) {
+            classifiedMarking = (V) ClassifiedMarkingFactory.createClassifiedMeaning(marking);
             for (int i = 0; i < classifiers.length; ++i) {
                 classifiers[i].classify(classifiedMarking);
             }
