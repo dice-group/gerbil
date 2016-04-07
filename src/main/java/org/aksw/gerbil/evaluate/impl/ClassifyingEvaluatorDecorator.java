@@ -21,14 +21,14 @@ import java.util.List;
 
 import org.aksw.gerbil.datatypes.marking.ClassifiedMarking;
 import org.aksw.gerbil.datatypes.marking.ClassifiedMarkingFactory;
-import org.aksw.gerbil.evaluate.AbstractTypeChangingEvaluatorDecorator;
+import org.aksw.gerbil.evaluate.AbstractTypeTransformingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.Evaluator;
-import org.aksw.gerbil.evaluate.TypeChangingEvaluatorDecorator;
+import org.aksw.gerbil.evaluate.TypeTransformingEvaluatorDecorator;
 import org.aksw.gerbil.matching.impl.clas.MarkingClassifier;
 import org.aksw.gerbil.transfer.nif.Marking;
 
 /**
- * This {@link TypeChangingEvaluatorDecorator} transforms {@link Marking}
+ * This {@link TypeTransformingEvaluatorDecorator} transforms {@link Marking}
  * instances into {@link ClassifiedMarking} instances based on the given
  * {@link MarkingClassifier} instances.
  * 
@@ -40,7 +40,7 @@ import org.aksw.gerbil.transfer.nif.Marking;
  *            The {@link ClassifiedMarking} class
  */
 public class ClassifyingEvaluatorDecorator<U extends Marking, V extends ClassifiedMarking>
-        extends AbstractTypeChangingEvaluatorDecorator<U, V> {
+        extends AbstractTypeTransformingEvaluatorDecorator<U, V> {
 
     protected MarkingClassifier<V> classifiers[];
 

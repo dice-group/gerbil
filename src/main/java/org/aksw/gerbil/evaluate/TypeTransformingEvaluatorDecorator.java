@@ -33,7 +33,7 @@ import org.aksw.gerbil.transfer.nif.Marking;
  * @param <V>
  *            internal {@link Marking} type
  */
-public interface TypeChangingEvaluatorDecorator<U extends Marking, V extends Marking> extends Evaluator<U> {
+public interface TypeTransformingEvaluatorDecorator<U extends Marking, V extends Marking> extends Evaluator<U> {
 
     /**
      * Returns the decorated {@link Evaluator}.

@@ -3,13 +3,13 @@ package org.aksw.gerbil.evaluate.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.gerbil.evaluate.AbstractTypeChangingEvaluatorDecorator;
+import org.aksw.gerbil.evaluate.AbstractTypeTransformingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.Evaluator;
-import org.aksw.gerbil.evaluate.TypeChangingEvaluatorDecorator;
+import org.aksw.gerbil.evaluate.TypeTransformingEvaluatorDecorator;
 import org.aksw.gerbil.transfer.nif.Marking;
 
 /**
- * This is a simple {@link TypeChangingEvaluatorDecorator} that casts all
+ * This is a simple {@link TypeTransformingEvaluatorDecorator} that casts all
  * objects to the given internal target class. If an instance is not
  * implementing the given class it will be discarded.
  * 
@@ -20,12 +20,12 @@ import org.aksw.gerbil.transfer.nif.Marking;
  * @param <V>
  *            internal {@link Marking} type
  */
-public class ClassTransformingEvaluatorDecorator<U extends Marking, V extends Marking>
-        extends AbstractTypeChangingEvaluatorDecorator<U, V> {
+public class SimpleTypeTransformingEvaluatorDecorator<U extends Marking, V extends Marking>
+        extends AbstractTypeTransformingEvaluatorDecorator<U, V> {
 
-    private Class<V> clazz;
+    private Class<? extends V> clazz;
 
-    public ClassTransformingEvaluatorDecorator(Evaluator<V> evaluator, Class<V> clazz) {
+    public SimpleTypeTransformingEvaluatorDecorator(Evaluator<V> evaluator, Class<? extends V> clazz) {
         super(evaluator);
         this.clazz = clazz;
     }
