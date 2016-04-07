@@ -1,6 +1,7 @@
 package org.aksw.gerbil.qa;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.aksw.gerbil.qa.datatypes.AnswerItemType;
 import org.aksw.gerbil.qa.datatypes.Property;
@@ -45,6 +46,7 @@ public class QAUtils {
      */
     protected static void deriveMarkingsFromSparqlQuery(final Document document, final String sparqlQueryString) {
         Query sparqlQuery = QueryFactory.create(sparqlQueryString);
+        final List<String> projectionVariables = sparqlQuery.getResultVars();
         ElementVisitorBase ELB = new ElementVisitorBase() {
             public void visit(ElementPathBlock el) {
                 Iterator<TriplePath> triples = el.patternElts();
@@ -65,16 +67,15 @@ public class QAUtils {
                     }
                     // If the predicate is rdf:type
                     if (predicate.equals(RDF.type)) {
-                        // FIXME @Ricardo do we have to check for the ?uri in
-                        // the subject?
-
-                        if (object.isURI()) {
-                            oAnnotation = new AnswerItemType(object.getURI());
-                            document.addMarking(oAnnotation);
-                        } else {
-                            oAnnotation = null;
-                        }
-
+                        // it is only an AnswerItemType if the subject is a
+                        // variable and contained in the projection variables
+                        // TODO RicardoOrMicha test this contains
+                        if (subject.isVariable() && projectionVariables.contains(subject) && object.isURI()) {
+	                        oAnnotation = new AnswerItemType(object.getURI());
+	                        document.addMarking(oAnnotation);
+	                    } else {
+	                        oAnnotation = null;
+	                    }
                         // the object is an Answer Item Type
                         document.addMarking(new AnswerItemType(object.getURI()));
                         pAnnotation = RDF_TYPE_PROPERTY;
