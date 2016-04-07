@@ -102,6 +102,8 @@ public class MainController {
     // DataID URL is generated automatically in the experiment method?
     private DataIDGenerator dataIdGenerator;
 
+    private ExperimentType[] availableExperimentTypes = RootConfig.getAvailableExperimentTypes();
+
     @Autowired
     protected HttpServletRequest request;
 
@@ -146,7 +148,14 @@ public class MainController {
         LOGGER.debug("Got request on /execute with experimentData={}", experimentData);
         Object obj = JSONValue.parse(experimentData);
         JSONObject configuration = (JSONObject) obj;
-        String type = (String) configuration.get("type");
+        String typeString = (String) configuration.get("type");
+        ExperimentType type = null;
+        try {
+            type = ExperimentType.valueOf(typeString);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", typeString);
+            return null;
+        }
         String matching = (String) configuration.get("matching");
         JSONArray jsonAnnotators = (JSONArray) configuration.get("annotator");
         String[] annotators = new String[jsonAnnotators.size()];
@@ -160,11 +169,10 @@ public class MainController {
         }
         ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[annotators.length * datasets.length];
         int count = 0;
-        ExperimentType expType = ExperimentType.valueOf(type);
         for (String annotator : annotators) {
             for (String dataset : datasets) {
-                configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, expType),
-                        adapterManager.getDatasetConfig(dataset, expType), expType, getMatching(matching));
+                configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, type),
+                        adapterManager.getDatasetConfig(dataset, type), type, getMatching(matching));
                 LOGGER.debug("Created config: {}", configs[count]);
                 ++count;
             }
@@ -207,29 +215,19 @@ public class MainController {
 
     @RequestMapping("/exptypes")
     public @ResponseBody ModelMap expTypes() {
-        List<ExperimentType> names = Lists.newArrayList();
-        for (ExperimentType type : ExperimentType.values()) {
-            try {
-                if (ExperimentType.class.getDeclaredField(type.name()).getAnnotation(Deprecated.class) == null)
-                    names.add(type);
-            } catch (Exception e) {
-                LOGGER.error("Couldn't check availability of ExperimentType " + type.toString(), e);
-            }
-        }
-        Collections.sort(names);
-        return new ModelMap("ExperimentType", names.toArray(new ExperimentType[names.size()]));
+        return new ModelMap("ExperimentType", availableExperimentTypes);
     }
-
-    // @RequestMapping("/exptypes")
-    // public @ResponseBody ModelMap expTypes() {
-    // ModelMap model = new ModelMap("ExperimentType", ExperimentType.values());
-    // return model;
-    // }
 
     @SuppressWarnings("deprecation")
     @RequestMapping("/matchings")
     public @ResponseBody ModelMap matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {
-        ExperimentType type = ExperimentType.valueOf(experimentType);
+        ExperimentType type = null;
+        try {
+            type = ExperimentType.valueOf(experimentType);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", experimentType);
+            return null;
+        }
         switch (type) {
         case C2KB:
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
@@ -265,7 +263,14 @@ public class MainController {
 
     @RequestMapping("/datasets")
     public @ResponseBody List<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
-        Set<String> datasets = adapterManager.getDatasetNamesForExperiment(ExperimentType.valueOf(experimentType));
+        ExperimentType type = null;
+        try {
+            type = ExperimentType.valueOf(experimentType);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", experimentType);
+            return null;
+        }
+        Set<String> datasets = adapterManager.getDatasetNamesForExperiment(type);
         List<String> list = Lists.newArrayList(datasets);
         Collections.sort(list);
         return list;

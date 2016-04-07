@@ -16,7 +16,6 @@
  */
 package org.aksw.gerbil.tools;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
@@ -38,9 +37,10 @@ public class DatasetAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetAnalyzer.class);
 
     public static void main(String[] args) {
-        // List<DatasetConfiguration> datasetConfigs =
-        // DatasetsConfig.datasets(RootConfig.getEntityCheckerManager(),
+        // List<DatasetConfiguration> datasetConfigs = DatasetsConfig
+        // .datasets(RootConfig.getEntityCheckerManager(),
         // RootConfig.createSameAsRetriever()).getConfigurations();
+
         List<DatasetConfiguration> datasetConfigs = DatasetsConfig.datasets(null, null).getConfigurations();
         PrintStream output = null;
         try {
@@ -55,7 +55,7 @@ public class DatasetAnalyzer {
                     e.printStackTrace();
                 }
             }
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             IOUtils.closeQuietly(output);

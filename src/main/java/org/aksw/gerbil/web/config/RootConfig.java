@@ -18,7 +18,10 @@ package org.aksw.gerbil.web.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
@@ -26,6 +29,7 @@ import org.aksw.gerbil.dataset.check.impl.EntityCheckerManagerImpl;
 import org.aksw.gerbil.dataset.check.impl.FileBasedCachingEntityCheckerManager;
 import org.aksw.gerbil.dataset.check.impl.HttpBasedEntityChecker;
 import org.aksw.gerbil.dataset.check.impl.InMemoryCachingEntityCheckerManager;
+import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
@@ -108,6 +112,8 @@ public class RootConfig {
     private static final String HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY = "org.aksw.gerbil.dataset.check.HttpBasedEntityChecker.namespace";
     private static final String WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY = "org.aksw.gerbil.semantic.sameas.impl.wiki.WikipediaApiBasedSingleUriSameAsRetriever.domain";
     private static final String SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY = "org.aksw.gerbil.semantic.sameas.impl.UriFilteringSameAsRetrieverDecorator.domainBlacklist";
+
+    private static final String AVAILABLE_EXPERIMENT_TYPES_KEY = "org.aksw.gerbil.web.MainController.availableExperimentTypes";
 
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
@@ -274,6 +280,35 @@ public class RootConfig {
             }
         }
         return manager;
+    }
+
+    public static ExperimentType[] getAvailableExperimentTypes() {
+        Configuration config = GerbilConfiguration.getInstance();
+        Set<ExperimentType> types = new HashSet<ExperimentType>();
+        if (config.containsKey(AVAILABLE_EXPERIMENT_TYPES_KEY)) {
+            String typeNames[] = config.getStringArray(AVAILABLE_EXPERIMENT_TYPES_KEY);
+            ExperimentType type = null;
+            for (int i = 0; i < typeNames.length; ++i) {
+                try {
+                    type = ExperimentType.valueOf(typeNames[i]);
+                    types.add(type);
+                } catch (IllegalArgumentException e) {
+                    LOGGER.warn(
+                            "Couldn't find the experiment type \"{}\" defined in the properties file. It will be ignored.",
+                            typeNames[i]);
+                }
+            }
+        }
+        if (types.size() == 0) {
+            LOGGER.error(
+                    "Couldn't load the list of available experiment types. This GERBIL instance won't work as expected. Please define a list of experiment types using the {} key in the configuration file.",
+                    AVAILABLE_EXPERIMENT_TYPES_KEY);
+            return new ExperimentType[0];
+        } else {
+            ExperimentType typesArray[] = types.toArray(new ExperimentType[types.size()]);
+            Arrays.sort(typesArray);
+            return typesArray;
+        }
     }
 
 }

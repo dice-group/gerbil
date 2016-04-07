@@ -114,7 +114,8 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
         // give the document a URI
         document.setDocumentURI(DOCUMENT_URI + documentCount);
         ++documentCount;
-        LOGGER.info("Started request for {}", document.getDocumentURI());
+        LOGGER.info("Started request for {} (\"{}\")", document.getDocumentURI(),
+                document.getText().length() > 20 ? (document.getText().substring(0, 20) + "...") : document.getText());
         // create NIF document
         String nifDocument = nifCreator.getDocumentAsNIFString(document);
         HttpEntity entity = new StringEntity(nifDocument, "UTF-8");
@@ -156,7 +157,7 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
         LOGGER.info("Finished request for {}", document.getDocumentURI());
         return document;
     }
-    
+
     public String getUrl() {
         return url;
     }
