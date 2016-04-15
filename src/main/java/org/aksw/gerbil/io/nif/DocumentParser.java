@@ -50,7 +50,7 @@ public class DocumentParser {
 
     public DocumentParser(AnnotationParser annotationParser, boolean removeUsedProperties) {
         this.removeUsedProperties = removeUsedProperties;
-        this.annotationParser = new AnnotationParser(removeUsedProperties);
+        this.annotationParser = annotationParser;
     }
 
     public Document getDocument(Model nifModel, Resource documentResource) {
