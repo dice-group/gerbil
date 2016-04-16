@@ -19,9 +19,7 @@ package org.aksw.gerbil.execute;
 import java.util.Arrays;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.TestA2KBAnnotator;
-import org.aksw.gerbil.annotator.TestD2KBAnnotator;
-import org.aksw.gerbil.annotator.TestEntityRecognizer;
+import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.TestDataset;
@@ -47,44 +45,45 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
         ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
     }
 
-    private static final List<Document> INSTANCES = Arrays
-            .asList((Document) new DocumentImpl(
+    private static final List<Document> INSTANCES = Arrays.asList(
+            (Document) new DocumentImpl(
                     "Angelina, her father Jon, and her partner Brad never played together in the same movie.",
-                    "http://www.aksw.org/gerbil/test-document-1", Arrays.asList((Marking) new NamedEntity(21, 3,
-                            "http://www.aksw.org/gerbil/test-document/Jon"), (Marking) new NamedEntity(0, 8,
-                            "http://www.aksw.org/gerbil/test-document/Angelina"), (Marking) new NamedEntity(42, 4,
-                            "http://www.aksw.org/gerbil/test-document/Brad"))),
-                    (Document) new DocumentImpl(
-                            "McDonald’s Corp., which replaced its chief executive officer last week, saw U.S. sales drop 4 percent in February after a short-lived recovery in its domestic market sputtered.",
-                            "http://www.aksw.org/gerbil/test-document-2", Arrays.asList((Marking) new NamedEntity(0,
-                                    16, "http://www.aksw.org/gerbil/test-document/McDonaldsCorp"),
-                                    (Marking) new NamedEntity(76, 4, "http://www.aksw.org/gerbil/test-document/US"))));
+                    "http://www.aksw.org/gerbil/test-document-1",
+                    Arrays.asList((Marking) new NamedEntity(21, 3, "http://www.aksw.org/gerbil/test-document/Jon"),
+                            (Marking) new NamedEntity(0, 8, "http://www.aksw.org/gerbil/test-document/Angelina"),
+                            (Marking) new NamedEntity(42, 4, "http://www.aksw.org/gerbil/test-document/Brad"))),
+            (Document) new DocumentImpl(
+                    "McDonald’s Corp., which replaced its chief executive officer last week, saw U.S. sales drop 4 percent in February after a short-lived recovery in its domestic market sputtered.",
+                    "http://www.aksw.org/gerbil/test-document-2",
+                    Arrays.asList(
+                            (Marking) new NamedEntity(0, 16, "http://www.aksw.org/gerbil/test-document/McDonaldsCorp"),
+                            (Marking) new NamedEntity(76, 4, "http://www.aksw.org/gerbil/test-document/US"))));
 
     @Test
     public void testEntityRecognition() {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                new TestEntityRecognizer(INSTANCES), new TestDataset(INSTANCES, ExperimentType.ERec),
-                ExperimentType.ERec, Matching.STRONG_ANNOTATION_MATCH);
+                new TestAnnotatorConfiguration(INSTANCES, ExperimentType.ERec),
+                new TestDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.STRONG_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 2;
-        configuration = new ExperimentTaskConfiguration(new TestEntityRecognizer(INSTANCES), new TestDataset(INSTANCES,
-                ExperimentType.ERec), ExperimentType.ERec, Matching.WEAK_ANNOTATION_MATCH);
+        configuration = new ExperimentTaskConfiguration(new TestAnnotatorConfiguration(INSTANCES, ExperimentType.ERec),
+                new TestDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.WEAK_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 3;
-        configuration = new ExperimentTaskConfiguration(new TestA2KBAnnotator(INSTANCES), new TestDataset(INSTANCES,
-                ExperimentType.ERec), ExperimentType.ERec, Matching.STRONG_ANNOTATION_MATCH);
+        configuration = new ExperimentTaskConfiguration(new TestAnnotatorConfiguration(INSTANCES, ExperimentType.A2KB),
+                new TestDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.STRONG_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 4;
-        configuration = new ExperimentTaskConfiguration(new TestA2KBAnnotator(INSTANCES), new TestDataset(INSTANCES,
-                ExperimentType.ERec), ExperimentType.ERec, Matching.WEAK_ANNOTATION_MATCH);
+        configuration = new ExperimentTaskConfiguration(new TestAnnotatorConfiguration(INSTANCES, ExperimentType.A2KB),
+                new TestDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.WEAK_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
     }
@@ -93,14 +92,15 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
     public void testEntityLinking() {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
-        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestD2KBAnnotator(INSTANCES),
+        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
+                new TestAnnotatorConfiguration(INSTANCES, ExperimentType.D2KB),
                 new TestDataset(INSTANCES, ExperimentType.D2KB), ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 2;
-        configuration = new ExperimentTaskConfiguration(new TestA2KBAnnotator(INSTANCES), new TestDataset(INSTANCES,
-                ExperimentType.D2KB), ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
+        configuration = new ExperimentTaskConfiguration(new TestAnnotatorConfiguration(INSTANCES, ExperimentType.A2KB),
+                new TestDataset(INSTANCES, ExperimentType.D2KB), ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
     }
@@ -109,14 +109,15 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
     public void testEntityExtraction() {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
-        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestA2KBAnnotator(INSTANCES),
+        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
+                new TestAnnotatorConfiguration(INSTANCES, ExperimentType.A2KB),
                 new TestDataset(INSTANCES, ExperimentType.A2KB), ExperimentType.A2KB, Matching.STRONG_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 2;
-        configuration = new ExperimentTaskConfiguration(new TestA2KBAnnotator(INSTANCES), new TestDataset(INSTANCES,
-                ExperimentType.A2KB), ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH);
+        configuration = new ExperimentTaskConfiguration(new TestAnnotatorConfiguration(INSTANCES, ExperimentType.A2KB),
+                new TestDataset(INSTANCES, ExperimentType.A2KB), ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
     }

@@ -20,14 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.AnnotatorConfiguration;
-import org.aksw.gerbil.annotator.TestA2KBAnnotator;
-import org.aksw.gerbil.annotator.TestC2KBAnnotator;
-import org.aksw.gerbil.annotator.TestD2KBAnnotator;
-import org.aksw.gerbil.annotator.TestEntityRecognizer;
-import org.aksw.gerbil.annotator.TestEntityTyper;
-import org.aksw.gerbil.annotator.TestOKETask1Annotator;
-import org.aksw.gerbil.annotator.TestOKETask2Annotator;
+import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.Dataset;
@@ -43,7 +36,6 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.ErrorFixingSameAsRetriever;
-import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.web.config.AdapterList;
 import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.aksw.gerbil.web.config.RootConfig;
@@ -122,35 +114,11 @@ public class GoldStdEvalTest extends AbstractExperimentTaskTest {
         Assert.assertNotNull(dataset);
 
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                createTestAnnotator(experimentType, dataset.getInstances()), datasetConfig, experimentType, MATCHING);
+                new TestAnnotatorConfiguration(dataset.getInstances(), experimentType), datasetConfig, experimentType,
+                MATCHING);
         runTest(experimentTaskId, experimentDAO, SAME_AS_RETRIEVER, EVALUATOR_FACTORY, configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO,
                         new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0 }));
-    }
-
-    @SuppressWarnings("deprecation")
-    private AnnotatorConfiguration createTestAnnotator(ExperimentType experimentType, List<Document> instances) {
-        switch (experimentType) {
-        case A2KB:
-            return new TestA2KBAnnotator(instances);
-        case C2KB:
-            return new TestC2KBAnnotator(instances);
-        case D2KB:
-            return new TestD2KBAnnotator(instances);
-        case ERec:
-            return new TestEntityRecognizer(instances);
-        case ETyping:
-            return new TestEntityTyper(instances);
-        case OKE_Task1:
-            return new TestOKETask1Annotator(instances);
-        case OKE_Task2:
-            return new TestOKETask2Annotator(instances);
-        case Rc2KB:
-        case Sa2KB:
-        case Sc2KB:
-        default:
-        }
-        return null;
     }
 
 }
