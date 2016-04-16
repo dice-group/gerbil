@@ -36,11 +36,12 @@ public class QAUtils {
     public static Document translateQuestion(IQuestion question, String questionUri) {
         Document document = new DocumentImpl(question.getLanguageToQuestion().get(QUESTION_LANGUAGE), questionUri);
         String sparqlQueryString = question.getSparqlQuery();
-        // FIXME @Ricardo, add the needed markings to the document
+        // add the needed markings to the document
         // properties, answerItemType, relations, entities
         if (sparqlQueryString != null) {
             deriveMarkingsFromSparqlQuery(document, sparqlQueryString);
         }
+        // FIXME @Ricardo if from annotator, load from IQuestion 
         // answerType
         String answerTypeLabel = question.getAnswerType();
         if (answerTypeLabel != null) {
@@ -88,7 +89,7 @@ public class QAUtils {
                         oAnnotation = null;
                         // it is only an AnswerItemType if the subject is a
                         // variable and contained in the projection variables
-                        if (subject.isVariable() && projectionVariables.contains(subject) && object.isURI()) {
+                        if (subject.isVariable() && projectionVariables.contains(subject.getName()) && object.isURI()) {
                             oAnnotation = new AnswerItemType(object.getURI());
                             document.addMarking(oAnnotation);
                         }

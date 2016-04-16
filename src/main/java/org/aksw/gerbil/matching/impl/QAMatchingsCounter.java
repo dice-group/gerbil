@@ -49,14 +49,6 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
             LOGGER.warn("Couldn't determine the question type from the gold standard. Assuming the SELECT type.");
             questionType = QuestionType.SELECT;
         }
-        // FIXME @Ricardo it would be possible to distinguish based on the query
-        // type @Micha@QA Why should we do that? Or do you mean also in the GUI?
-        // switch (questionType) {
-        // case SELECT:
-        // return countMatchingsOfSelect(annotatorAnswers, goldStandardAnswers);
-        // case ASK:
-        // return countMatchingsOfAsk(annotatorAnswers, goldStandardAnswers);
-        // }
         return countMatchings(annotatorAnswers, goldStandardAnswers);
     }
 

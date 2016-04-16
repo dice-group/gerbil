@@ -35,6 +35,7 @@ import org.aksw.gerbil.evaluate.impl.DoubleResultComparator;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.GSInKBClassifyingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.HierarchicalFMeasureCalculator;
+import org.aksw.gerbil.evaluate.impl.SimpleTypeTransformingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.SpanMergingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.SubTaskAverageCalculator;
 import org.aksw.gerbil.evaluate.impl.filter.MarkingFilteringEvaluatorDecorator;
@@ -61,12 +62,12 @@ import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
-import org.aksw.gerbil.utils.filter.InstanceClassBasedMarkingFilter;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -245,24 +246,29 @@ public class EvaluatorFactory {
             // -------- QA Experiments --------
 
         case AT2KB: {
-            return new FMeasureCalculator<AnswerType>(
-                    new MatchingsCounterImpl<AnswerType>(new EqualsBasedMatchingsSearcher<AnswerType>()));
+            return new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerType>(
+                    new FMeasureCalculator<AnswerType>(
+                            new MatchingsCounterImpl<AnswerType>(new EqualsBasedMatchingsSearcher<AnswerType>())),
+                    AnswerType.class);
         }
         case AIT2KB: {
-            return new MarkingFilteringEvaluatorDecorator<Meaning>(
-                    new InstanceClassBasedMarkingFilter(AnswerItemType.class),
-                    createEvaluator(ExperimentType.C2KB, configuration, dataset));
+            return new SimpleTypeTransformingEvaluatorDecorator<Marking, Meaning>(
+                    (Evaluator<Meaning>) createEvaluator(ExperimentType.C2KB, configuration, dataset),
+                    AnswerItemType.class);
         }
         case P2KB: {
-            return new MarkingFilteringEvaluatorDecorator<Meaning>(new InstanceClassBasedMarkingFilter(Property.class),
-                    createEvaluator(ExperimentType.C2KB, configuration, dataset));
+            return new SimpleTypeTransformingEvaluatorDecorator<Marking, Meaning>(
+                    (Evaluator<Meaning>) createEvaluator(ExperimentType.C2KB, configuration, dataset), Property.class);
         }
         case QA: {
-            return new FMeasureCalculator<AnswerSet>(new QAMatchingsCounter());
+            return new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerSet>(
+                    new FMeasureCalculator<AnswerSet>(new QAMatchingsCounter()), AnswerSet.class);
         }
         case RE2KB: {
-            return new FMeasureCalculator<Relation>(
-                    new MatchingsCounterImpl<Relation>(new EqualsBasedMatchingsSearcher<Relation>()));
+            return new SimpleTypeTransformingEvaluatorDecorator<Marking, Relation>(
+                    new FMeasureCalculator<Relation>(
+                            new MatchingsCounterImpl<Relation>(new EqualsBasedMatchingsSearcher<Relation>())),
+                    Relation.class);
         }
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");

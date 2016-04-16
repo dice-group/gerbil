@@ -17,6 +17,7 @@
 package org.aksw.gerbil.execute;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.A2KBAnnotator;
@@ -27,6 +28,7 @@ import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
+import org.aksw.gerbil.annotator.QASystem;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
@@ -118,7 +120,8 @@ public class ExperimentTask implements Task {
             ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator
                     .createDecorator(configuration.type, decoratedAnnotator, dataset.size());
             decoratedAnnotator = errorCounter;
-            decoratedAnnotator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type, decoratedAnnotator);
+            decoratedAnnotator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type,
+                    decoratedAnnotator);
 
             List<Evaluator<?>> evaluators = new ArrayList<Evaluator<?>>();
             evFactory.addEvaluators(evaluators, configuration, dataset);
@@ -379,10 +382,6 @@ public class ExperimentTask implements Task {
             }
             break;
         }
-        case Sc2KB: // Falls through
-        case Rc2KB: {
-            throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
-        }
         case ERec: {
             try {
                 List<List<Span>> results = new ArrayList<List<Span>>(dataset.size());
@@ -478,6 +477,37 @@ public class ExperimentTask implements Task {
             }
             break;
         }
+        case QA: {
+            try {
+                List<List<Marking>> results = new ArrayList<List<Marking>>(dataset.size());
+                List<List<Marking>> goldStandard = new ArrayList<List<Marking>>(dataset.size());
+                QASystem qaSystem = ((QASystem) annotator);
+
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a text and a list of Spans
+                    results.add(qaSystem.answerQuestion(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings());
+                    taskState.increaseExperimentStepCount();
+                }
+                List<Meaning> meanings = new ArrayList<Meaning>(results.size());
+                for (List<Marking> markings : results) {
+                    for (Marking marking : markings) {
+                        if (marking instanceof Meaning) {
+                            meanings.add((Meaning) marking);
+                        }
+                    }
+                }
+                prepareAnnotatorResults(Arrays.asList(meanings), globalRetriever);
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case Sc2KB: // Falls through
+        case Rc2KB:
         default:
             throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
                     ErrorTypes.UNEXPECTED_EXCEPTION);
