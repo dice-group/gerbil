@@ -39,6 +39,7 @@ import org.aksw.gerbil.semantic.sameas.impl.ErrorFixingSameAsRetriever;
 import org.aksw.gerbil.web.config.AdapterList;
 import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.aksw.gerbil.web.config.RootConfig;
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -106,11 +107,17 @@ public class GoldStdEvalTest extends AbstractExperimentTaskTest {
     }
 
     @Test
-    public void test() throws GerbilException {
+    public void test() {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
 
-        Dataset dataset = datasetConfig.getDataset(experimentType);
+        Dataset dataset = null;
+        try {
+            dataset = datasetConfig.getDataset(experimentType);
+        } catch (GerbilException e) {
+            IOUtils.closeQuietly(experimentDAO);
+            throw new RuntimeException("Couldn't load dataset " + datasetConfig.getName(), e);
+        }
         Assert.assertNotNull(dataset);
 
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
