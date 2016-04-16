@@ -48,7 +48,7 @@ import com.carrotsearch.hppc.ObjectLongOpenHashMap;
  */
 public class FileBasedCachingEntityCheckerManager extends EntityCheckerManagerImpl {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryCachingEntityCheckerManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileBasedCachingEntityCheckerManager.class);
 
     private static final int MAX_CONCURRENT_READERS = 1000;
     private static final int EXISTS_FLAG_MASK = 0x1;
