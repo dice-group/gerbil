@@ -12,6 +12,7 @@ import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
+import org.aksw.gerbil.annotator.QASystem;
 import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -23,7 +24,7 @@ import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 
 public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2KBAnnotator, C2KBAnnotator,
-        D2KBAnnotator, EntityRecognizer, EntityTyper, OKETask1Annotator, OKETask2Annotator {
+        D2KBAnnotator, EntityRecognizer, EntityTyper, OKETask1Annotator, OKETask2Annotator, QASystem {
 
     protected Map<String, Document> uriInstanceMapping;
 
@@ -85,5 +86,10 @@ public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2K
     @Override
     public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
         return getDocumentMarkings(document.getDocumentURI(), MeaningSpan.class);
+    }
+
+    @Override
+    public List<Marking> answerQuestion(Document document) throws GerbilException {
+        return getDocumentMarkings(document.getDocumentURI(), Marking.class);
     }
 }
