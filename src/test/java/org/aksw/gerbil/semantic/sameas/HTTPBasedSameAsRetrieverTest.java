@@ -40,11 +40,7 @@ public class HTTPBasedSameAsRetrieverTest {
         testConfigs.add(new Object[] { null, null });
         testConfigs.add(new Object[] { "http://aksw.org/notInWiki/Peter_Pan", null });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Kaufland",
-                Arrays.asList("http://fr.dbpedia.org/resource/Kaufland", "http://de.dbpedia.org/resource/Kaufland",
-                        "http://wikidata.dbpedia.org/resource/Q685967", "http://cs.dbpedia.org/resource/Kaufland",
-                        "http://nl.dbpedia.org/resource/Kaufland", "http://pl.dbpedia.org/resource/Kaufland",
-                        "http://wikidata.org/entity/Q685967", "http://rdf.freebase.com/ns/m.0dwt4w",
-                        "http://yago-knowledge.org/resource/Kaufland") });
+                Arrays.asList("http://fr.dbpedia.org/resource/Kaufland", "http://de.dbpedia.org/resource/Kaufland") });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Malaysia",
                 Arrays.asList("http://de.dbpedia.org/resource/Malaysia") });
         testConfigs.add(new Object[] {"http://dbpedia.org/resource/People's_Republic_of_China",
