@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.TestOKETask1Annotator;
+import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
@@ -72,110 +72,55 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
                 new double[] { 0, 0, 0, 0, 0, 0, 0 } });
         // The extractor found everything and marked all entities using dbpedia
         // URIs (if they were available)
-        testConfigs
-                .add(new Object[] {
-                        new Document[] {
-                                new DocumentImpl(
-                                        TEXTS[0],
-                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1",
-                                        Arrays.asList(
-                                                (Marking) new TypedNamedEntity(
-                                                        0,
-                                                        20,
-                                                        "http://dbpedia.org/resource/Florence_May_Harding",
-                                                        new HashSet<String>(
-                                                                Arrays.asList(
-                                                                        "http://www.w3.org/2002/07/owl#Individual",
-                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
-                                                (Marking) new TypedNamedEntity(
-                                                        44,
-                                                        6,
-                                                        "http://dbpedia.org/resource/Sydney",
-                                                        new HashSet<String>(
-                                                                Arrays.asList(
-                                                                        "http://www.w3.org/2002/07/owl#Individual",
-                                                                        "http://ontologydesignpatterns.org/ont/wikipedia/d0.owl#Location"))),
-                                                (Marking) new TypedNamedEntity(
-                                                        61,
-                                                        21,
-                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Douglas_Robert_Dundas",
-                                                        new HashSet<String>(
-                                                                Arrays.asList(
-                                                                        "http://www.w3.org/2002/07/owl#Individual",
-                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))))),
-                                new DocumentImpl(
-                                        TEXTS[1],
-                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
-                                        Arrays.asList(
-                                                (Marking) new TypedNamedEntity(
-                                                        22,
-                                                        14,
-                                                        "http://dbpedia.org/resource/James_Carville",
-                                                        new HashSet<String>(
-                                                                Arrays.asList(
-                                                                        "http://www.w3.org/2002/07/owl#Individual",
-                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
-                                                (Marking) new TypedNamedEntity(
-                                                        57,
-                                                        17,
-                                                        "http://dbpedia.org/resource/Political_consulting",
-                                                        new HashSet<String>(
-                                                                Arrays.asList(
-                                                                        "http://www.w3.org/2002/07/owl#Individual",
-                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"))),
-                                                (Marking) new TypedNamedEntity(
-                                                        78,
-                                                        12,
-                                                        "http://dbpedia.org/resource/Bill_Clinton",
-                                                        new HashSet<String>(
-                                                                Arrays.asList(
-                                                                        "http://www.w3.org/2002/07/owl#Individual",
-                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
-                                                (Marking) new TypedNamedEntity(
-                                                        96,
-                                                        13,
-                                                        "http://dbpedia.org/resource/Donna_Brazile",
-                                                        new HashSet<String>(
-                                                                Arrays.asList(
-                                                                        "http://www.w3.org/2002/07/owl#Individual",
-                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
-                                                (Marking) new TypedNamedEntity(
-                                                        115,
-                                                        16,
-                                                        "http://dbpedia.org/resource/Campaign_manager",
-                                                        new HashSet<String>(
-                                                                Arrays.asList(
-                                                                        "http://www.w3.org/2002/07/owl#Individual",
-                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"))),
-                                                (Marking) new TypedNamedEntity(
-                                                        184,
-                                                        7,
-                                                        "http://dbpedia.org/resource/Al_Gore",
-                                                        new HashSet<String>(
-                                                                Arrays.asList(
-                                                                        "http://www.w3.org/2002/07/owl#Individual",
-                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))))),
-                                new DocumentImpl(
-                                        TEXTS[2],
-                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
-                                        Arrays.asList(
-                                                (Marking) new TypedNamedEntity(
-                                                        4,
-                                                        7,
-                                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Senator_1",
-                                                        new HashSet<String>(
-                                                                Arrays.asList(
-                                                                        "http://www.w3.org/2002/07/owl#Individual",
-                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
-                                                (Marking) new TypedNamedEntity(
-                                                        49,
-                                                        19,
-                                                        "http://dbpedia.org/resource/Columbia_University",
-                                                        new HashSet<String>(
-                                                                Arrays.asList(
-                                                                        "http://www.w3.org/2002/07/owl#Individual",
-                                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization"))))) },
-                        GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+        testConfigs.add(new Object[] {
+                new Document[] {
+                        new DocumentImpl(TEXTS[0],
+                                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1",
+                                Arrays.asList(
+                                        (Marking) new TypedNamedEntity(0, 20,
+                                                "http://dbpedia.org/resource/Florence_May_Harding",
+                                                new HashSet<String>(Arrays.asList(
+                                                        "http://www.w3.org/2002/07/owl#Individual",
+                                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
+                                (Marking) new TypedNamedEntity(44, 6, "http://dbpedia.org/resource/Sydney",
+                                        new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
+                                                "http://ontologydesignpatterns.org/ont/wikipedia/d0.owl#Location"))),
+                        (Marking) new TypedNamedEntity(61, 21,
+                                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Douglas_Robert_Dundas",
+                                new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
+                                        "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))))),
+                new DocumentImpl(TEXTS[1], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
+                        Arrays.asList(
+                                (Marking) new TypedNamedEntity(22, 14, "http://dbpedia.org/resource/James_Carville",
+                                        new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
+                                                "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
+                                (Marking) new TypedNamedEntity(57, 17,
+                                        "http://dbpedia.org/resource/Political_consulting",
+                                        new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
+                                                "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"))),
+                                (Marking) new TypedNamedEntity(78, 12, "http://dbpedia.org/resource/Bill_Clinton",
+                                        new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
+                                                "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
+                                (Marking) new TypedNamedEntity(96, 13, "http://dbpedia.org/resource/Donna_Brazile",
+                                        new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
+                                                "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
+                                (Marking) new TypedNamedEntity(115, 16, "http://dbpedia.org/resource/Campaign_manager",
+                                        new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
+                                                "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"))),
+                                (Marking) new TypedNamedEntity(184, 7, "http://dbpedia.org/resource/Al_Gore",
+                                        new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
+                                                "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))))),
+                new DocumentImpl(TEXTS[2], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
+                        Arrays.asList(
+                                (Marking) new TypedNamedEntity(4, 7,
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Senator_1",
+                                        new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
+                                                "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person"))),
+                                (Marking) new TypedNamedEntity(49, 19,
+                                        "http://dbpedia.org/resource/Columbia_University",
+                                        new HashSet<String>(Arrays.asList("http://www.w3.org/2002/07/owl#Individual",
+                                                "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization"))))) },
+                GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
         return testConfigs;
     }
 
@@ -196,8 +141,9 @@ public class OKEChallengeTask1Test extends AbstractExperimentTaskTest {
     public void test() {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
-        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestOKETask1Annotator(
-                Arrays.asList(annotatorResults)), dataset, ExperimentType.OKE_Task1, matching);
+        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
+                new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.OKE_Task1), dataset,
+                ExperimentType.OKE_Task1, matching);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }

@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.TestA2KBAnnotator;
+import org.aksw.gerbil.annotator.AnnotatorConfiguration;
+import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.Dataset;
@@ -129,7 +130,7 @@ public class FileBasedA2KBTest extends AbstractExperimentTaskTest {
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResultWithoutConfidence));
     }
 
-    public TestA2KBAnnotator loadAnnotatorFile(String annotatorFileName, boolean eraseConfidenceValues)
+    public AnnotatorConfiguration loadAnnotatorFile(String annotatorFileName, boolean eraseConfidenceValues)
             throws GerbilException {
         Dataset dataset = (new NIFFileDatasetConfig("ANNOTATOR", annotatorFileName, false, EXPERIMENT_TYPE))
                 .getDataset(EXPERIMENT_TYPE);
@@ -149,6 +150,6 @@ public class FileBasedA2KBTest extends AbstractExperimentTaskTest {
         } else {
             instances = dataset.getInstances();
         }
-        return new TestA2KBAnnotator(instances);
+        return new TestAnnotatorConfiguration(instances, ExperimentType.A2KB);
     }
 }

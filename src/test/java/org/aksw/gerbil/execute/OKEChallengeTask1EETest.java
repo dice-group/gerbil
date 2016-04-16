@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.TestA2KBAnnotator;
+import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
@@ -186,7 +186,8 @@ public class OKEChallengeTask1EETest extends AbstractExperimentTaskTest {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                new TestA2KBAnnotator(Arrays.asList(annotatorResults)), dataset, ExperimentType.A2KB, matching);
+                new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.A2KB), dataset,
+                ExperimentType.A2KB, matching);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }

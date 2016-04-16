@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.TestC2KBAnnotator;
+import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
@@ -60,7 +60,7 @@ public class C2KBTest extends AbstractExperimentTaskTest {
         MatchingsCounterImpl.setPrintDebugMsg(true);
         ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
         ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
-    
+
     }
 
     private static final String TEXTS[] = new String[] {
@@ -220,7 +220,8 @@ public class C2KBTest extends AbstractExperimentTaskTest {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                new TestC2KBAnnotator(Arrays.asList(annotatorResults)), dataset, ExperimentType.C2KB, matching);
+                new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.C2KB), dataset,
+                ExperimentType.C2KB, matching);
         runTest(experimentTaskId, experimentDAO, SameAsRetrieverSingleton4Tests.getInstance(),
                 new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));

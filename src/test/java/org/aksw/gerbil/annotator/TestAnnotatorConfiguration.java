@@ -16,31 +16,29 @@
  */
 package org.aksw.gerbil.annotator;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.aksw.gerbil.annotator.impl.instance.InstanceListBasedAnnotator;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.utils.ClosePermitionGranter;
 import org.junit.Ignore;
 
 @Ignore
-public class AbstractTestAnnotator extends AbstractAdapterConfiguration implements Annotator, AnnotatorConfiguration {
+public class TestAnnotatorConfiguration extends AbstractAdapterConfiguration implements AnnotatorConfiguration {
 
-    protected Map<String, Document> uriInstanceMapping;
+    private Annotator annotator;
 
-    public AbstractTestAnnotator(String annotatorName, boolean couldBeCached, List<Document> instances,
+    public TestAnnotatorConfiguration(List<Document> instances, ExperimentType applicableForExperiment) {
+        this("Test-" + applicableForExperiment.name(), false, instances, applicableForExperiment);
+    }
+
+    public TestAnnotatorConfiguration(String annotatorName, boolean couldBeCached, List<Document> instances,
             ExperimentType applicableForExperiment) {
         super(annotatorName, couldBeCached, applicableForExperiment);
-        this.uriInstanceMapping = new HashMap<String, Document>(instances.size());
-        for (Document document : instances) {
-            uriInstanceMapping.put(document.getDocumentURI(), document);
-        }
+        annotator = new InstanceListBasedAnnotator(annotatorName, instances);
     }
 
     @Override
@@ -56,25 +54,7 @@ public class AbstractTestAnnotator extends AbstractAdapterConfiguration implemen
     }
 
     protected Annotator loadAnnotator(ExperimentType type) throws Exception {
-        return this;
-    }
-
-    protected Document getDocument(String uri) {
-        if (uriInstanceMapping.containsKey(uri)) {
-            return uriInstanceMapping.get(uri);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void close() throws IOException {
-        // nothing to do
-    }
-
-    @Override
-    public void setClosePermitionGranter(ClosePermitionGranter granter) {
-        // nothing to do
+        return annotator;
     }
 
 }

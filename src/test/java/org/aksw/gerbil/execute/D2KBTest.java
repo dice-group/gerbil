@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.TestD2KBAnnotator;
+import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
@@ -59,7 +59,7 @@ public class D2KBTest extends AbstractExperimentTaskTest {
         MatchingsCounterImpl.setPrintDebugMsg(true);
         ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
         ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
-    
+
     }
 
     private static final String TEXTS[] = new String[] {
@@ -273,7 +273,8 @@ public class D2KBTest extends AbstractExperimentTaskTest {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                new TestD2KBAnnotator(Arrays.asList(annotatorResults)), dataset, ExperimentType.D2KB, matching);
+                new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.D2KB), dataset,
+                ExperimentType.D2KB, matching);
         runTest(experimentTaskId, experimentDAO, EVALUATOR_FACTORY, configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }
