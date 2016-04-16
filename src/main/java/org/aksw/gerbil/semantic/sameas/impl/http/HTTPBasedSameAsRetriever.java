@@ -87,7 +87,7 @@ public class HTTPBasedSameAsRetriever extends AbstractHttpRequestEmitter impleme
         try {
             request = createGetRequest(uri);
         } catch (IllegalArgumentException e) {
-            LOGGER.error("Exception while sending request for \"" + uri + "\". Returning null.", e);
+            LOGGER.info("Exception while sending request for \"" + uri + "\". Returning null.", e);
             return null;
         }
         request.addHeader(HttpHeaders.ACCEPT, REQUEST_ACCEPT_HEADER_VALUE);
@@ -106,32 +106,32 @@ public class HTTPBasedSameAsRetriever extends AbstractHttpRequestEmitter impleme
                             + "\" needed too much time and was interrupted. Returning null.");
                     return null;
                 } else {
-                    LOGGER.error("Exception while sending request to \"" + uri + "\". Returning null.", e);
+                    LOGGER.info("Exception while sending request to \"" + uri + "\". Returning null.", e);
                     return null;
                 }
             } catch (UnknownHostException e) {
                 LOGGER.info("Couldn't find host of \"" + uri + "\". Returning null.");
                 return null;
             } catch (Exception e) {
-                LOGGER.error("Exception while sending request to \"" + uri + "\". Returning null.", e);
+                LOGGER.info("Exception while sending request to \"" + uri + "\". Returning null.", e);
                 return null;
             }
             StatusLine status = response.getStatusLine();
             if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
-                LOGGER.warn("Response of \"{}\" has the wrong status ({}). Returning null.", uri, status.toString());
+                LOGGER.info("Response of \"{}\" has the wrong status ({}). Returning null.", uri, status.toString());
                 return null;
             }
             // receive NIF document
             entity = response.getEntity();
             Header contentTypeHeader = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
             if (contentTypeHeader == null) {
-                LOGGER.error("The response did not contain a content type header. Returning null.");
+                LOGGER.info("The response did not contain a content type header. Returning null.");
                 return null;
             }
             ContentType contentType = ContentType.create(contentTypeHeader.getValue());
             Lang language = RDFLanguages.contentTypeToLang(contentType);
             if (language == null) {
-                LOGGER.error("Couldn't find an RDF language for the content type header value \"{}\". Returning null.",
+                LOGGER.info("Couldn't find an RDF language for the content type header value \"{}\". Returning null.",
                         contentTypeHeader.getValue());
                 return null;
             }
@@ -140,7 +140,7 @@ public class HTTPBasedSameAsRetriever extends AbstractHttpRequestEmitter impleme
                 model = ModelFactory.createDefaultModel();
                 RDFDataMgr.read(model, entity.getContent(), language);
             } catch (Exception e) {
-                LOGGER.error("Couldn't parse the response for the URI \"" + uri + "\". Returning null", e);
+                LOGGER.info("Couldn't parse the response for the URI \"" + uri + "\". Returning null", e);
             }
         } finally {
             if (entity != null) {
