@@ -45,6 +45,7 @@ public class QAUtils {
         // answerType
         String answerTypeLabel = question.getAnswerType();
         if (answerTypeLabel != null) {
+            answerTypeLabel = answerTypeLabel.toUpperCase();
             AnswerTypes answerType = AnswerTypes.valueOf(answerTypeLabel);
             if (answerType != null) {
                 document.addMarking(new AnswerType(answerType));
