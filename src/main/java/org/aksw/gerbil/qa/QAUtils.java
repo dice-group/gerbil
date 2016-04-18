@@ -41,7 +41,7 @@ public class QAUtils {
         if (sparqlQueryString != null) {
             deriveMarkingsFromSparqlQuery(document, sparqlQueryString);
         }
-        // FIXME @Ricardo if from annotator, load from IQuestion 
+        // FIXME @Ricardo if from annotator, load from IQuestion
         // answerType
         String answerTypeLabel = question.getAnswerType();
         if (answerTypeLabel != null) {
@@ -65,7 +65,15 @@ public class QAUtils {
      * @param question
      */
     protected static void deriveMarkingsFromSparqlQuery(final Document document, final String sparqlQueryString) {
-        Query sparqlQuery = QueryFactory.create(sparqlQueryString);
+        Query sparqlQuery = null;
+        try {
+            sparqlQuery = QueryFactory.create(sparqlQueryString);
+        } catch (Exception e) {
+            LOGGER.error(
+                    "Couldn't parse the given SPARQL Query \"" + sparqlQueryString + "\". Throwing catched exception.",
+                    e);
+            throw e;
+        }
         final Set<String> projectionVariables = new HashSet<String>(sparqlQuery.getResultVars());
         ElementVisitorBase ELB = new ElementVisitorBase() {
             public void visit(ElementPathBlock el) {
