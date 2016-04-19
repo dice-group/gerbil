@@ -107,8 +107,8 @@ public class NERDAnnotator extends AbstractAnnotator implements A2KBAnnotator {
      * Send request to NERD and parse the response as a set of scored
      * annotations.
      *
-     * @param text
-     *            the text to send
+     * @param document
+     *            the document to send
      */
     public Document getNERDAnnotations(Document document) throws GerbilException {
         Document resultDoc = new DocumentImpl(document.getText(), document.getDocumentURI());

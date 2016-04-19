@@ -23,7 +23,7 @@ package org.aksw.gerbil.semantic.subclass;
  * contain at least one single {@link ClassNode} object representing the given
  * class.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public interface SubClassInferencer {

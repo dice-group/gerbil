@@ -354,7 +354,6 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
      * Removes the given {@link Annotator} from the registration.
      * 
      * @param decoratedAnnotator
-     * @return
      */
     protected static void unregisterAnnotator(Annotator decoratedAnnotator) {
         try {

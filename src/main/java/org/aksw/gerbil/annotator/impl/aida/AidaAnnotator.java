@@ -60,8 +60,10 @@ import org.springframework.util.StreamUtils;
 
 /**
  * Client implementation of the web service of the AIDA annotator. The API is
- * described here:
- * {@link http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/aida/webservice/}
+ * described here: <a href=
+ * "http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/research/yago-naga/aida/webservice/">
+ * http://www.mpi-inf.mpg.de/departments/databases-and-information-systems/
+ * research/yago-naga/aida/webservice/</a>
  * 
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  *
@@ -106,7 +108,8 @@ public class AidaAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnn
         request.setEntity(new StringEntity(requestContent.toString(), REQUEST_CONTENT_TYPE));
         // AIDA returns JSON, but it returns an error if we request it
         // request.addHeader(HttpHeaders.ACCEPT, "application/json");
-        // We can ask for UTF-8 but it is not clear whether the service really returns UTF-8
+        // We can ask for UTF-8 but it is not clear whether the service really
+        // returns UTF-8
         request.addHeader(HttpHeaders.ACCEPT_ENCODING, Consts.UTF_8.name());
 
         HttpEntity entity = null;

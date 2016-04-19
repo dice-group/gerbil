@@ -19,7 +19,7 @@ package org.aksw.gerbil.dataset.datahub.model;
 /**
  * Represents a CKAN group
  * 
- * @author Ross Jones <ross.jones@okfn.org>
+ * @author Ross Jones (ross.jones@okfn.org)
  * @version 1.7
  * @since 2012-05-01
  */

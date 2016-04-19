@@ -24,7 +24,7 @@ import org.aksw.gerbil.transfer.nif.Meaning;
  * This implementation of a {@link MatchingsSearcher} searches for a matching
  * meaning for every given expected meaning and a list of annotator results.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  * @param <T>
  *            is the {@link Meaning} class or one of its extensions.

@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Represents a CKAN Dataset (previously a Package)
  * 
- * @author Ross Jones <ross.jones@okfn.org>
+ * @author Ross Jones (ross.jones@okfn.org)
  * @version 1.7
  * @since 2012-05-01
  */

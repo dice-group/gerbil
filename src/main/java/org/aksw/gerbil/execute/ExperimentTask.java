@@ -201,7 +201,8 @@ public class ExperimentTask implements Task {
      * Prepares the given annotator results for the evaluation, i.e., performs a
      * sameAs retrieval if it is needed for the experiment type.
      * 
-     * @param dataset
+     * @param results
+     * @param annotatorSameAsRetriever
      */
     @SuppressWarnings("deprecation")
     protected void prepareAnnotatorResults(List<? extends List<? extends Meaning>> results,
