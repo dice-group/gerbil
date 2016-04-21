@@ -95,6 +95,11 @@
 					</select>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<hr />
+				</div>
+			</div>
 			<!--Matching dropdown filled by loadMatching() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="annotator">Matching</label>
@@ -103,12 +108,18 @@
 					</select>
 				</div>
 			</div>
-			<!--Annotator dropdown filled by loadAnnotator() function -->
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<hr />
+				</div>
+			</div>
+			<!--System dropdown filled by loadAnnotator() function -->
 			<div class="form-group">
-				<label class="col-md-4 control-label" for="annotator">Annotator</label>
+				<label class="col-md-4 control-label" for="annotator">System</label>
 				<div class="col-md-4">
 					<select id="annotator" multiple="multiple" style="display: none;">
 					</select>
+					<hr />
 					<div>
 						<span> Or add another webservice via URI:</span>
 						<div>
@@ -141,9 +152,45 @@
 							annotator.<br> <span id="annotatorTestErrorMsg"></span>
 						</div>
 						<input type="button" id="addAnnotator"
-							class="btn btn-primary pull-right" value="Add another annotator"
-							style="margin-top: 15px" />
+							class="btn btn-primary pull-right" value="Add system"
+							style="margin-top: 15px" /><br> <br>
 					</div>
+					<hr id="uploadAnswersSeparator" />
+					<div id="uploadAnswers">
+						<span> Or upload a file with answers:</span>
+						<div>
+							<label for="nameAnswerFile">Name:</label> <input
+								class="form-control" type="text" id="nameAnswerFile" name="name"
+								placeholder="Type something" /> <br> <select
+								id="answerFileDataset" class="form-control">
+							</select> <br> <br> <span
+								class="btn btn-success fileinput-button"> <i
+								class="glyphicon glyphicon-plus"></i> <span>Select
+									file...</span> <!-- The file input field used as target for the file upload widget -->
+								<input id="answerFileUpload" type="file" name="files[]">
+							</span> <br> <br>
+							<!-- The global progress bar -->
+							<div id="answerFileProgress" class="progress">
+								<div class="progress-bar progress-bar-success"></div>
+							</div>
+							<div>
+								<!-- list to be filled by button press and javascript function addDataset -->
+								<ul class="unstyled" id="answerFileList"
+									style="margin-top: 15px; list-style-type: none;">
+								</ul>
+							</div>
+							<div id="warningEmptyAnswerFileName" class="alert alert-warning"
+								role="alert">
+								<button type="button" class="close" data-dismiss="alert"></button>
+								<strong>Warning!</strong> Enter a name.
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<hr />
 				</div>
 			</div>
 			<!--Dataset dropdown filled by loadDatasets() function -->
@@ -152,6 +199,7 @@
 				<div class="col-md-4">
 					<select id="dataset" multiple="multiple" style="display: none;">
 					</select>
+					<hr />
 					<div>
 						<span> Or upload another dataset:</span>
 						<div>
@@ -182,6 +230,11 @@
 					</div>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<hr />
+				</div>
+			</div>
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="datasets">Disclaimer</label>
 				<div class="checkbox">
@@ -204,100 +257,77 @@
 	<script type="text/javascript">
 		// PLEASE DECLARE FUNCTION _OUTSIDE_ OF THE $(document).ready(function() {...}) !!!
 
+		// This function generates a simple select. It is assumed that data is an array of Strings that are used as label and value of the single options.
+		function generateSimpleMultiSelect(elementId, data) {
+			var formattedData = [];
+			for (var i = 0; i < data.length; i++) {
+				var dat = {};
+				dat.label = data[i];
+				dat.value = data[i];
+				formattedData.push(dat);
+			}
+			$(elementId).multiselect('dataprovider', formattedData);
+			$(elementId).multiselect('rebuild');
+		}
+
+		// This function generates a simple multi select. It is assumed that data is an array of Strings that are used as label and value of the single options.
+		function generateSimpleSelect(elementId, data) {
+			var formattedData = [];
+			for (var i = 0; i < data.length; i++) {
+				var dat = {};
+				dat.label = data[i];
+				dat.value = data[i];
+				formattedData.push(dat);
+			}
+			$(elementId).multiselect('dataprovider', formattedData);
+			$(elementId).multiselect('rebuild');
+		}
+
+		// This function generates a multi select with tooltips. It is assumed that data is an array of objects each having a label, a name and a description.
+		function generateMultiSelectWithTooltips(elementId, data) {
+			var formattedData = [];
+			for (var i = 0; i < data.length; i++) {
+				var dat = {};
+				dat.label = data[i].label;
+				dat.value = data[i].name;
+				formattedData.push(dat);
+			}
+			$(elementId).multiselect('dataprovider', formattedData);
+			$(elementId).multiselect('rebuild');
+			// Add tooltips
+			$($(elementId).next().find('li')).each(
+					function(index) {
+						for (var i = 0; i < data.length; i++) {
+							if (data[i].name == $(this).find('input').val()) {
+								$(this).attr('data-toggle', 'tooltip').attr(
+										'data-placement', 'top').attr('title',
+										data[i].description);
+							}
+						}
+					});
+			$('[data-toggle="tooltip"]').tooltip();
+		}
 		//declaration of functions for loading experiment types, annotators, matchings and datasets
 		function loadExperimentTypes() {
-			$
-					.getJSON(
-							'${exptypes}',
-							{
-								ajax : 'false'
-							},
-							function(data) {
-								var formattedData = [];
-								for (var i = 0; i < data.ExperimentType.length; i++) {
-									var dat = {};
-									dat.label = data.ExperimentType[i].label;
-									dat.value = data.ExperimentType[i].name;
-									formattedData.push(dat);
-								}
-								$('#type').multiselect('dataprovider',
-										formattedData);
-								$('#type').multiselect('rebuild');
-
-								$($('#type').next().find('li'))
-										.each(
-												function(index) {
-													for (var i = 0; i < data.ExperimentType.length; i++) {
-														if (data.ExperimentType[i].name == $(
-																this).find(
-																'input').val()) {
-															$(this)
-																	.attr(
-																			'data-toggle',
-																			'tooltip')
-																	.attr(
-																			'data-placement',
-																			'top')
-																	.attr(
-																			'title',
-																			data.ExperimentType[i].description);
-														}
-													}
-												});
-
-								$('[data-toggle="tooltip"]').tooltip();
-
-								loadMatching();
-								loadAnnotator();
-								loadDatasets();
-							});
+			$.getJSON('${exptypes}', {
+				ajax : 'false'
+			}, function(data) {
+				generateMultiSelectWithTooltips('#type', data.ExperimentType);
+				adaptGuiForExperimentType();
+				loadMatching();
+				loadAnnotator();
+				loadDatasets();
+			});
 		}
 		function loadMatching() {
 			$('#matching').html('');
 			$('#annotator').html('');
-			$
-					.getJSON(
-							'${matchings}',
-							{
-								experimentType : $('#type').val(),
-								ajax : 'false'
-							},
-							function(data) {
-								var formattedData = [];
-								for (var i = 0; i < data.Matching.length; i++) {
-									var dat = {};
-									dat.label = data.Matching[i].label;
-									dat.value = data.Matching[i].name;
-									formattedData.push(dat);
-								}
-								$('#matching').multiselect('dataprovider',
-										formattedData);
-								$('#matching').multiselect('rebuild');
-
-								$($('#matching').next().find('li'))
-										.each(
-												function(index) {
-													for (var i = 0; i < data.Matching.length; i++) {
-														if (data.Matching[i].name == $(
-																this).find(
-																'input').val()) {
-															$(this)
-																	.attr(
-																			'data-toggle',
-																			'tooltip')
-																	.attr(
-																			'data-placement',
-																			'top')
-																	.attr(
-																			'title',
-																			data.Matching[i].description);
-														}
-													}
-												});
-
-								$('[data-toggle="tooltip"]').tooltip();
-
-							});
+			$.getJSON('${matchings}', {
+				experimentType : $('#type').val(),
+				ajax : 'false'
+			}, function(data) {
+				generateMultiSelectWithTooltips('#matching', data.Matching);
+			});
 		}
 		function loadAnnotator() {
 			$('#annotator').html('');
@@ -305,16 +335,7 @@
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
-				var formattedData = [];
-				for (var i = 0; i < data.length; i++) {
-					var dat = {};
-					dat.label = data[i];
-					dat.value = data[i];
-					formattedData.push(dat);
-				}
-				$('#annotator').multiselect('dataprovider', formattedData);
-				<c:url value="/file/upload" var="upload"/>
-				$('#annotator').multiselect('rebuild');
+				generateSimpleMultiSelect('#annotator', data);
 			});
 		}
 		function loadDatasets() {
@@ -323,44 +344,48 @@
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
-				var formattedData = [];
-				for (var i = 0; i < data.length; i++) {
-					var dat = {};
-					dat.label = data[i];
-					dat.value = data[i];
-					formattedData.push(dat);
-				}
-				$('#dataset').multiselect('dataprovider', formattedData);
-				$('#dataset').multiselect('rebuild');
+				generateSimpleMultiSelect('#dataset', data);
+				generateSimpleSelect('#answerFileDataset', data);
 			});
 		}
+		// This function can be used to adapt the GUI for the chosen experiment type
+		function adaptGuiForExperimentType() {
+			console.log($('#type').val());
+			if ($('#type').val() == "QA") {
+				$("#uploadAnswersSeparator").show();
+				$("#uploadAnswers").show();
+			} else {
+				$("#uploadAnswersSeparator").hide();
+				$("#uploadAnswers").hide();
+			}
+		}
 		function checkExperimentConfiguration() {
-			//fetch list of selected and manually added annotators
-			var annotatorMultiselect = $('#annotator option:selected');
-			var annotator = [];
-			$(annotatorMultiselect).each(function(index, annotatorMultiselect) {
-				annotator.push([ $(this).val() ]);
-			});
-			$("#annotatorList li span.li_content").each(function() {
-				annotator.push($(this).text());
-			});
-			//fetch list of selected and manually added datasets
-			var datasetMultiselect = $('#dataset option:selected');
-			var dataset = [];
-			$(datasetMultiselect).each(function(index, datasetMultiselect) {
-				dataset.push([ $(this).val() ]);
-			});
-			$("#datasetList li span.li_content").each(function() {
-				dataset.push($(this).text());
-			});
+			var numberOfSystems = $('#annotator option:selected').length
+					+ $("#annotatorList li span.li_content").length;
+			var numberOfDataset = $('#dataset option:selected').length
+					+ $("#datasetList li span.li_content").length;
+			var numberOfAnswerFiles = $("#answerFileList li span.li_content").length;
 
-			//check whether there is at least one dataset and at least one annotator 
+			//check whether there is at least one dataset and at least one annotator or at least one answerFile
 			//and the disclaimer checkbox should be clicked
-			if (dataset.length > 0 && annotator.length > 0
+			if (((numberOfSystems > 0 && numberOfDataset > 0) || (numberOfAnswerFiles > 0))
 					&& $('#disclaimerCheckbox:checked').length == 1) {
 				$('#submit').attr("disabled", false);
 			} else {
 				$('#submit').attr("disabled", true);
+			}
+		}
+		function addItemToList(listElement, item) {
+			$(listElement)
+					.append(
+							"<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
+									+ item + "</span></li>");
+			var listItems = $(listElement,' > li > span');
+			for (var i = 0; i < listItems.length; i++) {
+				listItems[i].onclick = function() {
+					this.parentNode.parentNode.removeChild(this.parentNode);
+					checkExperimentConfiguration();
+				};
 			}
 		}
 		function defineNIFAnnotator() {
@@ -375,43 +400,54 @@
 			if (name === '' || uri === '') {
 				$('#warningEmptyAnnotator').show();
 			} else {
-				$('#infoAnnotatorTest').show();
-				$
-						.getJSON(
-								'${testNifWs}',
-								{
-									experimentType : $('#type').val(),
-									url : uri
-								},
-								function(data) {
-									$('#infoAnnotatorTest').hide();
-									if (data.testOk === true) {
-										$('#annotatorList')
-												.append(
-														"<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
-																+ name
-																+ "("
-																+ uri
-																+ ")</span></li>");
-										var listItems = $('#annotatorList > li > span');
-										for (var i = 0; i < listItems.length; i++) {
-											listItems[i].onclick = function() {
-												this.parentNode.parentNode
-														.removeChild(this.parentNode);
-												checkExperimentConfiguration();
-											};
-										}
-										$('#nameAnnotator').val('');
-										$('#URIAnnotator').val('');
-									} else {
-										$('span#annotatorTestErrorMsg').text(
-												data.errorMsg);
-										$('#dangerAnnotatorTestError').show();
-									}
-								});
+				// If this is not a question answering web ervice 
+				if ($('#type').val() != "QA") {
+					$('#infoAnnotatorTest').show();
+					$.getJSON('${testNifWs}', {
+						experimentType : $('#type').val(),
+						url : uri
+					},
+							function(data) {
+								$('#infoAnnotatorTest').hide();
+								if (data.testOk === true) {
+									addItemToList('#annotatorList', name + "("
+											+ uri + ")");
+									$('#nameAnnotator').val('');
+									$('#URIAnnotator').val('');
+								} else {
+									$('span#annotatorTestErrorMsg').text(
+											data.errorMsg);
+									$('#dangerAnnotatorTestError').show();
+								}
+							});
+				} else {
+					addItemToList('#annotatorList', name + "(" + uri + ")");
+					$('#nameAnnotator').val('');
+					$('#URIAnnotator').val('');
+				}
 			}
 			//check showing run button if something is changed in dropdown menu
 			checkExperimentConfiguration();
+		}
+		// Adds the values of the elements from the given array to the given list
+		function addToList(list, array) {
+			$(array).each(function() {
+				if (prefix != "") {
+					list.push(prefix + $(this).val());
+				} else {
+					list.push($(this).val());
+				}
+			});
+		}
+		// Adds the text of the elements from the given array to the given list adding the given prefix 
+		function addToList(list, array, prefix) {
+			$(array).each(function() {
+				if (prefix != "") {
+					list.push(prefix + $(this).text());
+				} else {
+					list.push($(this).text());
+				}
+			});
 		}
 
 		$(document)
@@ -427,6 +463,7 @@
 							$('#type').change(loadMatching);
 							$('#type').change(loadAnnotator);
 							$('#type').change(loadDatasets);
+							$('#type').change(adaptGuiForExperimentType);
 
 							loadExperimentTypes();
 
@@ -450,7 +487,24 @@
 							$('#infoAnnotatorTest').hide();
 							$('#dangerAnnotatorTestError').hide();
 							$('#addAnnotator').click(defineNIFAnnotator);
-							//if add button is clicked check whether there is a name and a uri 
+							//if system file add button is clicked check whether there is a name and a dataset
+							$('#warningEmptyAnswerFileName').hide();
+							$('#answerFileUpload').click(
+									function() {
+										var name = $('#nameAnswerFile').val();
+										if (name == '') {
+											$('#answerFileUpload').fileupload(
+													'disable');
+											$('#warningEmptyAnswerFileName')
+													.show();
+										} else {
+											$('#answerFileUpload').fileupload(
+													'enable');
+											$('#warningEmptyAnswerFileName')
+													.hide();
+										}
+									});
+							//if dataset file add button is clicked check whether there is a name 
 							$('#warningEmptyDataset').hide();
 							$('#fileupload').click(function() {
 								var name = $('#nameDataset').val();
@@ -470,59 +524,87 @@
 												//fetch list of selected and manually added annotators
 												var annotatorMultiselect = $('#annotator option:selected');
 												var annotator = [];
-												$(annotatorMultiselect)
-														.each(
-																function(index,
-																		annotatorMultiselect) {
-																	annotator
-																			.push($(
-																					this)
-																					.val());
-																});
-												$(
-														"#annotatorList li span.li_content")
-														.each(
-																function() {
-																	annotator
-																			.push("NIFWS_"
-																					+ $(
-																							this)
-																							.text());
-																});
+												addToList(annotator,
+														annotatorMultiselect);
+												//$(annotatorMultiselect)
+												//		.each(
+												//				function(index,
+												//						annotatorMultiselect) {
+												//					annotator
+												//							.push($(
+												//									this)
+												//									.val());
+												//				});
+												addToList(
+														annotator,
+														$("#annotatorList li span.li_content"),
+														"NIFWS_");
+												//$(
+												//		"#annotatorList li span.li_content")
+												//		.each(
+												//				function() {
+												//					annotator
+												//							.push("NIFWS_"
+												//									+ $(
+												//											this)
+												//											.text());
+												//				});
 												//fetch list of selected and manually added datasets
 												var datasetMultiselect = $('#dataset option:selected');
 												var dataset = [];
-												$(datasetMultiselect)
-														.each(
-																function(index,
-																		datasetMultiselect) {
-																	dataset
-																			.push($(
-																					this)
-																					.val());
-																});
-												$(
-														"#datasetList li span.li_content")
-														.each(
-																function() {
-																	dataset
-																			.push("NIFDS_"
-																					+ $(
-																							this)
-																							.text());
-																});
+												addToList(dataset,
+														datasetMultiselect);
+												//$(datasetMultiselect)
+												//		.each(
+												//				function(index,
+												//						datasetMultiselect) {
+												//					dataset
+												//							.push($(
+												//									this)
+												//									.val());
+												//				});
+												addToList(
+														annotator,
+														$("#datasetList li span.li_content"),
+														"NIFDS_");
+												//$(
+												//		"#datasetList li span.li_content")
+												//		.each(
+												//				function() {
+												//					dataset
+												//							.push("NIFDS_"
+												//									+ $(
+												//											this)
+												//											.text());
+												//				});
+												var answerFiles = [];
+												addToList(
+														answerFiles,
+														$("#answerFileList li span.li_content"),
+														"AF_");
+												//$(
+												//		"#answerFileList li span.li_content")
+												//		.each(
+												//				function() {
+												//					dataset
+												//							.push("AF_"
+												//									+ $(
+												//											this)
+												//											.text());
+												//				});
 												var type = $('#type').val() ? $(
 														'#type').val()
-														: "D2KB";
+														: "A2KB";
 												var matching = $('#matching')
 														.val() ? $('#matching')
 														.val()
-														: "Ma - strong annotation match";
+														: "Mw - weak annotation match";
 												var data = {};
 												data.type = type;
 												data.matching = matching;
 												data.annotator = annotator;
 												data.dataset = dataset;
+												data.answerFiles = answerFiles;
 												$
 														.ajax(
 																'${execute}',
@@ -561,54 +643,81 @@
 											});
 						});
 
-		// define file upload
+		// define dataset file upload
 		$(function() {
 			'use strict';
 			// Change this to the location of your server-side upload handler:
 			var url = '${upload}';
-			$('#fileupload')
-					.fileupload(
-							{
-								url : url,
-								dataType : 'json',
-								done : function(e, data) {
-									var name = $('#nameDataset').val();
-									$
-											.each(
-													data.result.files,
-													function(index, file) {
-														$('#datasetList')
-																.append(
-																		"<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
-																				+ name
-																				+ "("
-																				+ file.name
-																				+ ")</span></li>");
-														var listItems = $('#datasetList > li > span');
-														for (var i = 0; i < listItems.length; i++) {
-															listItems[i].onclick = function() {
-																this.parentNode.parentNode
-																		.removeChild(this.parentNode);
-																checkExperimentConfiguration();
-															};
-														}
-														$('#nameDataset').val(
-																'');
-														$('#URIDataset')
-																.val('');
-													});
-								},
-								progressall : function(e, data) {
-									var progress = parseInt(data.loaded
-											/ data.total * 100, 10);
-									$('#progress .progress-bar').css('width',
-											progress + '%');
-								},
-								processfail : function(e, data) {
-									alert(data.files[data.index].name + "\n"
-											+ data.files[data.index].error);
-								}
-							}).prop('disabled', !$.support.fileInput).parent()
+			$('#fileupload').fileupload(
+					{
+						url : url,
+						dataType : 'json',
+						done : function(e, data) {
+							var name = $('#nameDataset').val();
+							$.each(data.result.files, function(index, file) {
+								addItemToList($('#datasetList'), name + "("
+										+ file.name + ")");
+								//														$('#datasetList')
+								//																.append(
+								//																		"<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
+								//																				+ name
+								//																				+ "("
+								//																				+ file.name
+								//																				+ ")</span></li>");
+								//														var listItems = $('#datasetList > li > span');
+								//														for (var i = 0; i < listItems.length; i++) {
+								//															listItems[i].onclick = function() {
+								//																this.parentNode.parentNode
+								//																		.removeChild(this.parentNode);
+								//																checkExperimentConfiguration();
+								//															};
+								//														}
+								$('#nameDataset').val('');
+								$('#URIDataset').val('');
+							});
+						},
+						progressall : function(e, data) {
+							var progress = parseInt(data.loaded / data.total
+									* 100, 10);
+							$('#progress .progress-bar').css('width',
+									progress + '%');
+						},
+						processfail : function(e, data) {
+							alert(data.files[data.index].name + "\n"
+									+ data.files[data.index].error);
+						}
+					}).prop('disabled', !$.support.fileInput).parent()
+					.addClass($.support.fileInput ? undefined : 'disabled');
+		});
+		// define answer file upload
+		$(function() {
+			'use strict';
+			// Change this to the location of your server-side upload handler:
+			var url = '${upload}';
+			$('#answerFileUpload').fileupload(
+					{
+						url : url,
+						dataType : 'json',
+						done : function(e, data) {
+							var name = $('#nameAnswerFile').val();
+							var dataset = $('#answerFileDataset').val();
+							$.each(data.result.files, function(index, file) {
+								addItemToList($('#answerFileList'), name + "("
+										+ file.name + ")(" + dataset + ")");
+								$('#nameAnswerFile').val('');
+							});
+						},
+						progressall : function(e, data) {
+							var progress = parseInt(data.loaded / data.total
+									* 100, 10);
+							$('#answerFileProgress .progress-bar').css('width',
+									progress + '%');
+						},
+						processfail : function(e, data) {
+							alert(data.files[data.index].name + "\n"
+									+ data.files[data.index].error);
+						}
+					}).prop('disabled', !$.support.fileInput).parent()
 					.addClass($.support.fileInput ? undefined : 'disabled');
 		});
 	</script>
