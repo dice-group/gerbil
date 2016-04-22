@@ -167,8 +167,16 @@ public class MainController {
         for (int i = 0; i < jsonDataset.size(); i++) {
             datasets[i] = (String) jsonDataset.get(i);
         }
-        ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[annotators.length * datasets.length];
+        JSONArray jsonAnswerFiles = (JSONArray) configuration.get("answerFiles");
+        String[] answerFiles = new String[jsonAnswerFiles.size()];
+        for (int i = 0; i < jsonAnswerFiles.size(); i++) {
+            answerFiles[i] = (String) jsonAnswerFiles.get(i);
+        }
+
+        ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[(annotators.length * datasets.length)
+                + answerFiles.length];
         int count = 0;
+        // create all annotator - dataset combinations
         for (String annotator : annotators) {
             for (String dataset : datasets) {
                 configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, type),
@@ -177,6 +185,14 @@ public class MainController {
                 ++count;
             }
         }
+        // create the answer file based experiment tasks
+        for (String answerFile : answerFiles) {
+            configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(answerFile, type),
+                    adapterManager.getDatasetConfig(answerFile, type), type, getMatching(matching));
+            LOGGER.debug("Created config: {}", configs[count]);
+            ++count;
+        }
+
         String experimentId = IDCreator.getInstance().createID();
         Experimenter exp = new Experimenter(overseer, dao, globalRetriever, evFactory, configs, experimentId);
         exp.setAnnotatorOutputWriter(annotatorOutputWriter);

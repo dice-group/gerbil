@@ -33,6 +33,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
      * @param qaldDatasetName
      */
     public QALDDataset(String qaldDatasetName) {
+        super(qaldDatasetName);
         this.qaldDatasetName = qaldDatasetName;
     }
 

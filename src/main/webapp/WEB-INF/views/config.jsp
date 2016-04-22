@@ -162,7 +162,9 @@
 							<label for="nameAnswerFile">Name:</label> <input
 								class="form-control" type="text" id="nameAnswerFile" name="name"
 								placeholder="Type something" /> <br> <select
-								id="answerFileDataset" class="form-control">
+								id="answerFileType" class="form-control">
+							</select> <br> <br> <select id="answerFileDataset"
+								class="form-control">
 							</select> <br> <br> <span
 								class="btn btn-success fileinput-button"> <i
 								class="glyphicon glyphicon-plus"></i> <span>Select
@@ -257,8 +259,8 @@
 	<script type="text/javascript">
 		// PLEASE DECLARE FUNCTION _OUTSIDE_ OF THE $(document).ready(function() {...}) !!!
 
-		// This function generates a simple select. It is assumed that data is an array of Strings that are used as label and value of the single options.
-		function generateSimpleMultiSelect(elementId, data) {
+		// Adds the given data to the given (multi) select element. It is assumed that data is an array of Strings that are used as label and value of the single options.
+		function addDataToSelect(elementId, data) {
 			var formattedData = [];
 			for (var i = 0; i < data.length; i++) {
 				var dat = {};
@@ -270,21 +272,8 @@
 			$(elementId).multiselect('rebuild');
 		}
 
-		// This function generates a simple multi select. It is assumed that data is an array of Strings that are used as label and value of the single options.
-		function generateSimpleSelect(elementId, data) {
-			var formattedData = [];
-			for (var i = 0; i < data.length; i++) {
-				var dat = {};
-				dat.label = data[i];
-				dat.value = data[i];
-				formattedData.push(dat);
-			}
-			$(elementId).multiselect('dataprovider', formattedData);
-			$(elementId).multiselect('rebuild');
-		}
-
-		// This function generates a multi select with tooltips. It is assumed that data is an array of objects each having a label, a name and a description.
-		function generateMultiSelectWithTooltips(elementId, data) {
+		// Adds the given data (with tooltips) to the given (multi) select element. It is assumed that data is an array of objects each having a label, a name and a description.
+		function addDataToSelectWithTooltips(elementId, data) {
 			var formattedData = [];
 			for (var i = 0; i < data.length; i++) {
 				var dat = {};
@@ -312,7 +301,7 @@
 			$.getJSON('${exptypes}', {
 				ajax : 'false'
 			}, function(data) {
-				generateMultiSelectWithTooltips('#type', data.ExperimentType);
+				addDataToSelectWithTooltips('#type', data.ExperimentType);
 				adaptGuiForExperimentType();
 				loadMatching();
 				loadAnnotator();
@@ -326,7 +315,7 @@
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
-				generateMultiSelectWithTooltips('#matching', data.Matching);
+				addDataToSelectWithTooltips('#matching', data.Matching);
 			});
 		}
 		function loadAnnotator() {
@@ -335,7 +324,7 @@
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
-				generateSimpleMultiSelect('#annotator', data);
+				addDataToSelect('#annotator', data);
 			});
 		}
 		function loadDatasets() {
@@ -344,8 +333,8 @@
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
-				generateSimpleMultiSelect('#dataset', data);
-				generateSimpleSelect('#answerFileDataset', data);
+				addDataToSelect('#dataset', data);
+				addDataToSelect('#answerFileDataset', data);
 			});
 		}
 		// This function can be used to adapt the GUI for the chosen experiment type
@@ -380,7 +369,7 @@
 					.append(
 							"<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
 									+ item + "</span></li>");
-			var listItems = $(listElement,' > li > span');
+			var listItems = $(listElement, ' > li > span');
 			for (var i = 0; i < listItems.length; i++) {
 				listItems[i].onclick = function() {
 					this.parentNode.parentNode.removeChild(this.parentNode);
@@ -467,6 +456,9 @@
 
 							loadExperimentTypes();
 
+							addDataToSelect('#answerFileType', [ 'QALD JSON',
+									'QALD XML' ]);
+
 							//supervise configuration of experiment and let it only run
 							//if everything is ok 
 							//initially it is turned off 
@@ -526,72 +518,24 @@
 												var annotator = [];
 												addToList(annotator,
 														annotatorMultiselect);
-												//$(annotatorMultiselect)
-												//		.each(
-												//				function(index,
-												//						annotatorMultiselect) {
-												//					annotator
-												//							.push($(
-												//									this)
-												//									.val());
-												//				});
 												addToList(
 														annotator,
 														$("#annotatorList li span.li_content"),
 														"NIFWS_");
-												//$(
-												//		"#annotatorList li span.li_content")
-												//		.each(
-												//				function() {
-												//					annotator
-												//							.push("NIFWS_"
-												//									+ $(
-												//											this)
-												//											.text());
-												//				});
 												//fetch list of selected and manually added datasets
 												var datasetMultiselect = $('#dataset option:selected');
 												var dataset = [];
 												addToList(dataset,
 														datasetMultiselect);
-												//$(datasetMultiselect)
-												//		.each(
-												//				function(index,
-												//						datasetMultiselect) {
-												//					dataset
-												//							.push($(
-												//									this)
-												//									.val());
-												//				});
 												addToList(
 														annotator,
 														$("#datasetList li span.li_content"),
 														"NIFDS_");
-												//$(
-												//		"#datasetList li span.li_content")
-												//		.each(
-												//				function() {
-												//					dataset
-												//							.push("NIFDS_"
-												//									+ $(
-												//											this)
-												//											.text());
-												//				});
 												var answerFiles = [];
 												addToList(
 														answerFiles,
 														$("#answerFileList li span.li_content"),
 														"AF_");
-												//$(
-												//		"#answerFileList li span.li_content")
-												//		.each(
-												//				function() {
-												//					dataset
-												//							.push("AF_"
-												//									+ $(
-												//											this)
-												//											.text());
-												//				});
 												var type = $('#type').val() ? $(
 														'#type').val()
 														: "A2KB";
@@ -657,21 +601,6 @@
 							$.each(data.result.files, function(index, file) {
 								addItemToList($('#datasetList'), name + "("
 										+ file.name + ")");
-								//														$('#datasetList')
-								//																.append(
-								//																		"<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
-								//																				+ name
-								//																				+ "("
-								//																				+ file.name
-								//																				+ ")</span></li>");
-								//														var listItems = $('#datasetList > li > span');
-								//														for (var i = 0; i < listItems.length; i++) {
-								//															listItems[i].onclick = function() {
-								//																this.parentNode.parentNode
-								//																		.removeChild(this.parentNode);
-								//																checkExperimentConfiguration();
-								//															};
-								//														}
 								$('#nameDataset').val('');
 								$('#URIDataset').val('');
 							});
@@ -701,9 +630,11 @@
 						done : function(e, data) {
 							var name = $('#nameAnswerFile').val();
 							var dataset = $('#answerFileDataset').val();
+							var type = $('#answerFileType').val();
 							$.each(data.result.files, function(index, file) {
 								addItemToList($('#answerFileList'), name + "("
-										+ file.name + ")(" + dataset + ")");
+										+ file.name + ")(" + type + ")("
+										+ dataset + ")");
 								$('#nameAnswerFile').val('');
 							});
 						},

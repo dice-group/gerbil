@@ -21,11 +21,15 @@ import java.util.Set;
 
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
+import org.aksw.gerbil.annotator.InstanceListBasedConfigurationImpl;
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
+import org.aksw.gerbil.dataset.DatasetConfigurationImpl;
 import org.aksw.gerbil.dataset.impl.nif.NIFFileDatasetConfig;
+import org.aksw.gerbil.dataset.impl.qald.FileBasedQALDDataset;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.qa.QALDStreamType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +43,8 @@ public class AdapterManager {
 
     private static final String NIF_WS_PREFIX = "NIFWS_";
     private static final String NIF_WS_SUFFIX = " (NIF WS)";
+    private static final String AF_PREFIX = "AF_";
+    private static final String UPLOADED_AF_SUFFIX = " (uploaded)";
     private static final String UPLOADED_FILES_PATH_PROPERTY_KEY = "org.aksw.gerbil.UploadPath";
     private static final String UPLOADED_DATASET_SUFFIX = " (uploaded)";
     private static final String UPLOADED_DATASET_PREFIX = "NIFDS_";
@@ -94,6 +100,64 @@ public class AdapterManager {
                 // return new NIFWebserviceAnnotatorConfiguration(uri, name,
                 // false, type);
             }
+            if (name.startsWith(AF_PREFIX)) {
+                String uploadedFilesPath = GerbilConfiguration.getInstance()
+                        .getString(UPLOADED_FILES_PATH_PROPERTY_KEY);
+                if (uploadedFilesPath == null) {
+                    LOGGER.error(
+                            "Couldn't process uploaded file request, because the upload path is not set (\"{}\"). Returning null.",
+                            UPLOADED_FILES_PATH_PROPERTY_KEY);
+                    return null;
+                }
+                // This describes a QA answer file
+                // The name should have the form NIF_WS_PREFIX +
+                // "name(file)(type)(dataset)"
+                int brackets[] = getLastBracketsContent(name, name.length() - 1);
+                if (brackets == null) {
+                    LOGGER.error(
+                            "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
+                    return null;
+                }
+                // we don't need the dataset name, search for file type
+                brackets = getLastBracketsContent(name, brackets[0]);
+                if (brackets == null) {
+                    LOGGER.error(
+                            "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
+                    return null;
+                }
+                String fileType = name.substring(brackets[0] + 1, brackets[1] - 1);
+                QALDStreamType streamType = null;
+                try {
+                    streamType = QALDStreamType.valueOf(fileType);
+                } catch (Exception e) {
+                    LOGGER.error("Couldn't parse the QALD stream type of this QA answer file \"" + name
+                            + "\". Returning null.", e);
+                    return null;
+                }
+                // search for file the file name
+                brackets = getLastBracketsContent(name, brackets[0]);
+                if (brackets == null) {
+                    LOGGER.error(
+                            "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
+                    return null;
+                }
+                String fileName = name.substring(brackets[0] + 1, brackets[1] - 1);
+                // remove "AF_" from the name
+                name = name.substring(AF_PREFIX.length(), brackets[0]) + UPLOADED_AF_SUFFIX;
+                try {
+                    return new InstanceListBasedConfigurationImpl(name, false,
+                            new DatasetConfigurationImpl(name, false,
+                                    FileBasedQALDDataset.class.getConstructor(String.class, QALDStreamType.class),
+                                    new Object[] { uploadedFilesPath + fileName, streamType }, ExperimentType.QA, null,
+                                    null),
+                            type);
+                } catch (Exception e) {
+                    LOGGER.error(
+                            "Exception while trying to create an annotator configuration for a uploaded QA answer file. Returning null.",
+                            e);
+                    return null;
+                }
+            }
             LOGGER.error("Got an unknown annotator name \"" + name + "\". Returning null.");
         }
         return null;
@@ -119,20 +183,31 @@ public class AdapterManager {
                 }
                 // This describes a NIF based web service
                 // The name should have the form "NIFDS_name(uri)"
-                int pos = name.lastIndexOf('(');
-                if (pos < 0) {
-                    LOGGER.error("Couldn't parse the definition of this NIF based web service \"" + name
-                            + "\". Returning null.");
+                int brackets[] = getLastBracketsContent(name, name.length() - 1);
+                if (brackets == null) {
+                    LOGGER.error("Couldn't parse the uploaded NIF file name from \"" + name + "\". Returning null.");
                     return null;
                 }
-                String uri = uploadedFilesPath + name.substring(pos + 1, name.length() - 1);
+                String uri = uploadedFilesPath + name.substring(brackets[0] + 1, brackets[1] - 1);
                 // remove dataset prefix from the name
-                name = name.substring(UPLOADED_DATASET_PREFIX.length(), pos) + UPLOADED_DATASET_SUFFIX;
+                name = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]) + UPLOADED_DATASET_SUFFIX;
                 return new NIFFileDatasetConfig(name, uri, false, type);
             }
-            LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
-            return null;
+            if (name.startsWith(AF_PREFIX)) {
+                // This describes a QA answer file
+                // The name should have the form NIF_WS_PREFIX +
+                // "name(file)(type)(dataset)"
+                int brackets[] = getLastBracketsContent(name, name.length() - 1);
+                if (brackets == null) {
+                    LOGGER.error(
+                            "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
+                    return null;
+                }
+                String datasetName = name.substring(brackets[0] + 1, brackets[1] - 1);
+                return getDatasetConfig(datasetName, type);
+            }
         }
+        LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
         return null;
     }
 
@@ -152,4 +227,21 @@ public class AdapterManager {
         this.datasets = datasets;
     }
 
+    /**
+     * Returns the positions of the last bracket pair searching backwards from
+     * the given position or null if no pair could be found
+     * 
+     * @return
+     */
+    protected static int[] getLastBracketsContent(String input, int pos) {
+        int endPos = input.lastIndexOf(')', pos);
+        if (endPos < 0) {
+            return null;
+        }
+        int startPos = input.lastIndexOf('(', endPos);
+        if (startPos < 0) {
+            return null;
+        }
+        return new int[] { startPos, endPos };
+    }
 }
