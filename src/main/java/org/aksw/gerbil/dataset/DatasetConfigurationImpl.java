@@ -26,6 +26,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.SameAsRetrieverUtils;
 import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.model.DatasetBasedSameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -83,6 +84,7 @@ public class DatasetConfigurationImpl extends AbstractAdapterConfiguration imple
         }
         List<Meaning> meanings;
         for (Document document : instance.getInstances()) {
+            SameAsRetrieverUtils.addSameURIsToMarkings(retriever, document.getMarkings());
             meanings = document.getMarkings(Meaning.class);
             if (retriever != null) {
                 for (Meaning meaning : document.getMarkings(Meaning.class)) {

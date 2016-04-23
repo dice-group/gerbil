@@ -21,7 +21,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>gerbil</artifactId>
-	<version>1.2.2</version>
+	<version>1.2.3-SNAPSHOT</version>
 	<name>General Entity Annotator Benchmark</name>
 	<description>This project is a benchmark for entity annotation and disambiguation tools.</description>
 	<inceptionYear>2014</inceptionYear>
@@ -383,6 +383,43 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.4.0</version>
 			</plugin>
+			<!-- Javadoc plugin for generating documentation -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+				<configuration>
+				<configuration>
+					<show>private</show>
+					<nohelp>true</nohelp>
+					<quiet>true</quiet>
+					<!-- added for generating javadoc with java 1.8 -->
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Source plugin for creating source file jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 
 		<resources>
@@ -397,6 +434,6 @@
 			</resource>
 		</resources>
 	</build>
-	<packaging>war</packaging>
 
+	<packaging>war</packaging>
 </project>

@@ -19,7 +19,7 @@ package org.aksw.gerbil.dataset.datahub.model;
 /**
  * Represents an extra metadata field in a dataset or group
  * 
- * @author Ross Jones <ross.jones@okfn.org>
+ * @author Ross Jones (ross.jones@okfn.org)
  * @version 1.7
  * @since 2012-05-01
  */

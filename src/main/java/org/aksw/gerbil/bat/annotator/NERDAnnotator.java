@@ -54,7 +54,7 @@ import com.google.common.collect.Sets;
 /**
  * NERD Annotator - It triggers queries to the NERD framework http://nerd.eurecom.fr and it parses the results
  * 
- * @author Giuseppe Rizzo <giuse.rizzo@gmail.com>
+ * @author Giuseppe Rizzo (giuse.rizzo@gmail.com)
  * 
  */
 @Deprecated

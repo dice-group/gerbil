@@ -52,7 +52,7 @@ import org.springframework.util.StreamUtils;
 
 /**
  * Client implementation of the web service of the FRED annotator. The API is
- * described here: {@link http://wit.istc.cnr.it/stlab-tools/fred/api}
+ * described here: http://wit.istc.cnr.it/stlab-tools/fred/api
  * 
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  *

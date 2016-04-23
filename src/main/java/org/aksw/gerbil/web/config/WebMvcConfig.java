@@ -44,8 +44,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     private static final transient Logger logger = LoggerFactory.getLogger(WebMvcConfig.class);
 
     /**
-     * <gd
-     * 
      * @return the view resolver
      */
     @Bean

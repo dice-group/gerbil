@@ -21,7 +21,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 /**
  * Represents a single resource within a Dataset
  * 
- * @author Ross Jones <ross.jones@okfn.org>
+ * @author Ross Jones (ross.jones@okfn.org)
  * @version 2.2
  * @since 2012-05-01
  */

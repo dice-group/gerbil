@@ -26,7 +26,7 @@ import org.apache.commons.collections.SetUtils;
  * A node inside a {@link ClassSet} containing a {@link Set} of URIs
  * representing the class inside the hierarchy.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
 public class SimpleClassNode implements ClassNode {

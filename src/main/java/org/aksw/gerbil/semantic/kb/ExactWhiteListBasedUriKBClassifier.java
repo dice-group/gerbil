@@ -25,8 +25,8 @@ import java.util.Set;
  * part of the KB if it can be found inside its internal list of URIs. Thus, it
  * does not use namespaces for classification, but complete URIs.
  * 
- * @author Michael R&ouml;der <roeder@informatik.uni-leipzig.de>
- * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ *
  */
 public class ExactWhiteListBasedUriKBClassifier implements UriKBClassifier {
 

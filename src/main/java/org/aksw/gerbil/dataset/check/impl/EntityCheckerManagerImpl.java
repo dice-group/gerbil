@@ -17,11 +17,14 @@
 package org.aksw.gerbil.dataset.check.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.dataset.check.EntityChecker;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
+import org.aksw.gerbil.datatypes.marking.MeaningsContainingMarking;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +58,18 @@ public class EntityCheckerManagerImpl implements EntityCheckerManager {
     }
 
     @Override
-    public void checkMeanings(List<? extends Meaning> meanings) {
+    public void checkMarkings(Collection<? extends Marking> markings) {
+        for (Marking marking : markings) {
+            if (marking instanceof Meaning) {
+                checkMeaning((Meaning) marking);
+            } else if (marking instanceof MeaningsContainingMarking) {
+                checkMeanings(((MeaningsContainingMarking) marking).getMeanings());
+            }
+        }
+    }
+
+    @Override
+    public void checkMeanings(Collection<? extends Meaning> meanings) {
         for (Meaning meaning : meanings) {
             checkMeaning(meaning);
         }

@@ -125,8 +125,6 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      *            the name of the experiment type
      * @param matching
      *            the name of the matching used
-     * @param experimentId
-     *            the id of the experiment
      * @return The id of the experiment task or {@value #EXPERIMENT_TASK_NOT_CACHED} if such an experiment task
      *         couldn't be found.
      */
