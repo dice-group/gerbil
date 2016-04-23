@@ -1,6 +1,12 @@
 package org.aksw.gerbil.qa.datatypes;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.aksw.gerbil.datatypes.marking.MeaningsContainingMarking;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 
 /**
@@ -11,7 +17,7 @@ import org.aksw.gerbil.transfer.nif.data.Annotation;
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  *
  */
-public class Relation implements Marking {
+public class Relation implements Marking, MeaningsContainingMarking {
 
     protected Annotation subject;
     protected Property predicate;
@@ -87,5 +93,39 @@ public class Relation implements Marking {
     @Override
     public Object clone() {
         return new Relation(subject, predicate, object);
+    }
+
+    @Override
+    public Collection<? extends Meaning> getMeanings() {
+        List<Meaning> meanings = new ArrayList<Meaning>(3);
+        if (subject != null) {
+            meanings.add(subject);
+        }
+        if (predicate != null) {
+            meanings.add(predicate);
+        }
+        if (object != null) {
+            meanings.add(object);
+        }
+        return meanings;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Relation [");
+        builder.append(subject);
+        builder.append(", ");
+        builder.append(predicate);
+        if (object != null) {
+            builder.append(", ");
+            builder.append(object);
+            builder.append("]");
+        } else {
+            builder.append(", \"");
+            builder.append(objectLiteral);
+            builder.append("\"]");
+        }
+        return builder.toString();
     }
 }

@@ -324,7 +324,8 @@ public class EvaluatorFactory {
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.C2KB, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
-                    createEvaluator(ExperimentType.C2KB, subTaskConfig, dataset)));
+                    new SimpleTypeTransformingEvaluatorDecorator<Marking, Meaning>(
+                            createEvaluator(ExperimentType.C2KB, subTaskConfig, dataset), Meaning.class)));
 
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.P2KB, Matching.STRONG_ENTITY_MATCH);

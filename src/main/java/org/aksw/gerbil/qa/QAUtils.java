@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.aksw.gerbil.qa.datatypes.AnswerItemType;
+import org.aksw.gerbil.qa.datatypes.AnswerSet;
 import org.aksw.gerbil.qa.datatypes.AnswerType;
 import org.aksw.gerbil.qa.datatypes.AnswerTypes;
 import org.aksw.gerbil.qa.datatypes.Property;
@@ -53,6 +54,8 @@ public class QAUtils {
                 LOGGER.error("Couldn't parse AnswerType {}. It will be ignored.", answerTypeLabel);
             }
         }
+        // add the answers
+        document.addMarking(new AnswerSet(question.getGoldenAnswers()));
         return document;
     }
 

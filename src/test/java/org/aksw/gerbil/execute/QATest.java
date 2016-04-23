@@ -105,6 +105,35 @@ public class QATest extends AbstractExperimentTaskTest {
                                 "http://dbpedia.org/resource/Augsburg", "http://dbpedia.org/resource/Wiesbaden",
                                 "http://dbpedia.org/resource/Karlsruhe", "http://dbpedia.org/resource/Bremen")))) },
                 GOLD_STD, Matching.STRONG_ENTITY_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+        // The system missed 11 of 21 answers
+        testConfigs.add(new Object[] {
+                new Document[] { new DocumentImpl(TEXTS[0], "http://qa.gerbil.aksw.org/QALD_Test_dataset/question#101",
+                        Arrays.asList((Marking) new AnswerSet(Sets.newHashSet("http://dbpedia.org/resource/Hanover",
+                                "http://dbpedia.org/resource/Cologne", "http://dbpedia.org/resource/Frankfurt",
+                                "http://dbpedia.org/resource/Hamburg", "http://dbpedia.org/resource/Munich",
+                                "http://dbpedia.org/resource/Aachen", "http://dbpedia.org/resource/Augsburg",
+                                "http://dbpedia.org/resource/Wiesbaden", "http://dbpedia.org/resource/Karlsruhe",
+                                "http://dbpedia.org/resource/Bremen")))) },
+                GOLD_STD, Matching.STRONG_ENTITY_MATCH,
+                new double[] { 1.0, 10.0 / 21.0, 20.0 / 31.0, 1.0, 10.0 / 21.0, 20.0 / 31.0, 0 } });
+        // The system resolved all correct answers but added to wrong answers
+        testConfigs.add(new Object[] {
+                new Document[] { new DocumentImpl(TEXTS[0], "http://qa.gerbil.aksw.org/QALD_Test_dataset/question#101",
+                        Arrays.asList((Marking) new AnswerSet(Sets.newHashSet("http://dbpedia.org/resource/Bonn",
+                                "http://dbpedia.org/resource/Gelsenkirchen", "http://dbpedia.org/resource/Mannheim",
+                                "http://dbpedia.org/resource/Braunschweig", "http://dbpedia.org/resource/Bielefeld",
+                                "http://dbpedia.org/resource/Bochum", "http://dbpedia.org/resource/Wuppertal",
+                                "http://dbpedia.org/resource/Dortmund", "http://dbpedia.org/resource/Essen",
+                                "http://dbpedia.org/resource/Nuremberg", "http://dbpedia.org/resource/Dresden",
+                                "http://dbpedia.org/resource/Hanover", "http://dbpedia.org/resource/Cologne",
+                                "http://dbpedia.org/resource/Frankfurt", "http://dbpedia.org/resource/Hamburg",
+                                "http://dbpedia.org/resource/Munich", "http://dbpedia.org/resource/Aachen",
+                                "http://dbpedia.org/resource/Augsburg", "http://dbpedia.org/resource/Wiesbaden",
+                                "http://dbpedia.org/resource/Karlsruhe", "http://dbpedia.org/resource/Bremen",
+                                "http://dbpedia.org/resource/SmallVillage1",
+                                "http://dbpedia.org/resource/SmallVillage2")))) },
+                GOLD_STD, Matching.STRONG_ENTITY_MATCH,
+                new double[] { 21.0 / 23.0, 1.0, 42.0 / 44.0, 21.0 / 23.0, 1.0, 42.0 / 44.0, 0 } });
         return testConfigs;
     }
 

@@ -18,7 +18,6 @@ package org.aksw.gerbil.dataset;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
-import java.util.List;
 
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
@@ -30,7 +29,6 @@ import org.aksw.gerbil.semantic.sameas.SameAsRetrieverUtils;
 import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.model.DatasetBasedSameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.Meaning;
 
 public class DatasetConfigurationImpl extends AbstractAdapterConfiguration implements DatasetConfiguration {
 
