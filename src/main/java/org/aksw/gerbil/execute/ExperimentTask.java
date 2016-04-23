@@ -48,6 +48,7 @@ import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.SameAsRetrieverUtils;
 import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.model.DatasetBasedSameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -118,7 +119,8 @@ public class ExperimentTask implements Task {
             ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator
                     .createDecorator(configuration.type, decoratedAnnotator, dataset.size());
             decoratedAnnotator = errorCounter;
-            decoratedAnnotator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type, decoratedAnnotator);
+            decoratedAnnotator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type,
+                    decoratedAnnotator);
 
             List<Evaluator<?>> evaluators = new ArrayList<Evaluator<?>>();
             evFactory.addEvaluators(evaluators, configuration, dataset);
@@ -183,9 +185,7 @@ public class ExperimentTask implements Task {
             }
             if (retriever != null) {
                 for (Document document : dataset.getInstances()) {
-                    for (Meaning meaning : document.getMarkings(Meaning.class)) {
-                        retriever.addSameURIs(meaning.getUris());
-                    }
+                    SameAsRetrieverUtils.addSameURIsToMarkings(retriever, document.getMarkings());
                 }
             }
             return;
@@ -219,9 +219,7 @@ public class ExperimentTask implements Task {
         case ETyping: {
             if (annotatorSameAsRetriever != null) {
                 for (List<? extends Meaning> result : results) {
-                    for (Meaning meaning : result) {
-                        annotatorSameAsRetriever.addSameURIs(meaning.getUris());
-                    }
+                    SameAsRetrieverUtils.addSameURIsToMeanings(annotatorSameAsRetriever, result);
                 }
             }
             return;

@@ -16,8 +16,9 @@
  */
 package org.aksw.gerbil.dataset.check;
 
-import java.util.List;
+import java.util.Collection;
 
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
 
 /**
@@ -44,6 +45,19 @@ public interface EntityCheckerManager {
     public void registerEntityChecker(String namespace, EntityChecker checker);
 
     /**
+     * Checks the given list of {@link Marking}s for {@link Meaning}s and their
+     * existence based on the available {@link EntityChecker}. Only URIs are
+     * checked which have a name space for which an {@link EntityChecker} is
+     * available. If a URI has been identified as not existing, it is replaced
+     * by a generated URI.
+     * 
+     * @param markings
+     *            a List of {@link Marking}s that should be checked for their
+     *            existence if they implement or contain a {@link Meaning}.
+     */
+    public void checkMarkings(Collection<? extends Marking> markings);
+
+    /**
      * Checks the given list of {@link Meaning}s for their existence based on
      * the available {@link EntityChecker}. Only URIs are checked which have a
      * name space for which an {@link EntityChecker} is available. If a URI has
@@ -53,5 +67,5 @@ public interface EntityCheckerManager {
      *            a List of {@link Meaning}s that should be checked for their
      *            existence.
      */
-    public void checkMeanings(List<? extends Meaning> meanings);
+    public void checkMeanings(Collection<? extends Meaning> meanings);
 }
