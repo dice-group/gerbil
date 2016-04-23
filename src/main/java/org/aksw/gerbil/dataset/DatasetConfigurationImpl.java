@@ -82,18 +82,13 @@ public class DatasetConfigurationImpl extends AbstractAdapterConfiguration imple
         } else {
             retriever = globalRetriever;
         }
-        List<Meaning> meanings;
         for (Document document : instance.getInstances()) {
-            SameAsRetrieverUtils.addSameURIsToMarkings(retriever, document.getMarkings());
-            meanings = document.getMarkings(Meaning.class);
             if (retriever != null) {
-                for (Meaning meaning : document.getMarkings(Meaning.class)) {
-                    retriever.addSameURIs(meaning.getUris());
-                }
+                SameAsRetrieverUtils.addSameURIsToMarkings(retriever, document.getMarkings());
             }
             // check the meanings
             if (entityCheckerManager != null) {
-                entityCheckerManager.checkMeanings(meanings);
+                entityCheckerManager.checkMarkings(document.getMarkings());
             }
         }
         return instance;
