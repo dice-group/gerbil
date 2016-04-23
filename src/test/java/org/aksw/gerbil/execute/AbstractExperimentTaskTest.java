@@ -22,6 +22,7 @@ import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
@@ -71,9 +72,21 @@ public abstract class AbstractExperimentTaskTest {
                 .getLogger(AbstractExperimentTaskTest.AbstractJUnitTestTaskObserver.class);
 
         private AbstractExperimentTaskTest testInstance;
+        private ExperimentType type;
+        private int experimentTaskId;
+        private SimpleLoggingResultStoringDAO4Debugging experimentDAO;
 
-        public AbstractJUnitTestTaskObserver(AbstractExperimentTaskTest testInstance) {
+        public AbstractJUnitTestTaskObserver(AbstractExperimentTaskTest testInstance, int experimentTaskId,
+                SimpleLoggingResultStoringDAO4Debugging experimentDAO) {
+            this(testInstance, null, experimentTaskId, experimentDAO);
+        }
+
+        public AbstractJUnitTestTaskObserver(AbstractExperimentTaskTest testInstance, ExperimentType type,
+                int experimentTaskId, SimpleLoggingResultStoringDAO4Debugging experimentDAO) {
             this.testInstance = testInstance;
+            this.type = type;
+            this.experimentDAO = experimentDAO;
+            this.experimentTaskId = experimentTaskId;
         }
 
         @Override
@@ -91,8 +104,24 @@ public abstract class AbstractExperimentTaskTest {
             testInstance.mutex.release();
         }
 
-        protected abstract void testTaskResults(Task task);
+        protected void testTaskResults(Task task) {
+            Assert.assertEquals(ExperimentDAO.TASK_FINISHED, experimentDAO.getExperimentState(experimentTaskId));
+            ExperimentTaskResult result = experimentDAO.getTaskResult(experimentTaskId);
+            if ((type == null) || (result.getType() == type)) {
+                evaluateResult(result);
+            } else {
+                boolean foundType = false;
+                for (ExperimentTaskResult subTaskResult : result.subTasks) {
+                    if (subTaskResult.getType() == type) {
+                        evaluateResult(subTaskResult);
+                        foundType = true;
+                    }
+                }
+                Assert.assertTrue("The expected ExperimentType (" + type + ") has not been found.", foundType);
+            }
+        }
 
+        protected abstract void evaluateResult(ExperimentTaskResult result);
     }
 
     protected static class F1MeasureTestingObserver extends AbstractJUnitTestTaskObserver {
@@ -107,22 +136,22 @@ public abstract class AbstractExperimentTaskTest {
 
         private static final double DELTA = 0.0000001;
 
-        private int experimentTaskId;
-        private SimpleLoggingResultStoringDAO4Debugging experimentDAO;
         private double expectedResults[];
 
         public F1MeasureTestingObserver(AbstractExperimentTaskTest testInstance, int experimentTaskId,
                 SimpleLoggingResultStoringDAO4Debugging experimentDAO, double expectedResults[]) {
-            super(testInstance);
-            this.experimentTaskId = experimentTaskId;
-            this.experimentDAO = experimentDAO;
+            super(testInstance, experimentTaskId, experimentDAO);
+            this.expectedResults = expectedResults;
+        }
+
+        public F1MeasureTestingObserver(AbstractExperimentTaskTest testInstance, ExperimentType type,
+                int experimentTaskId, SimpleLoggingResultStoringDAO4Debugging experimentDAO, double expectedResults[]) {
+            super(testInstance, type, experimentTaskId, experimentDAO);
             this.expectedResults = expectedResults;
         }
 
         @Override
-        protected void testTaskResults(Task task) {
-            Assert.assertEquals(ExperimentDAO.TASK_FINISHED, experimentDAO.getExperimentState(experimentTaskId));
-            ExperimentTaskResult result = experimentDAO.getTaskResult(experimentTaskId);
+        protected void evaluateResult(ExperimentTaskResult result) {
             Assert.assertEquals(expectedResults[MACRO_PREC_INDEX], result.getMacroPrecision(), DELTA);
             Assert.assertEquals(expectedResults[MACRO_REC_INDEX], result.getMacroRecall(), DELTA);
             Assert.assertEquals(expectedResults[MACRO_F1_INDEX], result.getMacroF1Measure(), DELTA);
