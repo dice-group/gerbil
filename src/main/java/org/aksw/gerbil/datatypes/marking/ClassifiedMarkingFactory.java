@@ -20,8 +20,12 @@ import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClassifiedMarkingFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassifiedMarkingFactory.class);
 
     public static ClassifiedMarking createClassifiedMeaning(Marking marking) {
         if (marking instanceof ScoredNamedEntity) {
@@ -34,6 +38,9 @@ public class ClassifiedMarkingFactory {
         } else if (marking instanceof Meaning) {
             return new ClassifiedAnnotation(((Meaning) marking).getUris());
         }
+        LOGGER.error(
+                "There is no rule for creating an implementationof the ClssifiedMarking interface for an {} object. Returning null.",
+                marking.getClass().getName());
         return null;
     }
 }

@@ -50,6 +50,7 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
     public void init() throws GerbilException {
         FileInputStream fin = null;
         try {
+            fin = new FileInputStream(file);
             instances = QALDStreamUtils.parseDocument(fin, fileType, getName());
         } catch (Exception e) {
             throw new GerbilException("Couldn't load the given QALD file.", e, ErrorTypes.DATASET_LOADING_ERROR);

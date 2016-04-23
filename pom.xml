@@ -325,16 +325,17 @@
 			<version>20140107</version>
 		</dependency>
 
-		<!-- Question Answering -->
+		<!-- Question Answering[22.04.2016 17:13:26] Ricardo Usbeck: datasets sind jetzt 0.0.3 und commons 0.0.9
+[22.04.2016 17:23:48] Ricardo Usbeck: qa.systems-0.0.2.jar -->
 		<dependency>
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>commons</artifactId>
-			<version>0.0.8</version>
+			<version>0.0.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aksw</groupId>
 			<artifactId>qa.systems</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.2</version>
 		</dependency>
 	</dependencies>
 

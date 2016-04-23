@@ -19,14 +19,15 @@ package org.aksw.gerbil.annotator.decorator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.C2KBAnnotator;
-import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
+import org.aksw.gerbil.annotator.QASystem;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
@@ -82,6 +83,8 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             return new ErrorCountingOKETask1Annotator((OKETask1Annotator) annotator, maxErrors);
         case OKE_Task2:
             return new ErrorCountingOKETask2Annotator((OKETask2Annotator) annotator, maxErrors);
+        case QA:
+            return new ErrorCountingQASystem((QASystem) annotator, maxErrors);
         case Rc2KB:
             break;
         case Sa2KB:
@@ -92,12 +95,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             break;
 
         }
-        // if (annotator instanceof Sc2WSystem) {
-        // return new ErrorCountingSc2W((Sc2WSystem) annotator, maxErrors);
-        // }
-        // if (annotator instanceof C2WSystem) {
-        // return new ErrorCountingC2W((C2WSystem) annotator, maxErrors);
-        // }
+        LOGGER.error("Couldn't generate a ErrorCountingAnnotatorDecorator for the given annotator. Returning null.");
         return null;
     }
 
@@ -201,6 +199,18 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         @Override
         public List<TypedNamedEntity> performTask2(Document document) throws GerbilException {
             return ErrorCountingAnnotatorDecorator.performOKETask2(this, document);
+        }
+    }
+
+    private static class ErrorCountingQASystem extends ErrorCountingAnnotatorDecorator implements QASystem {
+
+        protected ErrorCountingQASystem(QASystem decoratedAnnotator, int maxErrors) {
+            super(decoratedAnnotator, maxErrors);
+        }
+
+        @Override
+        public List<Marking> answerQuestion(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performQATask(this, document);
         }
     }
 
@@ -377,6 +387,29 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             }
             errorCounter.increaseErrorCount();
             return new ArrayList<TypedNamedEntity>(0);
+        }
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
+            logResult(result, errorCounter.getName(), "TypedNamedEntity");
+        }
+        return result;
+    }
+
+    protected static List<Marking> performQATask(ErrorCountingAnnotatorDecorator errorCounter, Document document)
+            throws GerbilException {
+        List<Marking> result = null;
+        try {
+            result = ((QASystem) errorCounter.getDecoratedAnnotator()).answerQuestion(document);
+        } catch (Exception e) {
+            if (errorCounter.getErrorCount() == 0) {
+                // Log only the first exception completely
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + ")", e);
+            } else {
+                // Log only the Exception message without the stack trace
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + "): "
+                        + e.getLocalizedMessage());
+            }
+            errorCounter.increaseErrorCount();
+            return new ArrayList<Marking>(0);
         }
         if (printDebugMsg && LOGGER.isDebugEnabled()) {
             logResult(result, errorCounter.getName(), "TypedNamedEntity");

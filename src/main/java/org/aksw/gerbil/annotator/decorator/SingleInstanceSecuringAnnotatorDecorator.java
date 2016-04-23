@@ -29,10 +29,12 @@ import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
+import org.aksw.gerbil.annotator.QASystem;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
@@ -73,6 +75,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
             return new SingleInstanceSecuringOKETask1Annotator((OKETask1Annotator) annotator);
         case OKE_Task2:
             return new SingleInstanceSecuringOKETask2Annotator((OKETask2Annotator) annotator);
+        case QA:
+            return new SingleInstanceSecuringQASystem((QASystem) annotator);
         case Rc2KB:
             break;
         case Sa2KB:
@@ -83,6 +87,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
             break;
 
         }
+        LOGGER.error(
+                "Couldn't generate a SingleInstanceSecuringAnnotatorDecorator for the given annotator. Returning null.");
         return null;
     }
 
@@ -190,6 +196,19 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         @Override
         public List<TypedNamedEntity> performTask2(Document document) throws GerbilException {
             return SingleInstanceSecuringAnnotatorDecorator.performOKETask2(this, document);
+        }
+    }
+
+    private static class SingleInstanceSecuringQASystem extends SingleInstanceSecuringAnnotatorDecorator
+            implements QASystem {
+
+        protected SingleInstanceSecuringQASystem(QASystem decoratedAnnotator) {
+            super(decoratedAnnotator);
+        }
+
+        @Override
+        public List<Marking> answerQuestion(Document document) throws GerbilException {
+            return SingleInstanceSecuringAnnotatorDecorator.performQATask(this, document);
         }
     }
 
@@ -313,6 +332,24 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         }
         try {
             result = ((OKETask2Annotator) decorator.getDecoratedAnnotator()).performTask2(document);
+        } finally {
+            decorator.semaphore.release();
+        }
+        return result;
+    }
+
+    protected static List<Marking> performQATask(SingleInstanceSecuringAnnotatorDecorator decorator, Document document)
+            throws GerbilException {
+        List<Marking> result = null;
+        try {
+            decorator.semaphore.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.error("Interrupted while waiting for the Annotator's semaphore.", e);
+            throw new GerbilException("Interrupted while waiting for the Annotator's semaphore.", e,
+                    ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
+        try {
+            result = ((QASystem) decorator.getDecoratedAnnotator()).answerQuestion(document);
         } finally {
             decorator.semaphore.release();
         }

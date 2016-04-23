@@ -281,10 +281,14 @@ public class EvaluatorFactory {
             Dataset dataset) {
         ExperimentTaskConfiguration subTaskConfig;
         switch (configuration.type) {
-        case ERec: // falls through
-        case D2KB:
-        case ETyping:
+        case AIT2KB: // falls through
+        case AT2KB:
         case C2KB:
+        case D2KB:
+        case ERec:
+        case ETyping:
+        case P2KB:
+        case RE2KB:
             // Since the OKE challenge tasks are using the results of their
             // subtasks, the definition of subtasks is part of their evaluation
             // creation
@@ -304,6 +308,33 @@ public class EvaluatorFactory {
             // configuration, dataset));
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
                     createEvaluator(ExperimentType.D2KB, subTaskConfig, dataset)));
+            return;
+        }
+        case QA: {
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.AIT2KB, configuration.matching);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
+                    createEvaluator(ExperimentType.AIT2KB, subTaskConfig, dataset)));
+
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.AT2KB, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
+                    createEvaluator(ExperimentType.AT2KB, subTaskConfig, dataset)));
+
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.C2KB, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
+                    createEvaluator(ExperimentType.C2KB, subTaskConfig, dataset)));
+
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.P2KB, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
+                    createEvaluator(ExperimentType.P2KB, subTaskConfig, dataset)));
+
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.RE2KB, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
+                    createEvaluator(ExperimentType.RE2KB, subTaskConfig, dataset)));
             return;
         }
         default: {

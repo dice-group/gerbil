@@ -18,14 +18,15 @@ package org.aksw.gerbil.annotator.decorator;
 
 import java.util.List;
 
+import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.C2KBAnnotator;
-import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
+import org.aksw.gerbil.annotator.QASystem;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
@@ -38,6 +39,8 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a simple decorator for an annotator which measures the time needed
@@ -50,6 +53,8 @@ import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
  */
 public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorDecorator
         implements Evaluator<Marking>, TimeMeasurer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TimeMeasuringAnnotatorDecorator.class);
 
     public static final String AVG_TIME_RESULT_NAME = "avg millis/doc";
 
@@ -70,6 +75,8 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
             return new TimeMeasuringOKETask1Annotator((OKETask1Annotator) annotator);
         case OKE_Task2:
             return new TimeMeasuringOKETask2Annotator((OKETask2Annotator) annotator);
+        case QA:
+            return new TimeMeasuringQASystem((QASystem) annotator);
         case Rc2KB:
             break;
         case Sa2KB:
@@ -79,6 +86,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         default:
             break;
         }
+        LOGGER.error("Couldn't generate a TimeMeasuringAnnotatorDecorator for the given annotator. Returning null.");
         return null;
     }
 
@@ -186,6 +194,18 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
+    private static class TimeMeasuringQASystem extends TimeMeasuringAnnotatorDecorator implements QASystem {
+
+        protected TimeMeasuringQASystem(QASystem decoratedAnnotator) {
+            super(decoratedAnnotator);
+        }
+
+        @Override
+        public List<Marking> answerQuestion(Document document) throws GerbilException {
+            return TimeMeasuringAnnotatorDecorator.performQATask(this, document);
+        }
+    }
+
     protected static List<Meaning> performC2KB(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
             throws GerbilException {
         long startTime = System.currentTimeMillis();
@@ -245,6 +265,15 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         long startTime = System.currentTimeMillis();
         List<TypedNamedEntity> result = null;
         result = ((OKETask2Annotator) timeMeasurer.getDecoratedAnnotator()).performTask2(document);
+        timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
+        return result;
+    }
+
+    protected static List<Marking> performQATask(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
+            throws GerbilException {
+        long startTime = System.currentTimeMillis();
+        List<Marking> result = null;
+        result = ((QASystem) timeMeasurer.getDecoratedAnnotator()).answerQuestion(document);
         timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
         return result;
     }

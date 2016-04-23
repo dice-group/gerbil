@@ -64,7 +64,7 @@ public class QALDStreamUtils {
 
         String questionUriPrefix;
         try {
-            questionUriPrefix = "htt://qa.gerbil.aksw.org/" + URLEncoder.encode(adapterName, "UTF-8") + "/question#";
+            questionUriPrefix = "http://qa.gerbil.aksw.org/" + URLEncoder.encode(adapterName, "UTF-8") + "/question#";
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException("Severe error while trying to encode adapter name.", e);
         }
