@@ -255,7 +255,7 @@ public class MainController {
         case Sc2KB:
         case QA:
         case AIT2KB:
-        case AT2KB:
+        case AType:
         case P2KB:
         case RE2KB:
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));

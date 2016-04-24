@@ -40,18 +40,22 @@ public class QAUtils {
         // add the needed markings to the document
         // properties, answerItemType, relations, entities
         if (sparqlQueryString != null) {
-            deriveMarkingsFromSparqlQuery(document, sparqlQueryString);
+            try {
+                deriveMarkingsFromSparqlQuery(document, sparqlQueryString);
+            } catch (Exception e) {
+                return null;
+            }
         }
         // FIXME @Ricardo if from annotator, load from IQuestion
         // answerType
         String answerTypeLabel = question.getAnswerType();
         if (answerTypeLabel != null) {
             answerTypeLabel = answerTypeLabel.toUpperCase();
-            AnswerTypes answerType = AnswerTypes.valueOf(answerTypeLabel);
-            if (answerType != null) {
+            try {
+                AnswerTypes answerType = AnswerTypes.valueOf(answerTypeLabel);
                 document.addMarking(new AnswerType(answerType));
-            } else {
-                LOGGER.error("Couldn't parse AnswerType {}. It will be ignored.", answerTypeLabel);
+            } catch (Exception e) {
+                LOGGER.error("Couldn't parse AnswerType " + answerTypeLabel + ". It will be ignored.", e);
             }
         }
         // add the answers

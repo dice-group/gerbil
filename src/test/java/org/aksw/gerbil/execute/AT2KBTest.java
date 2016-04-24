@@ -129,7 +129,7 @@ public class AT2KBTest extends AbstractExperimentTaskTest {
                 new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.QA), dataset,
                 ExperimentType.QA, matching);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
-                new F1MeasureTestingObserver(this, ExperimentType.AT2KB, experimentTaskId, experimentDAO,
+                new F1MeasureTestingObserver(this, ExperimentType.AType, experimentTaskId, experimentDAO,
                         expectedResults));
     }
 }

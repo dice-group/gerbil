@@ -76,7 +76,7 @@ public class GoldStdEvalTest extends AbstractExperimentTaskTest {
         AdapterList<DatasetConfiguration> adapterList = DatasetsConfig.datasets(ENTITY_CHECKER_MANAGER,
                 SAME_AS_RETRIEVER);
         List<DatasetConfiguration> datasetConfigs = null;
-        for (ExperimentType experimentType : ExperimentType.values()) {
+        for (ExperimentType experimentType : RootConfig.getAvailableExperimentTypes()) {
             if (ExperimentType.class.getDeclaredField(experimentType.name()).getAnnotation(Deprecated.class) == null) {
                 datasetConfigs = adapterList.getAdaptersForExperiment(experimentType);
                 for (DatasetConfiguration datasetConfig : datasetConfigs) {

@@ -21,9 +21,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>gerbil</artifactId>
-	<version>1.2.3-SNAPSHOT</version>
+	<version>1.2.3-QA-RC1</version>
 	<name>General Entity Annotator Benchmark</name>
-	<description>This project is a benchmark for entity annotation and disambiguation tools.</description>
+	<description>This project is a benchmark for entity annotation and disambiguation tools extended towards question answering.</description>
 	<inceptionYear>2014</inceptionYear>
 
 	<properties>
@@ -325,12 +325,11 @@
 			<version>20140107</version>
 		</dependency>
 
-		<!-- Question Answering[22.04.2016 17:13:26] Ricardo Usbeck: datasets sind jetzt 0.0.3 und commons 0.0.9
-[22.04.2016 17:23:48] Ricardo Usbeck: qa.systems-0.0.2.jar -->
+		<!-- Question Answering -->
 		<dependency>
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>commons</artifactId>
-			<version>0.0.9</version>
+			<version>0.0.10-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aksw</groupId>

@@ -245,7 +245,7 @@ public class EvaluatorFactory {
 
             // -------- QA Experiments --------
 
-        case AT2KB: {
+        case AType: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerType>(
                     new FMeasureCalculator<AnswerType>(
                             new MatchingsCounterImpl<AnswerType>(new EqualsBasedMatchingsSearcher<AnswerType>())),
@@ -282,7 +282,7 @@ public class EvaluatorFactory {
         ExperimentTaskConfiguration subTaskConfig;
         switch (configuration.type) {
         case AIT2KB: // falls through
-        case AT2KB:
+        case AType:
         case C2KB:
         case D2KB:
         case ERec:
@@ -317,9 +317,9 @@ public class EvaluatorFactory {
                     createEvaluator(ExperimentType.AIT2KB, subTaskConfig, dataset)));
 
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.AT2KB, Matching.STRONG_ENTITY_MATCH);
+                    ExperimentType.AType, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
-                    createEvaluator(ExperimentType.AT2KB, subTaskConfig, dataset)));
+                    createEvaluator(ExperimentType.AType, subTaskConfig, dataset)));
 
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.C2KB, Matching.STRONG_ENTITY_MATCH);

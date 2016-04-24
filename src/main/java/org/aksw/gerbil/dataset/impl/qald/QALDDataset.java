@@ -79,8 +79,12 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
             }
 
             instances = new ArrayList<Document>(questions.size());
+            Document document;
             for (IQuestion question : questions) {
-                instances.add(QAUtils.translateQuestion(question, questionUriPrefix + question.getId()));
+                document = QAUtils.translateQuestion(question, questionUriPrefix + question.getId());
+                if (document != null) {
+                    instances.add(document);
+                }
             }
         }
     }

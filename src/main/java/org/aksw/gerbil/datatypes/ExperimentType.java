@@ -42,12 +42,12 @@ public enum ExperimentType implements Describable {
     /**
      * Answer Type 2 KB
      */
-    AT2KB("Answer Type 2KB", "The annotator gets a question and shall recognize its answer type."),
+    AType("Answer Type", "The annotator gets a question and shall recognize its answer type."),
 
     /**
      * Answer Item Type 2 KB
      */
-    AIT2KB("Answer Ite, Type 2KB", "The annotator gets a question and shall recognize its answer item type."),
+    AIT2KB("Answer Item Type 2KB", "The annotator gets a question and shall recognize its answer item type."),
 
     /**
      * Concepts to KB
@@ -238,7 +238,7 @@ public enum ExperimentType implements Describable {
         }
         case QA: {
             switch (type) {
-            case AT2KB: // falls through
+            case AType: // falls through
             case AIT2KB:
             case P2KB:
             case QA:
