@@ -81,7 +81,7 @@ table {
 				</div>
 			</div>
 
-			<div class="col-md-12">
+			<div class="col-md-12" style="visibility:hidden;">
 				<div class="control-group">
 					<label class="col-md-4 control-label">Matching</label>
 					<div id="matching" class="col-md-8"></div>
@@ -115,7 +115,7 @@ table {
 			<tbody></tbody>
 		</table>
 	</div>
-	<div class="container">
+	<div class="container" style="visibility:hidden;">
 		<div class="form-horizontal">
 			<div class="col-md-12">
 				<h2>Annotator &ndash; Dataset feature correlations</h2>
@@ -132,7 +132,7 @@ table {
 			</div>
 		</div>
 	</div>
-	<div class="container-fluid">
+	<div class="container-fluid" style="visibility:hidden;">
 		<table id="correlationsTable"
 			class="table table-hover table-condensed">
 			<thead></thead>

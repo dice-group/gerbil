@@ -95,13 +95,13 @@
 					</select>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row" id="matchingsSeparator">
 				<div class="col-md-8 col-md-offset-2">
 					<hr />
 				</div>
 			</div>
 			<!--Matching dropdown filled by loadMatching() function -->
-			<div class="form-group">
+			<div class="form-group" id="matchingsDiv">
 				<label class="col-md-4 control-label" for="annotator">Matching</label>
 				<div class="col-md-4">
 					<select id="matching" style="display: none;">
@@ -343,7 +343,11 @@
 			if ($('#type').val() == "QA") {
 				$("#uploadAnswersSeparator").show();
 				$("#uploadAnswers").show();
+				$("#matchingsSeparator").hide();
+				$("#matchingsDiv").hide();
 			} else {
+				$("#matchingsSeparator").show();
+				$("#matchingsDiv").show();
 				$("#uploadAnswersSeparator").hide();
 				$("#uploadAnswers").hide();
 			}
