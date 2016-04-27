@@ -51,6 +51,7 @@ public class QAUtils {
         String answerTypeLabel = question.getAnswerType();
         if (answerTypeLabel != null) {
             answerTypeLabel = answerTypeLabel.toUpperCase();
+            answerTypeLabel = answerTypeLabel.replace("RESOUCE", "RESOURCE");
             try {
                 AnswerTypes answerType = AnswerTypes.valueOf(answerTypeLabel);
                 document.addMarking(new AnswerType(answerType));

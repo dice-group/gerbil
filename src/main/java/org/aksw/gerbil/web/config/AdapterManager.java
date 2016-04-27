@@ -118,17 +118,24 @@ public class AdapterManager {
                             "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
                     return null;
                 }
-                // we don't need the dataset name, search for file type
+                String datasetName = name.substring(brackets[0] + 1, brackets[1]);
                 brackets = getLastBracketsContent(name, brackets[0]);
                 if (brackets == null) {
                     LOGGER.error(
                             "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
                     return null;
                 }
-                String fileType = name.substring(brackets[0] + 1, brackets[1] - 1);
+                String fileType = name.substring(brackets[0] + 1, brackets[1]);
                 QALDStreamType streamType = null;
                 try {
-                    streamType = QALDStreamType.valueOf(fileType);
+                    if (fileType.startsWith("QALD")) {
+                        if (fileType.endsWith("XML")) {
+                            streamType = QALDStreamType.XML;
+                        }
+                        if (fileType.endsWith("JSON")) {
+                            streamType = QALDStreamType.JSON;
+                        }
+                    }
                 } catch (Exception e) {
                     LOGGER.error("Couldn't parse the QALD stream type of this QA answer file \"" + name
                             + "\". Returning null.", e);
@@ -141,15 +148,16 @@ public class AdapterManager {
                             "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
                     return null;
                 }
-                String fileName = name.substring(brackets[0] + 1, brackets[1] - 1);
+                String fileName = name.substring(brackets[0] + 1, brackets[1]);
                 // remove "AF_" from the name
                 name = name.substring(AF_PREFIX.length(), brackets[0]) + UPLOADED_AF_SUFFIX;
                 try {
                     return new InstanceListBasedConfigurationImpl(name, false,
-                            new DatasetConfigurationImpl(name, false,
-                                    FileBasedQALDDataset.class.getConstructor(String.class, QALDStreamType.class),
-                                    new Object[] { uploadedFilesPath + fileName, streamType }, ExperimentType.QA, null,
-                                    null),
+                            new DatasetConfigurationImpl(datasetName, false,
+                                    FileBasedQALDDataset.class.getConstructor(String.class, String.class,
+                                            QALDStreamType.class),
+                                    new Object[] { datasetName, uploadedFilesPath + fileName, streamType },
+                                    ExperimentType.QA, null, null),
                             type);
                 } catch (Exception e) {
                     LOGGER.error(
@@ -188,7 +196,7 @@ public class AdapterManager {
                     LOGGER.error("Couldn't parse the uploaded NIF file name from \"" + name + "\". Returning null.");
                     return null;
                 }
-                String uri = uploadedFilesPath + name.substring(brackets[0] + 1, brackets[1] - 1);
+                String uri = uploadedFilesPath + name.substring(brackets[0] + 1, brackets[1]);
                 // remove dataset prefix from the name
                 name = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]) + UPLOADED_DATASET_SUFFIX;
                 return new NIFFileDatasetConfig(name, uri, false, type);
@@ -203,7 +211,7 @@ public class AdapterManager {
                             "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
                     return null;
                 }
-                String datasetName = name.substring(brackets[0] + 1, brackets[1] - 1);
+                String datasetName = name.substring(brackets[0] + 1, brackets[1]);
                 return getDatasetConfig(datasetName, type);
             }
         }

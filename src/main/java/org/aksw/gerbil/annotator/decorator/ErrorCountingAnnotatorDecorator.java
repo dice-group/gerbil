@@ -412,7 +412,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             return new ArrayList<Marking>(0);
         }
         if (printDebugMsg && LOGGER.isDebugEnabled()) {
-            logResult(result, errorCounter.getName(), "TypedNamedEntity");
+            logResult(result, errorCounter.getName(), "");
         }
         return result;
     }

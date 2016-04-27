@@ -23,6 +23,7 @@ import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
+import org.aksw.gerbil.dataset.check.impl.FileBasedCachingEntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
@@ -51,9 +52,9 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    private static final String ANNOTATOR_NAME = "FREME NER";
-    private static final String DATASET_NAME = "OKE 2015 Task 1 example set";
-    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.D2KB;
+    private static final String ANNOTATOR_NAME = "AF_HAWK(answer_optimal_ranking_qald-5_train.xml)(QALD XML)(QALD5 Train Hybrid)";
+    private static final String DATASET_NAME = "QALD5 Train Hybrid";
+    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.QA;
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
 
     private static final boolean USE_SAME_AS_RETRIEVAL = true;
@@ -77,29 +78,47 @@ public class SingleRunTest implements TaskObserver {
     }
 
     public void run() throws Exception {
-        AdapterManager adapterManager = new AdapterManager();
-        adapterManager.setAnnotators(AnnotatorsConfig.annotators());
-        adapterManager.setDatasets(DatasetsConfig.datasets(ENTITY_CHECKER_MANAGER, SAME_AS_RETRIEVER));
+        DefeatableOverseer overseer = null;
+        try {
+            AdapterManager adapterManager = new AdapterManager();
+            adapterManager.setAnnotators(AnnotatorsConfig.annotators());
+            adapterManager.setDatasets(DatasetsConfig.datasets(ENTITY_CHECKER_MANAGER, SAME_AS_RETRIEVER));
 
-        AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE);
-        Assert.assertNotNull(annotatorConfig);
-        DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE);
-        Assert.assertNotNull(datasetConfig);
+            AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE);
+            Assert.assertNotNull(annotatorConfig);
+             DatasetConfiguration datasetConfig =
+             adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE);
+             Assert.assertNotNull(datasetConfig);
+            // DatasetConfiguration datasetConfig = new
+            // DatasetConfigurationImpl("Test", false,
+            // FileBasedQALDDataset.class.getConstructor(String.class,
+            // String.class, QALDStreamType.class),
+            // new Object[] { "TEST",
+            // "src/test/resources/datasets/QALD_test.xml", QALDStreamType.XML
+            // },
+            // EXPERIMENT_TYPE, ENTITY_CHECKER_MANAGER, SAME_AS_RETRIEVER);
 
-        DefeatableOverseer overseer = RootConfig.createOverseer();
-        overseer.addObserver(this);
+            overseer = RootConfig.createOverseer();
+            overseer.addObserver(this);
 
-        ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
-                new ExperimentTaskConfiguration(annotatorConfig, datasetConfig, EXPERIMENT_TYPE, MATCHING) };
+            ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
+                    new ExperimentTaskConfiguration(annotatorConfig, datasetConfig, EXPERIMENT_TYPE, MATCHING) };
 
-        Experimenter experimenter = new Experimenter(overseer, new SimpleLoggingDAO4Debugging(), SAME_AS_RETRIEVER,
-                new EvaluatorFactory(), taskConfigs, "SingleRunTest");
-        experimenter.run();
+            Experimenter experimenter = new Experimenter(overseer, new SimpleLoggingDAO4Debugging(), SAME_AS_RETRIEVER,
+                    new EvaluatorFactory(), taskConfigs, "SingleRunTest");
+            experimenter.run();
 
-        mutex.acquire();
-
-        closeHttpRetriever(SAME_AS_RETRIEVER);
-        overseer.shutdown();
+            mutex.acquire();
+        } finally {
+            closeHttpRetriever(SAME_AS_RETRIEVER);
+            if (overseer != null) {
+                overseer.shutdown();
+            }
+            if ((ENTITY_CHECKER_MANAGER != null)
+                    && (ENTITY_CHECKER_MANAGER instanceof FileBasedCachingEntityCheckerManager)) {
+                ((FileBasedCachingEntityCheckerManager) ENTITY_CHECKER_MANAGER).storeCache();
+            }
+        }
     }
 
     private void closeHttpRetriever(SameAsRetriever retriever) {

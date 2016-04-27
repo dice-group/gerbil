@@ -72,7 +72,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
 
             String questionUriPrefix;
             try {
-                questionUriPrefix = "htt://qa.gerbil.aksw.org/" + URLEncoder.encode(getName(), "UTF-8") + "/question#";
+                questionUriPrefix = "http://qa.gerbil.aksw.org/" + URLEncoder.encode(getName(), "UTF-8") + "/question#";
             } catch (UnsupportedEncodingException e) {
                 throw new GerbilException("Severe error while trying to encode dataset name.", e,
                         ErrorTypes.DATASET_LOADING_ERROR);

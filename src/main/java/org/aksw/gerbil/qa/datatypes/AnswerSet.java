@@ -51,4 +51,13 @@ public class AnswerSet implements Marking {
     public Object clone() {
         return new AnswerSet(answers);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("AnswerSet [answers=");
+        builder.append(answers.toString());
+        builder.append("]");
+        return builder.toString();
+    }
 }

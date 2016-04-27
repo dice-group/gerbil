@@ -7,8 +7,6 @@ import java.util.Set;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
-import org.aksw.gerbil.qa.datatypes.ClassifiedAnswerSet;
-import org.aksw.gerbil.qa.datatypes.QuestionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +28,8 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
             }
             annotatorAnswers = annotatorResult.get(0).getAnswers();
         }
-        QuestionType questionType = null;
+        // FIXME the question type is never needed
+        // QuestionType questionType = null;
         Set<String> goldStandardAnswers;
         if (goldStandard.size() == 0) {
             goldStandardAnswers = new HashSet<String>();
@@ -41,14 +40,15 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
             }
             AnswerSet as = goldStandard.get(0);
             goldStandardAnswers = as.getAnswers();
-            if (as instanceof ClassifiedAnswerSet) {
-                questionType = ((ClassifiedAnswerSet) as).getQuestionType();
-            }
+            // if (as instanceof ClassifiedAnswerSet) {
+            // questionType = ((ClassifiedAnswerSet) as).getQuestionType();
+            // }
         }
-        if (questionType == null) {
-            LOGGER.warn("Couldn't determine the question type from the gold standard. Assuming the SELECT type.");
-            questionType = QuestionType.SELECT;
-        }
+        // if (questionType == null) {
+        // LOGGER.info("Couldn't determine the question type from the gold
+        // standard. Assuming the SELECT type.");
+        // questionType = QuestionType.SELECT;
+        // }
         return countMatchings(annotatorAnswers, goldStandardAnswers);
     }
 

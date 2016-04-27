@@ -431,7 +431,7 @@
 		// Adds the text of the elements from the given array to the given list adding the given prefix 
 		function addToList(list, array, prefix) {
 			$(array).each(function() {
-				if (($(prefix).length > 0) && (prefix != "")) {
+				if ((prefix.length > 0) && (prefix != "")) {
 					list.push(prefix + $(this).text());
 				} else {
 					list.push($(this).text());
@@ -481,7 +481,7 @@
 								$('#submitField').append(span);
 								$('#submitField').append(link);
 							}).fail(function() {
-						alert("Error, insufficient parameters.");
+						alert("The server reported an Error.");
 					});
 		}
 
