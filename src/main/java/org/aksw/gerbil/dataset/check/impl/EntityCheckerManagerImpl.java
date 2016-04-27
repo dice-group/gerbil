@@ -39,7 +39,7 @@ import com.carrotsearch.hppc.ObjectObjectOpenHashMap;
  * </p>
  * TODO The current implementation is not thread safe if
  * {@link #registerEntityChecker(String, EntityChecker)} is called while another
- * thread already is inside the {@link #checkMeanings(List)} method.
+ * thread already is inside the {@link #checkMeanings(Collection)} method.
  * 
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  *
