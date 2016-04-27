@@ -431,7 +431,7 @@
 		// Adds the text of the elements from the given array to the given list adding the given prefix 
 		function addToList(list, array, prefix) {
 			$(array).each(function() {
-				if ((prefix.length > 0) && (prefix != "")) {
+				if ((typeof prefix != 'undefined') && (prefix != "")) {
 					list.push(prefix + $(this).text());
 				} else {
 					list.push($(this).text());
