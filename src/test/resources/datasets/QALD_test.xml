@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<dataset id="qald-5_train">
+<question id="305" answertype="resource" aggregation="false" onlydbo="true" hybrid="true">
+<string lang="en"><![CDATA[Which recipients of the Victoria Cross died in the Battle of Arnhem?]]></string>
+<pseudoquery><![CDATA[
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX res: <http://dbpedia.org/resource/>
+SELECT DISTINCT ?uri 
+WHERE {
+    ?uri dbo:award res:Victoria_Cross .
+    ?uri text:"died in" text:"Battle of Arnhem" .
+}
+]]></pseudoquery>
+<answers>
+<answer><![CDATA[http://dbpedia.org/resource/John_Hollington_Grayburn]]></answer>
+<answer><![CDATA[http://dbpedia.org/resource/John_Baskeyfield]]></answer>
+</answers>
+</question>
+</dataset>

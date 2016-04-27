@@ -22,9 +22,13 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2KBAnnotator, C2KBAnnotator,
         D2KBAnnotator, EntityRecognizer, EntityTyper, OKETask1Annotator, OKETask2Annotator, QASystem {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(InstanceListBasedAnnotator.class);
 
     protected Map<String, Document> uriInstanceMapping;
 
@@ -40,6 +44,8 @@ public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2K
         if (uriInstanceMapping.containsKey(uri)) {
             return uriInstanceMapping.get(uri);
         } else {
+            LOGGER.info("The {} annotator could't find a matching document with the URI \"{}\". null is returned.",
+                    getName(), uri);
             return null;
         }
     }
