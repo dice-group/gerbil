@@ -32,6 +32,7 @@ import org.aksw.gerbil.evaluate.impl.ClassifyingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.DoubleResultComparator;
+import org.aksw.gerbil.evaluate.impl.EmptyEvaluationAvoidingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.GSInKBClassifyingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.HierarchicalFMeasureCalculator;
@@ -243,22 +244,25 @@ public class EvaluatorFactory {
                     new DoubleResultComparator());
         }
 
-            // -------- QA Experiments --------
+        // -------- QA Experiments --------
 
         case AType: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerType>(
-                    new FMeasureCalculator<AnswerType>(
-                            new MatchingsCounterImpl<AnswerType>(new EqualsBasedMatchingsSearcher<AnswerType>())),
+                    new EmptyEvaluationAvoidingEvaluatorDecorator<AnswerType>(new FMeasureCalculator<AnswerType>(
+                            new MatchingsCounterImpl<AnswerType>(new EqualsBasedMatchingsSearcher<AnswerType>()))),
                     AnswerType.class);
         }
         case AIT2KB: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, Meaning>(
-                    (Evaluator<Meaning>) createEvaluator(ExperimentType.C2KB, configuration, dataset),
+                    new EmptyEvaluationAvoidingEvaluatorDecorator<Meaning>(
+                            (Evaluator<Meaning>) createEvaluator(ExperimentType.C2KB, configuration, dataset)),
                     AnswerItemType.class);
         }
         case P2KB: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, Meaning>(
-                    (Evaluator<Meaning>) createEvaluator(ExperimentType.C2KB, configuration, dataset), Property.class);
+                    new EmptyEvaluationAvoidingEvaluatorDecorator<Meaning>(
+                            (Evaluator<Meaning>) createEvaluator(ExperimentType.C2KB, configuration, dataset)),
+                    Property.class);
         }
         case QA: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerSet>(
@@ -266,8 +270,8 @@ public class EvaluatorFactory {
         }
         case RE2KB: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, Relation>(
-                    new FMeasureCalculator<Relation>(
-                            new MatchingsCounterImpl<Relation>(new EqualsBasedMatchingsSearcher<Relation>())),
+                    new EmptyEvaluationAvoidingEvaluatorDecorator<Relation>(new FMeasureCalculator<Relation>(
+                            new MatchingsCounterImpl<Relation>(new EqualsBasedMatchingsSearcher<Relation>()))),
                     Relation.class);
         }
         default: {
