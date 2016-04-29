@@ -51,8 +51,11 @@ public class ConfidenceBasedFMeasureCalculator<T extends Marking> implements Eva
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
             EvaluationResultContainer results) {
         ScoredEvaluationCountsArray counts = generateMatchingCounts(annotatorResults, goldStandard);
-        double threshold = calculateMicroFMeasure(counts, results);
-        calculateMacroFMeasure(counts, results, threshold);
+        if ((counts.truePositiveSums.length > 0) && (counts.falseNegativeSums.length > 0)
+                && (counts.falsePositiveSums.length > 0)) {
+            double threshold = calculateMicroFMeasure(counts, results);
+            calculateMacroFMeasure(counts, results, threshold);
+        }
     }
 
     protected ScoredEvaluationCountsArray generateMatchingCounts(List<List<T>> annotatorResults,
