@@ -133,7 +133,7 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
                     } else {
                         if (!line[TEXT_INDEX].isEmpty()) {
                             // if we should insert a whitespace
-                            if ((textBuilder.length() > 0) && (line[TEXT_INDEX].length() > 1)
+                            if ((textBuilder.length() > 0) && (line[TEXT_INDEX].length() >= 1)
                                     && (Character.isLetterOrDigit(line[TEXT_INDEX].charAt(0)))) {
                                 textBuilder.append(' ');
                             }
