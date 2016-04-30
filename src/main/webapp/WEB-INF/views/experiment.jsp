@@ -189,7 +189,7 @@
 				+ "</a>";
 			// If this is the AKSW instance of GERBIL
 			if(origin == "http://gerbil.aksw.org") {
-				content = " and <a href=\"http://w3id.org/gerbil/experiment"
+				content += " and <a href=\"http://w3id.org/gerbil/experiment"
 					+ experimentId
 					+ "\">http://w3id.org/gerbil/experiment"
 					+ experimentId
@@ -197,13 +197,13 @@
 			}
 			// If this is the AKSW instance of GERBIL QA
 			if(origin == "http://gerbil-qa.aksw.org") {
-				content = " and <a href=\"http://w3id.org/gerbil/qa/experiment"
+				content += " and <a href=\"http://w3id.org/gerbil/qa/experiment"
 					+ experimentId
 					+ "\">http://w3id.org/gerbil/qa/experiment"
 					+ experimentId
 					+ "</a>";
 			}
-			$("#epxerimentUri").html(content);
+			$("#experimentUri").html(content);
 		});
 	</script>
 </body>
