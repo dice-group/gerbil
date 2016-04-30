@@ -334,7 +334,7 @@
 		<dependency>
 			<groupId>org.aksw</groupId>
 			<artifactId>qa.systems</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

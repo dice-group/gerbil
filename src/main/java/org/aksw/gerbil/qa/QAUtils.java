@@ -1,8 +1,12 @@
 package org.aksw.gerbil.qa;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.aksw.gerbil.qa.datatypes.AnswerItemType;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
@@ -45,6 +49,11 @@ public class QAUtils {
             } catch (Exception e) {
                 return null;
             }
+        } else if (question.getPseudoSparqlQuery() != null) {
+            try {
+                deriveMarkingsFromSparqlQuery(document, question.getPseudoSparqlQuery());
+            } catch (Exception e) {
+            }
         }
         // FIXME @Ricardo if from annotator, load from IQuestion
         // answerType
@@ -72,7 +81,47 @@ public class QAUtils {
      * @param document
      * @param question
      */
-    protected static void deriveMarkingsFromSparqlQuery(final Document document, final String sparqlQueryString) {
+    protected static void deriveMarkingsFromSparqlQuery(final Document document, String sparqlQueryString) {
+        // handle text: prefixes of literals
+        List<String> strings = null;
+        if (sparqlQueryString.contains("text:\"")) {
+            int wherePos = sparqlQueryString.toLowerCase().indexOf("where {");
+            if(sparqlQueryString.contains("dbo:architecturalStyle")) {
+                System.out.println("STOP!");
+            }
+            if (wherePos >= 0) {
+                StringBuilder builder = new StringBuilder();
+                String remainingString = sparqlQueryString.substring(wherePos);
+
+                strings = new ArrayList<String>();
+                Pattern pattern = Pattern.compile("text:\"([^\"]*)\"");
+                Matcher matcher = pattern.matcher(remainingString);
+                int startPos, endPos = 7;
+                while (matcher.find()) {
+                    startPos = matcher.start();
+                    builder.append(remainingString.substring(endPos, startPos));
+                    builder.append("?text");
+                    builder.append(strings.size());
+                    strings.add(matcher.group(1));
+                    endPos = matcher.end();
+                }
+                builder.append(remainingString.substring(endPos));
+                remainingString = builder.toString();
+                builder.delete(0, builder.length());
+
+                builder.append(sparqlQueryString.substring(0, wherePos + 7));
+                for (int i = 0; i < strings.size(); ++i) {
+                    builder.append(" ?text");
+                    builder.append(i);
+                    builder.append(" <http://okbqa.org/text#query> \"");
+                    builder.append(strings.get(i));
+                    builder.append("\" .");
+                }
+                builder.append(remainingString);
+                sparqlQueryString = builder.toString();
+            }
+        }
+
         Query sparqlQuery = null;
         try {
             sparqlQuery = QueryFactory.create(sparqlQueryString);

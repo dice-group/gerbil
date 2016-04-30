@@ -1,15 +1,16 @@
 package org.aksw.gerbil.annotator.impl.qa;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.QASystem;
 import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.qa.datatypes.AnswerSet;
+import org.aksw.gerbil.qa.QAUtils;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.systems.ASystem;
 import org.aksw.qa.systems.HAWK;
 import org.aksw.qa.systems.QAKIS;
@@ -57,7 +58,13 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 
     @Override
     public List<Marking> answerQuestion(Document document) throws GerbilException {
-        return Arrays.asList((Marking) new AnswerSet(qaSystem.search(document.getText())));
+        IQuestion question = qaSystem.search(document.getText());
+        Document resultDoc = QAUtils.translateQuestion(question, document.getDocumentURI());
+        if(resultDoc != null) {
+            return resultDoc.getMarkings();
+        } else {
+            return new ArrayList<Marking>(0);
+        }
     }
 
 }
