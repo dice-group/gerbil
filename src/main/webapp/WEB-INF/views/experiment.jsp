@@ -57,7 +57,8 @@
 				<c:set var="hasSubTasks" value="true" />
 			</c:if>
 		</c:forEach>
-
+	Experiment URI: <span id="experimentUri"></span>
+		<br>
 	Type: <c:out value="${tasks[0].type.label}" />
 		<br>
 	Matching: <c:out value="${tasks[0].matching.label}" />
@@ -175,6 +176,34 @@
 			$("#resultTable").tablesorter({
 				sortList : [ [ 0, 0 ], [ 1, 0 ] ]
 			});
+
+			// print the URI of the experiment
+			var origin = window.location.origin;
+			var experimentId = window.location.search;
+			var content = "<a href=\"/gerbil/experiment"
+				+ experimentId
+				+ "\">"
+				+ origin
+				+ "/gerbil/experiment"
+				+ experimentId
+				+ "</a>";
+			// If this is the AKSW instance of GERBIL
+			if(origin == "http://gerbil.aksw.org") {
+				content = " and <a href=\"http://w3id.org/gerbil/experiment"
+					+ experimentId
+					+ "\">http://w3id.org/gerbil/experiment"
+					+ experimentId
+					+ "</a>";
+			}
+			// If this is the AKSW instance of GERBIL QA
+			if(origin == "http://gerbil-qa.aksw.org") {
+				content = " and <a href=\"http://w3id.org/gerbil/qa/experiment"
+					+ experimentId
+					+ "\">http://w3id.org/gerbil/qa/experiment"
+					+ experimentId
+					+ "</a>";
+			}
+			$("#epxerimentUri").html(content);
 		});
 	</script>
 </body>
