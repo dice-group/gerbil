@@ -17,6 +17,7 @@
 package org.aksw.gerbil.test;
 
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
+import org.aksw.gerbil.dataset.check.impl.FileBasedCachingEntityCheckerManager;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.junit.Ignore;
 
@@ -38,6 +39,14 @@ public class EntityCheckerManagerSingleton4Tests {
             instance = RootConfig.getEntityCheckerManager();
         }
         return instance;
+    }
+
+    public synchronized static void storeCache() {
+        if (instance != null) {
+            if (instance instanceof FileBasedCachingEntityCheckerManager) {
+                ((FileBasedCachingEntityCheckerManager) instance).storeCache();
+            }
+        }
     }
 
 }

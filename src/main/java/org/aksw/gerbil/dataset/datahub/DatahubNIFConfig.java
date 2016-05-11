@@ -25,8 +25,10 @@ import java.nio.file.StandardOpenOption;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.AbstractDatasetConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.apache.jena.riot.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +42,9 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
     private String datasetUrl;
     private RestTemplate rt;
 
-    public DatahubNIFConfig(String datasetName, String datasetUrl, boolean couldBeCached) {
-        super(datasetName, couldBeCached, ExperimentType.A2KB);
+    public DatahubNIFConfig(String datasetName, String datasetUrl, boolean couldBeCached, EntityCheckerManager entityCheckerManager,
+            SameAsRetriever globalRetriever) {
+        super(datasetName, couldBeCached, ExperimentType.A2KB, entityCheckerManager, globalRetriever);
         this.datasetUrl = datasetUrl;
         rt = new RestTemplate();
     }

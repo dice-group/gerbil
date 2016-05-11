@@ -16,17 +16,29 @@
  */
 package org.aksw.gerbil.dataset;
 
+import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.SameAsRetrieverUtils;
+import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.model.DatasetBasedSameAsRetriever;
+import org.aksw.gerbil.transfer.nif.Document;
 
+public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfiguration
+        implements DatasetConfiguration {
 
-public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfiguration implements DatasetConfiguration {
+    protected EntityCheckerManager entityCheckerManager;
+    protected SameAsRetriever globalRetriever;
 
     public AbstractDatasetConfiguration(String datasetName, boolean couldBeCached,
-            ExperimentType applicableForExperiment) {
+            ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
+            SameAsRetriever globalRetriever) {
         super(datasetName, couldBeCached, applicableForExperiment);
+        this.entityCheckerManager = entityCheckerManager;
+        this.globalRetriever = globalRetriever;
     }
 
     @Override
@@ -35,12 +47,39 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
         // if (applicableForExperiments[i].equalsOrContainsType(experimentType))
         if (applicableForExperiment.equalsOrContainsType(experimentType)) {
             try {
-                return loadDataset();
+                return getPreparedDataset();
             } catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.DATASET_LOADING_ERROR);
             }
         }
         return null;
+    }
+
+    protected Dataset getPreparedDataset() throws Exception {
+        Dataset instance = loadDataset();
+        // If this dataset should be initialized
+        if (instance instanceof InitializableDataset) {
+            ((InitializableDataset) instance).init();
+        }
+        // Expand and check the URIs of the dataset
+        SameAsRetriever retriever = DatasetBasedSameAsRetriever.create(instance);
+        if (retriever != null) {
+            if (globalRetriever != null) {
+                retriever = new MultipleSameAsRetriever(retriever, globalRetriever);
+            }
+        } else {
+            retriever = globalRetriever;
+        }
+        for (Document document : instance.getInstances()) {
+            if (retriever != null) {
+                SameAsRetrieverUtils.addSameURIsToMarkings(retriever, document.getMarkings());
+            }
+            // check the meanings
+            if (entityCheckerManager != null) {
+                entityCheckerManager.checkMarkings(document.getMarkings());
+            }
+        }
+        return instance;
     }
 
     protected abstract Dataset loadDataset() throws Exception;

@@ -117,7 +117,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int size;
 
         public SimpleTestDatasetConfig(int size) {
-            super("test dataset", false, ExperimentType.ERec);
+            super("test dataset", false, ExperimentType.ERec, null, null);
             this.size = size;
         }
 

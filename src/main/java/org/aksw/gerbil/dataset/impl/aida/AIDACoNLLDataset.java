@@ -145,8 +145,9 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
                                         uris = generateArtificialUri(documentUriPrefix,
                                                 line[ANNOTATION_SURFACE_FORM_INDEX]);
                                     } else {
-                                        uris = WikipediaHelper
-                                                .generateUriSet(line[ANNOTATION_TITLE_INDEX]);
+                                        uris = WikipediaHelper.generateUriSet(line[ANNOTATION_TITLE_INDEX]);
+                                        // uris = new HashSet<String>();
+                                        // uris.add(line[]);
                                     }
                                     lastNE = new NamedEntity(textBuilder.length(), 0, uris);
                                     markings.add(lastNE);

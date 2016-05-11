@@ -57,7 +57,7 @@ public class OKEChallengeTask1ETTest extends AbstractExperimentTaskTest {
             "Such notables include James Carville, who was the senior political adviser to Bill Clinton, and Donna Brazile, the campaign manager of the 2000 presidential campaign of Vice-President Al Gore.",
             "The senator received a Bachelor of Laws from the Columbia University." };
     private static final DatasetConfiguration GOLD_STD = new NIFFileDatasetConfig("OKE_Task1",
-            "src/test/resources/OKE_Challenge/example_data/task1.ttl", false, ExperimentType.ETyping);
+            "src/test/resources/OKE_Challenge/example_data/task1.ttl", false, ExperimentType.ETyping, null, null);
     private static final UriKBClassifier URI_KB_CLASSIFIER = new SimpleWhiteListBasedUriKBClassifier(
             "http://dbpedia.org/resource/", "http://ontologydesignpatterns.org/ont/wikipedia/d0.owl#",
             "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#");

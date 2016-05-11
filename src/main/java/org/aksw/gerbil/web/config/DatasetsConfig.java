@@ -73,7 +73,8 @@ public class DatasetsConfig {
         DatahubNIFLoader datahub = new DatahubNIFLoader();
         Map<String, String> datasets = datahub.getDataSets();
         for (String datasetName : datasets.keySet()) {
-            datasetConfigurations.add(new DatahubNIFConfig(datasetName, datasets.get(datasetName), true));
+            datasetConfigurations.add(new DatahubNIFConfig(datasetName, datasets.get(datasetName), true,
+                    entityCheckerManager, globalRetriever));
         }
 
         LOGGER.info("Found {} datasets.", datasetConfigurations.size());

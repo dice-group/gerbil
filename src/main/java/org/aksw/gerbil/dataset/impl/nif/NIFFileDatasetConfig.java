@@ -18,16 +18,18 @@ package org.aksw.gerbil.dataset.impl.nif;
 
 import org.aksw.gerbil.dataset.AbstractDatasetConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.apache.jena.riot.Lang;
 
 public class NIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
     private String file;
 
-    public NIFFileDatasetConfig(String name, String file, boolean couldBeCached,
-            ExperimentType applicableForExperiment) {
-        super(name, couldBeCached, applicableForExperiment);
+    public NIFFileDatasetConfig(String name, String file, boolean couldBeCached, ExperimentType applicableForExperiment,
+            EntityCheckerManager entityCheckerManager, SameAsRetriever globalRetriever) {
+        super(name, couldBeCached, applicableForExperiment, entityCheckerManager, globalRetriever);
         this.file = file;
     }
 
