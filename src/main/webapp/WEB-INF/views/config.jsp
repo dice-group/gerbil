@@ -95,6 +95,11 @@
 					</select>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<hr />
+				</div>
+			</div>
 			<!--Matching dropdown filled by loadMatching() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="annotator">Matching</label>
@@ -103,12 +108,18 @@
 					</select>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<hr />
+				</div>
+			</div>
 			<!--Annotator dropdown filled by loadAnnotator() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="annotator">Annotator</label>
 				<div class="col-md-4">
 					<select id="annotator" multiple="multiple" style="display: none;">
 					</select>
+					<hr />
 					<div>
 						<span> Or add another webservice via URI:</span>
 						<div>
@@ -146,12 +157,18 @@
 					</div>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<hr />
+				</div>
+			</div>
 			<!--Dataset dropdown filled by loadDatasets() function -->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="datasets">Dataset</label>
 				<div class="col-md-4">
 					<select id="dataset" multiple="multiple" style="display: none;">
 					</select>
+					<hr />
 					<div>
 						<span> Or upload another dataset:</span>
 						<div>
@@ -180,6 +197,11 @@
 							</div>
 						</div>
 					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<hr />
 				</div>
 			</div>
 			<div class="form-group">
