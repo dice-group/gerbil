@@ -60,12 +60,13 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
     private static final int NE_TYPE_INDEX = 1;
     private static final int ANNOTATION_SURFACE_FORM_INDEX = 2;
     private static final int ANNOTATION_TITLE_INDEX = 3;
-    // private static final int ANNOTATION_URI_INDEX = 4;
+    private static final int ANNOTATION_URI_INDEX = 4;
 
     private static final String DOCUMENT_START_TAG = "-DOCSTART-";
     private static final String ANNOTATION_FIRST_WORD_TAG = "B";
     // private static final String ANNOTATION_NEXT_WORD_TAG = "I";
     private static final String ANNOTATION_NOT_IN_WIKI_TAG = "--NME--";
+    private static final String WIKIPEDIA_URI_START = "http://en.wikipedia.org/wiki/";
 
     private String file;
     private List<Document> documents;
@@ -145,9 +146,18 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
                                         uris = generateArtificialUri(documentUriPrefix,
                                                 line[ANNOTATION_SURFACE_FORM_INDEX]);
                                     } else {
-                                        uris = WikipediaHelper.generateUriSet(line[ANNOTATION_TITLE_INDEX]);
-                                        // uris = new HashSet<String>();
-                                        // uris.add(line[]);
+                                        // Add the DBpdia URI if this is a wiki
+                                        // URI
+                                        if (line[ANNOTATION_URI_INDEX].startsWith(WIKIPEDIA_URI_START)) {
+                                            uris = WikipediaHelper.generateUriSet(
+                                                    line[ANNOTATION_URI_INDEX].substring(WIKIPEDIA_URI_START.length()));
+                                        } else {
+                                            LOGGER.warn(
+                                                    "Found a URI that is not part of the English Wikipedia \"{}\". This was not expected.",
+                                                    line[ANNOTATION_URI_INDEX]);
+                                            uris = new HashSet<String>();
+                                        }
+                                        uris.add(line[ANNOTATION_URI_INDEX]);
                                     }
                                     lastNE = new NamedEntity(textBuilder.length(), 0, uris);
                                     markings.add(lastNE);
