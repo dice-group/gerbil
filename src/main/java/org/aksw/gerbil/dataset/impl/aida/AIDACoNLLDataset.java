@@ -120,6 +120,8 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
             NamedEntity lastNE = null;
             Set<String> uris;
             line = reader.readNext();
+            boolean quoteCharSeenBefore = false;
+            boolean whiteSpaceInFront, whiteSpaceBehind = true;
             while (line != null) {
                 if (line.length > TEXT_INDEX) {
                     // If a new document starts
@@ -127,6 +129,7 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
                         if (currentDoc != null) {
                             currentDoc.setText(textBuilder.toString().trim());
                             textBuilder.setLength(0);
+                            quoteCharSeenBefore = false;
                         }
                         markings = new ArrayList<Marking>();
                         currentDoc = new DocumentImpl(null, documentUriPrefix + documents.size(), markings);
@@ -134,9 +137,48 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
                     } else {
                         if (!line[TEXT_INDEX].isEmpty()) {
                             // if we should insert a whitespace
-                            if ((textBuilder.length() > 0) && (line[TEXT_INDEX].length() >= 1)
-                                    && (Character.isLetterOrDigit(line[TEXT_INDEX].charAt(0)))) {
-                                textBuilder.append(' ');
+                            whiteSpaceInFront = whiteSpaceBehind;
+                            whiteSpaceBehind = true;
+                            if ((textBuilder.length() > 0) && (line[TEXT_INDEX].length() >= 1)) {
+                                if (line[TEXT_INDEX].length() == 1) {
+                                    switch (line[TEXT_INDEX].charAt(0)) {
+                                    case '?': // falls through
+                                    case '!':
+                                    case ',':
+                                    case ')':
+                                    case ']':
+                                    case '}':
+                                    case '.': {
+                                        whiteSpaceInFront = false;
+                                        break;
+                                    }
+                                    case '"': {
+                                        // If we have seen another quote char
+                                        // before
+                                        if (!quoteCharSeenBefore) {
+                                            whiteSpaceBehind = false;
+                                        } else {
+                                            whiteSpaceInFront = false;
+                                        }
+                                        quoteCharSeenBefore = !quoteCharSeenBefore;
+                                        break;
+                                    }
+                                    case '(': // falls through
+                                    case '[':
+                                    case '{': {
+                                        whiteSpaceBehind = false;
+                                        break;
+                                    }
+                                    default: {
+                                        break;
+                                    }
+                                    }
+                                } else if (!Character.isLetterOrDigit(line[TEXT_INDEX].charAt(0))) {
+                                    whiteSpaceInFront = false;
+                                }
+                                if (whiteSpaceInFront) {
+                                    textBuilder.append(' ');
+                                }
                             }
                             // If there is a named entity
                             if ((line.length > NE_TYPE_INDEX) && !line[NE_TYPE_INDEX].isEmpty()) {
