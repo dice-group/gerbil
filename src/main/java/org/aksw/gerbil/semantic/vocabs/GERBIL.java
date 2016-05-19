@@ -29,7 +29,7 @@ public class GERBIL {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GERBIL.class);
 
-    protected static final String uri = "http://gerbil.aksw.org/gerbil/vocab#";
+    protected static final String uri = "http://w3id.org/gerbil/vocab#";
 
     /**
      * returns the URI for this schema
@@ -80,6 +80,7 @@ public class GERBIL {
     public static final Property microPrecision = property("microPrecision");
     public static final Property microRecall = property("microRecall");
     public static final Property statusCode = property("statusCode");
+    public static final Property subExperimentOf = property("subExperimentOf");
     public static final Property timestamp = property("timestamp");
     public static final Property topic = property("topic");
 
@@ -121,11 +122,9 @@ public class GERBIL {
             return ERec;
         case ETyping:
             return ETyping;
-        // FIXME add missing experiment types
-        default:
-            ;
         }
         LOGGER.error("Got an unknown experiment type: " + type.name());
         return null;
     }
+
 }

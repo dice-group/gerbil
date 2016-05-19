@@ -18,7 +18,6 @@ package org.aksw.gerbil.database;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -120,6 +119,11 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     @Override
     public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching,
             String[] annotatorNames, String[] datasetNames) {
+        return null;
+    }
+
+    @Override
+    public ExperimentTaskResult getResultOfExperimentTask(int experimentTaskId) {
         return null;
     }
 

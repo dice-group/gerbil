@@ -43,11 +43,11 @@ public class SingletonDatasetConfigImpl extends DatasetConfigurationImpl impleme
     }
 
     @Override
-    protected Dataset loadDataset() throws Exception {
+    protected Dataset getPreparedDataset() throws Exception {
         instanceMutex.acquire();
         try {
             if (instance == null) {
-                instance = super.loadDataset();
+                instance = super.getPreparedDataset();
                 instance.setClosePermitionGranter(this);
             }
             ++instanceUsages;

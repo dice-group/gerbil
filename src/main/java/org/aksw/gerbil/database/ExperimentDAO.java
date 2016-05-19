@@ -86,6 +86,16 @@ public interface ExperimentDAO extends Closeable {
     public List<ExperimentTaskResult> getResultsOfExperiment(String experimentId);
 
     /**
+     * Returns the result of the experiment task with the given ID or null if
+     * this task does not exist.
+     * 
+     * @param experimentTaskId
+     *            the id of the experiment task
+     * @return the experiment task or null if this task does not exist.
+     */
+    public ExperimentTaskResult getResultOfExperimentTask(int experimentTaskId);
+
+    /**
      * This method is called with the description of an experiment task and an
      * experiment id. The method checks whether there is already such an
      * experiment task inside the database that does not have an error code as
