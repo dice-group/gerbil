@@ -138,7 +138,7 @@ public class OKEChallengeTask1DatasetTest {
     @Test
     public void test() throws GerbilException {
         DatasetConfiguration datasetConfig = new NIFFileDatasetConfig("OKE_Task1", TASK1_FILE, false,
-                ExperimentType.A2KB);
+                ExperimentType.A2KB, null, null);
         Dataset dataset = datasetConfig.getDataset(ExperimentType.A2KB);
 
         Map<String, Document> uriInstanceMapping = new HashMap<String, Document>(EXPECTED_DOCUMENTS.length);

@@ -60,12 +60,13 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
     private static final int NE_TYPE_INDEX = 1;
     private static final int ANNOTATION_SURFACE_FORM_INDEX = 2;
     private static final int ANNOTATION_TITLE_INDEX = 3;
-    // private static final int ANNOTATION_URI_INDEX = 4;
+    private static final int ANNOTATION_URI_INDEX = 4;
 
     private static final String DOCUMENT_START_TAG = "-DOCSTART-";
     private static final String ANNOTATION_FIRST_WORD_TAG = "B";
     // private static final String ANNOTATION_NEXT_WORD_TAG = "I";
     private static final String ANNOTATION_NOT_IN_WIKI_TAG = "--NME--";
+    private static final String WIKIPEDIA_URI_START = "http://en.wikipedia.org/wiki/";
 
     private String file;
     private List<Document> documents;
@@ -119,6 +120,8 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
             NamedEntity lastNE = null;
             Set<String> uris;
             line = reader.readNext();
+            boolean quoteCharSeenBefore = false;
+            boolean whiteSpaceInFront, whiteSpaceBehind = true;
             while (line != null) {
                 if (line.length > TEXT_INDEX) {
                     // If a new document starts
@@ -126,6 +129,7 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
                         if (currentDoc != null) {
                             currentDoc.setText(textBuilder.toString().trim());
                             textBuilder.setLength(0);
+                            quoteCharSeenBefore = false;
                         }
                         markings = new ArrayList<Marking>();
                         currentDoc = new DocumentImpl(null, documentUriPrefix + documents.size(), markings);
@@ -133,9 +137,48 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
                     } else {
                         if (!line[TEXT_INDEX].isEmpty()) {
                             // if we should insert a whitespace
-                            if ((textBuilder.length() > 0) && (line[TEXT_INDEX].length() >= 1)
-                                    && (Character.isLetterOrDigit(line[TEXT_INDEX].charAt(0)))) {
-                                textBuilder.append(' ');
+                            whiteSpaceInFront = whiteSpaceBehind;
+                            whiteSpaceBehind = true;
+                            if ((textBuilder.length() > 0) && (line[TEXT_INDEX].length() >= 1)) {
+                                if (line[TEXT_INDEX].length() == 1) {
+                                    switch (line[TEXT_INDEX].charAt(0)) {
+                                    case '?': // falls through
+                                    case '!':
+                                    case ',':
+                                    case ')':
+                                    case ']':
+                                    case '}':
+                                    case '.': {
+                                        whiteSpaceInFront = false;
+                                        break;
+                                    }
+                                    case '"': {
+                                        // If we have seen another quote char
+                                        // before
+                                        if (!quoteCharSeenBefore) {
+                                            whiteSpaceBehind = false;
+                                        } else {
+                                            whiteSpaceInFront = false;
+                                        }
+                                        quoteCharSeenBefore = !quoteCharSeenBefore;
+                                        break;
+                                    }
+                                    case '(': // falls through
+                                    case '[':
+                                    case '{': {
+                                        whiteSpaceBehind = false;
+                                        break;
+                                    }
+                                    default: {
+                                        break;
+                                    }
+                                    }
+                                } else if (!Character.isLetterOrDigit(line[TEXT_INDEX].charAt(0))) {
+                                    whiteSpaceInFront = false;
+                                }
+                                if (whiteSpaceInFront) {
+                                    textBuilder.append(' ');
+                                }
                             }
                             // If there is a named entity
                             if ((line.length > NE_TYPE_INDEX) && !line[NE_TYPE_INDEX].isEmpty()) {
@@ -145,8 +188,18 @@ public class AIDACoNLLDataset extends AbstractDataset implements InitializableDa
                                         uris = generateArtificialUri(documentUriPrefix,
                                                 line[ANNOTATION_SURFACE_FORM_INDEX]);
                                     } else {
-                                        uris = WikipediaHelper
-                                                .generateUriSet(line[ANNOTATION_TITLE_INDEX]);
+                                        // Add the DBpdia URI if this is a wiki
+                                        // URI
+                                        if (line[ANNOTATION_URI_INDEX].startsWith(WIKIPEDIA_URI_START)) {
+                                            uris = WikipediaHelper.generateUriSet(
+                                                    line[ANNOTATION_URI_INDEX].substring(WIKIPEDIA_URI_START.length()));
+                                        } else {
+                                            LOGGER.warn(
+                                                    "Found a URI that is not part of the English Wikipedia \"{}\". This was not expected.",
+                                                    line[ANNOTATION_URI_INDEX]);
+                                            uris = new HashSet<String>();
+                                        }
+                                        uris.add(line[ANNOTATION_URI_INDEX]);
                                     }
                                     lastNE = new NamedEntity(textBuilder.length(), 0, uris);
                                     markings.add(lastNE);

@@ -29,7 +29,7 @@ public class GERBIL {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GERBIL.class);
 
-    protected static final String uri = "http://gerbil.aksw.org/gerbil/vocab#";
+    protected static final String uri = "http://w3id.org/gerbil/vocab#";
 
     /**
      * returns the URI for this schema
@@ -61,6 +61,11 @@ public class GERBIL {
     public static final Resource OKE2015_Task2 = resource("OKE2015_Task2");
     public static final Resource ERec = resource("ERec");
     public static final Resource ETyping = resource("ETyping");
+    public static final Resource AIT2KB = resource("AIT2KB");
+    public static final Resource AType = resource("AType");
+    public static final Resource P2KB = resource("P2KB");
+    public static final Resource QA = resource("QA");
+    public static final Resource RE2KB = resource("RE2KB");
 
     public static final Resource StrongAnnoMatch = resource("StrongAnnoMatch");
     public static final Resource WeakAnnoMatch = resource("WeakAnnoMatch");
@@ -80,6 +85,7 @@ public class GERBIL {
     public static final Property microPrecision = property("microPrecision");
     public static final Property microRecall = property("microRecall");
     public static final Property statusCode = property("statusCode");
+    public static final Property subExperimentOf = property("subExperimentOf");
     public static final Property timestamp = property("timestamp");
     public static final Property topic = property("topic");
 
@@ -121,11 +127,21 @@ public class GERBIL {
             return ERec;
         case ETyping:
             return ETyping;
-        // FIXME  @Micha@QA add missing experiment types
+        case AIT2KB:
+            return AIT2KB;
+        case AType:
+            return AType;
+        case P2KB:
+            return P2KB;
+        case QA:
+            return QA;
+        case RE2KB:
+            return RE2KB;
         default:
-            ;
+            break;
         }
         LOGGER.error("Got an unknown experiment type: " + type.name());
         return null;
     }
+
 }

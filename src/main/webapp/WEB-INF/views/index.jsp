@@ -11,6 +11,12 @@
 <script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <link rel="icon" type="image/png"
 	href="/gerbil/webResources/gerbilicon_transparent.png">
+<style>
+div.picture {
+	background-color: #fff;
+	border-radius: 6px;
+}
+</style>
 </head>
 <body class="container">
 	<%@include file="navbar.jsp"%>
@@ -21,9 +27,10 @@
 			<p>
 				We present GERBIL QA, an extension of the <a
 					href="http://gerbil.aksw.org">general entity annotation system
-					GERBIL</a>. It offers an easy-to-use
-				web-based platform for the agile comparison of QA systems using
-				multiple datasets and uniform measuring approaches. <!-- To add a tool to
+					GERBIL</a>. It offers an easy-to-use web-based platform for the agile
+				comparison of QA systems using multiple datasets and uniform
+				measuring approaches.
+				<!-- To add a tool to
 				GERBIL, all the end user has to do is to provide a URL to a REST
 				interface to its tool which abides by a given specification. The
 				integration and benchmarking of the tool against user-specified

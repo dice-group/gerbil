@@ -26,10 +26,12 @@ import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.DatasetConfigurationImpl;
+import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.dataset.impl.nif.NIFFileDatasetConfig;
 import org.aksw.gerbil.dataset.impl.qald.FileBasedQALDDataset;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.qa.QALDStreamType;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +58,12 @@ public class AdapterManager {
     @Autowired
     @Qualifier("datasets")
     private AdapterList<DatasetConfiguration> datasets;
+
+    @Autowired
+    private EntityCheckerManager entityCheckerManager;
+
+    @Autowired
+    private SameAsRetriever globalRetriever;
 
     public Set<String> getAnnotatorNamesForExperiment(ExperimentType type) {
         return annotators.getAdapterNamesForExperiment(type);
@@ -199,7 +207,7 @@ public class AdapterManager {
                 String uri = uploadedFilesPath + name.substring(brackets[0] + 1, brackets[1]);
                 // remove dataset prefix from the name
                 name = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]) + UPLOADED_DATASET_SUFFIX;
-                return new NIFFileDatasetConfig(name, uri, false, type);
+return new NIFFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
             }
             if (name.startsWith(AF_PREFIX)) {
                 // This describes a QA answer file
@@ -251,5 +259,21 @@ public class AdapterManager {
             return null;
         }
         return new int[] { startPos, endPos };
+    }
+
+public EntityCheckerManager getEntityCheckerManager() {
+        return entityCheckerManager;
+    }
+
+    public void setEntityCheckerManager(EntityCheckerManager entityCheckerManager) {
+        this.entityCheckerManager = entityCheckerManager;
+    }
+
+    public SameAsRetriever getGlobalRetriever() {
+        return globalRetriever;
+    }
+
+    public void setGlobalRetriever(SameAsRetriever globalRetriever) {
+        this.globalRetriever = globalRetriever;
     }
 }

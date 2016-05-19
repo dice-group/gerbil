@@ -32,7 +32,7 @@ public class TestDataset extends AbstractDatasetConfiguration implements Dataset
     }
 
     public TestDataset(String name, List<Document> instances, ExperimentType applicableForExperiment) {
-        super(name, false, applicableForExperiment);
+        super(name, false, applicableForExperiment, null, null);
         this.instances = instances;
     }
 

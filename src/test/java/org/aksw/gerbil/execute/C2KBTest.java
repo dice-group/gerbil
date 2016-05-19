@@ -68,7 +68,7 @@ public class C2KBTest extends AbstractExperimentTaskTest {
             "Such notables include James Carville, who was the senior political adviser to Bill Clinton, and Donna Brazile, the campaign manager of the 2000 presidential campaign of Vice-President Al Gore.",
             "The senator received a Bachelor of Laws from the Columbia University." };
     private static final DatasetConfiguration GOLD_STD = new NIFFileDatasetConfig("OKE_Task1",
-            "src/test/resources/OKE_Challenge/example_data/task1.ttl", false, ExperimentType.C2KB);
+            "src/test/resources/OKE_Challenge/example_data/task1.ttl", false, ExperimentType.C2KB, null, null);
     private static final UriKBClassifier URI_KB_CLASSIFIER = new SimpleWhiteListBasedUriKBClassifier(
             "http://dbpedia.org/resource/");
 
@@ -81,9 +81,10 @@ public class C2KBTest extends AbstractExperimentTaskTest {
         // The extractor found everything and marked all entities using the OKE
         // URI --> some of them should be wrong, because they are not linked to
         // the DBpedia
-        testConfigs.add(new Object[] { new Document[] {
-                new DocumentImpl(TEXTS[0], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1",
-                        Arrays.asList((Marking) new Annotation(
+        testConfigs.add(new Object[] { new Document[] { new DocumentImpl(TEXTS[0],
+                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1",
+                Arrays.asList(
+                        (Marking) new Annotation(
                                 "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Florence_May_Harding"),
                         (Marking) new Annotation(
                                 "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/National_Art_School"),
@@ -130,24 +131,29 @@ public class C2KBTest extends AbstractExperimentTaskTest {
                                                 (Marking) new Annotation(
                                                         "http://dbpedia.org/resource/Florence_May_Harding"),
                                                 (Marking) new Annotation("http://dbpedia.org/resource/Sydney"))),
-                        // found 2xDBpedia but missed 2xnull
-                        // (TP=2,FP=0,FN=2,P=1,R=0.5,F1=2/3)
-                        new DocumentImpl(TEXTS[1],
-                                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
-                                Arrays.asList((Marking) new Annotation("http://dbpedia.org/resource/James_Carville"),
-                                        (Marking) new Annotation("http://dbpedia.org/resource/Political_consulting"),
-                                        (Marking) new Annotation("http://dbpedia.org/resource/Bill_Clinton"),
-                                        (Marking) new Annotation("http://dbpedia.org/resource/Donna_Brazile"),
-                                        (Marking) new Annotation("http://dbpedia.org/resource/Campaign_manager"),
-                                        (Marking) new Annotation("http://dbpedia.org/resource/Al_Gore"))),
-                // found 6xDBpedia
-                // (TP=6,FP=0,FN=0,P=1,R=1,F1=1)
-                new DocumentImpl(TEXTS[2], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
-                        Arrays.asList((Marking) new Annotation("http://dbpedia.org/resource/Columbia_University"))) },
-                // found 1xDBpedia but missed 1xnull
-                // (TP=1,FP=0,FN=1,P=1,R=0.5,F1=2/3)
-                GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
-                new double[] { 1.0, 2.0 / 3.0, 7.0 / 9.0, 1.0, 0.75, 1.5 / 1.75, 0 } });
+                                // found 2xDBpedia but missed 2xnull
+                                // (TP=2,FP=0,FN=2,P=1,R=0.5,F1=2/3)
+                                new DocumentImpl(TEXTS[1],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
+                                        Arrays.asList(
+                                                (Marking) new Annotation("http://dbpedia.org/resource/James_Carville"),
+                                                (Marking) new Annotation(
+                                                        "http://dbpedia.org/resource/Political_consulting"),
+                                                (Marking) new Annotation("http://dbpedia.org/resource/Bill_Clinton"),
+                                                (Marking) new Annotation("http://dbpedia.org/resource/Donna_Brazile"),
+                                                (Marking) new Annotation(
+                                                        "http://dbpedia.org/resource/Campaign_manager"),
+                                                (Marking) new Annotation("http://dbpedia.org/resource/Al_Gore"))),
+                                // found 6xDBpedia
+                                // (TP=6,FP=0,FN=0,P=1,R=1,F1=1)
+                                new DocumentImpl(TEXTS[2],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
+                                        Arrays.asList((Marking) new Annotation(
+                                                "http://dbpedia.org/resource/Columbia_University"))) },
+                        // found 1xDBpedia but missed 1xnull
+                        // (TP=1,FP=0,FN=1,P=1,R=0.5,F1=2/3)
+                        GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
+                        new double[] { 1.0, 2.0 / 3.0, 7.0 / 9.0, 1.0, 0.75, 1.5 / 1.75, 0 } });
         // The linker linked all entities using dbpedia URIs if they were
         // available or an emtpy URI set.
         testConfigs
@@ -161,18 +167,23 @@ public class C2KBTest extends AbstractExperimentTaskTest {
                                                 (Marking) new Annotation(new HashSet<String>()),
                                                 (Marking) new Annotation("http://dbpedia.org/resource/Sydney"),
                                                 (Marking) new Annotation(new HashSet<String>()))),
-                        new DocumentImpl(TEXTS[1],
-                                "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
-                                Arrays.asList((Marking) new Annotation("http://dbpedia.org/resource/James_Carville"),
-                                        (Marking) new Annotation("http://dbpedia.org/resource/Political_consulting"),
-                                        (Marking) new Annotation("http://dbpedia.org/resource/Bill_Clinton"),
-                                        (Marking) new Annotation("http://dbpedia.org/resource/Donna_Brazile"),
-                                        (Marking) new Annotation("http://dbpedia.org/resource/Campaign_manager"),
-                                        (Marking) new Annotation("http://dbpedia.org/resource/Al_Gore"))),
-                new DocumentImpl(TEXTS[2], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
-                        Arrays.asList((Marking) new Annotation(new HashSet<String>()),
-                                (Marking) new Annotation("http://dbpedia.org/resource/Columbia_University"))) },
-                GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+                                new DocumentImpl(TEXTS[1],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
+                                        Arrays.asList(
+                                                (Marking) new Annotation("http://dbpedia.org/resource/James_Carville"),
+                                                (Marking) new Annotation(
+                                                        "http://dbpedia.org/resource/Political_consulting"),
+                                                (Marking) new Annotation("http://dbpedia.org/resource/Bill_Clinton"),
+                                                (Marking) new Annotation("http://dbpedia.org/resource/Donna_Brazile"),
+                                                (Marking) new Annotation(
+                                                        "http://dbpedia.org/resource/Campaign_manager"),
+                                                (Marking) new Annotation("http://dbpedia.org/resource/Al_Gore"))),
+                                new DocumentImpl(TEXTS[2],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
+                                        Arrays.asList((Marking) new Annotation(new HashSet<String>()),
+                                                (Marking) new Annotation(
+                                                        "http://dbpedia.org/resource/Columbia_University"))) },
+                        GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
         // The extractor found everything and marked all entities using dbpedia
         // URIs (if they were available) or own URIs
         testConfigs
@@ -188,17 +199,23 @@ public class C2KBTest extends AbstractExperimentTaskTest {
                                                 (Marking) new Annotation("http://dbpedia.org/resource/Sydney"),
                                                 (Marking) new Annotation(
                                                         "http://aksws.org/notInWiki/Douglas_Robert_Dundas"))),
-                new DocumentImpl(TEXTS[1], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
-                        Arrays.asList((Marking) new Annotation("http://dbpedia.org/resource/James_Carville"),
-                                (Marking) new Annotation("http://dbpedia.org/resource/Political_consulting"),
-                                (Marking) new Annotation("http://dbpedia.org/resource/Bill_Clinton"),
-                                (Marking) new Annotation("http://dbpedia.org/resource/Donna_Brazile"),
-                                (Marking) new Annotation("http://dbpedia.org/resource/Campaign_manager"),
-                                (Marking) new Annotation("http://dbpedia.org/resource/Al_Gore"))),
-                new DocumentImpl(TEXTS[2], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
-                        Arrays.asList((Marking) new Annotation("http://aksws.org/notInWiki/Senator_1"),
-                                (Marking) new Annotation("http://dbpedia.org/resource/Columbia_University"))) },
-                GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+                                new DocumentImpl(TEXTS[1],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-2",
+                                        Arrays.asList(
+                                                (Marking) new Annotation("http://dbpedia.org/resource/James_Carville"),
+                                                (Marking) new Annotation(
+                                                        "http://dbpedia.org/resource/Political_consulting"),
+                                                (Marking) new Annotation("http://dbpedia.org/resource/Bill_Clinton"),
+                                                (Marking) new Annotation("http://dbpedia.org/resource/Donna_Brazile"),
+                                                (Marking) new Annotation(
+                                                        "http://dbpedia.org/resource/Campaign_manager"),
+                                                (Marking) new Annotation("http://dbpedia.org/resource/Al_Gore"))),
+                                new DocumentImpl(TEXTS[2],
+                                        "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
+                                        Arrays.asList((Marking) new Annotation("http://aksws.org/notInWiki/Senator_1"),
+                                                (Marking) new Annotation(
+                                                        "http://dbpedia.org/resource/Columbia_University"))) },
+                        GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
         return testConfigs;
     }
 

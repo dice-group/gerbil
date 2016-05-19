@@ -18,16 +18,19 @@ package org.aksw.gerbil.dataid;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
+import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.semantic.vocabs.CUBE;
 import org.aksw.gerbil.semantic.vocabs.GERBIL;
 import org.aksw.gerbil.web.ExperimentTaskStateHelper;
 import org.apache.jena.riot.RDFDataMgr;
 
+import com.carrotsearch.hppc.IntDoubleOpenHashMap;
 import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -39,21 +42,19 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 public class DataIDGenerator {
 
-    private static final String EXPERIMENT_PREFIX = "#experiment_";
+    private static final String EXPERIMENT_PREFIX = "experiment?id=";
+    private static final String EXPERIMENT_TASK_PREFIX = "experimentTask_";
     private static final String DATASET_DATAID = "dataId/corpora/";
     private static final String ANNOTATOR_DATAID = "dataId/annotators/";
     private static final String DATAID_EXTENSION = "";
 
     private String gerbilURL;
-    private String gerbilFullURL;
 
-    public DataIDGenerator(String gerbilURL, String gerbilFullURL) {
+    public DataIDGenerator(String gerbilURL) {
         this.gerbilURL = gerbilURL;
-        this.gerbilFullURL = gerbilFullURL;
     }
 
-    public String createDataIDModel(List<ExperimentTaskResult> results, String eID) {
-
+    public Model generateDataIDModel() {
         // create an empty JENA Model
         Model model = ModelFactory.createDefaultModel();
 
@@ -64,41 +65,21 @@ public class DataIDGenerator {
         model.setNsPrefix("xsd", XSD.getURI());
         model.setNsPrefix("qb", CUBE.getURI());
 
+        return model;
+    }
+
+    public String createDataIDModel(List<ExperimentTaskResult> results, String eID) {
         // If the experiment is not existing (== there are no results), return
         // an empty String
         if (results.size() == 0) {
             return "";
         }
 
-        Resource experiment = createExperimentResource(model, eID);
+        Model model = generateDataIDModel();
 
-        int experimentNumber = 0;
-        Iterator<ExperimentTaskResult> resultIterator = results.iterator();
-        ExperimentTaskResult result;
-        // iterating over the experiments
-        while (resultIterator.hasNext()) {
-            result = resultIterator.next();
-            // If this is the first experiment result, use it to get further
-            // properties of the experiment (matching, ...)
-            if (experimentNumber == 0) {
-                Resource r = GERBIL.getExperimentTypeResource(result.type);
-                if (r != null) {
-                    experiment.addProperty(GERBIL.experimentType, r);
-                }
-                r = GERBIL.getMatchingResource(result.matching);
-                if (r != null) {
-                    experiment.addProperty(GERBIL.matching, r);
-                }
-            }
-            // create experiment task
-            addExperimentTask(model, result, experiment, experimentNumber);
+        addToModel(model, results, eID);
 
-            ++experimentNumber;
-        }
-
-        // writing dataid result to output (this should be removed)
-        // RDFDataMgr.write(System.out, model, RDFFormat.TURTLE);
-
+        // writing dataid result to output
         OutputStream o = new ByteArrayOutputStream();
 
         // creating json-ld output format
@@ -107,9 +88,40 @@ public class DataIDGenerator {
         return o.toString();
     }
 
-    private Resource createExperimentResource(Model model, String eID) {
+    public void addToModel(Model model, List<ExperimentTaskResult> results, String eID) {
+        if (results.size() == 0) {
+            return;
+        }
+
+        Resource experiment = createExperimentResource(model, eID);
+
+        boolean first = true;
+        Iterator<ExperimentTaskResult> resultIterator = results.iterator();
+        ExperimentTaskResult result;
+        // iterating over the experiments
+        while (resultIterator.hasNext()) {
+            result = resultIterator.next();
+            // If this is the first experiment result, use it to get further
+            // properties of the experiment (matching, ...)
+            if (first) {
+                Resource r = GERBIL.getExperimentTypeResource(result.type);
+                if (r != null) {
+                    experiment.addProperty(GERBIL.experimentType, r);
+                }
+                r = GERBIL.getMatchingResource(result.matching);
+                if (r != null) {
+                    experiment.addProperty(GERBIL.matching, r);
+                }
+                first = false;
+            }
+            // create experiment task
+            addExperimentTask(model, result, experiment);
+        }
+    }
+
+    public Resource createExperimentResource(Model model, String eID) {
         // create experiment resource
-        Resource experiment = model.createResource(gerbilFullURL + EXPERIMENT_PREFIX + eID);
+        Resource experiment = model.createResource(gerbilURL + EXPERIMENT_PREFIX + eID);
         experiment.addProperty(RDF.type, CUBE.Dataset);
         experiment.addProperty(RDF.type, GERBIL.Experiment);
 
@@ -119,36 +131,92 @@ public class DataIDGenerator {
         return experiment;
     }
 
-    private void addExperimentTask(Model model, ExperimentTaskResult result, Resource experiment, int experimentNumber) {
+    public void addExperimentTask(Model model, ExperimentTaskResult result, Resource experiment) {
+        addExperimentTask(model, result, experiment, null);
+    }
+
+    public void addExperimentTask(Model model, ExperimentTaskResult result, Resource experiment,
+            Resource superExpTask) {
+        List<Resource> experimentTasks = new ArrayList<Resource>();
+        createExperimentTask(model, result, superExpTask, experimentTasks);
+        linkTasksToExperiment(model, experiment, experimentTasks);
+    }
+
+    public void linkTasksToExperiment(Model model, Resource experiment, List<Resource> experimentTasks) {
+        for (Resource experimentTask : experimentTasks) {
+            model.add(experimentTask, CUBE.dataset, experiment.getURI());
+        }
+    }
+
+    public void createExperimentTask(Model model, ExperimentTaskResult result, Resource superExpTask,
+            List<Resource> experimentTasks) {
         // create Resource
-        Resource experimentTask = model.createResource(experiment.getURI() + "_task_" + experimentNumber);
+        Resource experimentTask = model.createResource(generateExperimentTaskUri(result.idInDb));
+        experimentTasks.add(experimentTask);
+        if (model.containsResource(experimentTask)) {
+            return;
+        }
         experimentTask.addProperty(RDF.type, CUBE.Observation);
 
         // add annotator and dataset
         experimentTask.addProperty(GERBIL.annotator,
-                gerbilURL + DATASET_DATAID + DataIDUtils.treatsNames(result.annotator) + DATAID_EXTENSION);
-        experimentTask.addProperty(GERBIL.dataset,
                 gerbilURL + ANNOTATOR_DATAID + DataIDUtils.treatsNames(result.dataset) + DATAID_EXTENSION);
+        experimentTask.addProperty(GERBIL.dataset,
+                gerbilURL + DATASET_DATAID + DataIDUtils.treatsNames(result.annotator) + DATAID_EXTENSION);
 
         // set the status of this task
         model.add(experimentTask, GERBIL.statusCode, model.createTypedLiteral(result.state));
 
+        if (superExpTask != null) {
+            model.add(experimentTask, GERBIL.subExperimentOf, superExpTask);
+        }
+
         // If this task has been finished
         if (ExperimentTaskStateHelper.taskFinished(result)) {
-        	model.add(experimentTask, CUBE.dataset, model.createResource(experiment.getURI()));
             // creating and setting literals for the current experiment
-            model.add(experimentTask, GERBIL.microF1, model.createTypedLiteral(String.valueOf(result.getMicroF1Measure()),XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.microPrecision, model.createTypedLiteral(String.valueOf(result.getMicroPrecision()),XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.microRecall, model.createTypedLiteral(String.valueOf(result.getMicroRecall()),XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroF1, model.createTypedLiteral(String.valueOf(result.getMacroF1Measure()),XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroPrecision, model.createTypedLiteral(String.valueOf(result.getMacroPrecision()),XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroRecall, model.createTypedLiteral(String.valueOf(result.getMacroRecall()), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.microF1,
+                    model.createTypedLiteral(String.valueOf(result.getMicroF1Measure()), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.microPrecision,
+                    model.createTypedLiteral(String.valueOf(result.getMicroPrecision()), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.microRecall,
+                    model.createTypedLiteral(String.valueOf(result.getMicroRecall()), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroF1,
+                    model.createTypedLiteral(String.valueOf(result.getMacroF1Measure()), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroPrecision,
+                    model.createTypedLiteral(String.valueOf(result.getMacroPrecision()), XSDDatatype.XSDdecimal));
+            model.add(experimentTask, GERBIL.macroRecall,
+                    model.createTypedLiteral(String.valueOf(result.getMacroRecall()), XSDDatatype.XSDdecimal));
             model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(String.valueOf(result.errorCount)));
+
+            if (result.hasAdditionalResults()) {
+                IntDoubleOpenHashMap additionalResults = result.getAdditionalResults();
+                String propertyUri;
+                ResultNameToIdMapping mapping = ResultNameToIdMapping.getInstance();
+                for (int i = 0; i < additionalResults.allocated.length; ++i) {
+                    if (additionalResults.allocated[i]) {
+                        propertyUri = mapping.getResultName(additionalResults.keys[i]);
+                        if (propertyUri != null) {
+                            propertyUri = GERBIL.getURI() + propertyUri.replace(" ", "_");
+                            model.add(experimentTask, model.createProperty(propertyUri), model.createTypedLiteral(
+                                    String.valueOf(additionalResults.values[i]), XSDDatatype.XSDdecimal));
+                        }
+                    }
+                }
+            }
+            if (result.hasSubTasks()) {
+                for (ExperimentTaskResult subResult : result.getSubTasks()) {
+                    createExperimentTask(model, subResult, experimentTask, experimentTasks);
+                }
+            }
         }
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(result.timestamp);
         model.add(experimentTask, GERBIL.timestamp, model.createTypedLiteral(cal));
+    }
+
+    public String generateExperimentTaskUri(int taskId) {
+        return gerbilURL + EXPERIMENT_TASK_PREFIX + taskId;
     }
 
 }

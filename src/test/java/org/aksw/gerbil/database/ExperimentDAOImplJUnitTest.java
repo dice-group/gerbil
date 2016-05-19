@@ -103,21 +103,23 @@ public class ExperimentDAOImplJUnitTest {
         for (int i = 0; i < 10; ++i) {
             if (i < 8) {
                 results.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2KB,
-                        Matching.STRONG_ANNOTATION_MATCH, new double[] { random.nextFloat(), random.nextFloat(),
-                                random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat() },
+                        Matching.STRONG_ANNOTATION_MATCH,
+                        new double[] { random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(),
+                                random.nextFloat(), random.nextFloat() },
                         ExperimentDAO.TASK_FINISHED, random.nextInt()));
             } else {
                 results.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2KB,
                         Matching.STRONG_ANNOTATION_MATCH, new double[6],
-                        i == 8 ? ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET : ErrorTypes.UNEXPECTED_EXCEPTION
-                                .getErrorCode(), 0));
+                        i == 8 ? ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET
+                                : ErrorTypes.UNEXPECTED_EXCEPTION.getErrorCode(),
+                        0));
             }
         }
 
         int taskId;
         for (ExperimentTaskResult result : results) {
-            taskId = this.dao.createTask(result.getAnnotator(), result.getDataset(), result.getType().name(), result
-                    .getMatching().name(), EXPERIMENT_ID);
+            taskId = this.dao.createTask(result.getAnnotator(), result.getDataset(), result.getType().name(),
+                    result.getMatching().name(), EXPERIMENT_ID);
             if (result.state == ExperimentDAO.TASK_FINISHED) {
                 this.dao.setExperimentTaskResult(taskId, result);
             } else {
@@ -173,7 +175,8 @@ public class ExperimentDAOImplJUnitTest {
 
     @Test
     public void testGetLatestResultsOfExperiments() {
-        // Only the first task should be retrieved, the second is not finished, the third has the wrong matching and the
+        // Only the first task should be retrieved, the second is not finished,
+        // the third has the wrong matching and the
         // fourth has the wrong type
         String tasks[][] = new String[][] {
                 { "annotator1", "dataset1", ExperimentType.A2KB.name(), Matching.WEAK_ANNOTATION_MATCH.name() },
@@ -188,7 +191,8 @@ public class ExperimentDAOImplJUnitTest {
             }
         }
         List<ExperimentTaskResult> results = this.dao.getLatestResultsOfExperiments(ExperimentType.A2KB.name(),
-                Matching.WEAK_ANNOTATION_MATCH.name());
+                Matching.WEAK_ANNOTATION_MATCH.name(), new String[] { "annotator1", "annotator2" },
+                new String[] { "dataset1", "dataset2" });
         Assert.assertEquals(1, results.size());
         Assert.assertEquals("annotator1", results.get(0).annotator);
         Assert.assertEquals("dataset1", results.get(0).dataset);

@@ -62,7 +62,7 @@ public class OKEChallengeTask2Test extends AbstractExperimentTaskTest {
             "Brian Banner is a fictional villain from the Marvel Comics Universe created by Bill Mantlo and Mike Mignola and first appearing in print in late 1985.",
             "Avex Group Holdings Inc., listed in the Tokyo Stock Exchange as 7860 and abbreviated as AGHD, is the holding company for a group of entertainment-related subsidiaries based in Japan." };
     private static final DatasetConfiguration GOLD_STD = new NIFFileDatasetConfig("OKE_Task2",
-            "src/test/resources/OKE_Challenge/example_data/task2.ttl", false, ExperimentType.OKE_Task2);
+            "src/test/resources/OKE_Challenge/example_data/task2.ttl", false, ExperimentType.OKE_Task2, null, null);
 
     private static final SubClassInferencer inferencer = RootConfig.createSubClassInferencer();
 

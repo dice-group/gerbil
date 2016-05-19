@@ -104,9 +104,6 @@ public class MainController {
 
     private ExperimentType[] availableExperimentTypes = RootConfig.getAvailableExperimentTypes();
 
-    @Autowired
-    protected HttpServletRequest request;
-
     private AnnotatorOutputWriter annotatorOutputWriter = RootConfig.getAnnotatorOutputWriter();
 
     @RequestMapping("/config")
@@ -202,9 +199,9 @@ public class MainController {
     }
 
     @RequestMapping("/experiment")
-    public ModelAndView experiment(@RequestParam(value = "id") String id) {
+    public ModelAndView experiment(@RequestParam(value = "id") String id, HttpServletRequest request) {
         LOGGER.debug("Got request on /experiment with id={}", id);
-        dataIdGenerator = new DataIDGenerator(getURLBase(), getFullURL());
+        dataIdGenerator = new DataIDGenerator(getURLBase(request));
         List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
         ExperimentTaskStateHelper.setStatusLines(results);
         ModelAndView model = new ModelAndView();
@@ -313,7 +310,7 @@ public class MainController {
         return "";
     }
 
-    private String getURLBase() {
+    private String getURLBase(HttpServletRequest request) {
         String scheme = request.getScheme();
         String serverName = request.getServerName();
         int serverPort = request.getServerPort();
@@ -326,7 +323,9 @@ public class MainController {
         return url.toString();
     }
 
-    private String getFullURL() {
+    @SuppressWarnings("unused")
+    @Deprecated
+    private String getFullURL(HttpServletRequest request) {
         StringBuffer requestURL = request.getRequestURL();
         String queryString = request.getQueryString();
 

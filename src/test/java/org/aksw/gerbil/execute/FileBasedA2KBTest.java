@@ -55,7 +55,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class FileBasedA2KBTest extends AbstractExperimentTaskTest {
 
     private static final DatasetConfiguration GOLD_STD = new NIFFileDatasetConfig("OKE_Task1",
-            "src/test/resources/OKE_Challenge/example_data/task1.ttl", false, ExperimentType.A2KB);
+            "src/test/resources/OKE_Challenge/example_data/task1.ttl", false, ExperimentType.A2KB, null, null);
     private static final UriKBClassifier URI_KB_CLASSIFIER = new SimpleWhiteListBasedUriKBClassifier(
             "http://dbpedia.org/resource/");
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.A2KB;
@@ -132,7 +132,7 @@ public class FileBasedA2KBTest extends AbstractExperimentTaskTest {
 
     public AnnotatorConfiguration loadAnnotatorFile(String annotatorFileName, boolean eraseConfidenceValues)
             throws GerbilException {
-        Dataset dataset = (new NIFFileDatasetConfig("ANNOTATOR", annotatorFileName, false, EXPERIMENT_TYPE))
+        Dataset dataset = (new NIFFileDatasetConfig("ANNOTATOR", annotatorFileName, false, EXPERIMENT_TYPE, null, null))
                 .getDataset(EXPERIMENT_TYPE);
         List<Document> instances;
         if (eraseConfidenceValues) {

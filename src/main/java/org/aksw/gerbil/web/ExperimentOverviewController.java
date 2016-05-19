@@ -99,7 +99,7 @@ public class ExperimentOverviewController {
 		}
 
 		List<ExperimentTaskResult> expResults = dao.getLatestResultsOfExperiments(experimentType.name(),
-				matching.name());
+				matching.name(), annotatorNames, datasetNames);
 		double results[][] = new double[annotatorNames.length][datasetNames.length];
 		for (int i = 0; i < results.length; ++i) {
 			Arrays.fill(results[i], NOT_AVAILABLE_SENTINAL);

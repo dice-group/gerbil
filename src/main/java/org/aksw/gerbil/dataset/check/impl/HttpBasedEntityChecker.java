@@ -50,7 +50,12 @@ public class HttpBasedEntityChecker extends AbstractHttpRequestEmitter implement
         try {
             request = createHeadRequest(uri);
         } catch (IllegalArgumentException e) {
-            LOGGER.error("Exception while creating HTTP request. Returning false.", e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error("Exception while creating HTTP request. Returning false.", e);
+            } else {
+                LOGGER.error("Exception while creating HTTP request. Returning false. Exception: "
+                        + e.getLocalizedMessage());
+            }
             return false;
         }
         CloseableHttpResponse response = null;
@@ -59,7 +64,12 @@ public class HttpBasedEntityChecker extends AbstractHttpRequestEmitter implement
             StatusLine status = response.getStatusLine();
             return (status.getStatusCode() >= 200) && (status.getStatusCode() < 300);
         } catch (Exception e) {
-            LOGGER.error("Exception while sending HTTP request. Returning false.", e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error("Exception while sending HTTP request. Returning false.", e);
+            } else {
+                LOGGER.error(
+                        "Exception while sending HTTP request. Returning false. Exception: " + e.getLocalizedMessage());
+            }
             return false;
         } finally {
             closeRequest(request);
