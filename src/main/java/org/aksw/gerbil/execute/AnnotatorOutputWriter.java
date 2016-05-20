@@ -88,7 +88,7 @@ public class AnnotatorOutputWriter {
             fileBuilder.append("-s-");
         }
         appendCleanedString(fileBuilder, configuration.type.name());
-        fileBuilder.append(".ttl");
+        fileBuilder.append(".ttl.gz");
         return new File(fileBuilder.toString());
     }
 
