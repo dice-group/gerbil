@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.io.nif.NIFWriter;
@@ -52,15 +53,18 @@ public class AnnotatorOutputWriter {
             List<List<T>> results, List<Document> documents) {
         if (outputShouldBeStored(configuration)) {
             FileOutputStream fout = null;
+            GZIPOutputStream gout = null;
             try {
                 File file = generateOutputFile(configuration);
                 List<Document> resultDocuments = generateResultDocuments(results, documents);
                 fout = new FileOutputStream(file);
+                gout = new GZIPOutputStream(fout);
                 NIFWriter writer = new TurtleNIFWriter();
-                writer.writeNIF(resultDocuments, fout);
+                writer.writeNIF(resultDocuments, gout);
             } catch (Exception e) {
                 LOGGER.error("Couldn't write annotator result to file.", e);
             } finally {
+                IOUtils.closeQuietly(gout);
                 IOUtils.closeQuietly(fout);
             }
         }
@@ -84,7 +88,7 @@ public class AnnotatorOutputWriter {
             fileBuilder.append("-s-");
         }
         appendCleanedString(fileBuilder, configuration.type.name());
-        fileBuilder.append(".ttl");
+        fileBuilder.append(".ttl.gz");
         return new File(fileBuilder.toString());
     }
 
