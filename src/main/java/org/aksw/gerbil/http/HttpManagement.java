@@ -94,13 +94,13 @@ public class HttpManagement {
 
     protected InterruptingObserver interruptingObserver;
     protected CloseableHttpClient client;
+    protected String userAgent;
     protected Semaphore blockingDomainMappingMutex = new Semaphore(1);
     protected ObjectLongOpenHashMap<String> blockingDomainTimestampMapping = new ObjectLongOpenHashMap<String>();
 
     protected HttpManagement(InterruptingObserver interruptingObserver, String userAgent) {
         this.interruptingObserver = interruptingObserver;
-        this.client = HttpClientBuilder.create().setConnectionManager(new PoolingHttpClientConnectionManager())
-                .setUserAgent(userAgent).build();
+        this.client = generateHttpClientBuilder().build();
     }
 
     public void reportStart(HttpRequestEmitter emitter, HttpUriRequest request) {
@@ -187,4 +187,14 @@ public class HttpManagement {
         }
     }
 
+    /**
+     * Creates a HttpClientBuilder with the default settings of GERBIL.
+     * 
+     * @return a HttpClientBuilder with the default settings of GERBIL.
+     */
+    public HttpClientBuilder generateHttpClientBuilder() {
+        HttpClientBuilder builder = HttpClientBuilder.create();
+        builder.setUserAgent(userAgent);
+        return builder;
+    }
 }

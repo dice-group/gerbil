@@ -17,15 +17,20 @@
 package org.aksw.gerbil.annotator.impl.tagme;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.KeyStore;
 import java.util.List;
+
+import javax.net.ssl.SSLContext;
 
 import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.http.HttpManagement;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
@@ -39,8 +44,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -52,6 +62,8 @@ public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements A2KBAn
     private static final Logger LOGGER = LoggerFactory.getLogger(TagMeAnnotator.class);
 
     private static final String TAGME_KEY_PARAMETER_KEY = "org.aksw.gerbil.annotators.TagMe.key";
+    private static final String KEY_STORE_RESOURCE_NAME = "TagMe_keyStore.jks";
+    private static final char KEY_STORE_PASSWORD[] = "tagme2".toCharArray();
 
     private static final String ANNOTATIONS_LIST_KEY = "annotations";
     private static final String ANNOTATION_TITLE_KEY = "title";
@@ -73,12 +85,39 @@ public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements A2KBAn
             throw new GerbilException("Couldn't load key from configuration (\"" + TAGME_KEY_PARAMETER_KEY + "\").",
                     ErrorTypes.ANNOTATOR_LOADING_ERROR);
         }
+        init();
     }
 
     public TagMeAnnotator(String annotationUrl, String spotUrl, String key) throws GerbilException {
         this.annotationUrl = annotationUrl;
         this.spotUrl = spotUrl;
         this.key = key;
+        init();
+    }
+
+    protected void init() throws GerbilException {
+        HttpClientBuilder builder = HttpManagement.getInstance().generateHttpClientBuilder();
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            InputStream instream = this.getClass().getClassLoader().getResourceAsStream(KEY_STORE_RESOURCE_NAME);
+            try {
+                keyStore.load(instream, KEY_STORE_PASSWORD);
+            } finally {
+                instream.close();
+            }
+            SSLContext sslcontext = SSLContexts.custom().loadTrustMaterial(keyStore, new TrustSelfSignedStrategy())
+                    .build();
+            builder.setSSLContext(sslcontext);
+
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new String[] { "TLSv1" },
+                    null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+            builder.setSSLSocketFactory(sslsf);
+            CloseableHttpClient localClient = builder.build();
+            this.setClient(localClient);
+        } catch (Exception e) {
+            throw new GerbilException("Couldn't initialize SSL context.", e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
+        this.setClient(builder.build());
     }
 
     @Override
@@ -110,9 +149,9 @@ public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements A2KBAn
         } catch (IllegalArgumentException e) {
             throw new GerbilException("Couldn't create HTTP request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
         }
-        
+
         StringBuilder parameters = new StringBuilder();
-        parameters.append("key=");
+        parameters.append("lang=en&gcube-token=");
         parameters.append(key);
         parameters.append("&text=");
         try {
@@ -211,5 +250,11 @@ public class TagMeAnnotator extends AbstractHttpBasedAnnotator implements A2KBAn
                 resultDoc.addMarking(new SpanImpl(start, end - start));
             }
         }
+    }
+
+    @Override
+    protected void performClose() throws IOException {
+        client.close();
+        super.performClose();
     }
 }
