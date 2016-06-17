@@ -103,10 +103,6 @@ public class XLisaAnnotator extends AbstractAnnotator implements A2KBAnnotator {
             for(int i = 0; i < nodeList.getLength(); i++){
                 Element node = (Element) nodeList.item(i); 
                 int startPosition = document.getText().indexOf(node.getAttribute("mention"));
-                if(useSpans){
-                	//TODO DK2B
-                	
-                }
 //                if(Double.valueOf(node.getAttribute("weight"))<0.3){
 //            		continue;
 //            	}
