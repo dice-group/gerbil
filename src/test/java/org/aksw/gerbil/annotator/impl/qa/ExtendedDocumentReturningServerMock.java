@@ -17,9 +17,12 @@
 package org.aksw.gerbil.annotator.impl.qa;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.aksw.commons.util.Files;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.entity.ContentType;
 import org.junit.Ignore;
@@ -35,6 +38,8 @@ public class ExtendedDocumentReturningServerMock implements Container {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedDocumentReturningServerMock.class);
   
+    private static final String CORRECT_JSON_FILENAME = "src/test/resources/datasets/QALD_test.json";
+    
     private Throwable throwable;
 
     public ExtendedDocumentReturningServerMock(){
@@ -42,14 +47,7 @@ public class ExtendedDocumentReturningServerMock implements Container {
     }
     
     public String getCorrectJSON() throws IOException{
-    	BufferedReader reader = new BufferedReader(
-    			new FileReader("src/test/resources/datasets/QALD_test.json"));
-    	String ret ="", line=""; 
-    	while((line=reader.readLine())!=null){
-    		ret+=line+"\n";
-    	}
-    	reader.close();
-    	return ret;
+    	return Files.readContent(new File(CORRECT_JSON_FILENAME));
     }
 
     public String getWrongJSON(){
