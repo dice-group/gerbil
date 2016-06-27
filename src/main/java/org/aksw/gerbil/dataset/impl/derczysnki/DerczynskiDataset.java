@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.aksw.gerbil.dataset.InitializableDataset;
 import org.aksw.gerbil.dataset.impl.AbstractDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -22,7 +23,8 @@ import au.com.bytecode.opencsv.CSVReader;
 
 public class DerczynskiDataset extends AbstractDataset implements InitializableDataset {
 
-    private static final char SEPARATION_CHAR = 0;
+    private static final char SEPARATION_CHAR = '\t';
+	private static StringBuilder realTweet;
 	private String file;
     private List<Document> documents;
     private int firstDocId;
@@ -54,38 +56,40 @@ public class DerczynskiDataset extends AbstractDataset implements InitializableD
 
 	protected List<Document> loadDocuments(File tweetsFile)
 			throws GerbilException {
-		BufferedReader bReader = null;
-		CSVReader reader = null;
+		BufferedReader reader = null;
+//		CSVReader reader = null;
 		List<Document> documents = new ArrayList<Document>();
 		String documentUriPrefix = "http//:" + getName() + "/";
 		try {
-			bReader = new BufferedReader(new InputStreamReader(
+			reader = new BufferedReader(new InputStreamReader(
 					new FileInputStream(tweetsFile), Charset.forName("UTF-8")));
-			reader = new CSVReader(bReader, SEPARATION_CHAR);
 
-			String line[] = reader.readNext();
+			String line = reader.readLine();
 			int tweetIndex=0;
 			List<Marking> markings = new ArrayList<Marking>();
-			StringBuilder tweet = new StringBuilder("").append(line[0]);
+			StringBuilder tweet = new StringBuilder("").append(line);
 			while (line != null) {
-				if(line.length==0){
+				if(line.trim().isEmpty()){
 					//Get Markings
-					findMarkings(tweet.toString());
+					markings = findMarkings(tweet.toString());
 					//Save old tweet
-					documents.add(new DocumentImpl(tweet.toString(), documentUriPrefix
+					documents.add(new DocumentImpl(realTweet.toString(), documentUriPrefix
 							+ tweetIndex, markings));
 					//New Tweet 
 					tweet.delete(0, tweet.length());
+					line = reader.readLine();
 					tweetIndex++;
+					continue;
 				}
-				line = reader.readNext();
+				tweet.append(line+"\n");
+				line = reader.readLine();
 			}
 		} catch (IOException e) {
 			throw new GerbilException("Exception while reading dataset.", e,
 					ErrorTypes.DATASET_LOADING_ERROR);
 		} finally {
 			IOUtils.closeQuietly(reader);
-			IOUtils.closeQuietly(bReader);
+//			IOUtils.closeQuietly(bReader);
 		}
 		return documents;
 	}
@@ -93,10 +97,11 @@ public class DerczynskiDataset extends AbstractDataset implements InitializableD
 	public static List<Marking> findMarkings(String tweet){
 		int start=0;
 		List<Marking> markings = new ArrayList<Marking>();
-		
+		realTweet = new StringBuilder();
 		String[] line = tweet.split("\n");
 		for(String tokenFull : line){
 			String[] token = tokenFull.split("\t+");
+			realTweet.append(token[0]+" ");
 			token[1]=token[1].trim();
 			if(!token[1].trim().equals("O") && !token[1].trim().equals("NIL")){
 				//TOken has URI
