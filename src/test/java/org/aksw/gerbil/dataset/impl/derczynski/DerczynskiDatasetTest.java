@@ -34,7 +34,6 @@ public class DerczynskiDatasetTest {
 
     @Test
     public void test() {
-//        String line[] = new String[] { "tweet-ID", "orig tweet text", mention, "mention-URI" };
         List<Marking> markings = DerczynskiDataset.findMarkings(text);
         Assert.assertNotNull(markings);
         Assert.assertTrue(markings.size() > 0);

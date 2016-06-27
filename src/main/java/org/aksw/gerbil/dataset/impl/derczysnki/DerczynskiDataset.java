@@ -64,7 +64,7 @@ public class DerczynskiDataset extends AbstractDataset implements InitializableD
 			reader = new CSVReader(bReader, SEPARATION_CHAR);
 
 			String line[] = reader.readNext();
-			int start=0, tweetIndex=0;
+			int tweetIndex=0;
 			List<Marking> markings = new ArrayList<Marking>();
 			StringBuilder tweet = new StringBuilder("").append(line[0]);
 			while (line != null) {
