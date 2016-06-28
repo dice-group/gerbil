@@ -48,14 +48,16 @@ public interface NIFWriter {
      * 
      * <p>
      * <b>Note</b> that following the recommendations of the Jena framework we
-     * highly recommend to use {@link #writeNIF(List, OutputStream) instead of
-     * using a {@link writer} since the {@link OutputStream} is not relying on a
+     * highly recommend to use {@link #writeNIF(List, OutputStream)} instead of
+     * using a {@link Writer} since the {@link OutputStream} is not relying on a
      * specific encoding.
      * </p>
      * 
      * @param document
      *            the list of {@link Document} instances that should be written
      *            as NIF data
+     * @param writer
+     *            the {@link Writer} to which the NIF data should be written
      */
     public void writeNIF(List<Document> document, Writer writer);
 
@@ -66,6 +68,9 @@ public interface NIFWriter {
      * @param document
      *            the list of {@link Document} instances that should be written
      *            as NIF data
+     * @param os
+     *            the {@link OutputStream} to which the NIF data should be
+     *            written
      */
     public void writeNIF(List<Document> document, OutputStream os);
 
