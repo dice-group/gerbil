@@ -27,6 +27,13 @@ import org.aksw.gerbil.transfer.nif.data.StartPosBasedComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The positions in NIF are measured in codepoints, while Java counts in terms
+ * of characters. This class offers methods to handle that problem.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ *
+ */
 public class NIFPositionHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NIFPositionHelper.class);
@@ -36,10 +43,12 @@ public class NIFPositionHelper {
      * terms of characters. So we have to correct the positions of the
      * annotations.
      * 
-     * @param resultDocument
+     * @param document
+     *            the {@link Document} for which the positions should be checked
+     *            and corrected if necessary
      */
-    public static void correctAnnotationPositions(Document resultDocument) {
-        List<Span> spans = resultDocument.getMarkings(Span.class);
+    public static void correctAnnotationPositions(Document document) {
+        List<Span> spans = document.getMarkings(Span.class);
         Collections.sort(spans, new StartPosBasedComparator());
         List<Span> annotationsSortedByEnd = new ArrayList<Span>(spans);
         Collections.sort(annotationsSortedByEnd, new EndPosBasedComparator());
@@ -51,7 +60,7 @@ public class NIFPositionHelper {
             currentAnnotation = annotationsSortedByEnd.get(i);
             endPositions[i] = currentAnnotation.getStartPosition() + currentAnnotation.getLength();
         }
-        String text = resultDocument.getText();
+        String text = document.getText();
         int codePointsCount = 0;
         int posInStart = 0, posInEnd = 0;
         for (int i = 0; i < text.length(); ++i) {
@@ -70,6 +79,16 @@ public class NIFPositionHelper {
         checkPositionsForConspicuity(annotationsSortedByEnd, text);
     }
 
+    /**
+     * This method checks the given {@link Span} instances for simple errors,
+     * e.g., markings that start or end with a whitespace instead of an
+     * alphanumeric character. If errors are found, a waring is printed.
+     * 
+     * @param spans
+     *            the list of {@link Span} instances that should be checked
+     * @param text
+     *            the text on which the {@link Span} instances rely on
+     */
     public static void checkPositionsForConspicuity(List<Span> spans, String text) {
         int start, end;
         for (Span s : spans) {

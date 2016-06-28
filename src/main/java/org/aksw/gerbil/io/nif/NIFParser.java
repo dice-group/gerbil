@@ -47,6 +47,12 @@ public interface NIFParser {
     /**
      * Parses the NIF data read from the given Reader and returns the list of
      * documents that could be found.
+     * <p>
+     * <b>Note</b> that following the recommendations of the Jena framework we
+     * highly recommend to use {@link #parseNIF(InputStream)} instead of using a
+     * {@link Reader} since the {@link InputStream} is not relying on a specific
+     * encoding.
+     * </p>
      * 
      * @param reader
      *            a {@link Reader} from which the NIF data is read
@@ -94,6 +100,13 @@ public interface NIFParser {
      * But it uses the given model to store this information.
      * 
      * <p>
+     * <b>Note</b> that following the recommendations of the Jena framework we
+     * highly recommend to use {@link #parseNIF(InputStream, Model)} instead of
+     * using a {@link Reader} since the {@link InputStream} is not relying on a
+     * specific encoding.
+     * </p>
+     * 
+     * <p>
      * Note that the parser will use and change the data that is already inside
      * the given model.
      * </p>
@@ -136,5 +149,11 @@ public interface NIFParser {
      */
     public List<Document> parseNIF(InputStream is, Model model);
 
+    /**
+     * This method should return the HTTP content type string for the data that
+     * can be handled by this reader.
+     * 
+     * @return the HTTP content type string
+     */
     public String getHttpContentType();
 }

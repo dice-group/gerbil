@@ -17,7 +17,15 @@
 package org.aksw.gerbil.io.nif.impl;
 
 import org.aksw.gerbil.io.nif.AbstractNIFWriter;
+import org.aksw.gerbil.io.nif.NIFWriter;
 
+/**
+ * This is a implementation of the {@link NIFWriter} interface that relies on
+ * the Turtle (TTL) serialization of RDF.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ *
+ */
 public class TurtleNIFWriter extends AbstractNIFWriter {
 
     private static final String HTTP_CONTENT_TYPE = "application/x-turtle";

@@ -20,11 +20,19 @@ import java.io.InputStream;
 import java.io.Reader;
 
 import org.aksw.gerbil.io.nif.AbstractNIFParser;
+import org.aksw.gerbil.io.nif.NIFParser;
 import org.apache.jena.riot.adapters.JenaReadersWriters.RDFReaderRIOT_TTL;
 import org.apache.jena.riot.adapters.RDFReaderRIOT;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
+/**
+ * This is a implementation of the {@link NIFParser} interface that relies on
+ * the Turtle (TTL) serialization of RDF.
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ *
+ */
 public class TurtleNIFParser extends AbstractNIFParser {
 
     private static final String HTTP_CONTENT_TYPE = "application/x-turtle";
@@ -46,5 +54,4 @@ public class TurtleNIFParser extends AbstractNIFParser {
         rdfReader.read(nifModel, reader, "");
         return nifModel;
     }
-
 }
