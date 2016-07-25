@@ -29,18 +29,14 @@ import org.w3c.dom.NodeList;
 public class XLisaAnnotator extends AbstractAnnotator implements A2KBAnnotator {
 
 	private static final String BASE_URI = "http://km.aifb.kit.edu/services/text-annotation/?";
-	private static final String XLISA_LANG_1 = "org.aksw.gerbil.annotators.definition.XLisa.lang1"; 
-	private static final String XLISA_LANG_2 = "org.aksw.gerbil.annotators.definition.XLisa.lang2";
-	private static final String XLISA_KB = "org.aksw.gerbil.annotators.definition.XLisa.kb";
-	private static final String XLISA_MODEL = "org.aksw.gerbil.annotators.definition.XLisa.model";
-	
+
 	private String lang1,lang2,kb,model;
 	
-	public XLisaAnnotator(){
-		this.lang1 = GerbilConfiguration.getInstance().getString(XLISA_LANG_1);
-		this.lang2 = GerbilConfiguration.getInstance().getString(XLISA_LANG_2);
-		this.kb = GerbilConfiguration.getInstance().getString(XLISA_KB);
-		this.model = GerbilConfiguration.getInstance().getString(XLISA_MODEL);
+	public XLisaAnnotator(String lang1, String lang2, String kb, String model){
+		this.lang1 = lang1;
+		this.lang2 = lang2;
+		this.kb = kb;
+		this.model = model;
 	}
 	
 	@Override
