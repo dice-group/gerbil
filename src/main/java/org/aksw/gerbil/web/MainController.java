@@ -191,6 +191,22 @@ public class MainController {
         ModelAndView model = new ModelAndView();
         model.setViewName("experiment");
         model.addObject("tasks", results);
+        int currentExperimentID=-1;
+        int currentState = 0;
+        List<ExperimentTaskResult> tasks = dao.getAllRunningExperimentTasks();
+        for(ExperimentTaskResult r : results){
+        	if(r.state==0){
+        		continue;
+        	}
+        	if(tasks.contains(r)){
+        		currentState = r.state;
+        		currentExperimentID = tasks.indexOf(r);
+        		break;
+        	}
+        }
+        model.addObject("currentState", currentState);
+        model.addObject("currentExperimentID", currentExperimentID);
+        model.addObject("workers", RootConfig.getNoOfWorkers());
         model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
         int additionalResultIds[] = ResultNameToIdMapping.getInstance().listAdditionalResultIds(results);
         // we need Double objects to make sure that they can be null

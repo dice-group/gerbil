@@ -310,4 +310,18 @@ public class RootConfig {
         }
     }
 
+    public static int getNoOfWorkers(){
+    	int numberOfWorkers = DEFAULT_NUMBER_OF_WORKERS;
+        if (GerbilConfiguration.getInstance().containsKey(NUMBER_OF_WORKERS_KEY)) {
+            try {
+                numberOfWorkers = GerbilConfiguration.getInstance().getInt(NUMBER_OF_WORKERS_KEY);
+            } catch (Exception e) {
+//                LOGGER.warn("Couldn't load number of workers from config. Using the default number.", e);
+            }
+        } else {
+//            LOGGER.warn("Couldn't load number of workers from config. Using the default number.");
+        }
+        return numberOfWorkers;
+    }
+    
 }
