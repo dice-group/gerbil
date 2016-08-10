@@ -13,7 +13,7 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.qa.QAUtils;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.qa.commons.datastructure.IQuestion;
-import org.aksw.qa.commons.load.QALD_Loader;
+import org.aksw.qa.commons.load.LoaderController;
 
 /**
  * This {@link Dataset} represents a QALD dataset.
@@ -64,7 +64,8 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
                             + "\" of this QALD dataset is not a value of the org.aksw.qa.commons.load.Dataset enum.",
                     ErrorTypes.DATASET_LOADING_ERROR);
         } else {
-            List<IQuestion> questions = QALD_Loader.load(datasetId);
+//            List<IQuestion> questions = QALD_Loader.load(datasetId);
+        	List<IQuestion> questions = LoaderController.load(datasetId);
             if (questions == null) {
                 throw new GerbilException("Couldn't load questions of QALD dataset " + datasetId.toString() + ".",
                         ErrorTypes.DATASET_LOADING_ERROR);

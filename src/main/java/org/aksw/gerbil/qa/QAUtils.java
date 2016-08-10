@@ -18,6 +18,9 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.qa.commons.datastructure.IQuestion;
+import org.aksw.qa.commons.load.json.EJAnswers;
+import org.aksw.qa.commons.load.json.QaldQuestion;
+import org.aksw.qa.commons.load.json.QaldQuestionEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +76,46 @@ public class QAUtils {
         return document;
     }
 
+    public static Document translateQuestion(QaldQuestionEntry question, String questionUri) {
+        Document document = new DocumentImpl(question.getQuestion().get(0).getLanguage(), questionUri);
+        String sparqlQueryString = question.getQuery().getSparql();
+        // add the needed markings to the document
+        // properties, answerItemType, relations, entities
+        if (sparqlQueryString != null) {
+            try {
+                deriveMarkingsFromSparqlQuery(document, sparqlQueryString);
+            } catch (Exception e) {
+                return null;
+            }
+        } else if (question.getQuery().getPseudo() != null) {
+            try {
+                deriveMarkingsFromSparqlQuery(document, question.getQuery().getPseudo());
+            } catch (Exception e) {
+            }
+        }
+        // FIXME @Ricardo if from annotator, load from IQuestion
+        // answerType
+        String answerTypeLabel = question.getAnswertype();
+        if (answerTypeLabel != null) {
+            answerTypeLabel = answerTypeLabel.toUpperCase();
+            answerTypeLabel = answerTypeLabel.replace("RESOUCE", "RESOURCE");
+            try {
+                AnswerTypes answerType = AnswerTypes.valueOf(answerTypeLabel);
+                document.addMarking(new AnswerType(answerType));
+            } catch (Exception e) {
+                LOGGER.error("Couldn't parse AnswerType " + answerTypeLabel + ". It will be ignored.", e);
+            }
+        }
+        // add the answers
+        Set<String> answers = new HashSet<String>();
+        for(EJAnswers ejA: question.getAnswers()){
+        	answers.add(ejA.toString());
+        }
+        document.addMarking(new AnswerSet(answers));
+        return document;
+    }
+
+    
     /**
      * Adds {@link Annotation}, {@link Property}, {@link AnswerItemType} and
      * {@link Relation} markings to the document if they can be parsed from the

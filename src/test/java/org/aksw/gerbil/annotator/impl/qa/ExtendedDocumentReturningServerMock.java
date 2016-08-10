@@ -38,7 +38,7 @@ public class ExtendedDocumentReturningServerMock implements Container {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedDocumentReturningServerMock.class);
   
-    private static final String CORRECT_JSON_FILENAME = "src/test/resources/datasets/QALD_test.json";
+    private static final String CORRECT_JSON_FILENAME = "src/test/resources/mock/extJson_test.json";
     
     private Throwable throwable;
 

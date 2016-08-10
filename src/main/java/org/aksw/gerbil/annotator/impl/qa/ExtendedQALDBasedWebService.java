@@ -1,7 +1,12 @@
 package org.aksw.gerbil.annotator.impl.qa;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.aksw.gerbil.annotator.QASystem;
 import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
@@ -11,9 +16,16 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.qa.QAUtils;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.utils.ClosePermitionGranter;
 import org.aksw.qa.commons.datastructure.IQuestion;
-import org.aksw.qa.commons.load.QALD_Loader;
+import org.aksw.qa.commons.load.json.EJAnswers;
+import org.aksw.qa.commons.load.json.EJQuestionEntry;
+import org.aksw.qa.commons.load.json.EJQuestionFactory;
+import org.aksw.qa.commons.load.json.ExtendedJson;
+import org.aksw.qa.commons.load.json.ExtendedQALDJSONLoader;
+import org.aksw.qa.commons.load.json.QaldJson;
+import org.aksw.qa.commons.load.json.QaldQuestionEntry;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -33,6 +45,13 @@ public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator impl
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedQALDBasedWebService.class);
 
 	
+    public static void main(String[] argc) throws GerbilException{
+    	ExtendedQALDBasedWebService service = new ExtendedQALDBasedWebService("http://qanary.univ-st-etienne.fr/gerbil");
+    	Document document = new DocumentImpl();
+    	document.setText("Who is the wife of Barack Obama");
+    	service.answerQuestion(document);
+    }
+    
     public ExtendedQALDBasedWebService(String url) {
         super();
         this.url = url;
@@ -65,20 +84,22 @@ public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator impl
             throw new GerbilException("Couldn't create HTTP request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
         }
         request.setEntity(entity);
-        request.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_PLAIN + ";charset=UTF-8");
+        request.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED + ";charset=UTF-8");
         request.addHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.toString());
         request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
 
         entity = null;
         CloseableHttpResponse response = null;
-        List<Marking> ret;
+        List<Marking> ret = null;
 		try {
             response = sendRequest(request);
             // receive NIF document
             entity = response.getEntity();
             // read response and parse NIF
             try {
-                List<IQuestion>  questions = QALD_Loader.loadJSON(entity.getContent());
+            	ExtendedJson exJson = (ExtendedJson) ExtendedQALDJSONLoader.readJson(entity.getContent(), ExtendedJson.class); 
+ 
+            	List<IQuestion>  questions = EJQuestionFactory.getQuestionsFromExtendedJson(exJson);
                 ret = QAUtils.translateQuestion(questions.get(0), questions.get(0).getId()+"").getMarkings();
                 
             } catch (Exception e) {

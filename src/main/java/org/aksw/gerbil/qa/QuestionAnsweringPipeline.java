@@ -1,12 +1,17 @@
 package org.aksw.gerbil.qa;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.commons.load.Dataset;
-import org.aksw.qa.commons.load.QALD_Loader;
+import org.aksw.qa.commons.load.LoaderController;
+import org.aksw.qa.commons.load.json.EJQuestionFactory;
+import org.aksw.qa.commons.load.json.ExtendedJson;
+import org.aksw.qa.commons.load.json.ExtendedQALDJSONLoader;
 import org.aksw.qa.commons.measure.AnswerBasedEvaluation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +30,14 @@ import com.hp.hpl.jena.sparql.syntax.ElementWalker;
 
 //FIXME Micha@QA Was machen wir mit der Datei
 public class QuestionAnsweringPipeline {
-	private static Logger log = LoggerFactory.getLogger(QuestionAnsweringPipeline.class);
+	private static Logger log = LoggerFactory
+			.getLogger(QuestionAnsweringPipeline.class);
 
 	public static void main(String[] args) {
 
 		// read QALD question with gold SPAQRL query
-		List<IQuestion> dataset = QALD_Loader.load(Dataset.QALD6_Train_Multilingual);
+		List<IQuestion> dataset = LoaderController
+				.load(Dataset.QALD6_Train_Multilingual);
 
 		ClassLoader.getSystemClassLoader();
 		// read QANARY and QALD-HAWK answer to question
@@ -38,15 +45,23 @@ public class QuestionAnsweringPipeline {
 		// List<IQuestion> answer =
 		// QANARYReader.load(ClassLoader.getSystemResourceAsStream("QANARY_SystemAnswer_test.ttl"));
 		log.debug("Load QALD JSON");
-		List<IQuestion> answer_qald_json = QALD_Loader.loadJSON(ClassLoader.getSystemResourceAsStream("QALD_SystemAnswer_test.json"));
+		InputStream in = ClassLoader.getSystemResourceAsStream("QALD_SystemAnswer_test.json");
+		List<IQuestion> answer_qald_json = null;
+		try {
+			answer_qald_json = EJQuestionFactory.getQuestionsFromExtendedJson((ExtendedJson) ExtendedQALDJSONLoader.readJson(in, ExtendedJson.class));
+		} catch (IOException e) {
+			log.error("Could not load QALD JSON");;
+		}
 		log.debug("Load QALD XML");
-		List<IQuestion> answer_qald_xml = QALD_Loader.loadXML(ClassLoader.getSystemResourceAsStream("QALD_SystemAnswer_test.xml"));
+		List<IQuestion> answer_qald_xml = LoaderController.loadXML(ClassLoader
+				.getSystemResourceAsStream("QALD_SystemAnswer_test.xml"));
 
 		List<IQuestion> testQuestions = Lists.newArrayList(answer_qald_json);
 		testQuestions.addAll(answer_qald_xml);
 		for (IQuestion goldQuestion : dataset) {
 			for (IQuestion systemQuestion : testQuestions) {
-				if (systemQuestion.getLanguageToQuestion().get("en").equals(goldQuestion.getLanguageToQuestion().get("en"))) {
+				if (systemQuestion.getLanguageToQuestion().get("en")
+						.equals(goldQuestion.getLanguageToQuestion().get("en"))) {
 					// extract concepts for C2KB
 					Set<Node> concepts = extractResources(goldQuestion);
 					log.debug("concepts: " + Joiner.on(", ").join(concepts));
@@ -68,7 +83,8 @@ public class QuestionAnsweringPipeline {
 					// answer item type 2KB (class recognition + linking from
 					// sentence)
 					Set<Node> answerItemType = extractAnswerItemType(goldQuestion);
-					log.debug("answerItemType: " + Joiner.on(", ").join(answerItemType));
+					log.debug("answerItemType: "
+							+ Joiner.on(", ").join(answerItemType));
 
 					// 1) Measure C2KB
 
@@ -81,9 +97,12 @@ public class QuestionAnsweringPipeline {
 					// 5) Measure AIT2KB
 
 					// 6) Measure F-measure
-					double precision = AnswerBasedEvaluation.precision(systemQuestion.getGoldenAnswers(), goldQuestion);
-					double recall = AnswerBasedEvaluation.recall(systemQuestion.getGoldenAnswers(), goldQuestion);
-					double fMeasure = AnswerBasedEvaluation.fMeasure(systemQuestion.getGoldenAnswers(), goldQuestion);
+					double precision = AnswerBasedEvaluation.precision(
+							systemQuestion.getGoldenAnswers(), goldQuestion);
+					double recall = AnswerBasedEvaluation.recall(
+							systemQuestion.getGoldenAnswers(), goldQuestion);
+					double fMeasure = AnswerBasedEvaluation.fMeasure(
+							systemQuestion.getGoldenAnswers(), goldQuestion);
 					log.debug("P=" + precision);
 					log.debug("R=" + recall);
 					log.debug("F=" + fMeasure);
@@ -106,7 +125,8 @@ public class QuestionAnsweringPipeline {
 						TriplePath next = triples.next();
 						// TODO @Axel: Least general generalization with
 						// hierachical f-measure?
-						if (next.getPredicate().hasURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")) {
+						if (next.getPredicate()
+								.hasURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")) {
 							candidates.add(next.getObject());
 						}
 					}
