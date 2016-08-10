@@ -18,6 +18,7 @@ import org.aksw.qa.commons.load.json.EJQuestionFactory;
 import org.aksw.qa.commons.load.json.ExtendedJson;
 import org.aksw.qa.commons.load.json.ExtendedQALDJSONLoader;
 import org.aksw.qa.commons.load.json.QaldJson;
+import org.openrdf.http.protocol.error.ErrorType;
 
 public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
 		QASystem {
@@ -48,7 +49,7 @@ public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
 			QaldJson json = (QaldJson) ExtendedQALDJSONLoader.readJson(
 					new File(qaldFile), QaldJson.class);
 			if (json == null) {
-				return;
+				throw new GerbilException("Unkown file format!", ErrorTypes.UNEXPECTED_EXCEPTION);
 			}
 			questions = EJQuestionFactory.getQuestionsFromQaldJson(json);
 		}
