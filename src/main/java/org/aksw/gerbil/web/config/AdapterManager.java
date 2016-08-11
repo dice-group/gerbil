@@ -23,6 +23,7 @@ import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.annotator.InstanceListBasedConfigurationImpl;
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
+import org.aksw.gerbil.annotator.impl.qa.ExtendedQALDBasedWebService;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.DatasetConfigurationImpl;
@@ -98,7 +99,7 @@ public class AdapterManager {
                 name = name.substring(NIF_WS_PREFIX.length(), pos) + NIF_WS_SUFFIX;
                 try {
                     return new AnnotatorConfigurationImpl(name, false,
-                            NIFBasedAnnotatorWebservice.class.getConstructor(String.class), new Object[] { uri }, type);
+                    		ExtendedQALDBasedWebService.class.getConstructor(String.class), new Object[] { uri }, type);
                 } catch (Exception e) {
                     LOGGER.error(
                             "Exception while trying to create an annotator configuration for a NIF based webservice. Returning null.",

@@ -65,6 +65,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
                     ErrorTypes.DATASET_LOADING_ERROR);
         } else {
 //            List<IQuestion> questions = QALD_Loader.load(datasetId);
+        	
         	List<IQuestion> questions = LoaderController.load(datasetId);
             if (questions == null) {
                 throw new GerbilException("Couldn't load questions of QALD dataset " + datasetId.toString() + ".",
