@@ -45,7 +45,7 @@ public class AdapterManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdapterManager.class);
 
     private static final String NIF_WS_PREFIX = "NIFWS_";
-    private static final String NIF_WS_SUFFIX = " (NIF WS)";
+    private static final String NIF_WS_SUFFIX = " (WS)";
     private static final String AF_PREFIX = "AF_";
     private static final String UPLOADED_AF_SUFFIX = " (uploaded)";
     private static final String UPLOADED_FILES_PATH_PROPERTY_KEY = "org.aksw.gerbil.UploadPath";

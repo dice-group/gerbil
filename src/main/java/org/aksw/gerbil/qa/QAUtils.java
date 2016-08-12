@@ -50,7 +50,6 @@ public class QAUtils {
             try {
                 deriveMarkingsFromSparqlQuery(document, sparqlQueryString);
             } catch (Exception e) {
-                return null;
             }
         } else if (question.getPseudoSparqlQuery() != null) {
             try {
@@ -85,7 +84,6 @@ public class QAUtils {
             try {
                 deriveMarkingsFromSparqlQuery(document, sparqlQueryString);
             } catch (Exception e) {
-                return null;
             }
         } else if (question.getQuery().getPseudo() != null) {
             try {
