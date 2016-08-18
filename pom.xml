@@ -19,13 +19,15 @@
 	<inceptionYear>2014</inceptionYear>
 
 	<properties>
-		<java.version>1.7</java.version>
+		<java.version>1.8</java.version>
 		<slf4j.version>1.7.6</slf4j.version>
 		<junit.version>4.11</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.17.RELEASE</spring.version>
 		<jena.version>2.13.0</jena.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
+		<war.warName>gerbil</war.warName>
+		<maven.tomcat.path>/gerbil</maven.tomcat.path>
 	</properties>
 
 	<repositories>
@@ -331,6 +333,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>gerbil</finalName>
 		<plugins>
 
 			<plugin>

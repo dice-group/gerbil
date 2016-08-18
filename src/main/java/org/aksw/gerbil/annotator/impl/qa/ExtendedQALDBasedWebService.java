@@ -100,8 +100,8 @@ public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator impl
             	ExtendedJson exJson = (ExtendedJson) ExtendedQALDJSONLoader.readJson(entity.getContent(), ExtendedJson.class); 
  
             	List<IQuestion>  questions = EJQuestionFactory.getQuestionsFromExtendedJson(exJson);
-                ret = QAUtils.translateQuestion(questions.get(0), questions.get(0).getId()+"").getMarkings();
-                
+            	Document resultDoc = QAUtils.translateQuestion(questions.get(0), null);
+                ret = resultDoc.getMarkings();
             } catch (Exception e) {
                 LOGGER.error("Couldn't parse the response.", e);
                 throw new GerbilException("Couldn't parse the response.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
