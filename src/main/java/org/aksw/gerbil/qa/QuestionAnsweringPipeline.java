@@ -49,8 +49,8 @@ public class QuestionAnsweringPipeline {
 		List<IQuestion> answer_qald_json = null;
 		try {
 			answer_qald_json = EJQuestionFactory.getQuestionsFromExtendedJson((ExtendedJson) ExtendedQALDJSONLoader.readJson(in, ExtendedJson.class));
-		} catch (IOException e) {
-			log.error("Could not load QALD JSON");;
+		} catch (Exception e) {
+			log.error("Could not load QALD JSON");
 		}
 		log.debug("Load QALD XML");
 		List<IQuestion> answer_qald_xml = LoaderController.loadXML(ClassLoader

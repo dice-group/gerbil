@@ -1,6 +1,10 @@
 package org.aksw.gerbil.dataset.impl.qald;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.dataset.Dataset;
@@ -10,7 +14,13 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.qa.QALDStreamType;
 import org.aksw.gerbil.qa.QALDStreamUtils;
+import org.aksw.gerbil.qa.QAUtils;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.qa.commons.datastructure.IQuestion;
+import org.aksw.qa.commons.load.LoaderController;
+import org.aksw.qa.commons.load.json.EJQuestionFactory;
+import org.aksw.qa.commons.load.json.ExtendedJson;
+import org.aksw.qa.commons.load.json.ExtendedQALDJSONLoader;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -25,6 +35,14 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
     protected String file;
     protected QALDStreamType fileType;
 
+    public FileBasedQALDDataset(String file){
+    	this.file=file;
+    }
+    public FileBasedQALDDataset(String name, String file){
+    	super(name);
+    	this.file=file;
+    }
+    
     public FileBasedQALDDataset(String file, QALDStreamType fileType) {
         this.file = file;
         this.fileType = fileType;
@@ -51,12 +69,42 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
         FileInputStream fin = null;
         try {
             fin = new FileInputStream(file);
-            instances = QALDStreamUtils.parseDocument(fin, fileType, getName());
+            if(fileType!=null){
+            	instances = QALDStreamUtils.parseDocument(fin, fileType, getName());
+            }
+            else{
+        		List<IQuestion> questions;
+        		//JSON 
+        		questions = EJQuestionFactory.getQuestionsFromJson(ExtendedQALDJSONLoader.readJson(new File(file)));
+        		if(questions==null){
+        			//XML
+        			questions = LoaderController.loadXML(fin);
+        		}
+        		instances = generateInstancesFromQuestions(getName(), questions);
+            }
         } catch (Exception e) {
-            throw new GerbilException("Couldn't load the given QALD file.", e, ErrorTypes.DATASET_LOADING_ERROR);
-        } finally {
-            IOUtils.closeQuietly(fin);
+        	IOUtils.closeQuietly(fin);
+        	throw new GerbilException("Couldn't load the given QALD file.", e, ErrorTypes.DATASET_LOADING_ERROR);
         }
+        IOUtils.closeQuietly(fin);
     }
 
+    
+    private static List<Document> generateInstancesFromQuestions(String adapterName, List<IQuestion> questions){
+    	String questionUriPrefix;
+		try {
+			questionUriPrefix = "http://qa.gerbil.aksw.org/"
+					+ URLEncoder.encode(adapterName, "UTF-8") + "/question#";
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException(
+					"Severe error while trying to encode adapter name.", e);
+		}
+
+		List<Document> instances = new ArrayList<Document>(questions.size());
+		for (IQuestion question : questions) {
+			instances.add(QAUtils.translateQuestion(question, questionUriPrefix
+					+ question.getId()));
+		}
+		return instances;
+    }
 }

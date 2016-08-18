@@ -38,22 +38,9 @@ public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
 			throws GerbilException {
 
 		List<IQuestion> questions = null;
-
-		ExtendedJson exJson = (ExtendedJson) ExtendedQALDJSONLoader.readJson(
-				new File(qaldFile), ExtendedJson.class);
-		if (exJson != null) {
-			// In extended Json format
-			questions = EJQuestionFactory.getQuestionsFromExtendedJson(exJson);
-		} else {
-			//Not in extended Json Format, try QALD
-			QaldJson json = (QaldJson) ExtendedQALDJSONLoader.readJson(
-					new File(qaldFile), QaldJson.class);
-			if (json == null) {
-				throw new GerbilException("Unkown file format!", ErrorTypes.UNEXPECTED_EXCEPTION);
-			}
-			questions = EJQuestionFactory.getQuestionsFromQaldJson(json);
-		}
-
+		Object json = ExtendedQALDJSONLoader.readJson(new File(qaldFile));
+		questions = EJQuestionFactory.getQuestionsFromJson(json);
+		
 		for (IQuestion question : questions) {
 			instances.add(QAUtils.translateQuestion(question, questionUriPrefix
 					+ question.getId()));

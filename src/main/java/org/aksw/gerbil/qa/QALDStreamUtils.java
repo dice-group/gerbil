@@ -1,6 +1,5 @@
 package org.aksw.gerbil.qa;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -59,9 +58,8 @@ public class QALDStreamUtils {
 		List<IQuestion> questions;
 		switch (streamType) {
 		case JSON:
-			try {
-				questions = EJQuestionFactory.getQuestionsFromExtendedJson((ExtendedJson) ExtendedQALDJSONLoader.readJson(in, ExtendedJson.class));
-			} catch (IOException e1) {
+	
+			if(null==(questions = EJQuestionFactory.getQuestionsFromExtendedJson((ExtendedJson) ExtendedQALDJSONLoader.readJson(in, ExtendedJson.class)))) {
 				throw new IllegalArgumentException("Could not load JSON stream");
 			}
 			break;

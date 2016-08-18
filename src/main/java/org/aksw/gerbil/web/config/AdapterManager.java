@@ -30,6 +30,7 @@ import org.aksw.gerbil.dataset.DatasetConfigurationImpl;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.dataset.impl.nif.NIFFileDatasetConfig;
 import org.aksw.gerbil.dataset.impl.qald.FileBasedQALDDataset;
+import org.aksw.gerbil.dataset.impl.qald.QALDFileDatasetConfig;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.qa.QALDStreamType;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
@@ -208,7 +209,7 @@ public class AdapterManager {
                 String uri = uploadedFilesPath + name.substring(brackets[0] + 1, brackets[1]);
                 // remove dataset prefix from the name
                 name = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]) + UPLOADED_DATASET_SUFFIX;
-return new NIFFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
+return new QALDFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
             }
             if (name.startsWith(AF_PREFIX)) {
                 // This describes a QA answer file
