@@ -161,9 +161,9 @@
 						<div>
 							<label for="nameAnswerFile">Name:</label> <input
 								class="form-control" type="text" id="nameAnswerFile" name="name"
-								placeholder="Type something" /> <br> <select
-								id="answerFileType" class="form-control">
-							</select> <br> <br> <select id="answerFileDataset"
+								placeholder="Type something" /> 
+
+							 <br> <select id="answerFileDataset"
 								class="form-control">
 							</select> <br> <br> <span
 								class="btn btn-success fileinput-button"> <i

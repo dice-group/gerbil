@@ -136,21 +136,21 @@ public class AdapterManager {
                     return null;
                 }
                 String fileType = name.substring(brackets[0] + 1, brackets[1]);
-                QALDStreamType streamType = null;
-                try {
-                    if (fileType.startsWith("QALD")) {
-                        if (fileType.endsWith("XML")) {
-                            streamType = QALDStreamType.XML;
-                        }
-                        if (fileType.endsWith("JSON")) {
-                            streamType = QALDStreamType.JSON;
-                        }
-                    }
-                } catch (Exception e) {
-                    LOGGER.error("Couldn't parse the QALD stream type of this QA answer file \"" + name
-                            + "\". Returning null.", e);
-                    return null;
-                }
+//                QALDStreamType streamType = null;
+//                try {
+//                    if (fileType.startsWith("QALD")) {
+//                        if (fileType.endsWith("XML")) {
+//                            streamType = QALDStreamType.XML;
+//                        }
+//                        if (fileType.endsWith("JSON")) {
+//                            streamType = QALDStreamType.JSON;
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    LOGGER.error("Couldn't parse the QALD stream type of this QA answer file \"" + name
+//                            + "\". Returning null.", e);
+//                    return null;
+//                }
                 // search for file the file name
                 brackets = getLastBracketsContent(name, brackets[0]);
                 if (brackets == null) {
@@ -164,9 +164,8 @@ public class AdapterManager {
                 try {
                     return new InstanceListBasedConfigurationImpl(name, false,
                             new DatasetConfigurationImpl(datasetName, false,
-                                    FileBasedQALDDataset.class.getConstructor(String.class, String.class,
-                                            QALDStreamType.class),
-                                    new Object[] { datasetName, uploadedFilesPath + fileName, streamType },
+                                    FileBasedQALDDataset.class.getConstructor(String.class, String.class),
+                                    new Object[] { datasetName, uploadedFilesPath + fileName},
                                     ExperimentType.QA, null, null),
                             type);
                 } catch (Exception e) {
