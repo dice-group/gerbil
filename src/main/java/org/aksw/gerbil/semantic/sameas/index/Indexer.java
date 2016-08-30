@@ -2,7 +2,11 @@ package org.aksw.gerbil.semantic.sameas.index;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -17,16 +21,15 @@ import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Indexer extends LuceneConstants{
+public class Indexer extends LuceneConstants {
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(HTTPBasedSameAsRetriever.class);
 
-	
-
 	private IndexWriter writer;
 
-	public Indexer(String path) throws GerbilException {
+	public Indexer(String path, IndexingStrategy strategy)
+			throws GerbilException {
 		try {
 			Directory dir = FSDirectory.open(new File(path));
 			writer = new IndexWriter(dir, new StandardAnalyzer(
@@ -36,6 +39,7 @@ public class Indexer extends LuceneConstants{
 			LOGGER.error("Error occured during accesing file " + path, e);
 			throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
 		}
+		this.strategy = strategy;
 	}
 
 	public void close() {
@@ -46,13 +50,20 @@ public class Indexer extends LuceneConstants{
 		}
 	}
 
+	public void index(List<String> uris) {
+		switch (strategy) {
+		case WildCard:
+			indexSameAs(uris);
+			break;
+		case TermQuery:
+			indexSameAs2(uris);
+			break;
+		}
+	}
 
 	public void indexSameAs(List<String> uris) {
-		String entity="";
-		for(String uri : uris){
-			entity+=uri+" ";
-		}
-		Document doc = convertString("\""+entity+"\"");
+		String entity = listToStr(uris);
+		Document doc = convertString("\"" + entity + "\"");
 		try {
 			writer.addDocument(doc);
 			writer.commit();
@@ -61,17 +72,56 @@ public class Indexer extends LuceneConstants{
 			e.printStackTrace();
 		}
 	}
-	
 
+	private String listToStr(List<String> uris) {
+		String entity = "";
+		for (String uri : uris) {
+			entity += uri + " ";
+		}
+		return entity;
+	}
 
-	
-	private Document convertString(String str){
+	public void indexSameAs2(List<String> uris) {
+		Map<String, String> map = new HashMap<String, String>();
+		for (String uri : uris) {
+			List<String> uris_copy = new ArrayList<String>(uris);
+			uris_copy.remove(uri);
+			map.put(uri, listToStr(uris_copy));
+			uris_copy.clear();
+		}
+		for (Document doc : convertMap(map)) {
+			try {
+				writer.addDocument(doc);
+				writer.commit();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private List<Document> convertMap(Map<String, String> map) {
+		List<Document> documents = new ArrayList<Document>();
+		for (String key : map.keySet()) {
+			Document document = new Document();
+			Field contentField = new Field(CONTENTS, key, Field.Store.YES,
+					Field.Index.NOT_ANALYZED);
+			Field sameAsField = new Field(SAMEAS, map.get(key),
+					Field.Store.YES, Field.Index.NOT_ANALYZED);
+			document.add(contentField);
+			document.add(sameAsField);
+			documents.add(document);
+		}
+		return documents;
+	}
+
+	private Document convertString(String str) {
 		Document document = new Document();
-		Field contentField = new Field(CONTENTS, str, Field.Store.YES, Field.Index.NOT_ANALYZED);
+		Field contentField = new Field(CONTENTS, str, Field.Store.YES,
+				Field.Index.NOT_ANALYZED);
 		document.add(contentField);
 
 		return document;
-		
 	}
 
 }
