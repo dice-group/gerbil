@@ -2,8 +2,8 @@ package org.aksw.gerbil.semantic.sameas.index;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Collection;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -82,7 +82,7 @@ public class Searcher extends LuceneConstants {
 		indexSearcher.close();
 	}
 
-	public List<String> search(String uri) throws GerbilException{
+	public Collection<String> search(String uri) throws GerbilException{
 		switch(strategy){
 		case WildCard:
 			return searchSameAsWildcard(uri);
@@ -93,14 +93,14 @@ public class Searcher extends LuceneConstants {
 		}
 	}
 	
-	public List<String> searchSameAsTerm(String uri) throws GerbilException{
+	public Collection<String> searchSameAsTerm(String uri) throws GerbilException{
 		TopDocs docs;
 		try {
 			docs = searchTops(uri);
 		} catch (IOException | ParseException e1) {
 			throw new GerbilException("Could not parse index files", ErrorTypes.UNEXPECTED_EXCEPTION);
 		}
-		List<String> uris = new LinkedList<String>();
+		Collection<String> uris = new HashSet<String>();
 		for (ScoreDoc scoreDoc : docs.scoreDocs) {
 			Document doc;
 			try {
@@ -117,14 +117,14 @@ public class Searcher extends LuceneConstants {
 		return uris;
 	}
 	
-	public List<String> searchSameAsWildcard(String uri) throws GerbilException{
+	public Collection<String> searchSameAsWildcard(String uri) throws GerbilException{
 		TopDocs docs;
 		try {
 			docs = searchTops("*"+uri+"*");
 		} catch (IOException | ParseException e1) {
 			throw new GerbilException("Could not parse index files", ErrorTypes.UNEXPECTED_EXCEPTION);
 		}
-		List<String> uris = new LinkedList<String>();
+		Collection<String> uris = new HashSet<String>();
 		for (ScoreDoc scoreDoc : docs.scoreDocs) {
 			Document doc;
 			try {

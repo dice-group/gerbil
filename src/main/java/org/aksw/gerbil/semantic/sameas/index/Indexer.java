@@ -3,8 +3,8 @@ package org.aksw.gerbil.semantic.sameas.index;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +50,7 @@ public class Indexer extends LuceneConstants {
 		}
 	}
 
-	public void index(List<String> uris) {
+	public void index(Collection<String> uris) {
 		switch (strategy) {
 		case WildCard:
 			indexSameAs(uris);
@@ -61,7 +61,7 @@ public class Indexer extends LuceneConstants {
 		}
 	}
 
-	public void indexSameAs(List<String> uris) {
+	public void indexSameAs(Collection<String> uris) {
 		String entity = listToStr(uris);
 		Document doc = convertString("\"" + entity + "\"");
 		try {
@@ -73,7 +73,7 @@ public class Indexer extends LuceneConstants {
 		}
 	}
 
-	private String listToStr(List<String> uris) {
+	private String listToStr(Collection<String> uris) {
 		String entity = "";
 		for (String uri : uris) {
 			entity += uri + " ";
@@ -81,7 +81,7 @@ public class Indexer extends LuceneConstants {
 		return entity;
 	}
 
-	public void indexSameAs2(List<String> uris) {
+	public void indexSameAs2(Collection<String> uris) {
 		Map<String, String> map = new HashMap<String, String>();
 		for (String uri : uris) {
 			List<String> uris_copy = new ArrayList<String>(uris);
