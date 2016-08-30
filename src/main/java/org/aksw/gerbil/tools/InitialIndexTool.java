@@ -6,6 +6,7 @@ import java.util.Set;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.index.Indexer;
 import org.aksw.gerbil.semantic.sameas.index.LuceneConstants.IndexingStrategy;
+import org.aksw.gerbil.semantic.sameas.index.Searcher;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -27,10 +28,11 @@ public class InitialIndexTool {
 	
 	public static void main(String[] args) throws GerbilException {
 		Indexer index = new Indexer(OUTPUT_FOLDER, STRATEGY);
-		index(index);
+		Searcher search = new Searcher(OUTPUT_FOLDER, STRATEGY);
+		index(index, search);
 	}
 	
-	public static void index(Indexer index){
+	public static void index(Indexer index, Searcher search) throws GerbilException{
 		int offset=0, limit=20000;
 		boolean test=true;
 
@@ -50,7 +52,6 @@ public class InitialIndexTool {
 			//Go through all elements
 			while(res.hasNext()){
 				size++;
-
 				QuerySolution solution = res.next();
 				RDFNode node1 = solution.get("s");
 				RDFNode node2 = solution.get("o");
@@ -58,11 +59,17 @@ public class InitialIndexTool {
 					sameAsBlock.add(node2.toString());
 				}
 				else if(old!=null){
-					index.index(sameAsBlock);
+					//Enitity is finished
+					if(!search.search(old.toString()).isEmpty()){
+						index.index(sameAsBlock);
+
+					}
 					sameAsBlock.clear();
+					//Add Uri
 					sameAsBlock.add(node1.toString());
 				}
 				else{
+					//First run
 					sameAsBlock.add(node1.toString());
 				}
 			}
