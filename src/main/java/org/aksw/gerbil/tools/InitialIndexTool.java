@@ -1,5 +1,10 @@
 package org.aksw.gerbil.tools;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,6 +12,9 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.index.Indexer;
 import org.aksw.gerbil.semantic.sameas.index.LuceneConstants.IndexingStrategy;
 import org.aksw.gerbil.semantic.sameas.index.Searcher;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -18,22 +26,26 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class InitialIndexTool {
 
-	private static final String OUTPUT_FOLDER="lucene_index";
+    private static final Logger LOGGER = LoggerFactory.getLogger(InitialIndexTool.class);
 
-	private static final String SPARQL_GET = "select distinct ?s ?o where {?s owl:sameAs ?o}";
+	private static final String OUTPUT_FOLDER="lucene_index";
+	private static final String SPARQL_GET = "select distinct ?s ?o where {?s <http://www.w3.org/2002/07/owl#sameAs> ?o}";
 	
 	private static final IndexingStrategy STRATEGY = IndexingStrategy.TermQuery;
 
-	private static String service = "http://dbpedia.org/sparql";
+	private static String service = "http://coxpresdb.jp/sparql";
 	
-	public static void main(String[] args) throws GerbilException {
+	public static void main(String[] args) throws GerbilException{
 		Indexer index = new Indexer(OUTPUT_FOLDER, STRATEGY);
 		Searcher search = new Searcher(OUTPUT_FOLDER, STRATEGY);
+		SimpleDateFormat format = new SimpleDateFormat();
+		LOGGER.info("Start indexing at {}", format.format(Calendar.getInstance().getTime()));
 		index(index, search);
+		LOGGER.info("Indexing finished at {}", format.format(Calendar.getInstance().getTime()));
 	}
 	
 	public static void index(Indexer index, Searcher search) throws GerbilException{
-		int offset=0, limit=20000;
+		int offset=0, limit=10000;
 		boolean test=true;
 
 		Query q = QueryFactory.create(SPARQL_GET);
@@ -42,13 +54,15 @@ public class InitialIndexTool {
 		//Create here! 
 		Set<String> sameAsBlock = new HashSet<String>();
 		RDFNode old = null;
-		
+		int rounds=0, size=0;
+		long total=0;
 		do{
 			q.setOffset(offset);
 			QueryExecution qexec = QueryExecutionFactory.sparqlService(service , q);
 			ResultSet res = qexec.execSelect();
 			//get results
-			int size=0;
+			size=0;
+			rounds++;
 			//Go through all elements
 			while(res.hasNext()){
 				size++;
@@ -60,17 +74,20 @@ public class InitialIndexTool {
 				}
 				else if(old!=null){
 					//Enitity is finished
-					if(!search.search(old.toString()).isEmpty()){
+					if(search.search(old.toString()).isEmpty()){
 						index.index(sameAsBlock);
-
+						total+=sameAsBlock.size();
 					}
 					sameAsBlock.clear();
 					//Add Uri
 					sameAsBlock.add(node1.toString());
+					old=node1;
 				}
 				else{
 					//First run
 					sameAsBlock.add(node1.toString());
+					sameAsBlock.add(node2.toString());
+					old=node1;
 				}
 			}
 			if(size<limit){
@@ -79,12 +96,14 @@ public class InitialIndexTool {
 			}
 			//Set offset so it starts immediately after last results
 			offset+=limit;
+			LOGGER.info("Got {} triples...(Sum: {})",size, limit*(rounds-1)+size);
 		}while(test);
 		//done
 		if(!sameAsBlock.isEmpty()){
 			index.index(sameAsBlock);
 			sameAsBlock.clear();
 		}
+		LOGGER.info("Successfully indexed {} triples",total);
 	}
 
 }
