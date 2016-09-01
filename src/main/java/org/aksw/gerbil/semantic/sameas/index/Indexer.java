@@ -46,6 +46,7 @@ public class Indexer extends LuceneConstants {
 
 	public void close() {
 		try {
+			writer.commit();
 			writer.close();
 		} catch (IOException e) {
 			LOGGER.error("Error occured during closing Index Writer", e);
@@ -68,7 +69,6 @@ public class Indexer extends LuceneConstants {
 		Document doc = convertString("\"" + entity + "\"");
 		try {
 			writer.addDocument(doc);
-			writer.commit();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -95,7 +95,6 @@ public class Indexer extends LuceneConstants {
 		Document doc = convertTerm(uri, listToStr(uris));
 			try {
 				writer.addDocument(doc);
-				writer.commit();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
