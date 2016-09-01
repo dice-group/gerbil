@@ -1,10 +1,10 @@
 package org.aksw.gerbil.tools;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,8 +12,6 @@ import java.util.Set;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.index.Indexer;
 import org.aksw.gerbil.semantic.sameas.index.LuceneConstants.IndexingStrategy;
-import org.aksw.gerbil.semantic.sameas.index.Searcher;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,90 +26,167 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class InitialIndexTool {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InitialIndexTool.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(InitialIndexTool.class);
 
-	private static final String OUTPUT_FOLDER="lucene_index";
+	private static final String OUTPUT_FOLDER = "lucene_index";
 	private static final String SPARQL_GET = "select distinct ?s ?o where {?s <http://www.w3.org/2002/07/owl#sameAs> ?o}";
-	
+
 	private static final IndexingStrategy STRATEGY = IndexingStrategy.TermQuery;
 
-	private static String service = "http://dbpedia.org/sparql";
-	
-	public static void main(String[] args) throws GerbilException, IOException{
+	private static String service = "http://de.dbpedia.org/sparql";
+
+	private static Object owlSameAs="<http://www.w3.org/2002/07/owl#sameAs>";
+
+	public static void main(String[] args) throws GerbilException, IOException {
 		Indexer index = new Indexer(OUTPUT_FOLDER, STRATEGY);
 		SimpleDateFormat format = new SimpleDateFormat();
 		Date start = Calendar.getInstance().getTime();
-//		Searcher search = new Searcher(OUTPUT_FOLDER, STRATEGY);
-		LOGGER.info("Start indexing at {}", format.format(start));		
-		index(index);
+		// Searcher search = new Searcher(OUTPUT_FOLDER, STRATEGY);
+
+		LOGGER.info("Start indexing at {}", format.format(start));
+		index(index, args[0]);
 		index.close();
 		Date end = Calendar.getInstance().getTime();
 		LOGGER.info("Indexing finished at {}", format.format(end));
-		LOGGER.info("Indexing took: "+DurationFormatUtils.formatDurationHMS(end.getTime()-start.getTime()));
+		LOGGER.info("Indexing took: "
+				+ DurationFormatUtils.formatDurationHMS(end.getTime()
+						- start.getTime()));
 	}
-	
-	public static void index(Indexer index) throws GerbilException{
-		int offset=0, limit=10000;
-		boolean test=true;
+
+	public static void index(Indexer index) throws GerbilException {
+		int offset = 0, limit = 10000;
+		boolean test = true;
 
 		Query q = QueryFactory.create(SPARQL_GET);
 		q.setLimit(limit);
-		
-		//Create here! 
+
+		// Create here!
 		Set<String> sameAsBlock = new HashSet<String>();
 		RDFNode old = null;
-		int rounds=0, size=0;
-		long total=0;
+		int rounds = 0, size = 0;
+		long total = 0;
 		Date start = Calendar.getInstance().getTime();
-		do{
+		do {
 			q.setOffset(offset);
-			QueryExecution qexec = QueryExecutionFactory.sparqlService(service , q);
+			Date startQ = Calendar.getInstance().getTime();
+			QueryExecution qexec = QueryExecutionFactory.sparqlService(service,
+					q);
 			ResultSet res = qexec.execSelect();
-			//get results
-			size=0;
+			Date endQ = Calendar.getInstance().getTime();
+			// get results
+			size = 0;
+			long sumI = 0;
 			rounds++;
-			//Go through all elements
-			while(res.hasNext()){
+			// Go through all elements
+			while (res.hasNext()) {
 				size++;
 				QuerySolution solution = res.next();
 				RDFNode node1 = solution.get("s");
 				RDFNode node2 = solution.get("o");
-				if(node1.equals(old)){
+				if (node1.equals(old)) {
 					sameAsBlock.add(node2.toString());
-				}
-				else if(old!=null){
-					//Enitity is finished
+				} else if (old != null) {
+					// Enitity is finished
+					Date startI = Calendar.getInstance().getTime();
 					index.index(old.toString(), sameAsBlock);
-					total+=sameAsBlock.size();
+					Date endI = Calendar.getInstance().getTime();
+					sumI += endI.getTime() - startI.getTime();
+					total += sameAsBlock.size();
 
 					sameAsBlock.clear();
-					//Add Uri
+					// Add Uri
 					sameAsBlock.add(node2.toString());
-					old=node1;
-				}
-				else{
-					//First run
+					old = node1;
+				} else {
+					// First run
 					sameAsBlock.add(node2.toString());
-					old=node1;
+					old = node1;
 				}
 			}
-			if(size<limit){
-				//No more results
-				test=false;
+			if (size < limit) {
+				// No more results
+				test = false;
 			}
-			//Set offset so it starts immediately after last results
-			offset+=limit;
-			
+			// Set offset so it starts immediately after last results
+			offset += limit;
+
 			Date end = Calendar.getInstance().getTime();
-			String avg = DurationFormatUtils.formatDurationHMS((end.getTime()-start.getTime())/rounds);
-			LOGGER.info("Got {} triples...(Sum: {}, AvgTime: {})",size, limit*(rounds-1)+size, avg);
-		}while(test);
-		//done
-		if(!sameAsBlock.isEmpty()){
+			String avg = DurationFormatUtils
+					.formatDurationHMS((end.getTime() - start.getTime())
+							/ rounds);
+			String avgQ = DurationFormatUtils
+					.formatDurationHMS((endQ.getTime() - startQ.getTime()));
+			String avgI = DurationFormatUtils.formatDurationHMS(sumI);
+			sumI = 0;
+			LOGGER.info(
+					"Got {} triples...(Sum: {}, AvgTime: {}, QueryTime: {}, IndexTime: {})",
+					size, limit * (rounds - 1) + size, avg, avgQ, avgI);
+		} while (test);
+		// done
+		if (!sameAsBlock.isEmpty()) {
 			index.index(old.toString(), sameAsBlock);
 			sameAsBlock.clear();
 		}
-		LOGGER.info("Successfully indexed {} triples",total);
+		LOGGER.info("Successfully indexed {} triples", total);
+	}
+
+	public static void index(Indexer index, String file)
+			throws GerbilException, IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+
+		// Create here!
+		Set<String> sameAsBlock = new HashSet<String>();
+
+		long total = 0, size=0, rounds=0;
+		String line = "";
+		String old = null;
+		Date start = Calendar.getInstance().getTime();
+		while ((line = reader.readLine()) != null) {
+			String[] split = line.split("\\s+");
+			if(!split[1].equals(owlSameAs)) {
+				continue;
+			}
+			String node1 = split[0].replace("<", "").replace(">", "");
+			String node2 = split[2];
+			if(node2.endsWith(".")){
+				node2.substring(node2.indexOf("<"), node2.lastIndexOf(">"));
+			}
+			node2 = node2.replace("<", "").replace(">", "");
+			
+			if (node1.equals(old)) {
+				sameAsBlock.add(node2.toString());
+			} else if (old != null) {
+				// Enitity is finished
+				index.index(old.toString(), sameAsBlock);
+				total += sameAsBlock.size();
+
+				sameAsBlock.clear();
+				// Add Uri
+				sameAsBlock.add(node2.toString());
+				old = node1;
+			} else {
+				// First run
+				sameAsBlock.add(node2.toString());
+				old = node1;
+			}
+			size++;
+			if(size%100000==0){
+				Date end = Calendar.getInstance().getTime();
+				rounds++;
+				String avgTime  =DurationFormatUtils.formatDurationHMS((end.getTime()
+						- start.getTime())/rounds);
+				LOGGER.info("Got 10000 triples...(Sum: {}, AvgTime: {})", size, avgTime);
+			}
+		}
+
+		// done
+		if (!sameAsBlock.isEmpty()) {
+			index.index(old.toString(), sameAsBlock);
+			sameAsBlock.clear();
+		}
+		reader.close();
+		LOGGER.info("Successfully indexed {} triples", total);
 	}
 
 }

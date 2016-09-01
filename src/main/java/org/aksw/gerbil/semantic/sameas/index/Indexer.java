@@ -14,9 +14,14 @@ import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
+import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.MMapDirectory;
+import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +38,10 @@ public class Indexer extends LuceneConstants {
 	public Indexer(String path, IndexingStrategy strategy)
 			throws GerbilException {
 		try {
-			Directory dir = FSDirectory.open(new File(path));
-			writer = new IndexWriter(dir, new StandardAnalyzer(
-					Version.LUCENE_CURRENT), true,
-					IndexWriter.MaxFieldLength.UNLIMITED);
+			Directory dir = FSDirectory.open(new File(path).toPath());
+			IndexWriterConfig config = new IndexWriterConfig();
+			config.setRAMBufferSizeMB(2048);
+			writer = new IndexWriter(dir, config);
 		} catch (IOException e) {
 			LOGGER.error("Error occured during accesing file " + path, e);
 			throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
@@ -104,10 +109,13 @@ public class Indexer extends LuceneConstants {
 
 	private Document convertTerm(String uri, String sameAs) {
 		Document document = new Document();
-		Field contentField = new Field(CONTENTS, uri, Field.Store.YES,
-				Field.Index.NOT_ANALYZED);
-		Field sameAsField = new Field(SAMEAS, sameAs, Field.Store.YES,
-				Field.Index.NOT_ANALYZED);
+		FieldType type = new FieldType();
+		type.setStored(true);
+		FieldType type2 = new FieldType();
+		type2.setStored(true);
+		type2.setIndexOptions(IndexOptions.NONE);
+		Field contentField = new Field(CONTENTS, uri, type);
+		Field sameAsField = new Field(SAMEAS, sameAs, type2);
 		document.add(contentField);
 		document.add(sameAsField);
 
@@ -116,12 +124,12 @@ public class Indexer extends LuceneConstants {
 
 	private List<Document> convertMap(Map<String, String> map) {
 		List<Document> documents = new ArrayList<Document>();
+		FieldType type = new FieldType();
+		type.setStored(true);
 		for (String key : map.keySet()) {
 			Document document = new Document();
-			Field contentField = new Field(CONTENTS, key, Field.Store.YES,
-					Field.Index.NOT_ANALYZED);
-			Field sameAsField = new Field(SAMEAS, map.get(key),
-					Field.Store.YES, Field.Index.NOT_ANALYZED);
+			Field contentField = new Field(CONTENTS, key, type);
+			Field sameAsField = new Field(SAMEAS, map.get(key),type);
 			document.add(contentField);
 			document.add(sameAsField);
 			documents.add(document);
@@ -131,8 +139,9 @@ public class Indexer extends LuceneConstants {
 
 	private Document convertString(String str) {
 		Document document = new Document();
-		Field contentField = new Field(CONTENTS, str, Field.Store.YES,
-				Field.Index.NOT_ANALYZED);
+		FieldType type = new FieldType();
+		type.setStored(true);
+		Field contentField = new Field(CONTENTS, str,type);
 		document.add(contentField);
 
 		return document;
