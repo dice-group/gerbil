@@ -29,7 +29,7 @@ public class InitialIndexTool {
     private static final Logger LOGGER = LoggerFactory.getLogger(InitialIndexTool.class);
 
 	private static final String OUTPUT_FOLDER="lucene_index";
-	private static final String SPARQL_GET = "select distinct ?s ?o where {?s <http://www.w3.org/2002/07/owl#sameAs> ?o}";
+	private static final String SPARQL_GET = "select distinct ?s ?o where {?s <http://www.w3.org/2002/07/owl#sameAs> ?o} ORDER BY ?s";
 	
 	private static final IndexingStrategy STRATEGY = IndexingStrategy.TermQuery;
 
