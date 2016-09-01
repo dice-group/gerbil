@@ -14,15 +14,15 @@ import org.junit.Test;
 public class IndexerTest {
 
 	
-	@Test
+//	@Test
 	public void testTerm() throws GerbilException, IOException{
 		//Test if indexing and searching works
 		//1. make some same as retrievals
 		//2. index them
 		Indexer index = new Indexer("test", IndexingStrategy.TermQuery);
-		index.index(getList("http://dbpedia.org"));
-		index.index(getList("http://wikipedia.org"));
-		index.index(getList("http://de.dbpedia.org"));
+		index.index("http://dbpedia.org/a", getList("http://dbpedia.org"));
+		index.index("http://wikipedia.org/a", getList("http://wikipedia.org"));
+		index.index("http://de.dbpedia.org/a", getList("http://de.dbpedia.org"));
 		//3. search for one that exists
 		Searcher search = new Searcher("test", IndexingStrategy.TermQuery);
 		assertFalse(search.search("http://wikipedia.org/a").isEmpty());
