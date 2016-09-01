@@ -35,7 +35,7 @@ public class InitialIndexTool {
 	
 	private static final IndexingStrategy STRATEGY = IndexingStrategy.TermQuery;
 
-	private static String service = "http://de.dbpedia.org/sparql";
+	private static String service = "http://dbpedia.org/sparql";
 	
 	public static void main(String[] args) throws GerbilException, IOException{
 		Indexer index = new Indexer(OUTPUT_FOLDER, STRATEGY);
