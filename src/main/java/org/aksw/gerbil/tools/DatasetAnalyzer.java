@@ -28,7 +28,8 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.apache.commons.io.IOUtils;
-import org.apache.lucene.analysis.WhitespaceTokenizer;
+import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+import org.apache.lucene.analysis.core.WhitespaceTokenizerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +82,8 @@ public class DatasetAnalyzer {
     }
 
     private int countTokensInText(String text) {
-        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(new StringReader(text));
+        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer();
+        tokenizer.setReader(new StringReader(text));
         int tokens = 0;
         try {
             while (tokenizer.incrementToken()) {
