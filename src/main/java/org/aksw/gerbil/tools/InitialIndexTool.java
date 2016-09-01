@@ -33,18 +33,17 @@ public class InitialIndexTool {
 	
 	private static final IndexingStrategy STRATEGY = IndexingStrategy.TermQuery;
 
-	private static String service = "http://coxpresdb.jp/sparql";
+	private static String service = "http://dbpedia.org/sparql";
 	
 	public static void main(String[] args) throws GerbilException{
 		Indexer index = new Indexer(OUTPUT_FOLDER, STRATEGY);
-		Searcher search = new Searcher(OUTPUT_FOLDER, STRATEGY);
 		SimpleDateFormat format = new SimpleDateFormat();
-		LOGGER.info("Start indexing at {}", format.format(Calendar.getInstance().getTime()));
-		index(index, search);
+		LOGGER.info("Start indexing at {}", format.format(Calendar.getInstance().getTime()));		
+		index(index);
 		LOGGER.info("Indexing finished at {}", format.format(Calendar.getInstance().getTime()));
 	}
 	
-	public static void index(Indexer index, Searcher search) throws GerbilException{
+	public static void index(Indexer index) throws GerbilException{
 		int offset=0, limit=10000;
 		boolean test=true;
 
@@ -74,18 +73,16 @@ public class InitialIndexTool {
 				}
 				else if(old!=null){
 					//Enitity is finished
-					if(search.search(old.toString()).isEmpty()){
-						index.index(sameAsBlock);
-						total+=sameAsBlock.size();
-					}
+					index.index(old.toString(), sameAsBlock);
+					total+=sameAsBlock.size();
+
 					sameAsBlock.clear();
 					//Add Uri
-					sameAsBlock.add(node1.toString());
+					sameAsBlock.add(node2.toString());
 					old=node1;
 				}
 				else{
 					//First run
-					sameAsBlock.add(node1.toString());
 					sameAsBlock.add(node2.toString());
 					old=node1;
 				}
@@ -100,7 +97,7 @@ public class InitialIndexTool {
 		}while(test);
 		//done
 		if(!sameAsBlock.isEmpty()){
-			index.index(sameAsBlock);
+			index.index(old.toString(), sameAsBlock);
 			sameAsBlock.clear();
 		}
 		LOGGER.info("Successfully indexed {} triples",total);

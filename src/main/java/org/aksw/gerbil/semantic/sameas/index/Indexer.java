@@ -28,6 +28,8 @@ public class Indexer extends LuceneConstants {
 
 	private IndexWriter writer;
 
+	private String uri;
+
 	public Indexer(String path, IndexingStrategy strategy)
 			throws GerbilException {
 		try {
@@ -50,13 +52,13 @@ public class Indexer extends LuceneConstants {
 		}
 	}
 
-	public void index(Collection<String> uris) {
+	public void index(String uri, Collection<String> uris) {
 		switch (strategy) {
 		case WildCard:
 			indexSameAs(uris);
 			break;
 		case TermQuery:
-			indexSameAs2(uris);
+			indexSameAs2(uri, uris);
 			break;
 		}
 	}
@@ -81,15 +83,16 @@ public class Indexer extends LuceneConstants {
 		return entity;
 	}
 
-	public void indexSameAs2(Collection<String> uris) {
-		Map<String, String> map = new HashMap<String, String>();
-		for (String uri : uris) {
-			List<String> uris_copy = new ArrayList<String>(uris);
-			uris_copy.remove(uri);
-			map.put(uri, listToStr(uris_copy));
-			uris_copy.clear();
-		}
-		for (Document doc : convertMap(map)) {
+	public void indexSameAs2(String uri, Collection<String> uris) {
+//		Map<String, String> map = new HashMap<String, String>();
+//		for (String uri : uris) {
+//			List<String> uris_copy = new ArrayList<String>(uris);
+//			uris_copy.remove(uri);
+//			map.put(uri, listToStr(uris_copy));
+//			uris_copy.clear();
+//		}
+//		for (Document doc : convertMap(map)) {
+		Document doc = convertTerm(uri, listToStr(uris));
 			try {
 				writer.addDocument(doc);
 				writer.commit();
@@ -97,7 +100,19 @@ public class Indexer extends LuceneConstants {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		
+	}
+
+	private Document convertTerm(String uri, String sameAs) {
+		Document document = new Document();
+		Field contentField = new Field(CONTENTS, uri, Field.Store.YES,
+				Field.Index.NOT_ANALYZED);
+		Field sameAsField = new Field(SAMEAS, sameAs, Field.Store.YES,
+				Field.Index.NOT_ANALYZED);
+		document.add(contentField);
+		document.add(sameAsField);
+
+		return document;
 	}
 
 	private List<Document> convertMap(Map<String, String> map) {
