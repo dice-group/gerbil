@@ -22,7 +22,6 @@ import java.util.Set;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.http.AbstractHttpRequestEmitter;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.index.LuceneConstants.IndexingStrategy;
 import org.aksw.gerbil.semantic.sameas.index.Searcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +31,10 @@ public class IndexBasedSameAsRetriever extends AbstractHttpRequestEmitter implem
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexBasedSameAsRetriever.class);
 	private Searcher searcher;
 
-    public IndexBasedSameAsRetriever(String indexPath, IndexingStrategy strategy) throws GerbilException{
-    	searcher = new Searcher(indexPath, strategy);
+    public IndexBasedSameAsRetriever(String indexPath) throws GerbilException{
+    	searcher = new Searcher(indexPath);
     }
-    
-    public IndexBasedSameAsRetriever(String indexPath, String strategy) throws GerbilException{
-    	searcher = new Searcher(indexPath, IndexingStrategy.valueOf(strategy));
-    }
-    
+
     @Override
     public Set<String> retrieveSameURIs(String uri) {
         if ((uri == null) || (uri.isEmpty())) {
