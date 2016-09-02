@@ -31,7 +31,6 @@ public class IndexerTest {
 		//4. search for one that dont exist		
 		assertTrue(search.search("http://wikipedia.org/ab").isEmpty());
 		index.close();
-		search.close();
 	}
 	
 	@Test
@@ -50,7 +49,6 @@ public class IndexerTest {
 		//4. search for one that dont exist		
 		assertTrue(search.search("http://wikipedia.org/ab").isEmpty());
 		index.close();
-		search.close();
 	}
 	
 	public List<String> getList(String prefix){

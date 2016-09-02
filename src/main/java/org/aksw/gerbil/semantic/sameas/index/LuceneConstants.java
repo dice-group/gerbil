@@ -6,11 +6,5 @@ public abstract class LuceneConstants {
 
 	protected static final String SAMEAS = "sameAs";
 
-	protected static final int MAX_SEARCH = 10;
-	
-	protected IndexingStrategy strategy;
-	
-	public enum IndexingStrategy {
-		TermQuery, WildCard
-	}
+	protected static final int MAX_SEARCH = 100;
 }

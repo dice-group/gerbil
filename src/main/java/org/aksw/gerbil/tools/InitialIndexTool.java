@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.index.Indexer;
-import org.aksw.gerbil.semantic.sameas.index.LuceneConstants.IndexingStrategy;
+import org.aksw.gerbil.semantic.sameas.index.Searcher;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,19 +32,17 @@ public class InitialIndexTool {
 	private static final String OUTPUT_FOLDER = "lucene_index";
 	private static final String SPARQL_GET = "select distinct ?s ?o where {?s <http://www.w3.org/2002/07/owl#sameAs> ?o}";
 
-	private static final IndexingStrategy STRATEGY = IndexingStrategy.TermQuery;
-
 	private static String service = "http://de.dbpedia.org/sparql";
 
 	private static Object owlSameAs="<http://www.w3.org/2002/07/owl#sameAs>";
 
 	public static void main(String[] args) throws GerbilException, IOException {
-		Indexer index = new Indexer(OUTPUT_FOLDER, STRATEGY);
+		Indexer index = new Indexer(OUTPUT_FOLDER);
 		SimpleDateFormat format = new SimpleDateFormat();
 		Date start = Calendar.getInstance().getTime();
-		// Searcher search = new Searcher(OUTPUT_FOLDER, STRATEGY);
 
 		LOGGER.info("Start indexing at {}", format.format(start));
+		
 		index(index, args[0]);
 		index.close();
 		Date end = Calendar.getInstance().getTime();
@@ -149,10 +147,7 @@ public class InitialIndexTool {
 			}
 			String node1 = split[0].replace("<", "").replace(">", "");
 			String node2 = split[2];
-			if(node2.endsWith(".")){
-				node2.substring(node2.indexOf("<"), node2.lastIndexOf(">"));
-			}
-			node2 = node2.replace("<", "").replace(">", "");
+			node2 = node2.substring(node2.indexOf("<")+1, node2.lastIndexOf(">")).trim();
 			
 			if (node1.equals(old)) {
 				sameAsBlock.add(node2.toString());
@@ -176,7 +171,7 @@ public class InitialIndexTool {
 				rounds++;
 				String avgTime  =DurationFormatUtils.formatDurationHMS((end.getTime()
 						- start.getTime())/rounds);
-				LOGGER.info("Got 10000 triples...(Sum: {}, AvgTime: {})", size, avgTime);
+				LOGGER.info("Got 100000 triples...(Sum: {}, AvgTime: {})", size, avgTime);
 			}
 		}
 
