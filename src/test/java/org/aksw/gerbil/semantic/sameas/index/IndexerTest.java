@@ -31,24 +31,7 @@ public class IndexerTest {
 		assertTrue(search.search("http://wikipedia.org/ab").isEmpty());
 		index.close();
 	}
-	
-	@Test
-	public void testWildcard() throws GerbilException, IOException{
-		//Test if indexing and searching works
-		//1. make some same as retrievals
-		//2. index them
-		Indexer index = new Indexer("test");
-		index.indexSameAs("http://dbpedia.org/a", getList("http://dbpedia.org"));
-		index.indexSameAs("http://wikipedia.org/a", getList("http://wikipedia.org"));
-		index.indexSameAs("http://de.dbpedia.org/a", getList("http://de.dbpedia.org"));
-		//3. search for one that exists
-		Searcher search = new Searcher("test");
-		assertFalse(search.search("http://wikipedia.org/a").isEmpty());
-		assertFalse(search.search("http://dbpedia.org/a").isEmpty());
-		//4. search for one that dont exist		
-		assertTrue(search.search("http://wikipedia.org/ab").isEmpty());
-		index.close();
-	}
+
 	
 	public List<String> getList(String prefix){
 		List<String> sameAs = new LinkedList<String>();

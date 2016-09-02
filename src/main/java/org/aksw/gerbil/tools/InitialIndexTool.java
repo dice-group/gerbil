@@ -1,18 +1,23 @@
 package org.aksw.gerbil.tools;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.index.Indexer;
 import org.aksw.gerbil.semantic.sameas.index.Searcher;
 import org.apache.commons.lang.time.DurationFormatUtils;
+import org.apache.jena.riot.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +27,8 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class InitialIndexTool {
@@ -43,7 +50,7 @@ public class InitialIndexTool {
 
 		LOGGER.info("Start indexing at {}", format.format(start));
 		
-		index(index, args[0]);
+		indexFolder(index, args[0]);
 		index.close();
 		Date end = Calendar.getInstance().getTime();
 		LOGGER.info("Indexing finished at {}", format.format(end));
@@ -128,7 +135,17 @@ public class InitialIndexTool {
 		}
 		LOGGER.info("Successfully indexed {} triples", total);
 	}
+	
 
+
+	public static void indexFolder(Indexer index, String folder) throws GerbilException, IOException{
+		File dir = new File(folder);
+		
+		for(File f : dir.listFiles()){
+			index(index, f.getAbsolutePath());
+		}
+	}
+	
 	public static void index(Indexer index, String file)
 			throws GerbilException, IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
