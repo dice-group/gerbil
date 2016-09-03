@@ -8,11 +8,14 @@ wget http://www.l3s.de/~minack/rdf2rdf/downloads/rdf2rdf-1.0.1-2.3.1.jar
 
 
 rm *.json
+rm *.txt
 rm index.html
 
 for i in *.bz2; do
 	bzip2 -vd $i
 done
+
+rm *.tql
 
 for i in *.ttl; do
 	java -jar rdf2rdf-1.0.1-2.3.1.jar $i .nt

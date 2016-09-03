@@ -140,7 +140,8 @@ public class InitialIndexTool {
 		File dir = new File(folder);
 		
 		for(File f : dir.listFiles()){
-			index(index, f.getAbsolutePath());
+			if(f.getName().endsWith(".nt"))
+				index(index, f.getAbsolutePath());
 		}
 	}
 	
