@@ -47,9 +47,7 @@ public class InitialIndexTool {
 		Indexer index = new Indexer(OUTPUT_FOLDER);
 		SimpleDateFormat format = new SimpleDateFormat();
 		Date start = Calendar.getInstance().getTime();
-
 		LOGGER.info("Start indexing at {}", format.format(start));
-		
 		indexFolder(index, args[0]);
 		index.close();
 		Date end = Calendar.getInstance().getTime();

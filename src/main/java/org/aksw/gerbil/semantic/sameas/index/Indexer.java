@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class Indexer extends LuceneConstants {
 
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(HTTPBasedSameAsRetriever.class);
+			.getLogger(Indexer.class);
 
 	private IndexWriter writer;
 	private Directory dir;

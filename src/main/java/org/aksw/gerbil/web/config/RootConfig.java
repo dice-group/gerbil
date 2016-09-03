@@ -31,6 +31,7 @@ import org.aksw.gerbil.dataset.check.impl.HttpBasedEntityChecker;
 import org.aksw.gerbil.dataset.check.impl.InMemoryCachingEntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SingleUriSameAsRetriever;
@@ -42,6 +43,7 @@ import org.aksw.gerbil.semantic.sameas.impl.UriFilteringSameAsRetrieverDecorator
 import org.aksw.gerbil.semantic.sameas.impl.cache.FileBasedCachingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.cache.InMemoryCachingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.index.IndexBasedSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.wiki.WikiDbPediaBridgingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.wiki.WikipediaApiBasedSingleUriSameAsRetriever;
 import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
@@ -115,6 +117,8 @@ public class RootConfig {
 
     private static final String AVAILABLE_EXPERIMENT_TYPES_KEY = "org.aksw.gerbil.web.MainController.availableExperimentTypes";
 
+	private static final String INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY = "org.aksw.gerbil.semantic.sameas.impl.index.IndexBasedSameAsRetriever.folder";
+
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
         Resource[] resourceLocations = new Resource[] { new ClassPathResource("gerbil.properties"), };
@@ -178,6 +182,8 @@ public class RootConfig {
                 retrieverManager.addDomainSpecificRetriever(domain, singleRetriever);
             }
         }
+        
+        
 
         // Wikipedia to DBpedia URI translation
         (new WikiDbPediaBridgingSameAsRetriever()).addToManager(retrieverManager);
@@ -199,6 +205,7 @@ public class RootConfig {
             decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, false,
                     new File(GerbilConfiguration.getInstance().getString(SAME_AS_CACHE_FILE_KEY)));
         }
+        
         if (decoratedRetriever == null) {
             LOGGER.warn("Couldn't create file based cache for sameAs retrieving. Trying to create in Memory cache.");
             if (GerbilConfiguration.getInstance().containsKey(SAME_AS_IN_MEMORY_CACHE_SIZE_KEY)) {
@@ -222,7 +229,14 @@ public class RootConfig {
             sameAsRetriever = decoratedRetriever;
             decoratedRetriever = null;
         }
-
+        if(GerbilConfiguration.getInstance().containsKey(INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY)){
+        	try {
+				sameAsRetriever = new IndexBasedSameAsRetriever(
+						GerbilConfiguration.getInstance().getString(INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY));
+        	} catch (GerbilException e) {
+				LOGGER.error("Could not load Index Retriever");
+			}
+        }
         return sameAsRetriever;
     }
 

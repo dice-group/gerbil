@@ -26,7 +26,7 @@ import org.aksw.gerbil.semantic.sameas.index.Searcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IndexBasedSameAsRetriever extends AbstractHttpRequestEmitter implements SameAsRetriever {
+public class IndexBasedSameAsRetriever implements SameAsRetriever {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexBasedSameAsRetriever.class);
 	private Searcher searcher;
@@ -41,7 +41,11 @@ public class IndexBasedSameAsRetriever extends AbstractHttpRequestEmitter implem
             return null;
         }
         try {
-			return (Set<String>) searcher.search(uri);
+        	Set<String> ret = (Set<String>) searcher.search(uri);
+        	if(ret.isEmpty()){
+        		return null;
+        	}
+        	return ret;
 		} catch (GerbilException e) {
 			LOGGER.warn("Could not retrieve Same Uris", e);
 			return null;
