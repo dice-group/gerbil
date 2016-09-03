@@ -450,7 +450,7 @@
 			var datasetMultiselect = $('#dataset option:selected');
 			var dataset = [];
 			addToList(dataset, datasetMultiselect);
-			addToList(annotator, $("#datasetList li span.li_content"), "NIFDS_");
+			addToList(dataset, $("#datasetList li span.li_content"), "NIFDS_");
 			var answerFiles = [];
 			addToList(answerFiles, $("#answerFileList li span.li_content"),
 					"AF_");
