@@ -1,7 +1,7 @@
 mkdir dbpedia_dump
 cd dbpedia_dump
 
-wget -r --no-parent http://downloads.dbpedia.org/2016-04/core-i18n/en/
+wget -r --no-parent -R "*.txt, *.html, *.json" -A "*.nt, *.ttl, *.nt.bz2, *.ttl.bz2" http://downloads.dbpedia.org/2016-04/core-i18n/en/
 cd downloads.dbpedia.org/2016-04/core-i18n/en/
 
 wget http://www.l3s.de/~minack/rdf2rdf/downloads/rdf2rdf-1.0.1-2.3.1.jar
@@ -14,8 +14,6 @@ rm index.html
 for i in *.bz2; do
 	bzip2 -vd $i
 done
-
-rm *.tql
 
 for i in *.ttl; do
 	java -jar rdf2rdf-1.0.1-2.3.1.jar $i .nt
