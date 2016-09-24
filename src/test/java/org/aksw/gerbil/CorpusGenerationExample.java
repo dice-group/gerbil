@@ -30,10 +30,9 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.Ignore;
-
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 /**
  * This class contains a simple example, showing how a developer could create a

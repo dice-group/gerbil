@@ -32,14 +32,13 @@ import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.NodeIterator;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 public class AnnotationParser {
 

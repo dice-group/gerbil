@@ -29,11 +29,10 @@ import org.aksw.gerbil.transfer.nif.data.ScoredAnnotation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
-
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.vocabulary.RDF;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.RDF;
 
 public class AnnotationWriter {
 

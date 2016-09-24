@@ -21,10 +21,9 @@ import java.io.Reader;
 
 import org.aksw.gerbil.io.nif.AbstractNIFParser;
 import org.aksw.gerbil.io.nif.NIFParser;
-import org.apache.jena.riot.adapters.JenaReadersWriters.RDFReaderRIOT_TTL;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.adapters.RDFReaderRIOT;
-
-import com.hp.hpl.jena.rdf.model.Model;
 
 /**
  * This is a implementation of the {@link NIFParser} interface that relies on
@@ -43,14 +42,14 @@ public class TurtleNIFParser extends AbstractNIFParser {
 
     @Override
     protected Model parseNIFModel(InputStream is, Model nifModel) {
-        RDFReaderRIOT rdfReader = new RDFReaderRIOT_TTL();
+        RDFReaderRIOT rdfReader = new RDFReaderRIOT(Lang.TTL);
         rdfReader.read(nifModel, is, "");
         return nifModel;
     }
 
     @Override
     protected Model parseNIFModel(Reader reader, Model nifModel) {
-        RDFReaderRIOT rdfReader = new RDFReaderRIOT_TTL();
+        RDFReaderRIOT rdfReader = new RDFReaderRIOT(Lang.TTL);
         rdfReader.read(nifModel, reader, "");
         return nifModel;
     }

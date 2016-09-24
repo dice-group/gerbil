@@ -23,11 +23,10 @@ import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
-
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.vocabulary.RDF;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.RDF;
 
 public class DocumentWriter {
 

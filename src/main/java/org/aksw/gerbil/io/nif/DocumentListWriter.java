@@ -19,8 +19,7 @@ package org.aksw.gerbil.io.nif;
 import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.Document;
-
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 
 public class DocumentListWriter {
 

@@ -33,6 +33,8 @@ import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.apache.commons.io.IOUtils;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,9 +42,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 @RunWith(Parameterized.class)
 public class TurtleNIFParserTest {

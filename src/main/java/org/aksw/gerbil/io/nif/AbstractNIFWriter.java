@@ -23,9 +23,8 @@ import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.NIFTransferPrefixMapping;
-
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 
 public abstract class AbstractNIFWriter implements NIFWriter {
 

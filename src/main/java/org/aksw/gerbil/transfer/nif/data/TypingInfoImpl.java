@@ -23,8 +23,7 @@ import java.util.Set;
 
 import org.aksw.gerbil.transfer.nif.TypeHierarchy;
 import org.aksw.gerbil.transfer.nif.TypingInfo;
-
-import com.hp.hpl.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.RDFS;
 
 @Deprecated
 public class TypingInfoImpl implements TypingInfo, TypeHierarchy {

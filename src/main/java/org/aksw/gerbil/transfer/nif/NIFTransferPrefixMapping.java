@@ -18,12 +18,11 @@ package org.aksw.gerbil.transfer.nif;
 
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
-
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.shared.PrefixMapping;
-import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.shared.impl.PrefixMappingImpl;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
 public class NIFTransferPrefixMapping {
 
