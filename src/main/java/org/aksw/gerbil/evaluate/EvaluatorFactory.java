@@ -111,13 +111,13 @@ public class EvaluatorFactory {
     }
 
     @SuppressWarnings("rawtypes")
-    protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration,
+    public Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration,
             Dataset dataset) {
         return createEvaluator(type, configuration, dataset, globalClassifier, inferencer);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
+    public Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
             UriKBClassifier classifier, SubClassInferencer inferencer) {
         switch (type) {
         case C2KB: {
