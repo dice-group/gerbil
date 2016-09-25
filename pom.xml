@@ -13,7 +13,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>gerbil</artifactId>
-	<version>1.2.4</version>
+	<version>1.2.4-jena3.1</version>
 	<name>General Entity Annotator Benchmark</name>
 	<description>This project is a benchmark for entity annotation and disambiguation tools.</description>
 	<inceptionYear>2014</inceptionYear>
@@ -24,7 +24,7 @@
 		<junit.version>4.11</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.17.RELEASE</spring.version>
-		<jena.version>2.13.0</jena.version>
+		<jena.version>3.1.0</jena.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
 	</properties>
 
@@ -56,23 +56,19 @@
 		<dependency>
 			<groupId>org.aksw</groupId>
 			<artifactId>gerbil.nif.transfer</artifactId>
-			<version>1.2.2</version>
+			<version>1.2.2-jena3.1</version>
 		</dependency>
 		<!-- Jena for using JSON-LD -->
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-core</artifactId>
-			<version>${jena.version}</version>
+			<version>3.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
-			<artifactId>jena-arq</artifactId>
-			<version>${jena.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.jsonld-java</groupId>
-			<artifactId>jsonld-java-jena</artifactId>
-			<version>${jsonld-java-jena.version}</version>
+			<artifactId>apache-jena-libs</artifactId>
+			<type>pom</type>
+			<version>3.1.0</version>
 		</dependency>
 
 		<!-- Google Guava -->

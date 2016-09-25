@@ -21,11 +21,10 @@ import java.util.HashSet;
 
 import org.aksw.gerbil.transfer.nif.TypedMarking;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class TypeBasedMarkingFilterTest {
 

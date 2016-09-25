@@ -29,11 +29,11 @@ import org.aksw.gerbil.datatypes.marking.ClassifiedSpanMeaning;
 import org.aksw.gerbil.datatypes.marking.MarkingClasses;
 import org.aksw.gerbil.evaluate.impl.ClassConsideringFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.ClassifyingEvaluatorDecorator;
+import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.DoubleResultComparator;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.GSInKBClassifyingEvaluatorDecorator;
-import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.HierarchicalFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.SpanMergingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.SubTaskAverageCalculator;
@@ -60,12 +60,11 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 @SuppressWarnings("deprecation")
 public class EvaluatorFactory {
