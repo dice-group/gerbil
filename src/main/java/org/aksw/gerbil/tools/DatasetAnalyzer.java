@@ -25,8 +25,11 @@ import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.web.config.DatasetsConfig;
+import org.aksw.gerbil.web.config.RootConfig;
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizerFactory;
@@ -46,8 +49,7 @@ public class DatasetAnalyzer {
         PrintStream output = null;
         try {
             output = new PrintStream("datasetAnalyzation.log");
-            output.println(
-                    "name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
+            output.println("name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, numberOfEEs, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
             DatasetAnalyzer analyzer = new DatasetAnalyzer(output);
             for (DatasetConfiguration config : datasetConfigs) {
                 try {
@@ -64,6 +66,7 @@ public class DatasetAnalyzer {
     }
 
     private PrintStream output;
+    private UriKBClassifier classifier = RootConfig.createDefaultUriKBClassifier();
 
     public DatasetAnalyzer(PrintStream output) {
         this.output = output;
@@ -105,9 +108,15 @@ public class DatasetAnalyzer {
         List<Document> documents = dataset.getInstances();
         int annotationsSum = 0;
         int tokensSum = 0;
+        int eeCount = 0;
         for (Document document : documents) {
             annotationsSum += document.getMarkings().size();
             tokensSum += countTokensInText(document.getText());
+            for (Meaning meaning : document.getMarkings(Meaning.class)) {
+                if(!classifier.containsKBUri(meaning.getUris())) {
+                    ++eeCount;
+                }
+            }
         }
         // average entities per document
         output.print((double) annotationsSum / (double) documents.size());
@@ -124,7 +133,9 @@ public class DatasetAnalyzer {
         // number of entities
         output.print(annotationsSum);
         output.print(',');
-        // output.print(" tokens=" + tokensSum);
+        // number of EEs
+        output.print(eeCount);
+        output.print(',');
 
         output.println();
     }

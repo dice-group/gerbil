@@ -33,6 +33,8 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
+import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
+import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SingleUriSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.CrawlingSameAsRetrieverDecorator;
@@ -116,6 +118,8 @@ public class RootConfig {
     private static final String SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY = "org.aksw.gerbil.semantic.sameas.impl.UriFilteringSameAsRetrieverDecorator.domainBlacklist";
 
     private static final String AVAILABLE_EXPERIMENT_TYPES_KEY = "org.aksw.gerbil.web.MainController.availableExperimentTypes";
+    
+    private static final String DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY = "org.aksw.gerbil.evaluate.DefaultWellKnownKB";
 
 	private static final String INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY = "org.aksw.gerbil.semantic.sameas.impl.index.IndexBasedSameAsRetriever.folder";
 
@@ -322,6 +326,18 @@ public class RootConfig {
             Arrays.sort(typesArray);
             return typesArray;
         }
+    }
+    
+    public static UriKBClassifier createDefaultUriKBClassifier(){
+        return new SimpleWhiteListBasedUriKBClassifier(loadDefaultKBs());
+    }
+
+    public static String[] loadDefaultKBs() {
+        String kbs[] = GerbilConfiguration.getInstance().getStringArray(DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY);
+        if (kbs == null) {
+            LOGGER.error("Couldn't load the list of well known KBs. This GERBIL instance might not work as expected!");
+        }
+        return kbs;
     }
 
     public static int getNoOfWorkers(){
