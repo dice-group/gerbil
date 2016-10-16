@@ -271,10 +271,9 @@ public class RootConfig {
         if (manager == null) {
             manager = new EntityCheckerManagerImpl();
         }
-        @SuppressWarnings("unchecked")
-        List<String> namespaces = config.getList(HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY);
+        List<Object> namespaces = config.getList(HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY);
         if (!namespaces.isEmpty()) {
-            for (String namespace : namespaces) {
+            for (Object namespace : namespaces) {
                 manager.registerEntityChecker(namespace.toString(), new HttpBasedEntityChecker(namespace.toString()));
             }
         }

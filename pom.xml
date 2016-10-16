@@ -140,8 +140,25 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- ~~~~~~~~~~~~~~~~~~~ End Testing ~~~~~~~~~~~~~~~~~~~~~~ -->
-		<!-- BABELFY -->
+		<!-- ~~~~~~~~~~~~~~~~~~~ Lucene for Indexing ~~~~~~~~~~~~~~~~~~~~~~ -->
 		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>4.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>4.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>4.4.0</version>
+		</dependency>
+		<!-- ~~~~~~~~~~~~~~~~~~~ End Lucene for Indexing ~~~~~~~~~~~~~~~~~~~~~~ -->
+		<!-- BABELFY -->
+		<!-- <dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
 			<version>2.9.1</version>
@@ -205,7 +222,7 @@
 			<groupId>edu.stanford</groupId>
 			<artifactId>stanpost341</artifactId>
 			<version>3.4.1</version>
-		</dependency>
+		</dependency>-->
 
 		<!-- File Upload -->
 		<dependency>

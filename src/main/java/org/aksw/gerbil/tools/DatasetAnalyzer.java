@@ -28,7 +28,8 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.apache.commons.io.IOUtils;
-import org.apache.lucene.analysis.WhitespaceTokenizer;
+import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +46,7 @@ public class DatasetAnalyzer {
         PrintStream output = null;
         try {
             output = new PrintStream("datasetAnalyzation.log");
-            output.println(
-                    "name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
+            output.println("name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
             DatasetAnalyzer analyzer = new DatasetAnalyzer(output);
             for (DatasetConfiguration config : datasetConfigs) {
                 try {
@@ -81,7 +81,7 @@ public class DatasetAnalyzer {
     }
 
     private int countTokensInText(String text) {
-        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(new StringReader(text));
+        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(Version.LUCENE_44, new StringReader(text));
         int tokens = 0;
         try {
             while (tokenizer.incrementToken()) {
@@ -89,6 +89,8 @@ public class DatasetAnalyzer {
             }
         } catch (IOException e) {
             LOGGER.error("Error while tokenizing text. Returning.", e);
+        } finally {
+            IOUtils.closeQuietly(tokenizer);
         }
         return tokens;
     }
