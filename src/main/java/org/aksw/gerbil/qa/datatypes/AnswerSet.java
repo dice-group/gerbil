@@ -6,19 +6,19 @@ import org.aksw.gerbil.transfer.nif.Marking;
 
 import com.google.common.collect.Sets;
 
-public class AnswerSet implements Marking {
+public class AnswerSet<T> implements Marking {
 
-    protected Set<String> answers = Sets.newHashSet();
+    protected Set<T> answers = Sets.newHashSet();
 
-    public AnswerSet(Set<String> answers) {
+    public AnswerSet(Set<T> answers) {
         this.answers = answers;
     }
 
-    public Set<String> getAnswers() {
+    public Set<T> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(Set<String> answers) {
+    public void setAnswers(Set<T> answers) {
         this.answers = answers;
     }
 
@@ -38,7 +38,8 @@ public class AnswerSet implements Marking {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AnswerSet other = (AnswerSet) obj;
+        @SuppressWarnings("unchecked")
+        AnswerSet<T> other = (AnswerSet<T>) obj;
         if (answers == null) {
             if (other.answers != null)
                 return false;
@@ -49,7 +50,7 @@ public class AnswerSet implements Marking {
 
     @Override
     public Object clone() {
-        return new AnswerSet(answers);
+        return new AnswerSet<T>(answers);
     }
 
     @Override

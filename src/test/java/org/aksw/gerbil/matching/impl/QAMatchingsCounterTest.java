@@ -17,48 +17,75 @@
 package org.aksw.gerbil.matching.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.aksw.agdistis.util.Triple;
+import org.aksw.agdistis.util.TripleIndex;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
+import org.aksw.gerbil.qa.datatypes.ResourceAnswerSet;
+import org.aksw.gerbil.semantic.kb.UriKBClassifier;
+import org.aksw.gerbil.transfer.nif.data.Annotation;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
+@SuppressWarnings("rawtypes")
 public class QAMatchingsCounterTest {
 
-    @SuppressWarnings("rawtypes")
     private static final MatchingTestExample EXAMPLES[] = new MatchingTestExample[] {
             // empty test case
             new MatchingTestExample<>(new AnswerSet[] {}, new AnswerSet[] {}, new int[] { 0, 0, 0 }),
             // test case with empty annotator results
-            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet(Sets.newHashSet("http://kb/1")) },
-                    new AnswerSet[] {}, new int[] { 0, 1, 0 }),
-            // test case with empty gold standard
-            new MatchingTestExample<AnswerSet>(new AnswerSet[] {},
-                    new AnswerSet[] { new AnswerSet(Sets.newHashSet("http://kb/1")) }, new int[] { 0, 0, 1 }),
-            // test case with single exact matching AnswerSets
-            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet(Sets.newHashSet("http://kb/1")) },
-                    new AnswerSet[] { new AnswerSet(Sets.newHashSet("http://kb/1")) }, new int[] { 1, 0, 0 }),
-            // test case with several exact matching AnswerSets
             new MatchingTestExample<AnswerSet>(
-                    new AnswerSet[] { new AnswerSet(Sets.newHashSet("http://kb/1", "http://kb/2", "http://kb/3")) },
-                    new AnswerSet[] { new AnswerSet(Sets.newHashSet("http://kb/1", "http://kb/2", "http://kb/3")) },
-                    new int[] { 3, 0, 0 }),
+                    new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1")) }, new AnswerSet[] {},
+                    new int[] { 0, 1, 0 }),
+            // test case with empty gold standard
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] {}, new AnswerSet[] { new AnswerSet<String>(
+                    Sets.newHashSet("http://kb/1")) }, new int[] { 0, 0, 1 }),
+            // test case with single exact matching AnswerSets
+            new MatchingTestExample<AnswerSet>(
+                    new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1")) },
+                    new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1")) }, new int[] { 1, 0, 0 }),
+            // test case with several exact matching AnswerSets
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1",
+                    "http://kb/2", "http://kb/3")) }, new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet(
+                    "http://kb/1", "http://kb/2", "http://kb/3")) }, new int[] { 3, 0, 0 }),
             // test case with several exact matching AnswerSets with a different
             // order
-            new MatchingTestExample<AnswerSet>(
-                    new AnswerSet[] { new AnswerSet(Sets.newHashSet("http://kb/1", "http://kb/2", "http://kb/3")) },
-                    new AnswerSet[] { new AnswerSet(Sets.newHashSet("http://kb/2", "http://kb/3", "http://kb/1")) },
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1",
+                    "http://kb/2", "http://kb/3")) }, new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet(
+                    "http://kb/2", "http://kb/3", "http://kb/1")) }, new int[] { 3, 0, 0 }),
+            // the same test case with expected ResourceAnswerSets and given
+            // String answer sets
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet(
+                    "http://kb.org/2", "http://kb.org/3", "http://kb.org/1")) },
+                    new AnswerSet[] { new ResourceAnswerSet(Sets.newHashSet(new Annotation("http://kb.org/1"),
+                            new Annotation("http://kb.org/2"), new Annotation("http://kb.org/3"))) }, new int[] { 3, 0,
+                            0 }),
+            // the same test case with expected ResourceAnswerSets and given
+            // String answer sets and URIs that are not valid for the given URL
+            // validator but match the expected URIs
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/2",
+                    "http://kb/3", "http://kb/1")) }, new AnswerSet[] { new ResourceAnswerSet(Sets.newHashSet(
+                    new Annotation("http://kb/1"), new Annotation("http://kb/2"), new Annotation("http://kb/3"))) },
                     new int[] { 3, 0, 0 }),
             // test case with one exact matching AnswerSets, one wrong matching
             // and a missing matching
-            new MatchingTestExample<AnswerSet>(
-                    new AnswerSet[] { new AnswerSet(Sets.newHashSet("http://kb/1", "http://ukb/2")) },
-                    new AnswerSet[] { new AnswerSet(Sets.newHashSet("http://kb/1", "http://kb/2", "http://kb/3")) },
-                    new int[] { 1, 1, 2 }) };
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1",
+                    "http://ukb/2")) }, new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1",
+                    "http://kb/2", "http://kb/3")) }, new int[] { 1, 1, 2 }),
+            // The Annotator returned the label of the resource instead of the
+            // correct resource
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("Paris")) },
+                    new AnswerSet[] { new ResourceAnswerSet(Sets.newHashSet(new Annotation(
+                            "http://dbpedia.org/resource/Paris"))) }, new int[] { 1, 1, 0 }) };
 
     private MatchingsCounter<AnswerSet> counter;
     private List<List<AnswerSet>> annotatorResult;
@@ -67,7 +94,15 @@ public class QAMatchingsCounterTest {
 
     @SuppressWarnings("unchecked")
     public QAMatchingsCounterTest() {
-        this.counter = new QAMatchingsCounter();
+        Map<String, String[]> labelToUriMapping = new HashMap<>();
+        labelToUriMapping.put("Paris", new String[] { "http://dbpedia.org/resource/Paris",
+                "http://dbpedia.org/resource/Paris,_Arkansas" });
+        this.counter = new QAMatchingsCounter(new MockupIndex(labelToUriMapping), new UrlValidator(),
+                new DummyUriKbClassifier());
+        // this.counter = new QAMatchingsCounter(RootConfig.createTripleIndex(),
+        // new UrlValidator(),
+        // new DummyUriKbClassifier());
+
         this.annotatorResult = new ArrayList<List<AnswerSet>>(EXAMPLES.length);
         this.goldStandard = new ArrayList<List<AnswerSet>>(EXAMPLES.length);
         this.expectedCounts = new ArrayList<EvaluationCounts>(EXAMPLES.length);
@@ -89,4 +124,38 @@ public class QAMatchingsCounterTest {
         }
     }
 
+    protected class MockupIndex extends TripleIndex {
+
+        private Map<String, String[]> labelToUriMapping;
+
+        protected MockupIndex(Map<String, String[]> labelToUriMapping) {
+            super(null, null, null);
+            this.labelToUriMapping = labelToUriMapping;
+        }
+
+        @Override
+        public List<Triple> search(String subject, String predicate, String object, int maxNumberOfResults) {
+            List<Triple> results = new ArrayList<>();
+            if (labelToUriMapping.containsKey(object)) {
+                for (String uri : labelToUriMapping.get(object)) {
+                    results.add(new Triple(uri, "http://www.w3.org/2000/01/rdf-schema#label", object));
+                }
+            }
+            return results;
+        }
+    }
+
+    protected class DummyUriKbClassifier implements UriKBClassifier {
+
+        @Override
+        public boolean isKBUri(String uri) {
+            return true;
+        }
+
+        @Override
+        public boolean containsKBUri(Collection<String> uris) {
+            return true;
+        }
+
+    }
 }

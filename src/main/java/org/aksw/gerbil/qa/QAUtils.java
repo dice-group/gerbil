@@ -15,12 +15,13 @@ import org.aksw.gerbil.qa.datatypes.AnswerTypes;
 import org.aksw.gerbil.qa.datatypes.Property;
 import org.aksw.gerbil.qa.datatypes.Relation;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.commons.load.json.EJAnswers;
-import org.aksw.qa.commons.load.json.QaldQuestion;
 import org.aksw.qa.commons.load.json.QaldQuestionEntry;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,8 @@ public class QAUtils {
     public static final String QUESTION_LANGUAGE = "en";
 
     protected static final Property RDF_TYPE_PROPERTY = new Property(RDF.type.getURI());
+
+    protected static final UrlValidator URL_VALIDATOR = new UrlValidator();
 
     public static Document translateQuestion(IQuestion question, String questionUri) {
         Document document = new DocumentImpl(question.getLanguageToQuestion().get(QUESTION_LANGUAGE), questionUri);
@@ -71,10 +74,21 @@ public class QAUtils {
             }
         }
         // add the answers
-        document.addMarking(new AnswerSet(question.getGoldenAnswers()));
+        Set<String> goldenAnswers = question.getGoldenAnswers();
+        Marking answers = transformToAnnotations(goldenAnswers);
+        if(answers == null){
+            answers = new AnswerSet<String>(goldenAnswers);
+        }
+        document.addMarking(answers);
         return document;
     }
 
+    /**
+     * @deprecated set this to deprecated because it seems to contain a bug. The
+     *             line "answers.add(ejA.toString());" does most probably not
+     *             produce results as it is expected.
+     */
+    @Deprecated
     public static Document translateQuestion(QaldQuestionEntry question, String questionUri) {
         Document document = new DocumentImpl(question.getQuestion().get(0).getLanguage(), questionUri);
         String sparqlQueryString = question.getQuery().getSparql();
@@ -106,14 +120,13 @@ public class QAUtils {
         }
         // add the answers
         Set<String> answers = new HashSet<String>();
-        for(EJAnswers ejA: question.getAnswers()){
-        	answers.add(ejA.toString());
+        for (EJAnswers ejA : question.getAnswers()) {
+            answers.add(ejA.toString());
         }
-        document.addMarking(new AnswerSet(answers));
+        document.addMarking(new AnswerSet<String>(answers));
         return document;
     }
 
-    
     /**
      * Adds {@link Annotation}, {@link Property}, {@link AnswerItemType} and
      * {@link Relation} markings to the document if they can be parsed from the
@@ -127,7 +140,7 @@ public class QAUtils {
         List<String> strings = null;
         if (sparqlQueryString.contains("text:\"")) {
             int wherePos = sparqlQueryString.toLowerCase().indexOf("where {");
-            if(sparqlQueryString.contains("dbo:architecturalStyle")) {
+            if (sparqlQueryString.contains("dbo:architecturalStyle")) {
                 System.out.println("STOP!");
             }
             if (wherePos >= 0) {
@@ -167,9 +180,8 @@ public class QAUtils {
         try {
             sparqlQuery = QueryFactory.create(sparqlQueryString);
         } catch (Exception e) {
-            LOGGER.error(
-                    "Couldn't parse the given SPARQL Query \"" + sparqlQueryString + "\". Throwing catched exception.",
-                    e);
+            LOGGER.error("Couldn't parse the given SPARQL Query \"" + sparqlQueryString
+                    + "\". Throwing catched exception.", e);
             throw e;
         }
         final Set<String> projectionVariables = new HashSet<String>(sparqlQuery.getResultVars());
@@ -219,8 +231,7 @@ public class QAUtils {
                     }
                     // Add the triple
                     if (object.isLiteral()) {
-                        document.addMarking(
-                                new Relation(sAnnotation, pAnnotation, object.getLiteralValue().toString()));
+                        document.addMarking(new Relation(sAnnotation, pAnnotation, object.getLiteralValue().toString()));
                     } else {
                         document.addMarking(new Relation(sAnnotation, pAnnotation, oAnnotation));
                     }
@@ -230,4 +241,25 @@ public class QAUtils {
         ElementWalker.walk(sparqlQuery.getQueryPattern(), ELB);
     }
 
+    /**
+     * Transforms the given answers into a set of {@link Annotation} instances
+     * if possible.
+     * 
+     * @param goldenAnswers
+     *            answers that should be transformed into annotations
+     * @return answer set as {@link Annotation} instances or null, if there was
+     *         at least one answer that couldn't be transformed
+     */
+    public static AnswerSet<Annotation> transformToAnnotations(Set<String> answers) {
+        for (String goldenAnswer : answers) {
+            if (!URL_VALIDATOR.isValid(goldenAnswer)) {
+                return null;
+            }
+        }
+        Set<Annotation> annotations = new HashSet<>();
+        for (String goldenAnswer : answers) {
+            annotations.add(new Annotation(goldenAnswer));
+        }
+        return new AnswerSet<Annotation>(annotations);
+    }
 }

@@ -46,7 +46,7 @@ public class TripleIndex implements Closeable {
         try {
             directory = new MMapDirectory(new File(indexDirectory));
             reader = DirectoryReader.open(directory);
-            return new TripleIndex(directory, reader);
+            return new TripleIndex(directory, reader, new IndexSearcher(reader));
         } catch (Exception e) {
             LOGGER.error("Couldn't open index. Returning null.", e);
             IOUtils.closeQuietly(reader);
@@ -62,12 +62,17 @@ public class TripleIndex implements Closeable {
     private DirectoryReader ireader;
     private UrlValidator urlValidator;
     private Cache<BooleanQuery, List<Triple>> cache;
+    private QueryParser parser;
 
-    protected TripleIndex(Directory directory, DirectoryReader reader) {
+    protected TripleIndex(Directory directory, DirectoryReader reader, IndexSearcher isearcher) {
         this.directory = directory;
         this.ireader = reader;
-        isearcher = new IndexSearcher(ireader);
+        this.isearcher = isearcher;
         this.urlValidator = new UrlValidator();
+
+        Analyzer analyzer = new LiteralAnalyzer(LUCENE44);
+        parser = new QueryParser(LUCENE44, FIELD_NAME_OBJECT_LITERAL, analyzer);
+        parser.setDefaultOperator(QueryParser.Operator.AND);
 
         cache = CacheBuilder.newBuilder().maximumSize(50000).build();
     }
@@ -96,9 +101,6 @@ public class TripleIndex implements Closeable {
                 if (urlValidator.isValid(object)) {
                     q = new TermQuery(new Term(FIELD_NAME_OBJECT_URI, object));
                 } else {
-                    Analyzer analyzer = new LiteralAnalyzer(LUCENE44);
-                    QueryParser parser = new QueryParser(LUCENE44, FIELD_NAME_OBJECT_LITERAL, analyzer);
-                    parser.setDefaultOperator(QueryParser.Operator.OR);
                     q = parser.parse(QueryParserBase.escape(object));
                 }
                 bq.add(q, BooleanClause.Occur.MUST);

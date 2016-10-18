@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.agdistis.util.TripleIndex;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.dataset.check.impl.EntityCheckerManagerImpl;
@@ -115,6 +116,8 @@ public class RootConfig {
 
     private static final String AVAILABLE_EXPERIMENT_TYPES_KEY = "org.aksw.gerbil.web.MainController.availableExperimentTypes";
 
+    private static final String LABEL_INDEX_PATH_KEY = "org.aksw.agdistis.util.TripleIndex.path";
+
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
         Resource[] resourceLocations = new Resource[] { new ClassPathResource("gerbil.properties"), };
@@ -141,8 +144,8 @@ public class RootConfig {
 
     public static @Bean SubClassInferencer createSubClassInferencer() {
         Model classModel = ModelFactory.createDefaultModel();
-        String hierarchyFiles[] = GerbilConfiguration.getInstance()
-                .getStringArray("org.aksw.gerbil.semantic.subclass.SubClassInferencer.classHierarchyFiles");
+        String hierarchyFiles[] = GerbilConfiguration.getInstance().getStringArray(
+                "org.aksw.gerbil.semantic.subclass.SubClassInferencer.classHierarchyFiles");
         ClassHierarchyLoader loader = new ClassHierarchyLoader();
         for (int i = 0; i < hierarchyFiles.length; i += 3) {
             try {
@@ -173,8 +176,8 @@ public class RootConfig {
         // Wikipedia API based same as retrieval
         if (GerbilConfiguration.getInstance().containsKey(WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
             SingleUriSameAsRetriever singleRetriever = new WikipediaApiBasedSingleUriSameAsRetriever();
-            for (String domain : GerbilConfiguration.getInstance()
-                    .getStringArray(WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
+            for (String domain : GerbilConfiguration.getInstance().getStringArray(
+                    WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
                 retrieverManager.addDomainSpecificRetriever(domain, singleRetriever);
             }
         }
@@ -187,8 +190,8 @@ public class RootConfig {
 
         // same as retrieval domain blacklist
         if (GerbilConfiguration.getInstance().containsKey(SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY)) {
-            sameAsRetriever = new UriFilteringSameAsRetrieverDecorator(sameAsRetriever,
-                    GerbilConfiguration.getInstance().getStringArray(SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY));
+            sameAsRetriever = new UriFilteringSameAsRetrieverDecorator(sameAsRetriever, GerbilConfiguration
+                    .getInstance().getStringArray(SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY));
         }
 
         // same as crawling
@@ -196,8 +199,8 @@ public class RootConfig {
 
         SameAsRetriever decoratedRetriever = null;
         if (GerbilConfiguration.getInstance().containsKey(SAME_AS_CACHE_FILE_KEY)) {
-            decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, false,
-                    new File(GerbilConfiguration.getInstance().getString(SAME_AS_CACHE_FILE_KEY)));
+            decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, false, new File(
+                    GerbilConfiguration.getInstance().getString(SAME_AS_CACHE_FILE_KEY)));
         }
         if (decoratedRetriever == null) {
             LOGGER.warn("Couldn't create file based cache for sameAs retrieving. Trying to create in Memory cache.");
@@ -206,9 +209,8 @@ public class RootConfig {
                     int cacheSize = GerbilConfiguration.getInstance().getInt(SAME_AS_IN_MEMORY_CACHE_SIZE_KEY);
                     decoratedRetriever = new InMemoryCachingSameAsRetriever(sameAsRetriever, cacheSize);
                 } catch (ConversionException e) {
-                    LOGGER.warn(
-                            "Exception while trying to load parameter \"" + SAME_AS_IN_MEMORY_CACHE_SIZE_KEY + "\".",
-                            e);
+                    LOGGER.warn("Exception while trying to load parameter \"" + SAME_AS_IN_MEMORY_CACHE_SIZE_KEY
+                            + "\".", e);
                 }
             }
             if (decoratedRetriever == null) {
@@ -226,7 +228,19 @@ public class RootConfig {
         return sameAsRetriever;
     }
 
-    public static @Bean EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer) {
+    public static @Bean TripleIndex createTripleIndex() {
+        if (GerbilConfiguration.getInstance().containsKey(LABEL_INDEX_PATH_KEY)) {
+            LOGGER.info("Using in-memory based cache for entity checking.");
+            return TripleIndex.createIndex(GerbilConfiguration.getInstance().getString(LABEL_INDEX_PATH_KEY));
+        } else {
+            LOGGER.error(
+                    "The parameter \"{}\" is missing and the TripleIndex can not be created. This instance won't be able to match labels to resources.",
+                    LABEL_INDEX_PATH_KEY);
+        }
+        return null;
+    }
+
+    public static @Bean EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer, TripleIndex index) {
         return new EvaluatorFactory(inferencer);
     }
 
@@ -234,8 +248,8 @@ public class RootConfig {
         if (GerbilConfiguration.getInstance().containsKey(ANNOTATOR_OUTPUT_WRITER_USAGE_KEY)
                 && GerbilConfiguration.getInstance().getBoolean(ANNOTATOR_OUTPUT_WRITER_USAGE_KEY)
                 && GerbilConfiguration.getInstance().containsKey(ANNOTATOR_OUTPUT_WRITER_DIRECTORY_KEY)) {
-            return new AnnotatorOutputWriter(
-                    GerbilConfiguration.getInstance().getString(ANNOTATOR_OUTPUT_WRITER_DIRECTORY_KEY));
+            return new AnnotatorOutputWriter(GerbilConfiguration.getInstance().getString(
+                    ANNOTATOR_OUTPUT_WRITER_DIRECTORY_KEY));
         } else {
             return null;
         }

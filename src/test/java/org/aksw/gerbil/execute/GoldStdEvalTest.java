@@ -57,8 +57,8 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class GoldStdEvalTest extends AbstractExperimentTaskTest {
 
-    private static final EvaluatorFactory EVALUATOR_FACTORY = RootConfig
-            .createEvaluatorFactory(RootConfig.createSubClassInferencer());
+    private static final EvaluatorFactory EVALUATOR_FACTORY = RootConfig.createEvaluatorFactory(
+            RootConfig.createSubClassInferencer(), RootConfig.createTripleIndex());
     private static final SameAsRetriever SAME_AS_RETRIEVER = new ErrorFixingSameAsRetriever();
     private static final EntityCheckerManager ENTITY_CHECKER_MANAGER = new EntityCheckerManagerImpl();
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
@@ -120,12 +120,11 @@ public class GoldStdEvalTest extends AbstractExperimentTaskTest {
         }
         Assert.assertNotNull(dataset);
 
-        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                new TestAnnotatorConfiguration(dataset.getInstances(), experimentType), datasetConfig, experimentType,
-                MATCHING);
+        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(new TestAnnotatorConfiguration(
+                dataset.getInstances(), experimentType), datasetConfig, experimentType, MATCHING);
         runTest(experimentTaskId, experimentDAO, SAME_AS_RETRIEVER, EVALUATOR_FACTORY, configuration,
-                new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO,
-                        new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0 }));
+                new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, new double[] { 1.0, 1.0, 1.0, 1.0,
+                        1.0, 1.0, 0.0 }));
     }
 
 }

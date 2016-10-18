@@ -26,22 +26,19 @@ import org.simpleframework.transport.connect.SocketConnection;
 
 public class ExtendedQALDBasedWebServiceTest implements TaskObserver {
 
-	
     private static final int FAST_SERVER_PORT = 8023;
     private static final String FAST_HTTP_SERVER_ADDRESS = "http://localhost:" + FAST_SERVER_PORT;
-	
+
     private static final long MAX_WAITING_TIME = 20000;
     private static final long CHECK_INERVAL = 1000;
 
+    private static long maxWaitingTimeBackup;
+    private static long checkIntervalBackup;
 
-	
-	private static long maxWaitingTimeBackup;
-	private static long checkIntervalBackup;
-	
-	protected Semaphore taskEndedMutex = new Semaphore(0);
-	private String correctAnswer = "http://dbpedia.org/resource/Michelle_Obama";
-	
-	@BeforeClass
+    protected Semaphore taskEndedMutex = new Semaphore(0);
+    private String correctAnswer = "http://dbpedia.org/resource/Michelle_Obama";
+
+    @BeforeClass
     public static void setHttpConfig() {
         HttpManagement mngmt = HttpManagement.getInstance();
         maxWaitingTimeBackup = mngmt.getMaxWaitingTime();
@@ -57,9 +54,9 @@ public class ExtendedQALDBasedWebServiceTest implements TaskObserver {
         mngmt.setCheckInterval(checkIntervalBackup);
     }
 
-	private ExtendedDocumentReturningServerMock fastServerContainer;
-	private ContainerServer fastServer;
-	private SocketConnection fastConnection;
+    private ExtendedDocumentReturningServerMock fastServerContainer;
+    private ContainerServer fastServer;
+    private SocketConnection fastConnection;
 
     @Before
     public void startServer() throws IOException {
@@ -69,45 +66,41 @@ public class ExtendedQALDBasedWebServiceTest implements TaskObserver {
         SocketAddress address1 = new InetSocketAddress(FAST_SERVER_PORT);
         fastConnection.connect(address1);
     }
-    
-    @Test
-    public void correctResults() throws GerbilException, IOException{
-    	ExtendedQALDBasedWebService service = new ExtendedQALDBasedWebService(FAST_HTTP_SERVER_ADDRESS);
-    	Document document = new DocumentImpl();
-    	
-    	
-		System.out.println("Testing now: Anything goes as excpected");
-    	document.setText("correct");
-    	
-		List<Marking> results = service.answerQuestion(document);
-		AnswerSet answer = (AnswerSet) results.get(results.size()-1);
-		String test = answer.getAnswers().iterator().next();
-		assertTrue(correctAnswer.equals(test));
-		System.out.println("Test done. Everything is ok");
-		
-		System.out.println("Testing now: Response Json is wrong");
-		document = new DocumentImpl();
-    	document.setText("json");
-    	
-		try {
-			service.answerQuestion(document);
-		} catch (GerbilException e) {
-//			assertTrue(e.getCause() instanceof JsonException);
-		}
-		System.out.println("Test done. Everything is ok");
-		
-		service.close();
-    }
-    
 
-    
-    
+    @Test
+    public void correctResults() throws GerbilException, IOException {
+        ExtendedQALDBasedWebService service = new ExtendedQALDBasedWebService(FAST_HTTP_SERVER_ADDRESS);
+        Document document = new DocumentImpl();
+
+        System.out.println("Testing now: Anything goes as excpected");
+        document.setText("correct");
+
+        List<Marking> results = service.answerQuestion(document);
+        AnswerSet<String> answer = (AnswerSet<String>) results.get(results.size() - 1);
+        String test = answer.getAnswers().iterator().next();
+        assertTrue(correctAnswer.equals(test));
+        System.out.println("Test done. Everything is ok");
+
+        System.out.println("Testing now: Response Json is wrong");
+        document = new DocumentImpl();
+        document.setText("json");
+
+        try {
+            service.answerQuestion(document);
+        } catch (GerbilException e) {
+            // assertTrue(e.getCause() instanceof JsonException);
+        }
+        System.out.println("Test done. Everything is ok");
+
+        service.close();
+    }
+
     @After
     public void stopServer() throws IOException {
         fastConnection.close();
         fastServer.stop();
     }
-    
+
     @Override
     public void reportTaskFinished(Task task) {
         taskEndedMutex.release();
