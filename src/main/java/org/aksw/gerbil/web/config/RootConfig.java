@@ -116,12 +116,14 @@ public class RootConfig {
     private static final String HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY = "org.aksw.gerbil.dataset.check.HttpBasedEntityChecker.namespace";
     private static final String WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY = "org.aksw.gerbil.semantic.sameas.impl.wiki.WikipediaApiBasedSingleUriSameAsRetriever.domain";
     private static final String SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY = "org.aksw.gerbil.semantic.sameas.impl.UriFilteringSameAsRetrieverDecorator.domainBlacklist";
+	private static final String INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY = "org.aksw.gerbil.semantic.sameas.impl.index.IndexBasedSameAsRetriever.folder";
+	private static final String INDEXED_BASED_SAME_AS_RETRIEVER_DOMAIN_KEY = "org.aksw.gerbil.semantic.sameas.impl.index.IndexBasedSameAsRetriever.domain";
 
     private static final String AVAILABLE_EXPERIMENT_TYPES_KEY = "org.aksw.gerbil.web.MainController.availableExperimentTypes";
     
     private static final String DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY = "org.aksw.gerbil.evaluate.DefaultWellKnownKB";
 
-	private static final String INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY = "org.aksw.gerbil.semantic.sameas.impl.index.IndexBasedSameAsRetriever.folder";
+
 
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
@@ -171,13 +173,34 @@ public class RootConfig {
         retrieverManager.addStaticRetriever(new UriEncodingHandlingSameAsRetriever());
 
         // HTTP based same as retrieval
+        HTTPBasedSameAsRetriever httpRetriever = null;
         if (GerbilConfiguration.getInstance().containsKey(HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
-            HTTPBasedSameAsRetriever httpRetriever = new HTTPBasedSameAsRetriever();
+            httpRetriever = new HTTPBasedSameAsRetriever();
             for (String domain : GerbilConfiguration.getInstance().getStringArray(HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
                 retrieverManager.addDomainSpecificRetriever(domain, httpRetriever);
             }
         }
 
+        if(GerbilConfiguration.getInstance().containsKey(INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY)){
+        	SameAsRetriever retriever;
+        	try {
+				retriever = new IndexBasedSameAsRetriever(
+						GerbilConfiguration.getInstance().getString(INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY));
+				
+        	} catch (GerbilException e) {
+				LOGGER.error("Could not load Index Retriever. using HTTPBasedSameAs Retriever instead");
+				if(httpRetriever==null){
+					retriever = new HTTPBasedSameAsRetriever();
+				}
+				else{
+					retriever = httpRetriever;
+				}
+			}
+        	for(String domain : GerbilConfiguration.getInstance()
+					.getStringArray(INDEXED_BASED_SAME_AS_RETRIEVER_DOMAIN_KEY)){
+				retrieverManager.addDomainSpecificRetriever(domain, retriever);
+			}
+        }
         // Wikipedia API based same as retrieval
         if (GerbilConfiguration.getInstance().containsKey(WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
             SingleUriSameAsRetriever singleRetriever = new WikipediaApiBasedSingleUriSameAsRetriever();
@@ -233,14 +256,7 @@ public class RootConfig {
             sameAsRetriever = decoratedRetriever;
             decoratedRetriever = null;
         }
-        if(GerbilConfiguration.getInstance().containsKey(INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY)){
-        	try {
-				sameAsRetriever = new IndexBasedSameAsRetriever(
-						GerbilConfiguration.getInstance().getString(INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY));
-        	} catch (GerbilException e) {
-				LOGGER.error("Could not load Index Retriever");
-			}
-        }
+        
         return sameAsRetriever;
     }
 

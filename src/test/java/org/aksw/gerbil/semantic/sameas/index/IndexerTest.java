@@ -13,23 +13,24 @@ import org.junit.Test;
 public class IndexerTest {
 
 	
-//	@Test
+	@Test
 	public void testTerm() throws GerbilException, IOException{
 		//Test if indexing and searching works
 		//1. make some same as retrievals
 		//2. index them
 		Indexer index = new Indexer("test");
-		index.index("http://dbpedia.org/a", getList("http://dbpedia.org"));
+		index.index("http://dbpedia.org/resource/Scar", getList("http://dbpedia.org"));
 		index.index("http://wikipedia.org/a", getList("http://wikipedia.org"));
 		index.index("http://de.dbpedia.org/a", getList("http://de.dbpedia.org"));
+		index.close();
 		//3. search for one that exists
 		Searcher search = new Searcher("test");
 		assertFalse(search.search("http://wikipedia.org/a").isEmpty());
-		assertFalse(search.search("http://wikipedia.org/d").isEmpty());
-		assertFalse(search.search("http://dbpedia.org/a").isEmpty());
+		assertTrue(search.search("http://wikipedia.org/d").isEmpty());
+		assertFalse(search.search("http://dbpedia.org/resource/Scar").isEmpty());
 		//4. search for one that dont exist		
 		assertTrue(search.search("http://wikipedia.org/ab").isEmpty());
-		index.close();
+		search.close();
 	}
 
 	
