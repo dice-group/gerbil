@@ -28,6 +28,7 @@ import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
 import org.aksw.gerbil.transfer.nif.data.ScoredTypedNamedEntity;
 import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.aksw.gerbil.transfer.nif.data.TypedSpanImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,15 +78,22 @@ public class NIFTransferTest {
                                 new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Person")), 0.25))) });
         tests.add(new Object[] { new DocumentImpl(
                 "Štvrtok is a village in Trenčín District in the Trenčín Region of north-western Slovakia.",
-                "http://www.aksw.org/gerbil/test-document",
-                Arrays.asList(
-                        (Marking) new TypedNamedEntity(0, 7, "http://dbpedia.org/resource/Štvrtok", new HashSet<String>(
-                                Arrays.asList("http://www.aksw.org/notInWiki/Village"))),
-                        (Marking) new TypedNamedEntity(13, 7, new HashSet<String>(Arrays.asList(
-                                "http://www.aksw.org/notInWiki/village")),
-                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Location"))),
+                "http://www.aksw.org/gerbil/test-document", Arrays.asList(
+                        (Marking) new TypedNamedEntity(0, 7, "http://dbpedia.org/resource/Štvrtok",
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Village"))),
+                        (Marking) new TypedNamedEntity(13, 7, new HashSet<String>(Arrays
+                                .asList("http://www.aksw.org/notInWiki/village")), new HashSet<String>(Arrays
+                                .asList("http://www.aksw.org/notInWiki/Location"))),
                         (Marking) new ScoredTypedNamedEntity(80, 8, "http://dbpedia.org/resource/Slovakia",
                                 new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Country")), 0.25))) });
+        tests.add(new Object[] { new DocumentImpl(
+                "Štvrtok is a village in Trenčín District in the Trenčín Region of north-western Slovakia.",
+                "http://www.aksw.org/gerbil/test-document", Arrays.asList(
+                        (Marking) new TypedSpanImpl(0, 7, new HashSet<String>(Arrays
+                                .asList("http://www.aksw.org/notInWiki/Village"))),
+                        (Marking) new TypedSpanImpl(13, 7, new HashSet<String>(Arrays
+                                .asList("http://www.aksw.org/notInWiki/Location"))), (Marking) new TypedSpanImpl(80, 8,
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Country"))))) });
         return tests;
     }
 

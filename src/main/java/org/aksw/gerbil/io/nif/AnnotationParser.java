@@ -30,6 +30,7 @@ import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
 import org.aksw.gerbil.transfer.nif.data.ScoredTypedNamedEntity;
 import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.aksw.gerbil.transfer.nif.data.TypedSpanImpl;
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
 import org.slf4j.Logger;
@@ -91,20 +92,19 @@ public class AnnotationParser {
                         nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
                         if (nodeIter.hasNext()) {
                             confidence = nodeIter.next().asLiteral().getDouble();
-                            markings.add(addTypeInformation(
-                                    new ScoredTypedNamedEntity(start, end - start, entityUris, types, confidence),
-                                    nifModel));
+                            markings.add(addTypeInformation(new ScoredTypedNamedEntity(start, end - start, entityUris,
+                                    types, confidence), nifModel));
                         } else {
                             // It has been typed without a confidence
-                            markings.add(addTypeInformation(new TypedNamedEntity(start, end - start, entityUris, types),
-                                    nifModel));
+                            markings.add(addTypeInformation(
+                                    new TypedNamedEntity(start, end - start, entityUris, types), nifModel));
                         }
                     } else {
                         nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
                         if (nodeIter.hasNext()) {
                             confidence = nodeIter.next().asLiteral().getDouble();
-                            markings.add(addTypeInformationIfPossible(
-                                    new ScoredNamedEntity(start, end - start, entityUris, confidence), nifModel));
+                            markings.add(addTypeInformationIfPossible(new ScoredNamedEntity(start, end - start,
+                                    entityUris, confidence), nifModel));
                         } else {
                             // It has been disambiguated without a confidence
                             markings.add(addTypeInformationIfPossible(new NamedEntity(start, end - start, entityUris),
@@ -112,8 +112,18 @@ public class AnnotationParser {
                         }
                     }
                 } else {
-                    // It is a named entity that hasn't been disambiguated
-                    markings.add(new SpanImpl(start, end - start));
+                    nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taClassRef);
+                    if (nodeIter.hasNext()) {
+                        Set<String> types = new HashSet<String>();
+                        while (nodeIter.hasNext()) {
+                            types.add(nodeIter.next().toString());
+                        }
+                        // It has been typed without a confidence
+                        markings.add(new TypedSpanImpl(start, end - start, types));
+                    } else {
+                        // It is a named entity that hasn't been disambiguated
+                        markings.add(new SpanImpl(start, end - start));
+                    }
                 }
                 // FIXME scored Span is missing
             } else {
@@ -157,8 +167,8 @@ public class AnnotationParser {
     }
 
     private MeaningSpan addTypeInformationIfPossible(ScoredNamedEntity ne, Model nifModel) {
-        ScoredTypedNamedEntity typedNE = new ScoredTypedNamedEntity(ne.getStartPosition(), ne.getLength(), ne.getUris(),
-                new HashSet<String>(), ne.getConfidence());
+        ScoredTypedNamedEntity typedNE = new ScoredTypedNamedEntity(ne.getStartPosition(), ne.getLength(),
+                ne.getUris(), new HashSet<String>(), ne.getConfidence());
         addTypeInformation(typedNE, nifModel);
         if (typedNE.getTypes().size() > 0) {
             return typedNE;

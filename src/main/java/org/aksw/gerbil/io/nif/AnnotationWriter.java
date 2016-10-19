@@ -26,7 +26,6 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedMarking;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.ScoredAnnotation;
-import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
 
@@ -95,7 +94,7 @@ public class AnnotationWriter {
                     nifModel.createTypedLiteral(((ScoredMarking) span).getConfidence(), XSDDatatype.XSDdouble));
         }
         if (span instanceof TypedMarking) {
-            Set<String> types = ((TypedNamedEntity) span).getTypes();
+            Set<String> types = ((TypedMarking) span).getTypes();
             for (String type : types) {
                 nifModel.add(spanAsResource, ITSRDF.taClassRef, nifModel.createResource(type));
             }
