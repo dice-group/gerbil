@@ -88,6 +88,7 @@ public class NIFWSTestingController {
             }
             case ETyping: {
                 annotator.performTyping(document);
+                break;
             }
             default: {
                 throw new IllegalArgumentException("Got an unknown experiment type \"" + experimentType + "\".");
