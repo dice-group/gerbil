@@ -107,7 +107,7 @@ public class DerczynskiDataset extends AbstractDataset implements InitializableD
 				//TOken has URI
 				markings.add(new NamedEntity(start, token[0].length(), token[1]));
 			}
-			start+=tokenFull.length()+1;
+			start+=token[1].length()+1;
 		}
 		
 		return markings;
