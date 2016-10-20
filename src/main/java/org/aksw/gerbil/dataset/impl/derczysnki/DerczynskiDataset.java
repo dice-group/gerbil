@@ -67,7 +67,7 @@ public class DerczynskiDataset extends AbstractDataset implements InitializableD
 			String line = reader.readLine();
 			int tweetIndex=0;
 			List<Marking> markings = new ArrayList<Marking>();
-			StringBuilder tweet = new StringBuilder("").append(line);
+			StringBuilder tweet = new StringBuilder("");
 			while (line != null) {
 				if(line.trim().isEmpty()){
 					//Get Markings
