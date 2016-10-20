@@ -59,7 +59,7 @@ public class DerczynskiDataset extends AbstractDataset implements InitializableD
 		BufferedReader reader = null;
 //		CSVReader reader = null;
 		List<Document> documents = new ArrayList<Document>();
-		String documentUriPrefix = "http//:" + getName() + "/";
+		String documentUriPrefix = "http://" + getName() + "/";
 		try {
 			reader = new BufferedReader(new InputStreamReader(
 					new FileInputStream(tweetsFile), Charset.forName("UTF-8")));
