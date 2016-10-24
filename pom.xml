@@ -55,13 +55,8 @@
 		<!-- NIF transfer lib -->
 		<dependency>
 			<groupId>org.aksw</groupId>
-<<<<<<< HEAD
 			<artifactId>gerbil.nif.transfer</artifactId>
 			<version>1.2.3-SNAPSHOT</version>
-=======
-			<artifactId>gerbil.nif.transfer</artifactId>
-			<version>1.2.2</version>
->>>>>>> master
 		</dependency>
 		<!-- Jena for using JSON-LD -->
 		<dependency>
