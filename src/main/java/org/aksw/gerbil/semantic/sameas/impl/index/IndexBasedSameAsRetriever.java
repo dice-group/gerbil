@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.http.AbstractHttpRequestEmitter;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.index.Searcher;
 import org.slf4j.Logger;

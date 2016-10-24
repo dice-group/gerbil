@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.aksw.gerbil.dataset.impl.derczysnki.DerczynskiDataset;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.junit.Assert;

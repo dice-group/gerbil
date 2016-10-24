@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.aksw.gerbil.transfer.nif.TypedSpan;
 
-public interface OKETask1Annotator extends A2KBAnnotator, RT2KBAnnotator {
+public interface RT2KBAnnotator extends EntityRecognizer, EntityTyper {
 
-    public List<TypedNamedEntity> performTask1(Document document) throws GerbilException;
+    public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException;
 }

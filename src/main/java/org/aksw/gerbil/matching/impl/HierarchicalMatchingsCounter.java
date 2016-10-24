@@ -102,8 +102,7 @@ public class HierarchicalMatchingsCounter<T extends TypedMarking> {
                 if ((documentCounts.truePositives == 0) && (documentCounts.falseNegatives == 0)
                         && (documentCounts.falsePositives == 0)) {
                     documentCounts.truePositives = 1;
-                    LOGGER.info(
-                            "Got an entity with a type that is not inside a known KB in the annotator and in the dataset.");
+                    LOGGER.info("Got an entity with a type that is not inside a known KB in the annotator and in the dataset.");
                 }
             } else {
                 documentCounts = new EvaluationCounts();
@@ -111,6 +110,14 @@ public class HierarchicalMatchingsCounter<T extends TypedMarking> {
                 documentCounts.falsePositives = 1;
             }
             localCounts.add(documentCounts);
+        }
+        for (int i = 0; i < annotatorResult.size(); ++i) {
+            if(!alreadyUsedResults.get(i)) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("found a false positive. {}", annotatorResult.get(i));
+                }
+                localCounts.add(new EvaluationCounts(0, 1, 0));
+            }
         }
         return localCounts;
     }

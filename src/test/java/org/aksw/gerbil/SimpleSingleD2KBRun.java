@@ -157,7 +157,7 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
 
     @Override
     @SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
-    protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
+    public Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
             UriKBClassifier globalClassifier, SubClassInferencer inferencer) {
         switch (type) {
         case D2KB: {

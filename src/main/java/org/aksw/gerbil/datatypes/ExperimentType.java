@@ -60,7 +60,8 @@ public enum ExperimentType implements Describable {
      * Input: text with marked entities <br>
      * Output: mentions for every entity
      */
-    D2KB("D2KB",
+    D2KB(
+            "D2KB",
             "The input for the annotator is a text with entities that already have been marked inside. The annotator should link all these mentioned entities to a knowledge base."),
 
     /**
@@ -73,7 +74,9 @@ public enum ExperimentType implements Describable {
      * Input: text <br>
      * Output: marked entities and scored mentions for their meaning
      */
-    @Deprecated Sa2KB("Sa2KB",
+    @Deprecated
+    Sa2KB(
+            "Sa2KB",
             "The annotator gets a text and shall recognize entities inside and link them to a knowledge base. Additionally, each annotation is assigned a score representing the likelihood that the annotation is correct."),
 
     /**
@@ -86,7 +89,9 @@ public enum ExperimentType implements Describable {
      * Input: text <br>
      * Output: scored markings of entities
      */
-    @Deprecated Sc2KB("Sc2KB",
+    @Deprecated
+    Sc2KB(
+            "Sc2KB",
             "The annotator gets a text and shall return relevant entities that are mentioned inside the text. Additionally, each tag is assigned a score representing the likelihood that the annotation is correct."),
 
     /**
@@ -98,7 +103,9 @@ public enum ExperimentType implements Describable {
      * Input: text <br>
      * Output: ranked markings of entities
      */
-    @Deprecated Rc2KB("Sc2KB",
+    @Deprecated
+    Rc2KB(
+            "Sc2KB",
             "The annotator gets a text and shall return relevant entities that are mentioned inside the textand rank them in terms of their relevance for the topics dealt with in the input text"),
 
     /**
@@ -126,8 +133,15 @@ public enum ExperimentType implements Describable {
      * a given text and the extraction of the part of the text, describing the
      * type.
      */
-    OKE_Task2("OKE Challenge 2015 - Task 2",
-            "This task comprises the determining of the type of a given entity inside a given text and the extraction of the part of the text, describing the type."),;
+    OKE_Task2(
+            "OKE Challenge 2015 - Task 2",
+            "This task comprises the determining of the type of a given entity inside a given text and the extraction of the part of the text, describing the type."),
+
+    /**
+     * The annotator gets a text and shall recognize entities inside and their
+     * types.
+     */
+    RT2KB("RT2KB", "The annotator gets a text and shall recognize entities inside and their types.");
 
     private String label;
     private String description;
@@ -162,7 +176,8 @@ public enum ExperimentType implements Describable {
             case ERec:
             case Sa2KB:
             case Sc2KB:
-            case Rc2KB: {
+            case Rc2KB:
+            case RT2KB: {
                 return true;
             }
             case ETyping: // falls through
@@ -179,6 +194,7 @@ public enum ExperimentType implements Describable {
             case A2KB:
             case D2KB:
             case ETyping:
+            case RT2KB:
             case OKE_Task1:
             case OKE_Task2: {
                 return false;
@@ -197,6 +213,7 @@ public enum ExperimentType implements Describable {
             case Sc2KB:
             case A2KB:
             case D2KB:
+            case RT2KB:
             case ETyping:
             case OKE_Task1:
             case OKE_Task2: {
@@ -205,6 +222,25 @@ public enum ExperimentType implements Describable {
             case Rc2KB: // falls through
             case C2KB: {
                 return true;
+            }
+            }
+        }
+        case RT2KB: {
+            switch (type) {
+            case ERec: // falls through
+            case ETyping:
+            case RT2KB: {
+                return true;
+            }
+            case C2KB: // falls through
+            case A2KB:
+            case D2KB:
+            case Sa2KB:
+            case Sc2KB:
+            case Rc2KB:
+            case OKE_Task1:
+            case OKE_Task2: {
+                return false;
             }
             }
         }

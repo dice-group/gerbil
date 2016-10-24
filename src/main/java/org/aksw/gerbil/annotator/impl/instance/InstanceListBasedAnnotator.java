@@ -86,4 +86,9 @@ public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2K
     public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
         return getDocumentMarkings(document.getDocumentURI(), MeaningSpan.class);
     }
+
+    @Override
+    public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
+        return getDocumentMarkings(document.getDocumentURI(), TypedSpan.class);
+    }
 }

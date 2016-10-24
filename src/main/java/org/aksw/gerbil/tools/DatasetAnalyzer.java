@@ -32,7 +32,6 @@ import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.apache.lucene.analysis.core.WhitespaceTokenizerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +93,8 @@ public class DatasetAnalyzer {
             }
         } catch (IOException e) {
             LOGGER.error("Error while tokenizing text. Returning.", e);
+        } finally {
+            IOUtils.closeQuietly(tokenizer);
         }
         return tokens;
     }

@@ -100,8 +100,7 @@ public class EvaluatorFactory {
     }
 
     @SuppressWarnings("rawtypes")
-    public Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration,
-            Dataset dataset) {
+    public Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset) {
         return createEvaluator(type, configuration, dataset, globalClassifier, inferencer);
     }
 
@@ -159,6 +158,12 @@ public class EvaluatorFactory {
                                             .createSpanMatchingsSearcher(configuration.matching), classifier,
                                     inferencer)), FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator()),
                     true);
+        }
+        case RT2KB: {
+            return new ConfidenceScoreEvaluatorDecorator<TypedSpan>(new HierarchicalFMeasureCalculator<TypedSpan>(
+                    new HierarchicalMatchingsCounter<TypedSpan>((MatchingsSearcher<TypedSpan>) MatchingsSearcherFactory
+                            .createSpanMatchingsSearcher(configuration.matching), classifier, inferencer)),
+                    FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator());
         }
         case OKE_Task1: {
             ExperimentTaskConfiguration subTaskConfig;
@@ -248,6 +253,19 @@ public class EvaluatorFactory {
             // evaluators.add(createEvaluator(ExperimentType.ELink,
             // configuration, dataset));
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.D2KB, subTaskConfig,
+                    dataset)));
+            return;
+        }
+        case RT2KB: {
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.ERec, configuration.matching);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.ERec, subTaskConfig,
+                    dataset)));
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
+            // evaluators.add(createEvaluator(ExperimentType.ELink,
+            // configuration, dataset));
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.ETyping, subTaskConfig,
                     dataset)));
             return;
         }
