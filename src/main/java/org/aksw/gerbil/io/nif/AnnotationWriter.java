@@ -1,18 +1,21 @@
 /**
- * This file is part of NIF transfer library for the General Entity Annotator Benchmark.
+ * This file is part of NIF transfer library for the General Entity Annotator
+ * Benchmark.
  *
- * NIF transfer library for the General Entity Annotator Benchmark is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * NIF transfer library for the General Entity Annotator Benchmark is free
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
  *
- * NIF transfer library for the General Entity Annotator Benchmark is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * NIF transfer library for the General Entity Annotator Benchmark is
+ * distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with NIF transfer library for the General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
+ * along with NIF transfer library for the General Entity Annotator Benchmark.
+ * If not, see <http://www.gnu.org/licenses/>.
  */
 package org.aksw.gerbil.io.nif;
 
@@ -35,68 +38,65 @@ import org.apache.jena.vocabulary.RDF;
 
 public class AnnotationWriter {
 
-    public void writeMarkingToModel(Model nifModel, Resource documentResource, String text, String documentURI,
-            Marking marking, int markingId) {
-        if (marking instanceof Span) {
-            addSpan(nifModel, documentResource, text, documentURI, (Span) marking);
-        } else if (marking instanceof Meaning) {
-            addAnnotation(nifModel, documentResource, documentURI, (Annotation) marking, markingId);
-        }
-    }
+	public void writeMarkingToModel(final Model nifModel, final Resource documentResource, final String text, final String documentURI, final Marking marking, final int markingId) {
+		if (marking instanceof Span) {
+			addSpan(nifModel, documentResource, text, documentURI, (Span) marking);
+		} else if (marking instanceof Meaning) {
+			addAnnotation(nifModel, documentResource, documentURI, (Annotation) marking, markingId);
+		}
+	}
 
-    public void addAnnotation(Model nifModel, Resource documentAsResource, String documentURI, Annotation annotation,
-            int annotationId) {
-        StringBuilder uriBuilder = new StringBuilder();
-        uriBuilder.append(documentURI);
-        uriBuilder.append("#annotation");
-        uriBuilder.append(annotationId);
+	public void addAnnotation(final Model nifModel, final Resource documentAsResource, final String documentURI, final Annotation annotation, final int annotationId) {
+		StringBuilder uriBuilder = new StringBuilder();
+		uriBuilder.append(documentURI);
+		uriBuilder.append("#annotation");
+		uriBuilder.append(annotationId);
 
-        Resource annotationAsResource = nifModel.createResource(uriBuilder.toString());
-        nifModel.add(annotationAsResource, RDF.type, NIF.Annotation);
-        nifModel.add(documentAsResource, NIF.topic, annotationAsResource);
-        for (String meainingUri : annotation.getUris()) {
-            nifModel.add(annotationAsResource, ITSRDF.taIdentRef, nifModel.createResource(meainingUri));
-        }
+		Resource annotationAsResource = nifModel.createResource(uriBuilder.toString());
+		nifModel.add(annotationAsResource, RDF.type, NIF.Annotation);
+		nifModel.add(documentAsResource, NIF.topic, annotationAsResource);
+		for (String meainingUri : annotation.getUris()) {
+			nifModel.add(annotationAsResource, ITSRDF.taIdentRef, nifModel.createResource(meainingUri));
+		}
 
-        if (annotation instanceof ScoredAnnotation) {
-            nifModel.add(annotationAsResource, NIF.confidence,
-                    Double.toString(((ScoredAnnotation) annotation).getConfidence()), XSDDatatype.XSDstring);
-        }
-    }
+		if (annotation instanceof ScoredAnnotation) {
+			nifModel.add(annotationAsResource, NIF.confidence, Double.toString(((ScoredAnnotation) annotation).getConfidence()), XSDDatatype.XSDstring);
+		}
+	}
 
-    public void addSpan(Model nifModel, Resource documentAsResource, String text, String documentURI, Span span) {
-        int startInJavaText = span.getStartPosition();
-        int endInJavaText = startInJavaText + span.getLength();
-        int start = text.codePointCount(0, startInJavaText);
-        int end = start + text.codePointCount(startInJavaText, endInJavaText);
+	public void addSpan(final Model nifModel, final Resource documentAsResource, final String text, final String documentURI, final Span span) {
+		int startInJavaText = span.getStartPosition();
+		int endInJavaText = startInJavaText + span.getLength();
+		int start = text.codePointCount(0, startInJavaText);
+		int end = start + text.codePointCount(startInJavaText, endInJavaText);
 
-        String spanUri = NIFUriHelper.getNifUri(documentURI, start, end);
-        Resource spanAsResource = nifModel.createResource(spanUri);
-        nifModel.add(spanAsResource, RDF.type, NIF.Phrase);
-        nifModel.add(spanAsResource, RDF.type, NIF.String);
-        nifModel.add(spanAsResource, RDF.type, NIF.RFC5147String);
-        // TODO add language to String
-        nifModel.add(spanAsResource, NIF.anchorOf,
-                nifModel.createTypedLiteral(text.substring(startInJavaText, endInJavaText), XSDDatatype.XSDstring));
-        nifModel.add(spanAsResource, NIF.beginIndex,
-                nifModel.createTypedLiteral(start, XSDDatatype.XSDnonNegativeInteger));
-        nifModel.add(spanAsResource, NIF.endIndex, nifModel.createTypedLiteral(end, XSDDatatype.XSDnonNegativeInteger));
-        nifModel.add(spanAsResource, NIF.referenceContext, documentAsResource);
+		String spanUri = NIFUriHelper.getNifUri(documentURI, start, end);
+		Resource spanAsResource = nifModel.createResource(spanUri);
+		nifModel.add(spanAsResource, RDF.type, NIF.Phrase);
+		nifModel.add(spanAsResource, RDF.type, NIF.String);
+		nifModel.add(spanAsResource, RDF.type, NIF.RFC5147String);
+		if (span.getIsWord()) {
+			nifModel.add(spanAsResource, RDF.type, NIF.Word);
+		}
+		// TODO add language to String
+		nifModel.add(spanAsResource, NIF.anchorOf, nifModel.createTypedLiteral(text.substring(startInJavaText, endInJavaText), XSDDatatype.XSDstring));
+		nifModel.add(spanAsResource, NIF.beginIndex, nifModel.createTypedLiteral(start, XSDDatatype.XSDnonNegativeInteger));
+		nifModel.add(spanAsResource, NIF.endIndex, nifModel.createTypedLiteral(end, XSDDatatype.XSDnonNegativeInteger));
+		nifModel.add(spanAsResource, NIF.referenceContext, documentAsResource);
 
-        if (span instanceof Meaning) {
-            for (String meainingUri : ((Meaning) span).getUris()) {
-                nifModel.add(spanAsResource, ITSRDF.taIdentRef, nifModel.createResource(meainingUri));
-            }
-        }
-        if (span instanceof ScoredMarking) {
-            nifModel.add(spanAsResource, ITSRDF.taConfidence,
-                    nifModel.createTypedLiteral(((ScoredMarking) span).getConfidence(), XSDDatatype.XSDdouble));
-        }
-        if (span instanceof TypedMarking) {
-            Set<String> types = ((TypedMarking) span).getTypes();
-            for (String type : types) {
-                nifModel.add(spanAsResource, ITSRDF.taClassRef, nifModel.createResource(type));
-            }
-        }
-    }
+		if (span instanceof Meaning) {
+			for (String meainingUri : ((Meaning) span).getUris()) {
+				nifModel.add(spanAsResource, ITSRDF.taIdentRef, nifModel.createResource(meainingUri));
+			}
+		}
+		if (span instanceof ScoredMarking) {
+			nifModel.add(spanAsResource, ITSRDF.taConfidence, nifModel.createTypedLiteral(((ScoredMarking) span).getConfidence(), XSDDatatype.XSDdouble));
+		}
+		if (span instanceof TypedMarking) {
+			Set<String> types = ((TypedMarking) span).getTypes();
+			for (String type : types) {
+				nifModel.add(spanAsResource, ITSRDF.taClassRef, nifModel.createResource(type));
+			}
+		}
+	}
 }
