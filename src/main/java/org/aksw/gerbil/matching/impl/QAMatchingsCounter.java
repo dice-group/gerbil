@@ -31,6 +31,8 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
     private MatchingsCounterImpl meaningMatchingsCounter;
     private SameAsRetriever retriever;
 
+
+    
     public QAMatchingsCounter(TripleIndex index, UrlValidator urlValidator, UriKBClassifier classifier) {
         this(index, urlValidator, classifier, null);
     }
@@ -42,6 +44,7 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
         this.meaningMatchingsCounter = new MatchingsCounterImpl<Meaning>(
                 new ClassifierBasedMeaningMatchingsSearcher<Meaning>(classifier));
         this.retriever = retriever;
+
     }
 
     @SuppressWarnings("unchecked")

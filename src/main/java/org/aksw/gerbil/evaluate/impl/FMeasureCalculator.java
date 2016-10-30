@@ -18,13 +18,17 @@ package org.aksw.gerbil.evaluate.impl;
 
 import java.util.List;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
+import org.aksw.gerbil.matching.impl.QAMatchingsCounter;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.utils.AnswersLogger;
+import org.aksw.gerbil.utils.AnswersLoggerContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,12 +42,25 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     public static final String MICRO_F1_SCORE_NAME = "Micro F1 score";
     public static final String MICRO_PRECISION_NAME = "Micro Precision";
     public static final String MICRO_RECALL_NAME = "Micro Recall";
+	private static final String PRINT_ANSWERS_TO_LOG_KEY = "org.aksw.gerbil.qa.matching.printAnswers";
 
     protected MatchingsCounter<T> matchingsCounter;
 
+    private boolean printAnswers = false;
+    private AnswersLogger<T> alog = null;
+    
     public FMeasureCalculator(MatchingsCounter<T> matchingsCounter) {
         super();
         this.matchingsCounter = matchingsCounter;
+    	this.printAnswers = Boolean.valueOf(GerbilConfiguration.getInstance().getString(PRINT_ANSWERS_TO_LOG_KEY));   	
+    	if(this.printAnswers){
+    		if(matchingsCounter instanceof QAMatchingsCounter) {
+    			alog = new AnswersLogger<T>(matchingsCounter.getClass().getSimpleName());
+    			AnswersLoggerContainer.addAnswersLogger(this.hashCode(), alog);
+    		}else{
+    			this.printAnswers=false;
+    		}
+    	}
     }
 
     @Override
@@ -52,6 +69,9 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         EvaluationCounts counts[] = generateMatchingCounts(annotatorResults, goldStandard);
         results.addResults(calculateMicroFMeasure(counts));
         results.addResults(calculateMacroFMeasure(counts));
+        if(printAnswers){
+        	alog.close();
+        }
     }
 
     protected EvaluationCounts[] generateMatchingCounts(List<List<T>> annotatorResults, List<List<T>> goldStandard) {
@@ -61,6 +81,13 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
                 LOGGER.debug("doc " + i + "|||||||||");
             }
             counts[i] = matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i));
+            
+            //Debug Answers
+            if(printAnswers){
+            	
+            	double[] measure = calculateMeasures(counts[i]);
+            	alog.printLine(i, annotatorResults.get(i), goldStandard.get(i), counts[i], measure);
+            }
         }
         return counts;
     }
@@ -76,6 +103,9 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
             sums.add(counts[i]);
         }
         double measures[] = calculateMeasures(sums);
+        if(printAnswers){
+        	alog.printMicro(sums, measures);
+        }
         return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, measures[0]),
                 new DoubleEvaluationResult(recallName, measures[1]),
                 new DoubleEvaluationResult(f1ScoreName, measures[2]) };
@@ -98,6 +128,9 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         avgs[0] /= counts.length;
         avgs[1] /= counts.length;
         avgs[2] /= counts.length;
+        if(printAnswers){
+        	alog.printMacro(avgs);
+        }
         return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, avgs[0]),
                 new DoubleEvaluationResult(recallName, avgs[1]), new DoubleEvaluationResult(f1ScoreName, avgs[2]) };
     }

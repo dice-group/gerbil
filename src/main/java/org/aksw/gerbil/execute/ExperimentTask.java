@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.execute;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,6 +61,8 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.aksw.gerbil.utils.AnswersLogger;
+import org.aksw.gerbil.utils.AnswersLoggerContainer;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -99,6 +102,7 @@ public class ExperimentTask implements Task {
         Annotator annotator = null;
         Dataset dataset = null;
         try {
+              	
             // Create dataset
             dataset = configuration.datasetConfig.getDataset(configuration.type);
             if (dataset == null) {
@@ -480,12 +484,26 @@ public class ExperimentTask implements Task {
                 List<List<Marking>> results = new ArrayList<List<Marking>>(dataset.size());
                 List<List<Marking>> goldStandard = new ArrayList<List<Marking>>(dataset.size());
                 QASystem qaSystem = ((QASystem) annotator);
-
+                
+                for(AnswersLogger<?> alog : AnswersLoggerContainer.getAnswersLoggers(evaluators)){
+                	alog.setExpID(experimentTaskId);
+                	alog.setSystem(qaSystem.getName());
+                	try {
+            			alog.open();
+        			} catch (IOException e) {
+        				LOGGER.debug("Could not open answer logging due to: "+e.getMessage());
+        				LOGGER.debug("Will not log answers");
+        			}
+                }
+                
                 for (Document document : dataset.getInstances()) {
                     // reduce the document to a text and a list of Spans
                     results.add(qaSystem.answerQuestion(DocumentInformationReducer.reduceToPlainText(document)));
                     goldStandard.add(document.getMarkings());
                     taskState.increaseExperimentStepCount();
+                    for(AnswersLogger<?> alog : AnswersLoggerContainer.getAnswersLoggers(evaluators)){
+                    	alog.addQuestion(document.getText());
+                    }
                 }
                 List<Meaning> meanings = new ArrayList<Meaning>(results.size());
                 for (List<Marking> markings : results) {
@@ -495,8 +513,11 @@ public class ExperimentTask implements Task {
                         }
                     }
                 }
+                
                 prepareAnnotatorResults(Arrays.asList(meanings), globalRetriever);
                 evalResult = evaluate(evaluators, results, goldStandard);
+               
+                AnswersLoggerContainer.remove(evaluators);
             } catch (GerbilException e) {
                 throw e;
             } catch (Exception e) {

@@ -18,6 +18,7 @@ package org.aksw.gerbil.matching.impl;
 
 import java.util.List;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.matching.MatchingsSearcher;
@@ -31,8 +32,9 @@ public class MatchingsCounterImpl<T extends Marking> implements MatchingsCounter
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MatchingsCounterImpl.class);
 
-    private static boolean printDebugMsg = true;
 
+    private static boolean printDebugMsg = true;
+    
     protected MatchingsSearcher<T> searcher;
 
     public MatchingsCounterImpl(MatchingsSearcher<T> searcher) {
