@@ -83,6 +83,9 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
             instances = new ArrayList<Document>(questions.size());
             Document document;
             for (IQuestion question : questions) {
+            	if(question.getOutOfScope()){
+            		continue;
+            	}
                 document = QAUtils.translateQuestion(question, questionUriPrefix + question.getId());
                 if (document != null) {
                     instances.add(document);
