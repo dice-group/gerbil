@@ -181,6 +181,7 @@ public class RootConfig {
             }
         }
 
+        // If there is an index based same as retriever available
         if(GerbilConfiguration.getInstance().containsKey(INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY)){
         	SameAsRetriever retriever;
         	try {
