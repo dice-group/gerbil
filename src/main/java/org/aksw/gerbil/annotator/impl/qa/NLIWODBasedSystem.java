@@ -72,7 +72,7 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
         if(resultDoc != null) {
             return resultDoc.getMarkings();
         } else {
-            return new ArrayList<Marking>(0);
+            throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
         }
     }
 
