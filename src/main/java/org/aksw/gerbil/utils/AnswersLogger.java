@@ -62,7 +62,7 @@ public class AnswersLogger<T extends Marking> {
 		pw.close();
 	}
 	
-	public void printLine(int index, List<T> annotator, List<T> golden, EvaluationCounts counts, double[] measure){
+	public void printLine(int index, List<T> annotator, List<T> golden, EvaluationCounts counts, double[] measure) throws IndexOutOfBoundsException{
 		StringBuilder print = new StringBuilder();
 		print.append(questions.get(index).replace("\t", "  "));
 		print.append("\t");

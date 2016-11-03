@@ -46,7 +46,6 @@ public class QAUtils {
 
     public static Document translateQuestion(IQuestion question, String questionUri) {
         Document document = new DocumentImpl(question.getLanguageToQuestion().get(QUESTION_LANGUAGE), questionUri);
-        Boolean sparqlNull=false, answerNull=false; 
         String sparqlQueryString = question.getSparqlQuery();
         // add the needed markings to the document
         // properties, answerItemType, relations, entities
@@ -61,9 +60,6 @@ public class QAUtils {
             } catch (Exception e) {
             }
         }
-        else{
-        	sparqlNull = true;
-        }
         // FIXME @Ricardo if from annotator, load from IQuestion
         // answerType
         String answerTypeLabel = question.getAnswerType();
@@ -77,17 +73,10 @@ public class QAUtils {
                 LOGGER.error("Couldn't parse AnswerType " + answerTypeLabel + ". It will be ignored.", e);
             }
         }
-        else{
-        	answerNull =true;
-        }
-        
+
         // add the answers
         Set<String> goldenAnswers = question.getGoldenAnswers();
-        
-        if(sparqlNull && answerNull && goldenAnswers.isEmpty()){
-        	return null;
-        }
-        
+
         Marking answers = transformToAnnotations(goldenAnswers);
         if(answers == null){
             answers = new AnswerSet<String>(goldenAnswers);

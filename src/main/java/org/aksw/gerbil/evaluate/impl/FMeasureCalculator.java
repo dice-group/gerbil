@@ -70,7 +70,11 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         results.addResults(calculateMicroFMeasure(counts));
         results.addResults(calculateMacroFMeasure(counts));
         if(printAnswers){
-        	alog.close();
+        	try{
+        		alog.close();
+        	}catch(Exception e){
+        		LOGGER.warn("Could not close answer logger");
+        	}
         }
     }
 
@@ -84,9 +88,12 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
             
             //Debug Answers
             if(printAnswers){
-            	
-            	double[] measure = calculateMeasures(counts[i]);
-            	alog.printLine(i, annotatorResults.get(i), goldStandard.get(i), counts[i], measure);
+            	try{
+            		double[] measure = calculateMeasures(counts[i]);
+            		alog.printLine(i, annotatorResults.get(i), goldStandard.get(i), counts[i], measure);
+            	}catch(Exception e){
+            		LOGGER.warn("Will not print answer log for question "+i);
+            	}
             }
         }
         return counts;
@@ -104,7 +111,11 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         }
         double measures[] = calculateMeasures(sums);
         if(printAnswers){
-        	alog.printMicro(sums, measures);
+        	try{
+        		alog.printMicro(sums, measures);
+        	}catch(Exception e){
+        		LOGGER.warn("Will not print answer log for micro ");
+        	}
         }
         return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, measures[0]),
                 new DoubleEvaluationResult(recallName, measures[1]),
@@ -129,7 +140,11 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         avgs[1] /= counts.length;
         avgs[2] /= counts.length;
         if(printAnswers){
-        	alog.printMacro(avgs);
+        	try{
+        		alog.printMacro(avgs);
+        	}catch(Exception e){
+        		LOGGER.warn("Will not print answer log for micro ");
+        	}
         }
         return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, avgs[0]),
                 new DoubleEvaluationResult(recallName, avgs[1]), new DoubleEvaluationResult(f1ScoreName, avgs[2]) };
