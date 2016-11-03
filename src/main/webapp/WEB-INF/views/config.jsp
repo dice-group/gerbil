@@ -134,7 +134,10 @@
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
 						<label class="control-label" for="annotator">System</label>
-					<a title="You can 1) select any of the system from the drop-down menu or 2) add a system via its URI (needs to understand the query parameter and return valid QALD JSON or XML) or 3) upload a QALD-formatted XML or JSON file which has the answers to one of the datasets. NOTE: First, type in the name of your system if you use option 2 or 3 and then type in the URI.">
+					<a title="You can 
+1) select any of the system from the drop-down menu or 
+2) add a system via its URI (needs to understand the query parameter and return valid QALD JSON or XML) or 
+3) upload a QALD-formatted XML or JSON file which has the answers to one of the datasets. NOTE: First, type in the name of your system if you use option 2 or 3 and then type in the URI.">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
 				</div>
@@ -222,7 +225,9 @@
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
 						<label class="control-label" for="datasets">Dataset</label>					
-					<a title="You can select multiple of the datasets from the drop-down menu or upload a QALD-formatted JSON or XML containing your custom benchmark data.">
+					<a title="You can 
+1) select multiple of the datasets from the drop-down menu or 
+2) upload a QALD-formatted JSON or XML containing your custom benchmark data.">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
 				</div>
