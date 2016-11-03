@@ -24,6 +24,14 @@
 	text-align: right;
 }
 
+.text-right {
+	text-align:right ;
+}
+
+.text-right a {
+	cursor: pointer; cursor: hand;
+}
+
 #type>option {
 	text-align: right;
 }
@@ -88,12 +96,20 @@
 			<legend>New Experiment</legend>
 			<!-- experiment type dropdown filled by loadexptype() function -->
 			<div class="form-group">
-				<label class="col-md-4 control-label" for="type">Experiment
-					Type</label>
+				<div class="col-md-2"></div>
+				<div class="col-md-2 text-right">
+					<label class="control-label" for="type">Experiment
+						Type</label>
+					<a title="The QA experiment type will benchmark how good your system is at answering questions.">
+							<span class="glyphicon glyphicon-question-sign"></span>
+					</a>	
+				</div>		
+				
 				<div class="col-md-4">
 					<select id="type" style="display: none;">
 					</select>
 				</div>
+				
 			</div>
 			<div class="row" id="matchingsSeparator">
 				<div class="col-md-8 col-md-offset-2">
@@ -115,7 +131,13 @@
 			</div>
 			<!--System dropdown filled by loadAnnotator() function -->
 			<div class="form-group">
-				<label class="col-md-4 control-label" for="annotator">System</label>
+				<div class="col-md-2"></div>
+					<div class="col-md-2 text-right">
+						<label class="control-label" for="annotator">System</label>
+					<a title="You can 1) select any of the system from the drop-down menu or 2) add a system via its URI (needs to understand the query parameter and return valid QALD JSON or XML) or 3) upload a QALD-formatted XML or JSON file which has the answers to one of the datasets. NOTE: First, type in the name of your system if you use option 2 or 3 and then type in the URI.">
+						<span class="glyphicon glyphicon-question-sign"></span>
+					</a>
+				</div>
 				<div class="col-md-4">
 					<select id="annotator" multiple="multiple" style="display: none;">
 					</select>
@@ -197,7 +219,13 @@
 			</div>
 			<!--Dataset dropdown filled by loadDatasets() function -->
 			<div class="form-group">
-				<label class="col-md-4 control-label" for="datasets">Dataset</label>
+				<div class="col-md-2"></div>
+					<div class="col-md-2 text-right">
+						<label class="control-label" for="datasets">Dataset</label>					
+					<a title="You can select multiple of the datasets from the drop-down menu or upload a QALD-formatted JSON or XML containing your custom benchmark data.">
+						<span class="glyphicon glyphicon-question-sign"></span>
+					</a>
+				</div>
 				<div class="col-md-4">
 					<select id="dataset" multiple="multiple" style="display: none;">
 					</select>
