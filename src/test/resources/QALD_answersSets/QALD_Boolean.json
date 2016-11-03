@@ -1,0 +1,52 @@
+{
+  "dataset": {
+    "id": "qald-6-test-hybrid"
+  },
+  "questions": [
+	{
+      "id": "1",
+      "answertype": "boolean",
+      "aggregation": "false",
+      "onlydbo": "true",
+      "hybrid": "true",
+      "question": [
+        {
+          "language": "en",
+          "string": "Is Christian Bale starring in Batman Begins?"
+        }
+      ],
+      "query": {
+        "pseudo": "PREFIX dbo: <http://dbpedia.org/ontology/> PREFIX res: <http://dbpedia.org/resource/> ASK  WHERE {	res:Batman_Begins dbo:starring res:Christian_Bale . }"
+      },
+      "answers": [
+        {
+
+          "head": { } ,
+          "boolean": true
+        }
+      ]
+    },
+   {
+      "id": "2",
+      "answertype": "boolean",
+      "aggregation": "false",
+      "onlydbo": "true",
+      "hybrid": "true",
+      "question": [
+        {
+          "language": "en",
+          "string": "Was Barack Obama born at 1961-08-05?"
+        }
+      ],
+      "query": {
+        "pseudo": "PREFIX res: <http://dbpedia.org/resource/> PREFIX dbo: <http://dbpedia.org/ontology/> ASK WHERE {res:Barack_Obama dbo:birthDate "1961-08-04"^^xsd:date }"
+      },
+      "answers": [
+        {
+          "head": { } ,
+          "boolean": false
+        }
+      ]
+    }
+]
+}

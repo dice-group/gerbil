@@ -1,0 +1,39 @@
+{
+  "dataset": {
+    "id": "qald-6-test-hybrid"
+  },
+  "questions": [
+	{
+      "id": "1",
+      "answertype": "number",
+      "aggregation": "false",
+      "onlydbo": "true",
+      "hybrid": "true",
+      "question": [
+        {
+          "language": "en",
+          "string": "How many children does Eddie Murphy have?"
+        }
+      ],
+      "query": {
+        "pseudo": "PREFIX dbp: <http://dbpedia.org/property/> PREFIX res: <http://dbpedia.org/resource/> SELECT DISTINCT ?n WHERE {         res:Eddie_Murphy dbp:children ?n . }"
+      },
+      "answers": [
+        {
+          "head": {
+            "vars": [
+              "age"
+            ]
+          },
+          "results": { "bindings": [
+            {
+              "age": {
+                "type": "literal",
+                "value": "0"
+              }
+            } ] }
+        }
+      ]
+    }
+]
+}

@@ -1,0 +1,71 @@
+{
+  "dataset": {
+    "id": "qald-6-test-hybrid"
+  },
+  "questions": [
+	{
+      "id": "1",
+      "answertype": "date",
+      "aggregation": "false",
+      "onlydbo": "false",
+      "hybrid": "true",
+      "question": [
+        {
+          "language": "en",
+          "string": "When was Barack Obama born?"
+        }
+      ],
+      "query": {
+        "pseudo": " PREFIX res: <http://dbpedia.org/resource/>  PREFIX dbo: <http://dbpedia.org/ontology/> Select ?s WHERE {res:Barack_Obama dbo:birthDate ?s } "
+      },
+      "answers": [
+        {
+          "head": {
+            "vars": [
+              "proj"
+            ]
+          },
+          "results": { "bindings": [
+            {
+              "proj": {
+                "type": "literal",
+                "value": "1961-08-04+02:00"
+              }
+            } ] }
+        }
+      ]
+    },
+{
+      "id": "2",
+      "answertype": "date",
+      "aggregation": "false",
+      "onlydbo": "false",
+      "hybrid": "true",
+      "question": [
+        {
+          "language": "en",
+          "string": "When was Barack Obama born?"
+        }
+      ],
+      "query": {
+        "pseudo": " PREFIX res: <http://dbpedia.org/resource/>  PREFIX dbo: <http://dbpedia.org/ontology/> Select ?s WHERE {res:Barack_Obama dbo:birthDate ?s } "
+      },
+      "answers": [
+        {
+          "head": {
+            "vars": [
+              "proj"
+            ]
+          },
+          "results": { "bindings": [
+            {
+              "proj": {
+                "type": "literal",
+                "value": "1961-08-04"
+              }
+            } ] }
+        }
+      ]
+    }
+]
+}
