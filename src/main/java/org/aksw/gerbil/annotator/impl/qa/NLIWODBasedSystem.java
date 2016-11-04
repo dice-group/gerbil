@@ -17,11 +17,11 @@ import org.aksw.qa.systems.QAKIS;
 import org.aksw.qa.systems.SINA;
 import org.aksw.qa.systems.START;
 import org.aksw.qa.systems.YODA;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.sparql.core.Prologue;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.shared.PrefixMapping;
-import com.hp.hpl.jena.sparql.core.Prologue;
 
 public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 
