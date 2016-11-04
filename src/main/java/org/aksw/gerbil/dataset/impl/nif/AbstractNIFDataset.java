@@ -27,13 +27,12 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.io.nif.AbstractNIFParser;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.adapters.RDFReaderRIOT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public abstract class AbstractNIFDataset extends AbstractDataset implements RdfModelContainingDataset, InitializableDataset {
 

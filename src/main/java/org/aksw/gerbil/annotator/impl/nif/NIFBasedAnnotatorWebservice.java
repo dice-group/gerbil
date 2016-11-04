@@ -134,7 +134,7 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
         entity = null;
         CloseableHttpResponse response = null;
         try {
-            response = sendRequest(request);
+            response = sendRequest(request, true);
             // receive NIF document
             entity = response.getEntity();
             // read response and parse NIF

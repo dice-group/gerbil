@@ -18,7 +18,11 @@ import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.ExperimentDAOImpl;
 import org.aksw.gerbil.dataid.DataIDGenerator;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.tools.DataDumpTool.ExperimentToTaskLink;
+import org.aksw.gerbil.tools.DataDumpTool.ExperimentToTaskLinkRowMapper;
 import org.apache.commons.io.IOUtils;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.slf4j.Logger;
@@ -27,9 +31,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 public class DataDumpTool implements Closeable {
 

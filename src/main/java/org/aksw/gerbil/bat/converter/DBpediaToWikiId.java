@@ -21,17 +21,16 @@ import it.unipi.di.acube.batframework.utils.WikipediaApiInterface;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import org.apache.jena.query.ParameterizedSparqlString;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryParseException;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.impl.StatementImpl;
+import org.apache.jena.shared.PrefixMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.query.ParameterizedSparqlString;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.impl.StatementImpl;
-import com.hp.hpl.jena.shared.PrefixMapping;
 
 @Deprecated
 public class DBpediaToWikiId {

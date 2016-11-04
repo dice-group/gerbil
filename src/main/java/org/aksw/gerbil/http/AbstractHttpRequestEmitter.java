@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -141,9 +142,21 @@ public class AbstractHttpRequestEmitter implements HttpRequestEmitter {
     }
 
     protected CloseableHttpResponse sendRequest(HttpUriRequest request) throws GerbilException {
+        return sendRequest(request, false);
+    }
+
+    protected CloseableHttpResponse sendRequest(HttpUriRequest request, boolean retry) throws GerbilException {
         CloseableHttpResponse response = null;
         try {
             response = client.execute(request);
+        } catch (NoHttpResponseException e) {
+            if (retry) {
+                LOGGER.warn("Got no response from the server (\"{}\"). Retrying...", e.getMessage());
+                return sendRequest(request, false);
+            } else {
+                LOGGER.error("Got no response from the server.", e);
+                throw new GerbilException("Got no response from the server.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
         } catch (RequestAbortedException e) {
             LOGGER.error("It seems like the annotator has needed too much time and has been interrupted.");
             throw new GerbilException("It seems like the annotator has needed too much time and has been interrupted.",

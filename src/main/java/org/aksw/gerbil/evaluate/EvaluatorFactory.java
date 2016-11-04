@@ -72,12 +72,12 @@ import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 @SuppressWarnings("deprecation")
 public class EvaluatorFactory {

@@ -52,13 +52,11 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    // private static final String ANNOTATOR_NAME =
-    // "AF_HAWK(answer_optimal_ranking_qald-5_train.xml)(QALD XML)(QALD5 Train
-    // Hybrid)";
-//    private static final String ANNOTATOR_NAME = "HAWK";
+
     private static final String ANNOTATOR_NAME = "NIFWS_QANARY(http://qanary.univ-st-etienne.fr/gerbil)";
     private static final String DATASET_NAME = "QALD4 Train Hybrid";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.QA;
+
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
 
     private static final boolean USE_SAME_AS_RETRIEVAL = false;
