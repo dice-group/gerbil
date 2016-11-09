@@ -1,5 +1,6 @@
 package org.aksw.gerbil.dataset.check.index;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
@@ -16,7 +17,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IndexBasedEntityChecker implements EntityChecker {
+public class IndexBasedEntityChecker implements EntityChecker, Closeable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexBasedEntityChecker.class);
 

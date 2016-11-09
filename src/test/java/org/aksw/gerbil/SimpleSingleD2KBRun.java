@@ -73,8 +73,8 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSingleD2KBRun.class);
 
-    private static final String ANNOTATOR_NAME = "WAT";
-    private static final String DATASET_NAME = "ACE2004";
+    private static final String ANNOTATOR_NAME = "xLisa-NER";
+    private static final String DATASET_NAME = "N3-RSS-500";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.D2KB;
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
 
@@ -86,6 +86,8 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
     }
 
     public static void main(String[] args) throws Exception {
+        System.out.println("waiting 10 secs...");
+        Thread.sleep(10000);
         setMatchingsCounterDebugFlag();
         SimpleSingleD2KBRun test = new SimpleSingleD2KBRun();
         test.run();

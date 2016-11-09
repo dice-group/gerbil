@@ -51,9 +51,9 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    private static final String ANNOTATOR_NAME = "FOX";
-    private static final String DATASET_NAME = "OKE 2015 Task 1 example set";
-    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.RT2KB;
+    private static final String ANNOTATOR_NAME = "DBpedia Spotlight";
+    private static final String DATASET_NAME = "MSNBC";
+    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.A2KB;
     private static final Matching MATCHING = Matching.WEAK_ANNOTATION_MATCH;
 
     private static final boolean USE_SAME_AS_RETRIEVAL = false;
