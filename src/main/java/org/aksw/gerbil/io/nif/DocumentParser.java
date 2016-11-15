@@ -86,4 +86,20 @@ public class DocumentParser {
         NIFPositionHelper.correctAnnotationPositions(document);
         return document;
     }
+
+    public AnnotationParser getAnnotationParser() {
+        return annotationParser;
+    }
+
+    public void setAnnotationParser(AnnotationParser annotationParser) {
+        this.annotationParser = annotationParser;
+    }
+
+    public boolean isRemoveUsedProperties() {
+        return removeUsedProperties;
+    }
+
+    public void setRemoveUsedProperties(boolean removeUsedProperties) {
+        this.removeUsedProperties = removeUsedProperties;
+    }
 }

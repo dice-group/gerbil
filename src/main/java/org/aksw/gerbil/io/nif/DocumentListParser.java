@@ -77,4 +77,12 @@ public class DocumentListParser {
 
         return documents;
     }
+
+    public DocumentParser getDocumentParser() {
+        return documentParser;
+    }
+
+    public void setDocumentParser(DocumentParser documentParser) {
+        this.documentParser = documentParser;
+    }
 }

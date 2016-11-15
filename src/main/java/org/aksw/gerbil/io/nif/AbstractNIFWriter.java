@@ -21,10 +21,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 
+import org.aksw.gerbil.io.nif.utils.NIFModelHelper;
 import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.NIFTransferPrefixMapping;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 
 public abstract class AbstractNIFWriter implements NIFWriter {
 
@@ -38,8 +37,7 @@ public abstract class AbstractNIFWriter implements NIFWriter {
     }
 
     protected Model createNIFModel(List<Document> document) {
-        Model nifModel = ModelFactory.createDefaultModel();
-        nifModel.setNsPrefixes(NIFTransferPrefixMapping.getInstance());
+        Model nifModel = NIFModelHelper.getDefaultModel();
         writer.writeDocumentsToModel(nifModel, document);
         return nifModel;
     }
@@ -66,5 +64,13 @@ public abstract class AbstractNIFWriter implements NIFWriter {
     public void writeNIF(List<Document> document, Writer writer) {
         Model nifModel = createNIFModel(document);
         nifModel.write(writer, language);
+    }
+
+    public DocumentListWriter getDocumentListWriter() {
+        return writer;
+    }
+
+    public void setDocumentListWriter(DocumentListWriter listWriter) {
+        this.writer = listWriter;
     }
 }
