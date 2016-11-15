@@ -22,8 +22,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 
+import org.aksw.gerbil.io.nif.utils.NIFModelHelper;
 import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.NIFTransferPrefixMapping;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +60,7 @@ public abstract class AbstractNIFParser implements NIFParser {
 
     @Override
     public List<Document> parseNIF(Reader reader) {
-        return parseNIF(reader, getDefaultModel());
+        return parseNIF(reader, NIFModelHelper.getDefaultModel());
     }
 
     @Override
@@ -74,7 +74,7 @@ public abstract class AbstractNIFParser implements NIFParser {
 
     @Override
     public List<Document> parseNIF(InputStream is) {
-        return parseNIF(is, getDefaultModel());
+        return parseNIF(is, NIFModelHelper.getDefaultModel());
     }
 
     @Override
@@ -86,21 +86,17 @@ public abstract class AbstractNIFParser implements NIFParser {
 
     protected abstract Model parseNIFModel(InputStream is, Model nifModel);
 
-    // protected Document createAnnotatedDocument(Model nifModel) {
-    // List<Document> documents = parser.parseDocuments(nifModel);
-    // if (documents.size() == 0) {
-    // LOGGER.error("Couldn't find any documents inside the given NIF model. Returning null.");
-    // return null;
-    // }
-    // if (documents.size() > 1) {
-    // LOGGER.warn("Found more than one document inside the given NIF model. Returning only the first one.");
-    // }
-    // return documents.get(0);
-    // }
-
     @Override
     public String getHttpContentType() {
         return httpContentType;
+    }
+
+    public DocumentListParser getDocumentListParser() {
+        return parser;
+    }
+
+    public void setDocumentListParser(DocumentListParser listParser) {
+        this.parser = listParser;
     }
 
     protected void infereTypes(Model nifModel) {
@@ -122,12 +118,6 @@ public abstract class AbstractNIFParser implements NIFParser {
         Reasoner reasoner = new GenericRuleReasoner(Rule.parseRules(sb.toString()));
         InfModel infModel = ModelFactory.createInfModel(reasoner, nifModel);
         nifModel.add(infModel);
-    }
-
-    protected Model getDefaultModel() {
-        Model nifModel = ModelFactory.createDefaultModel();
-        nifModel.setNsPrefixes(NIFTransferPrefixMapping.getInstance());
-        return nifModel;
     }
 
 }

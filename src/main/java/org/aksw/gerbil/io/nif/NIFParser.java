@@ -156,4 +156,19 @@ public interface NIFParser {
      * @return the HTTP content type string
      */
     public String getHttpContentType();
+
+    /**
+     * Returns the {@link DocumentListParser} used by this parser.
+     * 
+     * @return the {@link DocumentListParser} used by this parser
+     */
+    public DocumentListParser getDocumentListParser();
+
+    /**
+     * Sets the {@link DocumentListParser} used by this parser.
+     * 
+     * @param listParser
+     *            the {@link DocumentListParser} used by this parser
+     */
+    public void setDocumentListParser(DocumentListParser listParser);
 }

@@ -82,4 +82,19 @@ public interface NIFWriter {
      */
     public String getHttpContentType();
 
+    /**
+     * Returns the {@link DocumentListWriter} used by this parser.
+     * 
+     * @return the {@link DocumentListWriter} used by this parser
+     */
+    public DocumentListWriter getDocumentListWriter();
+
+    /**
+     * Sets the {@link DocumentListWriter} used by this parser.
+     * 
+     * @param listParser
+     *            the {@link DocumentListWriter} used by this parser
+     */
+    public void setDocumentListWriter(DocumentListWriter listWriter);
+
 }

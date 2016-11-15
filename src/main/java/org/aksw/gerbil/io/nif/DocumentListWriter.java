@@ -24,11 +24,27 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 public class DocumentListWriter {
 
-    private DocumentWriter documentWriter = new DocumentWriter();
+    private DocumentWriter documentWriter;
+
+    public DocumentListWriter() {
+        this(new DocumentWriter());
+    }
+
+    public DocumentListWriter(DocumentWriter documentWriter) {
+        this.documentWriter = documentWriter;
+    }
 
     public void writeDocumentsToModel(Model nifModel, List<Document> documents) {
         for (Document document : documents) {
             documentWriter.writeDocumentToModel(nifModel, document);
         }
+    }
+
+    public DocumentWriter getDocumentWriter() {
+        return documentWriter;
+    }
+
+    public void setDocumentWriter(DocumentWriter documentWriter) {
+        this.documentWriter = documentWriter;
     }
 }

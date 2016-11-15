@@ -31,7 +31,15 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class DocumentWriter {
 
-    private AnnotationWriter annotationWriter = new AnnotationWriter();
+    private AnnotationWriter annotationWriter;
+
+    public DocumentWriter() {
+        this(new AnnotationWriter());
+    }
+
+    public DocumentWriter(AnnotationWriter annotationWriter) {
+        this.annotationWriter = annotationWriter;
+    }
 
     public void writeDocumentToModel(Model nifModel, Document document) {
         // create the document node and add its properties
@@ -63,6 +71,14 @@ public class DocumentWriter {
                 ++meaningId;
             }
         }
+    }
+
+    public AnnotationWriter getAnnotationWriter() {
+        return annotationWriter;
+    }
+
+    public void setAnnotationWriter(AnnotationWriter annotationWriter) {
+        this.annotationWriter = annotationWriter;
     }
 
 }
