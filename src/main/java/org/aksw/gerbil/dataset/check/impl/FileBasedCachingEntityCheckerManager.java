@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.dataset.check.impl;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -89,25 +90,22 @@ public class FileBasedCachingEntityCheckerManager extends EntityCheckerManagerIm
         if (!cacheFile.exists() || cacheFile.isDirectory()) {
             return null;
         }
-        FileInputStream fin = null;
-        ObjectInputStream oin = null;
+        ObjectInputStream ois = null;
         try {
-            fin = new FileInputStream(cacheFile);
-            oin = new ObjectInputStream(fin);
+            ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(cacheFile)));
             // first, read the number of URIs
-            int count = oin.readInt();
+            int count = ois.readInt();
             String uri;
             ObjectLongOpenHashMap<String> cache = new ObjectLongOpenHashMap<String>(2 * count);
             for (int i = 0; i < count; ++i) {
-                uri = (String) oin.readObject();
-                cache.put(uri, oin.readLong());
+                uri = (String) ois.readObject();
+                cache.put(uri, ois.readLong());
             }
             return cache;
         } catch (Exception e) {
             LOGGER.error("Exception while reading cache file.", e);
         } finally {
-            IOUtils.closeQuietly(oin);
-            IOUtils.closeQuietly(fin);
+            IOUtils.closeQuietly(ois);
         }
         return null;
     }
@@ -121,8 +119,8 @@ public class FileBasedCachingEntityCheckerManager extends EntityCheckerManagerIm
     protected File cacheFile;
     protected File tempCacheFile;
 
-    protected FileBasedCachingEntityCheckerManager(ObjectLongOpenHashMap<String> cache,
-            long cacheEntryLifetime, File cacheFile, File tempCacheFile) {
+    protected FileBasedCachingEntityCheckerManager(ObjectLongOpenHashMap<String> cache, long cacheEntryLifetime,
+            File cacheFile, File tempCacheFile) {
         this.cache = cache;
         this.cacheEntryLifetime = cacheEntryLifetime;
         this.cacheFile = cacheFile;

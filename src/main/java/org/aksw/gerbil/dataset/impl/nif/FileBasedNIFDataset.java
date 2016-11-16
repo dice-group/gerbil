@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.dataset.impl.nif;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -77,14 +78,14 @@ public class FileBasedNIFDataset extends AbstractNIFDataset {
 
     @Override
     protected InputStream getDataAsInputStream() {
-        FileInputStream fin = null;
+        InputStream is = null;
         try {
             LOGGER.debug("Loading NIF dataset from {}", filePath);
-            fin = new FileInputStream(filePath);
+            is = new BufferedInputStream(new FileInputStream(filePath));
         } catch (FileNotFoundException e) {
             LOGGER.error("Couldn't load NIF dataset from file.", e);
         }
-        return fin;
+        return is;
     }
 
     @Override
