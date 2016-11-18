@@ -1,7 +1,5 @@
 package org.aksw.agdistis.util;
 
-import java.io.Reader;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseTokenizer;
@@ -24,8 +22,8 @@ public class LiteralAnalyzer extends Analyzer {
 	}
 
 	@Override
-	protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-		final Tokenizer source = new LowerCaseTokenizer(matchVersion, reader);
+	protected TokenStreamComponents createComponents(String fieldName) {
+		final Tokenizer source = new LowerCaseTokenizer();
 		return new TokenStreamComponents(source, new ASCIIFoldingFilter(source));
 	}
 }

@@ -34,7 +34,7 @@ public class TripleIndex implements Closeable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TripleIndex.class);
 
-    private static final Version LUCENE44 = Version.LUCENE_44;
+    private static final Version LUCENE_VER = Version.LUCENE_6_2_0;
     public static final String FIELD_NAME_SUBJECT = "subject";
     public static final String FIELD_NAME_PREDICATE = "predicate";
     public static final String FIELD_NAME_OBJECT_URI = "object_uri";
@@ -44,7 +44,7 @@ public class TripleIndex implements Closeable {
         Directory directory = null;
         DirectoryReader reader = null;
         try {
-            directory = new MMapDirectory(new File(indexDirectory));
+            directory = new MMapDirectory(new File(indexDirectory).toPath());
             reader = DirectoryReader.open(directory);
             return new TripleIndex(directory, reader, new IndexSearcher(reader));
         } catch (Exception e) {
@@ -70,8 +70,8 @@ public class TripleIndex implements Closeable {
         this.isearcher = isearcher;
         this.urlValidator = new UrlValidator();
 
-        Analyzer analyzer = new LiteralAnalyzer(LUCENE44);
-        parser = new QueryParser(LUCENE44, FIELD_NAME_OBJECT_LITERAL, analyzer);
+        Analyzer analyzer = new LiteralAnalyzer(LUCENE_VER);
+        parser = new QueryParser(FIELD_NAME_OBJECT_LITERAL, analyzer);
         parser.setDefaultOperator(QueryParser.Operator.AND);
 
         cache = CacheBuilder.newBuilder().maximumSize(50000).build();
@@ -82,7 +82,9 @@ public class TripleIndex implements Closeable {
     }
 
     public List<Triple> search(String subject, String predicate, String object, int maxNumberOfResults) {
-        BooleanQuery bq = new BooleanQuery();
+//        BooleanQuery bq = new BooleanQuery();
+        
+        BooleanQuery.Builder builder = new BooleanQuery.Builder();
         List<Triple> triples = new ArrayList<Triple>();
         try {
             if (subject != null && subject.equals("http://aksw.org/notInWiki")) {
@@ -90,11 +92,11 @@ public class TripleIndex implements Closeable {
             }
             if (subject != null) {
                 TermQuery tq = new TermQuery(new Term(FIELD_NAME_SUBJECT, subject));
-                bq.add(tq, BooleanClause.Occur.MUST);
+                builder.add(tq, BooleanClause.Occur.MUST);
             }
             if (predicate != null) {
                 TermQuery tq = new TermQuery(new Term(FIELD_NAME_PREDICATE, predicate));
-                bq.add(tq, BooleanClause.Occur.MUST);
+                builder.add(tq, BooleanClause.Occur.MUST);
             }
             if (object != null) {
                 Query q = null;
@@ -103,9 +105,10 @@ public class TripleIndex implements Closeable {
                 } else {
                     q = parser.parse(QueryParserBase.escape(object));
                 }
-                bq.add(q, BooleanClause.Occur.MUST);
+                builder.add(q, BooleanClause.Occur.MUST);
             }
             // use the cache
+            BooleanQuery bq = builder.build();
             if (null == (triples = cache.getIfPresent(bq))) {
                 triples = getFromIndex(maxNumberOfResults, bq);
                 cache.put(bq, triples);
@@ -119,7 +122,7 @@ public class TripleIndex implements Closeable {
 
     private List<Triple> getFromIndex(int maxNumberOfResults, BooleanQuery bq) throws IOException {
         LOGGER.debug("\t start asking index...");
-        TopScoreDocCollector collector = TopScoreDocCollector.create(maxNumberOfResults, true);
+        TopScoreDocCollector collector = TopScoreDocCollector.create(maxNumberOfResults);
         isearcher.search(bq, collector);
         ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
