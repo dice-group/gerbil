@@ -78,7 +78,7 @@ public class Microposts2016Dataset extends AbstractDataset implements
 		String documentUriPrefix = "http//:" + getName() + "/";
 
 		try (BufferedReader bReader = new BufferedReader(new FileReader(
-				annotations))) {
+				tweetsFile))) {
 			String line;
 			List<Marking> markings;
 			while ((line = bReader.readLine()) != null) {
