@@ -3,6 +3,7 @@ package org.aksw.gerbil.semantic.sameas.index;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +19,10 @@ public class IndexerTest {
 		//Test if indexing and searching works
 		//1. make some same as retrievals
 		//2. index them
-		Indexer index = new Indexer("test");
+		File indexFolder = createTempDirectory();
+		//Test if folder could be created
+		assertTrue(indexFolder!=null);
+		Indexer index = new Indexer(indexFolder.getAbsolutePath());
 		index.index("http://dbpedia.org/resource/Scar", getList("http://dbpedia.org"));
 		index.index("http://wikipedia.org/a", getList("http://wikipedia.org"));
 		index.index("http://de.dbpedia.org/a", getList("http://de.dbpedia.org"));
@@ -42,5 +46,19 @@ public class IndexerTest {
 		sameAs.add(prefix+"/d");
 		return sameAs;
 	}
+
+    public static File createTempDirectory()
+            throws IOException {
+        File temp = File.createTempFile("temp_index", Long.toString(System.nanoTime()));
+        if (temp.exists()) {
+        	if(!(temp.delete())){
+        		return null;
+        	}
+        }
+        if (!(temp.mkdir())) {
+            return null;
+        }
+        return temp;
+}
 	
 }
