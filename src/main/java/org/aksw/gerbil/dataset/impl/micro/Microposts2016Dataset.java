@@ -50,6 +50,8 @@ public class Microposts2016Dataset extends AbstractDataset implements
 	private String annotatedFile;
 	private String tweetsFile;
 
+	protected int typeIndex = 5;
+
 	public Microposts2016Dataset(String annotatedFile, String tweetsFile) {
 		this.annotatedFile = annotatedFile;
 		this.tweetsFile = tweetsFile;
@@ -88,7 +90,7 @@ public class Microposts2016Dataset extends AbstractDataset implements
 				}
 				String id = tweet[0];
 				String text = tweet[1];
-				markings = findMarkings(getMarkingLines(annotations, id), text);
+				markings = findMarkings(getMarkingLines(annotations, id), text, typeIndex );
 				documents.add(new DocumentImpl(text, documentUriPrefix + id,
 						markings));
 			}
@@ -100,7 +102,7 @@ public class Microposts2016Dataset extends AbstractDataset implements
 		return documents;
 	}
 
-	protected static List<Marking> findMarkings(Set<String> lines, String text) {
+	protected static List<Marking> findMarkings(Set<String> lines, String text, int typeIndex) {
 		List<Marking> markings = new ArrayList<Marking>();
 
 		for (String line : lines) {
@@ -114,7 +116,7 @@ public class Microposts2016Dataset extends AbstractDataset implements
 				uri = "";
 			}
 			Set<String> types = new HashSet<String>();
-			types.add(getTypeURI(annotation[5]));
+			types.add(getTypeURI(annotation[typeIndex]));
 
 			markings.add(new TypedNamedEntity(start, length, uri, types));
 
@@ -148,7 +150,7 @@ public class Microposts2016Dataset extends AbstractDataset implements
 		return lines;
 	}
 
-	private static String getTypeURI(String type) {
+	protected static String getTypeURI(String type) {
 		switch (type.toLowerCase()) {
 		case "thing":
 			return "http://dbpedia.org/ontology/Thing";
