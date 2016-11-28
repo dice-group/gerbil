@@ -31,6 +31,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.apache.commons.io.IOUtils;
 import org.apache.xerces.jaxp.SAXParserFactoryImpl;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class IITB_XMLParser {
@@ -58,7 +59,9 @@ public class IITB_XMLParser {
 
     public Map<String, Set<IITB_Annotation>> parseAnnotationsStream(InputStream is) throws IOException, SAXException {
         IITB_XMLHandler handler = new IITB_XMLHandler();
-        parser.parse(is, handler);
+        InputSource is2 = new InputSource(is);
+        is2.setEncoding("UTF-8");
+        parser.parse(is2, handler);
         return handler.getDocumentAnnotationsMap();
     }
 }

@@ -1,6 +1,7 @@
 package org.aksw.gerbil.dataset.impl.senseval;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.aksw.gerbil.dataset.impl.AbstractDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.xml.sax.InputSource;
 
 public class SensevalDataset extends AbstractDataset implements InitializableDataset {
 
@@ -41,10 +43,12 @@ public class SensevalDataset extends AbstractDataset implements InitializableDat
 	private List<Document> loadDocuments(File file) throws GerbilException {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser saxParser=null;
-		try{
-			saxParser = factory.newSAXParser();
-			saxParser.parse(file, new SensevalSAXHandler(documents));
 		
+		try{
+			InputSource is  = new InputSource(new FileInputStream(file));
+			is.setEncoding("UTF-8");
+			saxParser = factory.newSAXParser();
+			saxParser.parse(is, new SensevalSAXHandler(documents));
 		} catch (Exception e) {
 			throw new GerbilException("Exception while reading dataset.", e,
 					ErrorTypes.DATASET_LOADING_ERROR);

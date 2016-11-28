@@ -2,8 +2,10 @@ package org.aksw.gerbil.dataset.impl.wsdm;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -59,8 +61,8 @@ public class WSDMDataset extends AbstractDataset implements
 		List<Document> documents = new ArrayList<Document>();
 		String documentUriPrefix = "http://" + getName() + "/";
 		//its json per line 
-		try (BufferedReader bReader = new BufferedReader(new FileReader(
-				tweetsFile))) {
+		try (BufferedReader bReader = new BufferedReader(new InputStreamReader(
+				new FileInputStream(tweetsFile), Charset.forName("UTF-8")))) {
 			String line;
 			List<Marking> markings;
 			while ((line = bReader.readLine()) != null) {
@@ -97,8 +99,8 @@ public class WSDMDataset extends AbstractDataset implements
 	private static Set<String> getMarkingLines(File annotations, String id) {
 		Set<String> lines = new HashSet<String>();
 
-		try (BufferedReader bReader = new BufferedReader(new FileReader(
-				annotations))) {
+		try (BufferedReader bReader = new BufferedReader(new InputStreamReader(
+				new FileInputStream(annotations), Charset.forName("UTF-8")))) {
 			String line;
 			Boolean annotationSeen = false;
 			while ((line = bReader.readLine()) != null) {

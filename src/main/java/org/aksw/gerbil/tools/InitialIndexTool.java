@@ -2,8 +2,10 @@ package org.aksw.gerbil.tools;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -140,7 +142,8 @@ public class InitialIndexTool {
 	
 	public static void index(Indexer index, String file)
 			throws GerbilException, IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(file));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				new FileInputStream(file), Charset.forName("UTF-8")));
 
 		// Create here!
 		Set<String> sameAsBlock = new HashSet<String>();
