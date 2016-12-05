@@ -177,10 +177,12 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
             private String tag;
             private long last_Locator_line;
             private long last_Locator_column;
-            private long count_column;
+            private long count_position;
             private long origintaglength;
             private List<String> title;
             private int countSpezialSymbols;
+            private int lastPosition;
+            private boolean wasEnter;
             
             @Override
             public void setDocumentLocator(Locator locator) {
@@ -193,22 +195,12 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
                 this.origintaglength = -1;
                 this.last_Locator_line = locator.getLineNumber();
                 this.last_Locator_column = -1;
-                this.count_column = 0;
+                this.count_position = 0;
                 this.title = new LinkedList();
                 this.countSpezialSymbols = 0;
+                this.lastPosition = 0;
+                this.wasEnter = true;
                 super.startDocument();
-            }
-
-            @Override
-            public void endDocument() throws SAXException {
-                this.tag = "";
-                this.origintaglength = -1;
-                this.last_Locator_line = -1;
-                this.last_Locator_column = -1;
-                this.count_column = 0;
-                this.title.clear();
-                this.countSpezialSymbols = 0;
-                super.endDocument();
             }
             
             @Override
@@ -219,7 +211,6 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
                     for ( int i = 0; i < atts.getLength(); i++ ){
                         
                         if (Pattern.matches("rank_\\p{Digit}_title", atts.getQName(i))){
-                        
                             String string = atts.getValue(i);
 
                             try {
@@ -244,7 +235,6 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
                             origintaglength = StringEscapeUtils.escapeHtml4(atts.getValue(i)).length();
                             tag = atts.getValue(i).replace(" ", "_");
                             title.add(tag);
-                        
                         }
                     }
                 }
@@ -253,38 +243,51 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
             @Override
             public void characters(char[] ch, int start, int length) {
 
-                checkPosition();
+                checkPosition(ch, start, length);
                 
                 if (origintaglength > 0){
-
-                    int calc = (int)(count_column + locator.getColumnNumber() - length + countSpezialSymbols/*- 3 - origintaglength*/);
+                    int calc = (int)(count_position + locator.getColumnNumber() - length + countSpezialSymbols);
                     
                     for (String tmp : title){
-                        //markings.add(new NamedEntity(calc, (int)origintaglength, WIKIPEDIA_URI + tmp));
                         markings.add(new NamedEntity(calc, length, WIKIPEDIA_URI + tmp));
                     }
                     
                     origintaglength = -1;
-                    title.clear();
-                    
+                    title.clear(); 
                 }
                 
             }
             
-            private void checkPosition() {
+            private void checkPosition(char[] ch, int start, int length) {
                 
                 if (last_Locator_column < 0){
                     // <?xml version='1.0' encoding='UTF-8'?>
-                    count_column = 38;
+                    count_position = 38;
                     last_Locator_column = 0;
                 }
                 
                 if (last_Locator_line < locator.getLineNumber()){
-                    count_column = count_column + last_Locator_column;
+                    count_position = count_position + last_Locator_column;
+                    
+                    for (int i = start; i < (start+length); i++) {
+
+                        if (ch[i]==10) {
+                            if (wasEnter) {
+                                count_position = count_position + 1;
+                            } else {
+                                count_position = count_position + (i - lastPosition);
+                            }
+                            wasEnter = true;
+                        }
+                        
+                    }
+                } else {
+                    wasEnter = false;
                 }
                 
                 last_Locator_line = locator.getLineNumber();
                 last_Locator_column = locator.getColumnNumber();
+                lastPosition = start + length;
             }
             
         };
