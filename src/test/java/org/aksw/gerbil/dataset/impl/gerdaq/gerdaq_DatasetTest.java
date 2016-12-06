@@ -32,9 +32,11 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
 import static org.junit.Assert.assertEquals;
@@ -54,7 +56,7 @@ public class gerdaq_DatasetTest {
     private List<String> DOCUMENT_URI;
     
     @Before
-    public void prepareResourcesToTest(){
+    public void prepareResourcesToTest() throws GerbilException {
         
         /**
          * 0 = devel
@@ -63,9 +65,150 @@ public class gerdaq_DatasetTest {
          * 3 = trainingB
          */
         
-        EXPECTED_DOCUMENTS = new ArrayList();
-        LOADED_DOCUMENTS = new ArrayList();
         DOCUMENT_URI = new ArrayList();
+        
+        DOCUMENT_URI.add("http://Gerdaq-Test/gerdaq_devel.xml");
+        DOCUMENT_URI.add("http://Gerdaq-Test/gerdaq_test.xml");
+        DOCUMENT_URI.add("http://Gerdaq-Test/gerdaq_trainingA.xml");
+        DOCUMENT_URI.add("http://Gerdaq-Test/gerdaq_trainingB.xml");
+        
+        loadExpectedSet();
+        
+        loadDatasets();
+        
+//        generateTerminalOutputForLoadedDatasets();
+        
+    }
+    
+    @Test
+    public void checkLoadDatasets() throws GerbilException {
+        
+        assertThat(LOADED_DOCUMENTS.size(), is(4));
+        
+        int countmarkings = 0;
+        for (Document tmp : LOADED_DOCUMENTS){
+            countmarkings += tmp.getMarkings().size();
+        }
+        
+        assertThat(countmarkings, is(1815));
+
+    }
+    
+    @Test
+    public void checkExpectedDataset() {
+        
+        assertThat(EXPECTED_DOCUMENTS.size(), is(4));
+        
+        int countmarkings = 0;
+        for (Document tmp : EXPECTED_DOCUMENTS){
+            countmarkings += tmp.getMarkings().size();
+            assertThat(tmp.getMarkings().size(), is(16));
+        }
+        
+        assertThat(countmarkings, is(64));
+    }
+    
+    @Test
+    public void checkExpectedDatasetIsSubsetOfLoadedDataset() throws GerbilException {
+
+        for (int i = 0; i < EXPECTED_DOCUMENTS.size(); i++){
+            for (int j = 0; j < EXPECTED_DOCUMENTS.get(i).getMarkings().size(); j++){
+                
+                String ld_mark = LOADED_DOCUMENTS.get(i).getMarkings().get(j).toString();
+                ld_mark = ld_mark.substring(1, ld_mark.length()-1);
+                String[] ld_parts = ld_mark.split(" ");
+                
+                assertThat(ld_parts.length, is(3));
+                
+                String ld_start = ld_parts[0].substring(0, ld_parts[0].length()-1);
+                String ld_length = ld_parts[1].substring(0, ld_parts[1].length()-1);
+                String ld_uri = ld_parts[2].substring(1 + WIKIPEDIA_URI.length(), ld_parts[2].length()-1);
+                ld_uri = ld_uri.replaceAll("_", " ");
+                
+                String ex_mark = EXPECTED_DOCUMENTS.get(i).getMarkings().get(j).toString();
+                ex_mark = ex_mark.substring(1, ex_mark.length()-1);
+                String[] ex_parts = ex_mark.split(" ");
+                
+                assertThat(ex_parts.length, is(3));
+                
+                String ex_start = ex_parts[0].substring(0, ex_parts[0].length()-1);
+                String ex_length = ex_parts[1].substring(0, ex_parts[1].length()-1);
+                String ex_uri = ex_parts[2].substring(1 + WIKIPEDIA_URI.length(), ex_parts[2].length()-1);
+                ex_uri = ex_uri.replaceAll("_", " ");
+                
+                assertEquals(ld_start, ex_start);
+                assertEquals(ld_length, ex_length);
+                assertEquals(ld_uri, ex_uri);
+                
+            }
+        }
+        
+    }
+    
+    @Test
+    public void checkLoadedDatasetFindInDatasetFiles() throws GerbilException {
+
+        for (int i = 0; i < LOADED_DOCUMENTS.size(); i++){
+            int curP = 0;
+            int oldP = 0;
+            for (int j = 0; j < LOADED_DOCUMENTS.get(i).getMarkings().size(); j++){
+                
+                String mark = LOADED_DOCUMENTS.get(i).getMarkings().get(j).toString();
+                mark = mark.substring(1, mark.length()-1);
+                String[] parts = mark.split(" ");
+                
+                assertThat(parts.length, is(3));
+                
+                String start = parts[0].substring(0, parts[0].length()-1);
+                String uri = parts[2].substring(1 + WIKIPEDIA_URI.length(), parts[2].length()-1);
+                uri = uri.replaceAll("_", " ");
+                
+                String filePath = GERDAQ_DATASET_PATH + DOCUMENT_URI.get(i).substring(19);
+                
+                try {
+                    uri = new String(uri.getBytes("UTF-8"));
+                } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(gerdaq_Dataset.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                if (curP != Integer.valueOf(start)) {
+                    oldP = curP;
+                    curP = Integer.valueOf(start);
+                }
+                
+                int pos = checkStringInFileRange(filePath, curP, oldP, uri);
+
+                assertThat((pos>0), is(true));
+            }
+        }
+        
+    }
+    
+    private void loadDatasets() throws GerbilException {
+
+        assertThat(LOADED_DOCUMENTS, is(nullValue()));
+        
+        LOADED_DOCUMENTS = new ArrayList();
+        
+        assertThat(LOADED_DOCUMENTS, is(notNullValue()));
+        assertThat(LOADED_DOCUMENTS.size(), is(0));
+        
+        gerdaq_Dataset dataset = new gerdaq_Dataset(GERDAQ_DATASET_PATH);
+        dataset.setName("Gerdaq-Test");
+        dataset.init();
+        LOADED_DOCUMENTS.addAll(dataset.getInstances());
+        
+    }
+    
+    private void loadExpectedSet() {
+        
+        assertThat(EXPECTED_DOCUMENTS, is(nullValue()));
+        
+        EXPECTED_DOCUMENTS = new ArrayList();
+        
+        assertThat(EXPECTED_DOCUMENTS, is(notNullValue()));
+        assertThat(EXPECTED_DOCUMENTS.size(), is(0));
+        
         List<String> text = new ArrayList();
         List<List<Marking>> markings = new ArrayList<>(4);
         
@@ -77,11 +220,6 @@ public class gerdaq_DatasetTest {
                 "<dataset><instance><annotation rank_0_id=\"364646\" rank_0_score=\"0.833333333333\" rank_0_title=\"Sidney Lumet\">sidney lumet</annotation> familt</instance><instance><annotation rank_0_id=\"88771\" rank_0_score=\"0.638888888889\" rank_0_title=\"Metronome\">metronome</annotation> setting of <annotation rank_0_id=\"30967\" rank_0_score=\"0.666666666667\" rank_0_title=\"Tempo\">allegro</annotation></instance><instance><annotation rank_0_id=\"2321001\" rank_0_score=\"0.777777777778\" rank_0_title=\"South Street (Philadelphia)\">south st</annotation> <annotation rank_0_id=\"50585\" rank_0_score=\"1.0\" rank_0_title=\"Philadelphia\">philly</annotation> <annotation rank_0_id=\"183515\" rank_0_score=\"0.777777777778\" rank_0_title=\"Retail\">stores</annotation></instance><instance><annotation rank_0_id=\"287769\" rank_0_score=\"0.888888888889\" rank_0_title=\"Aloha Airlines\">aloha airlines</annotation> pbase</instance><instance><annotation rank_0_id=\"6021\" rank_0_score=\"0.694444444444\" rank_0_title=\"C (programming language)\">c book</annotation> <annotation rank_0_id=\"957316\" rank_0_score=\"0.822222222222\" rank_0_title=\"Default (computer science)\">default</annotation></instance><instance><annotation rank_0_id=\"29112639\" rank_0_score=\"0.63\" rank_0_title=\"Antique Motorcycle Club of America\">anteques motorcycles</annotation></instance><instance><annotation rank_0_id=\"73367\" rank_0_score=\"0.852222222222\" rank_0_title=\"Big business\">large company</annotation> payroll <annotation rank_0_id=\"1613082\" rank_0_score=\"0.888888888889\" rank_0_title=\"Service provider\">service providers</annotation></instance><instance>medica elga</instance><instance>mendia</instance><instance><annotation rank_0_id=\"8772245\" rank_0_score=\"0.777777777778\" rank_0_title=\"Coleman Army Airfield\">colemans army surplus</annotation></instance><instance>national <annotation rank_0_id=\"32977\" rank_0_score=\"0.777777777778\" rank_0_title=\"Writing\">write</annotation> <annotation bad_0_id=\"19468510\" bad_0_score=\"0.407777777778\" bad_0_title=\"United States House of Representatives\" rank_0_id=\"223225\" rank_0_score=\"0.741111111111\" rank_0_title=\"Member of Congress\">congressman</annotation> <annotation rank_0_id=\"574821\" rank_0_score=\"0.777777777778\" rank_0_title=\"Legitimacy (law)\">legit</annotation> <annotation rank_0_id=\"39206\" rank_0_score=\"0.861111111111\" rank_0_title=\"Business\">business</annotation></instance></dataset>");
         text.add("<?xml version='1.0' encoding='UTF-8'?>\n" +
                 "<dataset><instance><annotation rank_0_id=\"80903\" rank_0_score=\"0.972222222222\" rank_0_title=\"Billie Joe Armstrong\">billie joe armstrong</annotation> <annotation rank_0_id=\"643521\" rank_0_score=\"0.963333333333\" rank_0_title=\"Fansite\">fan sites</annotation></instance><instance>bmv <annotation rank_0_id=\"4868451\" rank_0_score=\"0.888888888889\" rank_0_title=\"Debt management plan\">debt management</annotation></instance><instance>malenuces</instance><instance><annotation rank_0_id=\"3743931\" rank_0_score=\"0.814444444444\" rank_0_title=\"Rent-to-own\">rental stores\"</annotation> \"<annotation rank_0_id=\"63503\" rank_0_score=\"0.925555555556\" rank_0_title=\"Duluth, Minnesota\">duluth mn</annotation></instance><instance><annotation rank_0_id=\"2249807\" rank_0_score=\"1.0\" rank_0_title=\"Houston Police Department\">houston police</annotation> car auctin</instance><instance><annotation rank_0_id=\"28191\" rank_0_score=\"0.777777777778\" rank_0_title=\"Snow\">snow</annotation> <annotation rank_0_id=\"4400\" rank_0_score=\"0.852222222222\" rank_0_title=\"Bear\">bear</annotation> <annotation rank_0_id=\"14276\" rank_0_score=\"0.963333333333\" rank_0_title=\"Hotel\">hotel</annotation></instance><instance><annotation bad_0_id=\"1100889\" bad_0_score=\"0.63\" bad_0_title=\"Fernand Point\" rank_0_id=\"19280445\" rank_0_score=\"0.777777777778\" rank_0_title=\"Fernand\">fernand</annotation> <annotation bad_0_id=\"19094931\" bad_0_score=\"0.147777777778\" bad_0_title=\"Alain Chapel\" rank_0_id=\"27340118\" rank_0_score=\"0.852222222222\" rank_0_title=\"Alain (surname)\">alain</annotation></instance><instance><annotation bad_0_id=\"14485161\" bad_0_score=\"0.185555555556\" bad_0_title=\"Jason Colwell\" rank_0_id=\"954975\" rank_0_score=\"0.741111111111\" rank_0_title=\"Colwell\">colweel</annotation></instance><instance>harry and henry <annotation rank_0_id=\"730219\" rank_0_score=\"0.963333333333\" rank_0_title=\"Bathing\">bath</annotation> <annotation rank_0_id=\"240410\" rank_0_score=\"0.814444444444\" rank_0_title=\"Product (business)\">products</annotation></instance><instance><annotation rank_0_id=\"3679088\" rank_0_score=\"0.741111111111\" rank_0_title=\"Marriott Hotels &amp; Resorts\">amariot hotels</annotation></instance><instance><annotation rank_0_id=\"33127\" rank_0_score=\"0.916666666667\" rank_0_title=\"Wisconsin\">wisconsin</annotation> <annotation rank_0_id=\"406786\" rank_0_score=\"0.888888888889\" rank_0_title=\"Probation\">probation</annotation> <annotation rank_0_id=\"1782724\" rank_0_score=\"0.63\" rank_0_title=\"Probation officer\">parole office</annotation></instance></dataset>");
-        
-        DOCUMENT_URI.add("http://Gerdaq-Test/gerdaq_devel.xml");
-        DOCUMENT_URI.add("http://Gerdaq-Test/gerdaq_test.xml");
-        DOCUMENT_URI.add("http://Gerdaq-Test/gerdaq_trainingA.xml");
-        DOCUMENT_URI.add("http://Gerdaq-Test/gerdaq_trainingB.xml");
         
         markings.add(Arrays.asList(
             (Marking) new NamedEntity(146, 6, "http://en.wikipedia.org/wiki/Candle"),
@@ -167,149 +305,6 @@ public class gerdaq_DatasetTest {
         
     }
     
-    @Test
-    public void checkLoadDatasets() throws GerbilException {
-        
-        assertThat(LOADED_DOCUMENTS, is(notNullValue()));
-        assertThat(LOADED_DOCUMENTS.size(), is(0));
-        
-        loadDatasets();
-        
-        assertThat(LOADED_DOCUMENTS.size(), is(4));
-        
-        int countmarkings = 0;
-        for (Document tmp : LOADED_DOCUMENTS){
-            countmarkings += tmp.getMarkings().size();
-        }
-        
-        assertThat(countmarkings, is(1815));
-
-    }
-    
-    @Test
-    public void checkExpectedDataset() {
-        
-        assertThat(EXPECTED_DOCUMENTS.size(), is(4));
-        
-        int countmarkings = 0;
-        for (Document tmp : EXPECTED_DOCUMENTS){
-            countmarkings += tmp.getMarkings().size();
-            assertThat(tmp.getMarkings().size(), is(16));
-        }
-        
-        assertThat(countmarkings, is(64));
-    }
-    
-    @Test
-    public void checkExpectedDatasetIsSubsetOfLoadedDataset() throws GerbilException {
-        
-        loadDatasets();
-
-        for (int i = 0; i < EXPECTED_DOCUMENTS.size(); i++){
-            for (int j = 0; j < EXPECTED_DOCUMENTS.get(i).getMarkings().size(); j++){
-                
-                String ld_mark = LOADED_DOCUMENTS.get(i).getMarkings().get(j).toString();
-                ld_mark = ld_mark.substring(1, ld_mark.length()-1);
-                String[] ld_parts = ld_mark.split(" ");
-                
-                assertThat(ld_parts.length, is(3));
-                
-                String ld_start = ld_parts[0].substring(0, ld_parts[0].length()-1);
-                String ld_length = ld_parts[1].substring(0, ld_parts[1].length()-1);
-                String ld_uri = ld_parts[2].substring(1 + WIKIPEDIA_URI.length(), ld_parts[2].length()-1);
-                ld_uri = ld_uri.replaceAll("_", " ");
-                
-                String ex_mark = EXPECTED_DOCUMENTS.get(i).getMarkings().get(j).toString();
-                ex_mark = ex_mark.substring(1, ex_mark.length()-1);
-                String[] ex_parts = ex_mark.split(" ");
-                
-                assertThat(ex_parts.length, is(3));
-                
-                String ex_start = ex_parts[0].substring(0, ex_parts[0].length()-1);
-                String ex_length = ex_parts[1].substring(0, ex_parts[1].length()-1);
-                String ex_uri = ex_parts[2].substring(1 + WIKIPEDIA_URI.length(), ex_parts[2].length()-1);
-                ex_uri = ex_uri.replaceAll("_", " ");
-                
-                assertEquals(ld_start, ex_start);
-                assertEquals(ld_length, ex_length);
-                assertEquals(ld_uri, ex_uri);
-                
-            }
-        }
-        
-    }
-    
-    @Test
-    public void checkLoadedDatasetFindInDatasetFiles() throws GerbilException {
-        
-        loadDatasets();
-
-        for (int i = 0; i < LOADED_DOCUMENTS.size(); i++){
-            int curP = 0;
-            int oldP = 0;
-            for (int j = 0; j < LOADED_DOCUMENTS.get(i).getMarkings().size(); j++){
-                
-                String mark = LOADED_DOCUMENTS.get(i).getMarkings().get(j).toString();
-                mark = mark.substring(1, mark.length()-1);
-                String[] parts = mark.split(" ");
-                
-                assertThat(parts.length, is(3));
-                
-                String start = parts[0].substring(0, parts[0].length()-1);
-//                String length = parts[1].substring(0, parts[1].length()-1);
-                String uri = parts[2].substring(1 + WIKIPEDIA_URI.length(), parts[2].length()-1);
-                uri = uri.replaceAll("_", " ");
-                
-                String filePath = GERDAQ_DATASET_PATH + DOCUMENT_URI.get(i).substring(19);
-                
-                try {
-                    uri = new String(uri.getBytes("UTF-8"));
-                } catch (UnsupportedEncodingException ex) {
-                    Logger.getLogger(gerdaq_Dataset.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
-                if (curP != Integer.valueOf(start)) {
-                    oldP = curP;
-                    curP = Integer.valueOf(start);
-                }
-                
-                int pos = checkStringInFileRange(filePath, curP, oldP, uri);
-
-                assertThat((pos>0), is(true));
-            }
-        }
-        
-    }
-    
-    @Test
-    public void generateTerminalOutputForLoadedDatasets() throws GerbilException {
-        
-        loadDatasets();
-        
-        System.out.println("=========================================================");
-        System.out.println("===================== Documents [" + LOADED_DOCUMENTS.size() + "] =====================");
-        for (int i = 0; i < LOADED_DOCUMENTS.size(); i++){
-            Document doc = LOADED_DOCUMENTS.get(i);
-            System.out.println("=========================================================");
-            System.out.println("Document-URI: " + doc.getDocumentURI());
-            System.out.println("==================== Markings [" + doc.getMarkings().size() + "] ====================");
-            for (Marking mark : doc.getMarkings()){
-                System.out.println(mark.toString());
-            }
-        }
-        System.out.println("=========================================================");
-        
-    }
-    
-    public void loadDatasets() throws GerbilException {
-
-        gerdaq_Dataset dataset = new gerdaq_Dataset(GERDAQ_DATASET_PATH);
-        dataset.setName("Gerdaq-Test");
-        dataset.init();
-        LOADED_DOCUMENTS.addAll(dataset.getInstances());
-        
-    }
-    
     private int checkStringInFileRange(String fielPath, int position, int lastPosition, String match){ 
         
         RandomAccessFile raf;
@@ -332,6 +327,23 @@ public class gerdaq_DatasetTest {
         }
         
         return pos;
+        
+    }
+    
+    private void generateTerminalOutputForLoadedDatasets() throws GerbilException {
+        
+        System.out.println("=========================================================");
+        System.out.println("===================== Documents [" + LOADED_DOCUMENTS.size() + "] =====================");
+        for (int i = 0; i < LOADED_DOCUMENTS.size(); i++){
+            Document doc = LOADED_DOCUMENTS.get(i);
+            System.out.println("=========================================================");
+            System.out.println("Document-URI: " + doc.getDocumentURI());
+            System.out.println("==================== Markings [" + doc.getMarkings().size() + "] ====================");
+            for (Marking mark : doc.getMarkings()){
+                System.out.println(mark.toString());
+            }
+        }
+        System.out.println("=========================================================");
         
     }
     
