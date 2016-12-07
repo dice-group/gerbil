@@ -105,6 +105,7 @@ public class erd_Dataset extends AbstractDataset implements InitializableDataset
             raf.seek(0);
             raf.readFully(filedata);
             text_data = new String(filedata);
+            raf.close();
         } catch (IOException e) {
             throw new GerbilException("Exception while reading text file of dataset.", e, ErrorTypes.DATASET_LOADING_ERROR);
         }
