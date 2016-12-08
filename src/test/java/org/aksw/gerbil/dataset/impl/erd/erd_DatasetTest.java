@@ -285,7 +285,7 @@ public class erd_DatasetTest {
             raf = new RandomAccessFile(file, "r");
             raf.readFully(filedata);
             out = new String(filedata);
-
+            raf.close();
         } catch (IOException e) {
             throw new GerbilException("Exception while reading annotation file of dataset.", e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
         }
