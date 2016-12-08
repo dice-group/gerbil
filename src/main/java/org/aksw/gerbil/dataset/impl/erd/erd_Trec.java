@@ -31,7 +31,7 @@ public class erd_Trec {
             this.line_number = 0;
             this.count_column = 0;
         } else {
-            line_number = this.befor.getLineNumber();
+            line_number = this.befor.getLineNumber() + 1;
             count_column = this.befor.getColumnCount() + 1;
         }
     }
@@ -42,8 +42,12 @@ public class erd_Trec {
         return pos;
     }
     
+    protected String getLine(){
+        return this.line;
+    }
+    
     protected int getLineNumber(){
-        return this.line_number + 1;
+        return this.line_number;
     }
     
     protected int getColumnCount(){
