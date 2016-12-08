@@ -42,7 +42,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class gerdaq_DatasetTest {
@@ -50,13 +50,13 @@ public class gerdaq_DatasetTest {
     private static final String WIKIPEDIA_URI = "http://en.wikipedia.org/wiki/";
     private static final String GERDAQ_DATASET_PATH = "gerbil_data/datasets/gerdaq_1.0/";
 
-    private List<Document> EXPECTED_DOCUMENTS;
-    private List<Document> LOADED_DOCUMENTS;
+    private static List<Document> EXPECTED_DOCUMENTS;
+    private static List<Document> LOADED_DOCUMENTS;
     
-    private List<String> DOCUMENT_URI;
+    private static List<String> DOCUMENT_URI;
     
-    @Before
-    public void prepareResourcesToTest() throws GerbilException {
+    @BeforeClass
+    public static void prepareResourcesToTest() throws GerbilException {
         
         /**
          * 0 = devel
@@ -184,7 +184,7 @@ public class gerdaq_DatasetTest {
         
     }
     
-    private void loadDatasets() throws GerbilException {
+    private static void loadDatasets() throws GerbilException {
 
         assertThat(LOADED_DOCUMENTS, is(nullValue()));
         
@@ -200,7 +200,7 @@ public class gerdaq_DatasetTest {
         
     }
     
-    private void loadExpectedSet() {
+    private static void loadExpectedSet() {
         
         assertThat(EXPECTED_DOCUMENTS, is(nullValue()));
         
@@ -210,7 +210,7 @@ public class gerdaq_DatasetTest {
         assertThat(EXPECTED_DOCUMENTS.size(), is(0));
         
         List<String> text = new ArrayList();
-        List<List<Marking>> markings = new ArrayList<>(4);
+        List<List<Marking>> markings = new ArrayList<>();
         
         text.add("<?xml version='1.0' encoding='UTF-8'?>\n" +
                 "<dataset><instance>loris <annotation rank_0_id=\"44017\" rank_0_score=\"0.925555555556\" rank_0_title=\"Candle\">candle</annotation> sampler</instance><instance><annotation rank_0_id=\"230699\" rank_0_score=\"0.666666666667\" rank_0_title=\"Conveyancing\">buying land</annotation> and <annotation rank_0_id=\"21883824\" rank_0_score=\"1.0\" rank_0_title=\"Arizona\">arizona</annotation></instance><instance>hip gry pl</instance><instance><annotation rank_0_id=\"42925\" rank_0_score=\"0.741111111111\" rank_0_title=\"Pine (email client)\">webpine email</annotation></instance><instance><annotation rank_0_id=\"917917\" rank_0_score=\"0.852222222222\" rank_0_title=\"Fundraising\">fundraisers</annotation> <annotation rank_0_id=\"128149\" rank_0_score=\"0.888888888889\" rank_0_title=\"Ramseur, North Carolina\">ramseur</annotation></instance><instance>sergio cardinali</instance><instance><annotation rank_0_id=\"298049\" rank_0_score=\"0.63\" rank_0_title=\"Case Closed\">thamtulungdanh conan</annotation></instance><instance><annotation rank_0_id=\"33978\" rank_0_score=\"0.814444444444\" rank_0_title=\"Weather\">weather</annotation> <annotation rank_0_id=\"107803\" rank_0_score=\"0.777777777778\" rank_0_title=\"Truckee, California\">truckee tahoe</annotation></instance><instance><annotation rank_0_id=\"329180\" rank_0_score=\"0.888888888889\" rank_0_title=\"Girl Scout Cookies\">girl scout cookie</annotation> <annotation rank_0_id=\"155698\" rank_0_score=\"0.963333333333\" rank_0_title=\"Sales\">sales</annotation> <annotation rank_0_id=\"7123\" rank_0_score=\"0.777777777778\" rank_0_title=\"Calendar date\">dates</annotation></instance><instance><annotation rank_0_id=\"244113\" rank_0_score=\"0.925555555556\" rank_0_title=\"Lyme disease\">lyme disease</annotation> in <annotation rank_0_id=\"48830\" rank_0_score=\"0.814444444444\" rank_0_title=\"Georgia (U.S. state)\">georgia</annotation></instance><instance><annotation rank_0_id=\"167334\" rank_0_score=\"0.972222222222\" rank_0_title=\"Adult\">adult</annotation> <annotation rank_0_id=\"330541\" rank_0_score=\"0.972222222222\" rank_0_title=\"Yahoo! Groups\">yahho groups</annotation></instance></dataset>");
@@ -305,19 +305,19 @@ public class gerdaq_DatasetTest {
         
     }
     
-    private int checkStringInFileRange(String fielPath, int position, int lastPosition, String match){ 
+    private int checkStringInFileRange(String filePath, int position, int lastPosition, String match){ 
         
         RandomAccessFile raf;
         int pos = -1;
         try {
-            File file = new File(fielPath);
+            File file = new File(filePath);
             byte[] search = new byte[position - lastPosition];
             raf = new RandomAccessFile(file, "r");
             raf.seek(lastPosition);
             raf.readFully(search);
             String tmp = new String(search);
             pos = tmp.indexOf(match);
-            
+            raf.close();
             if (pos < 0){
                 pos = tmp.indexOf(StringEscapeUtils.escapeHtml4(match));
             }
@@ -330,7 +330,7 @@ public class gerdaq_DatasetTest {
         
     }
     
-    private void generateTerminalOutputForLoadedDatasets() throws GerbilException {
+    private static void generateTerminalOutputForLoadedDatasets() throws GerbilException {
         
         System.out.println("=========================================================");
         System.out.println("===================== Documents [" + LOADED_DOCUMENTS.size() + "] =====================");
