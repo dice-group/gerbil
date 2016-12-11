@@ -23,15 +23,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 
 import java.nio.charset.Charset;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import java.util.regex.Pattern;
 
@@ -141,8 +138,8 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
                     IOUtils.closeQuietly(reader);
             }
             
-        } catch (SAXException | ParserConfigurationException | IOException ex) {
-            Logger.getLogger(gerdaq_Dataset.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SAXException | ParserConfigurationException | IOException e) {
+            throw new GerbilException("Document " + file.getAbsolutePath() + " could not create.", e, ErrorTypes.DATASET_LOADING_ERROR);
         }
         
         List<Marking> marks = new ArrayList<>();
@@ -212,25 +209,9 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
                         
                         if (Pattern.matches("rank_\\p{Digit}_title", atts.getQName(i))){
                             String string = atts.getValue(i);
-
-                            try {
-                                byte[] utf8 = string.getBytes("UTF-8");
-                                int count = 0;
-                                boolean praNeg = false;
-                                for (int z = 0; z < utf8.length - 1; z++){
-                                    if (utf8[z]<0) {
-                                        if (praNeg) count++;
-                                        praNeg = true;
-                                    } else {
-                                        praNeg = false;
-                                    }
-                                }
-
-                                countSpezialSymbols = countSpezialSymbols + count;
-
-                            } catch (UnsupportedEncodingException ex) {
-                                Logger.getLogger(gerdaq_Dataset.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                            
+                            byte[] byt = string.getBytes(Charset.forName("UTF-8"));
+                            countSpezialSymbols = countSpezialSymbols + byt.length - string.length();
 
                             origintaglength = StringEscapeUtils.escapeHtml4(atts.getValue(i)).length();
                             tag = atts.getValue(i).replace(" ", "_");

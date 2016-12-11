@@ -24,8 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.aksw.gerbil.datatypes.ErrorTypes;
 
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -79,7 +78,7 @@ public class gerdaq_DatasetTest {
 //        generateTerminalOutputForLoadedDatasets();
         
     }
-    
+
     @Test
     public void checkLoadDatasets() throws GerbilException {
         
@@ -167,8 +166,8 @@ public class gerdaq_DatasetTest {
                 
                 try {
                     uri = new String(uri.getBytes("UTF-8"));
-                } catch (UnsupportedEncodingException ex) {
-                    Logger.getLogger(gerdaq_Dataset.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (UnsupportedEncodingException e) {
+                    throw new GerbilException("The given string >" + uri + "< is not in UTF-8 format.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
                 }
                 
                 if (curP != Integer.valueOf(start)) {
@@ -305,7 +304,7 @@ public class gerdaq_DatasetTest {
         
     }
     
-    private int checkStringInFileRange(String filePath, int position, int lastPosition, String match){ 
+    private int checkStringInFileRange(String filePath, int position, int lastPosition, String match) throws GerbilException{ 
         
         RandomAccessFile raf;
         int pos = -1;
@@ -321,9 +320,8 @@ public class gerdaq_DatasetTest {
             if (pos < 0){
                 pos = tmp.indexOf(StringEscapeUtils.escapeHtml4(match));
             }
-
         } catch (IOException e) {
-            Logger.getLogger(gerdaq_DatasetTest.class.getName()).log(Level.SEVERE, null, e);
+            throw new GerbilException("The given file " + filePath + " could not load.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
         }
         
         return pos;
