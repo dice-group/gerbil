@@ -176,11 +176,11 @@ public enum ExperimentType implements Describable {
             case ERec:
             case Sa2KB:
             case Sc2KB:
-            case Rc2KB:
-            case RT2KB: {
+            case Rc2KB: {
                 return true;
             }
             case ETyping: // falls through
+            case RT2KB:
             case OKE_Task1:
             case OKE_Task2: {
                 return false;
