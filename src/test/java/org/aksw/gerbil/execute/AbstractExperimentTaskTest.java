@@ -61,7 +61,7 @@ public abstract class AbstractExperimentTaskTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Assert.assertNull("Got an exception: " + testError, testError);
+        Assert.assertNull("Got an exception: " + testError + " " + configuration.toString(), testError);
         SameAsRetrieverSingleton4Tests.storeCache();
     }
 
