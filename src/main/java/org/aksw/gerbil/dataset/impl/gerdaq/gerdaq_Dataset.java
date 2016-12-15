@@ -87,7 +87,7 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
         
         StringBuilder builder = new StringBuilder();
         builder.append("http://");
-        builder.append(name);
+        builder.append(name.replace(' ', '_'));
         builder.append('/');
         builder.append(fileName);
         
