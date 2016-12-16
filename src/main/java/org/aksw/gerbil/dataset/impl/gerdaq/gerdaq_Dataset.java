@@ -27,8 +27,12 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import java.util.regex.Pattern;
 
@@ -59,12 +63,14 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
 
     private static final String WIKIPEDIA_URI = "http://en.wikipedia.org/wiki/";
     private static final String ANNOTATION_TAG = "annotation";
+    private static final String DOCUMENT_SEPARATOR_TAG = "instance";
     
     private String file;
     private List<Document> documents;
-    private List<Marking> markings = new ArrayList<>();
     
-    public gerdaq_Dataset(String file) {
+    private Map<Integer, List<Marking>> markingsMap = new HashMap<>();
+    
+    public gerdaq_Dataset(String file){
         this.file = file;
     }
     
@@ -87,7 +93,7 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
         
         StringBuilder builder = new StringBuilder();
         builder.append("http://");
-        builder.append(name.replace(' ', '_'));
+        builder.append(name.replace(" ", "_"));
         builder.append('/');
         builder.append(fileName);
         
@@ -95,36 +101,39 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
         
     }
     
-    private List<Document> loadDocuments(File directory) throws GerbilException {
+    private List<Document> loadDocuments(File filePath) throws GerbilException {
         
         List<Document> docs = new ArrayList<>();
         
-        if ((!directory.exists()) || (!directory.isDirectory())) {
-            throw new GerbilException("The given directory (" + directory.getAbsolutePath() + ") is not existing or not a directory.", ErrorTypes.DATASET_LOADING_ERROR);
-        }
-        
-        String directoryPath = directory.getAbsolutePath();
-        if (!directoryPath.endsWith(File.separator)) {
-            directoryPath = directoryPath + File.separator;
+        if (!filePath.exists()) {
+            throw new GerbilException("The given file (" + filePath.getAbsolutePath() + ") is not existing.", ErrorTypes.DATASET_LOADING_ERROR);
         }
 
-        for (File tmpFile : new File(directoryPath).listFiles()){
-            docs.add(createDocument(tmpFile));
+        if (filePath.isDirectory()) {
+            
+            String directoryPath = filePath.getAbsolutePath();
+            if (!directoryPath.endsWith(File.separator)) {
+                directoryPath = directoryPath + File.separator;
+            }
+
+            for (File tmpFile : new File(directoryPath).listFiles()){
+                docs.addAll(createDocument(tmpFile));
+            }
+            
+        } else {
+            docs.addAll(createDocument(filePath));
         }
         
         return docs;
         
     }
     
-    private Document createDocument(File file) throws GerbilException {
+    private List<Document> createDocument(File file) throws GerbilException {
         
-        String documentUri = generateDocumentUri(file.getName());
+        List<Document> docs = new ArrayList<>();
+        String documentURI = generateDocumentUri(file.getName());
         BufferedReader reader = null;
         String text = "";
-        
-        if ((!file.exists()) || (file.isDirectory())) {
-            throw new GerbilException("The given filepath (" + file.getAbsolutePath() + ") is not existing or not a file.", ErrorTypes.DATASET_LOADING_ERROR);
-        }
         
         try {
             createSAXparser(file);
@@ -142,11 +151,18 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
             throw new GerbilException("Document " + file.getAbsolutePath() + " could not create.", e, ErrorTypes.DATASET_LOADING_ERROR);
         }
         
-        List<Marking> marks = new ArrayList<>();
-        marks.addAll(markings);
-        markings.clear();
+        Set<Integer> intset = markingsMap.keySet();
+        List<Integer> intlist = new LinkedList();
+        for(Integer intr : intset){
+            intlist.add(intr);
+        }
+        Collections.sort(intlist);
         
-        return new DocumentImpl(text, documentUri, marks);
+        for(Integer position : intlist){
+            docs.add(new DocumentImpl(text, documentURI, markingsMap.get(position)));
+        }
+        
+        return docs;
         
     }
     
@@ -180,6 +196,7 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
             private int countSpezialSymbols;
             private int lastPosition;
             private boolean wasEnter;
+            private List<Marking> markings;
             
             @Override
             public void setDocumentLocator(Locator locator) {
@@ -197,12 +214,13 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
                 this.countSpezialSymbols = 0;
                 this.lastPosition = 0;
                 this.wasEnter = true;
+                this.markings = new ArrayList<>();
                 super.startDocument();
             }
             
             @Override
             public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-
+            
                 if (qName.equals(ANNOTATION_TAG) && locator != null){
                     
                     for ( int i = 0; i < atts.getLength(); i++ ){
@@ -232,9 +250,18 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
                     for (String tmp : title){
                         markings.add(new NamedEntity(calc, length, WIKIPEDIA_URI + tmp));
                     }
-                    
+                    title.clear();
                     origintaglength = -1;
-                    title.clear(); 
+                }
+                
+            }
+
+            @Override
+            public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+                
+                if (qName.equals(DOCUMENT_SEPARATOR_TAG) && !markings.isEmpty()){
+                    markingsMap.put(markingsMap.size(), new ArrayList<>(markings));
+                    markings.clear();
                 }
                 
             }
