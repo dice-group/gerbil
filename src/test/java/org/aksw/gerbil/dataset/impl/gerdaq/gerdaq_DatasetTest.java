@@ -133,7 +133,7 @@ public class gerdaq_DatasetTest {
                     String ld_start = ld_parts[0].substring(0, ld_parts[0].length()-1);
                     String ld_length = ld_parts[1].substring(0, ld_parts[1].length()-1);
                     String ld_uri = ld_parts[2].substring(1 + WIKIPEDIA_URI.length(), ld_parts[2].length()-1);
-                    ld_uri = ld_uri.replaceAll("_", " ");
+                    ld_uri = ld_uri.replace('_', ' ');
 
                     String ex_mark = EXPECTED_DOCUMENTS.get(i).get(j).getMarkings().get(k).toString();
                     ex_mark = ex_mark.substring(1, ex_mark.length()-1);
@@ -144,7 +144,7 @@ public class gerdaq_DatasetTest {
                     String ex_start = ex_parts[0].substring(0, ex_parts[0].length()-1);
                     String ex_length = ex_parts[1].substring(0, ex_parts[1].length()-1);
                     String ex_uri = ex_parts[2].substring(1 + WIKIPEDIA_URI.length(), ex_parts[2].length()-1);
-                    ex_uri = ex_uri.replaceAll("_", " ");
+                    ex_uri = ex_uri.replace('_', ' ');
 
                     assertEquals(ld_start, ex_start);
                     assertEquals(ld_length, ex_length);
@@ -173,7 +173,7 @@ public class gerdaq_DatasetTest {
 
                     String start = parts[0].substring(0, parts[0].length()-1);
                     String uri = parts[2].substring(1 + WIKIPEDIA_URI.length(), parts[2].length()-1);
-                    uri = uri.replaceAll("_", " ");
+                    uri = uri.replace('_', ' ');
 
                     String filePath = GERDAQ_DATASET_DEVEL + DOCUMENT_URI.get(i).substring(19);
 

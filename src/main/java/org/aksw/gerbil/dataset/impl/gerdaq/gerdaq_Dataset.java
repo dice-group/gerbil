@@ -93,7 +93,7 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
         
         StringBuilder builder = new StringBuilder();
         builder.append("http://");
-        builder.append(name.replace(" ", "_"));
+        builder.append(name.replace(' ', '_'));
         builder.append('/');
         builder.append(fileName);
         
@@ -232,7 +232,7 @@ public class gerdaq_Dataset extends AbstractDataset implements InitializableData
                             countSpezialSymbols = countSpezialSymbols + byt.length - string.length();
 
                             origintaglength = StringEscapeUtils.escapeHtml4(atts.getValue(i)).length();
-                            tag = atts.getValue(i).replace(" ", "_");
+                            tag = atts.getValue(i).replace(' ', '_');
                             title.add(tag);
                         }
                     }
