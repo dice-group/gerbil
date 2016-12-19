@@ -160,6 +160,9 @@ public class gerdaq_DatasetTest {
     public void checkLoadedDatasetFindInDatasetFiles() throws GerbilException {
 
         for (int i = 0; i < LOADED_DOCUMENTS.size(); i++){
+            
+            String text = getString(GERDAQ_DATASET_PATH + DOCUMENT_URI.get(i).substring(19, DOCUMENT_URI.get(i).length()));
+            
             int curP = 0;
             int oldP = 0;
             for (int j = 0; j < LOADED_DOCUMENTS.get(i).size(); j++){
@@ -188,9 +191,13 @@ public class gerdaq_DatasetTest {
                         curP = Integer.valueOf(start);
                     }
                     
-                    int pos = checkStringInFileRange(filePath, curP, oldP, uri);
-
-                    assertThat((pos>0), is(true));
+                    int pos = text.indexOf(uri, oldP);
+                    
+                    if (pos < 0){
+                        pos = text.indexOf(StringEscapeUtils.escapeHtml4(uri), oldP);
+                    }
+                    
+                    assertThat((pos>oldP && pos<curP), is(true));
                 
                 }
             }
@@ -416,27 +423,22 @@ public class gerdaq_DatasetTest {
         
     }
     
-    private int checkStringInFileRange(String filePath, int position, int lastPosition, String match) throws GerbilException{ 
+    private String getString(String filePath) throws GerbilException {
         
         RandomAccessFile raf;
-        int pos = -1;
+        String out = "";
         try {
             File file = new File(filePath);
-            byte[] search = new byte[position - lastPosition];
+            byte[] filedata = new byte[(int) file.length()];
             raf = new RandomAccessFile(file, "r");
-            raf.seek(lastPosition);
-            raf.readFully(search);
-            String tmp = new String(search);
-            pos = tmp.indexOf(match);
+            raf.readFully(filedata);
+            out = new String(filedata);
             raf.close();
-            if (pos < 0){
-                pos = tmp.indexOf(StringEscapeUtils.escapeHtml4(match));
-            }
         } catch (IOException e) {
-            throw new GerbilException("The given file " + filePath + " could not load.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            throw new GerbilException("Exception while reading annotation file of dataset.", e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
         }
         
-        return pos;
+        return out;
         
     }
     
