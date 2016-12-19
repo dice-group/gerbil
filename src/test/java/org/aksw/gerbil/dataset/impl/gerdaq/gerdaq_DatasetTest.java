@@ -48,7 +48,7 @@ import org.junit.Test;
 public class gerdaq_DatasetTest {
     
     private static final String WIKIPEDIA_URI = "http://en.wikipedia.org/wiki/";
-    private static final String GERDAQ_DATASET_DEVEL = "gerbil_data/datasets/gerdaq_1.0/";
+    private static final String GERDAQ_DATASET_PATH = "gerbil_data/datasets/gerdaq_1.0/";
 
     private static List<List<Document>> EXPECTED_DOCUMENTS;
     private static List<List<Document>> LOADED_DOCUMENTS;
@@ -175,7 +175,7 @@ public class gerdaq_DatasetTest {
                     String uri = parts[2].substring(1 + WIKIPEDIA_URI.length(), parts[2].length()-1);
                     uri = uri.replace('_', ' ');
 
-                    String filePath = GERDAQ_DATASET_DEVEL + DOCUMENT_URI.get(i).substring(19);
+                    String filePath = GERDAQ_DATASET_PATH + DOCUMENT_URI.get(i).substring(19);
 
                     try {
                         uri = new String(uri.getBytes("UTF-8"));
@@ -187,7 +187,7 @@ public class gerdaq_DatasetTest {
                         oldP = curP;
                         curP = Integer.valueOf(start);
                     }
-
+                    
                     int pos = checkStringInFileRange(filePath, curP, oldP, uri);
 
                     assertThat((pos>0), is(true));
@@ -202,7 +202,7 @@ public class gerdaq_DatasetTest {
 
         assertThat(LOADED_DOCUMENTS, is(nullValue()));
         
-        File[] fileArr = new File(GERDAQ_DATASET_DEVEL).listFiles();
+        File[] fileArr = new File(GERDAQ_DATASET_PATH).listFiles();
         LOADED_DOCUMENTS = new ArrayList();
         for (File file : fileArr) {
             gerdaq_Dataset dataset = new gerdaq_Dataset(file.getAbsolutePath());
