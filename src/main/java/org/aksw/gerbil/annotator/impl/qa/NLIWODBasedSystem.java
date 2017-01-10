@@ -13,7 +13,9 @@ import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.systems.ASystem;
 import org.aksw.qa.systems.HAWK;
+import org.aksw.qa.systems.OKBQA;
 import org.aksw.qa.systems.QAKIS;
+import org.aksw.qa.systems.QANARY;
 import org.aksw.qa.systems.SINA;
 import org.aksw.qa.systems.START;
 import org.aksw.qa.systems.YODA;
@@ -30,6 +32,8 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 	public static final String SINA_SYSTEM_NAME = "SINA";
 	public static final String START_SYSTEM_NAME = "START";
 	public static final String YODA_SYSTEM_NAME = "YODA";
+	public static final String OKBQA_SYSTEM_NAME = "OKBQA";
+	public static final String QANARY_SYSTEM_NAME = "QANARY";
 
 	protected ASystem qaSystem;
 
@@ -53,6 +57,14 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 		}
 		case YODA_SYSTEM_NAME: {
 			qaSystem = new YODA();
+			break;
+		}
+		case OKBQA_SYSTEM_NAME: {
+			qaSystem = new OKBQA();
+			break;
+		}
+		case QANARY_SYSTEM_NAME: {
+			qaSystem = new QANARY();
 			break;
 		}
 		default:
