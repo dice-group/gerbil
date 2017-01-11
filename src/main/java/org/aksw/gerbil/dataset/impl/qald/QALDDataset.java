@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.InitializableDataset;
 import org.aksw.gerbil.dataset.impl.AbstractDataset;
@@ -23,8 +24,10 @@ import org.aksw.qa.commons.load.LoaderController;
  */
 public class QALDDataset extends AbstractDataset implements InitializableDataset {
 
-    protected List<Document> instances;
+    private static final String QALD_DERIVE_EDNPOINT = "org.aksw.gerbil.dataset.impl.qald.deriveUri";
+	protected List<Document> instances;
     protected String qaldDatasetName;
+    protected String deriveUri;
 
     /**
      * Constructor taking the name of the QALD dataset. Note that the name
@@ -35,6 +38,8 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
     public QALDDataset(String qaldDatasetName) {
         super(qaldDatasetName);
         this.qaldDatasetName = qaldDatasetName;
+    
+        deriveUri = GerbilConfiguration.getInstance().getString(QALD_DERIVE_EDNPOINT);
     }
 
     @Override
@@ -66,7 +71,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
         } else {
 //            List<IQuestion> questions = QALD_Loader.load(datasetId);
         	
-        	List<IQuestion> questions = LoaderController.load(datasetId);
+        	List<IQuestion> questions = LoaderController.load(datasetId, deriveUri);
             if (questions == null) {
                 throw new GerbilException("Couldn't load questions of QALD dataset " + datasetId.toString() + ".",
                         ErrorTypes.DATASET_LOADING_ERROR);
@@ -83,7 +88,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
             instances = new ArrayList<Document>(questions.size());
             Document document;
             for (IQuestion question : questions) {
-            	if(question.getOutOfScope()){
+            	if(question.getOutOfScope()!=null && question.getOutOfScope()){
             		continue;
             	}
                 document = QAUtils.translateQuestion(question, questionUriPrefix + question.getId());
