@@ -16,12 +16,18 @@
  */
 package org.aksw.gerbil.tools;
 
+import java.util.List;
+
 import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.apache.commons.io.IOUtils;
 import org.apache.jena.riot.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 public class NIFDatasetLoadingTest {
 
@@ -40,7 +46,24 @@ public class NIFDatasetLoadingTest {
         } catch (GerbilException e) {
             LOGGER.error("Got an exception while trying to load the dataset.", e);
         }
+        List<Document> documents = dataset.getInstances();
+        LOGGER.info("Dataset size: {} documents", documents.size());
+        ObjectIntOpenHashMap<String> annotationTypes;
+        for (Document document : documents) {
+            annotationTypes = listAnnotationTypes(document);
+            LOGGER.info("Document {} annotation types: {}", document.getDocumentURI(), annotationTypes.toString());
+        }
         IOUtils.closeQuietly(dataset);
         LOGGER.info("Finished loading of given test dataset.");
+    }
+
+    private static ObjectIntOpenHashMap<String> listAnnotationTypes(Document document) {
+        ObjectIntOpenHashMap<String> annotationTypes = new ObjectIntOpenHashMap<String>();
+        String className;
+        for (Marking marking : document.getMarkings()) {
+            className = marking.getClass().getSimpleName();
+            annotationTypes.putOrAdd(className, 1, 1);
+        }
+        return annotationTypes;
     }
 }
