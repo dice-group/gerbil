@@ -73,8 +73,7 @@ public class Microposts2016DatasetMentionSearchTest {
         for(String m : mentions){
         	lines.add(m);
         }
-        // FIXME replace the 5 with the correct type index!
-        List<Marking> markings = Microposts2016Dataset.findMarkings(lines, tweet, 5); 
+        List<Marking> markings = Microposts2016Dataset.findMarkings(lines, tweet); 
         Assert.assertNotNull(markings);
         Assert.assertTrue(markings.size() > 0);
         int i =0;

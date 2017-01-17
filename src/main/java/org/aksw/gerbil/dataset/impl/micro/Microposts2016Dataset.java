@@ -52,13 +52,13 @@ public class Microposts2016Dataset extends AbstractDataset implements
 	private String annotatedFile;
 	private String tweetsFile;
 
-	protected int typeIndex = 5;
+	protected static int typeIndex = 5;
 
 	public Microposts2016Dataset(String annotatedFile, String tweetsFile) {
 		this.annotatedFile = annotatedFile;
 		this.tweetsFile = tweetsFile;
 	}
-
+	
 	@Override
 	public int size() {
 		return documents.size();
@@ -92,7 +92,7 @@ public class Microposts2016Dataset extends AbstractDataset implements
 				}
 				String id = tweet[0];
 				String text = tweet[1];
-				markings = findMarkings(getMarkingLines(annotations, id), text, typeIndex );
+				markings = findMarkings(getMarkingLines(annotations, id), text );
 				documents.add(new DocumentImpl(text, documentUriPrefix + id,
 						markings));
 			}
@@ -104,7 +104,7 @@ public class Microposts2016Dataset extends AbstractDataset implements
 		return documents;
 	}
 
-	protected static List<Marking> findMarkings(Set<String> lines, String text, int typeIndex) {
+	protected static List<Marking> findMarkings(Set<String> lines, String text) {
 		List<Marking> markings = new ArrayList<Marking>();
 
 		for (String line : lines) {
