@@ -161,7 +161,7 @@ public class DatasetsConfig {
         if (config.containsKey(key)) {
             String checkerClassName = config.getString(key);
             // If checker arguments have been defined
-            key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CHECK_CLASS_SUFFIX);
+            key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CHECK_ARGS_SUFFIX);
             String checkerArgStrings[];
             if (config.containsKey(key)) {
                 checkerArgStrings = config.getStringArray(key);

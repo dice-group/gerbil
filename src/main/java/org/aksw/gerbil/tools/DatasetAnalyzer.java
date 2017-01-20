@@ -16,7 +16,6 @@
  */
 package org.aksw.gerbil.tools;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.List;
@@ -48,7 +47,8 @@ public class DatasetAnalyzer {
         PrintStream output = null;
         try {
             output = new PrintStream("datasetAnalyzation.log");
-            output.println("name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, numberOfEEs, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
+            output.println(
+                    "name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, numberOfEEs, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
             DatasetAnalyzer analyzer = new DatasetAnalyzer(output);
             for (DatasetConfiguration config : datasetConfigs) {
                 try {
@@ -74,10 +74,14 @@ public class DatasetAnalyzer {
     public void analyzeDataset(DatasetConfiguration config) throws GerbilException {
         if (config.isApplicableForExperiment(ExperimentType.D2KB)) {
             analyze(config, ExperimentType.D2KB);
+        } else if (config.isApplicableForExperiment(ExperimentType.ETyping)) {
+            analyze(config, ExperimentType.ETyping);
         } else if (config.isApplicableForExperiment(ExperimentType.OKE_Task2)) {
             analyze(config, ExperimentType.OKE_Task2);
         } else if (config.isApplicableForExperiment(ExperimentType.C2KB)) {
             analyze(config, ExperimentType.C2KB);
+        } else if (config.isApplicableForExperiment(ExperimentType.ERec)) {
+            analyze(config, ExperimentType.ERec);
         } else {
             LOGGER.error("Can not analyze the dataset with the following config: " + config.toString());
         }
@@ -88,10 +92,11 @@ public class DatasetAnalyzer {
         tokenizer.setReader(new StringReader(text));
         int tokens = 0;
         try {
+            tokenizer.reset();
             while (tokenizer.incrementToken()) {
                 ++tokens;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("Error while tokenizing text. Returning.", e);
         } finally {
             IOUtils.closeQuietly(tokenizer);
@@ -114,7 +119,7 @@ public class DatasetAnalyzer {
             annotationsSum += document.getMarkings().size();
             tokensSum += countTokensInText(document.getText());
             for (Meaning meaning : document.getMarkings(Meaning.class)) {
-                if(!classifier.containsKBUri(meaning.getUris())) {
+                if (!classifier.containsKBUri(meaning.getUris())) {
                     ++eeCount;
                 }
             }
