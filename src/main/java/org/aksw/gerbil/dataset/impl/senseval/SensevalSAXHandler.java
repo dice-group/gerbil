@@ -54,7 +54,7 @@ public class SensevalSAXHandler extends DefaultHandler {
 		if (qName.equalsIgnoreCase(SENTENCE_ELEMENT)) {
 			i++;
 			documents.add(new DocumentImpl(sentence.toString(),
-					"http://senseval2" + i, markings));
+					"http://senseval" + i, markings));
 			sentence = new StringBuilder();
 		} else if (qName.equalsIgnoreCase(INSTANCE_ELEMENT)) {
 			markings.add(new NamedEntity(start, length, instanceUri));
@@ -77,9 +77,13 @@ public class SensevalSAXHandler extends DefaultHandler {
 			this.length = length;
 			String word = new String(Arrays.copyOfRange(ch, start, start
 					+ length));
+			if(word.equals("&")){
+				word = word.replace("&", "&amp;");
+			}
 			this.start+= addWordToSentence(word);
 		}
 		this.field = 0;
+		
 	}
 
 	public List<Document> getDocuments() {
