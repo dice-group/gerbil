@@ -57,7 +57,7 @@ public class DerczynskiDataset extends AbstractDataset implements
 		BufferedReader reader = null;
 		// CSVReader reader = null;
 		List<Document> documents = new ArrayList<Document>();
-		String documentUriPrefix = "http//:" + getName() + "/";
+		String documentUriPrefix = "http://" + getName() + "/";
 		try {
 			reader = new BufferedReader(new InputStreamReader(
 					new FileInputStream(tweetsFile), Charset.forName("UTF-8")));
@@ -65,7 +65,7 @@ public class DerczynskiDataset extends AbstractDataset implements
 			String line = reader.readLine();
 			int tweetIndex = 0;
 			List<Marking> markings = new ArrayList<Marking>();
-			StringBuilder tweet = new StringBuilder("").append(line);
+			StringBuilder tweet = new StringBuilder("");
 			while (line != null) {
 				if (line.trim().isEmpty()) {
 					// Get Markings
