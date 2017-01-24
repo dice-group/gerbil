@@ -5,3 +5,5 @@ before_install:
   - mkdir -p "gerbil_data"
   - curl --retry 4 -L -o "gerbil_data/gerbil_data.zip" "https://github.com/AKSW/gerbil/releases/download/v1.2.4/gerbil_data.zip"
   - unzip "gerbil_data/gerbil_data.zip"
+  - ls
+  - ls gerbil_data/
