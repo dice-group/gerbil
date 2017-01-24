@@ -5,6 +5,7 @@ before_install:
   - mkdir -p "gerbil_data"
   - curl --retry 4 -L -o "gerbil_data/gerbil_data.zip" "http://139.18.2.164/mroeder/gerbil_data.zip"
   - unzip "gerbil_data/gerbil_data.zip"
+  - touch src/main/properties/gerbil_keys.properties
 install:
   - mvn clean compile -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 script:
