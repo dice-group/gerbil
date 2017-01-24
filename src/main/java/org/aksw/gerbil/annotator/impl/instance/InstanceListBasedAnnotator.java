@@ -41,17 +41,25 @@ public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2K
         super(annotatorName);
         this.uriInstanceMapping = new HashMap<String, Document>(instances.size());
         for (Document document : instances) {
-            uriInstanceMapping.put(document.getDocumentURI() + document.getText().length(), document);
+            uriInstanceMapping.put(generateDocUri(document.getDocumentURI(), document.getText().length()), document);
         }
     }
 
     protected Document getDocument(String uri, int textLength) {
-        String mappingUri = uri + textLength;
+        String mappingUri = generateDocUri(uri, textLength);
         if (uriInstanceMapping.containsKey(mappingUri)) {
             return uriInstanceMapping.get(mappingUri);
         } else {
             return null;
         }
+    }
+
+    protected static String generateDocUri(String uri, int textLength) {
+        StringBuilder builder = new StringBuilder(uri.length() + 10);
+        builder.append(uri);
+        builder.append('_');
+        builder.append(textLength);
+        return builder.toString();
     }
 
     protected <T extends Marking> List<T> getDocumentMarkings(String uri, int textLength, Class<T> clazz) {

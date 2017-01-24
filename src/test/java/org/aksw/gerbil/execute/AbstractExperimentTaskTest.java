@@ -124,7 +124,7 @@ public abstract class AbstractExperimentTaskTest {
             Assert.assertEquals(ExperimentDAO.TASK_FINISHED, experimentDAO.getExperimentState(experimentTaskId));
             ExperimentTaskResult result = experimentDAO.getTaskResult(experimentTaskId);
             String errorMsg = "Error for system " + result.annotator + " on dataset " + result.dataset
-                    + " in Experiment " + result.type.toString();
+                    + " in Experiment " + result.type.getName();
             Assert.assertEquals(errorMsg, expectedResults[MACRO_PREC_INDEX], result.getMacroPrecision(), DELTA);
             Assert.assertEquals(errorMsg, expectedResults[MACRO_REC_INDEX], result.getMacroRecall(), DELTA);
             Assert.assertEquals(errorMsg, expectedResults[MACRO_F1_INDEX], result.getMacroF1Measure(), DELTA);
