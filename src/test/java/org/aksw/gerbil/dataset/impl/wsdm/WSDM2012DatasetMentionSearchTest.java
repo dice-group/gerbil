@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.data.Annotation;
+import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,15 +39,14 @@ public class WSDM2012DatasetMentionSearchTest {
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         testConfigs.add(new Object[] { 
-        		new String[] { "375737278276321000	27	http://dbpedia.org/resource/Africa", "375737278276321000	4	http://dbpedia.org/resource/United_States"},
+        		new String[] { "375737278276321000	27	Africa", "375737278276321000	4	United_States"},
                 "The US Military’s Pivot to Africa http://t.co/wJn6YRE5hR",
-                new String[] {"US", "Africa" }});
+                new String[] {"http://en.wikipedia.org/wiki/United_States", "http://en.wikipedia.org/wiki/Africa" }});
        
         testConfigs.add(new Object[] { 
-        		new String[] { "375733981582729000	38	http://dbpedia.org/resource/Brooklyn", 
-        				"375733981582729000	4	NIL840"},
+        		new String[] { "375733981582729000	38	Brooklyn"},
                 "RT @BestProNews: A 19-year-old man in Brooklyn died today after he lost control of his remote control helicopter and sliced off the top of …",
-                new String[] {"BestProNews", "Brooklyn"}});
+                new String[] {"http://en.wikipedia.org/wiki/Brooklyn"}});
 
         
         return testConfigs;
@@ -73,11 +74,10 @@ public class WSDM2012DatasetMentionSearchTest {
         Assert.assertTrue(markings.size() > 0);
         int i =0;
         for(Marking marking : markings){
-        	Assert.assertTrue(marking instanceof TypedNamedEntity);
-        	TypedNamedEntity ne = (TypedNamedEntity) marking;
+        	Assert.assertTrue(marking instanceof Annotation);
+        	Annotation ne = (Annotation) marking;
         	
-        	String mention = tweet.substring(ne.getStartPosition(), ne.getStartPosition() + ne.getLength());
-        	Assert.assertEquals(expectedMentions[i], mention);
+        	Assert.assertEquals(expectedMentions[i], ne.getUris().iterator().next());
         	
         	i++;
         }
