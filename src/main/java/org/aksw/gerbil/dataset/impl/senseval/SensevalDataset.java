@@ -3,7 +3,6 @@ package org.aksw.gerbil.dataset.impl.senseval;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +14,7 @@ import org.aksw.gerbil.dataset.impl.AbstractDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
-import org.hsqldb.lib.StringInputStream;
 import org.xml.sax.InputSource;
-
-import com.hp.hpl.jena.util.FileUtils;
 
 public class SensevalDataset extends AbstractDataset implements InitializableDataset {
 

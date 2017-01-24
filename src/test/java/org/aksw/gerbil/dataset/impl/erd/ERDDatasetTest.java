@@ -44,6 +44,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+@Deprecated
 public class ERDDatasetTest {
     
     private static final String FREEBASE_URI = "https://www.googleapis.com/freebase";

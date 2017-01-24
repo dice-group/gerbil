@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.junit.Assert;
 import org.junit.Test;

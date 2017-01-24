@@ -42,6 +42,7 @@ import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 
 import org.apache.commons.io.IOUtils;
 
+@Deprecated
 public class ERDDataset extends AbstractDataset implements InitializableDataset {
 
     private static final String FREEBASE_URI = "https://www.googleapis.com/freebase";
