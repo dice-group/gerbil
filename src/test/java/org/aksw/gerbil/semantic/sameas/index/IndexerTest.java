@@ -28,7 +28,7 @@ public class IndexerTest {
 		index.index("http://de.dbpedia.org/a", getList("http://de.dbpedia.org"));
 		index.close();
 		//3. search for one that exists
-		Searcher search = new Searcher("test");
+		Searcher search = new Searcher(indexFolder.getAbsolutePath());
 		assertFalse(search.search("http://wikipedia.org/a").isEmpty());
 		assertTrue(search.search("http://wikipedia.org/d").isEmpty());
 		assertFalse(search.search("http://dbpedia.org/resource/Scar").isEmpty());
