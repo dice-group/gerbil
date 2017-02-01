@@ -13,10 +13,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class)
+//TODO set @RunWith, @Parameters, @Test again, as soon dataset is in gerbil_data.zip
+
+//@RunWith(Parameterized.class)
 public class RitterDatasetTest {
 
-    @Parameters
+//    @Parameters
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         testConfigs.add(new Object[] { "Texans	O\nurged	O\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-geo-loc\ncoast	I-geo-loc\n,	O\na	O\nURL	O", "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ", new String[]{"Texas coast", "http://dbpedia.org/ontology/Place"} });
@@ -42,7 +44,6 @@ public class RitterDatasetTest {
         this.expectedToken = expectedToken;
     }
 
-    //TODO set @Test again, as soon dataset is in gerbil_data.zip
 //    @Test
     public void test() {
         List<Marking> markings = RitterDataset.findMarkings(text);
