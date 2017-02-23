@@ -19,6 +19,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
+import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.utils.WikipediaHelper;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -62,7 +63,7 @@ public class WSDMDataset extends AbstractDataset implements
 		String documentUriPrefix = "http://" + getName() + "/";
 		//its json per line 
 		try (BufferedReader bReader = new BufferedReader(new InputStreamReader(
-				new FileInputStream(tweetsFile), Charset.forName("UTF-8")))) {
+				new FileInputStream(tweets), Charset.forName("UTF-8")))) {
 			String line;
 			List<Marking> markings;
 			while ((line = bReader.readLine()) != null) {
@@ -90,7 +91,6 @@ public class WSDMDataset extends AbstractDataset implements
 
 			String uri = WikipediaHelper.getWikipediaUri(WIKIPEDIA_DOMAIN , annotation[2]);
 			markings.add(new Annotation(uri));
-
 		}
 
 		return markings;
