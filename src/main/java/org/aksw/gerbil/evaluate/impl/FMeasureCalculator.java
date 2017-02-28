@@ -138,7 +138,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         }
         avgs[0] /= counts.length;
         avgs[1] /= counts.length;
-        avgs[2] = (2 * avgs[0] * avgs[1]) / (avgs[0] + avgs[1]);
+        avgs[2] /= counts.length;
         if(printAnswers){
         	try{
         		alog.printMacro(avgs);
