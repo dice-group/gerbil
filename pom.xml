@@ -332,11 +332,28 @@
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>systems</artifactId>
 			<version>0.0.4-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.aksw.qa</groupId>
+					<artifactId>commons</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>commons</artifactId>
 			<version>0.4.4</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.aksw.qa</groupId>
+					<artifactId>datasets</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.aksw.qa</groupId>
+			<artifactId>datasets</artifactId>
+			<version>0.5.4</version>
 		</dependency>
 	</dependencies>
 
