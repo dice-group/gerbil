@@ -165,6 +165,11 @@ public class FredAnnotator extends AbstractHttpBasedAnnotator implements OKETask
         return requestAnnotations(document).getMarkings(TypedNamedEntity.class);
     }
 
+    @Override
+    public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
+        return requestAnnotations(document).getMarkings(TypedSpan.class);
+    }
+
     @SuppressWarnings("unchecked")
     protected static <T extends Marking> List<T> transformToClass(List<Marking> markings, Class<T> clazz) {
         List<T> markingsWithClass = new ArrayList<T>();

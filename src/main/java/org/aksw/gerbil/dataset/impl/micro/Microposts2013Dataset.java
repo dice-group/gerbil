@@ -92,7 +92,7 @@ public class Microposts2013Dataset extends AbstractDataset implements
 		BufferedReader bReader = null;
 		CSVReader reader = null;
 		List<Document> documents = new ArrayList<Document>();
-		String documentUriPrefix = "http//:" + getName() + "/";
+		String documentUriPrefix = "http://" + getName() + "/";
 		try {
 			bReader = new BufferedReader(new InputStreamReader(
 					new FileInputStream(tweetsFile), Charset.forName("UTF-8")));

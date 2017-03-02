@@ -25,26 +25,45 @@ import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2KBAnnotator, C2KBAnnotator,
         D2KBAnnotator, EntityRecognizer, EntityTyper, OKETask1Annotator, OKETask2Annotator {
 
+    /*
+     * The mapping has been changed to contain the length since we encountered
+     * problems with some datasets containing a document URI more than once.
+     * Inside the NIF file this is not a problem because the length is added to
+     * the document URI. However, since we remove the positions from the URIs,
+     * we have to add the length in this class.
+     */
+    /**
+     * Mapping of URI + text.length() to the documents.
+     */
     protected Map<String, Document> uriInstanceMapping;
 
     public InstanceListBasedAnnotator(String annotatorName, List<Document> instances) {
         super(annotatorName);
         this.uriInstanceMapping = new HashMap<String, Document>(instances.size());
         for (Document document : instances) {
-            uriInstanceMapping.put(document.getDocumentURI(), document);
+            uriInstanceMapping.put(generateDocUri(document.getDocumentURI(), document.getText().length()), document);
         }
     }
 
-    protected Document getDocument(String uri) {
-        if (uriInstanceMapping.containsKey(uri)) {
-            return uriInstanceMapping.get(uri);
+    protected Document getDocument(String uri, int textLength) {
+        String mappingUri = generateDocUri(uri, textLength);
+        if (uriInstanceMapping.containsKey(mappingUri)) {
+            return uriInstanceMapping.get(mappingUri);
         } else {
             return null;
         }
     }
 
-    protected <T extends Marking> List<T> getDocumentMarkings(String uri, Class<T> clazz) {
-        Document result = this.getDocument(uri);
+    protected static String generateDocUri(String uri, int textLength) {
+        StringBuilder builder = new StringBuilder(uri.length() + 10);
+        builder.append(uri);
+        builder.append('_');
+        builder.append(textLength);
+        return builder.toString();
+    }
+
+    protected <T extends Marking> List<T> getDocumentMarkings(String uri, int textLength, Class<T> clazz) {
+        Document result = this.getDocument(uri, textLength);
         if (result == null) {
             return new ArrayList<T>(0);
         } else {
@@ -54,36 +73,41 @@ public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2K
 
     @Override
     public List<TypedNamedEntity> performTask2(Document document) throws GerbilException {
-        return getDocumentMarkings(document.getDocumentURI(), TypedNamedEntity.class);
+        return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), TypedNamedEntity.class);
     }
 
     @Override
     public List<TypedNamedEntity> performTask1(Document document) throws GerbilException {
-        return getDocumentMarkings(document.getDocumentURI(), TypedNamedEntity.class);
+        return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), TypedNamedEntity.class);
     }
 
     @Override
     public List<TypedSpan> performTyping(Document document) throws GerbilException {
-        return getDocumentMarkings(document.getDocumentURI(), TypedSpan.class);
+        return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), TypedSpan.class);
     }
 
     @Override
     public List<Span> performRecognition(Document document) throws GerbilException {
-        return getDocumentMarkings(document.getDocumentURI(), Span.class);
+        return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), Span.class);
     }
 
     @Override
     public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
-        return getDocumentMarkings(document.getDocumentURI(), MeaningSpan.class);
+        return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), MeaningSpan.class);
     }
 
     @Override
     public List<Meaning> performC2KB(Document document) throws GerbilException {
-        return getDocumentMarkings(document.getDocumentURI(), Meaning.class);
+        return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), Meaning.class);
     }
 
     @Override
     public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
-        return getDocumentMarkings(document.getDocumentURI(), MeaningSpan.class);
+        return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), MeaningSpan.class);
+    }
+
+    @Override
+    public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
+        return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), TypedSpan.class);
     }
 }

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -29,9 +30,13 @@ import org.aksw.gerbil.dataset.check.impl.EntityCheckerManagerImpl;
 import org.aksw.gerbil.dataset.check.impl.FileBasedCachingEntityCheckerManager;
 import org.aksw.gerbil.dataset.check.impl.HttpBasedEntityChecker;
 import org.aksw.gerbil.dataset.check.impl.InMemoryCachingEntityCheckerManager;
+import org.aksw.gerbil.dataset.check.index.IndexBasedEntityChecker;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
+import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
+import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SingleUriSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.CrawlingSameAsRetrieverDecorator;
@@ -42,6 +47,7 @@ import org.aksw.gerbil.semantic.sameas.impl.UriFilteringSameAsRetrieverDecorator
 import org.aksw.gerbil.semantic.sameas.impl.cache.FileBasedCachingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.cache.InMemoryCachingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.index.IndexBasedSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.wiki.WikiDbPediaBridgingSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.wiki.WikipediaApiBasedSingleUriSameAsRetriever;
 import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
@@ -110,10 +116,15 @@ public class RootConfig {
     private static final String ENTITY_CHECKING_MANAGER_IN_MEM_CACHE_SIZE_KEY = "org.aksw.gerbil.dataset.check.InMemoryCachingEntityCheckerManager.cacheSize";
     private static final String ENTITY_CHECKING_MANAGER_IN_MEM_CACHE_DURATION_KEY = "org.aksw.gerbil.dataset.check.InMemoryCachingEntityCheckerManager.cacheDuration";
     private static final String HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY = "org.aksw.gerbil.dataset.check.HttpBasedEntityChecker.namespace";
+    private static final String INDEX_BASED_ENTITY_CHECKING_CONFIG_KEY_START = "org.aksw.gerbil.dataset.check.IndexBasedEntityChecker";
     private static final String WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY = "org.aksw.gerbil.semantic.sameas.impl.wiki.WikipediaApiBasedSingleUriSameAsRetriever.domain";
     private static final String SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY = "org.aksw.gerbil.semantic.sameas.impl.UriFilteringSameAsRetrieverDecorator.domainBlacklist";
+    private static final String INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY = "org.aksw.gerbil.semantic.sameas.impl.index.IndexBasedSameAsRetriever.folder";
+    private static final String INDEXED_BASED_SAME_AS_RETRIEVER_DOMAIN_KEY = "org.aksw.gerbil.semantic.sameas.impl.index.IndexBasedSameAsRetriever.domain";
 
     private static final String AVAILABLE_EXPERIMENT_TYPES_KEY = "org.aksw.gerbil.web.MainController.availableExperimentTypes";
+
+    private static final String DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY = "org.aksw.gerbil.evaluate.DefaultWellKnownKB";
 
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
@@ -163,13 +174,34 @@ public class RootConfig {
         retrieverManager.addStaticRetriever(new UriEncodingHandlingSameAsRetriever());
 
         // HTTP based same as retrieval
+        HTTPBasedSameAsRetriever httpRetriever = null;
         if (GerbilConfiguration.getInstance().containsKey(HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
-            HTTPBasedSameAsRetriever httpRetriever = new HTTPBasedSameAsRetriever();
+            httpRetriever = new HTTPBasedSameAsRetriever();
             for (String domain : GerbilConfiguration.getInstance().getStringArray(HTTP_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
                 retrieverManager.addDomainSpecificRetriever(domain, httpRetriever);
             }
         }
 
+        // If there is an index based same as retriever available
+        if (GerbilConfiguration.getInstance().containsKey(INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY)) {
+            SameAsRetriever retriever;
+            try {
+                retriever = new IndexBasedSameAsRetriever(
+                        GerbilConfiguration.getInstance().getString(INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY));
+
+            } catch (GerbilException e) {
+                LOGGER.error("Could not load Index Retriever. using HTTPBasedSameAs Retriever instead");
+                if (httpRetriever == null) {
+                    retriever = new HTTPBasedSameAsRetriever();
+                } else {
+                    retriever = httpRetriever;
+                }
+            }
+            for (String domain : GerbilConfiguration.getInstance()
+                    .getStringArray(INDEXED_BASED_SAME_AS_RETRIEVER_DOMAIN_KEY)) {
+                retrieverManager.addDomainSpecificRetriever(domain, retriever);
+            }
+        }
         // Wikipedia API based same as retrieval
         if (GerbilConfiguration.getInstance().containsKey(WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
             SingleUriSameAsRetriever singleRetriever = new WikipediaApiBasedSingleUriSameAsRetriever();
@@ -199,6 +231,7 @@ public class RootConfig {
             decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, false,
                     new File(GerbilConfiguration.getInstance().getString(SAME_AS_CACHE_FILE_KEY)));
         }
+
         if (decoratedRetriever == null) {
             LOGGER.warn("Couldn't create file based cache for sameAs retrieving. Trying to create in Memory cache.");
             if (GerbilConfiguration.getInstance().containsKey(SAME_AS_IN_MEMORY_CACHE_SIZE_KEY)) {
@@ -241,6 +274,7 @@ public class RootConfig {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static @Bean EntityCheckerManager getEntityCheckerManager() {
         EntityCheckerManager manager = null;
         Configuration config = GerbilConfiguration.getInstance();
@@ -271,11 +305,39 @@ public class RootConfig {
         if (manager == null) {
             manager = new EntityCheckerManagerImpl();
         }
-        @SuppressWarnings("unchecked")
         List<String> namespaces = config.getList(HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY);
         if (!namespaces.isEmpty()) {
             for (String namespace : namespaces) {
                 manager.registerEntityChecker(namespace.toString(), new HttpBasedEntityChecker(namespace.toString()));
+            }
+        }
+        @SuppressWarnings("rawtypes")
+        Iterator keyIterator = config.getKeys(INDEX_BASED_ENTITY_CHECKING_CONFIG_KEY_START);
+        while (keyIterator.hasNext()) {
+            String key = keyIterator.next().toString();
+            namespaces = config.getList(key);
+            if (!namespaces.isEmpty()) {
+                // the first "namespace" is the directory of the index
+                IndexBasedEntityChecker indexBasedChecker = IndexBasedEntityChecker.create(namespaces.get(0));
+                if (indexBasedChecker != null) {
+                    boolean first = true;
+                    for (String namespace : namespaces) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            manager.registerEntityChecker(namespace.toString(), indexBasedChecker);
+                        }
+                    }
+                } else {
+                    LOGGER.error(
+                            "Couldn't create index based entity checker for index \"{}\". Creating HTTP based checker.",
+                            namespaces.get(0));
+                    // use HTTP based checker
+                    for (String namespace : namespaces) {
+                        manager.registerEntityChecker(namespace.toString(),
+                                new HttpBasedEntityChecker(namespace.toString()));
+                    }
+                }
             }
         }
         return manager;
@@ -308,6 +370,34 @@ public class RootConfig {
             Arrays.sort(typesArray);
             return typesArray;
         }
+    }
+
+    public static UriKBClassifier createDefaultUriKBClassifier() {
+        return new SimpleWhiteListBasedUriKBClassifier(loadDefaultKBs());
+    }
+
+    public static String[] loadDefaultKBs() {
+        String kbs[] = GerbilConfiguration.getInstance().getStringArray(DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY);
+        if (kbs == null) {
+            LOGGER.error("Couldn't load the list of well known KBs. This GERBIL instance might not work as expected!");
+        }
+        return kbs;
+    }
+
+    public static int getNoOfWorkers() {
+        int numberOfWorkers = DEFAULT_NUMBER_OF_WORKERS;
+        if (GerbilConfiguration.getInstance().containsKey(NUMBER_OF_WORKERS_KEY)) {
+            try {
+                numberOfWorkers = GerbilConfiguration.getInstance().getInt(NUMBER_OF_WORKERS_KEY);
+            } catch (Exception e) {
+                // LOGGER.warn("Couldn't load number of workers from config.
+                // Using the default number.", e);
+            }
+        } else {
+            // LOGGER.warn("Couldn't load number of workers from config. Using
+            // the default number.");
+        }
+        return numberOfWorkers;
     }
 
 }

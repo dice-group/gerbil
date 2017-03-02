@@ -29,6 +29,7 @@ import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.annotator.SingletonAnnotatorConfigImpl;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.web.config.check.Checker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +47,9 @@ public class AnnotatorsConfig {
     public static final String ANNOTATOR_EXPERIMENT_TYPE_SUFFIX = "experimentType";
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
     public static final String ANNOTATOR_SINGLETON_FLAG_SUFFIX = "singleton";
+    
+    public static final String ANNOTATOR_CHECK_CLASS_SUFFIX = "check.class";
+    public static final String ANNOTATOR_CHECK_ARGS_SUFFIX = "check.args";
 
     public static void main(String[] args) {
         annotators();
@@ -95,7 +99,7 @@ public class AnnotatorsConfig {
         org.apache.commons.configuration.Configuration config = GerbilConfiguration.getInstance();
         StringBuilder keyBuilder = new StringBuilder();
         String key;
-
+        
         key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_NAME_SUFFIX);
         if (!config.containsKey(key)) {
             LOGGER.error("Couldn't get a name for the \"" + annotatorKey + "\" annotator.");
@@ -144,6 +148,36 @@ public class AnnotatorsConfig {
             constructorArgClasses[i] = String.class;
         }
         Constructor<? extends Annotator> constructor = annotatorClass.getConstructor(constructorArgClasses);
+        
+     // If a checker class has been defined
+        key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_CHECK_CLASS_SUFFIX);
+        if (config.containsKey(key)) {
+            String checkerClassName = config.getString(key);
+            // If checker arguments have been defined
+            key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_CHECK_ARGS_SUFFIX);
+            String checkerArgStrings[];
+            if (config.containsKey(key)) {
+                checkerArgStrings = config.getStringArray(key);
+            } else {
+                checkerArgStrings = new String[0];
+            }
+            Object checkerArgs[] = new Object[checkerArgStrings.length];
+            for (int i = 0; i < checkerArgs.length; ++i) {
+                checkerArgs[i] = checkerArgStrings[i];
+            }
+            try {
+                @SuppressWarnings("unchecked")
+                Class<? extends Checker> checkerClass = (Class<? extends Checker>) AnnotatorsConfig.class.getClassLoader()
+                        .loadClass(checkerClassName);
+                Checker checker = checkerClass.newInstance();
+                if (!checker.check(checkerArgs)) {
+                    LOGGER.info("Check for annotator \"{}\" failed. It won't be available.", name);
+                    return null;
+                }
+            } catch (Exception e) {
+                LOGGER.error("Error while trying to run check for annotator \"" + name + "\". Returning null.", e);
+            }
+        }
 
         if (isSingleton) {
             return new SingletonAnnotatorConfigImpl(name, cacheable, constructor, constructorArgs, type);

@@ -33,6 +33,7 @@ import org.aksw.gerbil.dataset.datahub.DatahubNIFConfig;
 import org.aksw.gerbil.dataset.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.web.config.check.Checker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -49,6 +50,9 @@ public class DatasetsConfig {
     public static final String ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX = "constructorArgs";
     public static final String ANNOTATOR_EXPERIMENT_TYPE_SUFFIX = "experimentType";
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
+
+    public static final String ANNOTATOR_CHECK_CLASS_SUFFIX = "check.class";
+    public static final String ANNOTATOR_CHECK_ARGS_SUFFIX = "check.args";
 
     @Bean
     public static AdapterList<DatasetConfiguration> datasets(EntityCheckerManager entityCheckerManager,
@@ -151,6 +155,36 @@ public class DatasetsConfig {
         }
 
         Constructor<? extends Dataset> constructor = datasetClass.getConstructor(constructorArgClasses);
+
+        // If a checker class has been defined
+        key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CHECK_CLASS_SUFFIX);
+        if (config.containsKey(key)) {
+            String checkerClassName = config.getString(key);
+            // If checker arguments have been defined
+            key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CHECK_ARGS_SUFFIX);
+            String checkerArgStrings[];
+            if (config.containsKey(key)) {
+                checkerArgStrings = config.getStringArray(key);
+            } else {
+                checkerArgStrings = new String[0];
+            }
+            Object checkerArgs[] = new Object[checkerArgStrings.length];
+            for (int i = 0; i < checkerArgs.length; ++i) {
+                checkerArgs[i] = checkerArgStrings[i];
+            }
+            try {
+                @SuppressWarnings("unchecked")
+                Class<? extends Checker> checkerClass = (Class<? extends Checker>) DatasetsConfig.class.getClassLoader()
+                        .loadClass(checkerClassName);
+                Checker checker = checkerClass.newInstance();
+                if (!checker.check(checkerArgs)) {
+                    LOGGER.info("Check for dataset \"{}\" failed. It won't be available.", name);
+                    return null;
+                }
+            } catch (Exception e) {
+                LOGGER.error("Error while trying to run check for dataset \"" + name + "\". Returning null.", e);
+            }
+        }
 
         // return new DatasetConfigurationImpl(name, cacheable, constructor,
         // constructorArgs, type, entityCheckerManager);

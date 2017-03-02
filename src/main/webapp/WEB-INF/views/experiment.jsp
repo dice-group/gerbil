@@ -1,6 +1,7 @@
 <%@page import="org.aksw.gerbil.web.ExperimentTaskStateHelper"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%
 	request.setAttribute("additionalResultsCount",
@@ -53,10 +54,27 @@
 	<c:if test="${not empty tasks}">
 		<c:set var="hasSubTasks" value="false" />
 		<c:forEach var="task" items="${tasks}">
+				
 			<c:if test="${task.numberOfSubTasks > 0}">
 				<c:set var="hasSubTasks" value="true" />
 			</c:if>
 		</c:forEach>
+		<c:choose>
+    		<c:when test="${workers<currentExperimentID && currentState!=0}" >
+				<font color="red">
+				Experiments could take a while
+				<br>
+				<c:out value="${currentExperimentID} Experiments before yours on ${workers} Worker"/>
+				</font>
+    		</c:when>
+    		<c:when test="${currentState}==0" >
+    			Your Experiments finished			
+    		</c:when>
+    		<c:otherwise>
+    		</c:otherwise>
+		</c:choose>
+
+				<br>
 	Experiment URI: <span id="experimentUri"></span>
 		<br>
 	Type: <c:out value="${tasks[0].type.label}" />

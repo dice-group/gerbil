@@ -33,12 +33,13 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.apache.commons.collections.ListUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 
-public class SpotlightAnnotator extends AbstractHttpBasedAnnotator
-        implements OKETask1Annotator, EntityRecognizer, D2KBAnnotator, A2KBAnnotator, EntityTyper {
+public class SpotlightAnnotator extends AbstractHttpBasedAnnotator implements OKETask1Annotator, EntityRecognizer,
+        D2KBAnnotator, A2KBAnnotator, EntityTyper {
 
     private static final String SERVICE_URL_PARAM_KEY = "org.aksw.gerbil.annotator.impl.spotlight.SpotlightAnnotator.ServieURL";
 
@@ -90,6 +91,17 @@ public class SpotlightAnnotator extends AbstractHttpBasedAnnotator
         return client.annotate(document);
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
+        List<TypedNamedEntity> list = client.annotate(document);
+        if (list != null) {
+            return (List<TypedSpan>) ListUtils.typedList(list, TypedSpan.class);
+        } else {
+            return null;
+        }
+    }
+
     protected HttpPost createPostRequest(String url) {
         return super.createPostRequest(url);
     }
@@ -98,7 +110,7 @@ public class SpotlightAnnotator extends AbstractHttpBasedAnnotator
     protected void closeRequest(HttpUriRequest request) {
         super.closeRequest(request);
     }
-    
+
     @Override
     public CloseableHttpClient getClient() {
         return super.getClient();

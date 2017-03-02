@@ -47,8 +47,8 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
-        implements OKETask2Annotator, OKETask1Annotator, A2KBAnnotator, EntityTyper {
+public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator implements OKETask2Annotator,
+        OKETask1Annotator, A2KBAnnotator, EntityTyper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NIFBasedAnnotatorWebservice.class);
 
@@ -102,6 +102,11 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator
     @Override
     public List<TypedNamedEntity> performTask2(Document document) throws GerbilException {
         return performAnnotation(document, TypedNamedEntity.class);
+    }
+
+    @Override
+    public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
+        return performAnnotation(document, TypedSpan.class);
     }
 
     protected <T extends Marking> List<T> performAnnotation(Document document, Class<T> resultClass)

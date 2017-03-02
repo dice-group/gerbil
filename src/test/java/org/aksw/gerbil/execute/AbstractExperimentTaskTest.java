@@ -61,7 +61,7 @@ public abstract class AbstractExperimentTaskTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Assert.assertNull("Got an exception: " + testError, testError);
+        Assert.assertNull("Got an exception: " + testError + " " + configuration.toString(), testError);
         SameAsRetrieverSingleton4Tests.storeCache();
     }
 
@@ -123,13 +123,15 @@ public abstract class AbstractExperimentTaskTest {
         protected void testTaskResults(Task task) {
             Assert.assertEquals(ExperimentDAO.TASK_FINISHED, experimentDAO.getExperimentState(experimentTaskId));
             ExperimentTaskResult result = experimentDAO.getTaskResult(experimentTaskId);
-            Assert.assertEquals(expectedResults[MACRO_PREC_INDEX], result.getMacroPrecision(), DELTA);
-            Assert.assertEquals(expectedResults[MACRO_REC_INDEX], result.getMacroRecall(), DELTA);
-            Assert.assertEquals(expectedResults[MACRO_F1_INDEX], result.getMacroF1Measure(), DELTA);
-            Assert.assertEquals(expectedResults[MICRO_PREC_INDEX], result.getMicroPrecision(), DELTA);
-            Assert.assertEquals(expectedResults[MICRO_REC_INDEX], result.getMicroRecall(), DELTA);
-            Assert.assertEquals(expectedResults[MICRO_F1_INDEX], result.getMicroF1Measure(), DELTA);
-            Assert.assertEquals(expectedResults[ERROR_COUNT_INDEX], result.getErrorCount(), DELTA);
+            String errorMsg = "Error for system " + result.annotator + " on dataset " + result.dataset
+                    + " in Experiment " + result.type.getName();
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_PREC_INDEX], result.getMacroPrecision(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_REC_INDEX], result.getMacroRecall(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_F1_INDEX], result.getMacroF1Measure(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_PREC_INDEX], result.getMicroPrecision(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_REC_INDEX], result.getMicroRecall(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_F1_INDEX], result.getMicroF1Measure(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[ERROR_COUNT_INDEX], result.getErrorCount(), DELTA);
         }
     }
 }

@@ -1,0 +1,59 @@
+<corpus lang="en">
+	<text id="d000" source="Senseval2">
+		<sentence id="d000.s000">
+			<wf lemma="" pos="DT">The</wf>
+			<instance id="d000.s000.t001" lemma="art" pos="NN">art</instance>
+			<wf lemma="" pos="IN">of</wf>
+			<instance id="d000.s000.t003" lemma="change_ringing" pos="NN">change-ringing
+			</instance>
+			<instance id="d000.s000.t004" lemma="be" pos="VBZ">is</instance>
+			<instance id="d000.s000.t005" lemma="peculiar" pos="JJ">peculiar
+			</instance>
+			<wf lemma="" pos="TO">to</wf>
+			<wf lemma="" pos="DT">the</wf>
+			<instance id="d000.s000.t008" lemma="english" pos="NNS">English
+			</instance>
+			<wf lemma="" pos=",">,</wf>
+			<wf lemma="" pos="CC">and</wf>
+			<wf lemma="" pos=",">,</wf>
+			<wf lemma="" pos="IN">like</wf>
+			<instance id="d000.s000.t013" lemma="most" pos="JJS">most
+			</instance>
+			<instance id="d000.s000.t014" lemma="english" pos="JJ">English
+			</instance>
+			<instance id="d000.s000.t015" lemma="peculiarity" pos="NNS">peculiarities
+			</instance>
+			<wf lemma="" pos=",">,</wf>
+			<instance id="d000.s000.t017" lemma="unintelligible" pos="JJ">unintelligible
+			</instance>
+			<wf lemma="" pos="TO">to</wf>
+			<wf lemma="" pos="DT">the</wf>
+			<instance id="d000.s000.t020" lemma="rest" pos="NN">rest
+			</instance>
+			<wf lemma="" pos="IN">of</wf>
+			<wf lemma="" pos="DT">the</wf>
+			<instance id="d000.s000.t023" lemma="world" pos="NN">world
+			</instance>
+			<wf lemma="" pos=".">.</wf>
+		</sentence>
+		<sentence id="d000.s001">
+			<wf lemma="" pos=":">--</wf>
+			<wf lemma="" pos="NNP">Dorothy</wf>
+			<wf lemma="" pos="NNP">L.</wf>
+			<wf lemma="" pos="NNP">Sayers</wf>
+			<wf lemma="" pos=",">,</wf>
+			<wf lemma="" pos="``">``</wf>
+			<wf lemma="" pos="DT">The</wf>
+			<wf lemma="" pos="CD">Nine</wf>
+			<instance id="d000.s001.t008" lemma="tailor" pos="NNP">Tailors
+			</instance>
+			<wf lemma="" pos="``">``</wf>
+		</sentence>
+		<sentence id="d000.s002">
+			<wf lemma="" pos="NNP">ASLACTON</wf>
+			<wf lemma="" pos=",">,</wf>
+			<instance id="d000.s002.t002" lemma="england" pos="NNP">England
+			</instance>
+		</sentence>
+	</text>
+</corpus>

@@ -3,8 +3,9 @@ language: java
 before_install:
   - cp src/main/properties/log4j.properties src/test/resources/log4j.properties
   - mkdir -p "gerbil_data"
-  - curl --retry 4 -L -o "gerbil_data/gerbil_data.zip" "https://github.com/AKSW/gerbil/releases/download/v1.2.4/gerbil_data.zip"
+  - curl --retry 4 -L -o "gerbil_data/gerbil_data.zip" "https://github.com/AKSW/gerbil/releases/download/v1.2.5/gerbil_data.zip"
   - unzip "gerbil_data/gerbil_data.zip"
+  - touch src/main/properties/gerbil_keys.properties
 install:
   - mvn clean compile -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 script:

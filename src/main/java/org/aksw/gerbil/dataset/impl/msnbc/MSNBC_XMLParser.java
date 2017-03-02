@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.dataset.impl.msnbc;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.apache.commons.io.IOUtils;
 import org.apache.xerces.jaxp.SAXParserFactoryImpl;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class MSNBC_XMLParser {
@@ -44,18 +46,20 @@ public class MSNBC_XMLParser {
     }
 
     public MSNBC_Result parseAnnotationsFile(File file) throws IOException, SAXException {
-        FileInputStream fin = null;
+        InputStream is = null;
         try {
-            fin = new FileInputStream(file);
-            return parseAnnotationsStream(fin);
+            is = new BufferedInputStream(new FileInputStream(file));
+            return parseAnnotationsStream(is);
         } finally {
-            IOUtils.closeQuietly(fin);
+            IOUtils.closeQuietly(is);
         }
     }
 
     public MSNBC_Result parseAnnotationsStream(InputStream is) throws IOException, SAXException {
         MSNBC_XMLHandler handler = new MSNBC_XMLHandler();
-        parser.parse(is, handler);
+        InputSource is2 = new InputSource(is);
+        is2.setEncoding("UTF-8");
+        parser.parse(is2, handler);
         return handler;
     }
 }
