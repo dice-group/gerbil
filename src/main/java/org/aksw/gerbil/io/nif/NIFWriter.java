@@ -92,7 +92,7 @@ public interface NIFWriter {
     /**
      * Sets the {@link DocumentListWriter} used by this parser.
      * 
-     * @param listParser
+     * @param listWriter
      *            the {@link DocumentListWriter} used by this parser
      */
     public void setDocumentListWriter(DocumentListWriter listWriter);
