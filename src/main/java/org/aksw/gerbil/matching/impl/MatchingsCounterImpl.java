@@ -62,7 +62,11 @@ public class MatchingsCounterImpl<T extends Marking> implements MatchingsCounter
         // The remaining elements are false positives
         documentCounts.falsePositives = (int) (annotatorResult.size() - alreadyUsedResults.cardinality());
         if (printDebugMsg && LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Found {} false positives.", documentCounts.falsePositives);
+            for (int i = 0; i < annotatorResult.size(); ++i) {
+                if (!alreadyUsedResults.get(i)) {
+                    LOGGER.debug("Found a false positive ({}).", annotatorResult.get(i));
+                }
+            }
         }
         return documentCounts;
     }

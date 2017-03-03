@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.semantic.kb;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,15 +32,15 @@ public class WhiteListBasedUriKBClassifier extends AbstractWhiteListBasedUriKBCl
     private static final Logger LOGGER = LoggerFactory.getLogger(WhiteListBasedUriKBClassifier.class);
 
     public static WhiteListBasedUriKBClassifier create(File file) {
-        FileInputStream fin = null;
+        InputStream is = null;
         try {
-            fin = new FileInputStream(file);
-            return create(fin);
+            is = new BufferedInputStream(new FileInputStream(file));
+            return create(is);
         } catch (IOException e) {
             LOGGER.error("Exception while trying to read knowledge base namespaces.", e);
             return null;
         } finally {
-            IOUtils.closeQuietly(fin);
+            IOUtils.closeQuietly(is);
         }
     }
 

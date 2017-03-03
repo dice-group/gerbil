@@ -27,6 +27,7 @@ import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
+import org.aksw.gerbil.annotator.RT2KBAnnotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
@@ -52,8 +53,8 @@ import org.slf4j.LoggerFactory;
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
  */
-public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorDecorator
-        implements Evaluator<Marking>, ErrorCounter {
+public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorDecorator implements Evaluator<Marking>,
+        ErrorCounter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorCountingAnnotatorDecorator.class);
 
@@ -82,6 +83,8 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             return new ErrorCountingOKETask1Annotator((OKETask1Annotator) annotator, maxErrors);
         case OKE_Task2:
             return new ErrorCountingOKETask2Annotator((OKETask2Annotator) annotator, maxErrors);
+        case RT2KB:
+            return new ErrorCountingRT2KBAnnotator((RT2KBAnnotator) annotator, maxErrors);
         case Rc2KB:
             break;
         case Sa2KB:
@@ -125,8 +128,8 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
-    private static class ErrorCountingEntityRecognizer extends ErrorCountingAnnotatorDecorator
-            implements EntityRecognizer {
+    private static class ErrorCountingEntityRecognizer extends ErrorCountingAnnotatorDecorator implements
+            EntityRecognizer {
 
         public ErrorCountingEntityRecognizer(EntityRecognizer decoratedAnnotator, int maxErrors) {
             super(decoratedAnnotator, maxErrors);
@@ -173,8 +176,24 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
-    private static class ErrorCountingOKETask1Annotator extends ErrorCountingA2KBAnnotator
-            implements OKETask1Annotator {
+    private static class ErrorCountingRT2KBAnnotator extends ErrorCountingEntityRecognizer implements RT2KBAnnotator {
+
+        protected ErrorCountingRT2KBAnnotator(RT2KBAnnotator decoratedAnnotator, int maxErrors) {
+            super(decoratedAnnotator, maxErrors);
+        }
+
+        @Override
+        public List<TypedSpan> performTyping(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performTyping(this, document);
+        }
+
+        @Override
+        public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performRT2KBTask(this, document);
+        }
+    }
+
+    private static class ErrorCountingOKETask1Annotator extends ErrorCountingA2KBAnnotator implements OKETask1Annotator {
 
         protected ErrorCountingOKETask1Annotator(OKETask1Annotator decoratedAnnotator, int maxErrors) {
             super(decoratedAnnotator, maxErrors);
@@ -186,13 +205,18 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
 
         @Override
+        public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performRT2KBTask(this, document);
+        }
+
+        @Override
         public List<TypedNamedEntity> performTask1(Document document) throws GerbilException {
             return ErrorCountingAnnotatorDecorator.performOKETask1(this, document);
         }
     }
 
-    private static class ErrorCountingOKETask2Annotator extends ErrorCountingAnnotatorDecorator
-            implements OKETask2Annotator {
+    private static class ErrorCountingOKETask2Annotator extends ErrorCountingAnnotatorDecorator implements
+            OKETask2Annotator {
 
         protected ErrorCountingOKETask2Annotator(OKETask2Annotator decoratedAnnotator, int maxErrors) {
             super(decoratedAnnotator, maxErrors);
@@ -269,8 +293,8 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         return result;
     }
 
-    protected static List<MeaningSpan> performExtraction(ErrorCountingAnnotatorDecorator errorCounter,
-            Document document) throws GerbilException {
+    protected static List<MeaningSpan> performExtraction(ErrorCountingAnnotatorDecorator errorCounter, Document document)
+            throws GerbilException {
         List<MeaningSpan> result = null;
         try {
             result = ((A2KBAnnotator) errorCounter.getDecoratedAnnotator()).performA2KBTask(document);
@@ -377,6 +401,29 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             }
             errorCounter.increaseErrorCount();
             return new ArrayList<TypedNamedEntity>(0);
+        }
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
+            logResult(result, errorCounter.getName(), "TypedNamedEntity");
+        }
+        return result;
+    }
+
+    public static List<TypedSpan> performRT2KBTask(ErrorCountingAnnotatorDecorator errorCounter, Document document)
+            throws GerbilException {
+        List<TypedSpan> result = null;
+        try {
+            result = ((RT2KBAnnotator) errorCounter.getDecoratedAnnotator()).performRT2KBTask(document);
+        } catch (Exception e) {
+            if (errorCounter.getErrorCount() == 0) {
+                // Log only the first exception completely
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + ")", e);
+            } else {
+                // Log only the Exception message without the stack trace
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + "): "
+                        + e.getLocalizedMessage());
+            }
+            errorCounter.increaseErrorCount();
+            return new ArrayList<TypedSpan>(0);
         }
         if (printDebugMsg && LOGGER.isDebugEnabled()) {
             logResult(result, errorCounter.getName(), "TypedNamedEntity");

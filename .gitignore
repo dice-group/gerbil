@@ -11,3 +11,5 @@ gerbil_data
 google*.html
 export
 datadump.nt
+indexes
+dependency-reduced-pom.xml

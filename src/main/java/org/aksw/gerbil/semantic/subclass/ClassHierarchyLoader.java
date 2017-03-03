@@ -16,10 +16,12 @@
  */
 package org.aksw.gerbil.semantic.subclass;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -41,8 +43,8 @@ import org.apache.jena.vocabulary.RDFS;
 
 public class ClassHierarchyLoader {
 
-    private static final Set<Property> ALLOWED_PROPERTIES = new HashSet<Property>(Arrays.asList(RDF.type,
-            RDFS.subClassOf));
+    private static final Set<Property> ALLOWED_PROPERTIES = new HashSet<Property>(
+            Arrays.asList(RDF.type, RDFS.subClassOf));
 
     private RDFReaderFactoryRIOT factory = new RDFReaderFactoryRIOT();
 
@@ -54,13 +56,13 @@ public class ClassHierarchyLoader {
     }
 
     protected void readClassHierarchy(File file, String rdfLang, String baseUri, Model model) throws IOException {
-        FileInputStream fin = null;
+        InputStream is = null;
         RDFReader rdfReader = factory.getReader(rdfLang);
         try {
-            fin = new FileInputStream(file);
-            rdfReader.read(model, fin, baseUri);
+            is = new BufferedInputStream(new FileInputStream(file));
+            rdfReader.read(model, is, baseUri);
         } finally {
-            IOUtils.closeQuietly(fin);
+            IOUtils.closeQuietly(is);
         }
     }
 

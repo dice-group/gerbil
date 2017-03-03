@@ -29,6 +29,7 @@ import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
+import org.aksw.gerbil.annotator.RT2KBAnnotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -73,6 +74,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
             return new SingleInstanceSecuringOKETask1Annotator((OKETask1Annotator) annotator);
         case OKE_Task2:
             return new SingleInstanceSecuringOKETask2Annotator((OKETask2Annotator) annotator);
+        case RT2KB:
+            return new SingleInstanceSecuringRT2KBAnnotator((RT2KBAnnotator) annotator);
         case Rc2KB:
             break;
         case Sa2KB:
@@ -86,8 +89,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         return null;
     }
 
-    private static class SingleInstanceSecuringC2KBAnnotator extends SingleInstanceSecuringAnnotatorDecorator
-            implements C2KBAnnotator {
+    private static class SingleInstanceSecuringC2KBAnnotator extends SingleInstanceSecuringAnnotatorDecorator implements
+            C2KBAnnotator {
 
         public SingleInstanceSecuringC2KBAnnotator(C2KBAnnotator decoratedAnnotator) {
             super(decoratedAnnotator);
@@ -99,8 +102,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         }
     }
 
-    private static class SingleInstanceSecuringD2KBAnnotator extends SingleInstanceSecuringAnnotatorDecorator
-            implements D2KBAnnotator {
+    private static class SingleInstanceSecuringD2KBAnnotator extends SingleInstanceSecuringAnnotatorDecorator implements
+            D2KBAnnotator {
 
         public SingleInstanceSecuringD2KBAnnotator(D2KBAnnotator decoratedAnnotator) {
             super(decoratedAnnotator);
@@ -125,8 +128,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         }
     }
 
-    private static class SingleInstanceSecuringA2KBAnnotator extends SingleInstanceSecuringD2KBAnnotator
-            implements A2KBAnnotator {
+    private static class SingleInstanceSecuringA2KBAnnotator extends SingleInstanceSecuringD2KBAnnotator implements
+            A2KBAnnotator {
 
         public SingleInstanceSecuringA2KBAnnotator(A2KBAnnotator decoratedAnnotator) {
             super(decoratedAnnotator);
@@ -149,8 +152,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 
     }
 
-    private static class SingleInstanceSecuringEntityTyper extends SingleInstanceSecuringAnnotatorDecorator
-            implements EntityTyper {
+    private static class SingleInstanceSecuringEntityTyper extends SingleInstanceSecuringAnnotatorDecorator implements
+            EntityTyper {
 
         protected SingleInstanceSecuringEntityTyper(EntityTyper decoratedAnnotator) {
             super(decoratedAnnotator);
@@ -162,8 +165,26 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         }
     }
 
-    private static class SingleInstanceSecuringOKETask1Annotator extends SingleInstanceSecuringA2KBAnnotator
-            implements OKETask1Annotator {
+    private static class SingleInstanceSecuringRT2KBAnnotator extends SingleInstanceSecuringEntityRecognizer implements
+            RT2KBAnnotator {
+
+        protected SingleInstanceSecuringRT2KBAnnotator(RT2KBAnnotator decoratedAnnotator) {
+            super(decoratedAnnotator);
+        }
+
+        @Override
+        public List<TypedSpan> performTyping(Document document) throws GerbilException {
+            return SingleInstanceSecuringAnnotatorDecorator.performTyping(this, document);
+        }
+
+        @Override
+        public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
+            return SingleInstanceSecuringAnnotatorDecorator.performRT2KBTask(this, document);
+        }
+    }
+
+    private static class SingleInstanceSecuringOKETask1Annotator extends SingleInstanceSecuringA2KBAnnotator implements
+            OKETask1Annotator {
 
         protected SingleInstanceSecuringOKETask1Annotator(OKETask1Annotator decoratedAnnotator) {
             super(decoratedAnnotator);
@@ -172,6 +193,11 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         @Override
         public List<TypedSpan> performTyping(Document document) throws GerbilException {
             return SingleInstanceSecuringAnnotatorDecorator.performTyping(this, document);
+        }
+
+        @Override
+        public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
+            return SingleInstanceSecuringAnnotatorDecorator.performRT2KBTask(this, document);
         }
 
         @Override
@@ -247,8 +273,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         return result;
     }
 
-    protected static List<TypedSpan> performTyping(SingleInstanceSecuringAnnotatorDecorator decorator,
-            Document document) throws GerbilException {
+    protected static List<TypedSpan> performTyping(SingleInstanceSecuringAnnotatorDecorator decorator, Document document)
+            throws GerbilException {
         List<TypedSpan> result = null;
         try {
             decorator.semaphore.acquire();
@@ -265,8 +291,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         return result;
     }
 
-    protected static List<Span> performRecognition(SingleInstanceSecuringAnnotatorDecorator decorator,
-            Document document) throws GerbilException {
+    protected static List<Span> performRecognition(SingleInstanceSecuringAnnotatorDecorator decorator, Document document)
+            throws GerbilException {
         List<Span> result = null;
         try {
             decorator.semaphore.acquire();
@@ -313,6 +339,24 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         }
         try {
             result = ((OKETask2Annotator) decorator.getDecoratedAnnotator()).performTask2(document);
+        } finally {
+            decorator.semaphore.release();
+        }
+        return result;
+    }
+
+    protected static List<TypedSpan> performRT2KBTask(SingleInstanceSecuringAnnotatorDecorator decorator,
+            Document document) throws GerbilException {
+        List<TypedSpan> result = null;
+        try {
+            decorator.semaphore.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.error("Interrupted while waiting for the Annotator's semaphore.", e);
+            throw new GerbilException("Interrupted while waiting for the Annotator's semaphore.", e,
+                    ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
+        try {
+            result = ((RT2KBAnnotator) decorator.getDecoratedAnnotator()).performRT2KBTask(document);
         } finally {
             decorator.semaphore.release();
         }

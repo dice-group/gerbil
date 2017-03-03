@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.web;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,8 +47,7 @@ import org.springframework.web.servlet.ModelAndView;
 @PropertySource("gerbil.properties")
 public class FileUploadController {
 
-    private static final transient Logger logger = LoggerFactory
-            .getLogger(FileUploadController.class);
+    private static final transient Logger logger = LoggerFactory.getLogger(FileUploadController.class);
     @Value("${org.aksw.gerbil.UploadPath}")
     private String path;
 
@@ -60,9 +60,8 @@ public class FileUploadController {
     }
 
     @RequestMapping(value = "upload", method = RequestMethod.POST)
-    public @ResponseBody
-    ResponseEntity<UploadFileContainer> upload(
-            MultipartHttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody ResponseEntity<UploadFileContainer> upload(MultipartHttpServletRequest request,
+            HttpServletResponse response) {
 
         if (path == null) {
             logger.error("Path must be not null");
@@ -84,9 +83,9 @@ public class FileUploadController {
             try {
                 fileContainer.setBytes(mpf.getBytes());
                 createFolderIfNotExists();
-                FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(path
-                        + mpf.getOriginalFilename()));
-
+                FileCopyUtils.copy(mpf.getBytes(),
+                        new BufferedOutputStream(new FileOutputStream(path + mpf.getOriginalFilename())));
+                // the copy method closed the output stream
             } catch (IOException e) {
                 logger.error("Error during file upload", e);
                 fileContainer.setError(e.getMessage());
@@ -95,8 +94,7 @@ public class FileUploadController {
         }
 
         UploadFileContainer uploadFileContainer = new UploadFileContainer(files);
-        return new ResponseEntity<UploadFileContainer>(uploadFileContainer,
-                HttpStatus.OK);
+        return new ResponseEntity<UploadFileContainer>(uploadFileContainer, HttpStatus.OK);
     }
 
     private void createFolderIfNotExists() {

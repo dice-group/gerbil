@@ -22,7 +22,7 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 
-public interface OKETask1Annotator extends A2KBAnnotator, EntityTyper {
+public interface OKETask1Annotator extends A2KBAnnotator, RT2KBAnnotator {
 
     public List<TypedNamedEntity> performTask1(Document document) throws GerbilException;
 }

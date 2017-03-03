@@ -16,7 +16,6 @@
  */
 package org.aksw.gerbil.tools;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.List;
@@ -25,10 +24,13 @@ import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.web.config.DatasetsConfig;
+import org.aksw.gerbil.web.config.RootConfig;
 import org.apache.commons.io.IOUtils;
-import org.apache.lucene.analysis.WhitespaceTokenizer;
+import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +48,7 @@ public class DatasetAnalyzer {
         try {
             output = new PrintStream("datasetAnalyzation.log");
             output.println(
-                    "name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
+                    "name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, numberOfEEs, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
             DatasetAnalyzer analyzer = new DatasetAnalyzer(output);
             for (DatasetConfiguration config : datasetConfigs) {
                 try {
@@ -63,6 +65,7 @@ public class DatasetAnalyzer {
     }
 
     private PrintStream output;
+    private UriKBClassifier classifier = RootConfig.createDefaultUriKBClassifier();
 
     public DatasetAnalyzer(PrintStream output) {
         this.output = output;
@@ -71,24 +74,32 @@ public class DatasetAnalyzer {
     public void analyzeDataset(DatasetConfiguration config) throws GerbilException {
         if (config.isApplicableForExperiment(ExperimentType.D2KB)) {
             analyze(config, ExperimentType.D2KB);
+        } else if (config.isApplicableForExperiment(ExperimentType.ETyping)) {
+            analyze(config, ExperimentType.ETyping);
         } else if (config.isApplicableForExperiment(ExperimentType.OKE_Task2)) {
             analyze(config, ExperimentType.OKE_Task2);
         } else if (config.isApplicableForExperiment(ExperimentType.C2KB)) {
             analyze(config, ExperimentType.C2KB);
+        } else if (config.isApplicableForExperiment(ExperimentType.ERec)) {
+            analyze(config, ExperimentType.ERec);
         } else {
             LOGGER.error("Can not analyze the dataset with the following config: " + config.toString());
         }
     }
 
     private int countTokensInText(String text) {
-        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer(new StringReader(text));
+        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer();
+        tokenizer.setReader(new StringReader(text));
         int tokens = 0;
         try {
+            tokenizer.reset();
             while (tokenizer.incrementToken()) {
                 ++tokens;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("Error while tokenizing text. Returning.", e);
+        } finally {
+            IOUtils.closeQuietly(tokenizer);
         }
         return tokens;
     }
@@ -103,9 +114,15 @@ public class DatasetAnalyzer {
         List<Document> documents = dataset.getInstances();
         int annotationsSum = 0;
         int tokensSum = 0;
+        int eeCount = 0;
         for (Document document : documents) {
             annotationsSum += document.getMarkings().size();
             tokensSum += countTokensInText(document.getText());
+            for (Meaning meaning : document.getMarkings(Meaning.class)) {
+                if (!classifier.containsKBUri(meaning.getUris())) {
+                    ++eeCount;
+                }
+            }
         }
         // average entities per document
         output.print((double) annotationsSum / (double) documents.size());
@@ -122,7 +139,9 @@ public class DatasetAnalyzer {
         // number of entities
         output.print(annotationsSum);
         output.print(',');
-        // output.print(" tokens=" + tokensSum);
+        // number of EEs
+        output.print(eeCount);
+        output.print(',');
 
         output.println();
     }

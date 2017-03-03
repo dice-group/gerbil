@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.semantic.sameas.impl.cache;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -293,11 +294,9 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
         if (!cacheFile.exists() || cacheFile.isDirectory()) {
             return null;
         }
-        FileInputStream fin = null;
         ObjectInputStream oin = null;
         try {
-            fin = new FileInputStream(cacheFile);
-            oin = new ObjectInputStream(fin);
+            oin = new ObjectInputStream(new BufferedInputStream(new FileInputStream(cacheFile)));
             // first, read the number of URIs
             int count = oin.readInt();
             String uri;
@@ -323,7 +322,6 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
             LOGGER.error("Exception while reading cache file.", e);
         } finally {
             IOUtils.closeQuietly(oin);
-            IOUtils.closeQuietly(fin);
         }
         return null;
     }

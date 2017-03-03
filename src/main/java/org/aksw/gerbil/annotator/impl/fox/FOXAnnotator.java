@@ -107,6 +107,11 @@ public class FOXAnnotator extends AbstractHttpBasedAnnotator implements OKETask1
         return requestAnnotations(document).getMarkings(TypedNamedEntity.class);
     }
 
+    @Override
+    public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
+        return requestAnnotations(document).getMarkings(TypedSpan.class);
+    }
+
     protected Document requestAnnotations(Document document) throws GerbilException {
         Document resultDoc = new DocumentImpl(document.getText(), document.getDocumentURI());
         HttpEntity entity = new StringEntity(new JSONObject().put("input", document.getText()).put("type", "text")

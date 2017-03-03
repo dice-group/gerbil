@@ -27,6 +27,7 @@ import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
+import org.aksw.gerbil.annotator.RT2KBAnnotator;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
@@ -113,11 +114,11 @@ public class ExperimentTask implements Task {
             }
             Annotator decoratedAnnotator = annotator;
             // Add decroatoring evaluators
-            TimeMeasuringAnnotatorDecorator timeMeasurer = TimeMeasuringAnnotatorDecorator
-                    .createDecorator(configuration.type, decoratedAnnotator);
+            TimeMeasuringAnnotatorDecorator timeMeasurer = TimeMeasuringAnnotatorDecorator.createDecorator(
+                    configuration.type, decoratedAnnotator);
             decoratedAnnotator = timeMeasurer;
-            ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator
-                    .createDecorator(configuration.type, decoratedAnnotator, dataset.size());
+            ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator.createDecorator(
+                    configuration.type, decoratedAnnotator, dataset.size());
             decoratedAnnotator = errorCounter;
             decoratedAnnotator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type,
                     decoratedAnnotator);
@@ -427,6 +428,28 @@ public class ExperimentTask implements Task {
             }
             break;
         }
+        case RT2KB: {
+            try {
+                List<List<TypedSpan>> results = new ArrayList<List<TypedSpan>>(dataset.size());
+                List<List<TypedSpan>> goldStandard = new ArrayList<List<TypedSpan>>(dataset.size());
+                RT2KBAnnotator extractor = (RT2KBAnnotator) annotator;
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a single text
+                    results.add(extractor.performRT2KBTask(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings(TypedSpan.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
         case OKE_Task1: {
             try {
                 List<List<TypedNamedEntity>> results = new ArrayList<List<TypedNamedEntity>>(dataset.size());
@@ -435,8 +458,8 @@ public class ExperimentTask implements Task {
 
                 for (Document document : dataset.getInstances()) {
                     // reduce the document to a text and a list of Spans
-                    results.add(
-                            okeTask1Annotator.performTask1(DocumentInformationReducer.reduceToTextAndSpans(document)));
+                    results.add(okeTask1Annotator.performTask1(DocumentInformationReducer
+                            .reduceToTextAndSpans(document)));
                     goldStandard.add(document.getMarkings(TypedNamedEntity.class));
                     taskState.increaseExperimentStepCount();
                 }
@@ -460,8 +483,8 @@ public class ExperimentTask implements Task {
 
                 for (Document document : dataset.getInstances()) {
                     // reduce the document to a text and a list of Spans
-                    results.add(okeTask2Annotator
-                            .performTask2(DocumentInformationReducer.reduceToTextAndEntities(document)));
+                    results.add(okeTask2Annotator.performTask2(DocumentInformationReducer
+                            .reduceToTextAndEntities(document)));
                     goldStandard.add(document.getMarkings(TypedNamedEntity.class));
                     taskState.increaseExperimentStepCount();
                 }

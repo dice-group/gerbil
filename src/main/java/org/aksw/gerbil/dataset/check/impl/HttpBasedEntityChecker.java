@@ -52,9 +52,10 @@ public class HttpBasedEntityChecker extends AbstractHttpRequestEmitter implement
         } catch (IllegalArgumentException e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.error("Exception while creating HTTP request. Returning false.", e);
-            } else {
-                LOGGER.error("Exception while creating HTTP request. Returning false. Exception: "
-                        + e.getLocalizedMessage());
+                // } else {
+                // LOGGER.error("Exception while creating HTTP request.
+                // Returning false. Exception: "
+                // + e.getLocalizedMessage());
             }
             return false;
         }
@@ -66,9 +67,10 @@ public class HttpBasedEntityChecker extends AbstractHttpRequestEmitter implement
         } catch (Exception e) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.error("Exception while sending HTTP request. Returning false.", e);
-            } else {
-                LOGGER.error(
-                        "Exception while sending HTTP request. Returning false. Exception: " + e.getLocalizedMessage());
+                // } else {
+                // LOGGER.error(
+                // "Exception while sending HTTP request. Returning false.
+                // Exception: " + e.getLocalizedMessage());
             }
             return false;
         } finally {
