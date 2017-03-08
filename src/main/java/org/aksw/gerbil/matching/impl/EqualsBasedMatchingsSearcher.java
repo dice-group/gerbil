@@ -33,6 +33,8 @@ public class EqualsBasedMatchingsSearcher<T extends Marking> implements Matching
                     matchings.set(i);
                 }
             }
+            // this is needed to avoid false positives, when the same Element occurs twice
+            matchings.remove(alreadyUsedResults);
         }
         return matchings;
     }
