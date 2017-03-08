@@ -134,7 +134,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
             measures = calculateMeasures(counts[i]);
             avgs[0] += measures[0];
             avgs[1] += measures[1];
-//            avgs[2] += measures[2];
+            avgs[2] += measures[2];
         }
         avgs[0] /= counts.length;
         avgs[1] /= counts.length;
