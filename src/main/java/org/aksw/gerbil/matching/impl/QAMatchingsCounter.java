@@ -2,6 +2,7 @@ package org.aksw.gerbil.matching.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -93,6 +94,16 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
                 resultAnnotations = forceAnnotationCreation((Set<String>) annotatorAnswerSet.getAnswers());
             }
         } else {
+        	//Check if goldStd answer is Annotation and results is Annotation
+        	if(goldStdAnswerSet.getAnswers().iterator().next() instanceof Annotation){
+                goldAnnotations = new ArrayList<Annotation>(((AnswerSet) goldStdAnswerSet).getAnswers());
+                if (annotatorAnswerSet.getAnswers().iterator().next() instanceof Annotation) {
+                    resultAnnotations = new ArrayList<Annotation>(((ResourceAnswerSet) annotatorAnswerSet).getAnswers());
+                } else {
+                    // Force the creation of Annotations
+                    resultAnnotations = forceAnnotationCreation((Set<String>) annotatorAnswerSet.getAnswers());
+                }
+        	}
             goldStrings = (Set<String>) goldStdAnswerSet.getAnswers();
             resultStrings = (Set<String>) annotatorAnswerSet.getAnswers();
         }
