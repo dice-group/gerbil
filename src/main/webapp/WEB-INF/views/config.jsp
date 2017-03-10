@@ -264,15 +264,34 @@
 								<strong>Warning!</strong> Enter a name.
 							</div>
 						</div>
-					</div>
+					</div>	
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<hr />
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-2"></div>
+					<div class="col-md-2 text-right">
+						<label class="control-label" >Language</label>					
+					<a title="(Beta) You can change the language which should be tested (default: en)
+					
+F.e. if you want to use French, type in: fr">
+						<span class="glyphicon glyphicon-question-sign"></span>
+					</a>
+				</div>
+				<div class="col-md-4">
+
 					<div>
-						<span> Set the language (beta)</span>
-						<div>
-							<label for="qLang">language:</label> <input
+						<input
 								class="form-control" type="text" id="qLang" name="qlang"
 								placeholder="Type something: e.g. fr" /> <br>
 					</div>		
 				</div>
+			</div>
 			</div>
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2">
