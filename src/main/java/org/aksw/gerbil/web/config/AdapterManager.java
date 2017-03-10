@@ -166,7 +166,7 @@ public class AdapterManager {
                             new DatasetConfigurationImpl(datasetName, false,
                                     FileBasedQALDDataset.class.getConstructor(String.class, String.class, String.class),
                                     new Object[] { datasetName, uploadedFilesPath + fileName, questionLanguage},
-                                    ExperimentType.QA, null, null, questionLanguage),
+                                    ExperimentType.QA, null, null),
                             type, questionLanguage);
                 } catch (Exception e) {
                     LOGGER.error(
@@ -208,7 +208,7 @@ public class AdapterManager {
                 String uri = uploadedFilesPath + name.substring(brackets[0] + 1, brackets[1]);
                 // remove dataset prefix from the name
                 name = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]) + UPLOADED_DATASET_SUFFIX;
-return new QALDFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever, questionLanguage);
+return new QALDFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
             }
             if (name.startsWith(AF_PREFIX)) {
                 // This describes a QA answer file

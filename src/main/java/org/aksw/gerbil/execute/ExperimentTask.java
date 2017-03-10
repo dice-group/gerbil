@@ -36,6 +36,7 @@ import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
 import org.aksw.gerbil.annotator.impl.qa.FileBasedQALDSystem;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.ResultNameToIdMapping;
+import org.aksw.gerbil.dataset.AbstractDatasetConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.impl.qald.FileBasedQALDDataset;
@@ -111,17 +112,20 @@ public class ExperimentTask implements Task {
             	qLang="en";
             }
             // Create dataset
+            configuration.datasetConfig.setQuestionLanguage(qLang);
             dataset = configuration.datasetConfig.getDataset(configuration.type);
             if (dataset == null) {
                 throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
                         + configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
             }
-            if(dataset instanceof FileBasedQALDDataset){
-            	((FileBasedQALDDataset) dataset).setQuestionLanguage(qLang);
+            //Clean up dataset
+            List<Document> removeDocs = new ArrayList<Document>();
+            for(Document d : dataset.getInstances()){
+            	if(d.getText().isEmpty()){
+            		removeDocs.add(d);
+            	}
             }
-            else if(dataset instanceof QALDDataset){
-            	((QALDDataset) dataset).setQuestionLanguage(qLang);
-            }
+            dataset.getInstances().removeAll(removeDocs);
 
             // Create annotator
      
@@ -131,9 +135,7 @@ public class ExperimentTask implements Task {
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
                         ErrorTypes.ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT);
             }
-//            if(annotator instanceof FileBasedQALDSystem){
-//            	((FileBasedQALDSystem) annotator).setQuestionLanguage(qLang);
-//            }
+            
             Annotator decoratedAnnotator = annotator;
             // Add decroatoring evaluators
             TimeMeasuringAnnotatorDecorator timeMeasurer = TimeMeasuringAnnotatorDecorator

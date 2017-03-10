@@ -36,4 +36,6 @@ public interface DatasetConfiguration extends AdapterConfiguration {
      *             generation
      */
     public Dataset getDataset(ExperimentType experimentType) throws GerbilException;
+    
+    public void setQuestionLanguage(String questionLanguage);
 }

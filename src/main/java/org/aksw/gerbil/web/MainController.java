@@ -164,7 +164,7 @@ public class MainController {
         for (int i = 0; i < jsonDataset.size(); i++) {
             datasets[i] = (String) jsonDataset.get(i);
         }
-        String qLang = configuration.get("qLang").toString();
+        String qLang = configuration.get("questionLanguage").toString();
         if(qLang.isEmpty()){
         	qLang="en";
         }

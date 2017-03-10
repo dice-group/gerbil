@@ -33,4 +33,8 @@ public interface Dataset extends Closeable {
     public List<Document> getInstances();
     
     public void setClosePermitionGranter(ClosePermitionGranter granter);
+    
+    public void setQuestionLanguage(String qLang);
+    
+    public String getQuestionLanguage();
 }

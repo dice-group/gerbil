@@ -25,7 +25,9 @@ public abstract class AbstractDataset implements Dataset {
 
     protected String name;
     protected ClosePermitionGranter granter;
-
+    protected String qLang;
+    
+    
     public AbstractDataset() {
     }
 
@@ -57,5 +59,13 @@ public abstract class AbstractDataset implements Dataset {
 
     protected void performClose() throws IOException {
         // nothing to do
+    }
+    
+    public void setQuestionLanguage(String qLang){
+    	this.qLang = qLang;
+    }
+    
+    public String getQuestionLanguage(){
+    	return qLang;
     }
 }

@@ -342,7 +342,7 @@
 		<dependency>
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>commons</artifactId>
-			<version>0.4.4</version>
+			<version>0.4.5</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.aksw.qa</groupId>
@@ -353,7 +353,7 @@
 		<dependency>
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>datasets</artifactId>
-			<version>0.5.4</version>
+			<version>0.5.5</version>
 		</dependency>
 	</dependencies>
 

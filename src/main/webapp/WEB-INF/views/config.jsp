@@ -227,7 +227,9 @@
 						<label class="control-label" for="datasets">Dataset</label>					
 					<a title="You can 
 1) select multiple of the datasets from the drop-down menu or 
-2) upload a QALD-formatted JSON or XML containing your custom benchmark data.">
+2) upload a QALD-formatted JSON or XML containing your custom benchmark data.
+
+(Beta) Further on you can change the language which should be tested (default: en)">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
 				</div>
@@ -263,6 +265,13 @@
 							</div>
 						</div>
 					</div>
+					<div>
+						<span> Set the language (beta)</span>
+						<div>
+							<label for="qLang">language:</label> <input
+								class="form-control" type="text" id="qLang" name="qlang"
+								placeholder="Type something: e.g. fr" /> <br>
+					</div>		
 				</div>
 			</div>
 			<div class="row">
@@ -484,6 +493,7 @@
 			var dataset = [];
 			addToList(dataset, datasetMultiselect);
 			addToList(dataset, $("#datasetList li span.li_content"), "NIFDS_");
+			var qLang = $("#qLang").val();
 			var answerFiles = [];
 			addToList(answerFiles, $("#answerFileList li span.li_content"),
 					"AF_");
@@ -496,6 +506,7 @@
 			data.annotator = annotator;
 			data.dataset = dataset;
 			data.answerFiles = answerFiles;
+			data.questionLanguage = qLang;
 			$
 					.ajax('${execute}', {
 						data : {

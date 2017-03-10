@@ -32,13 +32,18 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
 
     protected EntityCheckerManager entityCheckerManager;
     protected SameAsRetriever globalRetriever;
-
+    protected String questionLang;
+    
     public AbstractDatasetConfiguration(String datasetName, boolean couldBeCached,
             ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
             SameAsRetriever globalRetriever) {
         super(datasetName, couldBeCached, applicableForExperiment);
         this.entityCheckerManager = entityCheckerManager;
         this.globalRetriever = globalRetriever;
+    }
+    
+    public void setQuestionLang(String questionLang){
+    	this.questionLang = questionLang;
     }
 
     @Override
@@ -57,6 +62,7 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
 
     protected Dataset getPreparedDataset() throws Exception {
         Dataset instance = loadDataset();
+        instance.setQuestionLanguage(questionLang);
         // If this dataset should be initialized
         if (instance instanceof InitializableDataset) {
             ((InitializableDataset) instance).init();
@@ -82,6 +88,10 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
         return instance;
     }
 
+    public void setQuestionLanguage(String qLang){
+    	this.questionLang=qLang;
+    }
+    
     protected abstract Dataset loadDataset() throws Exception;
 
 }

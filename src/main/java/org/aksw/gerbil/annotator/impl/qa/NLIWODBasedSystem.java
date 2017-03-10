@@ -85,7 +85,7 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 				question.setSparqlQuery(replacePrefixes(
 						question.getSparqlQuery(), PrefixMapping.Extended));
 			Document resultDoc = QAUtils.translateQuestion(question,
-					document.getDocumentURI(), questionLang);
+					document.getDocumentURI(), "en");
 			if (resultDoc != null) {
 				return resultDoc.getMarkings();
 			} else {

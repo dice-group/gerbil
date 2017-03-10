@@ -37,6 +37,7 @@ public class QALDFileDatasetConfig extends AbstractDatasetConfiguration {
     @Override
     protected Dataset loadDataset() throws Exception {
         FileBasedQALDDataset dataset = new FileBasedQALDDataset(getName(), file);
+        dataset.setQuestionLanguage(questionLang);
         dataset.init();
         return dataset;
     }
