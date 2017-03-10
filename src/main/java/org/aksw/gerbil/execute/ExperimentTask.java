@@ -33,10 +33,13 @@ import org.aksw.gerbil.annotator.QASystem;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
+import org.aksw.gerbil.annotator.impl.qa.FileBasedQALDSystem;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
+import org.aksw.gerbil.dataset.impl.qald.FileBasedQALDDataset;
+import org.aksw.gerbil.dataset.impl.qald.QALDDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -102,21 +105,35 @@ public class ExperimentTask implements Task {
         Annotator annotator = null;
         Dataset dataset = null;
         try {
-              	
+            String qLang = this.configuration.questionLanguage;
+            if(qLang.isEmpty()){
+            	this.configuration.questionLanguage="en";
+            	qLang="en";
+            }
             // Create dataset
             dataset = configuration.datasetConfig.getDataset(configuration.type);
             if (dataset == null) {
                 throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
                         + configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
             }
+            if(dataset instanceof FileBasedQALDDataset){
+            	((FileBasedQALDDataset) dataset).setQuestionLanguage(qLang);
+            }
+            else if(dataset instanceof QALDDataset){
+            	((QALDDataset) dataset).setQuestionLanguage(qLang);
+            }
 
             // Create annotator
+     
             annotator = (Annotator) configuration.annotatorConfig.getAnnotator(configuration.type);
             if (annotator == null) {
                 throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
                         ErrorTypes.ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT);
             }
+//            if(annotator instanceof FileBasedQALDSystem){
+//            	((FileBasedQALDSystem) annotator).setQuestionLanguage(qLang);
+//            }
             Annotator decoratedAnnotator = annotator;
             // Add decroatoring evaluators
             TimeMeasuringAnnotatorDecorator timeMeasurer = TimeMeasuringAnnotatorDecorator
@@ -484,7 +501,8 @@ public class ExperimentTask implements Task {
                 List<List<Marking>> results = new ArrayList<List<Marking>>(dataset.size());
                 List<List<Marking>> goldStandard = new ArrayList<List<Marking>>(dataset.size());
                 QASystem qaSystem = ((QASystem) annotator);
-                
+                //qaSystem.setQuestionLanguage(configuration.getQuestionLanguage());
+
                 for(AnswersLogger<?> alog : AnswersLoggerContainer.getAnswersLoggers(evaluators)){
                 	alog.setExpID(experimentTaskId);
                 	alog.setSystem(qaSystem.getName());
@@ -498,7 +516,8 @@ public class ExperimentTask implements Task {
                 
                 for (Document document : dataset.getInstances()) {
                     // reduce the document to a text and a list of Spans
-                    results.add(qaSystem.answerQuestion(DocumentInformationReducer.reduceToPlainText(document)));
+                    results.add(qaSystem.answerQuestion(DocumentInformationReducer.reduceToPlainText(document), 
+                    		configuration.getQuestionLanguage()));
                     goldStandard.add(document.getMarkings());
                     taskState.increaseExperimentStepCount();
                     for(AnswersLogger<?> alog : AnswersLoggerContainer.getAnswersLoggers(evaluators)){

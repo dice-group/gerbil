@@ -34,11 +34,13 @@ import org.aksw.gerbil.exceptions.GerbilException;
 public class InstanceListBasedConfigurationImpl extends AbstractAdapterConfiguration implements AnnotatorConfiguration {
 
     protected DatasetConfiguration datasetConfig;
+	protected String questionLang;
 
     public InstanceListBasedConfigurationImpl(String annotatorName, boolean couldBeCached,
-            DatasetConfiguration datasetConfig, ExperimentType applicableForExperiment) {
+            DatasetConfiguration datasetConfig, ExperimentType applicableForExperiment, String questionLang) {
         super(annotatorName, couldBeCached, applicableForExperiment);
         this.datasetConfig = datasetConfig;
+        this.questionLang = questionLang;
     }
 
     @Override
@@ -67,7 +69,7 @@ public class InstanceListBasedConfigurationImpl extends AbstractAdapterConfigura
         if (dataset == null) {
             return null;
         }
-        return new InstanceListBasedAnnotator(getName(), dataset.getInstances());
+        return new InstanceListBasedAnnotator(getName(), dataset.getInstances(), this.questionLang);
     }
 
     @Override

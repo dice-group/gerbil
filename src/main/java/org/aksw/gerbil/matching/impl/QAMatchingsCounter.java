@@ -98,7 +98,7 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
         	if(goldStdAnswerSet.getAnswers().iterator().next() instanceof Annotation){
                 goldAnnotations = new ArrayList<Annotation>(((AnswerSet) goldStdAnswerSet).getAnswers());
                 if (annotatorAnswerSet.getAnswers().iterator().next() instanceof Annotation) {
-                    resultAnnotations = new ArrayList<Annotation>(((ResourceAnswerSet) annotatorAnswerSet).getAnswers());
+                    resultAnnotations = new ArrayList<Annotation>(((AnswerSet) annotatorAnswerSet).getAnswers());
                 } else {
                     // Force the creation of Annotations
                     resultAnnotations = forceAnnotationCreation((Set<String>) annotatorAnswerSet.getAnswers());

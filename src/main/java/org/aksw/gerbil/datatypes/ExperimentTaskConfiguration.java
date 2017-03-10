@@ -26,6 +26,7 @@ public class ExperimentTaskConfiguration {
     public DatasetConfiguration datasetConfig;
     public ExperimentType type;
     public Matching matching;
+    public String questionLanguage;
 
     public ExperimentTaskConfiguration(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
             ExperimentType type, Matching matching) {
@@ -36,6 +37,16 @@ public class ExperimentTaskConfiguration {
         this.matching = matching;
     }
 
+    public ExperimentTaskConfiguration(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
+            ExperimentType type, Matching matching, String questionLanguage) {
+        super();
+        this.annotatorConfig = annotatorConfig;
+        this.datasetConfig = datasetConfig;
+        this.type = type;
+        this.matching = matching;
+        this.questionLanguage = questionLanguage;
+    }
+    
     public AnnotatorConfiguration getAnnotatorConfig() {
         return annotatorConfig;
     }
@@ -66,6 +77,14 @@ public class ExperimentTaskConfiguration {
 
     public void setMatching(Matching matching) {
         this.matching = matching;
+    }
+    
+    public String getQuestionLanguage(){
+    	return questionLanguage;
+    }
+    
+    public void setQuestionLanguage(String questionLanguage){
+    	this.questionLanguage = questionLanguage;
     }
 
     @Override

@@ -33,11 +33,12 @@ public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator impl
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedQALDBasedWebService.class);
 
 	
-    public static void main(String[] argc) throws GerbilException{
+    public static void main(String[] argc) throws GerbilException, IOException{
     	ExtendedQALDBasedWebService service = new ExtendedQALDBasedWebService("http://wdaqua-qanary.univ-st-etienne.fr/gerbil");
     	Document document = new DocumentImpl();
     	document.setText("When was Barack Obama born?");
-    	service.answerQuestion(document);
+    	service.answerQuestion(document, "en");
+    	service.close();
     }
     
     public ExtendedQALDBasedWebService(String url) {
@@ -61,7 +62,7 @@ public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator impl
 	}
 
 	@Override
-	public List<Marking> answerQuestion(Document document)
+	public List<Marking> answerQuestion(Document document, String questionLang)
 			throws GerbilException {
 		
 		HttpEntity entity = new StringEntity("query="+document.getText(), "UTF-8");
@@ -88,7 +89,7 @@ public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator impl
             	ExtendedJson exJson = (ExtendedJson) ExtendedQALDJSONLoader.readJson(entity.getContent(), ExtendedJson.class); 
  
             	List<IQuestion>  questions = EJQuestionFactory.getQuestionsFromExtendedJson(exJson);
-            	Document resultDoc = QAUtils.translateQuestion(questions.get(0), null);
+            	Document resultDoc = QAUtils.translateQuestion(questions.get(0), null, questionLang);
                 ret = resultDoc.getMarkings();
             } catch (Exception e) {
                 LOGGER.error("Couldn't parse the response.", e);

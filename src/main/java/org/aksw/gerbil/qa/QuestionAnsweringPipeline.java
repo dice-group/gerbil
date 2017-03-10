@@ -54,7 +54,7 @@ public class QuestionAnsweringPipeline {
 		}
 		log.debug("Load QALD XML");
 		List<IQuestion> answer_qald_xml = LoaderController.loadXML(ClassLoader
-				.getSystemResourceAsStream("QALD_SystemAnswer_test.xml"));
+				.getSystemResourceAsStream("QALD_SystemAnswer_test.xml"), "en");
 
 		List<IQuestion> testQuestions = Lists.newArrayList(answer_qald_json);
 		testQuestions.addAll(answer_qald_xml);

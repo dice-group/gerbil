@@ -28,7 +28,9 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
 	protected List<Document> instances;
     protected String qaldDatasetName;
     protected String deriveUri;
+	private String questionLanguage;
 
+    
     /**
      * Constructor taking the name of the QALD dataset. Note that the name
      * should be a value of the {@link org.aksw.qa.commons.load.Dataset} enum.
@@ -40,8 +42,17 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
         this.qaldDatasetName = qaldDatasetName;
     
         deriveUri = GerbilConfiguration.getInstance().getString(QALD_DERIVE_EDNPOINT);
+//        this.questionLanguage= questionLanguage;
     }
 
+//    private void initLanguage(){
+//    	this.questionLanguage = "en";
+//    }
+    
+    public void setQuestionLanguage(String lang){
+    	this.questionLanguage=lang;
+    }
+    
     @Override
     public int size() {
         return instances.size();
@@ -71,7 +82,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
         } else {
 //            List<IQuestion> questions = QALD_Loader.load(datasetId);
         	
-        	List<IQuestion> questions = LoaderController.load(datasetId, deriveUri);
+        	List<IQuestion> questions = LoaderController.load(datasetId, deriveUri, questionLanguage);
             if (questions == null) {
                 throw new GerbilException("Couldn't load questions of QALD dataset " + datasetId.toString() + ".",
                         ErrorTypes.DATASET_LOADING_ERROR);
@@ -91,7 +102,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
             	if(question.getOutOfScope()!=null && question.getOutOfScope()){
             		continue;
             	}
-                document = QAUtils.translateQuestion(question, questionUriPrefix + question.getId());
+                document = QAUtils.translateQuestion(question, questionUriPrefix + question.getId(), questionLanguage);
                 if (document != null) {
                     instances.add(document);
                 }

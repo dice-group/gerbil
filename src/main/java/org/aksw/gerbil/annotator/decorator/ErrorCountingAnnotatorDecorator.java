@@ -209,8 +209,8 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
 
         @Override
-        public List<Marking> answerQuestion(Document document) throws GerbilException {
-            return ErrorCountingAnnotatorDecorator.performQATask(this, document);
+        public List<Marking> answerQuestion(Document document, String questionLang) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performQATask(this, document, questionLang);
         }
     }
 
@@ -394,11 +394,11 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         return result;
     }
 
-    protected static List<Marking> performQATask(ErrorCountingAnnotatorDecorator errorCounter, Document document)
+    protected static List<Marking> performQATask(ErrorCountingAnnotatorDecorator errorCounter, Document document, String questionLang)
             throws GerbilException {
         List<Marking> result = null;
         try {
-            result = ((QASystem) errorCounter.getDecoratedAnnotator()).answerQuestion(document);
+            result = ((QASystem) errorCounter.getDecoratedAnnotator()).answerQuestion(document, questionLang);
         } catch (Exception e) {
             if (errorCounter.getErrorCount() == 0) {
                 // Log only the first exception completely

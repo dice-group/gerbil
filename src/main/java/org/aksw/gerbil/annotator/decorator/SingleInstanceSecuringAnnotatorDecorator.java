@@ -207,8 +207,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         }
 
         @Override
-        public List<Marking> answerQuestion(Document document) throws GerbilException {
-            return SingleInstanceSecuringAnnotatorDecorator.performQATask(this, document);
+        public List<Marking> answerQuestion(Document document, String questionLang) throws GerbilException {
+            return SingleInstanceSecuringAnnotatorDecorator.performQATask(this, document, questionLang);
         }
     }
 
@@ -338,7 +338,7 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         return result;
     }
 
-    protected static List<Marking> performQATask(SingleInstanceSecuringAnnotatorDecorator decorator, Document document)
+    protected static List<Marking> performQATask(SingleInstanceSecuringAnnotatorDecorator decorator, Document document, String questionLanguage)
             throws GerbilException {
         List<Marking> result = null;
         try {
@@ -349,7 +349,7 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
                     ErrorTypes.UNEXPECTED_EXCEPTION);
         }
         try {
-            result = ((QASystem) decorator.getDecoratedAnnotator()).answerQuestion(document);
+            result = ((QASystem) decorator.getDecoratedAnnotator()).answerQuestion(document, questionLanguage);
         } finally {
             decorator.semaphore.release();
         }

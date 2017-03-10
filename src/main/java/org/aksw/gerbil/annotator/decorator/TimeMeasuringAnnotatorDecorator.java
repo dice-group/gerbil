@@ -201,8 +201,8 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         }
 
         @Override
-        public List<Marking> answerQuestion(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performQATask(this, document);
+        public List<Marking> answerQuestion(Document document, String questionLang) throws GerbilException {
+            return TimeMeasuringAnnotatorDecorator.performQATask(this, document, questionLang);
         }
     }
 
@@ -269,11 +269,11 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         return result;
     }
 
-    protected static List<Marking> performQATask(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
+    protected static List<Marking> performQATask(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document, String questionLang)
             throws GerbilException {
         long startTime = System.currentTimeMillis();
         List<Marking> result = null;
-        result = ((QASystem) timeMeasurer.getDecoratedAnnotator()).answerQuestion(document);
+        result = ((QASystem) timeMeasurer.getDecoratedAnnotator()).answerQuestion(document, questionLang);
         timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
         return result;
     }

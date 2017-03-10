@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.InitializableDataset;
 import org.aksw.gerbil.dataset.impl.AbstractDataset;
@@ -19,7 +20,6 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.commons.load.LoaderController;
 import org.aksw.qa.commons.load.json.EJQuestionFactory;
-import org.aksw.qa.commons.load.json.ExtendedJson;
 import org.aksw.qa.commons.load.json.ExtendedQALDJSONLoader;
 import org.apache.commons.io.IOUtils;
 
@@ -31,27 +31,47 @@ import org.apache.commons.io.IOUtils;
  */
 public class FileBasedQALDDataset extends AbstractDataset implements InitializableDataset {
 
-    protected List<Document> instances;
+    private static final String QUESTION_LANGUAGE_KEY = "org.aksw.gerbil.dataset.question.language";
+	protected List<Document> instances;
     protected String file;
     protected QALDStreamType fileType;
+	private String questionLanguage;
 
     public FileBasedQALDDataset(String file){
     	this.file=file;
+    	initLanguage();
     }
     public FileBasedQALDDataset(String name, String file){
     	super(name);
     	this.file=file;
+    	initLanguage();
     }
     
     public FileBasedQALDDataset(String file, QALDStreamType fileType) {
         this.file = file;
         this.fileType = fileType;
+        initLanguage();
     }
 
     public FileBasedQALDDataset(String name, String file, QALDStreamType fileType) {
         super(name);
         this.file = file;
         this.fileType = fileType;
+        initLanguage();
+    }
+    public FileBasedQALDDataset(String name, String file, String questionLanguage) {
+        super(name);
+        this.file = file;
+        this.fileType = fileType;
+        this.questionLanguage=questionLanguage;
+    }
+    
+    private void initLanguage(){
+    	this.questionLanguage = "en";
+    }
+    
+    public void setQuestionLanguage(String lang){
+    	this.questionLanguage=lang;
     }
 
     @Override
@@ -78,9 +98,9 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
         		questions = EJQuestionFactory.getQuestionsFromJson(ExtendedQALDJSONLoader.readJson(new File(file)));
         		if(questions==null){
         			//XML
-        			questions = LoaderController.loadXML(fin);
+        			questions = LoaderController.loadXML(fin, null, questionLanguage);
         		}
-        		instances = generateInstancesFromQuestions(getName(), questions);
+        		instances = generateInstancesFromQuestions(getName(), questions, questionLanguage);
             }
         } catch (Exception e) {
         	IOUtils.closeQuietly(fin);
@@ -90,7 +110,7 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
     }
 
     
-    private static List<Document> generateInstancesFromQuestions(String adapterName, List<IQuestion> questions){
+    private static List<Document> generateInstancesFromQuestions(String adapterName, List<IQuestion> questions, String questionLanguage){
     	String questionUriPrefix;
 		try {
 			questionUriPrefix = "http://qa.gerbil.aksw.org/"
@@ -103,7 +123,7 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
 		List<Document> instances = new ArrayList<Document>(questions.size());
 		for (IQuestion question : questions) {
 			instances.add(QAUtils.translateQuestion(question, questionUriPrefix
-					+ question.getId()));
+					+ question.getId(), questionLanguage));
 		}
 		return instances;
     }

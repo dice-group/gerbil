@@ -31,10 +31,12 @@ public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2K
     private static final Logger LOGGER = LoggerFactory.getLogger(InstanceListBasedAnnotator.class);
 
     protected Map<String, Document> uriInstanceMapping;
+    protected String questionLanguage;
 
-    public InstanceListBasedAnnotator(String annotatorName, List<Document> instances) {
+    public InstanceListBasedAnnotator(String annotatorName, List<Document> instances, String questionLanguage) {
         super(annotatorName);
         this.uriInstanceMapping = new HashMap<String, Document>(instances.size());
+        this.questionLanguage = questionLanguage;
         for (Document document : instances) {
             uriInstanceMapping.put(document.getDocumentURI(), document);
         }
@@ -95,7 +97,7 @@ public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2K
     }
 
     @Override
-    public List<Marking> answerQuestion(Document document) throws GerbilException {
+    public List<Marking> answerQuestion(Document document, String questionLang) throws GerbilException {
         return getDocumentMarkings(document.getDocumentURI(), Marking.class);
     }
 }

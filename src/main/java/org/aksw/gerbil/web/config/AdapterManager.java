@@ -75,7 +75,7 @@ public class AdapterManager {
         return datasets.getAdapterNamesForExperiment(type);
     }
 
-    public AnnotatorConfiguration getAnnotatorConfig(String name, ExperimentType type) {
+    public AnnotatorConfiguration getAnnotatorConfig(String name, ExperimentType type, String questionLanguage) {
         List<AnnotatorConfiguration> configs = annotators.getAdaptersForName(name);
         if (configs != null) {
             for (AnnotatorConfiguration config : configs) {
@@ -164,10 +164,10 @@ public class AdapterManager {
                 try {
                     return new InstanceListBasedConfigurationImpl(name, false,
                             new DatasetConfigurationImpl(datasetName, false,
-                                    FileBasedQALDDataset.class.getConstructor(String.class, String.class),
-                                    new Object[] { datasetName, uploadedFilesPath + fileName},
-                                    ExperimentType.QA, null, null),
-                            type);
+                                    FileBasedQALDDataset.class.getConstructor(String.class, String.class, String.class),
+                                    new Object[] { datasetName, uploadedFilesPath + fileName, questionLanguage},
+                                    ExperimentType.QA, null, null, questionLanguage),
+                            type, questionLanguage);
                 } catch (Exception e) {
                     LOGGER.error(
                             "Exception while trying to create an annotator configuration for a uploaded QA answer file. Returning null.",
@@ -180,7 +180,7 @@ public class AdapterManager {
         return null;
     }
 
-    public DatasetConfiguration getDatasetConfig(String name, ExperimentType type) {
+    public DatasetConfiguration getDatasetConfig(String name, ExperimentType type, String questionLanguage) {
         List<DatasetConfiguration> configs = datasets.getAdaptersForName(name);
         if (configs != null) {
             for (DatasetConfiguration config : configs) {
@@ -208,7 +208,7 @@ public class AdapterManager {
                 String uri = uploadedFilesPath + name.substring(brackets[0] + 1, brackets[1]);
                 // remove dataset prefix from the name
                 name = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]) + UPLOADED_DATASET_SUFFIX;
-return new QALDFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
+return new QALDFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever, questionLanguage);
             }
             if (name.startsWith(AF_PREFIX)) {
                 // This describes a QA answer file
@@ -221,7 +221,7 @@ return new QALDFileDatasetConfig(name, uri, false, type, entityCheckerManager, g
                     return null;
                 }
                 String datasetName = name.substring(brackets[0] + 1, brackets[1]);
-                return getDatasetConfig(datasetName, type);
+                return getDatasetConfig(datasetName, type, questionLanguage);
             }
         }
         LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");

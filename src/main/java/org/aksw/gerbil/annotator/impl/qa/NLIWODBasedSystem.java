@@ -75,7 +75,7 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 	}
 
 	@Override
-	public List<Marking> answerQuestion(Document document)
+	public List<Marking> answerQuestion(Document document, String questionLang)
 			throws GerbilException {
 		IQuestion question;
 		try {
@@ -85,7 +85,7 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 				question.setSparqlQuery(replacePrefixes(
 						question.getSparqlQuery(), PrefixMapping.Extended));
 			Document resultDoc = QAUtils.translateQuestion(question,
-					document.getDocumentURI());
+					document.getDocumentURI(), questionLang);
 			if (resultDoc != null) {
 				return resultDoc.getMarkings();
 			} else {

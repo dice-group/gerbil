@@ -24,17 +24,17 @@ public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
 		QASystem {
 
 	protected static List<Document> loadInstances(List<String> qaldFiles,
-			List<String> questionUriPrefixes) throws GerbilException {
+			List<String> questionUriPrefixes, String qLang) throws GerbilException {
 		List<Document> instances = new ArrayList<Document>();
 		for (int i = 0; i < qaldFiles.size(); ++i) {
 			loadInstances(qaldFiles.get(i), questionUriPrefixes.get(i),
-					instances);
+					instances, qLang);
 		}
 		return instances;
 	}
 
 	protected static void loadInstances(String qaldFile,
-			String questionUriPrefix, List<Document> instances)
+			String questionUriPrefix, List<Document> instances, String qLang)
 			throws GerbilException {
 
 		List<IQuestion> questions = null;
@@ -43,9 +43,10 @@ public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
 		
 		for (IQuestion question : questions) {
 			instances.add(QAUtils.translateQuestion(question, questionUriPrefix
-					+ question.getId()));
+					+ question.getId(), qLang));
 		}
 	}
+
 
 	/**
 	 * Constructor.
@@ -58,8 +59,8 @@ public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
 	 *             if one of the given files can not be loaded correctly
 	 */
 	public FileBasedQALDSystem(List<String> qaldFiles,
-			List<String> questionUriPrefixes) throws GerbilException {
-		this(null, qaldFiles, questionUriPrefixes);
+			List<String> questionUriPrefixes, String questionLanguage) throws GerbilException {
+		this(null, qaldFiles, questionUriPrefixes, questionLanguage);
 	}
 
 	/**
@@ -75,8 +76,9 @@ public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
 	 *             if one of the given files can not be loaded correctly
 	 */
 	public FileBasedQALDSystem(String name, List<String> qaldFiles,
-			List<String> questionUriPrefixes) throws GerbilException {
-		super(name, loadInstances(qaldFiles, questionUriPrefixes));
+			List<String> questionUriPrefixes, String questionLanguage) throws GerbilException {
+		super(name, loadInstances(qaldFiles, questionUriPrefixes, questionLanguage), questionLanguage);
 	}
+
 
 }

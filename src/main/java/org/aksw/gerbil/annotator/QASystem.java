@@ -8,5 +8,6 @@ import org.aksw.gerbil.transfer.nif.Marking;
 
 public interface QASystem extends Annotator {
 
-    public List<Marking> answerQuestion(Document document) throws GerbilException;
+    public List<Marking> answerQuestion(Document document, String questionLang) throws GerbilException;
+
 }

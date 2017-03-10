@@ -38,14 +38,18 @@ public class QAUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QAUtils.class);
 
-    public static final String QUESTION_LANGUAGE = "en";
+    public static final String DEFAULT_QUESTION_LANGUAGE = "en";
 
     protected static final Property RDF_TYPE_PROPERTY = new Property(RDF.type.getURI());
 
     protected static final UrlValidator URL_VALIDATOR = new UrlValidator();
 
+    @Deprecated
     public static Document translateQuestion(IQuestion question, String questionUri) {
-        Document document = new DocumentImpl(question.getLanguageToQuestion().get(QUESTION_LANGUAGE), questionUri);
+    	return translateQuestion(question, questionUri, DEFAULT_QUESTION_LANGUAGE);
+    }
+    public static Document translateQuestion(IQuestion question, String questionUri, String questionLanguage) {
+    	Document document = new DocumentImpl(question.getLanguageToQuestion().get(questionLanguage), questionUri);
         String sparqlQueryString = question.getSparqlQuery();
         // add the needed markings to the document
         // properties, answerItemType, relations, entities

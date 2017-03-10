@@ -64,7 +64,7 @@ public class QALDStreamUtils {
 			}
 			break;
 		case XML:
-			questions = LoaderController.loadXML(in);
+			questions = LoaderController.loadXML(in, "en");
 			break;
 		default:
 			throw new IllegalArgumentException(
@@ -83,7 +83,7 @@ public class QALDStreamUtils {
 		List<Document> instances = new ArrayList<Document>(questions.size());
 		for (IQuestion question : questions) {
 			instances.add(QAUtils.translateQuestion(question, questionUriPrefix
-					+ question.getId()));
+					+ question.getId(), "en"));
 		}
 		return instances;
 	}
