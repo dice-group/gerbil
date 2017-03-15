@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.aksw.gerbil.annotator.QASystem;
 import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.qa.QAUtils;
@@ -34,10 +35,17 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 	public static final String YODA_SYSTEM_NAME = "YODA";
 	public static final String OKBQA_SYSTEM_NAME = "OKBQA";
 	public static final String QANARY_SYSTEM_NAME = "QANARY";
+	private static final int DEFAULT_WAITING_TIME = 60000;
+	private static final String MAXIMUM_TIME_TO_WAIT_KEY = "org.aksw.gerbil.annotator.http.HttpManagement.maxWaitingTime";
 
 	protected ASystem qaSystem;
 
 	public NLIWODBasedSystem(String systemName) throws GerbilException {
+		int maxWaitingTime = DEFAULT_WAITING_TIME;
+        try {
+            maxWaitingTime = GerbilConfiguration.getInstance().getInt(MAXIMUM_TIME_TO_WAIT_KEY);
+        } catch (Exception e) {
+        }
 		switch (systemName) {
 		case HAWK_SYSTEM_NAME: {
 			qaSystem = new HAWK();
@@ -71,6 +79,7 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 			throw new GerbilException("Got an unknown system name \""
 					+ systemName + "\".", ErrorTypes.ANNOTATOR_LOADING_ERROR);
 		}
+		qaSystem.setSocketTimeOutMs(maxWaitingTime);
 
 	}
 
@@ -79,13 +88,13 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 			throws GerbilException {
 		IQuestion question;
 		try {
-			question = qaSystem.search(document.getText());
+			question = qaSystem.search(document.getText(), questionLang, true);
 
 			if (question.getSparqlQuery() != null)
 				question.setSparqlQuery(replacePrefixes(
 						question.getSparqlQuery(), PrefixMapping.Extended));
 			Document resultDoc = QAUtils.translateQuestion(question,
-					document.getDocumentURI(), "en");
+					document.getDocumentURI(), questionLang);
 			if (resultDoc != null) {
 				return resultDoc.getMarkings();
 			} else {

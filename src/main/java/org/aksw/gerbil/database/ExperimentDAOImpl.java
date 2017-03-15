@@ -47,27 +47,27 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentDAOImpl.class);
 
-    private final static String INSERT_TASK = "INSERT INTO ExperimentTasks (annotatorName, datasetName, experimentType, matching, state, lastChanged) VALUES (:annotatorName, :datasetName, :experimentType, :matching, :state, :lastChanged)";
+    private final static String INSERT_TASK = "INSERT INTO ExperimentTasks (annotatorName, datasetName, language, experimentType, matching, state, lastChanged) VALUES (:annotatorName, :datasetName, :language, :experimentType, :matching, :state, :lastChanged)";
     private final static String SET_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE id=:id";
     private final static String SET_EXPERIMENT_TASK_RESULT = "UPDATE ExperimentTasks SET microF1=:microF1 , microPrecision=:microPrecision, microRecall=:microRecall, macroF1=:macroF1, macroPrecision=:macroPrecision, macroRecall=:macroRecall, errorCount=:errorCount, lastChanged=:lastChanged WHERE id=:id";
     private final static String CONNECT_TASK_EXPERIMENT = "INSERT INTO Experiments (id, taskId) VALUES(:id, :taskId)";
     private final static String GET_TASK_STATE = "SELECT state FROM ExperimentTasks WHERE id=:id";
-    private final static String GET_EXPERIMENT_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, taskId FROM ExperimentTasks t, Experiments e WHERE e.id=:id AND e.taskId=t.id";
-    private final static String GET_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, id FROM ExperimentTasks t WHERE id=:id";
-    private final static String GET_CACHED_TASK = "SELECT id FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND lastChanged>:lastChanged AND state>:errorState ORDER BY lastChanged DESC LIMIT 1";
+    private final static String GET_EXPERIMENT_RESULTS = "SELECT annotatorName, datasetName, language, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, taskId FROM ExperimentTasks t, Experiments e WHERE e.id=:id AND e.taskId=t.id";
+    private final static String GET_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, language, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, id FROM ExperimentTasks t WHERE id=:id";
+    private final static String GET_CACHED_TASK = "SELECT id FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND language=:language AND experimentType=:experimentType AND matching=:matching AND lastChanged>:lastChanged AND state>:errorState ORDER BY lastChanged DESC LIMIT 1";
     private final static String GET_HIGHEST_EXPERIMENT_ID = "SELECT id FROM Experiments ORDER BY id DESC LIMIT 1";
     private final static String SET_UNFINISHED_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE state=:unfinishedState";
     @Deprecated
-    private final static String GET_LATEST_EXPERIMENT_TASKS = "SELECT DISTINCT annotatorName, datasetName FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching";
+    private final static String GET_LATEST_EXPERIMENT_TASKS = "SELECT DISTINCT annotatorName, datasetName, language FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching";
     @Deprecated
-    private final static String GET_LATEST_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState ORDER BY lastChanged DESC LIMIT 1";
-    private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT tasks.annotatorName, tasks.datasetName, tasks.experimentType, tasks.matching, tasks.microF1, tasks.microPrecision, tasks.microRecall, tasks.macroF1, tasks.macroPrecision, tasks.macroRecall, tasks.state, tasks.errorCount, tasks.lastChanged, tasks.id FROM ExperimentTasks tasks, (SELECT datasetName, annotatorName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState AND annotatorName IN (:annotatorNames) AND datasetName IN (:datasetNames) GROUP BY datasetName, annotatorName) pairs WHERE tasks.annotatorName=pairs.annotatorName AND tasks.datasetName=pairs.datasetName AND tasks.experimentType=:experimentType AND tasks.matching=:matching AND tasks.lastChanged=pairs.lastChanged";
-    private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
+    private final static String GET_LATEST_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, language, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND language=:language AND experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState ORDER BY lastChanged DESC LIMIT 1";
+    private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT tasks.annotatorName, tasks.datasetName, tasks.language, tasks.experimentType, tasks.matching, tasks.microF1, tasks.microPrecision, tasks.microRecall, tasks.macroF1, tasks.macroPrecision, tasks.macroRecall, tasks.state, tasks.errorCount, tasks.lastChanged, tasks.id FROM ExperimentTasks tasks, (SELECT datasetName, annotatorName, language, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState AND annotatorName IN (:annotatorNames) AND datasetName IN (:datasetNames) AND language IN (:languages) GROUP BY datasetName, annotatorName, language) pairs WHERE tasks.annotatorName=pairs.annotatorName AND tasks.datasetName=pairs.datasetName AND tasks.language=pairs.language AND tasks.experimentType=:experimentType AND tasks.matching=:matching AND tasks.lastChanged=pairs.lastChanged";
+    private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, language, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
     private final static String SHUTDOWN = "SHUTDOWN";
 
     private final static String GET_ADDITIONAL_RESULTS = "SELECT resultId, value FROM ExperimentTasks_AdditionalResults WHERE taskId=:taskId";
     private final static String INSERT_ADDITIONAL_RESULT = "INSERT INTO ExperimentTasks_AdditionalResults(taskId, resultId, value) VALUES (:taskId, :resultId, :value)";
-    private final static String GET_SUB_TASK_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, subTaskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
+    private final static String GET_SUB_TASK_RESULTS = "SELECT annotatorName, datasetName, language, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, subTaskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
     private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
 
     // FIXME remove the following two statements by removing the experiment task
@@ -137,9 +137,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
 
     @Override
-    public int createTask(String annotatorName, String datasetName, String experimentType, String matching,
+    public int createTask(String annotatorName, String datasetName, String language, String experimentType, String matching,
             String experimentId) {
-        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType, matching);
+        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, language, experimentType, matching);
         params.addValue("state", ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET);
         java.util.Date today = new java.util.Date();
         params.addValue("lastChanged", new java.sql.Timestamp(today.getTime()));
@@ -162,11 +162,12 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         this.template.update(CONNECT_TASK_EXPERIMENT, parameters);
     }
 
-    private MapSqlParameterSource createTaskParameters(String annotatorName, String datasetName, String experimentType,
+    private MapSqlParameterSource createTaskParameters(String annotatorName, String datasetName, String language, String experimentType,
             String matching) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("annotatorName", annotatorName);
         parameters.addValue("datasetName", datasetName);
+        parameters.addValue("language", language);
         parameters.addValue("experimentType", experimentType);
         parameters.addValue("matching", matching);
         return parameters;
@@ -237,9 +238,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
 
     @Override
-    protected int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType,
+    protected int getCachedExperimentTaskId(String annotatorName, String datasetName, String language, String experimentType,
             String matching) {
-        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType, matching);
+        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, language, experimentType, matching);
         java.util.Date today = new java.util.Date();
         params.addValue("lastChanged", new java.sql.Timestamp(today.getTime() - this.resultDurability));
         params.addValue("errorState", ErrorTypes.HIGHEST_ERROR_CODE);
@@ -282,14 +283,14 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("experimentType", experimentType);
         params.addValue("matching", matching);
-        return this.template.query(GET_LATEST_EXPERIMENT_TASKS, params, new StringArrayRowMapper(new int[] { 1, 2 }));
+        return this.template.query(GET_LATEST_EXPERIMENT_TASKS, params, new StringArrayRowMapper(new int[] { 1, 2, 3 }));
     }
 
     @Deprecated
     @Override
     protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
-            String annotatorName, String datasetName) {
-        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType, matching);
+            String annotatorName, String datasetName, String language) {
+        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, language, experimentType, matching);
         params.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
         List<ExperimentTaskResult> result = this.template.query(GET_LATEST_EXPERIMENT_TASK_RESULT, params,
                 new ExperimentTaskResultRowMapper());
@@ -331,13 +332,14 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     @Override
     public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching,
-            String annotatorNames[], String datasetNames[]) {
+            String annotatorNames[], String datasetNames[], String languages[]) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("experimentType", experimentType);
         parameters.addValue("matching", matching);
         parameters.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
         parameters.addValue("annotatorNames", Arrays.asList(annotatorNames));
         parameters.addValue("datasetNames", Arrays.asList(datasetNames));
+        parameters.addValue("languages", Arrays.asList(languages));
         List<ExperimentTaskResult> results = this.template.query(GET_LATEST_EXPERIMENT_TASK_RESULTS, parameters,
                 new ExperimentTaskResultRowMapper());
         // FIXME remove this ugly workaround regarding the version of an
@@ -365,7 +367,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
 
     protected void insertSubTask(ExperimentTaskResult subTask, int experimentTaskId) {
-        subTask.idInDb = createTask(subTask.annotator, subTask.dataset, subTask.type.name(), subTask.matching.name(),
+        subTask.idInDb = createTask(subTask.annotator, subTask.dataset, subTask.language, subTask.type.name(), subTask.matching.name(),
                 null);
         setExperimentTaskResult(subTask.idInDb, subTask);
         addSubTaskRelation(experimentTaskId, subTask.idInDb);

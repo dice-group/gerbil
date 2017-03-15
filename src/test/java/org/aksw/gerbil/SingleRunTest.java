@@ -86,9 +86,9 @@ public class SingleRunTest implements TaskObserver {
             adapterManager.setAnnotators(AnnotatorsConfig.annotators());
             adapterManager.setDatasets(DatasetsConfig.datasets(ENTITY_CHECKER_MANAGER, SAME_AS_RETRIEVER));
 
-            AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE);
+            AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE, "en");
             Assert.assertNotNull(annotatorConfig);
-            DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE);
+            DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE, "en");
             Assert.assertNotNull(datasetConfig);
             // DatasetConfiguration datasetConfig = new
             // DatasetConfigurationImpl("Test", false,

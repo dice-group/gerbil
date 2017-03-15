@@ -105,9 +105,9 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
         adapterManager
                 .setDatasets(DatasetsConfig.datasets(EntityCheckerManagerSingleton4Tests.getInstance(), retriever));
 
-        AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE);
+        AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE, "en");
         Assert.assertNotNull(annotatorConfig);
-        DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE);
+        DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE,"en");
         Assert.assertNotNull(datasetConfig);
 
         DefeatableOverseer overseer = RootConfig.createOverseer();

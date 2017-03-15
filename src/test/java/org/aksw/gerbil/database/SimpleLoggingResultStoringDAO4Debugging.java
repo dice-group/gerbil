@@ -65,7 +65,7 @@ public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4De
 
     @Override
     protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
-            String annotatorName, String datasetName) {
+            String annotatorName, String datasetName, String language) {
         return null;
     }
 

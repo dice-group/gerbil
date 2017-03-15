@@ -28,7 +28,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
 	protected List<Document> instances;
     protected String qaldDatasetName;
     protected String deriveUri;
-	private String questionLanguage;
+//	private String questionLanguage;
 
     
     /**
@@ -48,10 +48,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
 //    private void initLanguage(){
 //    	this.questionLanguage = "en";
 //    }
-    
-    public void setQuestionLanguage(String lang){
-    	this.questionLanguage=lang;
-    }
+
     
     @Override
     public int size() {
@@ -82,7 +79,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
         } else {
 //            List<IQuestion> questions = QALD_Loader.load(datasetId);
         	
-        	List<IQuestion> questions = LoaderController.load(datasetId, deriveUri, questionLanguage);
+        	List<IQuestion> questions = LoaderController.load(datasetId, deriveUri, qLang);
             if (questions == null) {
                 throw new GerbilException("Couldn't load questions of QALD dataset " + datasetId.toString() + ".",
                         ErrorTypes.DATASET_LOADING_ERROR);
@@ -102,7 +99,7 @@ public class QALDDataset extends AbstractDataset implements InitializableDataset
             	if(question.getOutOfScope()!=null && question.getOutOfScope()){
             		continue;
             	}
-                document = QAUtils.translateQuestion(question, questionUriPrefix + question.getId(), questionLanguage);
+                document = QAUtils.translateQuestion(question, questionUriPrefix + question.getId(), qLang);
                 if (document != null) {
                     instances.add(document);
                 }

@@ -90,16 +90,16 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
     }
 
     @Override
-    public synchronized int connectCachedResultOrCreateTask(String annotatorName, String datasetName,
+    public synchronized int connectCachedResultOrCreateTask(String annotatorName, String datasetName, String language,
             String experimentType, String matching, String experimentId) {
         int experimentTaskId = EXPERIMENT_TASK_NOT_CACHED;
         if (resultDurability > 0) {
-            experimentTaskId = getCachedExperimentTaskId(annotatorName, datasetName, experimentType, matching);
+            experimentTaskId = getCachedExperimentTaskId(annotatorName, datasetName, language, experimentType, matching);
         } else {
             LOGGER.warn("The durability of results is <= 0. I won't be able to cache results.");
         }
         if (experimentTaskId == EXPERIMENT_TASK_NOT_CACHED) {
-            return createTask(annotatorName, datasetName, experimentType, matching, experimentId);
+            return createTask(annotatorName, datasetName, language, experimentType, matching, experimentId);
         } else {
             LOGGER.debug("Could reuse cached task (id={}).", experimentTaskId);
             connectExistingTaskWithExperiment(experimentTaskId, experimentId);
@@ -128,7 +128,7 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      * @return The id of the experiment task or {@value #EXPERIMENT_TASK_NOT_CACHED} if such an experiment task
      *         couldn't be found.
      */
-    protected abstract int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType,
+    protected abstract int getCachedExperimentTaskId(String annotatorName, String datasetName, String language, String experimentType,
             String matching);
 
     /**
@@ -149,7 +149,7 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
         List<ExperimentTaskResult> results = new ArrayList<ExperimentTaskResult>(experimentTasks.size());
         ExperimentTaskResult result;
         for (String combination[] : experimentTasks) {
-            result = getLatestExperimentTaskResult(experimentType, matching, combination[0], combination[1]);
+            result = getLatestExperimentTaskResult(experimentType, matching, combination[0], combination[1], combination[2]);
             if (result != null) {
                 results.add(result);
             }
@@ -187,5 +187,5 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      */
     @Deprecated
     protected abstract ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
-            String annotatorName, String datasetName);
+            String annotatorName, String datasetName, String language);
 }

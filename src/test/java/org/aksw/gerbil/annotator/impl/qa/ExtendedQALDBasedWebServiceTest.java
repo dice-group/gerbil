@@ -75,7 +75,7 @@ public class ExtendedQALDBasedWebServiceTest implements TaskObserver {
         System.out.println("Testing now: Anything goes as excpected");
         document.setText("correct");
 
-        List<Marking> results = service.answerQuestion(document);
+        List<Marking> results = service.answerQuestion(document, "en");
         AnswerSet<String> answer = (AnswerSet<String>) results.get(results.size() - 1);
         String test = answer.getAnswers().iterator().next();
         assertTrue(correctAnswer.equals(test));
@@ -86,7 +86,7 @@ public class ExtendedQALDBasedWebServiceTest implements TaskObserver {
         document.setText("json");
 
         try {
-            service.answerQuestion(document);
+            service.answerQuestion(document, "en");
         } catch (GerbilException e) {
             // assertTrue(e.getCause() instanceof JsonException);
         }

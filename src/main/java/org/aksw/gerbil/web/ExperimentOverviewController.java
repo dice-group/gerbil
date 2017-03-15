@@ -80,15 +80,16 @@ public class ExperimentOverviewController {
 
 		String annotatorNames[] = loadAnnotators(eType);
 		String datasetNames[] = loadDatasets(eType);
+		String languages[] = {"en"};
 
-		double results[][] = loadLatestResults(eType, matching, annotatorNames, datasetNames);
+		double results[][] = loadLatestResults(eType, matching, annotatorNames, datasetNames, languages);
 		double correlations[][] = calculateCorrelations(results, datasetNames);
 		return generateJson(results, correlations, annotatorNames, datasetNames);
 
 	}
 
 	private double[][] loadLatestResults(ExperimentType experimentType, Matching matching, String[] annotatorNames,
-			String[] datasetNames) {
+			String[] datasetNames, String[] languages) {
 		Map<String, Integer> annotator2Index = new HashMap<String, Integer>();
 		for (int i = 0; i < annotatorNames.length; ++i) {
 			annotator2Index.put(annotatorNames[i], i);
@@ -99,7 +100,7 @@ public class ExperimentOverviewController {
 		}
 
 		List<ExperimentTaskResult> expResults = dao.getLatestResultsOfExperiments(experimentType.name(),
-				matching.name(), annotatorNames, datasetNames);
+				matching.name(), annotatorNames, datasetNames, languages);
 		double results[][] = new double[annotatorNames.length][datasetNames.length];
 		for (int i = 0; i < results.length; ++i) {
 			Arrays.fill(results[i], NOT_AVAILABLE_SENTINAL);

@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.aksw.agdistis.util.Triple;
 import org.aksw.agdistis.util.TripleIndex;
+import org.aksw.gerbil.dataset.converter.Literal2ResourceManager;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
@@ -97,8 +98,9 @@ public class QAMatchingsCounterTest {
         Map<String, String[]> labelToUriMapping = new HashMap<>();
         labelToUriMapping.put("Paris", new String[] { "http://dbpedia.org/resource/Paris",
                 "http://dbpedia.org/resource/Paris,_Arkansas" });
+        Literal2ResourceManager emptyManager = new Literal2ResourceManager();
         this.counter = new QAMatchingsCounter(new MockupIndex(labelToUriMapping), new UrlValidator(),
-                new DummyUriKbClassifier());
+                new DummyUriKbClassifier(), emptyManager);
         // this.counter = new QAMatchingsCounter(RootConfig.createTripleIndex(),
         // new UrlValidator(),
         // new DummyUriKbClassifier());

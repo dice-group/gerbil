@@ -331,7 +331,7 @@
 		<dependency>
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>systems</artifactId>
-			<version>0.0.4-SNAPSHOT</version>
+			<version>0.0.5-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.aksw.qa</groupId>
@@ -430,7 +430,7 @@
 					<execution>
 						<phase>package</phase>
 						<goals>
-							<goal>jar</goal>
+<!-- 							<goal>jar</goal> -->
 						</goals>
 					</execution>
 				</executions>
@@ -463,6 +463,16 @@
 			</resource>
 		</resources>
 	</build>
-
+	<distributionManagement>
+		<repository>
+			<id>maven.aksw.internal</id>
+			<url>http://maven.aksw.org/archiva/repository/internal</url>
+		</repository>
+		<snapshotRepository>
+			<id>maven.aksw.snapshots</id>
+			<name>AKSW Snapshot Repository</name>
+			<url>http://maven.aksw.org/archiva/repository/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<packaging>war</packaging>
 </project>

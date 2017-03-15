@@ -53,7 +53,7 @@ public class QanaryWebServiceTest {
 			
 			Document document = new DocumentImpl();
 			document.setText(question);
-			List<Marking> annotationAnswers = service.answerQuestion(document);
+			List<Marking> annotationAnswers = service.answerQuestion(document, "en");
 			for(Marking m : annotationAnswers){
 				AnswerSet a = (AnswerSet) m;
 				String sA = (String) a.getAnswers().iterator().next();
@@ -66,7 +66,7 @@ public class QanaryWebServiceTest {
 	}
 	
 	public void answerXML(InputStream fis) throws GerbilException{
-		List<IQuestion> iquestions = LoaderController.loadXML(fis);
+		List<IQuestion> iquestions = LoaderController.loadXML(fis, "en");
 		answer(iquestions);
 	}
 	

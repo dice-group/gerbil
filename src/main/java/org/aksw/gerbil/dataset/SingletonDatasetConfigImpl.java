@@ -46,7 +46,7 @@ public class SingletonDatasetConfigImpl extends DatasetConfigurationImpl impleme
     protected Dataset getPreparedDataset() throws Exception {
         instanceMutex.acquire();
         try {
-            if (instance == null) {
+            if (instance == null || !instance.getQuestionLanguage().equals(this.questionLang)) {
                 instance = super.getPreparedDataset();
                 instance.setClosePermitionGranter(this);
             }

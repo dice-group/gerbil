@@ -74,6 +74,7 @@ public class GERBIL {
 
     public static final Property annotator = property("annotator");
     public static final Property dataset = property("dataset");
+    public static final Property language = property("language");
     public static final Property experimentType = property("experimentType");
     public static final Property errorCount = property("errorCount");
     public static final Property macroF1 = property("macroF1");

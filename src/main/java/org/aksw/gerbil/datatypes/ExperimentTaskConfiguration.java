@@ -37,6 +37,17 @@ public class ExperimentTaskConfiguration {
         this.matching = matching;
     }
 
+    
+    public ExperimentTaskConfiguration(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
+            String questionLanguage, ExperimentType type, Matching matching) {
+        super();
+        this.annotatorConfig = annotatorConfig;
+        this.datasetConfig = datasetConfig;
+        this.questionLanguage = questionLanguage;
+        this.type = type;
+        this.matching = matching;
+    }
+
     public ExperimentTaskConfiguration(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
             ExperimentType type, Matching matching, String questionLanguage) {
         super();

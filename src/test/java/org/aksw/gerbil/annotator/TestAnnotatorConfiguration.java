@@ -38,7 +38,7 @@ public class TestAnnotatorConfiguration extends AbstractAdapterConfiguration imp
     public TestAnnotatorConfiguration(String annotatorName, boolean couldBeCached, List<Document> instances,
             ExperimentType applicableForExperiment) {
         super(annotatorName, couldBeCached, applicableForExperiment);
-        annotator = new InstanceListBasedAnnotator(annotatorName, instances);
+        annotator = new InstanceListBasedAnnotator(annotatorName, instances, "en");
     }
 
     @Override

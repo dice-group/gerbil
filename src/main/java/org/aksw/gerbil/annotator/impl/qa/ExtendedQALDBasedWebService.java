@@ -65,7 +65,8 @@ public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator impl
 	public List<Marking> answerQuestion(Document document, String questionLang)
 			throws GerbilException {
 		
-		HttpEntity entity = new StringEntity("query="+document.getText(), "UTF-8");
+		HttpEntity entity = new StringEntity("query="+document.getText()+"&lang="+questionLang, "UTF-8");
+		
         HttpPost request = null;
         try {
             request = createPostRequest(url);

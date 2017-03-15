@@ -114,6 +114,7 @@ public class ExperimentTask implements Task {
             // Create dataset
             configuration.datasetConfig.setQuestionLanguage(qLang);
             dataset = configuration.datasetConfig.getDataset(configuration.type);
+            dataset.setQuestionLanguage(qLang);
             if (dataset == null) {
                 throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
                         + configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
@@ -121,7 +122,7 @@ public class ExperimentTask implements Task {
             //Clean up dataset
             List<Document> removeDocs = new ArrayList<Document>();
             for(Document d : dataset.getInstances()){
-            	if(d.getText().isEmpty()){
+            	if(d.getText()== null || d.getText().isEmpty()){
             		removeDocs.add(d);
             	}
             }
@@ -158,7 +159,7 @@ public class ExperimentTask implements Task {
             taskState = new ExperimentTaskState(dataset.size());
             // perform experiment
             EvaluationResult result = runExperiment(dataset, decoratedAnnotator, evaluators, taskState);
-
+            evFactory.getConverterManager().close();
             // create result object
             // FIXME Fix this workaround
             ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[6],
@@ -537,7 +538,7 @@ public class ExperimentTask implements Task {
                 
                 prepareAnnotatorResults(Arrays.asList(meanings), globalRetriever);
                 evalResult = evaluate(evaluators, results, goldStandard);
-               
+                
                 AnswersLoggerContainer.remove(evaluators);
             } catch (GerbilException e) {
                 throw e;

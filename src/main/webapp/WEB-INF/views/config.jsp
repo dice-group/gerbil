@@ -290,8 +290,9 @@ F.e. if you want to use French, type in: fr">
 								class="form-control" type="text" id="qLang" name="qlang"
 								placeholder="Type something: e.g. fr" /> <br>
 					</div>		
+					
+					
 				</div>
-			</div>
 			</div>
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2">

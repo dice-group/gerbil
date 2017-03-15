@@ -35,7 +35,6 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
 	protected List<Document> instances;
     protected String file;
     protected QALDStreamType fileType;
-	private String questionLanguage;
 
     public FileBasedQALDDataset(String file){
     	this.file=file;
@@ -63,16 +62,13 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
         super(name);
         this.file = file;
         this.fileType = fileType;
-        this.questionLanguage=questionLanguage;
+        this.qLang=questionLanguage;
     }
     
     private void initLanguage(){
-    	this.questionLanguage = "en";
+    	this.qLang = "en";
     }
-    
-    public void setQuestionLanguage(String lang){
-    	this.questionLanguage=lang;
-    }
+
 
     @Override
     public int size() {
@@ -98,9 +94,9 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
         		questions = EJQuestionFactory.getQuestionsFromJson(ExtendedQALDJSONLoader.readJson(new File(file)));
         		if(questions==null){
         			//XML
-        			questions = LoaderController.loadXML(fin, null, questionLanguage);
+        			questions = LoaderController.loadXML(fin, null, qLang);
         		}
-        		instances = generateInstancesFromQuestions(getName(), questions, questionLanguage);
+        		instances = generateInstancesFromQuestions(getName(), questions, qLang);
             }
         } catch (Exception e) {
         	IOUtils.closeQuietly(fin);

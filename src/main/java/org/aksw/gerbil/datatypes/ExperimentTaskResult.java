@@ -42,6 +42,7 @@ public class ExperimentTaskResult {
     public long timestamp;
     public String annotator;
     public String dataset;
+    public String language;
     public ExperimentType type;
     public Matching matching;
     public int idInDb;
@@ -55,20 +56,21 @@ public class ExperimentTaskResult {
      */
     public String stateMsg = null;
 
-    public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
+    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
             double results[], int state, int errorCount, long timestamp) {
-        this(annotator, dataset, type, matching, results, state, errorCount, timestamp, -1, null);
+        this(annotator, dataset, language, type, matching, results, state, errorCount, timestamp, -1, null);
     }
 
-    public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
+    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
             double results[], int state, int errorCount, long timestamp, int idInDb) {
-        this(annotator, dataset, type, matching, results, state, errorCount, timestamp, idInDb, null);
+        this(annotator, dataset, language, type, matching, results, state, errorCount, timestamp, idInDb, null);
     }
 
-    public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
+    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
             double results[], int state, int errorCount, long timestamp, int idInDb, String gerbilVersion) {
         this.annotator = annotator;
         this.dataset = dataset;
+        this.language = language;
         this.type = type;
         this.matching = matching;
         this.results = results;
@@ -79,15 +81,15 @@ public class ExperimentTaskResult {
         this.gerbilVersion = gerbilVersion;
     }
 
-    public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
+    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
             double results[], int state, int errorCount) {
-        this(annotator, dataset, type, matching, results, state, errorCount, (new java.util.Date()).getTime(), -1,
+        this(annotator, dataset, language, type, matching, results, state, errorCount, (new java.util.Date()).getTime(), -1,
                 null);
     }
 
     public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state,
             int errorCount) {
-        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
+        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.getQuestionLanguage(), configuration.type,
                 configuration.matching, results, state, errorCount, (new java.util.Date()).getTime());
     }
 
@@ -168,7 +170,15 @@ public class ExperimentTaskResult {
     public void setDataset(String dataset) {
         this.dataset = dataset;
     }
+    public String getLanguage() {
+        return language;
+    }
 
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    
     public ExperimentType getType() {
         return type;
     }

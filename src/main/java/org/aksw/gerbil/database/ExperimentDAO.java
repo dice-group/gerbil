@@ -114,6 +114,8 @@ public interface ExperimentDAO extends Closeable {
      *            the name with which the annotator can be identified
      * @param datasetName
      *            the name of the dataset
+     * @param language
+     * 			  the language which should be tested
      * @param experimentType
      *            the name of the experiment type
      * @param matching
@@ -125,7 +127,7 @@ public interface ExperimentDAO extends Closeable {
      *         an experiment task with the given preferences or the id of the
      *         newly created experiment task.
      */
-    public int connectCachedResultOrCreateTask(String annotatorName, String datasetName, String experimentType,
+    public int connectCachedResultOrCreateTask(String annotatorName, String datasetName, String language, String experimentType,
             String matching, String experimentId);
 
     /**
@@ -138,6 +140,8 @@ public interface ExperimentDAO extends Closeable {
      *            the name with which the annotator can be identified
      * @param datasetName
      *            the name of the dataset
+     * @param language
+     * 			  the language which should be tested
      * @param experimentType
      *            the name of the experiment type
      * @param matching
@@ -146,7 +150,7 @@ public interface ExperimentDAO extends Closeable {
      *            the id of the experiment
      * @return the id of the newly created experiment task.
      */
-    public int createTask(String annotatorName, String datasetName, String experimentType, String matching,
+    public int createTask(String annotatorName, String datasetName, String language, String experimentType, String matching,
             String experimentId);
 
     /**
@@ -222,10 +226,12 @@ public interface ExperimentDAO extends Closeable {
      *            the names of annotators for which the data should be collected
      * @param datasetNames
      *            the names of datasets for which the data should be collected
+     * @param language
+     * 			  the languages for which the data should be collected
      * @return a list of the latest results available in the database.
      */
     public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching,
-            String annotatorNames[], String datasetNames[]);
+            String annotatorNames[], String datasetNames[], String languages[]);
 
     /**
      * Returns a list of all running experiment tasks.

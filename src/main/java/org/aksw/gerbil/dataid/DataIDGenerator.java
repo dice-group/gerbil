@@ -47,6 +47,7 @@ public class DataIDGenerator {
     private static final String DATASET_DATAID = "dataId/corpora/";
     private static final String ANNOTATOR_DATAID = "dataId/annotators/";
     private static final String DATAID_EXTENSION = "";
+	private static final String LANGUAGE_DATAID = "dataId/languages/";
 
     private String gerbilURL;
 
@@ -163,7 +164,10 @@ public class DataIDGenerator {
                 gerbilURL + ANNOTATOR_DATAID + DataIDUtils.treatsNames(result.dataset) + DATAID_EXTENSION);
         experimentTask.addProperty(GERBIL.dataset,
                 gerbilURL + DATASET_DATAID + DataIDUtils.treatsNames(result.annotator) + DATAID_EXTENSION);
+        experimentTask.addProperty(GERBIL.language,
+                gerbilURL + LANGUAGE_DATAID + DataIDUtils.treatsNames(result.language) + DATAID_EXTENSION);
 
+        
         // set the status of this task
         model.add(experimentTask, GERBIL.statusCode, model.createTypedLiteral(result.state));
 

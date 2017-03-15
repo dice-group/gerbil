@@ -4,6 +4,7 @@ experimentType VARCHAR(10),
 matching VARCHAR(50),
 annotatorName VARCHAR(100),
 datasetName VARCHAR(100),
+language VARCHAR(3),
 microF1 double,
 microPrecision double,
 microRecall double,
@@ -23,7 +24,7 @@ CREATE TABLE IF NOT EXISTS Experiments (
 );
 
 DROP INDEX IF EXISTS ExperimentTaskConfig;
-CREATE INDEX ExperimentTaskConfig ON ExperimentTasks (matching,experimentType,annotatorName,datasetName);
+CREATE INDEX ExperimentTaskConfig ON ExperimentTasks (matching,experimentType,annotatorName,datasetName,language);
 
 -- Changes from version 1.0.0 to 1.1.0
 CREATE TABLE IF NOT EXISTS ExperimentTasks_Version (

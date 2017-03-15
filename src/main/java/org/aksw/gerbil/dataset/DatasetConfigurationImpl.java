@@ -40,6 +40,7 @@ public class DatasetConfigurationImpl extends AbstractDatasetConfiguration {
     protected Dataset loadDataset() throws Exception {
         Dataset instance = constructor.newInstance(constructorArgs);
         instance.setName(this.getName());
+        instance.setQuestionLanguage(questionLang);
         return instance;
     }
 

@@ -23,6 +23,10 @@ import java.util.List;
 import org.aksw.agdistis.util.TripleIndex;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
+import org.aksw.gerbil.dataset.converter.Literal2Resource;
+import org.aksw.gerbil.dataset.converter.Literal2ResourceManager;
+import org.aksw.gerbil.dataset.converter.impl.IndexBasedLiteral2Resource;
+import org.aksw.gerbil.dataset.converter.impl.SPARQLBasedLiteral2Resource;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.datatypes.marking.ClassifiedMeaning;
@@ -89,9 +93,16 @@ public class EvaluatorFactory {
 
     protected static final UrlValidator URL_VALIDATOR = new UrlValidator();
 
+	private static final String GERBIL_HTTP_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY = "org.aksw.gerbil.dataset.converter.domain";
+
+	private static final String GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY = null;
+
+	private static final String GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY = null;
+
     protected UriKBClassifier globalClassifier = null;
     protected SubClassInferencer inferencer = null;
     protected TripleIndex index = null;
+    protected Literal2ResourceManager converterManager = new Literal2ResourceManager();
 
     public EvaluatorFactory() {
         this(null, null);
@@ -123,6 +134,30 @@ public class EvaluatorFactory {
             this.inferencer = inferencer;
         } else {
             this.inferencer = new SimpleSubClassInferencer(ModelFactory.createDefaultModel());
+        }
+        //if(GerbilConfig has key Index)
+        //try catch(use SPARQL based)
+        //if(GerbilConfig has SPARQL key) 
+        if(GerbilConfiguration.getInstance().containsKey(GERBIL_HTTP_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY)){
+        	//add SPARQLBased...
+        	for(String domain : GerbilConfiguration.getInstance().getStringArray(GERBIL_HTTP_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY)){
+        		Literal2Resource converter = new SPARQLBasedLiteral2Resource(domain);
+        		converterManager.registerLiteral2Resource(converter);
+        	}
+    	}
+        
+        if(GerbilConfiguration.getInstance().containsKey(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY)){
+        	String folder = GerbilConfiguration.getInstance().getString(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY);
+        	for(String domain : GerbilConfiguration.getInstance().getStringArray(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY)){
+        		Literal2Resource converter = null;
+        		try{
+        			converter = new IndexBasedLiteral2Resource(folder, domain);
+        		}
+        		catch(Exception e){
+        			converter = new SPARQLBasedLiteral2Resource(domain);        		
+        		}
+       			converterManager.registerLiteral2Resource(converter);
+        	}
         }
     }
 
@@ -262,7 +297,7 @@ public class EvaluatorFactory {
         }
         case QA: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerSet>(new FMeasureCalculator<AnswerSet>(
-                    new QAMatchingsCounter(index, URL_VALIDATOR, classifier)), AnswerSet.class);
+                    new QAMatchingsCounter(index, URL_VALIDATOR, classifier, converterManager)), AnswerSet.class);
         }
         case RE2KB: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, Relation>(
@@ -312,28 +347,28 @@ public class EvaluatorFactory {
         }
         case QA: {
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.AIT2KB, configuration.matching);
+            		 configuration.questionLanguage, ExperimentType.AIT2KB, configuration.matching);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.AIT2KB, subTaskConfig,
                     dataset)));
 
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.AType, Matching.STRONG_ENTITY_MATCH);
+            		 configuration.questionLanguage, ExperimentType.AType, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.AType, subTaskConfig,
                     dataset)));
 
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.C2KB, Matching.STRONG_ENTITY_MATCH);
+            		 configuration.questionLanguage, ExperimentType.C2KB, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
                     new SimpleTypeTransformingEvaluatorDecorator<Marking, Meaning>(createEvaluator(ExperimentType.C2KB,
                             subTaskConfig, dataset), Meaning.class)));
 
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.P2KB, Matching.STRONG_ENTITY_MATCH);
+            		 configuration.questionLanguage, ExperimentType.P2KB, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.P2KB, subTaskConfig,
                     dataset)));
 
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.RE2KB, Matching.STRONG_ENTITY_MATCH);
+            		 configuration.questionLanguage, ExperimentType.RE2KB, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.RE2KB, subTaskConfig,
                     dataset)));
             return;
@@ -345,7 +380,12 @@ public class EvaluatorFactory {
     }
 
     public void addEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration, Dataset dataset) {
-        evaluators.add(createEvaluator(configuration.type, configuration, dataset));
+        converterManager.setQuestionLanguage(configuration.getQuestionLanguage());
+    	evaluators.add(createEvaluator(configuration.type, configuration, dataset));
         addSubTaskEvaluators(evaluators, configuration, dataset);
+    }
+    
+    public Literal2ResourceManager getConverterManager(){
+    	return converterManager;
     }
 }
