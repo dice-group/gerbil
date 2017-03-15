@@ -1,6 +1,7 @@
 package org.aksw.gerbil.matching.impl;
 
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -137,10 +138,10 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
 		List<Annotation> annotations = new ArrayList<Annotation>(answers.size());
 		for (String answer : answers) {
 			// If the String is a valid URL
-			try{
-				URI uri = new URI(answer);
+			if(urlValidator.isValid(answer)){
 				annotations.add(new Annotation(answer));
-			}catch(Exception e){
+			}
+			else{
 				// The given String might be a label. Try to find all matching
 				// resources
 				annotations.add(new Annotation(converterManager.getResourcesForLiteral(answer)));
