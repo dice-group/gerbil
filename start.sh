@@ -35,4 +35,4 @@ fi
 
 echo "Building and starting GERBIL QA..."
 #mvn clean tomcat:run -Dmaven.tomcat.port=1234
-mvn clean org.apache.tomcat.maven:tomcat7-maven-plugin:2.2:run -Dmaven.tomcat.port=1234
+mvn clean org.apache.tomcat.maven:tomcat7-maven-plugin:2.2:run -Dmaven.tomcat.port=5004
