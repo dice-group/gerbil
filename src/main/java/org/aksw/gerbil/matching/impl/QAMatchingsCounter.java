@@ -119,7 +119,7 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
 					}
 				}
 				else{
-					goldAnnotations.clear();
+					goldAnnotations = null;
 				}
 			}
 			goldStrings = (Set<String>) goldStdAnswerSet.getAnswers();

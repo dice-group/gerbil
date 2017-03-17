@@ -13,7 +13,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>gerbil-qa</artifactId>
-	<version>0.1.0</version>
+	<version>0.2.0</version>
 	<name>General Entity Annotator Benchmark - Question Answering Extension</name>
 	<description>This project is a benchmark for entity annotation and disambiguation tools extended towards question answering.</description>
 	<inceptionYear>2014</inceptionYear>
