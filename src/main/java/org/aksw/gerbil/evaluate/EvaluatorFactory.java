@@ -25,7 +25,6 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.converter.Literal2Resource;
 import org.aksw.gerbil.dataset.converter.Literal2ResourceManager;
-import org.aksw.gerbil.dataset.converter.impl.IndexBasedLiteral2Resource;
 import org.aksw.gerbil.dataset.converter.impl.SPARQLBasedLiteral2Resource;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -95,9 +94,9 @@ public class EvaluatorFactory {
 
 	private static final String GERBIL_HTTP_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY = "org.aksw.gerbil.dataset.converter.domain";
 
-	private static final String GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY = null;
-
-	private static final String GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY = null;
+//	private static final String GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY = null;
+//
+//	private static final String GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY = null;
 
     protected UriKBClassifier globalClassifier = null;
     protected SubClassInferencer inferencer = null;
@@ -146,19 +145,19 @@ public class EvaluatorFactory {
         	}
     	}
         
-        if(GerbilConfiguration.getInstance().containsKey(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY)){
-        	String folder = GerbilConfiguration.getInstance().getString(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY);
-        	for(String domain : GerbilConfiguration.getInstance().getStringArray(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY)){
-        		Literal2Resource converter = null;
-        		try{
-        			converter = new IndexBasedLiteral2Resource(folder, domain);
-        		}
-        		catch(Exception e){
-        			converter = new SPARQLBasedLiteral2Resource(domain);        		
-        		}
-       			converterManager.registerLiteral2Resource(converter);
-        	}
-        }
+//        if(GerbilConfiguration.getInstance().containsKey(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY)){
+//        	String folder = GerbilConfiguration.getInstance().getString(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY);
+//        	for(String domain : GerbilConfiguration.getInstance().getStringArray(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY)){
+//        		Literal2Resource converter = null;
+//        		try{
+//        			converter = new IndexBasedLiteral2Resource(folder, domain);
+//        		}
+//        		catch(Exception e){
+//        			converter = new SPARQLBasedLiteral2Resource(domain);        		
+//        		}
+//       			converterManager.registerLiteral2Resource(converter);
+//        	}
+//        }
     }
 
     @SuppressWarnings("rawtypes")
