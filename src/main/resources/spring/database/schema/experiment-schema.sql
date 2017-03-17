@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS Experiments (
 -- Changes from GERBIL QA 0.1.0 to 0.2.0
 -- (ALTER should be executed only once for updating old DBs
 -- ALTER TABLE ExperimentTasks ADD COLUMN language varchar(3);
-UPDATE ExperimentTasks  SET language='en' WHERE language='';
+UPDATE ExperimentTasks  SET language='en' WHERE language IS NULL;
 DROP INDEX IF EXISTS ExperimentTaskConfig;
 CREATE INDEX ExperimentTaskConfig ON ExperimentTasks (matching,experimentType,annotatorName,datasetName,language);
 
