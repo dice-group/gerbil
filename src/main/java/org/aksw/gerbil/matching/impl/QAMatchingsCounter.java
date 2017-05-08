@@ -124,6 +124,7 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
 			}
 			goldStrings = (Set<String>) goldStdAnswerSet.getAnswers();
 			resultStrings = (Set<String>) annotatorAnswerSet.getAnswers();
+			//Clean up literals
 		}
 
 		if (goldAnnotations != null) {
@@ -145,6 +146,14 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
 				// The given String might be a label. Try to find all matching
 				// resources
 				annotations.add(new Annotation(converterManager.getResourcesForLiteral(answer)));
+				
+				//FIXME: What if answer literal contains escaped @  
+				//Remove Lang from literal and exchange from answers. 
+				if(answer.contains("@")){
+				    String literal = answer.substring(0, answer.lastIndexOf("@"));
+				    answers.remove(answer);
+				    answers.add(literal);
+				}
 			}
 		}
 		// If there is a same as retriever, us it

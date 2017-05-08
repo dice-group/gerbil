@@ -13,7 +13,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>gerbil-qa</artifactId>
-	<version>0.2.0</version>
+	<version>0.2.1</version>
 	<name>General Entity Annotator Benchmark - Question Answering Extension</name>
 	<description>This project is a benchmark for entity annotation and disambiguation tools extended towards question answering.</description>
 	<inceptionYear>2014</inceptionYear>
@@ -474,5 +474,4 @@
 			<url>http://maven.aksw.org/archiva/repository/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
-	<packaging>war</packaging>
 </project>

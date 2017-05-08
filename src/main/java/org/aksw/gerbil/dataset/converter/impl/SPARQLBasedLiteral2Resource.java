@@ -9,6 +9,7 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 public class SPARQLBasedLiteral2Resource extends AbstractLiteral2Resource {
 
@@ -22,6 +23,14 @@ public class SPARQLBasedLiteral2Resource extends AbstractLiteral2Resource {
 	@Override
 	public Set<String> getResourcesForLiteral(String literal, String qLang) {
 		Set<String> ret = new HashSet<String>();
+		if(qLang==null) {
+		    //Get language from literal
+		    qLang="en";
+		    if(literal.lastIndexOf("@")!=-1){
+			    qLang = literal.substring(literal.lastIndexOf("@")+1, literal.length());
+		    }
+		    literal = literal.substring(0, literal.lastIndexOf("@"));
+		}
 		StringBuilder queryString = new StringBuilder(this.queryString).
 				append("\"").append(literal).append("\"@").append(qLang).append("}");
 		Query q = QueryFactory.create(queryString.toString());

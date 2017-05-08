@@ -25,5 +25,13 @@ public class Literal2ResourceManagerTest {
 		assertTrue(tmp.size()==2);
 		assertTrue(tmp.contains("http://dbpedia.org/resource/Abel,_King_of_Denmark"));
 		assertTrue(tmp.contains("http://es.dbpedia.org/resource/Abel_I_de_Dinamarca"));
+		
+		m = new Literal2ResourceManager();
+		Literal2Resource converterEs2 = new SPARQLBasedLiteral2Resource("http://es.dbpedia.org/sparql");
+		m.registerLiteral2Resource(converterEs2);
+		tmp = m.getResourcesForLiteral("Abel I de Dinamarca@es", null);
+		assertTrue(tmp.size()==2);
+		assertTrue(tmp.contains("http://dbpedia.org/resource/Abel,_King_of_Denmark"));
+		assertTrue(tmp.contains("http://es.dbpedia.org/resource/Abel_I_de_Dinamarca"));
 	}
 }
