@@ -45,7 +45,7 @@ public class SpotlightClient {
   private static final String TYPE_PREFIX_URI_MAPPING[][] = new String[][] {
       {"freebase", "http://rdf.freebase.com/ns/"}, {"dbpedia", "http://dbpedia.org/ontology/"}};
 
-  private static final String DEFAULT_REQUEST_URL = "http://spotlight.sztaki.hu:2222/rest";
+  private static final String DEFAULT_REQUEST_URL = "http://model.dbpedia-spotlight.org:2222/rest/";
   // private static final double DEFAULT_MIN_CONFIDENCE = -1;
   // private static final int DEFAULT_MIN_SUPPORT = -1;
 
