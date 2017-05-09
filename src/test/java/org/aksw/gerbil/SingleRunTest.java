@@ -53,9 +53,10 @@ public class SingleRunTest implements TaskObserver {
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
 
-    private static final String ANNOTATOR_NAME = "NIFWS_QANARY(http://qanary.univ-st-etienne.fr/gerbil)";
-    private static final String DATASET_NAME = "QALD4 Train Hybrid";
+    private static final String ANNOTATOR_NAME = "NIFWS_Tremblay(http://qald7rest.azurewebsites.net/api/question)";
+    private static final String DATASET_NAME = "QALD7 Train Hybrid";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.QA;
+    private static final String QUESTION_LANGUAGE = "fr";
 
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
 
@@ -86,9 +87,9 @@ public class SingleRunTest implements TaskObserver {
             adapterManager.setAnnotators(AnnotatorsConfig.annotators());
             adapterManager.setDatasets(DatasetsConfig.datasets(ENTITY_CHECKER_MANAGER, SAME_AS_RETRIEVER));
 
-            AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE, "en");
+            AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE, "fr");
             Assert.assertNotNull(annotatorConfig);
-            DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE, "en");
+            DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE, "fr");
             Assert.assertNotNull(datasetConfig);
             // DatasetConfiguration datasetConfig = new
             // DatasetConfigurationImpl("Test", false,
@@ -103,7 +104,7 @@ public class SingleRunTest implements TaskObserver {
             overseer.addObserver(this);
 
             ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
-                    new ExperimentTaskConfiguration(annotatorConfig, datasetConfig, EXPERIMENT_TYPE, MATCHING) };
+                    new ExperimentTaskConfiguration(annotatorConfig, datasetConfig, QUESTION_LANGUAGE, EXPERIMENT_TYPE, MATCHING) };
 
             Experimenter experimenter = new Experimenter(overseer, new SimpleLoggingDAO4Debugging(), SAME_AS_RETRIEVER,
                     new EvaluatorFactory(), taskConfigs, "SingleRunTest");

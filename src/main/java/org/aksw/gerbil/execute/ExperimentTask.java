@@ -114,11 +114,11 @@ public class ExperimentTask implements Task {
             // Create dataset
             configuration.datasetConfig.setQuestionLanguage(qLang);
             dataset = configuration.datasetConfig.getDataset(configuration.type);
-            dataset.setQuestionLanguage(qLang);
             if (dataset == null) {
                 throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
                         + configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
             }
+            dataset.setQuestionLanguage(qLang);
             //Clean up dataset
             List<Document> removeDocs = new ArrayList<Document>();
             for(Document d : dataset.getInstances()){
