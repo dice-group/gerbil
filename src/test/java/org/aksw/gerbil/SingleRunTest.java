@@ -54,7 +54,7 @@ public class SingleRunTest implements TaskObserver {
 
 
     private static final String ANNOTATOR_NAME = "NIFWS_Tremblay(http://qald7rest.azurewebsites.net/api/question)";
-    private static final String DATASET_NAME = "QALD7 Train Hybrid";
+    private static final String DATASET_NAME = "QALD7 Train Multilingual";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.QA;
     private static final String QUESTION_LANGUAGE = "fr";
 

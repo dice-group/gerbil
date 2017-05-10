@@ -1,6 +1,10 @@
 package org.aksw.gerbil.annotator.impl.qa;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.QASystem;
@@ -15,9 +19,11 @@ import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.commons.load.json.EJQuestionFactory;
 import org.aksw.qa.commons.load.json.ExtendedJson;
 import org.aksw.qa.commons.load.json.ExtendedQALDJSONLoader;
+import org.aksw.qa.commons.load.json.QaldJson;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
+import org.apache.http.ParseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -86,10 +92,23 @@ public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator impl
             // receive NIF document
             entity = response.getEntity();
             // read response and parse NIF
+            
             try {
-            	ExtendedJson exJson = (ExtendedJson) ExtendedQALDJSONLoader.readJson(entity.getContent(), ExtendedJson.class); 
- 
-            	List<IQuestion>  questions = EJQuestionFactory.getQuestionsFromExtendedJson(exJson);
+        	String content = EntityUtils.toString(entity);
+        	InputStream stream = new ByteArrayInputStream(content.getBytes("UTF-8"));
+        	Object json = ExtendedQALDJSONLoader.readJson(stream, ExtendedJson.class); 
+        	List<IQuestion>  questions;
+        	if(json==null){
+        	    stream = new ByteArrayInputStream(content.getBytes("UTF-8"));
+        	    QaldJson qaldJson = (QaldJson) ExtendedQALDJSONLoader.readJson(stream, QaldJson.class);
+        	    questions = EJQuestionFactory.getQuestionsFromQaldJson(qaldJson);
+        	}
+        	else{
+        	    ExtendedJson exJson = (ExtendedJson) json;
+        	    questions = EJQuestionFactory.getQuestionsFromExtendedJson(exJson);
+
+        	}
+        	
             	Document resultDoc = QAUtils.translateQuestion(questions.get(0), null, questionLang);
                 ret = resultDoc.getMarkings();
             } catch (Exception e) {

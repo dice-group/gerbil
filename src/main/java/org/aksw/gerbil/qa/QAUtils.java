@@ -60,7 +60,8 @@ public class QAUtils {
             }
         } else if (question.getPseudoSparqlQuery() != null) {
             try {
-                deriveMarkingsFromSparqlQuery(document, question.getPseudoSparqlQuery());
+        	//TODO FIXME crawl markings from pseudo somehow
+//                deriveMarkingsFromSparqlQuery(document, question.getPseudoSparqlQuery());
             } catch (Exception e) {
             }
         }

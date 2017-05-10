@@ -474,4 +474,5 @@
 			<url>http://maven.aksw.org/archiva/repository/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
+	<packaging>war</packaging>
 </project>
