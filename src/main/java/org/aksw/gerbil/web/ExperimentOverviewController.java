@@ -52,8 +52,8 @@ public class ExperimentOverviewController {
 	private static final double NOT_AVAILABLE_SENTINAL = -2;
 	private static final int MIN_NUMBER_OF_VALUES_FOR_CORR_CALC = 5;
 	private static final String CORRELATION_TABLE_COLUMN_HEADINGS[] = { "number of documents", "avg. document length",
-			"number of entities", "entities per document", "entities per token", "amount of persons",
-			"amount of organizations", "amount of locations", "amount of others"/*
+			"number of entities", "entities per document", "entities per token", "number of persons",
+			"number of organizations", "number of locations", "number of others"/*
 																				 * ,
 																				 * "corr. based on # datasets"
 																				 */};
