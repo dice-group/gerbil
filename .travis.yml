@@ -1,5 +1,16 @@
 language: java
 
+#Following https://docs.travis-ci.com/user/languages/java/ we have to run an update for JDK 8
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+      
+jdk:  
+  - oraclejdk8
+
 before_install:
   - cp src/main/properties/log4j.properties src/test/resources/log4j.properties
   - mkdir -p "gerbil_data"
