@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<dataset id="dbpedia-test">
+<question aggregation="false" answertype="boolean" id="1" onlydbo="true">
+<string lang="en">Is Christian Bale starring in Batman Begins?</string>
+<query><![CDATA[
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX res: <http://dbpedia.org/resource/>
+ASK 
+WHERE {
+	res:Batman_Begins dbo:starring res:Christian_Bale .
+}
+]]></query>
+<answers>
+<answer>
+<boolean>true</boolean>
+</answer>
+</answers>
+</question>
+<question aggregation="false" answertype="boolean" id="2" onlydbo="true">
+<string lang="en">Is Christian Bale starring in Batman Begins?</string>
+<query><![CDATA[
+PREFIX dbo: <http://dbpedia.org/ontology/>
+PREFIX res: <http://dbpedia.org/resource/>
+ASK 
+WHERE {
+	res:Batman_Begins dbo:starring res:Christian_Bale .
+}
+]]></query>
+<answers>
+<answer>
+<boolean>True</boolean>
+</answer>
+</answers>
+</question>
+
+<question aggregation="false" answertype="boolean" id="3" onlydbo="true">
+<string lang="en">Was Barack Obama born at 1961-08-06?</string>
+<query><![CDATA[
+PREFIX res: <http://dbpedia.org/resource/> 
+PREFIX dbo: <http://dbpedia.org/ontology/>
+ASK WHERE {res:Barack_Obama dbo:birthDate "1961-08-06"^^xsd:date }
+]]></query>
+<answers>
+<answer>false</answer>
+</answers>
+</question>
+<question aggregation="false" answertype="boolean" id="4" onlydbo="true">
+<string lang="en">Was Barack Obama born at 1961-08-06?</string>
+<query><![CDATA[
+PREFIX res: <http://dbpedia.org/resource/> 
+PREFIX dbo: <http://dbpedia.org/ontology/>
+ASK WHERE {res:Barack_Obama dbo:birthDate "1961-08-06"^^xsd:date }
+]]></query>
+<answers>
+<answer>False</answer>
+</answers>
+</question>
+</dataset>

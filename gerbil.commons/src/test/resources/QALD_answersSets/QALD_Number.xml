@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<dataset id="dbpedia-test">
+<question aggregation="false" answertype="number" id="1" hybrid="false" onlydbo="false"><string lang="en">How many children does Eddie Murphy have?</string><string lang="de">Wieviele Kinder hat Eddie Murphy?</string><string lang="es">¿Cuántos hijos tiene Eddie Murphy?</string><string lang="it">Quanti figli ha Eddie Murphy?</string><string lang="fr">Combien d'enfants a Eddie Murphy?</string><string lang="nl">Hoeveel kinderen heeft Eddie Murphy?</string><string lang="ro">Câți copii are Eddie Murphy?</string><keywords lang="en">children, Eddie Murphy</keywords><keywords lang="de">Kinder, Eddie Murphy</keywords><keywords lang="es">hijos, Eddie Murphy</keywords><keywords lang="it">figli, Eddie Murphy</keywords><keywords lang="fr">nombre d'enfants, Eddie Murphy</keywords><keywords lang="nl">kinderen, Eddie Murphy</keywords><keywords lang="ro">copii, Eddie Murphy</keywords><query>
+<![CDATA[PREFIX dbp: <http://dbpedia.org/property/>
+PREFIX res: <http://dbpedia.org/resource/>
+SELECT DISTINCT ?n
+WHERE { 
+        res:Eddie_Murphy dbp:children ?n . 
+}
+]]></query><answers><answer>0</answer></answers></question>
+
+</dataset>

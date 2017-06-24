@@ -1,0 +1,39 @@
+{
+  "dataset": {
+    "id": "qald-6-test-hybrid"
+  },
+  "questions": [
+	{
+      "id": "18",
+      "answertype": "text",
+      "aggregation": "false",
+      "onlydbo": "true",
+      "hybrid": "false",
+      "question": [
+        {
+          "language": "en",
+          "string": "What is the name of the Viennese newspaper founded by the creator of the croissant?"
+        }
+      ],
+      "query": {
+        "pseudo": "PREFIX dbo: <http://dbpedia.org/ontology/> PREFIX res: <http://dbpedia.org/resource/> SELECT DISTINCT ?name WHERE {        res:Croissant dbo:creator ?x .        ?x text:\"founder of\" ?name . }"
+      },
+      "answers": [
+        {
+          "head": {
+            "vars": [
+              "proj"
+            ]
+          },
+          "results": { "bindings": [
+            {
+              "proj": {
+                "type": "text",
+                "value": "Croissant"
+              }
+            }] }
+        }
+      ]
+    }
+]
+}

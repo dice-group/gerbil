@@ -1,0 +1,196 @@
+{
+  "dataset": {
+    "id": "qald-6-train-multilingual"
+  },
+  "questions": [
+     {
+      "id": "101",
+      "answertype": "resource",
+      "aggregation": "true",
+      "onlydbo": "true",
+      "hybrid": "false",
+      "question": [
+        {
+          "language": "en",
+          "string": "Which German cities have more than 250000 inhabitants?",
+          "keywords": "city, Germany, inhabitants, more than 250000"
+        },
+        {
+          "language": "fa",
+          "string": "چه شهرهایی در آلمان بیشتر از 250000 نفر سکنه دارند؟",
+          "keywords": "شهر، آلمان، بیشتر از 250000، سکنه"
+        },
+        {
+          "language": "de",
+          "string": "Welche deutschen Städte haben mehr als 250000 Einwohner?",
+          "keywords": "Stadt, Deutschland, Einwohner, mehr als 250000"
+        },
+        {
+          "language": "es",
+          "string": "¿Qué ciudades alemanas tienen más de 250000 habitantes?",
+          "keywords": "cuidad, Alemania, habitantes, más de 250000"
+        },
+        {
+          "language": "it",
+          "string": "Quali città tedesche hanno più di 250000 abitanti?",
+          "keywords": "città, Germania, abitanti, più di 250000"
+        },
+        {
+          "language": "fr",
+          "string": "Quelles villes allemandes ont plus de 250000 habitants?",
+          "keywords": "villes, Allemagne, habitants, plus de 250000"
+        },
+        {
+          "language": "nl",
+          "string": "Welke Duitse steden hebben meer dan 250000 inwoners?",
+          "keywords": "stad, Duitsland, inwoners, meer dan 250000"
+        },
+        {
+          "language": "ro",
+          "string": "Ce orașe germane au mai mult de 250000 de locuitori?",
+          "keywords": "oraș, Germania, locuitori, mai mult de 250000"
+        }
+      ],
+      "query": {
+        "sparql": "SELECT DISTINCT ?uri WHERE { { ?uri <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/City> . } UNION { ?uri <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Town> . }  ?uri <http://dbpedia.org/ontology/country> <http://dbpedia.org/resource/Germany> .  ?uri <http://dbpedia.org/ontology/populationTotal> ?population .  FILTER ( ?population > 250000 ) } "
+      },
+      "answers": [
+        {
+          "head": {
+            "vars": [
+              "uri"
+            ]
+          },
+          "results": {
+            "bindings": [
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Bonn"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Gelsenkirchen"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Mannheim"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Braunschweig"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Bielefeld"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Bochum"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Wuppertal"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Dortmund"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Essen"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Nuremberg"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Dresden"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Hanover"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Cologne"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Frankfurt"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Hamburg"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Munich"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Aachen"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Augsburg"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Wiesbaden"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Karlsruhe"
+                }
+              },
+              {
+                "uri": {
+                  "type": "uri",
+                  "value": "http://dbpedia.org/resource/Bremen"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }]}

@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="jquery.min.js"></script>
+</head>
+<body>
+	<span class="annotator">DBpedia Spotlight</span>
+	<br>
+	<span class="annotator">NERD-ML</span>
+	<br>
+	<span class="annotator">Babelfy</span>
+	<br>
+	<span class="annotator">AGDISTIS</span>
+	<br>
+	<span class="annotator">TagMe 2</span>
+	<br>
+	<span class="annotator">Wikipedia Miner</span>
+	<br>
+	<span class="annotator">KEA</span>
+	<br>
+	<span class="annotator">WAT</span>
+	<br>
+	<script type="text/javascript">
+		
+
+        $(document).ready(function() {
+	        $.each($("span.annotator"), function(index, value) {
+	        	value = $(value);
+		        value.css("background-color", colorForString(value.text().sub()));
+	        });
+        });
+	</script>
+</body>
+</html>

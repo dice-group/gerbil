@@ -1,0 +1,39 @@
+{
+  "dataset": {
+    "id": "qald-6-test-hybrid"
+  },
+  "questions": [
+	{
+      "id": "1",
+      "answertype": "resource",
+      "aggregation": "false",
+      "onlydbo": "false",
+      "hybrid": "true",
+      "question": [
+        {
+          "language": "en",
+          "string": "What eating disorder is characterized by an appetite for substances such as clay and sand?"
+        }
+      ],
+      "query": {
+        "pseudo": "PREFIX res: <http://dbpedia.org/resource/> PREFIX dbo: <http://dbpedia.org/ontology/>  SELECT DISTINCT ?uri  WHERE {           res:Mecca dbo:country ?uri . }"
+      },
+      "answers": [
+        {
+          "head": {
+            "vars": [
+              "uri"
+            ]
+          },
+          "results": { "bindings": [
+            {
+              "uri": {
+                "type": "uri",
+                "value": "http://dbpedia.org/resource/Al-Bad',_Saudi_Arabia"
+              }
+            } ] }
+        }
+      ]
+    }
+]
+}

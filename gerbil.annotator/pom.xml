@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>gerbil.annotator</groupId>
+  <artifactId>gerbil.annotator</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  	<name>General Entity Annotator Benchmark - Question Answering Extension</name>
+	<description>This project is a benchmark for entity annotation and disambiguation tools extended towards question answering.</description>
+	<inceptionYear>2014</inceptionYear>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<slf4j.version>1.7.6</slf4j.version>
+		<junit.version>4.11</junit.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring.version>3.2.17.RELEASE</spring.version>
+		<jena.version>3.1.0</jena.version>
+		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
+		<war.warName>gerbil</war.warName>
+		<maven.tomcat.path>/gerbil</maven.tomcat.path>
+	</properties>
+  <dependencies>
+  	<dependency>
+  		<groupId>gerbil.commons</groupId>
+  		<artifactId>gerbil.commons</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>gerbil.evaluate</groupId>
+  		<artifactId>gerbil.evaluate</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  			<!-- JUnit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>gerbil.dataset</groupId>
+			<artifactId>gerbil.dataset</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+  </dependencies>
+</project>

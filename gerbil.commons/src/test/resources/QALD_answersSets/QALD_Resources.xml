@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<dataset id="dbpedia-test">
+	<question aggregation="false" answertype="resource" id="1"
+		hybrid="false" onlydbo="true">
+		<string lang="en">In which country is Mecca located?</string>
+		<keywords lang="en">country, located, Mecca</keywords>
+		<query>
+<![CDATA[PREFIX res: <http://dbpedia.org/resource/>
+PREFIX dbo: <http://dbpedia.org/ontology/> 
+SELECT DISTINCT ?uri 
+WHERE {  
+        res:Mecca dbo:country ?uri .
+}
+]]></query>
+		<answers>
+			<answer>http://dbpedia.org/resource/Al-Bad',_Saudi_Arabia</answer>
+		</answers>
+	</question>
+
+</dataset>

@@ -1,0 +1,76 @@
+{
+  "dataset": {
+    "id": "qald-6-train-multilingual"
+  },
+  "questions": [
+    {
+      "id": 100,
+      "answertype": "string",
+      "aggregation": "false",
+      "onlydbo": "false",
+      "hybrid": "false",
+      "question": [
+        {
+          "language": "en",
+          "string": "What is Batman's real name?",
+          "keywords": "real name, Batman"
+        },
+        {
+          "language": "fa",
+          "string": "نام واقعی بتمن چیست؟",
+          "keywords": "نام واقعی، بتمن"
+        },
+        {
+          "language": "de",
+          "string": "Was ist Batmans richtiger Name?",
+          "keywords": "Batman, richtiger Name"
+        },
+        {
+          "language": "es",
+          "string": "¿Cuál es el verdadero nombre de Batman?",
+          "keywords": "verdadero nombre Batman"
+        },
+        {
+          "language": "it",
+          "string": "Qual è il vero nome di Batman?",
+          "keywords": "Batman, vero nome"
+        },
+        {
+          "language": "fr",
+          "string": "Quel est le vrai nom de Batman?",
+          "keywords": "vrai nom, Batman"
+        },
+        {
+          "language": "nl",
+          "string": "Wat is de echte naam van Batman?",
+          "keywords": "Batman, echte naam"
+        },
+        {
+          "language": "ro",
+          "string": "Care este numele real al lui Batman?",
+          "keywords": "nume real, Batman"
+        }
+      ],
+      "query": {
+        "sparql": "SELECT DISTINCT ?s WHERE { <http://dbpedia.org/resource/Batman> <http://dbpedia.org/property/alterEgo> ?s . }"
+      },
+      "answers": [
+        {
+          "head": {
+            "vars": [
+              "s"
+            ]
+          },
+          "results": {
+            "bindings": [
+              {
+                "s": {
+                  "type": "literal",
+                  "value": "Bruce Wayne"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }]}
