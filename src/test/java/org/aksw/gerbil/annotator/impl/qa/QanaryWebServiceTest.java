@@ -41,132 +41,127 @@ public class QanaryWebServiceTest {
 
 	private static final String QANARY_URI = "http://wdaqua-qanary.univ-st-etienne.fr/gerbil";
 
-//	protected Semaphore taskEndedMutex = new Semaphore(0);
-	
+	// protected Semaphore taskEndedMutex = new Semaphore(0);
+
 	protected ExtendedQALDBasedWebService service = new ExtendedQALDBasedWebService(QANARY_URI);
-	
-	private void answer(List<IQuestion> iquestions) throws GerbilException{
+
+	private void answer(List<IQuestion> iquestions) throws GerbilException {
 		for (IQuestion iquestion : iquestions) {
 			Set<String> goldenStandard = iquestion.getGoldenAnswers();
-		    Iterator it = goldenStandard.iterator();
+			Iterator it = goldenStandard.iterator();
 			String question = iquestion.getLanguageToQuestion().get("en");
-			
+
 			Document document = new DocumentImpl();
 			document.setText(question);
 			List<Marking> annotationAnswers = service.answerQuestion(document, "en");
-			for(Marking m : annotationAnswers){
+			for (Marking m : annotationAnswers) {
 				AnswerSet a = (AnswerSet) m;
 				String sA = (String) a.getAnswers().iterator().next();
 				String sG = (String) it.next();
-				System.out.println("Annotator answer: "+sA);
-				System.out.println("Golden Std: "+sG);
+				System.out.println("Annotator answer: " + sA);
+				System.out.println("Golden Std: " + sG);
 				assertTrue(sA.equals(sG));
 			}
 		}
 	}
-	
-	public void answerXML(InputStream fis) throws GerbilException{
+
+	public void answerXML(InputStream fis) throws GerbilException {
 		List<IQuestion> iquestions = LoaderController.loadXML(fis, "en");
 		answer(iquestions);
 	}
-	
-	public void answerJSON(InputStream fis) throws GerbilException{
-		ExtendedJson exJson = (ExtendedJson) ExtendedQALDJSONLoader.readJson(fis, ExtendedJson.class); 
-		 
-    	List<IQuestion>  iquestions = EJQuestionFactory.getQuestionsFromExtendedJson(exJson);
-    	answer(iquestions);
+
+	public void answerJSON(InputStream fis) throws GerbilException {
+		ExtendedJson exJson;
+		try {
+			exJson = (ExtendedJson) ExtendedQALDJSONLoader.readJson(fis, ExtendedJson.class);
+			List<IQuestion> iquestions = EJQuestionFactory.getQuestionsFromExtendedJson(exJson);
+			answer(iquestions);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
-	
-	
+
 	@Test
 	public void answerSetXMLBoolean() throws GerbilException, IOException {
-		try (FileInputStream fis = new FileInputStream(new File(
-				"src/test/resources/QALD_answersSets/QALD_Boolean.xml"))) {
+		try (FileInputStream fis = new FileInputStream(new File("src/test/resources/QALD_answersSets/QALD_Boolean.xml"))) {
 			answerXML(fis);
 		}
 	}
 
 	@Test
 	public void answerSetXMLDate() throws GerbilException, IOException {
-		try (FileInputStream fis = new FileInputStream(new File(
-				"src/test/resources/QALD_answersSets/QALD_Date.xml"))) {
+		try (FileInputStream fis = new FileInputStream(new File("src/test/resources/QALD_answersSets/QALD_Date.xml"))) {
 			answerXML(fis);
 		}
 	}
 
 	@Test
 	public void answerSetXMLNumber() throws GerbilException, IOException {
-		try (FileInputStream fis = new FileInputStream(new File(
-				"src/test/resources/QALD_answersSets/QALD_Number.xml"))) {
+		try (FileInputStream fis = new FileInputStream(new File("src/test/resources/QALD_answersSets/QALD_Number.xml"))) {
 			answerXML(fis);
 		}
 	}
 
 	@Test
 	public void answerSetXMLString() throws GerbilException, IOException {
-		try (FileInputStream fis = new FileInputStream(new File(
-				"src/test/resources/QALD_answersSets/QALD_String.xml"))) {
+		try (FileInputStream fis = new FileInputStream(new File("src/test/resources/QALD_answersSets/QALD_String.xml"))) {
 			answerXML(fis);
 		}
 	}
 
 	@Test
 	public void answerSetXMLResource() throws GerbilException, IOException {
-		try (FileInputStream fis = new FileInputStream(new File(
-				"src/test/resources/QALD_answersSets/QALD_Resources.xml"))) {
+		try (FileInputStream fis = new FileInputStream(new File("src/test/resources/QALD_answersSets/QALD_Resources.xml"))) {
 			answerXML(fis);
 		}
 	}
 
-//	@Test
+	// @Test
 	public void answerSetJSONBoolean() throws GerbilException, IOException {
-		try (FileInputStream fis = new FileInputStream(new File(
-				"src/test/resources/QALD_answersSets/QALD_Boolean.json"))) {
+		try (FileInputStream fis = new FileInputStream(new File("src/test/resources/QALD_answersSets/QALD_Boolean.json"))) {
 			answerJSON(fis);
 		}
 	}
 
-//	@Test
+	// @Test
 	public void answerSetJSONDate() throws GerbilException, IOException {
-		try (FileInputStream fis = new FileInputStream(new File(
-				"src/test/resources/QALD_answersSets/QALD_Date.json"))) {
+		try (FileInputStream fis = new FileInputStream(new File("src/test/resources/QALD_answersSets/QALD_Date.json"))) {
 			answerJSON(fis);
 		}
 	}
 
-//	@Test
+	// @Test
 	public void answerSetJSONNumber() throws GerbilException, IOException {
-		try (FileInputStream fis = new FileInputStream(new File(
-				"src/test/resources/QALD_answersSets/QALD_Number.json"))) {
+		try (FileInputStream fis = new FileInputStream(new File("src/test/resources/QALD_answersSets/QALD_Number.json"))) {
 			answerJSON(fis);
 		}
 	}
 
-//	@Test
+	// @Test
 	public void answerSetJSONString() throws GerbilException, IOException {
-		try (FileInputStream fis = new FileInputStream(new File(
-				"src/test/resources/QALD_answersSets/QALD_String.json"))) {
+		try (FileInputStream fis = new FileInputStream(new File("src/test/resources/QALD_answersSets/QALD_String.json"))) {
 			answerJSON(fis);
 		}
 	}
 
-//	@Test
+	// @Test
 	public void answerSetJSONResource() throws GerbilException, IOException {
-		try (FileInputStream fis = new FileInputStream(new File(
-				"src/test/resources/QALD_answersSets/QALD_Resources.json"))) {
+		try (FileInputStream fis = new FileInputStream(new File("src/test/resources/QALD_answersSets/QALD_Resources.json"))) {
 			answerJSON(fis);
 		}
 	}
 
-//	
-//	@Override
-//	public void reportTaskFinished(Task task) {
-//		taskEndedMutex.release();
-//	}
-//
-//	@Override
-//	public void reportTaskThrowedException(Task task, Throwable t) {
-//		taskEndedMutex.release();
-//	}
+	//
+	// @Override
+	// public void reportTaskFinished(Task task) {
+	// taskEndedMutex.release();
+	// }
+	//
+	// @Override
+	// public void reportTaskThrowedException(Task task, Throwable t) {
+	// taskEndedMutex.release();
+	// }
 
 }

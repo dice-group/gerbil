@@ -1,5 +1,6 @@
 package org.aksw.gerbil.qa;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -34,8 +35,7 @@ public class QALDStreamUtils {
 	 *             with a correct adapter name, instead.
 	 */
 	@Deprecated
-	public static List<Document> parseDocument(InputStream in,
-			QALDStreamType streamType) {
+	public static List<Document> parseDocument(InputStream in, QALDStreamType streamType) {
 		return parseDocument(in, streamType, MISSING_ADAPTER_NAME);
 	}
 
@@ -53,37 +53,36 @@ public class QALDStreamUtils {
 	 * @return a list of {@link Document} instances containing the questions
 	 *         that could be parsed.
 	 */
-	public static List<Document> parseDocument(InputStream in,
-			QALDStreamType streamType, String adapterName) {
+	public static List<Document> parseDocument(InputStream in, QALDStreamType streamType, String adapterName) {
 		List<IQuestion> questions;
-		switch (streamType) {
-		case JSON:
-	
-			if(null==(questions = EJQuestionFactory.getQuestionsFromExtendedJson((ExtendedJson) ExtendedQALDJSONLoader.readJson(in, ExtendedJson.class)))) {
-				throw new IllegalArgumentException("Could not load JSON stream");
+		try {
+			switch (streamType) {
+			case JSON:
+
+				if (null == (questions = EJQuestionFactory.getQuestionsFromExtendedJson((ExtendedJson) ExtendedQALDJSONLoader.readJson(in, ExtendedJson.class)))) {
+					throw new IllegalArgumentException("Could not load JSON stream");
+				}
+				break;
+			case XML:
+				questions = LoaderController.loadXML(in, "en");
+				break;
+			default:
+				throw new IllegalArgumentException("Got an unknown QALD stream type " + streamType);
 			}
-			break;
-		case XML:
-			questions = LoaderController.loadXML(in, "en");
-			break;
-		default:
-			throw new IllegalArgumentException(
-					"Got an unknown QALD stream type " + streamType);
+		} catch (IOException e1) {
+			throw new IllegalArgumentException("Got an unknown QALD stream type " + streamType);
 		}
 
 		String questionUriPrefix;
 		try {
-			questionUriPrefix = "http://qa.gerbil.aksw.org/"
-					+ URLEncoder.encode(adapterName, "UTF-8") + "/question#";
+			questionUriPrefix = "http://qa.gerbil.aksw.org/" + URLEncoder.encode(adapterName, "UTF-8") + "/question#";
 		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException(
-					"Severe error while trying to encode adapter name.", e);
+			throw new IllegalArgumentException("Severe error while trying to encode adapter name.", e);
 		}
 
 		List<Document> instances = new ArrayList<Document>(questions.size());
 		for (IQuestion question : questions) {
-			instances.add(QAUtils.translateQuestion(question, questionUriPrefix
-					+ question.getId(), "en"));
+			instances.add(QAUtils.translateQuestion(question, questionUriPrefix + question.getId(), "en"));
 		}
 		return instances;
 	}
