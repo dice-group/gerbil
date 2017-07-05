@@ -337,27 +337,22 @@
 					<groupId>org.aksw.qa</groupId>
 					<artifactId>commons</artifactId>
 				</exclusion>
+  				<exclusion>
+                                        <groupId>org.aksw.qa</groupId>
+                                        <artifactId>datasets</artifactId>
+                                </exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>commons</artifactId>
-			<version>0.4.9</version>
+			<version>0.4.11</version>
 			<exclusions>
-				<exclusion>
-					<groupId>org.aksw.qa</groupId>
-					<artifactId>datasets</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>mysql</groupId>
 					<artifactId>mysql-connector-java</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.aksw.qa</groupId>
-			<artifactId>datasets</artifactId>
-			<version>0.5.6</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
