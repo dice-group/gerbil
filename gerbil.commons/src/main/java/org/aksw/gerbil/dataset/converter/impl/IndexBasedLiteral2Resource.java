@@ -2,7 +2,6 @@ package org.aksw.gerbil.dataset.converter.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +14,6 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
@@ -69,7 +67,7 @@ public class IndexBasedLiteral2Resource extends AbstractLiteral2Resource {
 				uris.add(literal);
 				return uris;
 			}
-			String content = doc.get(CONTENTS);
+//			String content = doc.get(CONTENTS);
 			String res = doc.get(RESOURCE);
 			for (String uriStr : res.split(" "))
 				uris.add(uriStr);

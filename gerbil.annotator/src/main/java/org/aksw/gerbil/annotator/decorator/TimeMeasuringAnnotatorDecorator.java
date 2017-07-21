@@ -18,27 +18,15 @@ package org.aksw.gerbil.annotator.decorator;
 
 import java.util.List;
 
-import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotator.C2KBAnnotator;
-import org.aksw.gerbil.annotator.D2KBAnnotator;
-import org.aksw.gerbil.annotator.EntityRecognizer;
-import org.aksw.gerbil.annotator.EntityTyper;
-import org.aksw.gerbil.annotator.OKETask1Annotator;
-import org.aksw.gerbil.annotator.OKETask2Annotator;
-import org.aksw.gerbil.annotator.QASystem;
+import org.aksw.gerbil.annotator.SWCTask1System;
+import org.aksw.gerbil.annotator.SWCTask2System;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.Meaning;
-import org.aksw.gerbil.transfer.nif.MeaningSpan;
-import org.aksw.gerbil.transfer.nif.Span;
-import org.aksw.gerbil.transfer.nif.TypedSpan;
-import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,37 +40,19 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorDecorator
-        implements Evaluator<Marking>, TimeMeasurer {
+        implements Evaluator<Model>, TimeMeasurer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeMeasuringAnnotatorDecorator.class);
 
     public static final String AVG_TIME_RESULT_NAME = "avg millis/doc";
 
-    @SuppressWarnings("deprecation")
     public static TimeMeasuringAnnotatorDecorator createDecorator(ExperimentType type, Annotator annotator) {
         switch (type) {
-        case C2KB:
-            return new TimeMeasuringC2KBAnnotator((C2KBAnnotator) annotator);
-        case A2KB:
-            return new TimeMeasuringA2KBAnnotator((A2KBAnnotator) annotator);
-        case D2KB:
-            return new TimeMeasuringD2KBAnnotator((D2KBAnnotator) annotator);
-        case ERec:
-            return new TimeMeasuringEntityRecognizer((EntityRecognizer) annotator);
-        case ETyping:
-            return new TimeMeasuringEntityTyper((EntityTyper) annotator);
-        case OKE_Task1:
-            return new TimeMeasuringOKETask1Annotator((OKETask1Annotator) annotator);
-        case OKE_Task2:
-            return new TimeMeasuringOKETask2Annotator((OKETask2Annotator) annotator);
-        case QA:
-            return new TimeMeasuringQASystem((QASystem) annotator);
-        case Rc2KB:
-            break;
-        case Sa2KB:
-            break;
-        case Sc2KB:
-            break;
+        //TODO case T1/T2
+        case SWC1:
+            return new TimeMeasuringSWC1Annotator((SWCTask1System) annotator);
+        case SWC2:
+        	return new TimeMeasuringSWC2Annotator((SWCTask2System) annotator);
         default:
             break;
         }
@@ -90,194 +60,54 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         return null;
     }
 
-    private static class TimeMeasuringC2KBAnnotator extends TimeMeasuringAnnotatorDecorator implements C2KBAnnotator {
 
-        public TimeMeasuringC2KBAnnotator(C2KBAnnotator decoratedAnnotator) {
+
+    
+    private static class TimeMeasuringSWC1Annotator extends TimeMeasuringAnnotatorDecorator implements SWCTask1System {
+
+        protected TimeMeasuringSWC1Annotator(SWCTask1System decoratedAnnotator) {
             super(decoratedAnnotator);
         }
 
         @Override
-        public List<Meaning> performC2KB(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performC2KB(this, document);
+        public List<Model> performTask1(Model model) throws GerbilException {
+            return TimeMeasuringAnnotatorDecorator.performSWC1Task(this, model);
         }
-
     }
 
-    private static class TimeMeasuringD2KBAnnotator extends TimeMeasuringAnnotatorDecorator implements D2KBAnnotator {
+    private static class TimeMeasuringSWC2Annotator extends TimeMeasuringAnnotatorDecorator implements SWCTask1System {
 
-        public TimeMeasuringD2KBAnnotator(D2KBAnnotator decoratedAnnotator) {
+        protected TimeMeasuringSWC2Annotator(SWCTask2System decoratedAnnotator) {
             super(decoratedAnnotator);
         }
 
         @Override
-        public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performD2KBTask(this, document);
+        public List<Model> performTask1(Model model) throws GerbilException {
+            return TimeMeasuringAnnotatorDecorator.performSWC2Task(this, model);
         }
     }
 
-    private static class TimeMeasuringEntityRecognizer extends TimeMeasuringAnnotatorDecorator
-            implements EntityRecognizer {
-
-        public TimeMeasuringEntityRecognizer(EntityRecognizer decoratedAnnotator) {
-            super(decoratedAnnotator);
-        }
-
-        @Override
-        public List<Span> performRecognition(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performRecognition(this, document);
-        }
-    }
-
-    private static class TimeMeasuringA2KBAnnotator extends TimeMeasuringD2KBAnnotator implements A2KBAnnotator {
-
-        public TimeMeasuringA2KBAnnotator(A2KBAnnotator decoratedAnnotator) {
-            super(decoratedAnnotator);
-        }
-
-        @Override
-        public List<Meaning> performC2KB(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performC2KB(this, document);
-        }
-
-        @Override
-        public List<Span> performRecognition(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performRecognition(this, document);
-        }
-
-        @Override
-        public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performExtraction(this, document);
-        }
-
-    }
-
-    private static class TimeMeasuringEntityTyper extends TimeMeasuringAnnotatorDecorator implements EntityTyper {
-
-        protected TimeMeasuringEntityTyper(EntityTyper decoratedAnnotator) {
-            super(decoratedAnnotator);
-        }
-
-        @Override
-        public List<TypedSpan> performTyping(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performTyping(this, document);
-        }
-    }
-
-    private static class TimeMeasuringOKETask1Annotator extends TimeMeasuringA2KBAnnotator
-            implements OKETask1Annotator {
-
-        protected TimeMeasuringOKETask1Annotator(OKETask1Annotator decoratedAnnotator) {
-            super(decoratedAnnotator);
-        }
-
-        @Override
-        public List<TypedSpan> performTyping(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performTyping(this, document);
-        }
-
-        @Override
-        public List<TypedNamedEntity> performTask1(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performOKETask1(this, document);
-        }
-    }
-
-    private static class TimeMeasuringOKETask2Annotator extends TimeMeasuringAnnotatorDecorator
-            implements OKETask2Annotator {
-
-        protected TimeMeasuringOKETask2Annotator(OKETask2Annotator decoratedAnnotator) {
-            super(decoratedAnnotator);
-        }
-
-        @Override
-        public List<TypedNamedEntity> performTask2(Document document) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performOKETask2(this, document);
-        }
-    }
-
-    private static class TimeMeasuringQASystem extends TimeMeasuringAnnotatorDecorator implements QASystem {
-
-        protected TimeMeasuringQASystem(QASystem decoratedAnnotator) {
-            super(decoratedAnnotator);
-        }
-
-        @Override
-        public List<Marking> answerQuestion(Document document, String questionLang) throws GerbilException {
-            return TimeMeasuringAnnotatorDecorator.performQATask(this, document, questionLang);
-        }
-    }
-
-    protected static List<Meaning> performC2KB(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
+    
+    protected static List<Model> performSWC1Task(TimeMeasuringAnnotatorDecorator timeMeasurer, Model model)
             throws GerbilException {
         long startTime = System.currentTimeMillis();
-        List<Meaning> result = null;
-        result = ((C2KBAnnotator) timeMeasurer.getDecoratedAnnotator()).performC2KB(document);
+        List<Model> result = null;
+        result = ((SWCTask1System) timeMeasurer.getDecoratedAnnotator()).performTask1(model);
         timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
         return result;
     }
 
-    protected static List<MeaningSpan> performD2KBTask(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
+
+    protected static List<Model> performSWC2Task(TimeMeasuringAnnotatorDecorator timeMeasurer, Model model)
             throws GerbilException {
         long startTime = System.currentTimeMillis();
-        List<MeaningSpan> result = null;
-        result = ((D2KBAnnotator) timeMeasurer.getDecoratedAnnotator()).performD2KBTask(document);
+        List<Model> result = null;
+        result = ((SWCTask2System) timeMeasurer.getDecoratedAnnotator()).performTask2(model);
         timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
         return result;
     }
 
-    protected static List<MeaningSpan> performExtraction(TimeMeasuringAnnotatorDecorator timeMeasurer,
-            Document document) throws GerbilException {
-        long startTime = System.currentTimeMillis();
-        List<MeaningSpan> result = null;
-        result = ((A2KBAnnotator) timeMeasurer.getDecoratedAnnotator()).performA2KBTask(document);
-        timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
-        return result;
-    }
-
-    protected static List<TypedSpan> performTyping(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
-            throws GerbilException {
-        long startTime = System.currentTimeMillis();
-        List<TypedSpan> result = null;
-        result = ((EntityTyper) timeMeasurer.getDecoratedAnnotator()).performTyping(document);
-        timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
-        return result;
-    }
-
-    protected static List<Span> performRecognition(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
-            throws GerbilException {
-        long startTime = System.currentTimeMillis();
-        List<Span> result = null;
-        result = ((EntityRecognizer) timeMeasurer.getDecoratedAnnotator()).performRecognition(document);
-        timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
-        return result;
-    }
-
-    protected static List<TypedNamedEntity> performOKETask1(TimeMeasuringAnnotatorDecorator timeMeasurer,
-            Document document) throws GerbilException {
-        long startTime = System.currentTimeMillis();
-        List<TypedNamedEntity> result = null;
-        result = ((OKETask1Annotator) timeMeasurer.getDecoratedAnnotator()).performTask1(document);
-        timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
-        return result;
-    }
-
-    protected static List<TypedNamedEntity> performOKETask2(TimeMeasuringAnnotatorDecorator timeMeasurer,
-            Document document) throws GerbilException {
-        long startTime = System.currentTimeMillis();
-        List<TypedNamedEntity> result = null;
-        result = ((OKETask2Annotator) timeMeasurer.getDecoratedAnnotator()).performTask2(document);
-        timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
-        return result;
-    }
-
-    protected static List<Marking> performQATask(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document, String questionLang)
-            throws GerbilException {
-        long startTime = System.currentTimeMillis();
-        List<Marking> result = null;
-        result = ((QASystem) timeMeasurer.getDecoratedAnnotator()).answerQuestion(document, questionLang);
-        timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
-        return result;
-    }
-
+    
     protected long timeSum = 0;
     protected int callCount = 0;
 
@@ -306,7 +136,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
     }
 
     @Override
-    public void evaluate(List<List<Marking>> annotatorResults, List<List<Marking>> goldStandard,
+    public void evaluate(List<List<Model>> annotatorResults, List<List<Model>> goldStandard,
             EvaluationResultContainer results) {
         if (callCount > 0) {
             results.addResult(new DoubleEvaluationResult(AVG_TIME_RESULT_NAME, getAverageRuntime()));

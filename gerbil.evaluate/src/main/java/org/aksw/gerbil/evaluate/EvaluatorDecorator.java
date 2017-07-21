@@ -17,6 +17,7 @@
 package org.aksw.gerbil.evaluate;
 
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.apache.jena.rdf.model.Model;
 
 /**
  * Decorator interface of an {@link Evaluator} for implementing the decorator
@@ -28,7 +29,7 @@ import org.aksw.gerbil.transfer.nif.Marking;
  *            the {@link Marking} type of the decorated and, thus, of this
  *            {@link Evaluator}
  */
-public interface EvaluatorDecorator<T extends Marking> extends Evaluator<T> {
+public interface EvaluatorDecorator<T extends Model> extends Evaluator<T> {
 
     /**
      * Returns the decorated {@link Evaluator}.

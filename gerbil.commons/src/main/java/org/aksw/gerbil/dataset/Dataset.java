@@ -19,8 +19,8 @@ package org.aksw.gerbil.dataset;
 import java.io.Closeable;
 import java.util.List;
 
-import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.utils.ClosePermitionGranter;
+import org.apache.jena.rdf.model.Model;
 
 public interface Dataset extends Closeable {
 
@@ -30,7 +30,7 @@ public interface Dataset extends Closeable {
 
     public void setName(String name);
 
-    public List<Document> getInstances();
+    public List<Model> getInstances();
     
     public void setClosePermitionGranter(ClosePermitionGranter granter);
     

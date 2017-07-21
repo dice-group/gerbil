@@ -18,9 +18,9 @@ package org.aksw.gerbil.evaluate;
 
 import java.util.List;
 
-import org.aksw.gerbil.transfer.nif.Marking;
+import org.apache.jena.rdf.model.Model;
 
-public interface Evaluator<T extends Marking> {
+public interface Evaluator<T extends Model> {
 
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results);
 }

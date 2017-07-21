@@ -73,6 +73,9 @@ public enum ExperimentType implements Describable {
     D2KB("D2KB",
             "The input for the annotator is a text with entities that already have been marked inside. The annotator should link all these mentioned entities to a knowledge base."),
 
+    SWC1("SWC1", "TODO: Description"),
+    
+	SWC2("SWC2", "TODO: Description"),
     /**
      * Scored - annotate to KB
      * <p>

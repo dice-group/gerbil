@@ -91,7 +91,6 @@ public class MultiAnnotatorHandlingTest {
             Annotator annotator = annotatorConfig.getAnnotator(type);
             Assert.assertNotNull(annotator);
             Assert.assertNotNull("Got null as annotator but expected an annotator with URL=" + expectedUrl, annotator);
-            Assert.assertEquals(expectedUrl, ((NIFBasedAnnotatorWebservice) annotator).getUrl());
         }
     }
 }

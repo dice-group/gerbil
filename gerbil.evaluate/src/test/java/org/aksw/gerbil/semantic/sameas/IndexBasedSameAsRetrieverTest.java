@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -50,7 +47,8 @@ public class IndexBasedSameAsRetrieverTest {
         return testConfigs;
     }
 
-    private String uri;
+    @SuppressWarnings("unused")
+	private String uri;
     private Set<String> expectedURIs;
 
     public IndexBasedSameAsRetrieverTest(String uri, Collection<String> expectedURIs) {

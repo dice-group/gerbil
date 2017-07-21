@@ -23,7 +23,7 @@ import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.transfer.nif.Document;
+import org.apache.jena.rdf.model.Model;
 import org.junit.Ignore;
 
 @Ignore
@@ -31,14 +31,14 @@ public class TestAnnotatorConfiguration extends AbstractAdapterConfiguration imp
 
     private Annotator annotator;
 
-    public TestAnnotatorConfiguration(List<Document> instances, ExperimentType applicableForExperiment) {
+    public TestAnnotatorConfiguration(List<Model> instances, ExperimentType applicableForExperiment) {
         this("Test-" + applicableForExperiment.name(), false, instances, applicableForExperiment);
     }
 
-    public TestAnnotatorConfiguration(String annotatorName, boolean couldBeCached, List<Document> instances,
+    public TestAnnotatorConfiguration(String annotatorName, boolean couldBeCached, List<Model> instances,
             ExperimentType applicableForExperiment) {
         super(annotatorName, couldBeCached, applicableForExperiment);
-        annotator = new InstanceListBasedAnnotator(annotatorName, instances, "en");
+        annotator = new InstanceListBasedAnnotator(annotatorName, instances);
     }
 
     @Override

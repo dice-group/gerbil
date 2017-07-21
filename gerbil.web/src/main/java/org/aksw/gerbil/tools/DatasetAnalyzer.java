@@ -16,19 +16,16 @@
  */
 package org.aksw.gerbil.tools;
 
-import java.io.IOException;
 import java.io.PrintStream;
-import java.io.StringReader;
 import java.util.List;
 
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.apache.commons.io.IOUtils;
-import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +42,7 @@ public class DatasetAnalyzer {
         PrintStream output = null;
         try {
             output = new PrintStream("datasetAnalyzation.log");
-            output.println("name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
+            output.println("name,#subjects,#objects,#statements");
             DatasetAnalyzer analyzer = new DatasetAnalyzer(output);
             for (DatasetConfiguration config : datasetConfigs) {
                 try {
@@ -79,22 +76,6 @@ public class DatasetAnalyzer {
         }
     }
 
-    private int countTokensInText(String text) {
-        WhitespaceTokenizer tokenizer = new WhitespaceTokenizer();
-        tokenizer.setReader(new StringReader(text));
-        int tokens = 0;
-        try {
-            while (tokenizer.incrementToken()) {
-                ++tokens;
-            }
-        } catch (IOException e) {
-            LOGGER.error("Error while tokenizing text. Returning.", e);
-        } finally {
-            IOUtils.closeQuietly(tokenizer);
-        }
-        return tokens;
-    }
-
     private void analyze(DatasetConfiguration config, ExperimentType type) throws GerbilException {
         Dataset dataset = config.getDataset(type);
         if (dataset == null) {
@@ -102,30 +83,19 @@ public class DatasetAnalyzer {
         }
         output.print(config.getName());
         output.print(',');
-        List<Document> documents = dataset.getInstances();
-        int annotationsSum = 0;
-        int tokensSum = 0;
-        for (Document document : documents) {
-            annotationsSum += document.getMarkings().size();
-            tokensSum += countTokensInText(document.getText());
-        }
+        Model model = dataset.getInstances().get(0);
+     
+        
         // average entities per document
-        output.print((double) annotationsSum / (double) documents.size());
+        output.print(model.listSubjects().toList().size());
         output.print(',');
         // average entities per token
-        output.print(((double) annotationsSum / (double) tokensSum));
+        output.print(model.listObjects().toList().size());
         output.print(',');
-        // average document length
-        output.print(((double) tokensSum / (double) documents.size()));
-        output.print(',');
-        // number of documents
-        output.print(documents.size());
-        output.print(',');
-        // number of entities
-        output.print(annotationsSum);
-        output.print(',');
-        // output.print(" tokens=" + tokensSum);
 
+        // number of stmts
+        output.print(model.size());
+ 
         output.println();
     }
 }

@@ -16,9 +16,9 @@
  */
 package org.aksw.gerbil.evaluate;
 
-import org.aksw.gerbil.transfer.nif.Marking;
+import org.apache.jena.rdf.model.Model;
 
-public abstract class AbstractEvaluatorDecorator<T extends Marking> implements EvaluatorDecorator<T> {
+public abstract class AbstractEvaluatorDecorator<T extends Model> implements EvaluatorDecorator<T> {
 
     protected Evaluator<T> evaluator;
 

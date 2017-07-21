@@ -9,6 +9,7 @@ import org.apache.lucene.util.Version;
 
 public class LiteralAnalyzer extends Analyzer {
 
+	@SuppressWarnings("unused")
 	private final Version matchVersion;
 
 	/**

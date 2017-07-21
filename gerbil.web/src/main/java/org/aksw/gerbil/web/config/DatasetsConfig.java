@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
@@ -29,8 +28,6 @@ import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.SingletonDatasetConfigImpl;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
-import org.aksw.gerbil.dataset.datahub.DatahubNIFConfig;
-import org.aksw.gerbil.dataset.datahub.DatahubNIFLoader;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.slf4j.Logger;
@@ -67,14 +64,6 @@ public class DatasetsConfig {
                 LOGGER.error("Got an exception while trying to load configuration of \"" + datasetKey + "\" dataset: "
                         + e.toString());
             }
-        }
-
-        // load Datahub data
-        DatahubNIFLoader datahub = new DatahubNIFLoader();
-        Map<String, String> datasets = datahub.getDataSets();
-        for (String datasetName : datasets.keySet()) {
-            datasetConfigurations.add(new DatahubNIFConfig(datasetName, datasets.get(datasetName), true,
-                    entityCheckerManager, globalRetriever));
         }
 
         LOGGER.info("Found {} datasets.", datasetConfigurations.size());

@@ -69,6 +69,7 @@ import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDFS;
@@ -163,47 +164,10 @@ public class EvaluatorFactory {
     protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration,
             Dataset dataset, UriKBClassifier classifier, SubClassInferencer inferencer) {
         switch (type) {
-        case C2KB: {
-            return new ClassifyingEvaluatorDecorator<Meaning, ClassifiedMeaning>(
-                    new ClassConsideringFMeasureCalculator<ClassifiedMeaning>(
-                            new MatchingsCounterImpl<ClassifiedMeaning>(new ClassifiedMeaningMatchingsSearcher()),
-                            MarkingClasses.IN_KB, MarkingClasses.EE), new UriBasedMeaningClassifier<ClassifiedMeaning>(
-                            classifier, MarkingClasses.IN_KB), new EmergingEntityMeaningClassifier<ClassifiedMeaning>());
-        }
-        case Sa2KB:
-        case A2KB: {
-            MatchingsSearcher<ClassifiedSpanMeaning> searcher = (MatchingsSearcher<ClassifiedSpanMeaning>) MatchingsSearcherFactory
-                    .createSpanMatchingsSearcher(configuration.matching);
-            return new ClassifyingEvaluatorDecorator<MeaningSpan, ClassifiedSpanMeaning>(
-                    new ClassConsideringFMeasureCalculator<ClassifiedSpanMeaning>(
-                            new MatchingsCounterImpl<ClassifiedSpanMeaning>(
-                                    new CompoundMatchingsSearcher<ClassifiedSpanMeaning>(searcher,
-                                            new ClassifiedMeaningMatchingsSearcher<ClassifiedSpanMeaning>())),
-                            MarkingClasses.IN_KB, MarkingClasses.EE, MarkingClasses.GS_IN_KB),
-                    new UriBasedMeaningClassifier<ClassifiedSpanMeaning>(classifier, MarkingClasses.IN_KB),
-                    new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>());
-        }
-        case ERec: {
-            return new ConfidenceBasedFMeasureCalculator<Span>(new MatchingsCounterImpl<Span>(
-                    (MatchingsSearcher<Span>) MatchingsSearcherFactory
-                            .createSpanMatchingsSearcher(configuration.matching)));
-        }
-        case D2KB: {
-            return new SearcherBasedNotMatchingMarkingFilter<MeaningSpan>(
-                    new StrongSpanMatchingsSearcher<MeaningSpan>(),
-                    new ClassifyingEvaluatorDecorator<MeaningSpan, ClassifiedSpanMeaning>(
-                            new GSInKBClassifyingEvaluatorDecorator<ClassifiedSpanMeaning>(
-                                    new ClassConsideringFMeasureCalculator<ClassifiedSpanMeaning>(
-                                            new MatchingsCounterImpl<ClassifiedSpanMeaning>(
-                                                    new CompoundMatchingsSearcher<ClassifiedSpanMeaning>(
-                                                            (MatchingsSearcher<ClassifiedSpanMeaning>) MatchingsSearcherFactory
-                                                                    .createSpanMatchingsSearcher(configuration.matching),
-                                                            new ClassifiedMeaningMatchingsSearcher<ClassifiedSpanMeaning>())),
-                                            MarkingClasses.IN_KB, MarkingClasses.EE, MarkingClasses.GS_IN_KB),
-                                    new StrongSpanMatchingsSearcher<ClassifiedSpanMeaning>()),
-                            new UriBasedMeaningClassifier<ClassifiedSpanMeaning>(classifier, MarkingClasses.IN_KB),
-                            new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>()), true);
-        }
+        //TODO case Task1/Task2
+        case SWC1:
+        case SWC2:
+        	break;
         case ETyping: {
             return new SearcherBasedNotMatchingMarkingFilter<TypedSpan>(
                     new StrongSpanMatchingsSearcher<TypedSpan>(),
@@ -214,62 +178,7 @@ public class EvaluatorFactory {
                                     inferencer)), FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator()),
                     true);
         }
-        case OKE_Task1: {
-            ExperimentTaskConfiguration subTaskConfig;
-            List<SubTaskEvaluator<TypedNamedEntity>> evaluators = new ArrayList<SubTaskEvaluator<TypedNamedEntity>>();
-
-            UriKBClassifier okeClassifierTask1 = new ExactWhiteListBasedUriKBClassifier(Arrays.asList(
-                    "http://www.ontologydesignpatterns.org/ont/d0.owl#Location",
-                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization",
-                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person",
-                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"));
-
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.ERec, configuration.matching);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<TypedNamedEntity>) createEvaluator(
-                    ExperimentType.ERec, subTaskConfig, dataset)));
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<TypedNamedEntity>) createEvaluator(
-                    ExperimentType.D2KB, subTaskConfig, dataset)));
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<TypedNamedEntity>) createEvaluator(
-                    ExperimentType.ETyping, subTaskConfig, dataset, okeClassifierTask1, inferencer)));
-            return new ConfidenceScoreEvaluatorDecorator<TypedNamedEntity>(
-                    new SubTaskAverageCalculator<TypedNamedEntity>(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
-                    new DoubleResultComparator());
-        }
-        case OKE_Task2: {
-            ExperimentTaskConfiguration subTaskConfig;
-            List<SubTaskEvaluator<TypedNamedEntity>> evaluators = new ArrayList<SubTaskEvaluator<TypedNamedEntity>>();
-            String classTypes[] = new String[] { RDFS.Class.getURI(), OWL.Class.getURI() };
-
-            UriKBClassifier okeClassifierTask2 = new SimpleWhiteListBasedUriKBClassifier(
-                    "http://www.ontologydesignpatterns.org/ont/");
-
-            // sub task 1, find the correct type of the entity (use only
-            // entities, without a class type!)
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, new MarkingFilteringEvaluatorDecorator<>(
-                    new TypeBasedMarkingFilter<TypedNamedEntity>(false, classTypes),
-                    (Evaluator<TypedNamedEntity>) createEvaluator(ExperimentType.ETyping, subTaskConfig, dataset,
-                            okeClassifierTask2, inferencer))));
-            // sub task 2, find the correct position of the type in the text
-            // (use only entities with a class type!)
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.ERec, configuration.matching);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, new MarkingFilteringEvaluatorDecorator<>(
-                    new TypeBasedMarkingFilter<TypedNamedEntity>(true, classTypes),
-                    new SpanMergingEvaluatorDecorator<>((Evaluator<TypedNamedEntity>) createEvaluator(
-                            ExperimentType.ERec, subTaskConfig, dataset)))));
-
-            return new ConfidenceScoreEvaluatorDecorator<TypedNamedEntity>(
-                    new SubTaskAverageCalculator<TypedNamedEntity>(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
-                    new DoubleResultComparator());
-        }
-
+        
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
         }
@@ -321,12 +230,7 @@ public class EvaluatorFactory {
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.AType, subTaskConfig,
                     dataset)));
 
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-            		 configuration.questionLanguage, ExperimentType.C2KB, Matching.STRONG_ENTITY_MATCH);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
-                    new SimpleTypeTransformingEvaluatorDecorator<Marking, Meaning>(createEvaluator(ExperimentType.C2KB,
-                            subTaskConfig, dataset), Meaning.class)));
-
+    
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
             		 configuration.questionLanguage, ExperimentType.P2KB, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.P2KB, subTaskConfig,

@@ -20,18 +20,18 @@ import java.io.IOException;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.utils.ClosePermitionGranter;
+import org.apache.jena.rdf.model.Model;
 
 public class TestDataset extends AbstractDatasetConfiguration implements Dataset {
 
-    private List<Document> instances;
+    private List<Model> instances;
 
-    public TestDataset(List<Document> instances, ExperimentType applicableForExperiment) {
+    public TestDataset(List<Model> instances, ExperimentType applicableForExperiment) {
         this("TestDataset", instances, applicableForExperiment);
     }
 
-    public TestDataset(String name, List<Document> instances, ExperimentType applicableForExperiment) {
+    public TestDataset(String name, List<Model> instances, ExperimentType applicableForExperiment) {
         super(name, false, applicableForExperiment, null, null);
         this.instances = instances;
     }
@@ -42,7 +42,7 @@ public class TestDataset extends AbstractDatasetConfiguration implements Dataset
     }
 
     @Override
-    public List<Document> getInstances() {
+    public List<Model> getInstances() {
         return instances;
     }
 

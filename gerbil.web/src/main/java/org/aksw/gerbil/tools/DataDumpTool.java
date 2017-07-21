@@ -18,8 +18,6 @@ import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.ExperimentDAOImpl;
 import org.aksw.gerbil.dataid.DataIDGenerator;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
-import org.aksw.gerbil.tools.DataDumpTool.ExperimentToTaskLink;
-import org.aksw.gerbil.tools.DataDumpTool.ExperimentToTaskLinkRowMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;

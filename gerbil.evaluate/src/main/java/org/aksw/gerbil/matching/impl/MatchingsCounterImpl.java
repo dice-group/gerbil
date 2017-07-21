@@ -18,7 +18,6 @@ package org.aksw.gerbil.matching.impl;
 
 import java.util.List;
 
-import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.matching.MatchingsSearcher;

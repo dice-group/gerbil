@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-import org.aksw.gerbil.transfer.nif.Marking;
+import org.apache.jena.rdf.model.Model;
 
-public class SubTaskEvaluator<T extends Marking> implements Evaluator<T> {
+public class SubTaskEvaluator<T extends Model> implements Evaluator<T> {
 
     private ExperimentTaskConfiguration configuration;
     private List<Evaluator<T>> evaluators;
@@ -42,7 +42,7 @@ public class SubTaskEvaluator<T extends Marking> implements Evaluator<T> {
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
         SubTaskResult subTaskResults = new SubTaskResult(configuration);
-        for (Evaluator<? extends Marking> e : evaluators) {
+        for (Evaluator<? extends Model> e : evaluators) {
             ((Evaluator<T>) e).evaluate(annotatorResults, goldStandard, subTaskResults);
             if (subTaskResults.getResults().size() > 0) {
                 results.addResult(subTaskResults);

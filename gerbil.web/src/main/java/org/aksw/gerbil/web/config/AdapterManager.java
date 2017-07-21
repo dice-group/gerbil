@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
-import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.annotator.InstanceListBasedConfigurationImpl;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.DatasetConfigurationImpl;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
-import org.aksw.gerbil.dataset.impl.nif.NIFFileDatasetConfig;
+import org.aksw.gerbil.dataset.impl.sw.FileBasedRDFDataset;
+import org.aksw.gerbil.dataset.impl.sw.RDFFileDatasetConfig;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.slf4j.Logger;
@@ -90,12 +90,11 @@ public class AdapterManager {
                             + "\". Returning null.");
                     return null;
                 }
-                String uri = name.substring(pos + 1, name.length() - 1);
+                //String uri = name.substring(pos + 1, name.length() - 1);
                 // remove "NIFWS_" from the name
                 name = name.substring(NIF_WS_PREFIX.length(), pos) + NIF_WS_SUFFIX;
                 try {
-                    return new AnnotatorConfigurationImpl(name, false,
-                    		ExtendedQALDBasedWebService.class.getConstructor(String.class), new Object[] { uri }, type);
+                	throw new Exception("Currently not supported");
                 } catch (Exception e) {
                     LOGGER.error(
                             "Exception while trying to create an annotator configuration for a NIF based webservice. Returning null.",
@@ -130,7 +129,7 @@ public class AdapterManager {
                             "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
                     return null;
                 }
-                String fileType = name.substring(brackets[0] + 1, brackets[1]);
+                //String fileType = name.substring(brackets[0] + 1, brackets[1]);
 //                QALDStreamType streamType = null;
 //                try {
 //                    if (fileType.startsWith("QALD")) {
@@ -159,10 +158,10 @@ public class AdapterManager {
                 try {
                     return new InstanceListBasedConfigurationImpl(name, false,
                             new DatasetConfigurationImpl(datasetName, false,
-                                    FileBasedQALDDataset.class.getConstructor(String.class, String.class, String.class),
-                                    new Object[] { datasetName, uploadedFilesPath + fileName, questionLanguage},
+                                    FileBasedRDFDataset.class.getConstructor(String.class, String.class),
+                                    new Object[] { datasetName, uploadedFilesPath + fileName},
                                     ExperimentType.QA, null, null),
-                            type, questionLanguage);
+                            type);
                 } catch (Exception e) {
                     LOGGER.error(
                             "Exception while trying to create an annotator configuration for a uploaded QA answer file. Returning null.",
@@ -203,7 +202,7 @@ public class AdapterManager {
                 String uri = uploadedFilesPath + name.substring(brackets[0] + 1, brackets[1]);
                 // remove dataset prefix from the name
                 name = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]) + UPLOADED_DATASET_SUFFIX;
-return new QALDFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
+return new RDFFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
             }
             if (name.startsWith(AF_PREFIX)) {
                 // This describes a QA answer file

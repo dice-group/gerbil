@@ -9,7 +9,6 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.ResourceFactory;
 
 public class SPARQLBasedLiteral2Resource extends AbstractLiteral2Resource {
 

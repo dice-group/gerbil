@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.dataset.impl.nif;
+package org.aksw.gerbil.dataset.impl.sw;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,20 +26,21 @@ import org.apache.jena.riot.RDFLanguages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileBasedNIFDataset extends AbstractNIFDataset {
+public class FileBasedRDFDataset extends AbstractRDFDataset {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileBasedNIFDataset.class);
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileBasedRDFDataset.class);
 
     private String filePath;
     private Lang language;
 
-    public FileBasedNIFDataset(String filePath, String name, Lang language) {
+    public FileBasedRDFDataset(String filePath, String name, Lang language) {
         super(name);
         this.filePath = filePath;
         this.language = language;
     }
 
-    public FileBasedNIFDataset(String filePath, String name, String language) {
+    public FileBasedRDFDataset(String filePath, String name, String language) {
         super(name);
         this.filePath = filePath;
         this.language = RDFLanguages.nameToLang(language);
@@ -51,7 +52,7 @@ public class FileBasedNIFDataset extends AbstractNIFDataset {
         }
     }
 
-    public FileBasedNIFDataset(String filePath, String name) {
+    public FileBasedRDFDataset(String filePath, String name) {
         super(name);
         this.filePath = filePath;
         this.language = fileExtToLang(filePath);
@@ -60,13 +61,13 @@ public class FileBasedNIFDataset extends AbstractNIFDataset {
         }
     }
 
-    public FileBasedNIFDataset(String filePath, Lang language) {
+    public FileBasedRDFDataset(String filePath, Lang language) {
         super("");
         this.filePath = filePath;
         this.language = language;
     }
 
-    public FileBasedNIFDataset(String filePath) {
+    public FileBasedRDFDataset(String filePath) {
         super("");
         this.filePath = filePath;
         this.language = fileExtToLang(filePath);

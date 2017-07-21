@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.dataset.impl.nif;
+package org.aksw.gerbil.dataset.impl.sw;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -26,7 +26,6 @@ import org.aksw.gerbil.dataset.impl.AbstractDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.io.nif.AbstractNIFParser;
-import org.aksw.gerbil.transfer.nif.Document;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
@@ -34,16 +33,16 @@ import org.apache.jena.riot.adapters.RDFReaderRIOT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractNIFDataset extends AbstractDataset implements RdfModelContainingDataset, InitializableDataset {
+public abstract class AbstractRDFDataset extends AbstractDataset implements RdfModelContainingDataset, InitializableDataset {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(AbstractNIFDataset.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(AbstractRDFDataset.class);
 
-    private List<Document> documents;
+    private List<Model> models;
     private String name;
     private boolean hasBeenInitialized = false;
     private Model rdfModel;
 
-    public AbstractNIFDataset(String name) {
+    public AbstractRDFDataset(String name) {
         this.name = name;
     }
 
@@ -88,15 +87,14 @@ public abstract class AbstractNIFDataset extends AbstractDataset implements RdfM
         if (hasBeenInitialized) {
             return;
         }
-        Model nifModel = ModelFactory.createDefaultModel();
+        Model model = ModelFactory.createDefaultModel();
         // dataset = RDFDataMgr.loadModel(rdfpath);
         InputStream inputStream = getDataAsInputStream();
         if (inputStream == null) {
             throw new GerbilException("Couldn't get InputStream.", ErrorTypes.DATASET_LOADING_ERROR);
         }
         try {
-            LocalNIFParser parser = new LocalNIFParser(this);
-            documents = parser.parseNIF(inputStream, nifModel);
+            model = model.read(inputStream, null);
             // RDFDataMgr.read(nifModel, inputStream, getDataLanguage());
         } catch (Exception e) {
             throw new GerbilException("Exception while parsing dataset.", e, ErrorTypes.DATASET_LOADING_ERROR);
@@ -105,7 +103,7 @@ public abstract class AbstractNIFDataset extends AbstractDataset implements RdfM
         }
 
         // if there are still triples available
-        rdfModel = nifModel;
+        //rdfModel = model;
 
         hasBeenInitialized = true;
         LOGGER.info("{} dataset initialized", name);
@@ -125,16 +123,16 @@ public abstract class AbstractNIFDataset extends AbstractDataset implements RdfM
             throw new IllegalStateException(
                     "This dataset hasn't been initialized. Please call init() before using the dataset.");
         }
-        return documents.size();
+        return models.size();
     }
 
     @Override
-    public List<Document> getInstances() {
+    public List<Model> getInstances() {
         if (!hasBeenInitialized) {
             throw new IllegalStateException(
                     "This dataset hasn't been initialized. Please call init() before using the dataset.");
         }
-        return documents;
+        return models;
     }
 
     @Override
@@ -144,9 +142,9 @@ public abstract class AbstractNIFDataset extends AbstractDataset implements RdfM
 
     protected static class LocalNIFParser extends AbstractNIFParser {
 
-        private AbstractNIFDataset languageSource;
+        private AbstractRDFDataset languageSource;
 
-        public LocalNIFParser(AbstractNIFDataset languageSource) {
+        public LocalNIFParser(AbstractRDFDataset languageSource) {
             super("");
             this.languageSource = languageSource;
         }

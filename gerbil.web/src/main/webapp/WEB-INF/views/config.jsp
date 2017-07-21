@@ -142,10 +142,10 @@
 					</a>
 				</div>
 				<div class="col-md-4">
-					<select id="annotator" multiple="multiple" style="display: none;">
+					<select id="annotator" multiple="multiple" style="display: none; hidden: true;">
 					</select>
 					<hr />
-					<div>
+					<div style="hidden: true;">
 						<span> Or add another webservice via URI:</span>
 						<div>
 							<label for="nameAnnotator">Name:</label> <input
@@ -182,7 +182,7 @@
 					</div>
 					<hr id="uploadAnswersSeparator" />
 					<div id="uploadAnswers">
-						<span> Or upload a file with answers:</span>
+						<span> Upload a file with answers:</span>
 						<div>
 							<label for="nameAnswerFile">Name:</label> <input
 								class="form-control" type="text" id="nameAnswerFile" name="name"

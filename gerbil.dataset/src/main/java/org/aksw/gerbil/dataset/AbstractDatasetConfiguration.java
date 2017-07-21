@@ -22,10 +22,8 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.SameAsRetrieverUtils;
 import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.model.DatasetBasedSameAsRetriever;
-import org.aksw.gerbil.transfer.nif.Document;
 
 public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfiguration
         implements DatasetConfiguration {
@@ -76,15 +74,15 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
         } else {
             retriever = globalRetriever;
         }
-        for (Document document : instance.getInstances()) {
-            if (retriever != null) {
-                SameAsRetrieverUtils.addSameURIsToMarkings(retriever, document.getMarkings());
-            }
-            // check the meanings
-            if (entityCheckerManager != null) {
-                entityCheckerManager.checkMarkings(document.getMarkings());
-            }
-        }
+//        for (Model model : instance.getInstances()) {
+//            if (retriever != null) {
+//               // SameAsRetrieverUtils.addSameURIsToMarkings(retriever, model);
+//            }
+//            // check the meanings
+//            if (entityCheckerManager != null) {
+//    //            entityCheckerManager.checkMarkings(etMarkings());
+//            }
+//        }
         return instance;
     }
 

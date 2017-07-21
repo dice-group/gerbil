@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.dataset.impl.nif;
+package org.aksw.gerbil.dataset.impl.sw;
 
 import org.aksw.gerbil.dataset.AbstractDatasetConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
@@ -23,11 +23,11 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.apache.jena.riot.Lang;
 
-public class NIFFileDatasetConfig extends AbstractDatasetConfiguration {
+public class RDFFileDatasetConfig extends AbstractDatasetConfiguration {
 
     private String file;
 
-    public NIFFileDatasetConfig(String name, String file, boolean couldBeCached, ExperimentType applicableForExperiment,
+    public RDFFileDatasetConfig(String name, String file, boolean couldBeCached, ExperimentType applicableForExperiment,
             EntityCheckerManager entityCheckerManager, SameAsRetriever globalRetriever) {
         super(name, couldBeCached, applicableForExperiment, entityCheckerManager, globalRetriever);
         this.file = file;
@@ -35,7 +35,7 @@ public class NIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
     @Override
     protected Dataset loadDataset() throws Exception {
-        FileBasedNIFDataset dataset = new FileBasedNIFDataset(file, getName(), Lang.TTL);
+        FileBasedRDFDataset dataset = new FileBasedRDFDataset(file, getName(), Lang.TTL);
         dataset.init();
         return dataset;
     }
