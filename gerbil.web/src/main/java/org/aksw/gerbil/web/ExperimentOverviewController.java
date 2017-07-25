@@ -80,16 +80,15 @@ public class ExperimentOverviewController {
 
 		String annotatorNames[] = loadAnnotators(eType);
 		String datasetNames[] = loadDatasets(eType);
-		String languages[] = {"en"};
 
-		double results[][] = loadLatestResults(eType, matching, annotatorNames, datasetNames, languages);
+		double results[][] = loadLatestResults(eType, matching, annotatorNames, datasetNames);
 		double correlations[][] = calculateCorrelations(results, datasetNames);
 		return generateJson(results, correlations, annotatorNames, datasetNames);
 
 	}
 
 	private double[][] loadLatestResults(ExperimentType experimentType, Matching matching, String[] annotatorNames,
-			String[] datasetNames, String[] languages) {
+			String[] datasetNames) {
 		Map<String, Integer> annotator2Index = new HashMap<String, Integer>();
 		for (int i = 0; i < annotatorNames.length; ++i) {
 			annotator2Index.put(annotatorNames[i], i);
@@ -100,7 +99,7 @@ public class ExperimentOverviewController {
 		}
 
 		List<ExperimentTaskResult> expResults = dao.getLatestResultsOfExperiments(experimentType.name(),
-				matching.name(), annotatorNames, datasetNames, languages);
+				matching.name(), annotatorNames, datasetNames);
 		double results[][] = new double[annotatorNames.length][datasetNames.length];
 		for (int i = 0; i < results.length; ++i) {
 			Arrays.fill(results[i], NOT_AVAILABLE_SENTINAL);
@@ -111,7 +110,7 @@ public class ExperimentOverviewController {
 				row = annotator2Index.get(result.annotator);
 				col = dataset2Index.get(result.dataset);
 				if (result.state == ExperimentDAO.TASK_FINISHED) {
-					results[row][col] = result.getMicroF1Measure();
+					results[row][col] = result.getF1Measure();
 				} else {
 					results[row][col] = result.state;
 				}

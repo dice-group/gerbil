@@ -84,7 +84,7 @@ public class MultiAnnotatorHandlingTest {
 
     @Test
     public void test2() throws GerbilException {
-        AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, type, "en");
+        AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, type);
         if (expectedUrl == null) {
             Assert.assertNull(annotatorConfig);
         } else {

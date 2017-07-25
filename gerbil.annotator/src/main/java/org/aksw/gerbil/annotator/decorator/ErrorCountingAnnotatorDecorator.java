@@ -56,7 +56,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             int numberOfExpectedCalls) {
         int maxErrors = (int) Math.ceil(AMOUNT_OF_TOLERATED_ERRORS * numberOfExpectedCalls);
         switch (type) {
-        //TODO T1/T2
+        //T1/T2
         case SWC1:
             return new ErrorCountingSWCTask1System((SWCTask1System) annotator, maxErrors);
         case SWC2:

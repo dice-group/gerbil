@@ -48,7 +48,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
 
     public static TimeMeasuringAnnotatorDecorator createDecorator(ExperimentType type, Annotator annotator) {
         switch (type) {
-        //TODO case T1/T2
+        //case T1/T2
         case SWC1:
             return new TimeMeasuringSWC1Annotator((SWCTask1System) annotator);
         case SWC2:

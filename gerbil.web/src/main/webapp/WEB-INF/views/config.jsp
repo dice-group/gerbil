@@ -228,8 +228,7 @@
 					<a title="You can 
 1) select multiple of the datasets from the drop-down menu or 
 2) upload a QALD-formatted JSON or XML containing your custom benchmark data.
-
-(Beta) Further on you can change the language which should be tested (default: en)">
+">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
 				</div>
@@ -268,32 +267,7 @@
 				</div>
 			</div>
 			
-			<div class="row">
-				<div class="col-md-8 col-md-offset-2">
-					<hr />
-				</div>
-			</div>
-			<div class="form-group">
-				<div class="col-md-2"></div>
-					<div class="col-md-2 text-right">
-						<label class="control-label" >Language</label>					
-					<a title="(Beta) You can change the language which should be tested (default: en)
-					
-F.e. if you want to use French, type in: fr">
-						<span class="glyphicon glyphicon-question-sign"></span>
-					</a>
-				</div>
-				<div class="col-md-4">
 
-					<div>
-						<input
-								class="form-control" type="text" id="qLang" name="qlang"
-								placeholder="Type something: e.g. fr" /> <br>
-					</div>		
-					
-					
-				</div>
-			</div>
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2">
 					<hr />
@@ -513,7 +487,7 @@ F.e. if you want to use French, type in: fr">
 			var dataset = [];
 			addToList(dataset, datasetMultiselect);
 			addToList(dataset, $("#datasetList li span.li_content"), "NIFDS_");
-			var qLang = $("#qLang").val();
+			
 			var answerFiles = [];
 			addToList(answerFiles, $("#answerFileList li span.li_content"),
 					"AF_");
@@ -526,7 +500,6 @@ F.e. if you want to use French, type in: fr">
 			data.annotator = annotator;
 			data.dataset = dataset;
 			data.answerFiles = answerFiles;
-			data.questionLanguage = qLang;
 			$
 					.ajax('${execute}', {
 						data : {

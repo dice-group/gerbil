@@ -29,12 +29,9 @@ import com.carrotsearch.hppc.IntDoubleOpenHashMap;
 
 public class ExperimentTaskResult {
 
-    public static final int MICRO_F1_MEASURE_INDEX = 0;
-    public static final int MICRO_PRECISION_INDEX = 1;
-    public static final int MICRO_RECALL_INDEX = 2;
-    public static final int MACRO_F1_MEASURE_INDEX = 3;
-    public static final int MACRO_PRECISION_INDEX = 4;
-    public static final int MACRO_RECALL_INDEX = 5;
+    public static final int F1_MEASURE_INDEX = 0;
+    public static final int PRECISION_INDEX = 1;
+    public static final int RECALL_INDEX = 2;
 
     public double results[];
     public int state;
@@ -42,7 +39,6 @@ public class ExperimentTaskResult {
     public long timestamp;
     public String annotator;
     public String dataset;
-    public String language;
     public ExperimentType type;
     public Matching matching;
     public int idInDb;
@@ -56,21 +52,20 @@ public class ExperimentTaskResult {
      */
     public String stateMsg = null;
 
-    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
+    public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
             double results[], int state, int errorCount, long timestamp) {
-        this(annotator, dataset, language, type, matching, results, state, errorCount, timestamp, -1, null);
+        this(annotator, dataset,  type, matching, results, state, errorCount, timestamp, -1, null);
     }
 
-    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
+    public ExperimentTaskResult(String annotator, String dataset,  ExperimentType type, Matching matching,
             double results[], int state, int errorCount, long timestamp, int idInDb) {
-        this(annotator, dataset, language, type, matching, results, state, errorCount, timestamp, idInDb, null);
+        this(annotator, dataset, type, matching, results, state, errorCount, timestamp, idInDb, null);
     }
 
-    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
+    public ExperimentTaskResult(String annotator, String dataset,  ExperimentType type, Matching matching,
             double results[], int state, int errorCount, long timestamp, int idInDb, String gerbilVersion) {
         this.annotator = annotator;
         this.dataset = dataset;
-        this.language = language;
         this.type = type;
         this.matching = matching;
         this.results = results;
@@ -81,15 +76,15 @@ public class ExperimentTaskResult {
         this.gerbilVersion = gerbilVersion;
     }
 
-    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
+    public ExperimentTaskResult(String annotator, String dataset,  ExperimentType type, Matching matching,
             double results[], int state, int errorCount) {
-        this(annotator, dataset, language, type, matching, results, state, errorCount, (new java.util.Date()).getTime(), -1,
+        this(annotator, dataset, type, matching, results, state, errorCount, (new java.util.Date()).getTime(), -1,
                 null);
     }
 
     public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state,
             int errorCount) {
-        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.getQuestionLanguage(), configuration.type,
+        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
                 configuration.matching, results, state, errorCount, (new java.util.Date()).getTime());
     }
 
@@ -101,29 +96,18 @@ public class ExperimentTaskResult {
         this.results = results;
     }
 
-    public double getMicroF1Measure() {
-        return results[MICRO_F1_MEASURE_INDEX];
+    public double getF1Measure() {
+        return results[F1_MEASURE_INDEX];
     }
 
-    public double getMicroPrecision() {
-        return results[MICRO_PRECISION_INDEX];
+    public double getPrecision() {
+        return results[PRECISION_INDEX];
     }
 
-    public double getMicroRecall() {
-        return results[MICRO_RECALL_INDEX];
+    public double getRecall() {
+        return results[RECALL_INDEX];
     }
 
-    public double getMacroF1Measure() {
-        return results[MACRO_F1_MEASURE_INDEX];
-    }
-
-    public double getMacroPrecision() {
-        return results[MACRO_PRECISION_INDEX];
-    }
-
-    public double getMacroRecall() {
-        return results[MACRO_RECALL_INDEX];
-    }
 
     public void setState(int state) {
         this.state = state;
@@ -170,13 +154,6 @@ public class ExperimentTaskResult {
     public void setDataset(String dataset) {
         this.dataset = dataset;
     }
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
 
     
     public ExperimentType getType() {
@@ -216,18 +193,12 @@ public class ExperimentTaskResult {
         StringBuilder builder = new StringBuilder();
         builder.append("ExperimentTaskResult(state=");
         builder.append(state);
-        builder.append(",micF1=");
-        builder.append(results[MICRO_F1_MEASURE_INDEX]);
-        builder.append(",micPrecision=");
-        builder.append(results[MICRO_PRECISION_INDEX]);
-        builder.append(",micRecall=");
-        builder.append(results[MICRO_RECALL_INDEX]);
-        builder.append(",macF1=");
-        builder.append(results[MACRO_F1_MEASURE_INDEX]);
-        builder.append(",macPrecision=");
-        builder.append(results[MACRO_PRECISION_INDEX]);
-        builder.append(",macRecall=");
-        builder.append(results[MACRO_RECALL_INDEX]);
+        builder.append(",F1=");
+        builder.append(results[F1_MEASURE_INDEX]);
+        builder.append(",Precision=");
+        builder.append(results[PRECISION_INDEX]);
+        builder.append(",Recall=");
+        builder.append(results[RECALL_INDEX]);
         builder.append(",errors=");
         builder.append(errorCount);
         if (hasAdditionalResults()) {

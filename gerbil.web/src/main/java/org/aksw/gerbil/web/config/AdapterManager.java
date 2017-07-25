@@ -70,7 +70,7 @@ public class AdapterManager {
         return datasets.getAdapterNamesForExperiment(type);
     }
 
-    public AnnotatorConfiguration getAnnotatorConfig(String name, ExperimentType type, String questionLanguage) {
+    public AnnotatorConfiguration getAnnotatorConfig(String name, ExperimentType type) {
         List<AnnotatorConfiguration> configs = annotators.getAdaptersForName(name);
         if (configs != null) {
             for (AnnotatorConfiguration config : configs) {
@@ -174,7 +174,7 @@ public class AdapterManager {
         return null;
     }
 
-    public DatasetConfiguration getDatasetConfig(String name, ExperimentType type, String questionLanguage) {
+    public DatasetConfiguration getDatasetConfig(String name, ExperimentType type) {
         List<DatasetConfiguration> configs = datasets.getAdaptersForName(name);
         if (configs != null) {
             for (DatasetConfiguration config : configs) {
@@ -215,7 +215,7 @@ return new RDFFileDatasetConfig(name, uri, false, type, entityCheckerManager, gl
                     return null;
                 }
                 String datasetName = name.substring(brackets[0] + 1, brackets[1]);
-                return getDatasetConfig(datasetName, type, questionLanguage);
+                return getDatasetConfig(datasetName, type);
             }
         }
         LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");

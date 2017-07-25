@@ -164,10 +164,7 @@ public class MainController {
         for (int i = 0; i < jsonDataset.size(); i++) {
             datasets[i] = (String) jsonDataset.get(i);
         }
-        String qLang = configuration.get("questionLanguage").toString();
-        if(qLang.isEmpty()){
-        	qLang="en";
-        }
+        
         JSONArray jsonAnswerFiles = (JSONArray) configuration.get("answerFiles");
         String[] answerFiles = new String[jsonAnswerFiles.size()];
         for (int i = 0; i < jsonAnswerFiles.size(); i++) {
@@ -180,16 +177,16 @@ public class MainController {
         // create all annotator - dataset combinations
         for (String annotator : annotators) {
             for (String dataset : datasets) {
-                configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, type, qLang),
-                        adapterManager.getDatasetConfig(dataset, type, qLang), type, getMatching(matching), qLang);
+                configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, type),
+                        adapterManager.getDatasetConfig(dataset, type), type, getMatching(matching));
                 LOGGER.debug("Created config: {}", configs[count]);
                 ++count;
             }
         }
         // create the answer file based experiment tasks
         for (String answerFile : answerFiles) {
-            configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(answerFile, type, qLang),
-                    adapterManager.getDatasetConfig(answerFile, type, qLang), type, getMatching(matching), qLang);
+            configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(answerFile, type),
+                    adapterManager.getDatasetConfig(answerFile, type), type, getMatching(matching));
             LOGGER.debug("Created config: {}", configs[count]);
             ++count;
         }

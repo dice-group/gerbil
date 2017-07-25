@@ -37,9 +37,7 @@ import org.springframework.jdbc.core.RowMapper;
  * <li>6 - micro F1 measure</li>
  * <li>7 - micro precision</li>
  * <li>8 - micro recall</li>
- * <li>9 - macro F1 measure</li>
- * <li>10 - macro precision</li>
- * <li>11 - macro recall</li>
+
  * <li>12 - state</li>
  * <li>13 - error count</li>
  * <li>14 - timestamp</li>
@@ -59,11 +57,11 @@ public class ExperimentTaskResultRowMapper implements RowMapper<ExperimentTaskRe
         } catch (Exception e) {
             // nothing to do
         }
-        return new ExperimentTaskResult(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3),
-                ExperimentType.valueOf(resultSet.getString(4)), Matching.valueOf(resultSet.getString(5)),
-                new double[] { resultSet.getDouble(6), resultSet.getDouble(7), resultSet.getDouble(8),
-                        resultSet.getDouble(9), resultSet.getDouble(10), resultSet.getDouble(11) },
-                resultSet.getInt(12), resultSet.getInt(13), resultSet.getTimestamp(14).getTime(), idInDatabase);
+        return new ExperimentTaskResult(resultSet.getString(1), resultSet.getString(2),
+                ExperimentType.valueOf(resultSet.getString(3)), Matching.valueOf(resultSet.getString(4)),
+                new double[] { resultSet.getDouble(5), resultSet.getDouble(6), resultSet.getDouble(7),
+                         },
+                resultSet.getInt(8), resultSet.getInt(9), resultSet.getTimestamp(10).getTime(), idInDatabase);
     }
 
 }

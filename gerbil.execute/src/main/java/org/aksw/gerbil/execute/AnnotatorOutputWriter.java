@@ -18,18 +18,14 @@ package org.aksw.gerbil.execute;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-import org.aksw.gerbil.io.nif.NIFWriter;
-import org.aksw.gerbil.io.nif.impl.TurtleNIFWriter;
 import org.aksw.gerbil.matching.Matching;
-import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.apache.commons.io.IOUtils;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,18 +45,21 @@ public class AnnotatorOutputWriter {
         }
     }
 
-    public <T extends Marking> void storeAnnotatorOutput(ExperimentTaskConfiguration configuration,
-            List<List<T>> results, List<Document> documents) {
+    public <T extends Model> void storeAnnotatorOutput(ExperimentTaskConfiguration configuration,
+            List<List<T>> results, List<Model> documents) {
         if (outputShouldBeStored(configuration)) {
             FileOutputStream fout = null;
             GZIPOutputStream gout = null;
             try {
                 File file = generateOutputFile(configuration);
-                List<Document> resultDocuments = generateResultDocuments(results, documents);
+                List<Model> resultDocuments = documents;
                 fout = new FileOutputStream(file);
                 gout = new GZIPOutputStream(fout);
-                NIFWriter writer = new TurtleNIFWriter();
-                writer.writeNIF(resultDocuments, gout);
+                Model unionizedModel = ModelFactory.createDefaultModel();
+                for(Model m : resultDocuments){
+                	unionizedModel.union(m);
+                }
+                unionizedModel.write(gout, "TTL");
             } catch (Exception e) {
                 LOGGER.error("Couldn't write annotator result to file.", e);
             } finally {
@@ -103,21 +102,21 @@ public class AnnotatorOutputWriter {
         }
     }
 
-    private <T extends Marking> List<Document> generateResultDocuments(List<List<T>> results,
-            List<Document> documents) {
-        List<Document> resultDocuments = new ArrayList<Document>(documents.size());
-        Document datasetDocument, resultDocument;
-        for (int d = 0; d < documents.size(); ++d) {
-            datasetDocument = documents.get(d);
-            resultDocument = new DocumentImpl(datasetDocument.getText(), datasetDocument.getDocumentURI());
-            if ((d < results.size()) && (results.get(d) != null)) {
-                for (T m : results.get(d)) {
-                    resultDocument.addMarking(m);
-                }
-            }
-            resultDocuments.add(resultDocument);
-        }
-        return resultDocuments;
-    }
+//    private <T extends Model> List<Model> generateResultDocuments(List<List<T>> results,
+//            List<Model> documents) {
+//        List<Model> resultDocuments = new ArrayList<Model>(documents.size());
+//        Model datasetDocument, resultDocument;
+//        for (int d = 0; d < documents.size(); ++d) {
+//            datasetDocument = documents.get(d);
+//            resultDocument = ModelFactory.createDefaultModel();
+//            if ((d < results.size()) && (results.get(d) != null)) {
+//                for (T m : results.get(d)) {
+//                    resultDocument.addMarking(m);
+//                }
+//            }
+//            resultDocuments.add(resultDocument);
+//        }
+//        return resultDocuments;
+//    }
 
 }

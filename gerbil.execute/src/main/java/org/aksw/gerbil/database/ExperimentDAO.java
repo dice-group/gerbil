@@ -127,7 +127,7 @@ public interface ExperimentDAO extends Closeable {
      *         an experiment task with the given preferences or the id of the
      *         newly created experiment task.
      */
-    public int connectCachedResultOrCreateTask(String annotatorName, String datasetName, String language, String experimentType,
+    public int connectCachedResultOrCreateTask(String annotatorName, String datasetName, String experimentType,
             String matching, String experimentId);
 
     /**
@@ -150,7 +150,7 @@ public interface ExperimentDAO extends Closeable {
      *            the id of the experiment
      * @return the id of the newly created experiment task.
      */
-    public int createTask(String annotatorName, String datasetName, String language, String experimentType, String matching,
+    public int createTask(String annotatorName, String datasetName,  String experimentType, String matching,
             String experimentId);
 
     /**
@@ -231,7 +231,7 @@ public interface ExperimentDAO extends Closeable {
      * @return a list of the latest results available in the database.
      */
     public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching,
-            String annotatorNames[], String datasetNames[], String languages[]);
+            String annotatorNames[], String datasetNames[]);
 
     /**
      * Returns a list of all running experiment tasks.

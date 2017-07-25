@@ -16,29 +16,17 @@
  */
 package org.aksw.gerbil.execute;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotator.C2KBAnnotator;
-import org.aksw.gerbil.annotator.D2KBAnnotator;
-import org.aksw.gerbil.annotator.EntityRecognizer;
-import org.aksw.gerbil.annotator.EntityTyper;
-import org.aksw.gerbil.annotator.OKETask1Annotator;
-import org.aksw.gerbil.annotator.OKETask2Annotator;
-import org.aksw.gerbil.annotator.QASystem;
+import org.aksw.gerbil.annotator.SWCTask1System;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
-import org.aksw.gerbil.annotator.impl.qa.FileBasedQALDSystem;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.ResultNameToIdMapping;
-import org.aksw.gerbil.dataset.AbstractDatasetConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
-import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -50,19 +38,9 @@ import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.evaluate.IntEvaluationResult;
 import org.aksw.gerbil.evaluate.SubTaskResult;
-import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
+import org.aksw.gerbil.evaluate.impl.ModelComparator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.SameAsRetrieverUtils;
-import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.impl.model.DatasetBasedSameAsRetriever;
-import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.Meaning;
-import org.aksw.gerbil.transfer.nif.MeaningSpan;
-import org.aksw.gerbil.transfer.nif.Span;
-import org.aksw.gerbil.transfer.nif.TypedSpan;
-import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.apache.commons.io.IOUtils;
 import org.apache.jena.rdf.model.Model;
@@ -103,23 +81,17 @@ public class ExperimentTask implements Task {
         Annotator annotator = null;
         Dataset dataset = null;
         try {
-            String qLang = this.configuration.questionLanguage;
-            if(qLang.isEmpty()){
-            	this.configuration.questionLanguage="en";
-            	qLang="en";
-            }
+           
             // Create dataset
-            configuration.datasetConfig.setQuestionLanguage(qLang);
             dataset = configuration.datasetConfig.getDataset(configuration.type);
             if (dataset == null) {
                 throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
                         + configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
             }
-            dataset.setQuestionLanguage(qLang);
             //Clean up dataset
-            List<Document> removeDocs = new ArrayList<Document>();
-            for(Document d : dataset.getInstances()){
-            	if(d.getText()== null || d.getText().isEmpty()){
+            List<Model> removeDocs = new ArrayList<Model>();
+            for(Model d : dataset.getInstances()){
+            	if(d.isEmpty()){
             		removeDocs.add(d);
             	}
             }
@@ -161,8 +133,16 @@ public class ExperimentTask implements Task {
             // FIXME Fix this workaround
             ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[6],
                     ExperimentDAO.TASK_FINISHED, 0);
-            transformResults(result, expResult);
-
+            switch(configuration.type){
+            case SWC1:	
+            	transformResults(result, expResult);
+            	break;
+            case SWC2:
+            	//TODO
+            	//transformROCResults(result, expResult);
+			default:
+				break;
+            }
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
             LOGGER.info("Task Finished " + configuration.toString());
@@ -178,47 +158,6 @@ public class ExperimentTask implements Task {
         }
     }
 
-    /**
-     * Prepares the given dataset for the experiment, i.e., performs a sameAs
-     * retrieval if it is needed for the experiment type.
-     * 
-     * @param dataset
-     * @deprecated This should be done by the {@link DatasetConfiguration} class
-     *             that has loaded the dataset
-     */
-    @Deprecated
-    protected void prepareDataset(Dataset dataset) {
-        switch (configuration.type) {
-        case A2KB:// falls through
-        case C2KB:
-        case D2KB:
-        case Rc2KB:
-        case Sa2KB:
-        case Sc2KB:
-        case OKE_Task1: // falls through
-        case OKE_Task2:
-        case ETyping: {
-            SameAsRetriever retriever = DatasetBasedSameAsRetriever.create(dataset);
-            if (retriever != null) {
-                if (globalRetriever != null) {
-                    retriever = new MultipleSameAsRetriever(retriever, globalRetriever);
-                }
-            } else {
-                retriever = globalRetriever;
-            }
-            if (retriever != null) {
-                for (Document document : dataset.getInstances()) {
-                    SameAsRetrieverUtils.addSameURIsToMarkings(retriever, document.getMarkings());
-                }
-            }
-            return;
-        }
-        case ERec:// falls through
-        default:
-            // nothing to do
-            return;
-        }
-    }
 
     /**
      * Prepares the given annotator results for the evaluation, i.e., performs a
@@ -228,7 +167,7 @@ public class ExperimentTask implements Task {
      * @param annotatorSameAsRetriever
      */
     @SuppressWarnings("deprecation")
-    protected void prepareAnnotatorResults(List<? extends List<? extends Meaning>> results,
+    protected void prepareAnnotatorResults(List<? extends List<? extends Model>> results,
             SameAsRetriever annotatorSameAsRetriever) {
         switch (configuration.type) {
         case A2KB:// falls through
@@ -241,9 +180,9 @@ public class ExperimentTask implements Task {
         case OKE_Task2:
         case ETyping: {
             if (annotatorSameAsRetriever != null) {
-                for (List<? extends Meaning> result : results) {
-                    SameAsRetrieverUtils.addSameURIsToMeanings(annotatorSameAsRetriever, result);
-                }
+//                for (List<? extends Model> result : results) {
+//                    SameAsRetrieverUtils.addSameURIsToMeanings(annotatorSameAsRetriever, result);
+//                }
             }
             return;
         }
@@ -255,6 +194,7 @@ public class ExperimentTask implements Task {
     }
 
     protected void transformResults(EvaluationResult result, ExperimentTaskResult expResult) {
+    	//TODO F,P,R, AUC, ROC as additional
         if (result instanceof SubTaskResult) {
             ExperimentTaskResult subTask = new ExperimentTaskResult(((SubTaskResult) result).getConfiguration(),
                     new double[6], ExperimentDAO.TASK_FINISHED, 0);
@@ -270,36 +210,22 @@ public class ExperimentTask implements Task {
             }
         } else if (result instanceof DoubleEvaluationResult) {
             switch (result.getName()) {
-            case FMeasureCalculator.MACRO_F1_SCORE_NAME: {
-                expResult.results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
-                return;
-            }
-            case FMeasureCalculator.MACRO_PRECISION_NAME: {
-                expResult.results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
-                return;
-            }
-            case FMeasureCalculator.MACRO_RECALL_NAME: {
-                expResult.results[ExperimentTaskResult.MACRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
-                return;
-            }
-            case FMeasureCalculator.MICRO_F1_SCORE_NAME: {
-                expResult.results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
-                return;
-            }
-            case FMeasureCalculator.MICRO_PRECISION_NAME: {
-                expResult.results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
-                return;
-            }
-            case FMeasureCalculator.MICRO_RECALL_NAME: {
-                expResult.results[ExperimentTaskResult.MICRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
-                return;
-            }
+//            case ModelComparator.F1_SCORE_NAME: {
+//                expResult.results[ExperimentTaskResult.F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
+//                        .getValueAsDouble();
+//                return;
+//            }
+//            case ModelComparator.PRECISION_NAME: {
+//                expResult.results[ExperimentTaskResult.PRECISION_INDEX] = ((DoubleEvaluationResult) result)
+//                        .getValueAsDouble();
+//                return;
+//            }
+//            case ModelComparator.RECALL_NAME: {
+//                expResult.results[ExperimentTaskResult.RECALL_INDEX] = ((DoubleEvaluationResult) result)
+//                        .getValueAsDouble();
+//                return;
+//            }
+            
             default: {
                 int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
                 if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
@@ -324,36 +250,27 @@ public class ExperimentTask implements Task {
         }
     }
 
-    @SuppressWarnings({ "deprecation" })
     protected EvaluationResult runExperiment(Dataset dataset, Annotator annotator,
             List<Evaluator<? extends Model>> evaluators, ExperimentTaskState state) throws GerbilException {
         EvaluationResult evalResult = null;
         //TODO case T1/T2
         switch (configuration.type) {
-        case D2KB: {
-            try {
-                List<List<MeaningSpan>> results = new ArrayList<List<MeaningSpan>>(dataset.size());
-                List<List<MeaningSpan>> goldStandard = new ArrayList<List<MeaningSpan>>(dataset.size());
-                D2KBAnnotator linker = ((D2KBAnnotator) annotator);
-
-                for (Document document : dataset.getInstances()) {
-                    // reduce the document to a text and a list of Spans
-                    results.add(linker.performD2KBTask(DocumentInformationReducer.reduceToTextAndSpans(document)));
-                    goldStandard.add(document.getMarkings(MeaningSpan.class));
-                    taskState.increaseExperimentStepCount();
-                }
-                if (annotatorOutputWriter != null) {
-                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-                }
-                prepareAnnotatorResults(results, globalRetriever);
-                evalResult = evaluate(evaluators, results, goldStandard);
-            } catch (GerbilException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+        case SWC1: {
+        	//TODO different Models!!!
+        	List<List<Model>> results = new ArrayList<List<Model>>(dataset.size());
+            List<List<Model>> goldStandard = new ArrayList<List<Model>>(dataset.size());
+        	SWCTask1System system  = ((SWCTask1System) annotator);
+       		results.add(system.performTask1(dataset.getInstances().get(0)));
+       		goldStandard.add(dataset.getInstances());
+            taskState.increaseExperimentStepCount();
+            if (annotatorOutputWriter != null) {
+                annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
             }
+            prepareAnnotatorResults(results, globalRetriever);
+            evalResult = evaluate(evaluators, results, goldStandard);
             break;
         }
+       
         default:
             throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
                     ErrorTypes.UNEXPECTED_EXCEPTION);

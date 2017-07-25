@@ -100,18 +100,18 @@
 							<c:if test="${hasSubTasks}">
 								<td></td>
 							</c:if>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.microF1Measure}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.microPrecision}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.microRecall}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.macroF1Measure}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.macroPrecision}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.macroRecall}" /></td>
+<%-- 							<td><fmt:formatNumber type="number" maxFractionDigits="4" --%>
+<%-- 									value="${task.microF1Measure}" /></td> --%>
+<%-- 							<td><fmt:formatNumber type="number" maxFractionDigits="4" --%>
+<%-- 									value="${task.microPrecision}" /></td> --%>
+<%-- 							<td><fmt:formatNumber type="number" maxFractionDigits="4" --%>
+<%-- 									value="${task.microRecall}" /></td> --%>
+<%-- 							<td><fmt:formatNumber type="number" maxFractionDigits="4" --%>
+<%-- 									value="${task.macroF1Measure}" /></td> --%>
+<%-- 							<td><fmt:formatNumber type="number" maxFractionDigits="4" --%>
+<%-- 									value="${task.macroPrecision}" /></td> --%>
+<%-- 							<td><fmt:formatNumber type="number" maxFractionDigits="4" --%>
+<%-- 									value="${task.macroRecall}" /></td> --%>
 							<!-- <td>${task.state}</td> -->
 							<td>${task.errorCount}</td>
 							<!-- for every additional result -->

@@ -47,7 +47,6 @@ public class DataIDGenerator {
     private static final String DATASET_DATAID = "dataId/corpora/";
     private static final String ANNOTATOR_DATAID = "dataId/annotators/";
     private static final String DATAID_EXTENSION = "";
-	private static final String LANGUAGE_DATAID = "dataId/languages/";
 
     private String gerbilURL;
 
@@ -164,9 +163,7 @@ public class DataIDGenerator {
                 gerbilURL + ANNOTATOR_DATAID + DataIDUtils.treatsNames(result.dataset) + DATAID_EXTENSION);
         experimentTask.addProperty(GERBIL.dataset,
                 gerbilURL + DATASET_DATAID + DataIDUtils.treatsNames(result.annotator) + DATAID_EXTENSION);
-        experimentTask.addProperty(GERBIL.language,
-                gerbilURL + LANGUAGE_DATAID + DataIDUtils.treatsNames(result.language) + DATAID_EXTENSION);
-
+       
         
         // set the status of this task
         model.add(experimentTask, GERBIL.statusCode, model.createTypedLiteral(result.state));
@@ -179,17 +176,11 @@ public class DataIDGenerator {
         if (ExperimentTaskStateHelper.taskFinished(result)) {
             // creating and setting literals for the current experiment
             model.add(experimentTask, GERBIL.microF1,
-                    model.createTypedLiteral(String.valueOf(result.getMicroF1Measure()), XSDDatatype.XSDdecimal));
+                    model.createTypedLiteral(String.valueOf(result.getF1Measure()), XSDDatatype.XSDdecimal));
             model.add(experimentTask, GERBIL.microPrecision,
-                    model.createTypedLiteral(String.valueOf(result.getMicroPrecision()), XSDDatatype.XSDdecimal));
+                    model.createTypedLiteral(String.valueOf(result.getPrecision()), XSDDatatype.XSDdecimal));
             model.add(experimentTask, GERBIL.microRecall,
-                    model.createTypedLiteral(String.valueOf(result.getMicroRecall()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroF1,
-                    model.createTypedLiteral(String.valueOf(result.getMacroF1Measure()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroPrecision,
-                    model.createTypedLiteral(String.valueOf(result.getMacroPrecision()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroRecall,
-                    model.createTypedLiteral(String.valueOf(result.getMacroRecall()), XSDDatatype.XSDdecimal));
+                    model.createTypedLiteral(String.valueOf(result.getRecall()), XSDDatatype.XSDdecimal));
             model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(String.valueOf(result.errorCount)));
 
             if (result.hasAdditionalResults()) {
