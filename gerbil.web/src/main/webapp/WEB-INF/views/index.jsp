@@ -22,14 +22,13 @@ div.picture {
 	<%@include file="navbar.jsp"%>
 	<div class="jumbotron">
 		<div class="container">
-			<h1>GERBIL QA</h1>
+			<h1>GERBIL SWC</h1>
 			<p>This is GERBIL. All your peanuts belong to me!</p>
 			<p>
-				We present GERBIL QA, an extension of the <a
+				We present GERBIL SWC, an extension of the <a
 					href="http://gerbil.aksw.org">general entity annotation system
-					GERBIL</a>. It offers an easy-to-use web-based platform for the agile
-				comparison of QA systems using multiple datasets and uniform
-				measuring approaches.
+					GERBIL</a>. It offers an easy-to-use web-based platform for the Semantic Web
+					Challenge 2017 at the ISWC.
 				<!-- To add a tool to
 				GERBIL, all the end user has to do is to provide a URL to a REST
 				interface to its tool which abides by a given specification. The
@@ -43,8 +42,8 @@ div.picture {
 		</div>
 
 		<div class="container">
-			<img src="/gerbil/webResources/GERBIL_QA_overview.png"
-				alt="gerbil overview">
+<!-- 			<img src="/gerbil/webResources/GERBIL_QA_overview.png" -->
+<!-- 				alt="gerbil overview"> -->
 		</div>
 	</div>
 </body>

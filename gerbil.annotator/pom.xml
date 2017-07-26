@@ -42,4 +42,114 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
   </dependencies>
+  
+  	<build>
+		<finalName>gerbil</finalName>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<!-- License management plugin -->
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<header>com/mycila/maven/plugin/license/templates/LGPL-3.txt</header>
+					<properties>
+						<owner>Agile Knowledge Engineering and Semantic Web (AKSW)
+							(usbeck@informatik.uni-leipzig.de)</owner>
+					</properties>
+					<excludes>
+						<exclude>**/README</exclude>
+						<exclude>*.log</exclude>
+						<exclude>*.html</exclude>
+						<exclude>start.sh</exclude>
+						<exclude>**/LICENSE</exclude>
+						<exclude>documentation/**</exclude>
+						<exclude>repository/**</exclude>
+						<exclude>gerbil_data/**</exclude>
+						<exclude>src/main/resources/**</exclude>
+						<exclude>src/main/properties/**</exclude>
+						<exclude>src/main/webapp/**</exclude>
+						<exclude>src/test/resources/**</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<!-- Maven Exec Plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.5.0</version>
+			</plugin>
+			<!-- Javadoc plugin for generating documentation -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+				<configuration>
+					<configuration>
+						<show>private</show>
+						<nohelp>true</nohelp>
+						<quiet>true</quiet>
+						<!-- added for generating javadoc with java 1.8 -->
+						<additionalparam>-Xdoclint:none</additionalparam>
+					</configuration>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+<!-- 							<goal>jar</goal> -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Source plugin for creating source file jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<!-- Note that the properties files will be filtered. If mvn finds known 
+					place holders they will be replaced -->
+				<directory>src/main/properties</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
+	<distributionManagement>
+		<repository>
+			<id>maven.aksw.internal</id>
+			<url>http://maven.aksw.org/archiva/repository/internal</url>
+		</repository>
+		<snapshotRepository>
+			<id>maven.aksw.snapshots</id>
+			<name>AKSW Snapshot Repository</name>
+			<url>http://maven.aksw.org/archiva/repository/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+  
 </project>

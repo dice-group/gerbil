@@ -3,7 +3,6 @@ package org.aksw.gerbil.evaluate.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +30,7 @@ public class ROCEvaluatorTest {
 		Resource s3 = ResourceFactory.createResource("http://test.com/stmt3");
 		Resource s4 = ResourceFactory.createResource("http://test.com/stmt4");
 
-		Property p = ResourceFactory.createProperty("http://test.com/truthValue");
+		Property p = ResourceFactory.createProperty("http://gerbil-swc.org/truthValue");
 		
 		gold.addLiteral(s4, p, 1.0);
 		gold.addLiteral(s3, p, 1.0);
@@ -96,8 +95,8 @@ public class ROCEvaluatorTest {
 		assertTrue(curve.points.size()==4);
 		a = curve.points.get(0);
 		b = curve.points.get(1);
-		Point c = curve.points.get(3);
-		Point d = curve.points.get(4);
+		Point c = curve.points.get(2);
+		Point d = curve.points.get(3);
 		assertTrue(a.x==0.5);
 		assertTrue(a.y==0.0);
 		assertTrue(b.x==0.5);
@@ -120,8 +119,8 @@ public class ROCEvaluatorTest {
 		assertTrue(curve.points.size()==4);
 		a = curve.points.get(0);
 		b = curve.points.get(1);
-		c = curve.points.get(3);
-		d = curve.points.get(4);
+		c = curve.points.get(2);
+		d = curve.points.get(3);
 		assertTrue(a.x==0.0);
 		assertTrue(a.y==0.5);
 		assertTrue(b.x==0.5);
@@ -164,9 +163,9 @@ public class ROCEvaluatorTest {
 			double higher = stmts.get(i).getDouble();
 			double lower = stmts.get(i+1).getDouble();
 			assertTrue(higher>=lower);
-			orderedStmt.add(stmts.get(i).getResource().getURI());
+			orderedStmt.add(stmts.get(i).getSubject().getURI());
 		}
-		orderedStmt.add(stmts.get(stmts.size()-1).getResource().getURI());
+		orderedStmt.add(stmts.get(stmts.size()-1).getSubject().getURI());
 		List<String> correct = new ArrayList<String>();
 		correct.add("http://test.com/stmt1");
 		correct.add("http://test.com/stmt5");

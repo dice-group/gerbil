@@ -1,6 +1,5 @@
 package org.aksw.gerbil.evaluate.impl;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,28 +32,42 @@ public class ROCCurve {
 	}
 	
 	public void addUp(){
-		Point last = points.get(points.size()-1);
+		double lastX=0.0, lastY=0.0;
+		if(!points.isEmpty()){
+			Point last = points.get(points.size()-1);
+			lastX=last.x;
+			lastY=last.y;
+			if(DIRECTION.UP.equals(lastDir))
+				points.remove(last);
+		}
+		
 		Point newP = new Point();
-		newP.setLocation(last.getX(), last.getY()+1.0/trueStmts);
-		if(DIRECTION.UP.equals(lastDir))
-			points.remove(last);
+		lastY = lastY+1.0/trueStmts;
+		newP.setLocation(lastX, lastY);
+		
 		points.add(newP);
 		lastDir=DIRECTION.UP;
 	}
 	
 	public void addRight(){
-		Point last = points.get(points.size()-1);
+		double lastX=0.0, lastY=0.0;
+		if(!points.isEmpty()){
+			Point last = points.get(points.size()-1);
+			lastX=last.x;
+			lastY=last.y;
+			if(DIRECTION.RIGHT.equals(lastDir))
+				points.remove(last);
+		}
 		Point newP = new Point();
-		newP.setLocation(last.getX()+1.0/falseStmts, last.getY());
-		if(DIRECTION.RIGHT.equals(lastDir))
-			points.remove(last);
+		newP.setLocation(lastX+1.0/falseStmts, lastY);
+		
 		points.add(newP);
 		lastDir=DIRECTION.RIGHT;
 	}
 	
 	public double calcualteAUC(){
 		double auc = 0.0;
-		for(int i=0; i<points.size()-2;i++){
+		for(int i=0; i<points.size()-1;i++){
 			Point pointA = points.get(i);
 			Point pointB = points.get(i+1);
 			//calculate area under the points (rectangle)
@@ -69,12 +82,18 @@ public class ROCCurve {
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
 		builder.append("{ roc : [");
-		for(Point p : points){
+		for(int i=0; i<points.size()-1; i++){
+			Point p = points.get(i);
 			builder.append("{");
-			builder.append("x : \"").append(p.x).append("\"");
+			builder.append("x : \"").append(p.x).append("\",");
 			builder.append("y : \"").append(p.y).append("\"");
-			builder.append("}");
+			builder.append("},");
 		}
+		Point p = points.get(points.size()-1);
+		builder.append("{");
+		builder.append("x : \"").append(p.x).append("\",");
+		builder.append("y : \"").append(p.y).append("\"");
+		builder.append("}");
 		builder.append("]}");
 		return builder.toString();
 	}

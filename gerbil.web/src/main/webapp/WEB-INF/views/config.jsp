@@ -100,7 +100,7 @@
 				<div class="col-md-2 text-right">
 					<label class="control-label" for="type">Experiment
 						Type</label>
-					<a title="The QA experiment type will benchmark how good your system is at answering questions.">
+					<a title="The SWC experiments type will benchmark how good your system is.">
 							<span class="glyphicon glyphicon-question-sign"></span>
 					</a>	
 				</div>		
@@ -111,19 +111,7 @@
 				</div>
 				
 			</div>
-			<div class="row" id="matchingsSeparator">
-				<div class="col-md-8 col-md-offset-2">
-					<hr />
-				</div>
-			</div>
-			<!--Matching dropdown filled by loadMatching() function -->
-			<div class="form-group" id="matchingsDiv">
-				<label class="col-md-4 control-label" for="annotator">Matching</label>
-				<div class="col-md-4">
-					<select id="matching" style="display: none;">
-					</select>
-				</div>
-			</div>
+
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2">
 					<hr />
@@ -134,53 +122,11 @@
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
 						<label class="control-label" for="annotator">System</label>
-					<a title="You can 
-1) select any of the system from the drop-down menu or 
-2) add a system via its URI (needs to understand the query parameter and return valid QALD JSON or XML) or 
-3) upload a QALD-formatted XML or JSON file which has the answers to one of the datasets. NOTE: First, type in the name of your system if you use option 2 or 3 and then type in the URI.">
+					<a title="You can upload an RDF file which has the answers to one of the datasets. NOTE: First, type in the name of your system if you use option 2 or 3 and then type in the URI.">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
 				</div>
 				<div class="col-md-4">
-					<select id="annotator" multiple="multiple" style="display: none; hidden: true;">
-					</select>
-					<hr />
-					<div style="hidden: true;">
-						<span> Or add another webservice via URI:</span>
-						<div>
-							<label for="nameAnnotator">Name:</label> <input
-								class="form-control" type="text" id="nameAnnotator" name="name"
-								placeholder="Type something" /> <label for="URIAnnotator">URI:</label>
-							<input class="form-control" type="text" id="URIAnnotator"
-								name="URI" placeholder="Type something" />
-						</div>
-						<div>
-							<!-- list to be filled by button press and javascript function addAnnotator -->
-							<ul id="annotatorList"
-								style="margin-top: 15px; list-style-type: none;">
-							</ul>
-						</div>
-						<div id="warningEmptyAnnotator" class="alert alert-warning"
-							role="alert">
-							<button type="button" class="close" data-dismiss="alert"></button>
-							<strong>Warning!</strong> Enter a name and an URI.
-						</div>
-						<div id="infoAnnotatorTest" class="alert alert-info" role="alert">
-							<button type="button" class="close" data-dismiss="alert"></button>
-							<strong>Please wait</strong> while the communication with your
-							annotator is tested...
-						</div>
-						<div id="dangerAnnotatorTestError" class="alert alert-danger"
-							role="alert">
-							<button type="button" class="close" data-dismiss="alert"></button>
-							<strong>Warning!</strong> There was an error while testing the
-							annotator.<br> <span id="annotatorTestErrorMsg"></span>
-						</div>
-						<input type="button" id="addAnnotator"
-							class="btn btn-primary pull-right" value="Add system"
-							style="margin-top: 15px" /><br> <br>
-					</div>
-					<hr id="uploadAnswersSeparator" />
 					<div id="uploadAnswers">
 						<span> Upload a file with answers:</span>
 						<div>
@@ -225,45 +171,13 @@
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
 						<label class="control-label" for="datasets">Dataset</label>					
-					<a title="You can 
-1) select multiple of the datasets from the drop-down menu or 
-2) upload a QALD-formatted JSON or XML containing your custom benchmark data.
-">
+					<a title="You can select multiple of the datasets from the drop-down menu">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
 				</div>
 				<div class="col-md-4">
 					<select id="dataset" multiple="multiple" style="display: none;">
 					</select>
-					<hr />
-					<div>
-						<span> Or upload another dataset:</span>
-						<div>
-							<label for="nameDataset">Name:</label> <input
-								class="form-control" type="text" id="nameDataset" name="name"
-								placeholder="Type something" /> <br> <span
-								class="btn btn-success fileinput-button"> <i
-								class="glyphicon glyphicon-plus"></i> <span>Select
-									file...</span> <!-- The file input field used as target for the file upload widget -->
-								<input id="fileupload" type="file" name="files[]">
-							</span> <br> <br>
-							<!-- The global progress bar -->
-							<div id="progress" class="progress">
-								<div class="progress-bar progress-bar-success"></div>
-							</div>
-							<div>
-								<!-- list to be filled by button press and javascript function addDataset -->
-								<ul class="unstyled" id="datasetList"
-									style="margin-top: 15px; list-style-type: none;">
-								</ul>
-							</div>
-							<div id="warningEmptyDataset" class="alert alert-warning"
-								role="alert">
-								<button type="button" class="close" data-dismiss="alert"></button>
-								<strong>Warning!</strong> Enter a name.
-							</div>
-						</div>
-					</div>	
 				</div>
 			</div>
 			
@@ -385,7 +299,7 @@
 				$("#matchingsSeparator").show();
 				$("#matchingsDiv").show();
 				$("#uploadAnswersSeparator").hide();
-				$("#uploadAnswers").hide();
+				//$("#uploadAnswers").hide();
 			}
 		}
 		function checkExperimentConfiguration() {

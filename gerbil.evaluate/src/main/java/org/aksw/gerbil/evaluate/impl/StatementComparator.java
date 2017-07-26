@@ -10,7 +10,7 @@ public class StatementComparator implements Comparator<Statement> {
 	public int compare(Statement annotator, Statement goldStd) {
 		Double tValue1 = annotator.getLiteral().getDouble();
 		Double tValue2 = goldStd.getLiteral().getDouble();
-		return tValue1.compareTo(tValue2);
+		return tValue2.compareTo(tValue1);
 	}
 
 }
