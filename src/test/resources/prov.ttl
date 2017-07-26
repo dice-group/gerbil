@@ -1,0 +1,79 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix d0: <http://ontologydesignpatterns.org/ont/wikipedia/d0.owl#> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix oke: <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/> .
+@prefix dbpedia: <http://dbpedia.org/resource/> .
+@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,146>
+        a                     nif:RFC5147String , nif:String , nif:Context ;
+        nif:beginIndex        "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "146"^^xsd:nonNegativeInteger ;
+        nif:isString          "Florence May Harding studied at a school in Sydney, and with Douglas Robert Dundas , but in effect had no formal training in either botany or art."@en .
+
+oke:Florence_May_Harding
+     a                        owl:Individual, dul:Person ;
+     rdfs:label               "Florence May Harding"@en ;
+     owl:sameAs               dbpedia:Florence_May_Harding .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,20>
+        a                     nif:RFC5147String , nif:String, prov:Entity ;
+        nif:anchorOf          "Florence May Harding"@en ;
+        nif:beginIndex        "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "20"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,146> ;
+        itsrdf:taIdentRef     oke:Florence_May_Harding ;
+        prov:wasGeneratedBy   <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#activity-1-2-3> .
+        
+oke:School_1
+     a                        owl:Individual, dul:Organization ;
+     rdfs:label               "a school"@en .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=34,40>
+        a                     nif:RFC5147String , nif:String, prov:Entity ;
+        nif:anchorOf          "school"@en ;
+        nif:beginIndex        "34"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "40"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,146> ;
+        itsrdf:taIdentRef     oke:National_Art_School ;
+        prov:wasGeneratedBy   <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#activity-1-2-3> .
+
+oke:Sydney
+     a                        owl:Individual, d0:Location ;
+     rdfs:label               "Sydney"@en ;
+     owl:sameAs               dbpedia:Sydney .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=44,50>
+        a                     nif:RFC5147String , nif:String, prov:Entity ;
+        nif:anchorOf          "Sydney"@en ;
+        nif:beginIndex        "44"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "50"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,146> ;
+        itsrdf:taIdentRef     oke:Sydney ;
+        prov:wasGeneratedBy   <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#activity-1-2-3> .
+
+oke:Douglas_Robert_Dundas
+     a                        owl:Individual, dul:Person ;
+     rdfs:label               "Douglas Robert Dundas"@en .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=61,82>
+        a                     nif:RFC5147String , nif:String, prov:Entity ;
+        nif:anchorOf          "Douglas Robert Dundas"@en ;
+        nif:beginIndex        "61"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "82"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,146> ;
+        itsrdf:taIdentRef     oke:Douglas_Robert_Dundas ;
+        prov:wasGeneratedBy   <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#activity-1-2-3> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#activity-1-2-3>
+        a                     prov:Activity ;
+        prov:startedAtTime    "2011-07-14T01:01:01Z"^^xsd:dateTime;
+        prov:endedAtTime      "2011-07-14T02:02:02Z"^^xsd:dateTime;
+        prov:wasAssociatedWith  oke:system1 .
+        
+oke:system1     a             prov:Agent .

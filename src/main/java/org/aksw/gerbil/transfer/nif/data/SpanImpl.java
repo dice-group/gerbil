@@ -21,7 +21,7 @@ package org.aksw.gerbil.transfer.nif.data;
 
 import org.aksw.gerbil.transfer.nif.Span;
 
-public class SpanImpl implements Span {
+public class SpanImpl extends AbstractMarkingImpl implements Span {
 
 	protected int startPosition;
 	protected int length;

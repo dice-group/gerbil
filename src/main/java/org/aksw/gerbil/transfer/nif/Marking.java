@@ -29,4 +29,8 @@ public interface Marking extends Cloneable {
     public String toString();
     
     public Object clone() throws CloneNotSupportedException;
+
+    public void setProvenanceInfo(ProvenanceInfo provencance);
+    
+    public ProvenanceInfo getProvenanceInfo();
 }

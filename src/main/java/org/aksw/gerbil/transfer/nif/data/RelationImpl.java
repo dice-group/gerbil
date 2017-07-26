@@ -3,7 +3,7 @@ package org.aksw.gerbil.transfer.nif.data;
 import org.aksw.gerbil.transfer.nif.Relation;
 import org.apache.jena.graph.Triple;
 
-public class RelationImpl implements Relation {
+public class RelationImpl extends AbstractMarkingImpl implements Relation {
 
     protected Triple relation;
 

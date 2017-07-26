@@ -29,7 +29,7 @@ import org.aksw.gerbil.transfer.nif.MeaningEqualityChecker;
  * @author Michael Röder
  * 
  */
-public class Annotation implements Meaning {
+public class Annotation extends AbstractMarkingImpl implements Meaning {
 
     @Deprecated
     protected String uri;

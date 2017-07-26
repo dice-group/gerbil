@@ -19,11 +19,13 @@
  */
 package org.aksw.gerbil.io.nif;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import org.aksw.gerbil.io.nif.utils.NIFUriHelper;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.ProvenanceInfo;
 import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.ScoredMarking;
 import org.aksw.gerbil.transfer.nif.Span;
@@ -32,9 +34,9 @@ import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.ScoredAnnotation;
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
+import org.aksw.gerbil.transfer.nif.vocabulary.PROV;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
 
@@ -49,6 +51,8 @@ public class AnnotationWriter {
             addRelation(nifModel, documentResource, documentURI, (Relation) marking, markingId);
         } else if (marking instanceof Meaning) {
             addAnnotation(nifModel, documentResource, documentURI, (Annotation) marking, markingId);
+        } else if (marking instanceof ProvenanceInfo) {
+            addProvenanceInfo(nifModel, documentResource, documentURI, (ProvenanceInfo) marking);
         }
     }
 
@@ -70,6 +74,50 @@ public class AnnotationWriter {
             nifModel.add(annotationAsResource, NIF.confidence,
                     Double.toString(((ScoredAnnotation) annotation).getConfidence()), XSDDatatype.XSDstring);
         }
+        
+        if (annotation.getProvenanceInfo() != null) {
+            nifModel.add(annotationAsResource, PROV.wasGeneratedBy,
+                    nifModel.getResource(generateProvenanceInfoUri(annotation.getProvenanceInfo(), documentURI)));
+            nifModel.add(annotationAsResource, RDF.type, PROV.Entity);
+        }
+    }
+
+    public void addProvenanceInfo(Model nifModel, Resource documentResource, String documentURI,
+            ProvenanceInfo provenance) {
+        String provUri = generateProvenanceInfoUri(provenance, documentURI);
+        Resource provenanceAsResource = nifModel.createResource(provUri);
+        nifModel.add(provenanceAsResource, RDF.type, PROV.Activity);
+        if(provenance.getStartedAt() != null) {
+            nifModel.add(provenanceAsResource, PROV.startedAtTime, nifModel.createTypedLiteral(provenance.getStartedAt()));
+        }
+        if(provenance.getEndedAt() != null) {
+            nifModel.add(provenanceAsResource, PROV.endedAtTime, nifModel.createTypedLiteral(provenance.getEndedAt()));
+        }
+        if(provenance.getAssociatedAgents() != null) {
+            for (String agent : provenance.getAssociatedAgents()) {
+                Resource agentAsResource = nifModel.createResource(agent);
+                nifModel.add(agentAsResource, RDF.type, PROV.Agent);
+                nifModel.add(provenanceAsResource, PROV.wasAssociatedWith, agentAsResource);
+            }
+        }
+    }
+
+    public String generateProvenanceInfoUri(ProvenanceInfo provenance, String documentURI) {
+        StringBuilder uriBuilder = new StringBuilder();
+        uriBuilder.append(documentURI);
+        uriBuilder.append("#activity-");
+        uriBuilder.append((provenance.getEndedAt() != null) ? provenance.getStartedAt().getTimeInMillis() : "null");
+        uriBuilder.append('-');
+        uriBuilder.append((provenance.getEndedAt() != null) ? provenance.getEndedAt().getTimeInMillis() : "null");
+        uriBuilder.append('-');
+        if(provenance.getAssociatedAgents() != null) {
+            String[] agents = provenance.getAssociatedAgents().toArray(new String[provenance.getAssociatedAgents().size()]);
+            Arrays.sort(agents);
+            uriBuilder.append(Arrays.hashCode(agents));
+        } else {
+            uriBuilder.append("null");
+        }
+        return uriBuilder.toString();
     }
 
     public void addRelation(Model nifModel, Resource documentAsResource, String documentURI, Relation relation,
@@ -88,6 +136,12 @@ public class AnnotationWriter {
         if (relation instanceof ScoredMarking) {
             nifModel.add(relationAsResource, ITSRDF.taConfidence,
                     nifModel.createTypedLiteral(((ScoredMarking) relation).getConfidence(), XSDDatatype.XSDdouble));
+        }
+        
+        if (relation.getProvenanceInfo() != null) {
+            nifModel.add(relationAsResource, PROV.wasGeneratedBy,
+                    nifModel.getResource(generateProvenanceInfoUri(relation.getProvenanceInfo(), documentURI)));
+            nifModel.add(relationAsResource, RDF.type, PROV.Entity);
         }
     }
 
@@ -128,6 +182,12 @@ public class AnnotationWriter {
             for (String type : types) {
                 nifModel.add(spanAsResource, ITSRDF.taClassRef, nifModel.createResource(type));
             }
+        }
+        
+        if (span.getProvenanceInfo() != null) {
+            nifModel.add(spanAsResource, PROV.wasGeneratedBy,
+                    nifModel.getResource(generateProvenanceInfoUri(span.getProvenanceInfo(), documentURI)));
+            nifModel.add(spanAsResource, RDF.type, PROV.Entity);
         }
     }
 }

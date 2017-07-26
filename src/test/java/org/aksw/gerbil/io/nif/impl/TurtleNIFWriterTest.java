@@ -57,9 +57,10 @@ public class TurtleNIFWriterTest {
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
 
-//        testConfigs.add(new Object[] { "task1.ttl" });
-//        testConfigs.add(new Object[] { "task2.ttl" });
+        testConfigs.add(new Object[] { "task1.ttl" });
+        testConfigs.add(new Object[] { "task2.ttl" });
         testConfigs.add(new Object[] { "task4.ttl" });
+        testConfigs.add(new Object[] { "prov.ttl" });
         return testConfigs;
     }
 

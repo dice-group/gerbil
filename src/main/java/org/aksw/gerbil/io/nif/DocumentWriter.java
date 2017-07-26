@@ -20,6 +20,7 @@ import org.aksw.gerbil.io.nif.utils.NIFUriHelper;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.ProvenanceInfo;
 import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
@@ -61,6 +62,7 @@ public class DocumentWriter {
         // http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#predLang
 
         // add annotations
+        // FIXME should use one single method for all marking types!
         int meaningId = 0, relationId = 0;
         for (Marking marking : document.getMarkings()) {
             if (marking instanceof Span) {
@@ -71,8 +73,9 @@ public class DocumentWriter {
             } else if (marking instanceof Meaning) {
                 annotationWriter.addAnnotation(nifModel, documentResource, document.getDocumentURI(), (Annotation) marking, meaningId);
                 ++meaningId;
+            } else if (marking instanceof ProvenanceInfo) {
+                annotationWriter.addProvenanceInfo(nifModel, documentResource, document.getDocumentURI(), (ProvenanceInfo) marking);
             }
-        
         }
     }
 
