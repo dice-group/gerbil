@@ -28,14 +28,18 @@ import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.aksw.gerbil.transfer.nif.data.RelationImpl;
 import org.aksw.gerbil.transfer.nif.data.ScoredAnnotation;
 import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
+import org.aksw.gerbil.transfer.nif.data.ScoredRelationImpl;
 import org.aksw.gerbil.transfer.nif.data.ScoredTypedNamedEntity;
 import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.transfer.nif.data.TypedSpanImpl;
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.ResIterator;
@@ -131,7 +135,37 @@ public class AnnotationParser {
 				}
 				// FIXME scored Span is missing
 			} else {
-				LOGGER.warn("Found an annotation resource (\"" + annotationResource.getURI() + "\") without a start or end index. This annotation will be ignored.");
+			    // Check whether it is a relation
+			    if(nifModel.contains(annotationResource, RDF.type, RDF.Statement)) {
+			        Node s = null, p = null, o = null;
+	                nodeIter = nifModel.listObjectsOfProperty(annotationResource, RDF.subject);
+	                if (nodeIter.hasNext()) {
+	                    s = nodeIter.next().asNode();
+	                }
+                    nodeIter = nifModel.listObjectsOfProperty(annotationResource, RDF.predicate);
+                    if (nodeIter.hasNext()) {
+                        p = nodeIter.next().asNode();
+                    }
+                    nodeIter = nifModel.listObjectsOfProperty(annotationResource, RDF.object);
+                    if (nodeIter.hasNext()) {
+                        o = nodeIter.next().asNode();
+                    }
+                    if((s != null) && (p != null) && (o != null)) {
+                        nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
+                        if (nodeIter.hasNext()) {
+                            confidence = nodeIter.next().asLiteral().getDouble();
+                            markings.add(new ScoredRelationImpl(new Triple(s, p, o), confidence));
+                        } else {
+                            // It has been disambiguated without a confidence
+                            markings.add(new RelationImpl(new Triple(s, p, o)));
+                        }
+                    } else {
+                        // The relation is incomplete
+                        LOGGER.warn("Found an incomplete relation resource (\"" + annotationResource.getURI() + "\") with a missing subject, predicate or object. This annotation will be ignored.");
+                    }
+			    } else {
+			        LOGGER.warn("Found an annotation resource (\"" + annotationResource.getURI() + "\") without a start or end index. This annotation will be ignored.");
+			    }
 			}
 			if (removeUsedProperties) {
 				nifModel.removeAll(annotationResource, null, null);

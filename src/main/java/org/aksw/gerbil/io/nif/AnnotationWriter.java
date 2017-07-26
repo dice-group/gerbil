@@ -24,6 +24,7 @@ import java.util.Set;
 import org.aksw.gerbil.io.nif.utils.NIFUriHelper;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.ScoredMarking;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedMarking;
@@ -33,70 +34,100 @@ import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
 
 public class AnnotationWriter {
 
-	public void writeMarkingToModel(final Model nifModel, final Resource documentResource, final String text, final String documentURI, final Marking marking, final int markingId) {
-		if (marking instanceof Span) {
-			addSpan(nifModel, documentResource, text, documentURI, (Span) marking);
-		} else if (marking instanceof Meaning) {
-			addAnnotation(nifModel, documentResource, documentURI, (Annotation) marking, markingId);
-		}
-	}
+    // FIXME this method is not used in the DocumentWriter
+    public void writeMarkingToModel(final Model nifModel, final Resource documentResource, final String text,
+            final String documentURI, final Marking marking, final int markingId) {
+        if (marking instanceof Span) {
+            addSpan(nifModel, documentResource, text, documentURI, (Span) marking);
+        } else if (marking instanceof Relation) {
+            addRelation(nifModel, documentResource, documentURI, (Relation) marking, markingId);
+        } else if (marking instanceof Meaning) {
+            addAnnotation(nifModel, documentResource, documentURI, (Annotation) marking, markingId);
+        }
+    }
 
-	public void addAnnotation(final Model nifModel, final Resource documentAsResource, final String documentURI, final Annotation annotation, final int annotationId) {
-		StringBuilder uriBuilder = new StringBuilder();
-		uriBuilder.append(documentURI);
-		uriBuilder.append("#annotation");
-		uriBuilder.append(annotationId);
+    public void addAnnotation(final Model nifModel, final Resource documentAsResource, final String documentURI,
+            final Annotation annotation, final int annotationId) {
+        StringBuilder uriBuilder = new StringBuilder();
+        uriBuilder.append(documentURI);
+        uriBuilder.append("#annotation");
+        uriBuilder.append(annotationId);
 
-		Resource annotationAsResource = nifModel.createResource(uriBuilder.toString());
-		nifModel.add(annotationAsResource, RDF.type, NIF.Annotation);
-		nifModel.add(documentAsResource, NIF.topic, annotationAsResource);
-		for (String meainingUri : annotation.getUris()) {
-			nifModel.add(annotationAsResource, ITSRDF.taIdentRef, nifModel.createResource(meainingUri));
-		}
+        Resource annotationAsResource = nifModel.createResource(uriBuilder.toString());
+        nifModel.add(annotationAsResource, RDF.type, NIF.Annotation);
+        nifModel.add(documentAsResource, NIF.topic, annotationAsResource);
+        for (String meainingUri : annotation.getUris()) {
+            nifModel.add(annotationAsResource, ITSRDF.taIdentRef, nifModel.createResource(meainingUri));
+        }
 
-		if (annotation instanceof ScoredAnnotation) {
-			nifModel.add(annotationAsResource, NIF.confidence, Double.toString(((ScoredAnnotation) annotation).getConfidence()), XSDDatatype.XSDstring);
-		}
-	}
+        if (annotation instanceof ScoredAnnotation) {
+            nifModel.add(annotationAsResource, NIF.confidence,
+                    Double.toString(((ScoredAnnotation) annotation).getConfidence()), XSDDatatype.XSDstring);
+        }
+    }
 
-	public void addSpan(final Model nifModel, final Resource documentAsResource, final String text, final String documentURI, final Span span) {
-		int startInJavaText = span.getStartPosition();
-		int endInJavaText = startInJavaText + span.getLength();
-		int start = text.codePointCount(0, startInJavaText);
-		int end = start + text.codePointCount(startInJavaText, endInJavaText);
+    public void addRelation(Model nifModel, Resource documentAsResource, String documentURI, Relation relation,
+            int markingId) {
+        StringBuilder uriBuilder = new StringBuilder();
+        uriBuilder.append(documentURI);
+        uriBuilder.append("#relation");
+        uriBuilder.append(markingId);
 
-		String spanUri = NIFUriHelper.getNifUri(documentURI, start, end);
-		Resource spanAsResource = nifModel.createResource(spanUri);
-		nifModel.add(spanAsResource, RDF.type, NIF.Phrase);
-		nifModel.add(spanAsResource, RDF.type, NIF.String);
-		nifModel.add(spanAsResource, RDF.type, NIF.RFC5147String);
-		if (span.getIsWord()) {
-			nifModel.add(spanAsResource, RDF.type, NIF.Word);
-		}
-		// TODO add language to String
-		nifModel.add(spanAsResource, NIF.anchorOf, nifModel.createTypedLiteral(text.substring(startInJavaText, endInJavaText), XSDDatatype.XSDstring));
-		nifModel.add(spanAsResource, NIF.beginIndex, nifModel.createTypedLiteral(start, XSDDatatype.XSDnonNegativeInteger));
-		nifModel.add(spanAsResource, NIF.endIndex, nifModel.createTypedLiteral(end, XSDDatatype.XSDnonNegativeInteger));
-		nifModel.add(spanAsResource, NIF.referenceContext, documentAsResource);
+        Resource relationAsResource = nifModel.createResource(uriBuilder.toString());
+        nifModel.add(relationAsResource, RDF.type, RDF.Statement);
+        nifModel.add(relationAsResource, RDF.subject, nifModel.asRDFNode(relation.getRelation().getSubject()));
+        nifModel.add(relationAsResource, RDF.predicate, nifModel.asRDFNode(relation.getRelation().getPredicate()));
+        nifModel.add(relationAsResource, RDF.object, nifModel.asRDFNode(relation.getRelation().getObject()));
+        nifModel.add(relationAsResource, NIF.referenceContext, documentAsResource);
+        if (relation instanceof ScoredMarking) {
+            nifModel.add(relationAsResource, ITSRDF.taConfidence,
+                    nifModel.createTypedLiteral(((ScoredMarking) relation).getConfidence(), XSDDatatype.XSDdouble));
+        }
+    }
 
-		if (span instanceof Meaning) {
-			for (String meainingUri : ((Meaning) span).getUris()) {
-				nifModel.add(spanAsResource, ITSRDF.taIdentRef, nifModel.createResource(meainingUri));
-			}
-		}
-		if (span instanceof ScoredMarking) {
-			nifModel.add(spanAsResource, ITSRDF.taConfidence, nifModel.createTypedLiteral(((ScoredMarking) span).getConfidence(), XSDDatatype.XSDdouble));
-		}
-		if (span instanceof TypedMarking) {
-			Set<String> types = ((TypedMarking) span).getTypes();
-			for (String type : types) {
-				nifModel.add(spanAsResource, ITSRDF.taClassRef, nifModel.createResource(type));
-			}
-		}
-	}
+    public void addSpan(final Model nifModel, final Resource documentAsResource, final String text,
+            final String documentURI, final Span span) {
+        int startInJavaText = span.getStartPosition();
+        int endInJavaText = startInJavaText + span.getLength();
+        int start = text.codePointCount(0, startInJavaText);
+        int end = start + text.codePointCount(startInJavaText, endInJavaText);
+
+        String spanUri = NIFUriHelper.getNifUri(documentURI, start, end);
+        Resource spanAsResource = nifModel.createResource(spanUri);
+        nifModel.add(spanAsResource, RDF.type, NIF.Phrase);
+        nifModel.add(spanAsResource, RDF.type, NIF.String);
+        nifModel.add(spanAsResource, RDF.type, NIF.RFC5147String);
+        if (span.getIsWord()) {
+            nifModel.add(spanAsResource, RDF.type, NIF.Word);
+        }
+        // TODO add language to String
+        nifModel.add(spanAsResource, NIF.anchorOf,
+                nifModel.createTypedLiteral(text.substring(startInJavaText, endInJavaText), XSDDatatype.XSDstring));
+        nifModel.add(spanAsResource, NIF.beginIndex,
+                nifModel.createTypedLiteral(start, XSDDatatype.XSDnonNegativeInteger));
+        nifModel.add(spanAsResource, NIF.endIndex, nifModel.createTypedLiteral(end, XSDDatatype.XSDnonNegativeInteger));
+        nifModel.add(spanAsResource, NIF.referenceContext, documentAsResource);
+
+        if (span instanceof Meaning) {
+            for (String meainingUri : ((Meaning) span).getUris()) {
+                nifModel.add(spanAsResource, ITSRDF.taIdentRef, nifModel.createResource(meainingUri));
+            }
+        }
+        if (span instanceof ScoredMarking) {
+            nifModel.add(spanAsResource, ITSRDF.taConfidence,
+                    nifModel.createTypedLiteral(((ScoredMarking) span).getConfidence(), XSDDatatype.XSDdouble));
+        }
+        if (span instanceof TypedMarking) {
+            Set<String> types = ((TypedMarking) span).getTypes();
+            for (String type : types) {
+                nifModel.add(spanAsResource, ITSRDF.taClassRef, nifModel.createResource(type));
+            }
+        }
+    }
 }
