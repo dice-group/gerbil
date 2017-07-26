@@ -38,7 +38,6 @@ import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.evaluate.IntEvaluationResult;
 import org.aksw.gerbil.evaluate.SubTaskResult;
-import org.aksw.gerbil.evaluate.impl.ModelComparator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;

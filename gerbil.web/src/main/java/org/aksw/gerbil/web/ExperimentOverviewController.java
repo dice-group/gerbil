@@ -110,7 +110,7 @@ public class ExperimentOverviewController {
 				row = annotator2Index.get(result.annotator);
 				col = dataset2Index.get(result.dataset);
 				if (result.state == ExperimentDAO.TASK_FINISHED) {
-					results[row][col] = result.getF1Measure();
+//					results[row][col] = result.getF1Measure();
 				} else {
 					results[row][col] = result.state;
 				}

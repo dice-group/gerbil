@@ -29,9 +29,9 @@ import com.carrotsearch.hppc.IntDoubleOpenHashMap;
 
 public class ExperimentTaskResult {
 
-    public static final int F1_MEASURE_INDEX = 0;
-    public static final int PRECISION_INDEX = 1;
-    public static final int RECALL_INDEX = 2;
+//    public static final int F1_MEASURE_INDEX = 0;
+//   public static final int PRECISION_INDEX = 1;
+//    public static final int RECALL_INDEX = 2;
 
     public double results[];
     public int state;
@@ -96,17 +96,17 @@ public class ExperimentTaskResult {
         this.results = results;
     }
 
-    public double getF1Measure() {
-        return results[F1_MEASURE_INDEX];
-    }
-
-    public double getPrecision() {
-        return results[PRECISION_INDEX];
-    }
-
-    public double getRecall() {
-        return results[RECALL_INDEX];
-    }
+//    public double getF1Measure() {
+//        return results[F1_MEASURE_INDEX];
+//    }
+//
+//    public double getPrecision() {
+//        return results[PRECISION_INDEX];
+//    }
+//
+//    public double getRecall() {
+//        return results[RECALL_INDEX];
+//    }
 
 
     public void setState(int state) {
@@ -193,12 +193,12 @@ public class ExperimentTaskResult {
         StringBuilder builder = new StringBuilder();
         builder.append("ExperimentTaskResult(state=");
         builder.append(state);
-        builder.append(",F1=");
-        builder.append(results[F1_MEASURE_INDEX]);
-        builder.append(",Precision=");
-        builder.append(results[PRECISION_INDEX]);
-        builder.append(",Recall=");
-        builder.append(results[RECALL_INDEX]);
+//        builder.append(",F1=");
+//        builder.append(results[F1_MEASURE_INDEX]);
+//        builder.append(",Precision=");
+//        builder.append(results[PRECISION_INDEX]);
+//        builder.append(",Recall=");
+//        builder.append(results[RECALL_INDEX]);
         builder.append(",errors=");
         builder.append(errorCount);
         if (hasAdditionalResults()) {

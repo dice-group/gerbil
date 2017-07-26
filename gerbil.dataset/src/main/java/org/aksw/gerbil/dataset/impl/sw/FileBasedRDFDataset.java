@@ -80,10 +80,10 @@ public class FileBasedRDFDataset extends AbstractRDFDataset {
     protected InputStream getDataAsInputStream() {
         FileInputStream fin = null;
         try {
-            LOGGER.debug("Loading NIF dataset from {}", filePath);
+            LOGGER.debug("Loading RDF dataset from {}", filePath);
             fin = new FileInputStream(filePath);
         } catch (FileNotFoundException e) {
-            LOGGER.error("Couldn't load NIF dataset from file.", e);
+            LOGGER.error("Couldn't load RDF dataset from file.", e);
         }
         return fin;
     }
