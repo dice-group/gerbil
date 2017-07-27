@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,6 +51,7 @@ public class FileUploadController {
             .getLogger(FileUploadController.class);
     @Value("${org.aksw.gerbil.UploadPath}")
     private String path;
+	private String filePrefix;
 
     public FileUploadController() {
     }
@@ -75,9 +77,10 @@ public class FileUploadController {
         for (Iterator<String> it = request.getFileNames(); it.hasNext();) {
             mpf = request.getFile(it.next());
             logger.debug("{} uploaded", mpf.getOriginalFilename());
-
+            String filePrefix = UUID.randomUUID().toString() + "_";
+            
             FileMeta fileContainer = new FileMeta();
-            fileContainer.setName(mpf.getOriginalFilename());
+            fileContainer.setName(filePrefix+mpf.getOriginalFilename());
             fileContainer.setSize(mpf.getSize() / 1024 + "Kb");
             fileContainer.setFileType(mpf.getContentType());
 
@@ -85,7 +88,7 @@ public class FileUploadController {
                 fileContainer.setBytes(mpf.getBytes());
                 createFolderIfNotExists();
                 FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(path
-                        + mpf.getOriginalFilename()));
+                        + filePrefix + mpf.getOriginalFilename()));
 
             } catch (IOException e) {
                 logger.error("Error during file upload", e);
