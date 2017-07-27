@@ -98,10 +98,12 @@ public class ExperimentOverviewController {
 			listsAsJson.append("\"datasetName\" : \"").append(dataset).append("\", ");
 			
 			for(String annotator : annotatorNames){			
-				leaderList.add(dao.getBestResult(experimentType.name(), annotator, dataset));
+				ExperimentTaskResult result = dao.getBestResult(experimentType.name(), annotator, dataset);
+				if(result!=null)
+					leaderList.add(result);
 			}
 			Collections.sort(leaderList, new LeaderBoardComparator(experimentType));
-			listsAsJson.append(" \"list\" : [");
+			listsAsJson.append(" \"leader\" : [");
 			int count2=0;
 			for(ExperimentTaskResult expResults : leaderList){
 				listsAsJson.append("{ \"annotatorName\" : \"").append(expResults.annotator).append("\", \"value\": \"");

@@ -433,8 +433,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("experimentType", experimentType);
         parameters.addValue("annotator", annotator);
         parameters.addValue("dataset", dataset);
-        ExperimentTaskResult result = this.template.query(GET_BEST_EXPERIMENT_TASK_RESULTS, parameters,
-                new LeaderBoardResultRowMapper()).get(0);
-        return result;
+        
+        List<ExperimentTaskResult> result = this.template.query(GET_BEST_EXPERIMENT_TASK_RESULTS, parameters,
+                new LeaderBoardResultRowMapper());
+        if(result.isEmpty())
+        	return null;
+        return result.get(0);
 	}
 }

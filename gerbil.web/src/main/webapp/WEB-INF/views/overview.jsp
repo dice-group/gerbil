@@ -97,9 +97,8 @@ table {
 				</div>
 			</div>
 			<div class="col-md-12">
-				<h2>F1-measures</h2>
-				<p>The table as well as the diagram contain the micro
-					F1-measure.</p>
+				<h2>Leaderboards</h2>
+				<p>The tables will show the current leader at the specific dataset</p>
 			</div>
 			<!-- <div class="container-fluid"> -->
 			<div class="col-md-12">
@@ -109,11 +108,11 @@ table {
 			</div>
 		</div>
 	</div>
-	<div class="container-fluid">
-		<table id="resultsTable" class="table table-hover table-condensed">
-			<thead></thead>
-			<tbody></tbody>
-		</table>
+	<div class="container-fluid" id="resultsTable">
+<!-- 		<table id="resultsTable" class="table table-hover table-condensed"> -->
+<!-- 			<thead></thead> -->
+<!-- 			<tbody></tbody> -->
+<!-- 		</table> -->
 	</div>
 	<div class="container" style="visibility:hidden;">
 		<div class="form-horizontal">
@@ -237,40 +236,38 @@ table {
 			$.getJSON('${experimentoverview}', {
 				experimentType : $('#expTypes input:checked').val(),
 				ajax : 'false'
-			}, function(data) {
-				var tableData = data[0];
-				showTable(tableData, "resultsTable");
-// 				drawSpiderDiagram(tableData, "resultsChart");
-				tableData = data[1];
-				showTable(tableData, "correlationsTable");
-// 				drawSpiderDiagram(tableData, "correlationsChart");
+			}, function(data, experimentType) {
+				for(var i = 0; i < data.datasets.length; i++) {
+					var tableData = data.datasets[i];
+					showTable(tableData, "resultsTable", experimentType);
+				}
 			}).fail(function() {
 				console.log("error loading data for table");
 			});
 		};
 
-		function showTable(tableData, tableElementId) {
+		function showTable(tableData, tableElementId, experimentType) {
 			//http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
 			var tbl_body = "";
-			var tbl_hd = "";
-
-			$.each(tableData, function(i) {
-				var tbl_row = "";
-				if (i > 0) {
-					$.each(this, function(k, v) {
-						tbl_row += "<td>" + v + "</td>";
-					});
-					tbl_body += "<tr>" + tbl_row + "</tr>";
-				} else {
-					$.each(this, function(k, v) {
-						tbl_row += "<th class=\"rotated_cell\"><div >" + v
-								+ "</div></th>";
-					});
-					tbl_hd += "<tr>" + tbl_row + "</tr>";
-				}
-			});
-			$("#" + tableElementId + " thead").html(tbl_hd);
-			$("#" + tableElementId + " tbody").html(tbl_body);
+		    var measure = "F1 measure";
+		    if(experimentType==="SWC2"){
+		    	measure = "Area Under Curve (AUC)"
+		    }
+			var tbl_hd = "<tr><th>AnnotatorName</th><th>" + measure + "</th></tr>";
+			var tbl="<h3>Dataset: "+tableData.datasetName+"</h3><table id=\"" + tableData.datasetName + "\" class=\"table table-hover table-condensed\">";
+			tbl+=tbl_hd;
+			var leader = tableData.leader;
+			for(var i = 0; i < leader.length; i++) {
+				//TODO add elements from tableData
+				var tbl_row = "<tr>";
+				tbl_row+="<td>"+leader[i].annotatorName+"</td>";
+				tbl_row+="<td>"+leader[i].value+"</td>";
+				tbl_row+="</tr>";
+				tbl_body+=tbl_row;
+			};
+			tbl+=tbl_body;
+			tbl+="</table>";
+			$("#" + tableElementId).html(tbl);
 		}
 
 		function drawSpiderDiagram(tableData, chartElementId) {
