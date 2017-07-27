@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.SWCTask1System;
+import org.aksw.gerbil.annotator.SWCTask2System;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
@@ -37,6 +38,7 @@ import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.evaluate.IntEvaluationResult;
+import org.aksw.gerbil.evaluate.StringEvaluationResult;
 import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
@@ -130,15 +132,14 @@ public class ExperimentTask implements Task {
             evFactory.getConverterManager().close();
             // create result object
             // FIXME Fix this workaround
-            ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[6],
+            ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[0],
                     ExperimentDAO.TASK_FINISHED, 0);
             switch(configuration.type){
             case SWC1:	
             	transformResults(result, expResult);
             	break;
             case SWC2:
-            	//TODO
-            	//transformROCResults(result, expResult);
+            	transformResults(result, expResult);
 			default:
 				break;
             }
@@ -193,10 +194,9 @@ public class ExperimentTask implements Task {
     }
 
     protected void transformResults(EvaluationResult result, ExperimentTaskResult expResult) {
-    	//TODO F,P,R, AUC, ROC as additional
         if (result instanceof SubTaskResult) {
             ExperimentTaskResult subTask = new ExperimentTaskResult(((SubTaskResult) result).getConfiguration(),
-                    new double[6], ExperimentDAO.TASK_FINISHED, 0);
+                    new double[0], ExperimentDAO.TASK_FINISHED, 0);
             List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
             for (EvaluationResult tempResult : tempResults) {
                 transformResults(tempResult, subTask);
@@ -208,7 +208,7 @@ public class ExperimentTask implements Task {
                 transformResults(tempResult, expResult);
             }
         } else if (result instanceof DoubleEvaluationResult) {
-            switch (result.getName()) {
+//            switch (result.getName()) {
 //            case ModelComparator.F1_SCORE_NAME: {
 //                expResult.results[ExperimentTaskResult.F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
 //                        .getValueAsDouble();
@@ -225,16 +225,23 @@ public class ExperimentTask implements Task {
 //                return;
 //            }
             
-            default: {
+//            default: {
                 int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
                 if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
                     LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
                 } else {
                     expResult.addAdditionalResult(id, ((DoubleEvaluationResult) result).getValueAsDouble());
+
                 }
-            }
-            }
             return;
+        } else if (result instanceof StringEvaluationResult) {
+            int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
+            if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
+                LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
+            } else {
+//                expResult.addAdditionalResult(id, ((StringEvaluationResult) result).getValue().toString());
+
+            }
         } else if (result instanceof IntEvaluationResult) {
             if (result.getName().equals(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME)) {
                 expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
@@ -252,10 +259,8 @@ public class ExperimentTask implements Task {
     protected EvaluationResult runExperiment(Dataset dataset, Annotator annotator,
             List<Evaluator<? extends Model>> evaluators, ExperimentTaskState state) throws GerbilException {
         EvaluationResult evalResult = null;
-        //TODO case T1/T2
         switch (configuration.type) {
         case SWC1: {
-        	//TODO different Models!!!
         	List<List<Model>> results = new ArrayList<List<Model>>(dataset.size());
             List<List<Model>> goldStandard = new ArrayList<List<Model>>(dataset.size());
         	SWCTask1System system  = ((SWCTask1System) annotator);
@@ -269,7 +274,20 @@ public class ExperimentTask implements Task {
             evalResult = evaluate(evaluators, results, goldStandard);
             break;
         }
-       
+        case SWC2: {
+        	List<List<Model>> results = new ArrayList<List<Model>>(dataset.size());
+            List<List<Model>> goldStandard = new ArrayList<List<Model>>(dataset.size());
+        	SWCTask2System system  = ((SWCTask2System) annotator);
+       		results.add(system.performTask2(dataset.getInstances().get(0)));
+       		goldStandard.add(dataset.getInstances());
+            taskState.increaseExperimentStepCount();
+            if (annotatorOutputWriter != null) {
+                annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+            }
+            prepareAnnotatorResults(results, globalRetriever);
+            evalResult = evaluate(evaluators, results, goldStandard);
+            break;
+        }
         default:
             throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
                     ErrorTypes.UNEXPECTED_EXCEPTION);

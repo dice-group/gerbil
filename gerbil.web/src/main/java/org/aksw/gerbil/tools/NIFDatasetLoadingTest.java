@@ -19,7 +19,6 @@ package org.aksw.gerbil.tools;
 import org.aksw.gerbil.dataset.impl.sw.FileBasedRDFDataset;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.apache.commons.io.IOUtils;
-import org.apache.jena.riot.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ public class NIFDatasetLoadingTest {
             return;
         }
         LOGGER.info("Starting loading of given test dataset \"" + args[0] + "\"...");
-        FileBasedRDFDataset dataset = new FileBasedRDFDataset(args[0], "Test dataset", Lang.TTL);
+        FileBasedRDFDataset dataset = new FileBasedRDFDataset(args[0], "Test dataset");
         try {
             dataset.init();
         } catch (GerbilException e) {

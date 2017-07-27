@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.web.config;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -23,9 +24,7 @@ import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.annotator.InstanceListBasedConfigurationImpl;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
-import org.aksw.gerbil.dataset.DatasetConfigurationImpl;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
-import org.aksw.gerbil.dataset.impl.sw.FileBasedRDFDataset;
 import org.aksw.gerbil.dataset.impl.sw.RDFFileDatasetConfig;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
@@ -113,63 +112,24 @@ public class AdapterManager {
                             UPLOADED_FILES_PATH_PROPERTY_KEY);
                     return null;
                 }
-                // This describes a QA answer file
-                // The name should have the form NIF_WS_PREFIX +
-                // "name(file)(type)(dataset)"
-                int brackets[] = getLastBracketsContent(name, name.length() - 1);
-                if (brackets == null) {
-                    LOGGER.error(
-                            "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
-                    return null;
-                }
-                String datasetName = name.substring(brackets[0] + 1, brackets[1]);
-                brackets = getLastBracketsContent(name, brackets[0]);
-                if (brackets == null) {
-                    LOGGER.error(
-                            "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
-                    return null;
-                }
-                //String fileType = name.substring(brackets[0] + 1, brackets[1]);
-//                QALDStreamType streamType = null;
-//                try {
-//                    if (fileType.startsWith("QALD")) {
-//                        if (fileType.endsWith("XML")) {
-//                            streamType = QALDStreamType.XML;
-//                        }
-//                        if (fileType.endsWith("JSON")) {
-//                            streamType = QALDStreamType.JSON;
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    LOGGER.error("Couldn't parse the QALD stream type of this QA answer file \"" + name
-//                            + "\". Returning null.", e);
-//                    return null;
-//                }
-                // search for file the file name
-                brackets = getLastBracketsContent(name, brackets[0]);
-                if (brackets == null) {
-                    LOGGER.error(
-                            "Couldn't parse the definition of this QA answer file \"" + name + "\". Returning null.");
-                    return null;
-                }
-                String fileName = name.substring(brackets[0] + 1, brackets[1]);
+                // "name(file)"
+    
+                String fileName = uploadedFilesPath+File.separator+name.substring(name.indexOf('(')+1, name.indexOf(')'));
                 // remove "AF_" from the name
-                name = name.substring(AF_PREFIX.length(), brackets[0]) + UPLOADED_AF_SUFFIX;
+                name = name.substring(AF_PREFIX.length(), name.indexOf('(')) + UPLOADED_AF_SUFFIX;
                 try {
+                	
                     return new InstanceListBasedConfigurationImpl(name, false,
-                            new DatasetConfigurationImpl(datasetName, false,
-                                    FileBasedRDFDataset.class.getConstructor(String.class, String.class),
-                                    new Object[] { datasetName, uploadedFilesPath + fileName},
-                                    ExperimentType.QA, null, null),
+                    		new RDFFileDatasetConfig(name, fileName, false, type, null, null),
                             type);
                 } catch (Exception e) {
                     LOGGER.error(
-                            "Exception while trying to create an annotator configuration for a uploaded QA answer file. Returning null.",
+                            "Exception while trying to create an annotator configuration for a uploaded SWC answer file. Returning null.",
                             e);
                     return null;
                 }
             }
-            LOGGER.error("Got an unknown annotator name \"" + name + "\". Returning null.");
+            LOGGER.error(",Got an unknown annotator name \"" + name + "\". Returning null.");
         }
         return null;
     }
@@ -202,7 +162,7 @@ public class AdapterManager {
                 String uri = uploadedFilesPath + name.substring(brackets[0] + 1, brackets[1]);
                 // remove dataset prefix from the name
                 name = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]) + UPLOADED_DATASET_SUFFIX;
-return new RDFFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
+                return new RDFFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
             }
             if (name.startsWith(AF_PREFIX)) {
                 // This describes a QA answer file

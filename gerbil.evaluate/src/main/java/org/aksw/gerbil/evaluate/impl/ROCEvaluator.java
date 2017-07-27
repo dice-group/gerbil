@@ -23,6 +23,7 @@ import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.evaluate.StringEvaluationResult;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
@@ -86,7 +87,8 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
 		
 		auc = curve.calcualteAUC();
 		
-		return new EvaluationResult[] { new DoubleEvaluationResult(AUC_NAME, auc)};
+		return new EvaluationResult[] { new DoubleEvaluationResult(AUC_NAME, auc), 
+				new StringEvaluationResult(ROC_NAME, curve.toString())};
 	}
 
 }

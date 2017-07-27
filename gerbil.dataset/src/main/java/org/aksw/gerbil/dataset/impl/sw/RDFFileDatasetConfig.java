@@ -21,7 +21,6 @@ import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
-import org.apache.jena.riot.Lang;
 
 public class RDFFileDatasetConfig extends AbstractDatasetConfiguration {
 
@@ -35,7 +34,7 @@ public class RDFFileDatasetConfig extends AbstractDatasetConfiguration {
 
     @Override
     protected Dataset loadDataset() throws Exception {
-        FileBasedRDFDataset dataset = new FileBasedRDFDataset(file, getName(), Lang.TTL);
+        FileBasedRDFDataset dataset = new FileBasedRDFDataset(file, getName());
         dataset.init();
         return dataset;
     }

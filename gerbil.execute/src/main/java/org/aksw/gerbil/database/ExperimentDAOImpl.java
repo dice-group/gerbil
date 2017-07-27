@@ -190,7 +190,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         this.template.update(SET_EXPERIMENT_TASK_RESULT, parameters);
         if (result.hasAdditionalResults()) {
             for (int i = 0; i < result.additionalResults.allocated.length; ++i) {
-                if ((result.additionalResults.allocated[i]) && (result.additionalResults.keys[i] >= 6)) {
+                if ((result.additionalResults.allocated[i])) {
                     addAdditionaResult(experimentTaskId, result.additionalResults.keys[i],
                             result.additionalResults.values[i]);
                 }

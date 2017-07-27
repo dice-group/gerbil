@@ -1,0 +1,5 @@
+<http://test.com/s1> <http://test.com/p1> <http://test.com/o1> .
+<http://test.com/s1> <http://test.com/p1> <http://test.com/o2> .
+<http://test.com/s1> <http://test.com/p1> "abc" .
+<http://test.com/o1> <http://test.com/p2> <http://test.com/o2> .
+<http://test.com/o1> <http://test.com/p1> <http://test.com/s1> .

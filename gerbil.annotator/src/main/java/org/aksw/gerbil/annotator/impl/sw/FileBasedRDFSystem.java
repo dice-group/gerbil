@@ -11,6 +11,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RDFDataMgr;
 
 public class FileBasedRDFSystem extends InstanceListBasedAnnotator implements Annotator {
 
@@ -36,7 +37,8 @@ public class FileBasedRDFSystem extends InstanceListBasedAnnotator implements An
 		
 		try(InputStream inputStream = new FileInputStream(rdfFile)){
 		
-			model = model.read(inputStream, null);
+			RDFDataMgr.read(model, rdfFile);
+//			model = model.read(inputStream, null);
 			// RDFDataMgr.read(nifModel, inputStream, getDataLanguage());
 			instances.add(model);
 		} catch (Exception e) {

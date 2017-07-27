@@ -27,6 +27,7 @@ import org.aksw.gerbil.dataset.converter.impl.SPARQLBasedLiteral2Resource;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.impl.ModelComparator;
+import org.aksw.gerbil.evaluate.impl.ROCEvaluator;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
@@ -129,7 +130,7 @@ public class EvaluatorFactory {
         case SWC1:
         	return new ModelComparator();
         case SWC2:
-        	return new ModelComparator();
+        	return new ROCEvaluator();
 //        case ETyping: {
 //            return new SearcherBasedNotMatchingMarkingFilter<TypedSpan>(
 //                    new StrongSpanMatchingsSearcher<TypedSpan>(),
@@ -163,6 +164,8 @@ public class EvaluatorFactory {
             // Since the OKE challenge tasks are using the results of their
             // subtasks, the definition of subtasks is part of their evaluation
             // creation
+        case SWC1:
+        case SWC2:
         case OKE_Task1:
         case OKE_Task2: {
             return;

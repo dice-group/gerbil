@@ -17,10 +17,8 @@
 package org.aksw.gerbil.dataset.impl.sw;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFLanguages;
 import org.slf4j.Logger;
@@ -29,69 +27,37 @@ import org.slf4j.LoggerFactory;
 public class FileBasedRDFDataset extends AbstractRDFDataset {
 
 
+	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileBasedRDFDataset.class);
 
     private String filePath;
-    private Lang language;
 
-    public FileBasedRDFDataset(String filePath, String name, Lang language) {
-        super(name);
-        this.filePath = filePath;
-        this.language = language;
-    }
 
-    public FileBasedRDFDataset(String filePath, String name, String language) {
-        super(name);
-        this.filePath = filePath;
-        this.language = RDFLanguages.nameToLang(language);
-        if (this.language == null) {
-            this.language = fileExtToLang(filePath);
-        }
-        if (this.language == null) {
-            throw new IllegalArgumentException("Couldn't determine language of dataset.");
-        }
-    }
 
     public FileBasedRDFDataset(String filePath, String name) {
         super(name);
         this.filePath = filePath;
-        this.language = fileExtToLang(filePath);
-        if (this.language == null) {
-            throw new IllegalArgumentException("Couldn't determine language of dataset.");
-        }
+//        this.language = RDFLanguages.nameToLang(language);
+//        if (this.language == null) {
+//            this.language = fileExtToLang(filePath);
+//        }
+//        if (this.language == null) {
+//            throw new IllegalArgumentException("Couldn't determine language of dataset.");
+//        }
     }
 
-    public FileBasedRDFDataset(String filePath, Lang language) {
-        super("");
-        this.filePath = filePath;
-        this.language = language;
-    }
 
     public FileBasedRDFDataset(String filePath) {
         super("");
         this.filePath = filePath;
-        this.language = fileExtToLang(filePath);
-        if (this.language == null) {
-            throw new IllegalArgumentException("Couldn't determine language of dataset.");
-        }
+
     }
 
     @Override
-    protected InputStream getDataAsInputStream() {
-        FileInputStream fin = null;
-        try {
-            LOGGER.debug("Loading RDF dataset from {}", filePath);
-            fin = new FileInputStream(filePath);
-        } catch (FileNotFoundException e) {
-            LOGGER.error("Couldn't load RDF dataset from file.", e);
-        }
-        return fin;
+    protected String getFileName() {
+        return filePath;
     }
 
-    @Override
-    protected Lang getDataLanguage() {
-        return language;
-    }
 
     protected static Lang fileExtToLang(String filePath) {
         File file = new File(filePath);
@@ -102,4 +68,10 @@ public class FileBasedRDFDataset extends AbstractRDFDataset {
         }
         return RDFLanguages.fileExtToLang(ext.substring(pos));
     }
+
+	@Override
+	public Model getRdfModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

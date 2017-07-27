@@ -48,7 +48,7 @@ public class ResultNameToIdMapping {
             nameToIdMap.put(ModelComparator.PRECISION_NAME, 1);
             nameToIdMap.put(ModelComparator.RECALL_NAME, 2);
             nameToIdMap.put(ROCEvaluator.AUC_NAME, 3);
-//            nameToIdMap.put(ROCEvaluator.ROC_NAME, 4);
+            nameToIdMap.put(ROCEvaluator.ROC_NAME, 4);
             
 
             nameToIdMap.put(TimeMeasuringAnnotatorDecorator.AVG_TIME_RESULT_NAME, 20);

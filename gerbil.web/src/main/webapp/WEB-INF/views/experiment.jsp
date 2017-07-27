@@ -70,16 +70,10 @@
 				<tr>
 					<th>Annotator</th>
 					<th>Dataset</th>
-					<th>Language</th>
 					<c:if test="${hasSubTasks}">
 						<th></th>
 					</c:if>
-					<th>Micro F1</th>
-					<th>Micro Precision</th>
-					<th>Micro Recall</th>
-					<th>Macro F1</th>
-					<th>Macro Precision</th>
-					<th>Macro Recall</th>
+
 					<!-- <th>State</th> -->
 					<th>Error Count</th>
 					<!-- for every additional result -->
@@ -96,7 +90,6 @@
 						<tr>
 							<td>${task.annotator}</td>
 							<td>${task.dataset}</td>
-							<td>${task.language}</td>
 							<c:if test="${hasSubTasks}">
 								<td></td>
 							</c:if>
@@ -129,20 +122,8 @@
 							<tr>
 								<td>${task.annotator}</td>
 								<td>${task.dataset}</td>
-								<td>${task.language}</td>
 								<td>${subTask.type.label}</td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.microF1Measure}" /></td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.microPrecision}" /></td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.microRecall}" /></td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.macroF1Measure}" /></td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.macroPrecision}" /></td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.macroRecall}" /></td>
+
 								<!--<td colspan="3"></td> -->
 								<td>${task.errorCount}</td>
 								<!-- for every additional result -->
@@ -158,7 +139,6 @@
 						<tr>
 							<td>${task.annotator}</td>
 							<td>${task.dataset}</td>
-							<td>${task.language}</td>
 							<c:if test="${hasSubTasks}">
 								<td></td>
 							</c:if>

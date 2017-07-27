@@ -47,14 +47,20 @@ public class ModelComparator<T extends Model> implements Evaluator<T> {
     }
 
 
-	private EvaluationResult[] compareModel(Model annotator, Model gold) {
+	public EvaluationResult[] compareModel(Model annotator, Model gold) {
 		long tp = annotator.intersection(gold).size();
 		long fp = annotator.difference(gold).size();
 		long fn = gold.difference(annotator).size();
 		
-		double prec = tp*1.0/(tp+fp);
-		double rec = tp*1.0/(tp+fn);
-		double f1 = 2*(prec*rec)/(prec+rec);
+		double prec = 1.0;
+		if(tp!=0.0 || fp != 0.0)
+			prec = tp*1.0/(tp+fp);
+		double rec = 1.0;
+		if(tp!=0.0 || fn!=0.0)
+			rec =tp*1.0/(tp+fn);
+		double f1 = 0.0;
+		if(prec!=0.0 && rec!=0.0)
+			f1 = 2*(prec*rec)/(prec+rec);
 		return new EvaluationResult[] { new DoubleEvaluationResult(PRECISION_NAME, prec),
                 new DoubleEvaluationResult(RECALL_NAME, rec),
                 new DoubleEvaluationResult(F1_SCORE_NAME, f1) };

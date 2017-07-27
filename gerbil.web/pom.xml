@@ -3,8 +3,8 @@
   <groupId>gerbil.web</groupId>
   <artifactId>gerbil.web</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  	<name>General Entity Annotator Benchmark - Question Answering Extension</name>
-	<description>This project is a benchmark for entity annotation and disambiguation tools extended towards question answering.</description>
+  	<name>General Entity Annotator Benchmark - Semantic Web Challenge Extension - Web</name>
+	<description>This project is a benchmark for entity annotation and disambiguation tools extended towards the semantic Web Challenge at ISWC 2017</description>
 	<inceptionYear>2014</inceptionYear>
 
 	<properties>

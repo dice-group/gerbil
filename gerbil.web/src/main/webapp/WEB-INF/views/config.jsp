@@ -134,9 +134,7 @@
 								class="form-control" type="text" id="nameAnswerFile" name="name"
 								placeholder="Type something" /> 
 
-							 <br> <select id="answerFileDataset"
-								class="form-control">
-							</select> <br> <br> <span
+								<br> <br> <span
 								class="btn btn-success fileinput-button"> <i
 								class="glyphicon glyphicon-plus"></i> <span>Select
 									file...</span> <!-- The file input field used as target for the file upload widget -->
@@ -544,12 +542,9 @@
 						dataType : 'json',
 						done : function(e, data) {
 							var name = $('#nameAnswerFile').val();
-							var dataset = $('#answerFileDataset').val();
-							var type = $('#answerFileType').val();
 							$.each(data.result.files, function(index, file) {
 								addItemToList($('#answerFileList'), name + "("
-										+ file.name + ")(" + type + ")("
-										+ dataset + ")");
+										+ file.name + ")");
 								$('#nameAnswerFile').val('');
 							});
 						},

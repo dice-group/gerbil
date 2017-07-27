@@ -75,14 +75,14 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
-    private static class TimeMeasuringSWC2Annotator extends TimeMeasuringAnnotatorDecorator implements SWCTask1System {
+    private static class TimeMeasuringSWC2Annotator extends TimeMeasuringAnnotatorDecorator implements SWCTask2System {
 
         protected TimeMeasuringSWC2Annotator(SWCTask2System decoratedAnnotator) {
             super(decoratedAnnotator);
         }
 
         @Override
-        public List<Model> performTask1(Model model) throws GerbilException {
+        public List<Model> performTask2(Model model) throws GerbilException {
             return TimeMeasuringAnnotatorDecorator.performSWC2Task(this, model);
         }
     }

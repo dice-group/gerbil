@@ -17,19 +17,16 @@
 package org.aksw.gerbil.dataset.impl.sw;
 
 import java.io.InputStream;
-import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.dataset.InitializableDataset;
 import org.aksw.gerbil.dataset.RdfModelContainingDataset;
 import org.aksw.gerbil.dataset.impl.AbstractDataset;
-import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.io.nif.AbstractNIFParser;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.adapters.RDFReaderRIOT;
+import org.apache.jena.riot.RDFDataMgr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,10 +34,9 @@ public abstract class AbstractRDFDataset extends AbstractDataset implements RdfM
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(AbstractRDFDataset.class);
 
-    private List<Model> models;
+    private List<Model> models = new ArrayList<Model>();
     private String name;
     private boolean hasBeenInitialized = false;
-    private Model rdfModel;
 
     public AbstractRDFDataset(String name) {
         this.name = name;
@@ -56,15 +52,9 @@ public abstract class AbstractRDFDataset extends AbstractDataset implements RdfM
      * 
      * @return an opened InputStream or null if an error occurred.
      */
-    protected abstract InputStream getDataAsInputStream();
+    protected abstract String getFileName();
 
-    /**
-     * This method returns the language of the NIF data, e.g.,
-     * {@link Lang#TURTLE}.
-     * 
-     * @return the language of the NIF data
-     */
-    protected abstract Lang getDataLanguage();
+   
 
     /**
      * This method is called for closing the input stream that has been returned
@@ -88,20 +78,8 @@ public abstract class AbstractRDFDataset extends AbstractDataset implements RdfM
             return;
         }
         Model model = ModelFactory.createDefaultModel();
-        // dataset = RDFDataMgr.loadModel(rdfpath);
-        InputStream inputStream = getDataAsInputStream();
-        if (inputStream == null) {
-            throw new GerbilException("Couldn't get InputStream.", ErrorTypes.DATASET_LOADING_ERROR);
-        }
-        try {
-            model = model.read(inputStream, null);
-            // RDFDataMgr.read(nifModel, inputStream, getDataLanguage());
-        } catch (Exception e) {
-            throw new GerbilException("Exception while parsing dataset.", e, ErrorTypes.DATASET_LOADING_ERROR);
-        } finally {
-            closeInputStream(inputStream);
-        }
-
+        RDFDataMgr.read(model, getFileName());
+        models.add(model);
         // if there are still triples available
         //rdfModel = model;
 
@@ -135,34 +113,6 @@ public abstract class AbstractRDFDataset extends AbstractDataset implements RdfM
         return models;
     }
 
-    @Override
-    public Model getRdfModel() {
-        return rdfModel;
-    }
 
-    protected static class LocalNIFParser extends AbstractNIFParser {
-
-        private AbstractRDFDataset languageSource;
-
-        public LocalNIFParser(AbstractRDFDataset languageSource) {
-            super("");
-            this.languageSource = languageSource;
-        }
-
-        @Override
-        protected Model parseNIFModel(InputStream is, Model nifModel) {
-            RDFReaderRIOT rdfReader = new RDFReaderRIOT(languageSource.getDataLanguage());
-            rdfReader.read(nifModel, is, "");
-            return nifModel;
-        }
-
-        @Override
-        protected Model parseNIFModel(Reader reader, Model nifModel) {
-            RDFReaderRIOT rdfReader = new RDFReaderRIOT(languageSource.getDataLanguage());
-            rdfReader.read(nifModel, reader, "");
-            return nifModel;
-        }
-
-    }
 
 }

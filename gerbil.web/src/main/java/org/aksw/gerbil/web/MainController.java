@@ -185,10 +185,13 @@ public class MainController {
         }
         // create the answer file based experiment tasks
         for (String answerFile : answerFiles) {
-            configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(answerFile, type),
-                    adapterManager.getDatasetConfig(answerFile, type), type, getMatching(matching));
-            LOGGER.debug("Created config: {}", configs[count]);
-            ++count;
+        	for (String dataset : datasets) {
+        		configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(answerFile, type),
+        				adapterManager.getDatasetConfig(dataset, type), type, getMatching(matching));
+        		LOGGER.debug("Created config: {}", configs[count]);
+        		++count;
+        	}
+            
         }
 
         String experimentId = IDCreator.getInstance().createID();
@@ -211,7 +214,7 @@ public class MainController {
         model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
         int additionalResultIds[] = ResultNameToIdMapping.getInstance().listAdditionalResultIds(results);
         // we need Double objects to make sure that they can be null
-        Double additionalResults[][] = new Double[results.size()][additionalResultIds.length];
+        Object additionalResults[][] = new Double[results.size()][additionalResultIds.length];
         ExperimentTaskResult result;
         for (int i = 0; i < additionalResults.length; ++i) {
             result = results.get(i);

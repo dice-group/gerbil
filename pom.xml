@@ -1,0 +1,132 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.aksw</groupId>
+	<artifactId>gerbil-swc</artifactId>
+	<version>0.0.1</version>
+	<packaging>pom</packaging>
+	<inceptionYear>2017</inceptionYear>
+	<name>Gerbil Extension for the ISWC2017 Semantic Web Challenge</name>
+	
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.4.2.RELEASE</version>
+	</parent>
+	<!-- PROPERTIES -->
+	<properties>
+		<java.version>1.8</java.version>
+		<junit.version>4.12</junit.version>
+		<jena.version>3.1.0-1</jena.version>
+		<dllearner.version>1.3.1-SNAPSHOT</dllearner.version>
+		<logback.version>1.1.3</logback.version>
+
+		<!-- <lucene.version>4.4.0</lucene.version> -->
+		<!-- <com.carrotsearch.hppc.version>0.6.1</com.carrotsearch.hppc.version> -->
+		<!-- <org.apache.commons.commons-lang3.version>3.3.2</org.apache.commons.commons-lang3.version> -->
+		<!--<org.apache.commons.commons-io.version>2.4</org.apache.commons.commons-io.version> -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<!-- DEVELOPERS -->
+	<developers>
+		<developer>
+			<id>f.conrads</id>
+			<name>Felix Conrads</name>
+			<email>conrads@informatik.uni-leipzig.de</email>
+		</developer>
+	</developers>
+
+	<!-- BUILD configuration -->
+	<!-- Javadoc plugin for generating documentation -->
+	<build>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.4</version>
+				<configuration>
+					<additionalparam>-Xdoclint:none</additionalparam>
+					<show>private</show>
+					<nohelp>true</nohelp>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Source plugin for creating source file jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- MODULES -->
+	<!-- DISTRIBUTION MANAGEMENT -->
+	<distributionManagement>
+		<repository>
+			<id>maven.aksw.internal</id>
+			<url>http://maven.aksw.org/archiva/repository/internal</url>
+		</repository>
+		<snapshotRepository>
+			<id>maven.aksw.snapshots</id>
+			<name>AKSW Snapshot Repository</name>
+			<url>http://maven.aksw.org/archiva/repository/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<!-- REPOSITORIES -->
+	<repositories>
+		<repository>
+			<id>Apache Repo Central</id>
+			<name>Apache Repository</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+		</repository>
+		<repository>
+			<id>maven.aksw.internal</id>
+			<name>University Leipzig, AKSW Maven2 Repository</name>
+			<url>http://maven.aksw.org/archiva/repository/internal</url>
+		</repository>
+		<repository>
+			<id>maven.aksw.snapshots</id>
+			<name>University Leipzig, AKSW Maven2 Repository</name>
+			<url>http://maven.aksw.org/archiva/repository/snapshots</url>
+		</repository>
+		<repository>
+			<id>spring-releases</id>
+			<url>https://repo.spring.io/libs-release</url>
+		</repository>
+	</repositories>
+	<modules>
+		<module>gerbil.commons</module>
+		<module>gerbil.evaluate</module>
+		<module>gerbil.dataset</module>
+		<module>gerbil.annotator</module>	
+		<module>gerbil.execute</module>
+		<module>gerbil.web</module>
+	</modules>
+</project>

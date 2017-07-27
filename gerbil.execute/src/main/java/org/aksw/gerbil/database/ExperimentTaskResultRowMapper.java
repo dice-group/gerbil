@@ -31,17 +31,12 @@ import org.springframework.jdbc.core.RowMapper;
  * <ul>
  * <li>1 - annotator name</li>
  * <li>2 - dataset name</li>
- * <li>3 - language name</li>
- * <li>4 - experiment type</li>
- * <li>5 - matching</li>
- * <li>6 - micro F1 measure</li>
- * <li>7 - micro precision</li>
- * <li>8 - micro recall</li>
-
- * <li>12 - state</li>
- * <li>13 - error count</li>
- * <li>14 - timestamp</li>
- * <li>15 - id inside the database (optional)</li>
+ * <li>3 - experiment type</li>
+ * <li>4 - matching</li>
+ * <li>5 - state</li>
+ * <li>6 - error count</li>
+ * <li>7 - timestamp</li>
+ * <li>8 - id inside the database (optional)</li>
  * </ul>
  * 
  * @author m.roeder
@@ -53,15 +48,14 @@ public class ExperimentTaskResultRowMapper implements RowMapper<ExperimentTaskRe
     public ExperimentTaskResult mapRow(ResultSet resultSet, int rowId) throws SQLException {
         int idInDatabase = -1;
         try {
-            idInDatabase = resultSet.getInt(15);
+            idInDatabase = resultSet.getInt(8);
         } catch (Exception e) {
             // nothing to do
         }
         return new ExperimentTaskResult(resultSet.getString(1), resultSet.getString(2),
                 ExperimentType.valueOf(resultSet.getString(3)), Matching.valueOf(resultSet.getString(4)),
-                new double[] { resultSet.getDouble(5), resultSet.getDouble(6), resultSet.getDouble(7),
-                         },
-                resultSet.getInt(8), resultSet.getInt(9), resultSet.getTimestamp(10).getTime(), idInDatabase);
+                new double[] { },
+                resultSet.getInt(5), resultSet.getInt(6), resultSet.getTimestamp(7).getTime(), idInDatabase);
     }
 
 }

@@ -61,9 +61,6 @@ public class TestDataset extends AbstractDatasetConfiguration implements Dataset
         // nothing to do
     }
 
-	@Override
-	public String getQuestionLanguage() {
-		return "en";
-	}
+
 
 }

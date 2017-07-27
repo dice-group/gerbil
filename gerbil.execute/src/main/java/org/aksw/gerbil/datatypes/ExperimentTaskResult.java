@@ -284,7 +284,7 @@ public class ExperimentTaskResult {
         }
     }
 
-    public double getAdditionalResult(int id) {
+    public Object getAdditionalResult(int id) {
         if (additionalResults != null) {
             return additionalResults.get(id);
         } else {
