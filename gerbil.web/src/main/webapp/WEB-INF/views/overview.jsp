@@ -237,6 +237,7 @@ table {
 				experimentType : $('#expTypes input:checked').val(),
 				ajax : 'false'
 			}, function(data) {
+				$("#resultsTable").html("");
 				for(var i = 0; i < data.datasets.length; i++) {
 					var tableData = data.datasets[i];
 					showTable(tableData, "resultsTable");
@@ -268,7 +269,7 @@ table {
 			};
 			tbl+=tbl_body;
 			tbl+="</table>";
-			$("#" + tableElementId).html(tbl);
+			$("#" + tableElementId).prepend(tbl);
 		}
 
 		function drawSpiderDiagram(tableData, chartElementId) {

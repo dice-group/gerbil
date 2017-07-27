@@ -113,13 +113,13 @@ public class ExperimentOverviewController {
 					listsAsJson.append(", ");
 				count2++;
 			}
-			listsAsJson.append("]");
+			listsAsJson.append("]}");
 			if(count<datasetNames.length-1)
-				listsAsJson.append(", ");
+				listsAsJson.append(", {");
 			count++;
 		}
 
-		listsAsJson.append("}]}");
+		listsAsJson.append("]}");
 		
 		return listsAsJson.toString();
 	}
