@@ -18,7 +18,9 @@ package org.aksw.gerbil.web;
 
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -71,56 +73,58 @@ public class ExperimentOverviewController {
 	private AdapterList<DatasetConfiguration> datasets;
 
 	@RequestMapping("/experimentoverview")
-	public @ResponseBody String experimentoverview(@RequestParam(value = "experimentType") String experimentType,
-			@RequestParam(value = "matching") String matchingString) {
-		LOGGER.debug("Got request on /experimentoverview(experimentType={}, matching={}", experimentType,
-				matchingString);
-		Matching matching = MainController.getMatching(matchingString);
+	public @ResponseBody String experimentoverview(@RequestParam(value = "experimentType") String experimentType) {
+		LOGGER.debug("Got request on /experimentoverview(experimentType={}", experimentType);
 		ExperimentType eType = ExperimentType.valueOf(experimentType);
 
 		String annotatorNames[] = loadAnnotators(eType);
 		String datasetNames[] = loadDatasets(eType);
 
-		double results[][] = loadLatestResults(eType, matching, annotatorNames, datasetNames);
-		double correlations[][] = calculateCorrelations(results, datasetNames);
-		return generateJson(results, correlations, annotatorNames, datasetNames);
+		return loadLatestResults(eType, annotatorNames, datasetNames);
+//		double correlations[][] = calculateCorrelations(results, datasetNames);
+//		return generateJson(results, correlations, annotatorNames, datasetNames);
 
 	}
 
-	private double[][] loadLatestResults(ExperimentType experimentType, Matching matching, String[] annotatorNames,
+	private String loadLatestResults(ExperimentType experimentType,  String[] annotatorNames,
 			String[] datasetNames) {
-		Map<String, Integer> annotator2Index = new HashMap<String, Integer>();
-		for (int i = 0; i < annotatorNames.length; ++i) {
-			annotator2Index.put(annotatorNames[i], i);
-		}
-		Map<String, Integer> dataset2Index = new HashMap<String, Integer>();
-		for (int i = 0; i < datasetNames.length; ++i) {
-			dataset2Index.put(datasetNames[i], i);
+
+		StringBuilder listsAsJson = new StringBuilder("{ \"datasets\": [ {");
+		
+		int count=0;
+		for(String dataset : datasetNames){
+			List<ExperimentTaskResult> leaderList = new ArrayList<ExperimentTaskResult>();
+			
+			listsAsJson.append("\"datasetName\" : \"").append(dataset).append("\", ");
+			
+			for(String annotator : annotatorNames){			
+				leaderList.add(dao.getBestResult(experimentType.name(), annotator, dataset));
+			}
+			Collections.sort(leaderList, new LeaderBoardComparator(experimentType));
+			listsAsJson.append(" \"list\" : [");
+			int count2=0;
+			for(ExperimentTaskResult expResults : leaderList){
+				listsAsJson.append("{ \"annotatorName\" : \"").append(expResults.annotator).append("\", \"value\": \"");
+				listsAsJson.append(expResults.results[0]).append("\"}");
+								
+				if(count2<leaderList.size()-1)
+					listsAsJson.append(", ");
+				count2++;
+			}
+			listsAsJson.append("]");
+			if(count<datasetNames.length-1)
+				listsAsJson.append(", ");
+			count++;
 		}
 
-		List<ExperimentTaskResult> expResults = dao.getLatestResultsOfExperiments(experimentType.name(),
-				matching.name(), annotatorNames, datasetNames);
-		double results[][] = new double[annotatorNames.length][datasetNames.length];
-		for (int i = 0; i < results.length; ++i) {
-			Arrays.fill(results[i], NOT_AVAILABLE_SENTINAL);
-		}
-		int row, col;
-		for (ExperimentTaskResult result : expResults) {
-			if (annotator2Index.containsKey(result.annotator) && dataset2Index.containsKey(result.dataset)) {
-				row = annotator2Index.get(result.annotator);
-				col = dataset2Index.get(result.dataset);
-				if (result.state == ExperimentDAO.TASK_FINISHED) {
-//					results[row][col] = result.getF1Measure();
-				} else {
-					results[row][col] = result.state;
-				}
-			}
-		}
-		return results;
+		listsAsJson.append("}]}");
+		
+		return listsAsJson.toString();
 	}
 
 	private String[] loadAnnotators(ExperimentType eType) {
-		Set<String> annotatorNames = annotators.getAdapterNamesForExperiment(eType);
+		
+		Set<String> annotatorNames = dao.getAnnotators();
 		String annotatorNameArray[] = annotatorNames.toArray(new String[annotatorNames.size()]);
 		Arrays.sort(annotatorNameArray);
 		return annotatorNameArray;

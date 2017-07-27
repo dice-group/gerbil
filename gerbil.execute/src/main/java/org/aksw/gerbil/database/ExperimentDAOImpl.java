@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -61,7 +63,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_LATEST_EXPERIMENT_TASKS = "SELECT DISTINCT annotatorName, datasetName FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching";
     @Deprecated
     private final static String GET_LATEST_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, experimentType, matching, state, errorCount, lastChanged FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState ORDER BY lastChanged DESC LIMIT 1";
-    private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT tasks.annotatorName, tasks.datasetName, tasks.experimentType, tasks.matching, tasks.state, tasks.errorCount, tasks.lastChanged, tasks.id FROM ExperimentTasks tasks, (SELECT datasetName, annotatorName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState AND annotatorName IN (:annotatorNames) AND datasetName IN (:datasetNames) GROUP BY datasetName, annotatorName) pairs WHERE tasks.annotatorName=pairs.annotatorName AND tasks.datasetName=pairs.datasetName AND tasks.experimentType=:experimentType AND tasks.matching=:matching AND tasks.lastChanged=pairs.lastChanged";
+    private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, state, errorCount, lastChanged FROM ExperimentTasks , (SELECT datasetName, annotatorName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState GROUP BY datasetName, annotatorName) pairs WHERE annotatorName=pairs.annotatorName AND datasetName=pairs.datasetName AND experimentType=:experimentType AND matching=:matching AND lastChanged=pairs.lastChanged";
     private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
     private final static String SHUTDOWN = "SHUTDOWN";
 
@@ -75,6 +77,10 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_VERSION_OF_EXPERIMENT_TASK = "SELECT version FROM ExperimentTasks_Version WHERE id=:id";
     private final static String INSERT_VERSION_OF_EXPERIMENT_TASK = "INSERT INTO ExperimentTasks_Version (id, version) VALUES(:id,:version)";
 
+	private static final String GET_BEST_EXPERIMENT_TASK_RESULTS = "SELECT exp.datasetName, exp.annotatorName, exp.experimentType, addi.value AS result, exp.state, exp.errorCount, lastChanged FROM ExperimentTasks exp join ExperimentTasks_AdditionalResults addi ON exp.Id=addi.taskId WHERE exp.annotatorName=:annotator AND exp.datasetName=:dataset AND exp.experimentType=:experimentType AND (addi.resultId=0 OR addi.resultId=3) ORDER BY result DESC";
+
+	private static final String GET_ALL_ANNOTATORS = "SELECT DISTINCT annotatorName FROM ExperimentTasks";
+	
     private final NamedParameterJdbcTemplate template;
 
     public ExperimentDAOImpl(DataSource dataSource) {
@@ -303,6 +309,12 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         params.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
         return this.template.query(GET_RUNNING_EXPERIMENT_TASKS, params, new ExperimentTaskResultRowMapper());
     }
+    
+    @Override
+    public Set<String> getAnnotators() {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        return new HashSet<String>(this.template.queryForList(GET_ALL_ANNOTATORS, params, String.class));
+    }
 
     @Override
     public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching) {
@@ -414,4 +426,15 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
             }
         });
     }
+
+	@Override
+	public ExperimentTaskResult getBestResult(String experimentType,  String annotator, String dataset) {
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("experimentType", experimentType);
+        parameters.addValue("annotator", annotator);
+        parameters.addValue("dataset", dataset);
+        ExperimentTaskResult result = this.template.query(GET_BEST_EXPERIMENT_TASK_RESULTS, parameters,
+                new LeaderBoardResultRowMapper()).get(0);
+        return result;
+	}
 }

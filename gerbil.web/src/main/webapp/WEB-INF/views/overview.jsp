@@ -236,15 +236,14 @@ table {
 		function loadTables() {
 			$.getJSON('${experimentoverview}', {
 				experimentType : $('#expTypes input:checked').val(),
-				matching : $('#matching input:checked').val(),
 				ajax : 'false'
 			}, function(data) {
 				var tableData = data[0];
 				showTable(tableData, "resultsTable");
-				drawSpiderDiagram(tableData, "resultsChart");
+// 				drawSpiderDiagram(tableData, "resultsChart");
 				tableData = data[1];
 				showTable(tableData, "correlationsTable");
-				drawSpiderDiagram(tableData, "correlationsChart");
+// 				drawSpiderDiagram(tableData, "correlationsChart");
 			}).fail(function() {
 				console.log("error loading data for table");
 			});

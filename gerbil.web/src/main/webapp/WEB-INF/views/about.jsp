@@ -37,6 +37,7 @@
 		<li>Ricardo Usbeck(University Leipzig and Unister R&amp;D, Germany)
 		<li>J&ouml;rg Waitelonis (HPI Potsdam, Germany)
 		<li>Lars Wesemann (R&amp;D, Unister GmbH, Germany)
+		<li>Felix Conrads(University Leipzig, dice-group University Paderborn)
 	</ul>
 	
 	<p>

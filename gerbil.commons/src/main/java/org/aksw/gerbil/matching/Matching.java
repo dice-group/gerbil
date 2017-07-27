@@ -48,8 +48,9 @@ public enum Matching implements Describable {
      * overlap inside the text.
      */
     WEAK_ANNOTATION_MATCH("Mw - weak annotation match",
-            "The position of the entity inside the text has to overlap the position inside the gold standard.");
+            "The position of the entity inside the text has to overlap the position inside the gold standard."),
 
+	UNDEFINED("", "");
     private String label;
     private String description;
 

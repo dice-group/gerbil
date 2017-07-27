@@ -18,6 +18,7 @@ package org.aksw.gerbil.database;
 
 import java.io.Closeable;
 import java.util.List;
+import java.util.Set;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -239,4 +240,8 @@ public interface ExperimentDAO extends Closeable {
      * @return a list of all running experiment tasks.
      */
     public List<ExperimentTaskResult> getAllRunningExperimentTasks();
+
+	public ExperimentTaskResult getBestResult(String name, String annotator, String dataset);
+
+	public Set<String> getAnnotators();
 }
