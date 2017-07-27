@@ -236,19 +236,20 @@ table {
 			$.getJSON('${experimentoverview}', {
 				experimentType : $('#expTypes input:checked').val(),
 				ajax : 'false'
-			}, function(data, experimentType) {
+			}, function(data) {
 				for(var i = 0; i < data.datasets.length; i++) {
 					var tableData = data.datasets[i];
-					showTable(tableData, "resultsTable", experimentType);
+					showTable(tableData, "resultsTable");
 				}
 			}).fail(function() {
 				console.log("error loading data for table");
 			});
 		};
 
-		function showTable(tableData, tableElementId, experimentType) {
+		function showTable(tableData, tableElementId) {
 			//http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
 			var tbl_body = "";
+			var experimentType = $('#expTypes input:checked').val();
 		    var measure = "F1 measure";
 		    if(experimentType==="SWC2"){
 		    	measure = "Area Under Curve (AUC)"
