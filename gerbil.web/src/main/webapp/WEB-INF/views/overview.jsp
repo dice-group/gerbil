@@ -72,11 +72,11 @@ table {
 		<c:url var="exptypes" value="/exptypes" />
 
 		<%@include file="navbar.jsp"%>
-		<h1>GERBIL Experiment Overview</h1>
+		<h1>Leaderboards</h1>
 		<div class="form-horizontal">
 			<div class="col-md-12">
 				<div class="control-group">
-					<label class="col-md-4 control-label">Experiment Type</label>
+					<label class="col-md-4 control-label">Task</label>
 					<div id="expTypes" class="col-md-8"></div>
 				</div>
 			</div>
@@ -92,15 +92,15 @@ table {
 					<label class="col-md-4 control-label"></label>
 					<div class="col-md-8">
 						<button id="show" type="button" class="btn btn-default">Show
-							table!</button>
+							leaderboard!</button>
 					</div>
 				</div>
 			</div>
-			<div class="col-md-12">
+			<!-- <div class="col-md-12">
 				<h2>Leaderboards</h2>
-				<p>The tables will show the current leader at the specific dataset</p>
+				<p>The tables will show the ranking of current participants.</p>
 			</div>
-			<!-- <div class="container-fluid"> -->
+			 <div class="container-fluid"> -->
 			<div class="col-md-12">
 				<div id="resultsChartBody" class="chartBody">
 					<div id="resultsChart" class="chartDiv"></div>

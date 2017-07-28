@@ -87,19 +87,18 @@
 		value="/webResources/js/jquery.fileupload.js" />
 	<script src="${jqueryfileupload}"></script>
 	<%@include file="navbar.jsp"%>
-	<h1>GERBIL Experiment Configuration</h1>
+	<h1>SWC 2017 Submission</h1>
 
 
 	<form id="configForm" class="form-horizontal">
 		<fieldset>
 			<!-- Form Name -->
-			<legend>New Experiment</legend>
+			<legend> </legend>
 			<!-- experiment type dropdown filled by loadexptype() function -->
 			<div class="form-group">
 				<div class="col-md-2"></div>
 				<div class="col-md-2 text-right">
-					<label class="control-label" for="type">Experiment
-						Type</label>
+					<label class="control-label" for="type">Task</label>
 					<a title="The SWC experiments type will benchmark how good your system is.">
 							<span class="glyphicon glyphicon-question-sign"></span>
 					</a>	
@@ -121,7 +120,7 @@
 			<div class="form-group">
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
-						<label class="control-label" for="annotator">System</label>
+						<label class="control-label" for="annotator">Submission</label>
 					<a title="You can upload an RDF file which has the answers to one of the datasets. NOTE: First, type in the name of your system if you use option 2 or 3 and then type in the URI.">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
@@ -130,9 +129,13 @@
 					<div id="uploadAnswers">
 						<span> Upload a file with answers:</span>
 						<div>
-							<label for="nameAnswerFile">Name:</label> <input
+							<label for="nameAnswerFile">Name of participating system:</label> <input
 								class="form-control" type="text" id="nameAnswerFile" name="name"
 								placeholder="Type something" /> 
+                                
+                            <label for="nameAnswerFile">E-mail address:</label> <input
+								class="form-control" type="text" id="nameAnswerFile" name="name"
+								placeholder="Type something" />
 
 								<br> <br> <span
 								class="btn btn-success fileinput-button"> <i
@@ -168,7 +171,7 @@
 			<div class="form-group">
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
-						<label class="control-label" for="datasets">Dataset</label>					
+						<label class="control-label" for="datasets">Select reference dataset</label>					
 					<a title="You can select multiple of the datasets from the drop-down menu">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
@@ -189,8 +192,9 @@
 				<label class="col-md-4 control-label" for="datasets">Disclaimer</label>
 				<div class="checkbox">
 					<label> <input id="disclaimerCheckbox" type="checkbox">
-						I have read and understand the <a
-						href="https://github.com/AKSW/gerbil/wiki/Disclaimer">disclaimer</a>.
+                        I agree to all data provided being stored and processed. <br/> Any recourse to courts of law is excluded.
+						<!--I have read and understand the <a
+						href="https://github.com/AKSW/gerbil/wiki/Disclaimer">disclaimer</a>.-->
 					</label>
 				</div>
 			</div>

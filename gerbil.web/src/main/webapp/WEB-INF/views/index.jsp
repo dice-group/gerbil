@@ -22,12 +22,17 @@ div.picture {
 	<%@include file="navbar.jsp"%>
 	<div class="jumbotron">
 		<div class="container">
-			<h1>GERBIL SWC</h1>
-			<p>This is GERBIL. All your peanuts belong to me!</p>
-			<p>
-				We present GERBIL SWC, an extension of the <a
-					href="http://gerbil.aksw.org">general entity annotation system
-					GERBIL</a>. It offers an easy-to-use web-based platform for the Semantic Web
+			<h1>Semantic Web Challenge 2017</h1>
+			<p>Welcome to the evaluation platform for the Semantic Web Challenge at <a href="">ISWC 2017</a>. </p>
+            <p> This year's Semantic Web Challenge is centred around two important tasks for building large-scale knowledge graphs:
+            <ol>
+            <li> <b>Knowledge graph population</b>. Given the name and type of a subject entity, (e.g., a company) and a relation, (e.g., CEO) participants are expected to provide the value(s) for the relation. Submit your solution <a href="">here</a>. The leaderboard for this task can be found <a href="">here</a>.</li> 
+            <li> <b>Knowledge graph validation</b>. Given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement. Submit your solution <a href="">here</a>. The leaderboard for this task can be found <a href="">here</a>.</li>
+            </ol>
+            More details on the challenge can be found <a href="https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/">here</a>. </p>
+			<p>This evaluation platform is based on the <a
+					href="http://gerbil.aksw.org">
+					GERBIL</a> framework and is powered the <a href="http://project-hobbit.eu">HOBBIT</a>. It offers an easy-to-use web-based platform for the Semantic Web
 					Challenge 2017 at the ISWC.
 				<!-- To add a tool to
 				GERBIL, all the end user has to do is to provide a URL to a REST
