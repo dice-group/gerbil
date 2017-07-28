@@ -10,6 +10,9 @@
 </head>
 <body class="container">
 	<%@include file="navbar.jsp"%>
+	GERBIL SWC is the evaluation platform for the Semantic Web Challenge at ISWC 2017.<br>
+	Challenge Website: <a href="https://ngonga.github.io/SemWebChallenge2017/#">https://ngonga.github.io/SemWebChallenge2017/#</a>
+	
 	<h5>Contributors</h5>
 	<ul>
 		<li>Michael Röder (InfAI Leipzig and University Paderborn, Germany) 
