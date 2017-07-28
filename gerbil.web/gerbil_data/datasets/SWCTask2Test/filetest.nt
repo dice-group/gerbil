@@ -1,0 +1,4 @@
+<http://test.com/stmt1> <http://gerbil-swc.org/truthValue> "0.0"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://test.com/stmt2> <http://gerbil-swc.org/truthValue> "1.0"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://test.com/stmt3> <http://gerbil-swc.org/truthValue> "0.0"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://test.com/stmt4> <http://gerbil-swc.org/truthValue> "1.0"^^<http://www.w3.org/2001/XMLSchema#double> .
