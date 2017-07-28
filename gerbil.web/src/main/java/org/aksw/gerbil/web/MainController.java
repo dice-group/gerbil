@@ -207,6 +207,11 @@ public class MainController {
         LOGGER.debug("Got request on /experiment with id={}", id);
         dataIdGenerator = new DataIDGenerator(getURLBase(request));
         List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
+        for(ExperimentTaskResult result : results){
+        	String annotator = result.getAnnotator();
+        	annotator = annotator.substring(0, annotator.lastIndexOf("("));
+        	result.setAnnotator(annotator);
+        }
         ExperimentTaskStateHelper.setStatusLines(results);
         ModelAndView model = new ModelAndView();
         model.setViewName("experiment");
