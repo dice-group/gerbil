@@ -99,7 +99,7 @@
 				<div class="col-md-2"></div>
 				<div class="col-md-2 text-right">
 					<label class="control-label" for="type">Task</label>
-					<a title="The SWC experiments type will benchmark how good your system is.">
+					<a title="The Semantic Web Challenge tasks you want to participate in.">
 							<span class="glyphicon glyphicon-question-sign"></span>
 					</a>	
 				</div>		
@@ -121,7 +121,7 @@
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
 						<label class="control-label" for="annotator">Submission</label>
-					<a title="You can upload an RDF file which has the answers to one of the datasets. NOTE: First, type in the name of your system if you use option 2 or 3 and then type in the URI.">
+					<a title="To participate you need to enter a name of your participating system and your mail address and you have to select the file containing the answers of your system for the task selected above.">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
 				</div>
@@ -171,13 +171,13 @@
 			<div class="form-group">
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
-						<label class="control-label" for="datasets">Select reference dataset</label>					
-					<a title="You can select multiple of the datasets from the drop-down menu">
+						<label class="control-label" for="datasets">Reference dataset</label>					
+					<a title="Please select the dataset for which your system generated the answers.">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
 				</div>
 				<div class="col-md-4">
-					<select id="dataset" multiple="multiple" style="display: none;">
+					<select id="dataset" style="display: none;">
 					</select>
 				</div>
 			</div>

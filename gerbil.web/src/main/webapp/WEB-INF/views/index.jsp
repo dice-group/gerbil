@@ -16,6 +16,12 @@ div.picture {
 	background-color: #fff;
 	border-radius: 6px;
 }
+ol li {
+    /* Should have the same style as .jumbotron p */
+    margin-bottom: 15px;
+    font-size: 21px;
+    font-weight: 200;
+}
 </style>
 </head>
 <body class="container">
@@ -23,29 +29,20 @@ div.picture {
 	<div class="jumbotron">
 		<div class="container">
 			<h1>Semantic Web Challenge 2017</h1>
-			<p>Welcome to the evaluation platform for the Semantic Web Challenge at <a href="">ISWC 2017</a>. </p>
-            <p> This year's Semantic Web Challenge is centred around two important tasks for building large-scale knowledge graphs:
+			<p>Welcome to the evaluation platform for the Semantic Web Challenge at <a href="https://iswc2017.semanticweb.org">ISWC 2017</a>. </p>
+            <p>This year's Semantic Web Challenge is centred around two important tasks for building large-scale knowledge graphs:</p>
             <ol>
-            <li> <b>Knowledge graph population</b>. Given the name and type of a subject entity, (e.g., a company) and a relation, (e.g., CEO) participants are expected to provide the value(s) for the relation. Submit your solution <a href="">here</a>. The leaderboard for this task can be found <a href="">here</a>.</li> 
-            <li> <b>Knowledge graph validation</b>. Given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement. Submit your solution <a href="">here</a>. The leaderboard for this task can be found <a href="">here</a>.</li>
+                <li> <b>Knowledge graph population</b>. Given the name and type of a subject entity, (e.g., a company) and a relation, (e.g., CEO) participants are expected to provide the value(s) for the relation. Submit your solution <a href="config">here</a>. The leaderboard for this task can be found <a href="overview?task=SWC1">here</a>.</li> 
+                <li> <b>Knowledge graph validation</b>. Given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement. Submit your solution <a href="config">here</a>. The leaderboard for this task can be found <a href="overview?task=SWC2">here</a>.</li>
             </ol>
-            More details on the challenge can be found <a href="https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/">here</a>. </p>
-			<p>This evaluation platform is based on the <a
-					href="http://gerbil.aksw.org">
-					GERBIL</a> framework and is powered the <a href="http://project-hobbit.eu">HOBBIT</a>. It offers an easy-to-use web-based platform for the Semantic Web
-					Challenge 2017 at the ISWC.
-					<br><br>
-					<b>Challenge Website:</b> <a href="https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/">https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/</a>
-				<!-- To add a tool to
-				GERBIL, all the end user has to do is to provide a URL to a REST
-				interface to its tool which abides by a given specification. The
-				integration and benchmarking of the tool against user-specified
-				datasets is then carried out automatically by the GERBIL platform.
-				Currently, our platform provides results for 9 annotators and 11
-				datasets with more coming. Internally, GERBIL is based on the
-				Natural Language Programming Interchange Format (NIF) and provide
-				Java classes for implementing APIs for datasets and annotators to
-				NIF. -->
+            <p>More details on the challenge can be found <a href="https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/">here</a>. </p>
+			<p>This evaluation platform is based on the <a href="http://gerbil.aksw.org">GERBIL</a> framework and is by powered the <a href="http://project-hobbit.eu">HOBBIT</a> project. <!-- It offers an easy-to-use web-based platform for the Semantic Web Challenge 2017 at the ISWC.</p>
+					<b>Challenge Website:</b> <a href="https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/">https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/</a> -->
+                    </p>
+				
+	<a href="https://project-hobbit.eu"><img style="height: 85px" src="/gerbil/webResources/Hobbit_Logo_Claim_2015_rgb.png" alt="Logo of Hobbit"></a>
+	<a href="http://gerbil.aksw.org"><img style="height: 85px" src="/gerbil/webResources/gerbil_logo_large_transparent.png" alt="Logo of Gerbil"></a>
+	<a href="https://www.thomsonreuters.com/en.html"><img style="height: 73px" src="/gerbil/webResources/tr.png" alt="Logo of Thomson Reuters"></a>
 		</div>
 
 		<div class="container">
