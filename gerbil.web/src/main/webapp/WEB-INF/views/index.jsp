@@ -30,7 +30,7 @@ div.picture {
 					GERBIL</a>. It offers an easy-to-use web-based platform for the Semantic Web
 					Challenge 2017 at the ISWC.
 					<br><br>
-					<b>Challenge Website:</b> <a href="https://ngonga.github.io/SemWebChallenge2017/#">https://ngonga.github.io/SemWebChallenge2017/#</a>
+					<b>Challenge Website:</b> <a href="https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/">https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/</a>
 				<!-- To add a tool to
 				GERBIL, all the end user has to do is to provide a URL to a REST
 				interface to its tool which abides by a given specification. The
