@@ -112,11 +112,12 @@ public class AdapterManager {
                             UPLOADED_FILES_PATH_PROPERTY_KEY);
                     return null;
                 }
-                // "name(file)"
-    
-                String fileName = uploadedFilesPath+File.separator+name.substring(name.indexOf('(')+1, name.indexOf(')'));
+                // "name (email)(file)"
+                String email = name.substring(name.indexOf('(')+1, name.indexOf(')'));
+                String fileName = uploadedFilesPath+File.separator+name.substring(name.lastIndexOf('(')+1, name.lastIndexOf(')'));
                 // remove "AF_" from the name
                 name = name.substring(AF_PREFIX.length(), name.indexOf('(')) + UPLOADED_AF_SUFFIX;
+                name += "("+email+")";
                 try {
                 	
                     return new InstanceListBasedConfigurationImpl(name, false,

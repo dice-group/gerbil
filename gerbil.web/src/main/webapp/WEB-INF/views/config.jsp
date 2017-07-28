@@ -133,8 +133,8 @@
 								class="form-control" type="text" id="nameAnswerFile" name="name"
 								placeholder="Type something" /> 
                                 
-                            <label for="nameAnswerFile">E-mail address:</label> <input
-								class="form-control" type="text" id="nameAnswerFile" name="name"
+                            <label for="emailAnswerFile">E-mail address:</label> <input
+								class="form-control" type="text" id="emailAnswerFile" name="name"
 								placeholder="Type something" />
 
 								<br> <br> <span
@@ -479,7 +479,8 @@
 			$('#warningEmptyAnswerFileName').hide();
 			$('#answerFileUpload').click(function() {
 				var name = $('#nameAnswerFile').val();
-				if (name == '') {
+				var email = $('#emailAnswerFile').val();
+				if (name == '' || email == '') {
 					$('#answerFileUpload').fileupload('disable');
 					$('#warningEmptyAnswerFileName').show();
 				} else {
@@ -490,7 +491,7 @@
 			//if dataset file add button is clicked check whether there is a name 
 			$('#warningEmptyDataset').hide();
 			$('#fileupload').click(function() {
-				var name = $('#nameDataset').val();
+				var name = $('#nameDataset').val()
 				if (name == '') {
 					$('#fileupload').fileupload('disable');
 					$('#warningEmptyDataset').show();
@@ -546,8 +547,10 @@
 						dataType : 'json',
 						done : function(e, data) {
 							var name = $('#nameAnswerFile').val();
+							var email = $('#emailAnswerFile').val();
 							$.each(data.result.files, function(index, file) {
 								addItemToList($('#answerFileList'), name + "("
+										+ email + ")" + "("
 										+ file.name + ")");
 								$('#nameAnswerFile').val('');
 							});

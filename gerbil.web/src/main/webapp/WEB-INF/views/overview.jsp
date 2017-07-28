@@ -140,6 +140,7 @@ table {
 	</div>
 
 	<script type="text/javascript">
+		initLoading();
 		function loadMatchings() {
 			$
 					.getJSON(
@@ -245,6 +246,39 @@ table {
 			}).fail(function() {
 				console.log("error loading data for table");
 			});
+		};
+		
+		function initLoading() {
+			var param = getUrlParameter("task");
+			if(param=='SWC1'||param=='SWC2'){
+				$.getJSON('${experimentoverview}', {
+					experimentType : param,
+					ajax : 'false'
+				}, function(data) {
+					$("#resultsTable").html("");
+					for(var i = 0; i < data.datasets.length; i++) {
+						var tableData = data.datasets[i];
+						showTable(tableData, "resultsTable");
+					}
+				}).fail(function() {
+					console.log("error loading data for table");
+				});
+			}
+		}
+		
+		function getUrlParameter(sParam) {
+		    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+		        sURLVariables = sPageURL.split('&'),
+		        sParameterName,
+		        i;
+
+		    for (i = 0; i < sURLVariables.length; i++) {
+		        sParameterName = sURLVariables[i].split('=');
+
+		        if (sParameterName[0] === sParam) {
+		            return sParameterName[1] === undefined ? true : sParameterName[1];
+		        }
+		    }
 		};
 
 		function showTable(tableData, tableElementId) {

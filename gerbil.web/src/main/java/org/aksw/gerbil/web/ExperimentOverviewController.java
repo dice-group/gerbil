@@ -106,7 +106,8 @@ public class ExperimentOverviewController {
 			listsAsJson.append(" \"leader\" : [");
 			int count2=0;
 			for(ExperimentTaskResult expResults : leaderList){
-				listsAsJson.append("{ \"annotatorName\" : \"").append(expResults.annotator).append("\", \"value\": \"");
+				String annotator = expResults.annotator.substring(0, expResults.annotator.lastIndexOf("("));
+				listsAsJson.append("{ \"annotatorName\" : \"").append(annotator).append("\", \"value\": \"");
 				listsAsJson.append(expResults.results[0]).append("\"}");
 								
 				if(count2<leaderList.size()-1)
