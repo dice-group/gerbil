@@ -23,6 +23,9 @@ import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +38,12 @@ public class ModelComparator<T extends Model> implements Evaluator<T> {
     public static final String PRECISION_NAME = "Precision";
     public static final String RECALL_NAME = "Recall";
 
+    public static final String[] predicates = {"ttp://ont.thomsonreuters.com/mdaas/organizationFoundedYear",
+    	"http://ont.thomsonreuters.com/mdaas/organizationWebsite",
+    	"http://ont.thomsonreuters.com/mdaas/organizationCity",
+    	"http://ont.thomsonreuters.com/mdaas/headquartersFax",
+    	"http://ont.thomsonreuters.com/mdaas/headquartersAddress"};
+    
     public ModelComparator() {
         super();
    	
@@ -48,6 +57,8 @@ public class ModelComparator<T extends Model> implements Evaluator<T> {
 
 
 	public EvaluationResult[] compareModel(Model annotator, Model gold) {
+		annotator = reduceModel(annotator);
+		gold = reduceModel(gold); //just in case
 		long tp = annotator.intersection(gold).size();
 		long fp = annotator.difference(gold).size();
 		long fn = gold.difference(annotator).size();
@@ -66,4 +77,14 @@ public class ModelComparator<T extends Model> implements Evaluator<T> {
                 new DoubleEvaluationResult(F1_SCORE_NAME, f1) };
 	}
 
+	
+	public static Model reduceModel(Model annotator){
+		Model reducedModel = ModelFactory.createDefaultModel();
+		for(String predicate : predicates){
+			Property prop = annotator.createProperty(predicate);
+			reducedModel.add(annotator.listStatements(null, prop, (RDFNode)null));
+		}
+		return reducedModel;
+	}
+	
 }

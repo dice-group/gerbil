@@ -10,42 +10,25 @@
 </head>
 <body class="container">
 	<%@include file="navbar.jsp"%>
-	GERBIL is a community effort. Join us! For more information visit
-	<a href="http://gerbil.aksw.org">http://gerbil.aksw.org</a>.
+	GERBIL SWC is the evaluation platform for the Semantic Web Challenge at ISWC 2017.<br>
+	Challenge Website: <a href="https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/">https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/</a>
+	
 	<h5>Contributors</h5>
 	<ul>
-		<li>Ciro Baron (University Leipzig, Germany)
-		<li>Andreas Both (R&amp;D, Unister GmbH, Germany)
-		<li>Martin Br&uuml;mmer (University Leipzig, Germany)
-		<li>Diego Ceccarelli (Unversity Pisa, Italy)
-		<li>Marco Cornolti (University of Pisa, Italy)
-		<li>Didier Cherix (R&amp;D, Unister GmbH, Germany)
-		<li>Bernd Eickmann (R&amp;D, Unister GmbH, Germany)
-		<li>Paolo Ferragina (University of Pisa, Italy)
-		<li>Christiane Lemke (R&amp;D, Unister GmbH, Germany)
-		<li>Andrea Moro (Sapienza University of Rome, Italy)
-		<li>Roberto Navigli (Sapienza University of Rome, Italy)
-		<li>Axel-Cyrille Ngonga-Ngomo (University Leipzig, Germany)
-		<li>Francesco Piccinno (University of Pisa, Italy)
-		<li>Giuseppe Rizzo (EURECOM, France)
-		<li>Michael R&ouml;der (University Leipzig and Unister R&amp;D,
-			Germany)
-		<li>Harald Sack (HPI Potsdam, Germany)
-		<li>Ren&eacute; Speck (Institute for Applied Informatics,
-			Germany)
-		<li>Rapha&euml;l Troncy (EURECOM, France)
-		<li>Ricardo Usbeck(University Leipzig and Unister R&amp;D, Germany)
-		<li>J&ouml;rg Waitelonis (HPI Potsdam, Germany)
-		<li>Lars Wesemann (R&amp;D, Unister GmbH, Germany)
-		<li>Felix Conrads(University Leipzig, dice-group University Paderborn)
+		<li>Dan Bennett (Thomson Reuters, Eagan, MN, USA)
+	    <li>Axel Ngonga (University of Paderborn, Germany)
+	    <li>Heiko Paulheim (University of Mannheim, Germany)
+		<li>Michael Röder (InfAI Leipzig and University Paderborn, Germany) 
+		<li>Felix Conrads (University Leipzig and University Paderborn, Germany)
 	</ul>
 	
-	<p>
-	How to cite:<br>
-	<i>GERBIL -- General Entity Annotation Benchmark Framework</i> by Ricardo Usbeck, Michael R&ouml;der, Axel-Cyrille Ngonga Ngomo, Ciro Baron, Andreas Both, Martin Br&uuml;mmer, Diego Ceccarelli, Marco Cornolti, Didier Cherix, Bernd Eickmann, Paolo Ferragina, Christiane Lemke, Andrea Moro, Roberto Navigli, Francesco Piccinno, Giuseppe Rizzo, Harald Sack, Ren&eacute; Speck, Rapha&euml;l Troncy, J&ouml;rg Waitelonis and Lars Wesemann in 24th WWW conference.
-	</p>
-
-	<p>Parts of this work have been supported by the ESF.</p>
-	<a href="http://www.esf-in-sachsen.de"><img alt="ESF in Sachsen"
-		src="/gerbil/webResources/ESF_LOGO_klein_alpha.png"></a>
+		GERBIL is a community effort. Join us! For more information visit
+	<a href="http://gerbil.aksw.org">http://gerbil.aksw.org</a>.
+	
+	<br>
+	<br>
+	<p>This work has been supported by the H2020 project HOBBIT (GA no. 688227)</p>
+	<a href="https://project-hobbit.eu"><img style="height: 70px" src="/gerbil/webResources/Hobbit_Logo_Claim_2015_rgb.png" alt="Logo of Hobbit"></a>
+	<a href="http://ec.europa.eu/"><img style="height: 70px" src="/gerbil/webResources/logo_ec.png" alt="Logo of European Comission"></a>
+	<a href="http://europa.eu/"><img style="height: 70px" src="/gerbil/webResources/Europe.png" alt="Logo of Europe"></a>
 </body>
