@@ -15,6 +15,9 @@
 	
 	<h5>Contributors</h5>
 	<ul>
+		<li>Dan Bennett (Thomson Reuters, Eagan, MN, USA)
+	    <li>Axel Ngonga (University of Paderborn, Germany)
+	    <li>Heiko Paulheim (University of Mannheim, Germany)
 		<li>Michael Röder (InfAI Leipzig and University Paderborn, Germany) 
 		<li>Felix Conrads (University Leipzig and University Paderborn, Germany)
 	</ul>
