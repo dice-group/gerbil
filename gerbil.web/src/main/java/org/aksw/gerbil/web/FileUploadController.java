@@ -51,7 +51,7 @@ public class FileUploadController {
             .getLogger(FileUploadController.class);
     @Value("${org.aksw.gerbil.UploadPath}")
     private String path;
-	private String filePrefix;
+//	private String filePrefix;
 
     public FileUploadController() {
     }
