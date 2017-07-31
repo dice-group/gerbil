@@ -74,12 +74,8 @@ public class AnnotationWriter {
             nifModel.add(annotationAsResource, NIF.confidence,
                     Double.toString(((ScoredAnnotation) annotation).getConfidence()), XSDDatatype.XSDstring);
         }
-        
-        if (annotation.getProvenanceInfo() != null) {
-            nifModel.add(annotationAsResource, PROV.wasGeneratedBy,
-                    nifModel.getResource(generateProvenanceInfoUri(annotation.getProvenanceInfo(), documentURI)));
-            nifModel.add(annotationAsResource, RDF.type, PROV.Entity);
-        }
+
+        addProvenanceInfoLink(annotation, annotationAsResource, nifModel, documentURI);
     }
 
     public void addProvenanceInfo(Model nifModel, Resource documentResource, String documentURI,
@@ -137,12 +133,8 @@ public class AnnotationWriter {
             nifModel.add(relationAsResource, ITSRDF.taConfidence,
                     nifModel.createTypedLiteral(((ScoredMarking) relation).getConfidence(), XSDDatatype.XSDdouble));
         }
-        
-        if (relation.getProvenanceInfo() != null) {
-            nifModel.add(relationAsResource, PROV.wasGeneratedBy,
-                    nifModel.getResource(generateProvenanceInfoUri(relation.getProvenanceInfo(), documentURI)));
-            nifModel.add(relationAsResource, RDF.type, PROV.Entity);
-        }
+
+        addProvenanceInfoLink(relation, relationAsResource, nifModel, documentURI);
     }
 
     public void addSpan(final Model nifModel, final Resource documentAsResource, final String text,
@@ -184,10 +176,15 @@ public class AnnotationWriter {
             }
         }
         
-        if (span.getProvenanceInfo() != null) {
-            nifModel.add(spanAsResource, PROV.wasGeneratedBy,
-                    nifModel.getResource(generateProvenanceInfoUri(span.getProvenanceInfo(), documentURI)));
-            nifModel.add(spanAsResource, RDF.type, PROV.Entity);
+        addProvenanceInfoLink(span, spanAsResource, nifModel, documentURI);
+    }
+    
+    protected void addProvenanceInfoLink(Marking marking, Resource markingResource, Model nifModel, String documentURI) {
+        if (marking.getProvenanceInfo() != null) {
+            Resource provInfo = nifModel.getResource(generateProvenanceInfoUri(marking.getProvenanceInfo(), documentURI));
+            nifModel.add(markingResource, PROV.wasGeneratedBy, provInfo);
+            nifModel.add(provInfo, PROV.generated, markingResource);
+            nifModel.add(markingResource, RDF.type, PROV.Entity);
         }
     }
 }

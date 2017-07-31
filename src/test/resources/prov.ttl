@@ -74,6 +74,10 @@ oke:Douglas_Robert_Dundas
         a                     prov:Activity ;
         prov:startedAtTime    "2011-07-14T01:01:01Z"^^xsd:dateTime;
         prov:endedAtTime      "2011-07-14T02:02:02Z"^^xsd:dateTime;
+        prov:generated        <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=0,20>;
+        prov:generated        <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=34,40>;
+        prov:generated        <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=44,50>;
+        prov:generated        <http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1#char=61,82>;
         prov:wasAssociatedWith  oke:system1 .
         
 oke:system1     a             prov:Agent .

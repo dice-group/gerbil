@@ -120,6 +120,18 @@ public class AnnotationParser {
                             provUri);
                 }
             }
+            if (localProv == null) {
+                ResIterator resIter2 = nifModel.listResourcesWithProperty(PROV.generated, annotationResource);
+                if (resIter2.hasNext()) {
+                    String provUri = resIter2.next().getURI();
+                    if (provenanceInfos.containsKey(provUri)) {
+                        localProv = provenanceInfos.get(provUri);
+                    } else {
+                        LOGGER.warn("Found a link to a non existing provenance information \"{}\". It will be ignored",
+                                provUri);
+                    }
+                }
+            }
 
             start = end = -1;
             nodeIter = nifModel.listObjectsOfProperty(annotationResource, NIF.beginIndex);
@@ -152,16 +164,20 @@ public class AnnotationParser {
                                     types, confidence, isWord), nifModel);
                         } else {
                             // It has been typed without a confidence
-                            marking = addTypeInformation(new TypedNamedEntity(start, end - start, entityUris, types, isWord), nifModel);
+                            marking = addTypeInformation(
+                                    new TypedNamedEntity(start, end - start, entityUris, types, isWord), nifModel);
                         }
                     } else {
                         nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
                         if (nodeIter.hasNext()) {
                             confidence = nodeIter.next().asLiteral().getDouble();
-                            marking = addTypeInformationIfPossible(new ScoredNamedEntity(start, end - start, entityUris, confidence, isWord), nifModel);
+                            marking = addTypeInformationIfPossible(
+                                    new ScoredNamedEntity(start, end - start, entityUris, confidence, isWord),
+                                    nifModel);
                         } else {
                             // It has been disambiguated without a confidence
-                            marking = addTypeInformationIfPossible(new NamedEntity(start, end - start, entityUris, isWord), nifModel);
+                            marking = addTypeInformationIfPossible(
+                                    new NamedEntity(start, end - start, entityUris, isWord), nifModel);
                         }
                     }
                 } else {
@@ -215,7 +231,7 @@ public class AnnotationParser {
                 }
             }
             if (marking != null) {
-                if(localProv != null) {
+                if (localProv != null) {
                     marking.setProvenanceInfo(localProv);
                     usedProvInfos.add(localProv);
                 }
@@ -256,14 +272,14 @@ public class AnnotationParser {
                 }
             }
             if (marking != null) {
-                if(localProv != null) {
+                if (localProv != null) {
                     marking.setProvenanceInfo(localProv);
                     usedProvInfos.add(localProv);
                 }
                 markings.add(marking);
             }
         }
-        
+
         markings.addAll(usedProvInfos);
     }
 
