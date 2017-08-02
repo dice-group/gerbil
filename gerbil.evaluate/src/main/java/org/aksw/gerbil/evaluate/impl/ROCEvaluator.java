@@ -41,7 +41,7 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
     public static final String AUC_NAME = "Area Under Curve";
     public static final String ROC_NAME = "ROC Curve";
     
-    public static final String TRUTH_VALUE_PROPERTY_URI = "http://gerbil-swc.org/truthValue";
+    public static final String TRUTH_VALUE_PROPERTY_URI = "http://swc2017.aksw.org//hasTruthValue";
 
 
     public ROCEvaluator() {
@@ -73,6 +73,7 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
 		Collections.sort(sortedStatements, new StatementComparator());
 		ROCCurve curve = new ROCCurve(trueStmts, falseStmts);
 
+		int count=0;
 		for(Statement stmt : sortedStatements){
 			Resource checkStmt = stmt.getSubject(); 
 			StmtIterator stIt = gold.listStatements(checkStmt, truthValueGold, (RDFNode)null);
@@ -83,8 +84,12 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
 			else{
 				curve.addRight();
 			}
+			count++;
 		}
 		
+		for(int i=0; i<count-(trueStmts+falseStmts);i++){
+			curve.addRight();
+		}
 		auc = curve.calcualteAUC();
 		
 		return new EvaluationResult[] { new DoubleEvaluationResult(AUC_NAME, auc), 

@@ -1,5 +1,0 @@
-<http://test.com/s1> <http://ont.thomsonreuters.com/mdaas/organizationWebsite> <http://test.com/o1> .
-<http://test.com/s1> <http://ont.thomsonreuters.com/mdaas/organizationWebsite> <http://test.com/o2> .
-<http://test.com/s1> <http://ont.thomsonreuters.com/mdaas/organizationWebsite> "abc" .
-<http://test.com/o1> <http://ont.thomsonreuters.com/mdaas/organizationWebsite> <http://test.com/o2> .
-<http://test.com/o1> <http://ont.thomsonreuters.com/mdaas/organizationWebsite> <http://test.com/s1> .

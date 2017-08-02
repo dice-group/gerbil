@@ -89,11 +89,13 @@ public class ROCCurve {
 			builder.append("y : \"").append(p.y).append("\"");
 			builder.append("},");
 		}
-		Point p = points.get(points.size()-1);
-		builder.append("{");
-		builder.append("x : \"").append(p.x).append("\",");
-		builder.append("y : \"").append(p.y).append("\"");
-		builder.append("}");
+		if(points.size()>0){
+			Point p = points.get(points.size()-1);
+			builder.append("{");
+			builder.append("x : \"").append(p.x).append("\",");
+			builder.append("y : \"").append(p.y).append("\"");
+			builder.append("}");
+		}
 		builder.append("]}");
 		return builder.toString();
 	}
