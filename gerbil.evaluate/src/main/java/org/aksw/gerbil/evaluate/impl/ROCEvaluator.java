@@ -19,6 +19,7 @@ package org.aksw.gerbil.evaluate.impl;
 import java.util.Collections;
 import java.util.List;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
@@ -41,12 +42,14 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
     public static final String AUC_NAME = "Area Under Curve";
     public static final String ROC_NAME = "ROC Curve";
     
-    public static final String TRUTH_VALUE_PROPERTY_URI = "http://swc2017.aksw.org//hasTruthValue";
+    public static final String TRUTH_VALUE_URI_GERBIL_KEY = "org.aksw.gerbil.evaluator.roc.truthProperty";
+    
+    public static String truthValueURI = "http://swc2017.aksw.org//hasTruthValue";
 
 
     public ROCEvaluator() {
         super();
-   	
+        truthValueURI = GerbilConfiguration.getInstance().getString(TRUTH_VALUE_URI_GERBIL_KEY);
     }
 
     @Override
@@ -60,8 +63,8 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
 		Double auc = null;
 //		String rocJson = "";
 		
-		Property truthValueProp = annotator.getProperty(TRUTH_VALUE_PROPERTY_URI);
-		Property truthValueGold = gold.getProperty(TRUTH_VALUE_PROPERTY_URI);
+		Property truthValueProp = annotator.getProperty(truthValueURI);
+		Property truthValueGold = gold.getProperty(truthValueURI);
 		
 
 		int trueStmts = gold.listLiteralStatements(null, truthValueGold, 1.0).toList().size();
