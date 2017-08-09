@@ -47,6 +47,15 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * An annotator adapter for the FOX annotation service ({@link http://fox.aksw.org/}).
+ * 
+ * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+ * @author Rene Speck
+ * 
+ * @deprecated FOX supports NIF. Please use a NIFBasedAnnotatorWebservice instance instead.
+ */
+@Deprecated
 public class FOXAnnotator extends AbstractHttpBasedAnnotator implements OKETask1Annotator {
 
     private static final String FOX_SERVICE_URL_PARAMETER_KEY = "org.aksw.gerbil.annotators.FOXAnnotatorConfig.serviceUrl";
