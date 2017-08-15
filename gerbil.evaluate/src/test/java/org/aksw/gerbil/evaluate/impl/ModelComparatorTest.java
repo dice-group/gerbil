@@ -3,6 +3,7 @@ package org.aksw.gerbil.evaluate.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -14,11 +15,34 @@ import org.junit.Test;
 public class ModelComparatorTest {
 
 	@Test
+	public void cleansifyTest() {
+		Model anno = ModelFactory.createDefaultModel();
+		Model gold = ModelFactory.createDefaultModel();
+		Property p1 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/isDomiciledIn");
+		Property p2 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/isDomiciledIns");
+		
+		Resource s1 = ResourceFactory.createResource("http://test.com/stmt1");
+		Resource s2 = ResourceFactory.createResource("http://test.com/stmt2");
+		
+		gold.add(s1, p1, "YES");
+		anno.add(s1, p1, "NO");
+		anno.add(s1, p2, "NO");
+		anno.add(s2, p1, "NO");
+		
+		Model cleaned = ModelComparator.cleansify(anno, gold);	
+		
+//		assertTrue(anno.size()==1);
+		assertTrue("NO".equals(cleaned.listStatements().next().getObject().asLiteral().getString()));
+		
+	}
+	
+	@Test
 	public void checkReduce(){
+		ModelComparator cmp = new ModelComparator();
 		Model anno = ModelFactory.createDefaultModel();
 		Model expected = ModelFactory.createDefaultModel();
-		Property p1 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/organizationCity");
-		Property p2 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/organizationCity");
+		Property p1 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/isDomiciledIn");
+		Property p2 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/isDomiciledIn");
 		
 		Resource s = ResourceFactory.createResource("http://test.com/stmt1");
 
@@ -41,6 +65,8 @@ public class ModelComparatorTest {
 	
 	@Test
 	public void compareModel(){
+		ModelComparator cmp = new ModelComparator();
+
 		Model anno = ModelFactory.createDefaultModel();
 		
 		Model gold = ModelFactory.createDefaultModel();
@@ -49,9 +75,9 @@ public class ModelComparatorTest {
 		Resource s2 = ResourceFactory.createResource("http://test.com/stmt2");
 
 
-		Property p = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/organizationCity");
+		Property p = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/isDomiciledIn");
 
-		Property p2 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/organizationWebsite");
+		Property p2 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/isDomiciledIn");
 
 		
 		gold.addLiteral(s2, p, 0.0);

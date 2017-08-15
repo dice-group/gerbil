@@ -27,6 +27,8 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +72,8 @@ public class ModelComparator<T extends Model> implements Evaluator<T> {
 	public EvaluationResult[] compareModel(Model annotator, Model gold) {
 		annotator = reduceModel(annotator);
 		gold = reduceModel(gold); //just in case
+		annotator = cleansify(annotator, gold);
+		
 		long tp = annotator.intersection(gold).size();
 		long fp = annotator.difference(gold).size();
 		long fn = gold.difference(annotator).size();
@@ -89,6 +93,17 @@ public class ModelComparator<T extends Model> implements Evaluator<T> {
 	}
 
 	
+	public static Model cleansify(Model annotator, Model gold) {
+		StmtIterator it = gold.listStatements();
+		Model cleaned = ModelFactory.createDefaultModel();
+		while(it.hasNext()) {
+			Statement cur = it.next();
+			cleaned.add(annotator.listStatements(cur.getSubject(), cur.getPredicate(), (RDFNode) null));
+		}
+		
+		return cleaned;
+	}
+
 	public static Model reduceModel(Model annotator){
 		Model reducedModel = ModelFactory.createDefaultModel();
 		for(String predicate : predicates){
