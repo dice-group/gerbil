@@ -8,7 +8,6 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.StartPosBasedComparator;
 import org.aksw.gerbil.utils.DocumentTextComparison.DocumentTextComparisonResult;
-import org.aksw.gerbil.utils.DocumentTextComparison.DocumentTextEdits;
 
 /**
  * This class can revoke text edits and update the positions of NEs accordingly.
@@ -44,7 +43,6 @@ public class DocumentTextEditRevoker {
     }
 
     private static void updateNEPositions(Document document, DocumentTextComparisonResult comparison) {
-        DocumentTextEdits edits[] = comparison.steps.toArray(new DocumentTextEdits[comparison.steps.size()]);
         List<Span> spans = document.getMarkings(Span.class);
         if (spans.size() == 0) {
             return;
@@ -53,9 +51,10 @@ public class DocumentTextEditRevoker {
         int currentElement = 0;
         List<Span> currentEditedSpans = new ArrayList<Span>();
         int posDiff = 0;
-        for (int i = 0; i < edits.length; ++i) {
+        int numberOfSteps = comparison.getNumberOfSteps();
+        for (int i = 0; i < numberOfSteps; ++i) {
             // First, check how the positions are changed with the next edit
-            switch (edits[i]) {
+            switch (comparison.getStep(i)) {
             case DELETE: {
                 --posDiff;
                 // update lengths of currently edited spans

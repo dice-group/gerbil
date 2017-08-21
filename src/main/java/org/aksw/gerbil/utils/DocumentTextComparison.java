@@ -1,9 +1,7 @@
 package org.aksw.gerbil.utils;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 public class DocumentTextComparison {
 
@@ -30,6 +28,7 @@ public class DocumentTextComparison {
         if (oLength == 0) {
             return DocumentTextComparisonResult.create(nLength, DocumentTextEdits.DELETE);
         }
+        int expectedSteps = Math.max(nLength, oLength);
         // For all i and j, d[i,j] will hold the Levenshtein distance between
         // the first i characters of s and the first j characters of t.
         // Note that d has (m+1) x (n+1) values.
@@ -39,12 +38,12 @@ public class DocumentTextComparison {
         // (transforming the string of the first i characters of s into
         // the empty string requires i deletions)
         for (int i = 0; i <= nLength; ++i) {
-            matrix[i][0] = DocumentTextComparisonResult.create(i, DocumentTextEdits.DELETE);
+            matrix[i][0] = DocumentTextComparisonResult.create(i, DocumentTextEdits.DELETE, expectedSteps);
         }
 
         // the distance of any second string to an empty first string
         for (int i = 0; i <= oLength; ++i) {
-            matrix[0][i] = DocumentTextComparisonResult.create(i, DocumentTextEdits.INSERT);
+            matrix[0][i] = DocumentTextComparisonResult.create(i, DocumentTextEdits.INSERT, expectedSteps);
         }
 
         // Fill in the rest of the matrix
@@ -62,7 +61,8 @@ public class DocumentTextComparison {
         return matrix[nLength][oLength];
     }
 
-    private static DocumentTextComparisonResult determineOperation(DocumentTextComparisonResult[][] matrix, int i, int j) {
+    private static DocumentTextComparisonResult determineOperation(DocumentTextComparisonResult[][] matrix, int i,
+            int j) {
         DocumentTextEdits editType;
         DocumentTextComparisonResult formerResult;
         // matrix[i - 1][j - 1] + 1 --> subtitution
@@ -92,39 +92,123 @@ public class DocumentTextComparison {
         NONE, INSERT, DELETE, SUBSTITUTE
     }
 
+    /**
+     * 
+     * <p>
+     * Internally, it uses the following encoding.<br>
+     * {@code NONE -> 00}<br>
+     * {@code INSERT -> 01}<br>
+     * {@code DELETE -> 10}<br>
+     * {@code SUBSTITUTE -> 11}<br>
+     * </p>
+     * 
+     * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
+     *
+     */
     public static class DocumentTextComparisonResult {
-        public int editDistance = 0;
-        public List<DocumentTextEdits> steps;
+        protected int editDistance = 0;
+        protected int numberOfSteps = 0;
+        protected long steps[];
 
-        public static DocumentTextComparisonResult create(int length, DocumentTextEdits editType) {
-            List<DocumentTextEdits> steps = Lists.newArrayList();
-            for (int j = 0; j < length; ++j) {
-                steps.add(editType);
-            }
-            return new DocumentTextComparisonResult(length, steps);
+        public static DocumentTextComparisonResult create(int length, DocumentTextEdits editType,
+                int overallExpNumberOfEdits) {
+            DocumentTextComparisonResult result = new DocumentTextComparisonResult(overallExpNumberOfEdits);
+            addEditNTimes(result, editType, length);
+            return result;
         }
 
-        public static DocumentTextComparisonResult create(DocumentTextComparisonResult formerResult, DocumentTextEdits newStep) {
+        public static DocumentTextComparisonResult create(int length, DocumentTextEdits editType) {
+            DocumentTextComparisonResult result = new DocumentTextComparisonResult(length);
+            addEditNTimes(result, editType, length);
+            return result;
+        }
+
+        public static DocumentTextComparisonResult addEditNTimes(DocumentTextComparisonResult result,
+                DocumentTextEdits editType, int n) {
+            for (int j = 0; j < n; ++j) {
+                result.addStep(editType);
+            }
+            return result;
+        }
+
+        public static DocumentTextComparisonResult create(DocumentTextComparisonResult formerResult,
+                DocumentTextEdits newStep) {
             DocumentTextComparisonResult newResult = new DocumentTextComparisonResult(formerResult);
             newResult.addStep(newStep);
             return newResult;
         }
 
-        public DocumentTextComparisonResult(int editDistance, List<DocumentTextEdits> steps) {
-            this.editDistance = editDistance;
-            this.steps = steps;
+        public DocumentTextComparisonResult(List<DocumentTextEdits> steps) {
+            this(steps.size());
+            for (DocumentTextEdits step : steps) {
+                addStep(step);
+            }
+        }
+
+        public DocumentTextComparisonResult(int expectedNumberOfSteps) {
+            this.steps = new long[(expectedNumberOfSteps / 32) + ((expectedNumberOfSteps % 32) == 0 ? 0 : 1)];
         }
 
         public DocumentTextComparisonResult(DocumentTextComparisonResult o) {
             this.editDistance = o.editDistance;
-            this.steps = new ArrayList<>(o.steps);
+            this.numberOfSteps = o.numberOfSteps;
+            this.steps = Arrays.copyOf(o.steps, o.steps.length);
         }
 
         public void addStep(DocumentTextEdits newStep) {
-            this.steps.add(newStep);
+            ++numberOfSteps;
+            int currentCell = numberOfSteps / 32;
+            if (currentCell >= steps.length) {
+                steps = Arrays.copyOf(steps, currentCell);
+            }
             if (newStep != DocumentTextEdits.NONE) {
                 ++this.editDistance;
+                long mask = 0;
+                switch (newStep) {
+                case SUBSTITUTE:
+                    mask = 3;
+                    break;
+                case DELETE:
+                    mask = 2;
+                    break;
+                case INSERT:
+                    mask = 1;
+                    break;
+                case NONE: // not possible here
+                    break;
+                }
+                int currentBit = ((numberOfSteps - 1) % 32) * 2;
+                steps[currentCell] |= mask << currentBit;
             }
+        }
+
+        public DocumentTextEdits getStep(int index) {
+            if (index < 0) {
+                throw new IllegalArgumentException("Index has to be >= 0");
+            }
+            if (index >= numberOfSteps) {
+                throw new IllegalArgumentException(
+                        "Index was " + index + " while there are only " + numberOfSteps + " available.");
+            }
+            int currentCell = index / 32;
+            int currentBit = (index % 32) * 2;
+            int value = (int) (steps[currentCell] & (3L << currentBit)) >> currentBit;
+            switch (value) {
+            case 0:
+                return DocumentTextEdits.NONE;
+            case 1:
+                return DocumentTextEdits.INSERT;
+            case 2:
+                return DocumentTextEdits.DELETE;
+            case 3:
+                return DocumentTextEdits.SUBSTITUTE;
+            default:
+                throw new IllegalStateException("This shouldn't be possible. Programming error.");
+            }
+        }
+
+        public int getNumberOfSteps() {
+            return numberOfSteps;
         }
 
         @Override
@@ -132,7 +216,8 @@ public class DocumentTextComparison {
             final int prime = 31;
             int result = 1;
             result = prime * result + editDistance;
-            result = prime * result + ((steps == null) ? 0 : steps.hashCode());
+            result = prime * result + numberOfSteps;
+            result = prime * result + Arrays.hashCode(steps);
             return result;
         }
 
@@ -147,13 +232,11 @@ public class DocumentTextComparison {
             DocumentTextComparisonResult other = (DocumentTextComparisonResult) obj;
             if (editDistance != other.editDistance)
                 return false;
-            if (steps == null) {
-                if (other.steps != null)
-                    return false;
-            } else if (!steps.equals(other.steps))
+            if (numberOfSteps != other.numberOfSteps)
+                return false;
+            if (!Arrays.equals(steps, other.steps))
                 return false;
             return true;
         }
-
     }
 }

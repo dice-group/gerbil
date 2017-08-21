@@ -49,6 +49,12 @@ public class DocumentTextComparisonTest {
     @Test
     public void testLevenstein() {
         DocumentTextComparisonResult result = DocumentTextComparison.getLevensteinDistance(newText, originalText);
-        Assert.assertArrayEquals(expectedEdits, result.steps.toArray(new DocumentTextEdits[result.steps.size()]));
+        // DocumentTextEdits resultEdits[] = new
+        // DocumentTextEdits[result.getNumberOfSteps()];
+        for (int i = 0; i < expectedEdits.length; ++i) {
+            Assert.assertEquals("Arrays first differed at element [" + i + "];", expectedEdits[i], result.getStep(i));
+            // resultEdits[i] = result.getStep(i);
+        }
+        // Assert.assertArrayEquals(expectedEdits, resultEdits);
     }
 }
