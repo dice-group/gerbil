@@ -115,7 +115,7 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
         return document.getMarkings(resultClass);
     }
 
-    protected Document request(Document document) throws GerbilException {
+    public Document request(Document document) throws GerbilException {
         // give the document a URI
         document.setDocumentURI(DOCUMENT_URI + documentCount);
         ++documentCount;
