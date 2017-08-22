@@ -32,56 +32,62 @@ public class DocumentTextComparison {
         // For all i and j, d[i,j] will hold the Levenshtein distance between
         // the first i characters of s and the first j characters of t.
         // Note that d has (m+1) x (n+1) values.
-        DocumentTextComparisonResult matrix[][] = new DocumentTextComparisonResult[nLength + 1][oLength + 1];
+        DocumentTextComparisonResult oldLine[] = new DocumentTextComparisonResult[oLength + 1];
+        DocumentTextComparisonResult currentLine[] =  new DocumentTextComparisonResult[oLength + 1];
+        DocumentTextComparisonResult temp[];
 
-        // the distance of any first string to an empty second string
-        // (transforming the string of the first i characters of s into
-        // the empty string requires i deletions)
-        for (int i = 0; i <= nLength; ++i) {
-            matrix[i][0] = DocumentTextComparisonResult.create(i, DocumentTextEdits.DELETE, expectedSteps);
-        }
+//        // the distance of any first string to an empty second string
+//        // (transforming the string of the first i characters of s into
+//        // the empty string requires i deletions)
+//        for (int i = 0; i <= nLength; ++i) {
+//            matrix[i][0] = DocumentTextComparisonResult.create(i, DocumentTextEdits.DELETE, expectedSteps);
+//        }
 
         // the distance of any second string to an empty first string
         for (int i = 0; i <= oLength; ++i) {
-            matrix[0][i] = DocumentTextComparisonResult.create(i, DocumentTextEdits.INSERT, expectedSteps);
+            oldLine[i] = DocumentTextComparisonResult.create(i, DocumentTextEdits.INSERT, expectedSteps);
         }
 
         // Fill in the rest of the matrix
         for (int i = 1; i <= nLength; ++i) {
+            currentLine[0] = DocumentTextComparisonResult.create(i, DocumentTextEdits.DELETE, expectedSteps);
             for (int j = 1; j <= oLength; ++j) {
                 if (nText.charAt(i - 1) == oText.charAt(j - 1)) {
                     // no operation required
-                    matrix[i][j] = DocumentTextComparisonResult.create(matrix[i - 1][j - 1], DocumentTextEdits.NONE);
+                    currentLine[j] = DocumentTextComparisonResult.create(oldLine[j - 1], DocumentTextEdits.NONE);
                 } else {
-                    matrix[i][j] = determineOperation(matrix, i, j);
+                    currentLine[j] = determineOperation(currentLine, oldLine, i, j);
                 }
             }
+            temp = oldLine;
+                    oldLine = currentLine;
+            currentLine = temp;
         }
 
-        return matrix[nLength][oLength];
+        return oldLine[oLength];
     }
 
-    private static DocumentTextComparisonResult determineOperation(DocumentTextComparisonResult[][] matrix, int i,
-            int j) {
+    private static DocumentTextComparisonResult determineOperation(DocumentTextComparisonResult[] currentLine,
+            DocumentTextComparisonResult[] oldLine, int i, int j) {
         DocumentTextEdits editType;
         DocumentTextComparisonResult formerResult;
         // matrix[i - 1][j - 1] + 1 --> subtitution
         // matrix[i][j - 1] + 1 --> insertion
         // matrix[i - 1][j] + 1 --> deletion
-        if (matrix[i][j - 1].editDistance < matrix[i - 1][j - 1].editDistance) {
-            if (matrix[i][j - 1].editDistance < matrix[i - 1][j].editDistance) {
-                formerResult = matrix[i][j - 1];
+        if (currentLine[j - 1].editDistance < oldLine[j - 1].editDistance) {
+            if (currentLine[j - 1].editDistance < oldLine[j].editDistance) {
+                formerResult = currentLine[j - 1];
                 editType = DocumentTextEdits.INSERT;
             } else {
-                formerResult = matrix[i - 1][j];
+                formerResult = oldLine[j];
                 editType = DocumentTextEdits.DELETE;
             }
         } else {
-            if (matrix[i - 1][j - 1].editDistance < matrix[i - 1][j].editDistance) {
-                formerResult = matrix[i - 1][j - 1];
+            if (oldLine[j - 1].editDistance < oldLine[j].editDistance) {
+                formerResult = oldLine[j - 1];
                 editType = DocumentTextEdits.SUBSTITUTE;
             } else {
-                formerResult = matrix[i - 1][j];
+                formerResult = oldLine[j];
                 editType = DocumentTextEdits.DELETE;
             }
         }
@@ -149,6 +155,10 @@ public class DocumentTextComparison {
             this.steps = new long[(expectedNumberOfSteps / 32) + ((expectedNumberOfSteps % 32) == 0 ? 0 : 1)];
         }
 
+        public DocumentTextComparisonResult() {
+            this(0);
+        }
+
         public DocumentTextComparisonResult(DocumentTextComparisonResult o) {
             this.editDistance = o.editDistance;
             this.numberOfSteps = o.numberOfSteps;
@@ -156,10 +166,9 @@ public class DocumentTextComparison {
         }
 
         public void addStep(DocumentTextEdits newStep) {
-            ++numberOfSteps;
             int currentCell = numberOfSteps / 32;
             if (currentCell >= steps.length) {
-                steps = Arrays.copyOf(steps, currentCell);
+                steps = Arrays.copyOf(steps, currentCell + 1);
             }
             if (newStep != DocumentTextEdits.NONE) {
                 ++this.editDistance;
@@ -177,9 +186,10 @@ public class DocumentTextComparison {
                 case NONE: // not possible here
                     break;
                 }
-                int currentBit = ((numberOfSteps - 1) % 32) * 2;
+                int currentBit = (numberOfSteps % 32) * 2;
                 steps[currentCell] |= mask << currentBit;
             }
+            ++numberOfSteps;
         }
 
         public DocumentTextEdits getStep(int index) {
@@ -192,7 +202,7 @@ public class DocumentTextComparison {
             }
             int currentCell = index / 32;
             int currentBit = (index % 32) * 2;
-            int value = (int) (steps[currentCell] & (3L << currentBit)) >> currentBit;
+            int value = (int) ((steps[currentCell] & (3L << currentBit)) >>> currentBit);
             switch (value) {
             case 0:
                 return DocumentTextEdits.NONE;

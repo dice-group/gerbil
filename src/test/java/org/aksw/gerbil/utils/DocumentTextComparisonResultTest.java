@@ -1,5 +1,7 @@
 package org.aksw.gerbil.utils;
 
+import java.util.Random;
+
 import org.aksw.gerbil.utils.DocumentTextComparison.DocumentTextComparisonResult;
 import org.aksw.gerbil.utils.DocumentTextComparison.DocumentTextEdits;
 import org.junit.Assert;
@@ -210,6 +212,39 @@ public class DocumentTextComparisonResultTest {
             Assert.fail("An exception was expected in the line above");
         } catch (IllegalArgumentException e) {
             // That was expected
+        }
+    }
+
+    @Test
+    public void testAddAndGet() {
+        final int STEPS = 100;
+        DocumentTextComparisonResult result;
+        DocumentTextEdits correctSteps[] = new DocumentTextEdits[STEPS];
+        Random random = new Random();
+        for (int i = 0; i < STEPS; ++i) {
+            if(i == 31) {
+                correctSteps[i] = DocumentTextEdits.INSERT;
+            } else {
+            correctSteps[i] = DocumentTextEdits.values()[random.nextInt(DocumentTextEdits.values().length)];
+            }
+        }
+
+        // 1st test with correct size at init
+        result = new DocumentTextComparisonResult(STEPS);
+        for (int i = 0; i < STEPS; ++i) {
+            result.addStep(correctSteps[i]);
+        }
+        for (int i = 0; i < STEPS; ++i) {
+            Assert.assertEquals("Arrays first differed at element [" + i + "];", correctSteps[i], result.getStep(i));
+        }
+        
+        // 2nd test without init
+        result = new DocumentTextComparisonResult();
+        for (int i = 0; i < STEPS; ++i) {
+            result.addStep(correctSteps[i]);
+        }
+        for (int i = 0; i < STEPS; ++i) {
+            Assert.assertEquals("Arrays first differed at element [" + i + "];", correctSteps[i], result.getStep(i));
         }
     }
 }
