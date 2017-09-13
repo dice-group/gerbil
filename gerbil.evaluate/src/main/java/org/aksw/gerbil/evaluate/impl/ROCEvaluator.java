@@ -36,16 +36,14 @@ import org.slf4j.LoggerFactory;
 
 public class ROCEvaluator<T extends Model> implements Evaluator<T> {
 
-    @SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(ROCEvaluator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ROCEvaluator.class);
 
     public static final String AUC_NAME = "Area Under Curve";
     public static final String ROC_NAME = "ROC Curve";
-    
-    public static final String TRUTH_VALUE_URI_GERBIL_KEY = "org.aksw.gerbil.evaluator.roc.truthProperty";
-    
-    public static String truthValueURI = "http://swc2017.aksw.org//hasTruthValue";
 
+    public static final String TRUTH_VALUE_URI_GERBIL_KEY = "org.aksw.gerbil.evaluator.roc.truthProperty";
+
+    public static String truthValueURI = "http://swc2017.aksw.org//hasTruthValue";
 
     public ROCEvaluator() {
         super();
@@ -55,48 +53,51 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
             EvaluationResultContainer results) {
-        results.addResults(compareModel(annotatorResults.get(0).get(0), goldStandard.get(0).get(0)) );
+        results.addResults(compareModel(annotatorResults.get(0).get(0), goldStandard.get(0).get(0)));
     }
 
+    public EvaluationResult[] compareModel(Model annotator, Model gold) {
+        Double auc = null;
+        // String rocJson = "";
 
-	public EvaluationResult[] compareModel(Model annotator, Model gold) {
-		Double auc = null;
-//		String rocJson = "";
-		
-		Property truthValueProp = annotator.getProperty(truthValueURI);
-		Property truthValueGold = gold.getProperty(truthValueURI);
-		
+        Property truthValueProp = annotator.getProperty(truthValueURI);
+        Property truthValueGold = gold.getProperty(truthValueURI);
 
-		int trueStmts = gold.listLiteralStatements(null, truthValueGold, 1.0).toList().size();
-		int falseStmts = gold.listLiteralStatements(null, truthValueGold, 0.0).toList().size();
-				
-		List<Statement> sortedStatements = annotator.listStatements(null, truthValueProp, (RDFNode)null).toList();
+        int trueStmts = gold.listLiteralStatements(null, truthValueGold, 1.0).toList().size();
+        int falseStmts = gold.listLiteralStatements(null, truthValueGold, 0.0).toList().size();
 
+        List<Statement> sortedStatements = annotator.listStatements(null, truthValueProp, (RDFNode) null).toList();
 
-		Collections.sort(sortedStatements, new StatementComparator());
-		ROCCurve curve = new ROCCurve(trueStmts, falseStmts);
+        Collections.sort(sortedStatements, new StatementComparator());
+        ROCCurve curve = new ROCCurve(trueStmts, falseStmts);
 
-		int count=0;
-		for(Statement stmt : sortedStatements){
-			Resource checkStmt = stmt.getSubject(); 
-			StmtIterator stIt = gold.listStatements(checkStmt, truthValueGold, (RDFNode)null);
-			Double truthValue = stIt.next().getDouble();
-			if(truthValue==1){
-				curve.addUp();
-			}
-			else{
-				curve.addRight();
-			}
-			count++;
-		}
-		
-		for(int i=0; i<count-(trueStmts+falseStmts);i++){
-			curve.addRight();
-		}
-		auc = curve.calcualteAUC();
-		
-		return new EvaluationResult[] { new DoubleEvaluationResult(AUC_NAME, auc), 
-				new StringEvaluationResult(ROC_NAME, curve.toString())};
-	}
+        int count = 0;
+        for (Statement stmt : sortedStatements) {
+            // Get the same triple from the gold standard
+            Resource checkStmt = stmt.getSubject();
+            StmtIterator stIt = gold.listStatements(checkStmt, truthValueGold, (RDFNode) null);
+            // if such a triple exists
+            if (stIt.hasNext()) {
+                Double truthValue = stIt.next().getDouble();
+                if (truthValue == 1) {
+                    curve.addUp();
+                } else {
+                    curve.addRight();
+                }
+                count++;
+            } else {
+                // ignore it
+                LOGGER.info("The system answer contained the following unknown statement: {}", stmt.toString());
+            }
+        }
+
+        for (int i = 0; i < count - (trueStmts + falseStmts); i++) {
+            curve.addRight();
+        }
+        auc = curve.calcualteAUC();
+
+        return new EvaluationResult[] { new DoubleEvaluationResult(AUC_NAME, auc),
+                new StringEvaluationResult(ROC_NAME, curve.toString()) };
+    }
 
 }
