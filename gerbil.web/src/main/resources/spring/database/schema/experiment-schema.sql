@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS Experiments (
   PRIMARY KEY (id, taskId)
 );
 
+
+
 -- Changes from GERBIL QA 0.1.0 to 0.2.0
 -- (ALTER should be executed only once for updating old DBs
 -- ALTER TABLE ExperimentTasks ADD COLUMN language varchar(3);
@@ -34,6 +36,12 @@ resultId int NOT NULL,
 taskId int NOT NULL,
 value double,
 PRIMARY KEY (resultId, taskId)
+);
+
+CREATE TABLE IF NOT EXISTS ExperimentTasks_ROC (
+taskId int NOT NULL,
+roc BLOB,
+PRIMARY KEY (taskID)
 );
 
 CREATE TABLE IF NOT EXISTS ExperimentTasks_SubTasks (

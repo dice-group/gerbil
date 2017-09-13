@@ -43,7 +43,7 @@
 	<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script
 		src="/gerbil/webjars/tablesorter/2.15.5/js/jquery.tablesorter.js"></script>
-
+	<script src="/gerbil/webResources/js/Chart.js"></script>
 	<script type="application/ld+json">
 	${dataid}
 	</script>
@@ -77,9 +77,13 @@
 					<!-- <th>State</th> -->
 					<th>Error Count</th>
 					<!-- for every additional result -->
+					<c:if test="${hasRoc}">
+						<th>ROC</th>				
+					</c:if>	
 					<c:forEach items="${additionalResultNames}" var="name">
 						<th>${name}</th>
 					</c:forEach>
+											
 					<th>Timestamp</th>
 					<th>GERBIL version</th>
 				</tr>
@@ -107,6 +111,17 @@
 <%-- 									value="${task.macroRecall}" /></td> --%>
 							<!-- <td>${task.state}</td> -->
 							<td>${task.errorCount}</td>
+							<c:if test="${task.roc != null}">	
+ 								<td><canvas id="${task.hashCode()}" width="300" height="300"></canvas></td>		
+ 								<script>
+ 								var ctx = document.getElementById("${task.hashCode()}").getContext('2d');
+ 								var myLineChart = new Chart(ctx, {
+    								type: 'scatter',
+   		 							data : { datasets : [{showLine : true, lineTension : 0, fill : false, borderColor : "green", ${task.roc}}]},
+   		 							options: { scales: {yAxes: [{ticks: {max : 1, beginAtZero:true}}], xAxes : [{ticks: {max : 1, beginAtZero:true}}]}}
+								});
+ 								</script>
+ 							</c:if>	
 							<!-- for every additional result -->
 							<c:forEach items="${additionalResults[taskId.count - 1]}"
 								var="additionalResult">
@@ -115,6 +130,7 @@
 											value="${additionalResult}" />
 									</c:if></td>
 							</c:forEach>
+ 													
 							<td>${task.timestampstring}</td>
 							<td>${task.gerbilVersion}</td>
 						</tr>

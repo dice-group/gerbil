@@ -81,22 +81,22 @@ public class ROCCurve {
 	@Override
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
-		builder.append("{ roc : [");
+		builder.append("data : [");
 		for(int i=0; i<points.size()-1; i++){
 			Point p = points.get(i);
 			builder.append("{");
-			builder.append("x : \"").append(p.x).append("\",");
-			builder.append("y : \"").append(p.y).append("\"");
+			builder.append("x : ").append(p.x).append(",");
+			builder.append("y : ").append(p.y).append("");
 			builder.append("},");
 		}
 		if(points.size()>0){
 			Point p = points.get(points.size()-1);
 			builder.append("{");
-			builder.append("x : \"").append(p.x).append("\",");
-			builder.append("y : \"").append(p.y).append("\"");
+			builder.append("x : ").append(p.x).append(",");
+			builder.append("y : ").append(p.y).append("");
 			builder.append("}");
 		}
-		builder.append("]}");
+		builder.append("] ");
 		return builder.toString();
 	}
 	

@@ -240,7 +240,7 @@ public class ExperimentTask implements Task {
                 LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
             } else {
 //                expResult.addAdditionalResult(id, ((StringEvaluationResult) result).getValue().toString());
-
+            	  expResult.setRoc(result.getValue().toString());
             }
         } else if (result instanceof IntEvaluationResult) {
             if (result.getName().equals(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME)) {

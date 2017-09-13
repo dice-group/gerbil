@@ -191,7 +191,6 @@ public class MainController {
         		LOGGER.debug("Created config: {}", configs[count]);
         		++count;
         	}
-            
         }
 
         String experimentId = IDCreator.getInstance().createID();
@@ -207,10 +206,15 @@ public class MainController {
         LOGGER.debug("Got request on /experiment with id={}", id);
         dataIdGenerator = new DataIDGenerator(getURLBase(request));
         List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
+        Boolean hasRoc = false;
         for(ExperimentTaskResult result : results){
         	String annotator = result.getAnnotator();
         	annotator = annotator.substring(0, annotator.lastIndexOf("("));
         	result.setAnnotator(annotator);
+        	if(result.roc != null) {
+        		result.roc = result.roc.replace("roc", "data");
+        		hasRoc = true;
+        	}
         }
         ExperimentTaskStateHelper.setStatusLines(results);
         ModelAndView model = new ModelAndView();
@@ -229,6 +233,7 @@ public class MainController {
                 }
             }
         }
+        model.addObject("hasRoc", hasRoc);
         model.addObject("additionalResultNames",
                 ResultNameToIdMapping.getInstance().getNamesOfResultIds(additionalResultIds));
         model.addObject("additionalResults", additionalResults);

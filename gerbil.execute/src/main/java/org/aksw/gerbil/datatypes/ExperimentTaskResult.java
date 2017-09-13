@@ -41,6 +41,8 @@ public class ExperimentTaskResult {
     public String dataset;
     public ExperimentType type;
     public Matching matching;
+    public String roc;
+    public boolean hasRoc=false;
     public int idInDb;
     public String gerbilVersion;
     public IntDoubleOpenHashMap additionalResults = null;
@@ -171,7 +173,16 @@ public class ExperimentTaskResult {
     public void setMatching(Matching matching) {
         this.matching = matching;
     }
-
+    
+    public String getRoc() {
+		return roc;
+	}
+    
+    public void setRoc(String roc) {
+    	this.roc=roc;
+    	this.hasRoc=true;
+    }
+    
     public String getStateMsg() {
         return stateMsg;
     }
@@ -210,6 +221,10 @@ public class ExperimentTaskResult {
                     builder.append(additionalResults.values[i]);
                 }
             }
+        }
+        if(roc!=null) {
+        	builder.append(", ROC=");
+        	builder.append(roc);
         }
         builder.append(")");
         return builder.toString();

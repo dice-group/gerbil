@@ -5,15 +5,45 @@ import static org.junit.Assert.assertTrue;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.EvaluationResult;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.Test;
 
 public class ModelComparatorTest {
 
+	
+//	@Test
+	public void isomporphTest() {
+		Model expected = ModelFactory.createDefaultModel();
+		Model test = ModelFactory.createDefaultModel(); 
+
+		Resource s = ResourceFactory.createResource("http://test.com/stmt1");
+		Property p = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/isDomiciledIn");
+		
+		Literal l1 = ResourceFactory.createLangLiteral("United Kingdom", "en");
+		Literal l2 = ResourceFactory.createStringLiteral("United Kingdom");
+		
+		expected.addLiteral(s, p, l1);
+		test.addLiteral(s, p, l2);
+		
+		assertTrue(expected.isIsomorphicWith(test));
+		
+		expected.removeAll();
+		test.removeAll();
+		
+		expected.addLiteral(s, p, l2);
+		test.addLiteral(s, p, l1);
+		
+	}
+	
 	@Test
 	public void cleansifyTest() {
 		Model anno = ModelFactory.createDefaultModel();

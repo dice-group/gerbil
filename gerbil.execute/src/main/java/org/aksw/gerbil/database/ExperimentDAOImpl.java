@@ -17,6 +17,7 @@
 package org.aksw.gerbil.database;
 
 import java.io.IOException;
+import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.sql.DataSource;
+import javax.sql.rowset.serial.SerialBlob;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -68,7 +70,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String SHUTDOWN = "SHUTDOWN";
 
     private final static String GET_ADDITIONAL_RESULTS = "SELECT resultId, value FROM ExperimentTasks_AdditionalResults WHERE taskId=:taskId";
+    private final static String GET_ROC_CURVE = "SELECT roc FROM ExperimentTasks_ROC WHERE taskId=:taskId";
     private final static String INSERT_ADDITIONAL_RESULT = "INSERT INTO ExperimentTasks_AdditionalResults(taskId, resultId, value) VALUES (:taskId, :resultId, :value)";
+    private final static String INSERT_ROC = "INSERT INTO ExperimentTasks_ROC(taskId, roc) VALUES (:taskId, :roc)";
     private final static String GET_SUB_TASK_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, state, errorCount, lastChanged, subTaskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
     private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
 
@@ -102,6 +106,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         // experiment task
         for (ExperimentTaskResult e : result) {
             addVersion(e);
+            addROC(e);
             addAdditionalResults(e);
             addSubTasks(e);
         }
@@ -202,6 +207,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                 }
             }
         }
+        if(result.hasRoc)
+        	setRocCurve(experimentTaskId, result.roc);
         if (result.hasSubTasks()) {
             for (ExperimentTaskResult subTask : result.getSubTasks()) {
                 insertSubTask(subTask, experimentTaskId);
@@ -217,6 +224,20 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         this.template.update(INSERT_ADDITIONAL_RESULT, parameters);
     }
 
+    protected void setRocCurve(int taskId, String roc) {
+    	MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", taskId);
+        Blob rocBlob;
+		try {
+			rocBlob = new SerialBlob(roc.getBytes());
+			parameters.addValue("roc", rocBlob);
+	        this.template.update(INSERT_ROC, parameters);
+		} catch (SQLException e) {
+			LOGGER.error("Could not store ROC Blob into database", e);
+		}
+        
+    }
+    
     @Override
     public void setExperimentState(int experimentTaskId, int state) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -334,6 +355,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
         for (ExperimentTaskResult result : results) {
             addAdditionalResults(result);
+            addROC(result);
         }
         return results;
     }
@@ -359,6 +381,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
         for (ExperimentTaskResult result : results) {
             addAdditionalResults(result);
+            addROC(result);
         }
         return results;
     }
@@ -370,6 +393,18 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                 new IntDoublePairRowMapper());
         for (IntDoublePair a : addResults) {
             result.addAdditionalResult(a.first, a.second);
+        }
+        
+    }
+    
+    protected void addROC(ExperimentTaskResult result) {
+    	MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", result.idInDb);
+        List<String> addBlob = this.template.query(GET_ROC_CURVE, parameters,
+                new Blob2StringRowMapper());
+        for(String roc : addBlob) {
+        	result.roc=roc;
+        	
         }
     }
 
@@ -395,6 +430,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         for (ExperimentTaskResult subTask : subTasks) {
             subTask.gerbilVersion = expTask.gerbilVersion;
             addAdditionalResults(subTask);
+            addROC(subTask);
         }
     }
 
@@ -412,6 +448,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         // experiment task
         addVersion(result);
         addAdditionalResults(result);
+        addROC(result);
         addSubTasks(result);
         return result;
     }
