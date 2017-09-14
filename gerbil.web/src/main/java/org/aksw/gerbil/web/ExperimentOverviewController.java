@@ -16,8 +16,6 @@
  */
 package org.aksw.gerbil.web;
 
-import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
-
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -49,6 +47,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
+
 @Controller
 public class ExperimentOverviewController {
 
@@ -64,6 +64,7 @@ public class ExperimentOverviewController {
 																				 */};
 
 	private static final String GERBIL_PROPERTIES_CHALLENGE_END_KEY = "org.aksw.gerbil.challenge.enddate";
+	public static final String DATE_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss XXX";
 
 	@Autowired
 	@Qualifier("experimentDAO")
@@ -88,7 +89,7 @@ public class ExperimentOverviewController {
 		if(GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_END_KEY)) {
         	String tmpDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_END_KEY);
         	challengeDate = Calendar.getInstance();
-        	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        	DateFormat df = new SimpleDateFormat(DATE_FORMAT_STRING);
         	try {
 				challengeDate.setTime(df.parse(tmpDate));
 			} catch (ParseException e) {
@@ -310,4 +311,5 @@ public class ExperimentOverviewController {
 		dataBuilder.append("\"]]");
 		return dataBuilder.toString();
 	}
+	
 }

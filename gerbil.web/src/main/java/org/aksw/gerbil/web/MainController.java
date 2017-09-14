@@ -88,7 +88,7 @@ public class MainController {
         if(GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_END_KEY)) {
         	String tmpDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_END_KEY);
         	challengeDate = Calendar.getInstance();
-        	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        	DateFormat df = new SimpleDateFormat(ExperimentOverviewController.DATE_FORMAT_STRING);
         	try {
 				challengeDate.setTime(df.parse(tmpDate));
 			} catch (ParseException e) {
@@ -131,7 +131,7 @@ public class MainController {
         ModelAndView model = new ModelAndView();
         model.setViewName("config");
         model.addObject("challengeEnded", Calendar.getInstance().after(challengeDate));
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        DateFormat df = new SimpleDateFormat(ExperimentOverviewController.DATE_FORMAT_STRING);
         model.addObject("challengeDate", df.format(challengeDate.getTime()));
         return model;
     }
