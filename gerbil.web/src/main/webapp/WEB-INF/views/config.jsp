@@ -197,7 +197,7 @@
 					</label>
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="col-md-8 col-md-offset-2">
 			<c:if test="${challengeEnded}">
 				<div id="warningChallengeEnded" class="alert alert-warning"
 								role="alert">
