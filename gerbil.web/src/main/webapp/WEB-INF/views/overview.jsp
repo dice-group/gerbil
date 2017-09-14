@@ -331,14 +331,14 @@ table {
 			if(datasets.length >= 1){
 	 			var canvas = "<div class=\"col-md-4\"><canvas id=\"";
 				canvas += tableData.datasetName;
-				canvas += "roc\" width=\"300\" height=\"300\"></canvas></div>";
+				canvas += "roc\" width=\"350\" height=\"350\"></canvas></div>";
 				$("#" + id).append(canvas);
 				var ctx = document.getElementById(tableData.datasetName + "roc").getContext('2d');
 	 			
 	 			var myLineChart = new Chart(ctx, {
    		 			type: 'scatter',
    			 		data : { "datasets" : datasets},
-   			 		options: { layout : { padding: {top : 50} }, scales: {yAxes: [{ticks: {max : 1, beginAtZero:true}}], xAxes : [{ticks: {max : 1, beginAtZero:true}}]}}
+   			 		options: { responsive: false, layout : { padding: {top : 50} }, scales: {yAxes: [{ticks: {max : 1, beginAtZero:true}}], xAxes : [{ticks: {max : 1, beginAtZero:true}}]}}
 				});
 			}
 		}
