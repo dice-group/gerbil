@@ -18,6 +18,10 @@ package org.aksw.gerbil.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +30,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.aksw.gerbil.Experimenter;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.dataid.DataIDGenerator;
@@ -64,7 +69,11 @@ public class MainController {
 
     private static final String GOOGLE_ANALYTICS_FILE_NAME = "google1d91bc68c8a56517.html";
 
+	private static final String GERBIL_PROPERTIES_CHALLENGE_END_KEY = "org.aksw.gerbil.challenge.enddate";
+
     private static boolean isInitialized = false;
+    
+    private static Calendar challengeDate;
 
     private static synchronized void initialize(ExperimentDAO dao) {
         if (!isInitialized) {
@@ -76,6 +85,17 @@ public class MainController {
         }
         // Simply call the dataset mapping so that it has to be instantiated
         // DatasetMapping.getDatasetsForExperimentType(ExperimentType.EExt);
+        if(GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_END_KEY)) {
+        	String tmpDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_END_KEY);
+        	challengeDate = Calendar.getInstance();
+        	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        	try {
+				challengeDate.setTime(df.parse(tmpDate));
+			} catch (ParseException e) {
+				challengeDate = null;
+				LOGGER.error("Could not set challenge end time!", e);
+			}
+        }
     }
 
     @PostConstruct
@@ -110,6 +130,9 @@ public class MainController {
     public ModelAndView config() {
         ModelAndView model = new ModelAndView();
         model.setViewName("config");
+        model.addObject("challengeEnded", Calendar.getInstance().after(challengeDate));
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        model.addObject("challengeDate", df.format(challengeDate.getTime()));
         return model;
     }
 

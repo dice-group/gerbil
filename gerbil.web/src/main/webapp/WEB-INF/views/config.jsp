@@ -103,7 +103,6 @@
 							<span class="glyphicon glyphicon-question-sign"></span>
 					</a>	
 				</div>		
-				
 				<div class="col-md-4">
 					<select id="type" style="display: none;">
 					</select>
@@ -197,6 +196,14 @@
 						href="https://github.com/AKSW/gerbil/wiki/Disclaimer">disclaimer</a>.-->
 					</label>
 				</div>
+			</div>
+			<div class="form-group">
+			<c:if test="${challengeEnded}">
+				<div id="warningChallengeEnded" class="alert alert-warning"
+								role="alert">
+					<strong>Warning!</strong> Challenge ended <c:if test="${challengeDate != null}">at ${challengeDate}</c:if>. Results will not occur in Leaderboard.
+				</div>
+			</c:if>
 			</div>
 			<!-- Button -->
 			<div class="form-group">

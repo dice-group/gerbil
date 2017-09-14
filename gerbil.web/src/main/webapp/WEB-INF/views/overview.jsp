@@ -18,6 +18,7 @@
 	src="/gerbil/webResources/js/RadarChart.js"></script>
 <script type="text/javascript"
 	src="/gerbil/webResources/js/script_radar_overview.js"></script>
+<script type="text/javascript" src="/gerbil/webResources/js/Chart.js"></script>
 <link rel="icon" type="image/png"
 	href="/gerbil/webResources/gerbilicon_transparent.png">
 </head>
@@ -113,6 +114,7 @@ table {
 <!-- 			<thead></thead> -->
 <!-- 			<tbody></tbody> -->
 <!-- 		</table> -->
+		 
 	</div>
 	<div class="container" style="visibility:hidden;">
 		<div class="form-horizontal">
@@ -243,7 +245,7 @@ table {
 					var tableData = data.datasets[i];
 					showTable(tableData, "resultsTable");
 				}
-			}).fail(function() {
+			}).fail(function(data) {
 				console.log("error loading data for table");
 			});
 		};
@@ -282,12 +284,19 @@ table {
 		};
 
 		function showTable(tableData, tableElementId) {
+			
 			//http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
+			var str = tableData.datasetName.replace(/\s/g, "");
+			var newID = str + "bod";
+			var bootDiv = "<div id=\"" + newID + "\" class=\"col-md-12\"></div>";
+		    $("#" + tableElementId).prepend(bootDiv);
+		    
 			var tbl_body = "";
 			var experimentType = $('#expTypes input:checked').val();
+			
 		    var measure = "F1 measure";
 		    if(experimentType==="SWC2"){
-		    	measure = "Area Under Curve (AUC)"
+		    	measure = "Area Under Curve (AUC)";
 		    }
 			var tbl_hd = "<tr><th>AnnotatorName</th><th>" + measure + "</th></tr>";
 			var tbl="<h3>Dataset: "+tableData.datasetName+"</h3><table id=\"" + tableData.datasetName + "\" class=\"table table-hover table-condensed\">";
@@ -303,8 +312,47 @@ table {
 			};
 			tbl+=tbl_body;
 			tbl+="</table>";
-			$("#" + tableElementId).prepend(tbl);
+			$("#" + newID).prepend("<div class=\"col-md-8\">" + tbl + "</div>");
+			if(experimentType==="SWC2"){
+				createROC(tableData, newID);
+			}
 		}
+
+		function createROC(tableData, id) {
+			var datasets = [];
+			for(var i=0;i<tableData.rocs.length;i++){
+				var dataset = tableData.rocs[i];
+				dataset.showLine = true;
+				dataset.lineTension = 0;
+				dataset.fill = false;
+				dataset.borderColor = getRandomColor();
+				datasets.push(dataset);
+			}
+			if(datasets.length >= 1){
+	 			var canvas = "<div class=\"col-md-4\"><canvas id=\"";
+				canvas += tableData.datasetName;
+				canvas += "roc\" width=\"300\" height=\"300\"></canvas></div>";
+				$("#" + id).append(canvas);
+				var ctx = document.getElementById(tableData.datasetName + "roc").getContext('2d');
+	 			
+	 			var myLineChart = new Chart(ctx, {
+   		 			type: 'scatter',
+   			 		data : { "datasets" : datasets},
+   			 		options: { layout : { padding: {top : 50} }, scales: {yAxes: [{ticks: {max : 1, beginAtZero:true}}], xAxes : [{ticks: {max : 1, beginAtZero:true}}]}}
+				});
+			}
+		}
+
+		function getRandomColor() {
+    		var letters = '0123456789ABCDEF'.split('');
+    		var color = '#';
+  	  		for (var i = 0; i < 6; i++ ) {
+      	  		color += letters[Math.floor(Math.random() * 16)];
+   	 		}
+    		return color;
+		}
+
+		
 
 		function drawSpiderDiagram(tableData, chartElementId) {
 			//draw spider chart

@@ -18,21 +18,24 @@ package org.aksw.gerbil.web;
 
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.DatasetMetaData;
 import org.aksw.gerbil.utils.DatasetMetaDataMapping;
 import org.aksw.gerbil.utils.PearsonsSampleCorrelationCoefficient;
@@ -60,6 +63,8 @@ public class ExperimentOverviewController {
 																				 * "corr. based on # datasets"
 																				 */};
 
+	private static final String GERBIL_PROPERTIES_CHALLENGE_END_KEY = "org.aksw.gerbil.challenge.enddate";
+
 	@Autowired
 	@Qualifier("experimentDAO")
 	private ExperimentDAO dao;
@@ -79,42 +84,85 @@ public class ExperimentOverviewController {
 
 		String annotatorNames[] = loadAnnotators(eType);
 		String datasetNames[] = loadDatasets(eType);
-
-		return loadLatestResults(eType, annotatorNames, datasetNames);
+		Calendar challengeDate = null;
+		if(GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_END_KEY)) {
+        	String tmpDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_END_KEY);
+        	challengeDate = Calendar.getInstance();
+        	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        	try {
+				challengeDate.setTime(df.parse(tmpDate));
+			} catch (ParseException e) {
+				challengeDate = null;
+				LOGGER.error("Could not set challenge end time!", e);
+			}
+        }
+		
+		return loadLatestResults(eType, annotatorNames, datasetNames, challengeDate);
 //		double correlations[][] = calculateCorrelations(results, datasetNames);
 //		return generateJson(results, correlations, annotatorNames, datasetNames);
 
 	}
 
 	private String loadLatestResults(ExperimentType experimentType,  String[] annotatorNames,
-			String[] datasetNames) {
+			String[] datasetNames, Calendar challengeDate) {
 
 		StringBuilder listsAsJson = new StringBuilder("{ \"datasets\": [ {");
+	
 		
 		int count=0;
 		for(String dataset : datasetNames){
 			List<ExperimentTaskResult> leaderList = new ArrayList<ExperimentTaskResult>();
-			
+			StringBuilder rocs = new StringBuilder("");
+			if(experimentType.equals(ExperimentType.SWC2)) {
+				rocs.append(", \"rocs\" : [");
+			}
 			listsAsJson.append("\"datasetName\" : \"").append(dataset).append("\", ");
-			
-			for(String annotator : annotatorNames){			
-				ExperimentTaskResult result = dao.getBestResult(experimentType.name(), annotator, dataset);
-				if(result!=null)
+			for(String annotator : annotatorNames){	
+				ExperimentTaskResult result;
+				if(challengeDate==null) {
+					result = dao.getBestResult(experimentType.name(), annotator, dataset);
+				}
+				else {
+					
+					result = dao.getBestResult(experimentType.name(), annotator, dataset, new Timestamp(challengeDate.getTimeInMillis()));
+				}
+				if(result!=null) {
 					leaderList.add(result);
+					
+				}
 			}
 			Collections.sort(leaderList, new LeaderBoardComparator(experimentType));
 			listsAsJson.append(" \"leader\" : [");
 			int count2=0;
+			boolean firstRoc=true;
 			for(ExperimentTaskResult expResults : leaderList){
-				String annotator = expResults.annotator.substring(0, expResults.annotator.lastIndexOf("("));
+				String annotator = expResults.annotator.substring(0, expResults.annotator.lastIndexOf("(")).replace("\"", "\\\"");
 				listsAsJson.append("{ \"annotatorName\" : \"").append(annotator).append("\", \"value\": \"");
 				listsAsJson.append(expResults.results[0]).append("\"}");
-								
-				if(count2<leaderList.size()-1)
+							
+				if(count2<leaderList.size()-1) {
 					listsAsJson.append(", ");
+				}
+				
+				if(experimentType.equals(ExperimentType.SWC2)) {
+					if(firstRoc&&expResults.getRoc()!=null) {
+						rocs.append("{\"label\" : \"").append(annotator).append("\", ");
+						rocs.append(expResults.getRoc()).append("}");
+						firstRoc=false;
+					}
+					else if(expResults.getRoc()!=null){
+						rocs.append(", {\"label\" : \"").append(annotator).append("\", ");
+						rocs.append(expResults.getRoc()).append("}");
+					}
+					
+				}
+				
 				count2++;
 			}
-			listsAsJson.append("]}");
+			if(experimentType.equals(ExperimentType.SWC2)) {
+				rocs.append("]");
+			}
+			listsAsJson.append("]").append(rocs).append("}");
 			if(count<datasetNames.length-1)
 				listsAsJson.append(", {");
 			count++;

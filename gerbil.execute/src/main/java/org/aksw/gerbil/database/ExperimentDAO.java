@@ -17,6 +17,7 @@
 package org.aksw.gerbil.database;
 
 import java.io.Closeable;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
@@ -243,5 +244,7 @@ public interface ExperimentDAO extends Closeable {
 
 	public ExperimentTaskResult getBestResult(String name, String annotator, String dataset);
 
+	public ExperimentTaskResult getBestResult(String name, String annotator, String dataset, Timestamp challengeDate);
+	
 	public Set<String> getAnnotators();
 }

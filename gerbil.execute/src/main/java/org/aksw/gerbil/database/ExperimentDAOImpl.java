@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -81,9 +82,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_VERSION_OF_EXPERIMENT_TASK = "SELECT version FROM ExperimentTasks_Version WHERE id=:id";
     private final static String INSERT_VERSION_OF_EXPERIMENT_TASK = "INSERT INTO ExperimentTasks_Version (id, version) VALUES(:id,:version)";
 
-	private static final String GET_BEST_EXPERIMENT_TASK_RESULTS = "SELECT exp.datasetName, exp.annotatorName, exp.experimentType, addi.value AS result, exp.state, exp.errorCount, lastChanged FROM ExperimentTasks exp join ExperimentTasks_AdditionalResults addi ON exp.Id=addi.taskId WHERE exp.annotatorName=:annotator AND exp.datasetName=:dataset AND exp.experimentType=:experimentType AND (addi.resultId=0 OR addi.resultId=3) ORDER BY result DESC";
+	private static final String GET_BEST_EXPERIMENT_TASK_RESULTS = "SELECT exp.datasetName, exp.annotatorName, exp.experimentType, addi.value AS result, exp.state, exp.errorCount, lastChanged, exp.Id FROM ExperimentTasks exp join ExperimentTasks_AdditionalResults addi ON exp.Id=addi.taskId WHERE exp.annotatorName=:annotator AND exp.datasetName=:dataset AND exp.experimentType=:experimentType AND (addi.resultId=0 OR addi.resultId=3) ORDER BY result DESC";
 
 	private static final String GET_ALL_ANNOTATORS = "SELECT DISTINCT annotatorName FROM ExperimentTasks";
+
+	private static final String GET_BEST_EXPERIMENT_DATE_TASK_RESULTS = "SELECT exp.datasetName, exp.annotatorName, exp.experimentType, addi.value AS result, exp.state, exp.errorCount, lastChanged, exp.Id FROM ExperimentTasks exp join ExperimentTasks_AdditionalResults addi ON exp.Id=addi.taskId WHERE exp.annotatorName=:annotator AND exp.datasetName=:dataset AND exp.experimentType=:experimentType AND (addi.resultId=0 OR addi.resultId=3) AND exp.lastChanged <= :before ORDER BY result DESC";;
 	
     private final NamedParameterJdbcTemplate template;
 
@@ -403,8 +406,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         List<String> addBlob = this.template.query(GET_ROC_CURVE, parameters,
                 new Blob2StringRowMapper());
         for(String roc : addBlob) {
-        	result.roc=roc;
-        	
+        	result.setRoc(roc);
         }
     }
 
@@ -473,6 +475,27 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         
         List<ExperimentTaskResult> result = this.template.query(GET_BEST_EXPERIMENT_TASK_RESULTS, parameters,
                 new LeaderBoardResultRowMapper());
+        for(ExperimentTaskResult res : result) {
+        	addROC(res);
+        }
+        if(result.isEmpty())
+        	return null;
+        return result.get(0);
+	}
+    
+	@Override
+	public ExperimentTaskResult getBestResult(String experimentType,  String annotator, String dataset, Timestamp challengeDate) {
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("experimentType", experimentType);
+        parameters.addValue("annotator", annotator);
+        parameters.addValue("dataset", dataset);
+        parameters.addValue("before", challengeDate);
+        
+        List<ExperimentTaskResult> result = this.template.query(GET_BEST_EXPERIMENT_DATE_TASK_RESULTS, parameters,
+                new LeaderBoardResultRowMapper());
+        for(ExperimentTaskResult res : result) {
+        	addROC(res);
+        }
         if(result.isEmpty())
         	return null;
         return result.get(0);
