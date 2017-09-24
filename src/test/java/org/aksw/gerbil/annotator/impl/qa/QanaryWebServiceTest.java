@@ -1,51 +1,36 @@
 package org.aksw.gerbil.annotator.impl.qa;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
 
 import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.http.HttpManagement;
-import org.aksw.gerbil.qa.QAUtils;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.commons.load.LoaderController;
 import org.aksw.qa.commons.load.json.EJQuestionFactory;
 import org.aksw.qa.commons.load.json.ExtendedJson;
 import org.aksw.qa.commons.load.json.ExtendedQALDJSONLoader;
-import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
-import org.aksw.simba.topicmodeling.concurrent.tasks.TaskObserver;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Assert;
 import org.junit.Test;
-import org.simpleframework.http.core.ContainerServer;
-import org.simpleframework.transport.connect.SocketConnection;
 
 public class QanaryWebServiceTest {
 
-	private static final String QANARY_URI = "http://wdaqua-qanary.univ-st-etienne.fr/gerbil";
+	private static final String QANARY_URI = "https://wdaqua-qanary.univ-st-etienne.fr/gerbil-execute/wdaqua-core0,%20QueryExecuter/";
 
 	// protected Semaphore taskEndedMutex = new Semaphore(0);
 
 	protected ExtendedQALDBasedWebService service = new ExtendedQALDBasedWebService(QANARY_URI);
 
-	private void answer(List<IQuestion> iquestions) throws GerbilException {
+	private void answer(final List<IQuestion> iquestions) throws GerbilException {
+
 		for (IQuestion iquestion : iquestions) {
 			Set<String> goldenStandard = iquestion.getGoldenAnswers();
 			Iterator it = goldenStandard.iterator();
@@ -54,23 +39,26 @@ public class QanaryWebServiceTest {
 			Document document = new DocumentImpl();
 			document.setText(question);
 			List<Marking> annotationAnswers = service.answerQuestion(document, "en");
+			AnswerSet<String> answers = null;
 			for (Marking m : annotationAnswers) {
-				AnswerSet a = (AnswerSet) m;
-				String sA = (String) a.getAnswers().iterator().next();
-				String sG = (String) it.next();
-				System.out.println("Annotator answer: " + sA);
-				System.out.println("Golden Std: " + sG);
-				assertTrue(sA.equals(sG));
+				if (m instanceof AnswerSet<?>) {
+					answers = (AnswerSet) m;
+					System.out.println("Question : " + question);
+					System.out.println("Annotator answer: " + answers.getAnswers().toString());
+					System.out.println("Golden Std: " + goldenStandard.toString());
+					Assert.assertTrue("Annotator answers and golden answers dont match ", answers.getAnswers().equals(goldenStandard));
+				}
+
 			}
 		}
 	}
 
-	public void answerXML(InputStream fis) throws GerbilException {
+	public void answerXML(final InputStream fis) throws GerbilException {
 		List<IQuestion> iquestions = LoaderController.loadXML(fis, "en");
 		answer(iquestions);
 	}
 
-	public void answerJSON(InputStream fis) throws GerbilException {
+	public void answerJSON(final InputStream fis) throws GerbilException {
 		ExtendedJson exJson;
 		try {
 			exJson = (ExtendedJson) ExtendedQALDJSONLoader.readJson(fis, ExtendedJson.class);
