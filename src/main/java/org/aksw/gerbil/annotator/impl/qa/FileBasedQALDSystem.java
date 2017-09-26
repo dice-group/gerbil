@@ -11,46 +11,37 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.qa.QAUtils;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.qa.commons.datastructure.IQuestion;
-import org.aksw.qa.commons.datastructure.Question;
-import org.aksw.qa.commons.load.json.EJAnswers;
-import org.aksw.qa.commons.load.json.EJQuestionEntry;
 import org.aksw.qa.commons.load.json.EJQuestionFactory;
-import org.aksw.qa.commons.load.json.ExtendedJson;
 import org.aksw.qa.commons.load.json.ExtendedQALDJSONLoader;
-import org.aksw.qa.commons.load.json.QaldJson;
-import org.openrdf.http.protocol.error.ErrorType;
 
-public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
-		QASystem {
+public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements QASystem {
 
-	protected static List<Document> loadInstances(List<String> qaldFiles,
-			List<String> questionUriPrefixes, String qLang) throws GerbilException {
-		List<Document> instances = new ArrayList<Document>();
+	protected static List<Document> loadInstances(final List<String> qaldFiles, final List<String> questionUriPrefixes, final String qLang) throws GerbilException {
+		List<Document> instances = new ArrayList<>();
 		for (int i = 0; i < qaldFiles.size(); ++i) {
-			loadInstances(qaldFiles.get(i), questionUriPrefixes.get(i),
-					instances, qLang);
+			loadInstances(qaldFiles.get(i), questionUriPrefixes.get(i), instances, qLang);
 		}
 		return instances;
 	}
 
-	protected static void loadInstances(String qaldFile,
-			String questionUriPrefix, List<Document> instances, String qLang)
-			throws GerbilException {
+	protected static void loadInstances(final String qaldFile, final String questionUriPrefix, final List<Document> instances, final String qLang) throws GerbilException {
 
 		List<IQuestion> questions = null;
-		Object json = ExtendedQALDJSONLoader.readJson(new File(qaldFile));
-		questions = EJQuestionFactory.getQuestionsFromJson(json);
-		
+		try {
+			Object json = ExtendedQALDJSONLoader.readJson(new File(qaldFile));
+			questions = EJQuestionFactory.getQuestionsFromJson(json);
+		} catch (Exception e) {
+			throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+		}
+
 		for (IQuestion question : questions) {
-			instances.add(QAUtils.translateQuestion(question, questionUriPrefix
-					+ question.getId(), qLang));
+			instances.add(QAUtils.translateQuestion(question, questionUriPrefix + question.getId(), qLang));
 		}
 	}
 
-
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param qaldFiles
 	 *            the QALD files that contain the responses of this annotator
 	 * @param questionUriPrefixes
@@ -58,14 +49,13 @@ public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
 	 * @throws GerbilException
 	 *             if one of the given files can not be loaded correctly
 	 */
-	public FileBasedQALDSystem(List<String> qaldFiles,
-			List<String> questionUriPrefixes, String questionLanguage) throws GerbilException {
+	public FileBasedQALDSystem(final List<String> qaldFiles, final List<String> questionUriPrefixes, final String questionLanguage) throws GerbilException {
 		this(null, qaldFiles, questionUriPrefixes, questionLanguage);
 	}
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the annotator
 	 * @param qaldFiles
@@ -75,10 +65,8 @@ public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
 	 * @throws GerbilException
 	 *             if one of the given files can not be loaded correctly
 	 */
-	public FileBasedQALDSystem(String name, List<String> qaldFiles,
-			List<String> questionUriPrefixes, String questionLanguage) throws GerbilException {
+	public FileBasedQALDSystem(final String name, final List<String> qaldFiles, final List<String> questionUriPrefixes, final String questionLanguage) throws GerbilException {
 		super(name, loadInstances(qaldFiles, questionUriPrefixes, questionLanguage), questionLanguage);
 	}
-
 
 }
