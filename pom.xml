@@ -346,7 +346,7 @@
 		<dependency>
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>commons</artifactId>
-			<version>0.4.11</version>
+			<version>0.4.13</version>
 			<exclusions>
 				<exclusion>
 					<groupId>mysql</groupId>
