@@ -121,9 +121,21 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
 				else{
 					goldAnnotations = null;
 				}
+			}else {
+				//Check if annotator results are of type Annotation
+				if (annotatorAnswerSet.getAnswers().iterator().hasNext()) {
+					resultStrings = new HashSet<String>();
+					if ( annotatorAnswerSet.getAnswers().iterator().next() instanceof Annotation) {
+						for(Object obj : annotatorAnswerSet.getAnswers()) 
+							resultStrings.add(((Annotation)obj).getUri());
+					} else {
+						resultStrings = (Set<String>) annotatorAnswerSet.getAnswers();
+						
+					}
+				}
 			}
 			goldStrings = (Set<String>) goldStdAnswerSet.getAnswers();
-			resultStrings = (Set<String>) annotatorAnswerSet.getAnswers();
+			
 			//Clean up literals
 		}
 
