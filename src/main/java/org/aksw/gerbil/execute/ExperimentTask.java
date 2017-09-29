@@ -54,6 +54,7 @@ import org.aksw.gerbil.evaluate.IntEvaluationResult;
 import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.qa.datatypes.AnswerSet;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetrieverUtils;
 import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
@@ -64,6 +65,7 @@ import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.AnswersLogger;
 import org.aksw.gerbil.utils.AnswersLoggerContainer;
@@ -242,6 +244,7 @@ public class ExperimentTask implements Task {
         case Sc2KB:
         case OKE_Task1: // falls through
         case OKE_Task2:
+        case QA:
         case ETyping: {
             if (annotatorSameAsRetriever != null) {
                 for (List<? extends Meaning> result : results) {
@@ -528,15 +531,35 @@ public class ExperimentTask implements Task {
                     }
                 }
                 List<Meaning> meanings = new ArrayList<Meaning>(results.size());
+                List<AnswerSet> answerSets = new ArrayList<AnswerSet>(results.size());
                 for (List<Marking> markings : results) {
                     for (Marking marking : markings) {
                         if (marking instanceof Meaning) {
                             meanings.add((Meaning) marking);
                         }
+                        if (marking instanceof AnswerSet) {
+                        	answerSets.add((AnswerSet) marking);
+                        }
                     }
                 }
                 
                 prepareAnnotatorResults(Arrays.asList(meanings), globalRetriever);
+                
+                for(AnswerSet answerSet : answerSets) {
+                	
+                	for(Object answer : answerSet.getAnswers()) {
+                		if(answer instanceof Annotation) {
+                			globalRetriever.addSameURIs(((Annotation) answer).getUris());
+                		}
+                		else {
+                			globalRetriever.addSameURIs(answerSet.getAnswers());
+                			break;
+                		}
+                		
+                	}
+                	
+                }
+               
                 evalResult = evaluate(evaluators, results, goldStandard);
                 
                 AnswersLoggerContainer.remove(evaluators);

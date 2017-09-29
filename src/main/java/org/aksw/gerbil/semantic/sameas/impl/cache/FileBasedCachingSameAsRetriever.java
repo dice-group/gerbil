@@ -220,6 +220,9 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
         FileOutputStream fout = null;
         ObjectOutputStream oout = null;
         try {
+        	if(!tempCacheFile.exists()) {
+        		tempCacheFile.createNewFile();
+        	}
             fout = new FileOutputStream(tempCacheFile);
             oout = new ObjectOutputStream(fout);
             // first, serialize the number of URIs

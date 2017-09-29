@@ -1,6 +1,7 @@
 package org.aksw.gerbil.annotator.impl.qa;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,12 @@ public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
 			throws GerbilException {
 
 		List<IQuestion> questions = null;
-		Object json = ExtendedQALDJSONLoader.readJson(new File(qaldFile));
+		Object json;
+		try {
+			json = ExtendedQALDJSONLoader.readJson(new File(qaldFile));
+		} catch (IOException e) {
+			throw new GerbilException(ErrorTypes.DATASET_LOADING_ERROR);
+		}
 		questions = EJQuestionFactory.getQuestionsFromJson(json);
 		
 		for (IQuestion question : questions) {
