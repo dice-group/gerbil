@@ -42,7 +42,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     public static final String MICRO_F1_SCORE_NAME = "Micro F1 score";
     public static final String MICRO_PRECISION_NAME = "Micro Precision";
     public static final String MICRO_RECALL_NAME = "Micro Recall";
-    public static final String MACRO_F1_2_SCORE_NAME = "F_QALD";
+    public static final String MACRO_F1_2_SCORE_NAME = "Macro F1 QALD";
 	private static final String PRINT_ANSWERS_TO_LOG_KEY = "org.aksw.gerbil.qa.matching.printAnswers";
 
     protected MatchingsCounter<T> matchingsCounter;
