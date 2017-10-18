@@ -42,6 +42,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     public static final String MICRO_F1_SCORE_NAME = "Micro F1 score";
     public static final String MICRO_PRECISION_NAME = "Micro Precision";
     public static final String MICRO_RECALL_NAME = "Micro Recall";
+    public static final String MACRO_F1_2_SCORE_NAME = "F_QALD";
 	private static final String PRINT_ANSWERS_TO_LOG_KEY = "org.aksw.gerbil.qa.matching.printAnswers";
 
     protected MatchingsCounter<T> matchingsCounter;
@@ -69,6 +70,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         EvaluationCounts counts[] = generateMatchingCounts(annotatorResults, goldStandard);
         results.addResults(calculateMicroFMeasure(counts));
         results.addResults(calculateMacroFMeasure(counts));
+    
         if(printAnswers){
         	try{
         		alog.close();
@@ -139,6 +141,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         avgs[0] /= counts.length;
         avgs[1] /= counts.length;
         avgs[2] /= counts.length;
+        double F1_scoreDef = (2 * avgs[0] * avgs[1]) / (avgs[0] + avgs[1]);
         if(printAnswers){
         	try{
         		alog.printMacro(avgs);
@@ -147,7 +150,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         	}
         }
         return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, avgs[0]),
-                new DoubleEvaluationResult(recallName, avgs[1]), new DoubleEvaluationResult(f1ScoreName, avgs[2]) };
+                new DoubleEvaluationResult(recallName, avgs[1]), new DoubleEvaluationResult(f1ScoreName, avgs[2]), new DoubleEvaluationResult(MACRO_F1_2_SCORE_NAME, F1_scoreDef) };
     }
 
     private double[] calculateMeasures(EvaluationCounts counts) {

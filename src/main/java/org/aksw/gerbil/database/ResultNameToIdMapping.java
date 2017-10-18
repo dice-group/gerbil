@@ -54,6 +54,7 @@ public class ResultNameToIdMapping {
             nameToIdMap.put(FMeasureCalculator.MICRO_PRECISION_NAME, ExperimentTaskResult.MICRO_PRECISION_INDEX);
             nameToIdMap.put(FMeasureCalculator.MICRO_RECALL_NAME, ExperimentTaskResult.MICRO_RECALL_INDEX);
 
+
             nameToIdMap.put(InKBClassBasedFMeasureCalculator.MACRO_ACCURACY_NAME, 6);
             nameToIdMap.put(InKBClassBasedFMeasureCalculator.MICRO_ACCURACY_NAME, 7);
 
@@ -82,6 +83,9 @@ public class ResultNameToIdMapping {
             nameToIdMap.put(MarkingClasses.GS_IN_KB.getLabel() + " " + FMeasureCalculator.MICRO_PRECISION_NAME, 26);
             nameToIdMap.put(MarkingClasses.GS_IN_KB.getLabel() + " " + FMeasureCalculator.MICRO_RECALL_NAME, 27);
 
+            nameToIdMap.put(FMeasureCalculator.MACRO_F1_2_SCORE_NAME, 28);
+
+            
             instance = new ResultNameToIdMapping(nameToIdMap, IntObjectOpenHashMap.from(nameToIdMap.values().toArray(),
                     nameToIdMap.keys().toArray(String.class)));
         }

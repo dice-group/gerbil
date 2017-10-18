@@ -32,6 +32,8 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+
 public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator implements QASystem{
 
 	private String name;
@@ -96,7 +98,12 @@ public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator impl
             try {
         	String content = EntityUtils.toString(entity);
         	InputStream stream = new ByteArrayInputStream(content.getBytes("UTF-8"));
-        	Object json = ExtendedQALDJSONLoader.readJson(stream, ExtendedJson.class); 
+        	Object json = null;
+        	try {
+        		json = ExtendedQALDJSONLoader.readJson(stream, ExtendedJson.class); 
+        	}catch(UnrecognizedPropertyException e) {
+        		//can be ignored, it is just not an extended json obnject
+        	}
         	List<IQuestion>  questions;
         	if(json==null){
         	    stream = new ByteArrayInputStream(content.getBytes("UTF-8"));

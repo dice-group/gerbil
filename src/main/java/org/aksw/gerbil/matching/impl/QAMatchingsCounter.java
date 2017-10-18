@@ -91,6 +91,7 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
 		// }
 		Set<String> goldStrings = null, resultStrings = null;
 		List<Annotation> goldAnnotations = null, resultAnnotations = null;
+		resultStrings = new HashSet<String>();
 		if (goldStdAnswerSet instanceof ResourceAnswerSet) {
 			goldAnnotations = new ArrayList<Annotation>(
 					((ResourceAnswerSet) goldStdAnswerSet).getAnswers());
@@ -123,8 +124,9 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
 				}
 			}else {
 				//Check if annotator results are of type Annotation
+				
 				if (annotatorAnswerSet.getAnswers().iterator().hasNext()) {
-					resultStrings = new HashSet<String>();
+					
 					if ( annotatorAnswerSet.getAnswers().iterator().next() instanceof Annotation) {
 						for(Object obj : annotatorAnswerSet.getAnswers()) 
 							resultStrings.add(((Annotation)obj).getUri());
