@@ -32,7 +32,7 @@ public class SPARQLBasedLiteral2Resource extends AbstractLiteral2Resource {
 		    literal = literal.substring(0, literal.lastIndexOf("@"));
 		}
 		StringBuilder queryString = new StringBuilder(this.queryString).
-				append("\"").append(literal).append("\"@").append(qLang).append("}");
+				append(literal).append("@").append(qLang).append("}");
 		Query q;
 		try {
 			q = QueryFactory.create(queryString.toString());
