@@ -34,13 +34,18 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 	public static final String START_SYSTEM_NAME = "START";
 	public static final String YODA_SYSTEM_NAME = "YODA";
 	public static final String OKBQA_SYSTEM_NAME = "OKBQA";
-	public static final String QANARY_SYSTEM_NAME = "QANARY";
+	public static final String QANARY_SYSTEM_WIKIDATA_NAME = "QANARY (wikidata)";
+	public static final String QANARY_SYSTEM_DBPEDIA_NAME = "QANARY (DBpedia)";
 	private static final int DEFAULT_WAITING_TIME = 60000;
 	private static final String MAXIMUM_TIME_TO_WAIT_KEY = "org.aksw.gerbil.annotator.http.HttpManagement.maxWaitingTime";
 
 	protected ASystem qaSystem;
 
 	public NLIWODBasedSystem(String systemName) throws GerbilException {
+		this(systemName, "");
+	}
+	
+	public NLIWODBasedSystem(String systemName, String url) throws GerbilException {	
 		int maxWaitingTime = DEFAULT_WAITING_TIME;
         try {
             maxWaitingTime = GerbilConfiguration.getInstance().getInt(MAXIMUM_TIME_TO_WAIT_KEY);
@@ -71,8 +76,12 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 			qaSystem = new OKBQA();
 			break;
 		}
-		case QANARY_SYSTEM_NAME: {
-			qaSystem = new QANARY();
+		case QANARY_SYSTEM_WIKIDATA_NAME: {
+			qaSystem = new QANARY(url);
+			break;
+		}
+		case QANARY_SYSTEM_DBPEDIA_NAME:{
+			qaSystem = new QANARY(url);
 			break;
 		}
 		default:
