@@ -141,7 +141,9 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         avgs[0] /= counts.length;
         avgs[1] /= counts.length;
         avgs[2] /= counts.length;
-        double F1_scoreDef = (2 * avgs[0] * avgs[1]) / (avgs[0] + avgs[1]);
+
+        double F1_scoreDef = calculateF1QALD(counts);
+        
         if(printAnswers){
         	try{
         		alog.printMacro(avgs);
@@ -152,7 +154,54 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, avgs[0]),
                 new DoubleEvaluationResult(recallName, avgs[1]), new DoubleEvaluationResult(f1ScoreName, avgs[2]), new DoubleEvaluationResult(MACRO_F1_2_SCORE_NAME, F1_scoreDef) };
     }
+    
+    private double calculateF1QALD(EvaluationCounts counts[]) {
+    	 double avgs[] = new double[3];
+         double measures[];
+    	 for (int i = 0; i < counts.length; ++i) {
+             measures = calculateMeasuresQALD(counts[i]);
+             avgs[0] += measures[0];
+             avgs[1] += measures[1];
+             avgs[2] += measures[2];
+         }
+    	 avgs[0] /= counts.length;
+         avgs[1] /= counts.length;
+         avgs[2] /= counts.length;
+         return (2 * avgs[0] * avgs[1]) / (avgs[0] + avgs[1]);
+         
+    }
 
+    private double[] calculateMeasuresQALD(EvaluationCounts counts) {
+        double precision, recall, F1_score;
+        if (counts.truePositives == 0) {
+            if ((counts.falsePositives == 0) && (counts.falseNegatives == 0)) {
+                // If there haven't been something to find and nothing has been
+                // found --> everything is great
+                precision = 1.0;
+                recall = 1.0;
+                F1_score = 1.0;
+            } 
+            else if(counts.falsePositives == 0) {
+            	//Annotator has no answer 
+            	 precision = 1.0;
+                 recall = 0.0;
+                 F1_score = 0.0;
+            }
+            else {
+                // The annotator found no correct ones, but made some mistake
+                // --> that is bad
+                precision = 0.0;
+                recall = 0.0;
+                F1_score = 0.0;
+            }
+        } else {
+            precision = (double) counts.truePositives / (double) (counts.truePositives + counts.falsePositives);
+            recall = (double) counts.truePositives / (double) (counts.truePositives + counts.falseNegatives);
+            F1_score = (2 * precision * recall) / (precision + recall);
+        }
+        return new double[] { precision, recall, F1_score };
+    }
+    
     private double[] calculateMeasures(EvaluationCounts counts) {
         double precision, recall, F1_score;
         if (counts.truePositives == 0) {
