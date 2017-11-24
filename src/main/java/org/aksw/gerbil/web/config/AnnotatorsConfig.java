@@ -47,7 +47,7 @@ public class AnnotatorsConfig {
     public static final String ANNOTATOR_EXPERIMENT_TYPE_SUFFIX = "experimentType";
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
     public static final String ANNOTATOR_SINGLETON_FLAG_SUFFIX = "singleton";
-    
+
     public static final String ANNOTATOR_CHECK_CLASS_SUFFIX = "check.class";
     public static final String ANNOTATOR_CHECK_ARGS_SUFFIX = "check.args";
 
@@ -99,7 +99,7 @@ public class AnnotatorsConfig {
         org.apache.commons.configuration.Configuration config = GerbilConfiguration.getInstance();
         StringBuilder keyBuilder = new StringBuilder();
         String key;
-        
+
         key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_NAME_SUFFIX);
         if (!config.containsKey(key)) {
             LOGGER.error("Couldn't get a name for the \"" + annotatorKey + "\" annotator.");
@@ -147,9 +147,17 @@ public class AnnotatorsConfig {
             constructorArgs[i] = constructorArgStrings[i];
             constructorArgClasses[i] = String.class;
         }
-        Constructor<? extends Annotator> constructor = annotatorClass.getConstructor(constructorArgClasses);
-        
-     // If a checker class has been defined
+        Constructor<? extends Annotator> constructor = null;
+        try {
+            constructor = annotatorClass.getConstructor(constructorArgClasses);
+        } catch (NoClassDefFoundError e) {
+            throw new IllegalArgumentException(
+                    "The annotator configuriation tries to use a class (directly or indirectly) that is not existing ("
+                            + e.getLocalizedMessage() + "). The annotator won't be available.",
+                    e);
+        }
+
+        // If a checker class has been defined
         key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_CHECK_CLASS_SUFFIX);
         if (config.containsKey(key)) {
             String checkerClassName = config.getString(key);
@@ -167,8 +175,8 @@ public class AnnotatorsConfig {
             }
             try {
                 @SuppressWarnings("unchecked")
-                Class<? extends Checker> checkerClass = (Class<? extends Checker>) AnnotatorsConfig.class.getClassLoader()
-                        .loadClass(checkerClassName);
+                Class<? extends Checker> checkerClass = (Class<? extends Checker>) AnnotatorsConfig.class
+                        .getClassLoader().loadClass(checkerClassName);
                 Checker checker = checkerClass.newInstance();
                 if (!checker.check(checkerArgs)) {
                     LOGGER.info("Check for annotator \"{}\" failed. It won't be available.", name);
