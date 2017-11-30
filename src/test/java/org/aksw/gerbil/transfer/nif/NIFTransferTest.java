@@ -51,49 +51,72 @@ public class NIFTransferTest {
                 Arrays.asList((Marking) new NamedEntity(13, 8, "http://www.aksw.org/gerbil/testtext"))) });
         tests.add(new Object[] { new DocumentImpl("Dies ist ein Testtext.", "http://www.aksw.org/gerbil/test-document",
                 Arrays.asList((Marking) new ScoredNamedEntity(13, 8, "http://www.aksw.org/gerbil/testtext", 0.87))) });
-        tests.add(new Object[] { new DocumentImpl("<> dies ?% ist ein TästTöxt!!.",
-                "http://www.aksw.org/gerbil/test-document", Arrays.asList((Marking) new SpanImpl(3, 4),
-                        (Marking) new SpanImpl(19, 8))) });
+        tests.add(new Object[] {
+                new DocumentImpl("<> dies ?% ist ein TästTöxt!!.", "http://www.aksw.org/gerbil/test-document",
+                        Arrays.asList((Marking) new SpanImpl(3, 4), (Marking) new SpanImpl(19, 8))) });
         tests.add(new Object[] { new DocumentImpl(
                 "Angelina, her father Jon, and her partner Brad never played together in the same movie.",
                 "http://www.aksw.org/gerbil/test-document", Arrays.asList((Marking) new SpanImpl(21, 3),
                         (Marking) new SpanImpl(0, 8), (Marking) new SpanImpl(42, 4))) });
         tests.add(new Object[] { new DocumentImpl(
                 "Angelina, her father Jon, and her partner Brad never played together in the same movie.",
-                "http://www.aksw.org/gerbil/test-document", Arrays.asList((Marking) new Annotation(
-                        "http://www.aksw.org/gerbil/testtext"), (Marking) new Annotation(
-                        "http://www.aksw.org/gerbil/testtext2"), (Marking) new Annotation(
-                        "http://www.aksw.org/gerbil/testtext"))) });
+                "http://www.aksw.org/gerbil/test-document",
+                Arrays.asList((Marking) new Annotation("http://www.aksw.org/gerbil/testtext"),
+                        (Marking) new Annotation("http://www.aksw.org/gerbil/testtext2"),
+                        (Marking) new Annotation("http://www.aksw.org/gerbil/testtext"))) });
         tests.add(new Object[] { new DocumentImpl(
                 "Angelina, her father Jon, and her partner Brad never played together in the same movie.",
                 "http://www.aksw.org/gerbil/test-document",
                 Arrays.asList(
-                        (Marking) new TypedNamedEntity(21, 3, "http://www.aksw.org/notInWiki/Jon", new HashSet<String>(
-                                Arrays.asList("http://www.aksw.org/notInWiki/Person"))),
-                        (Marking) new TypedNamedEntity(0, 8, new HashSet<String>(Arrays.asList(
-                                "http://www.aksw.org/notInWiki/Angelina", "http://www.aksw.org/notInWiki/Angelina2")),
+                        (Marking) new TypedNamedEntity(21, 3, "http://www.aksw.org/notInWiki/Jon",
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Person"))),
+                        (Marking) new TypedNamedEntity(0, 8,
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Angelina",
+                                        "http://www.aksw.org/notInWiki/Angelina2")),
                                 new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Person",
-                                        "http://www.aksw.org/notInWiki/Actor", "http://www.aksw.org/notInWiki/Mother"))),
+                                        "http://www.aksw.org/notInWiki/Actor",
+                                        "http://www.aksw.org/notInWiki/Mother"))),
                         (Marking) new ScoredTypedNamedEntity(42, 4, "http://www.aksw.org/notInWiki/Brad",
                                 new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Person")), 0.25))) });
         tests.add(new Object[] { new DocumentImpl(
                 "Štvrtok is a village in Trenčín District in the Trenčín Region of north-western Slovakia.",
-                "http://www.aksw.org/gerbil/test-document", Arrays.asList(
+                "http://www.aksw.org/gerbil/test-document",
+                Arrays.asList(
                         (Marking) new TypedNamedEntity(0, 7, "http://dbpedia.org/resource/Štvrtok",
                                 new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Village"))),
-                        (Marking) new TypedNamedEntity(13, 7, new HashSet<String>(Arrays
-                                .asList("http://www.aksw.org/notInWiki/village")), new HashSet<String>(Arrays
-                                .asList("http://www.aksw.org/notInWiki/Location"))),
+                        (Marking) new TypedNamedEntity(13, 7,
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/village")),
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Location"))),
                         (Marking) new ScoredTypedNamedEntity(80, 8, "http://dbpedia.org/resource/Slovakia",
                                 new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Country")), 0.25))) });
         tests.add(new Object[] { new DocumentImpl(
                 "Štvrtok is a village in Trenčín District in the Trenčín Region of north-western Slovakia.",
-                "http://www.aksw.org/gerbil/test-document", Arrays.asList(
-                        (Marking) new TypedSpanImpl(0, 7, new HashSet<String>(Arrays
-                                .asList("http://www.aksw.org/notInWiki/Village"))),
-                        (Marking) new TypedSpanImpl(13, 7, new HashSet<String>(Arrays
-                                .asList("http://www.aksw.org/notInWiki/Location"))), (Marking) new TypedSpanImpl(80, 8,
+                "http://www.aksw.org/gerbil/test-document",
+                Arrays.asList(
+                        (Marking) new TypedSpanImpl(0, 7,
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Village"))),
+                        (Marking) new TypedSpanImpl(13, 7,
+                                new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Location"))),
+                        (Marking) new TypedSpanImpl(80, 8,
                                 new HashSet<String>(Arrays.asList("http://www.aksw.org/notInWiki/Country"))))) });
+        // Example containing emoticons (issue #229)
+        tests.add(new Object[] { new DocumentImpl(
+                "“@evepers: \"@MadamChiuLimFan: Trending WW at No. 1#XianLimTalentShow 👏👏👏👏👏👏👏 http://t.co/JrHAkdtwIi\"”@XianLimm IKAW Na talaga 👍💙😄",
+                "http://www.aksw.org/gerbil/test-document",
+                Arrays.asList(
+                        (Marking) new TypedNamedEntity(
+                                2, 7,
+                                new HashSet<String>(Arrays.asList("http://localhost/NIL/evepers_539076279300263000")),
+                                new HashSet<String>(Arrays.asList("http://localhost/NEEL/Person"))),
+                        (Marking) new TypedNamedEntity(13, 15,
+                                new HashSet<String>(Arrays.asList("http://localhost/NIL/MadamChiuLimFan_539076279300263000")),
+                                new HashSet<String>(Arrays.asList("http://localhost/NEEL/Person"))),
+                        (Marking) new TypedNamedEntity(102, 8,
+                                new HashSet<String>(Arrays.asList("http://dbpedia.org/resource/Xian_Lim")),
+                                new HashSet<String>(Arrays.asList("http://localhost/NEEL/Person"))),
+                        (Marking) new TypedNamedEntity(111, 4,
+                                new HashSet<String>(Arrays.asList("http://localhost/NIL/IKAW_539076279300263000")),
+                                new HashSet<String>(Arrays.asList("http://localhost/NEEL/Product"))))) });
         return tests;
     }
 
@@ -111,15 +134,18 @@ public class NIFTransferTest {
         NIFDocumentParser parser = new TurtleNIFDocumentParser();
         Document newDocument = parser.getDocumentFromNIFString(nifDocument);
 
-        Assert.assertEquals("Documents are not the same.\ndocument 1 : " + document.toString() + "\ndocument 2 : "
-                + newDocument.toString() + " NIF:\n" + nifDocument, document.getDocumentURI(),
-                newDocument.getDocumentURI());
+        Assert.assertEquals(
+                "Documents are not the same.\ndocument 1 : " + document.toString() + "\ndocument 2 : "
+                        + newDocument.toString() + " NIF:\n" + nifDocument,
+                document.getDocumentURI(), newDocument.getDocumentURI());
         Assert.assertEquals("Documents are not the same.\ndocument 1 : " + document.toString() + "\ndocument 2 : "
                 + newDocument.toString() + " NIF:\n" + nifDocument, document.getText(), newDocument.getText());
         List<Marking> expectedMarkings = document.getMarkings();
         List<Marking> receivedMarkings = newDocument.getMarkings();
-        Assert.assertEquals("Documents are not the same.\ndocument 1 : " + document.toString() + "\ndocument 2 : "
-                + newDocument.toString() + " NIF:\n" + nifDocument, expectedMarkings.size(), receivedMarkings.size());
+        Assert.assertEquals(
+                "Documents are not the same.\ndocument 1 : " + document.toString() + "\ndocument 2 : "
+                        + newDocument.toString() + " NIF:\n" + nifDocument,
+                expectedMarkings.size(), receivedMarkings.size());
         for (Marking marking : expectedMarkings) {
             Assert.assertTrue("Documents are not the same.\ndocument 1 : " + document.toString() + "\ndocument 2 : "
                     + newDocument.toString() + " NIF:\n" + nifDocument, receivedMarkings.contains(marking));
