@@ -111,10 +111,10 @@ public class NIFTransferTest {
                         (Marking) new TypedNamedEntity(13, 15,
                                 new HashSet<String>(Arrays.asList("http://localhost/NIL/MadamChiuLimFan_539076279300263000")),
                                 new HashSet<String>(Arrays.asList("http://localhost/NEEL/Person"))),
-                        (Marking) new TypedNamedEntity(102, 8,
+                        (Marking) new TypedNamedEntity(108, 8,
                                 new HashSet<String>(Arrays.asList("http://dbpedia.org/resource/Xian_Lim")),
                                 new HashSet<String>(Arrays.asList("http://localhost/NEEL/Person"))),
-                        (Marking) new TypedNamedEntity(111, 4,
+                        (Marking) new TypedNamedEntity(118, 4,
                                 new HashSet<String>(Arrays.asList("http://localhost/NIL/IKAW_539076279300263000")),
                                 new HashSet<String>(Arrays.asList("http://localhost/NEEL/Product"))))) });
         return tests;

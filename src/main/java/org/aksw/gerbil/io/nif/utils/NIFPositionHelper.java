@@ -61,10 +61,13 @@ public class NIFPositionHelper {
             endPositions[i] = currentAnnotation.getStartPosition() + currentAnnotation.getLength();
         }
         String text = document.getText();
+        // FIXME this method can be implement in a more performant way by using
+        // the methods text.codePoints() and
+        // StringBuilder#appendCodePoint(codePoint)
         int codePointsCount = 0;
         int posInStart = 0, posInEnd = 0;
         for (int i = 0; i < text.length(); ++i) {
-            codePointsCount += text.codePointCount(i, i + 1);
+            codePointsCount = text.codePointCount(0, i + 1);
             while ((posInStart < startPositions.length) && (codePointsCount > startPositions[posInStart])) {
                 spans.get(posInStart).setStartPosition(i);
                 ++posInStart;
