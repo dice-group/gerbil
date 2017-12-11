@@ -82,7 +82,7 @@ public class RT2KBTest extends AbstractExperimentTaskTest {
 	public static Collection<Object[]> data() {
 		List<Object[]> testConfigs = new ArrayList<Object[]>();
 		testConfigs.add(new Object[] { ANNOTATOR_FILE_NAME, GOLD_STD, Matching.STRONG_ANNOTATION_MATCH,
-				new double[] { 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, 0.25, 0.25, 0.25, 0 } });
+				new double[] { 7.0 / 16.0, 7.0 / 16.0, 7.0 / 16.0, 7.0 / 16.0, 7.0 / 16.0, 7.0 / 16.0, 0 } });
 		return testConfigs;
 	}
 	
