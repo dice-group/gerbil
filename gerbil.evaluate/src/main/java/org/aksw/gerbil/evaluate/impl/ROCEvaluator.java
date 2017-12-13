@@ -43,7 +43,9 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
 
     public static final String TRUTH_VALUE_URI_GERBIL_KEY = "org.aksw.gerbil.evaluator.roc.truthProperty";
 
-    public static String truthValueURI = "http://swc2017.aksw.org//hasTruthValue";
+    public static String DEFAULT_TRUTH_VALUE_URI = "http://swc2017.aksw.org/hasTruthValue";
+
+    private String truthValueURI = "http://swc2017.aksw.org//hasTruthValue";
 
     public ROCEvaluator() {
         super();
@@ -71,7 +73,6 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
         Collections.sort(sortedStatements, new StatementComparator());
         ROCCurve curve = new ROCCurve(trueStmts, falseStmts);
 
-        int count = 0;
         for (Statement stmt : sortedStatements) {
             // Get the same triple from the gold standard
             Resource checkStmt = stmt.getSubject();
@@ -79,25 +80,31 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
             // if such a triple exists
             if (stIt.hasNext()) {
                 Double truthValue = stIt.next().getDouble();
-                if (truthValue == 1) {
+                // We don't want to check whether it is equal to one or zero, so let's check
+                // whether it is larger than 0.5 ;-)
+                if (truthValue > 0.5) {
                     curve.addUp();
                 } else {
                     curve.addRight();
                 }
-                count++;
             } else {
                 // ignore it
                 LOGGER.info("The system answer contained the following unknown statement: {}", stmt.toString());
             }
         }
-
-        for (int i = 0; i < count - (trueStmts + falseStmts); i++) {
-            curve.addRight();
-        }
+        curve.finishCurve();
         auc = curve.calcualteAUC();
 
         return new EvaluationResult[] { new DoubleEvaluationResult(AUC_NAME, auc),
                 new StringEvaluationResult(ROC_NAME, curve.toString()) };
+    }
+
+    public String getTruthValueURI() {
+        return truthValueURI;
+    }
+
+    public void setTruthValueURI(String truthValueURI) {
+        this.truthValueURI = truthValueURI;
     }
 
 }

@@ -3,101 +3,190 @@ package org.aksw.gerbil.evaluate.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
+@NotThreadSafe
 public class ROCCurve {
 
-	public List<Point> points = new ArrayList<Point>();
-	
-	public int trueStmts=0;
-	public int falseStmts=0;
-	
-	private DIRECTION lastDir=null;
-	
-	private enum DIRECTION {
-		UP, RIGHT
-	};
-	
-	public ROCCurve(int trueStmts, int falseStmts){
-		this.trueStmts=trueStmts;
-		this.falseStmts=falseStmts;
-	}
-	
-	public void addPoint(double x, double y){
-		Point p = new Point();
-		p.setLocation(x, y);
-		addPoint(p);
-	}
-	
-	public void addPoint(Point p){
-		points.add(p);
-	}
-	
-	public void addUp(){
-		double lastX=0.0, lastY=0.0;
-		if(!points.isEmpty()){
-			Point last = points.get(points.size()-1);
-			lastX=last.x;
-			lastY=last.y;
-			if(DIRECTION.UP.equals(lastDir))
-				points.remove(last);
-		}
-		
-		Point newP = new Point();
-		lastY = lastY+1.0/trueStmts;
-		newP.setLocation(lastX, lastY);
-		
-		points.add(newP);
-		lastDir=DIRECTION.UP;
-	}
-	
-	public void addRight(){
-		double lastX=0.0, lastY=0.0;
-		if(!points.isEmpty()){
-			Point last = points.get(points.size()-1);
-			lastX=last.x;
-			lastY=last.y;
-			if(DIRECTION.RIGHT.equals(lastDir))
-				points.remove(last);
-		}
-		Point newP = new Point();
-		newP.setLocation(lastX+1.0/falseStmts, lastY);
-		
-		points.add(newP);
-		lastDir=DIRECTION.RIGHT;
-	}
-	
-	public double calcualteAUC(){
-		double auc = 0.0;
-		for(int i=0; i<points.size()-1;i++){
-			Point pointA = points.get(i);
-			Point pointB = points.get(i+1);
-			//calculate area under the points (rectangle)
-			double aup = pointA.y*(pointB.x-pointA.x);
-			auc += aup;
-			
-		}
-		return auc;
-	}
-	
-	@Override
-	public String toString(){
-		StringBuilder builder = new StringBuilder();
-		builder.append("\"data\" : [");
-		for(int i=0; i<points.size()-1; i++){
-			Point p = points.get(i);
-			builder.append("{");
-			builder.append("\"x\" : ").append(p.x).append(",");
-			builder.append("\"y\" : ").append(p.y).append("");
-			builder.append("},");
-		}
-		if(points.size()>0){
-			Point p = points.get(points.size()-1);
-			builder.append("{");
-			builder.append("\"x\" : ").append(p.x).append(",");
-			builder.append("\"y\" : ").append(p.y).append("");
-			builder.append("}");
-		}
-		builder.append("] ");
-		return builder.toString();
-	}
-	
+    public List<Point> points = new ArrayList<Point>();
+
+    private DIRECTION lastDir = null;
+    private final int trueStmts;
+    private final int falseStmts;
+    private double stepLengthUp;
+    private double stepLengthRight;
+    private double upStepsCount = 0;
+    private double rightStepsCount = 0;
+
+    private enum DIRECTION {
+        UP, RIGHT
+    };
+
+    public ROCCurve(int trueStmts, int falseStmts) {
+        if (trueStmts == 0) {
+            // FIXME throw Exception ?
+        } else {
+            stepLengthUp = 1.0 / trueStmts;
+        }
+        if (falseStmts == 0) {
+            // FIXME throw Exception ?
+        } else {
+            stepLengthRight = 1.0 / trueStmts;
+        }
+        this.trueStmts = trueStmts;
+        this.falseStmts = falseStmts;
+    }
+
+    public void addPoint(double x, double y) {
+        Point p = new Point();
+        p.setLocation(x, y);
+        addPoint(p);
+    }
+
+    public void addPoint(Point p) {
+        points.add(p);
+    }
+
+    /**
+     * Adds a new point to the curve by going one step up.
+     */
+    public void addUp() {
+        ++upStepsCount;
+        double newY = 0.0;
+        if (upStepsCount >= trueStmts) {
+            // We want to end up at 1.0 so simply add it instead of trying to calculate it
+            // and end up with 0.999...
+            newY = 1.0;
+        } else {
+            newY = upStepsCount * stepLengthUp;
+        }
+        addUp(newY);
+    }
+
+    /**
+     * Adds a new point in the upper direction with the given Y value and the X
+     * value of the last point. If the last point has already been set using a step
+     * up, this point is reused instead of creating a new point.
+     * 
+     * @param newY
+     *            the y value of the new point
+     */
+    private void addUp(double newY) {
+        double lastX = 0.0;
+        if (!points.isEmpty()) {
+            Point last = points.get(points.size() - 1);
+            lastX = last.x;
+            if (DIRECTION.UP.equals(lastDir)) {
+                last.setLocation(lastX, newY);
+                return;
+            }
+        }
+        Point newP = new Point();
+        newP.setLocation(lastX, newY);
+        points.add(newP);
+        lastDir = DIRECTION.UP;
+    }
+
+    /**
+     * Adds a new point to the curve by going one step right.
+     */
+    public void addRight() {
+        double newX;
+        ++rightStepsCount;
+        if (rightStepsCount >= falseStmts) {
+            // We want to end up at 1.0 so simply add it instead of trying to calculate it
+            // and end up with 0.999...
+            newX = 1.0;
+        } else {
+            newX = rightStepsCount * stepLengthRight;
+        }
+        addRight(newX);
+    }
+
+    /**
+     * Adds a new point in the right direction with the given X value and the Y
+     * value of the last point. If the last point has already been set using a step
+     * to the right, this point is reused instead of creating a new point.
+     * 
+     * @param newX
+     *            the x value of the new point
+     */
+    private void addRight(double newX) {
+        double lastY = 0.0;
+        if (!points.isEmpty()) {
+            Point last = points.get(points.size() - 1);
+            lastY = last.y;
+            if (DIRECTION.RIGHT.equals(lastDir)) {
+                last.setLocation(newX, lastY);
+                return;
+            }
+        }
+        Point newP = new Point();
+        newP.setLocation(newX, lastY);
+        points.add(newP);
+        lastDir = DIRECTION.RIGHT;
+    }
+
+    /**
+     * Finish the curve by adding missing points (if the curve has not reached the
+     * point (1,1) until now). The missing points are generated by making a step to
+     * the right to x=1.0 and a step up to y=1.0, i.e., the missing elements that
+     * have not been counted won't increase the AUC of the curve.
+     */
+    public void finishCurve() {
+        Point last;
+        if (points.isEmpty()) {
+            last = new Point();
+            last.setLocation(0.0, 0.0);
+            points.add(last);
+        } else {
+            last = points.get(points.size() - 1);
+        }
+        if (last.x < 1.0) {
+            addRight(1.0);
+        }
+        if (last.y < 1.0) {
+            addUp(1.0);
+        }
+    }
+
+    public double calcualteAUC() {
+        double auc = 0.0;
+        double aup;
+        Point pointA;
+        Point pointB = points.get(0);
+        for (int i = 1; i < points.size(); i++) {
+            pointA = pointB;
+            pointB = points.get(i);
+            // calculate area under the points (rectangle)
+            if (pointB.x != pointA.x) {
+                aup = pointA.y * (pointB.x - pointA.x);
+                auc += aup;
+            }
+        }
+        return auc;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("\"data\" : [");
+        for (int i = 0; i < points.size() - 1; i++) {
+            Point p = points.get(i);
+            builder.append("{");
+            builder.append("\"x\" : ").append(p.x).append(",");
+            builder.append("\"y\" : ").append(p.y).append("");
+            builder.append("},");
+        }
+        if (points.size() > 0) {
+            Point p = points.get(points.size() - 1);
+            builder.append("{");
+            builder.append("\"x\" : ").append(p.x).append(",");
+            builder.append("\"y\" : ").append(p.y).append("");
+            builder.append("}");
+        }
+        builder.append("] ");
+        return builder.toString();
+    }
+
 }
