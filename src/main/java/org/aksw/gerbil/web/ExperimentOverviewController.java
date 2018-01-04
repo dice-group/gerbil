@@ -18,7 +18,11 @@ package org.aksw.gerbil.web;
 
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -54,9 +58,8 @@ public class ExperimentOverviewController {
 	private static final String CORRELATION_TABLE_COLUMN_HEADINGS[] = { "number of documents", "avg. document length",
 			"number of entities", "entities per document", "entities per token", "amount of persons",
 			"amount of organizations", "amount of locations", "amount of others"/*
-																				 * ,
-																				 * "corr. based on # datasets"
-																				 */};
+																				 * , "corr. based on # datasets"
+																				 */ };
 
 	@Autowired
 	@Qualifier("experimentDAO")
@@ -80,12 +83,26 @@ public class ExperimentOverviewController {
 
 		String annotatorNames[] = loadAnnotators(eType);
 		String datasetNames[] = loadDatasets(eType);
-		String languages[] = {"en"};
-
+		String languages[] = loadLanguages();
+		String leaderBoard = loadLeaderBoard(eType, loadAnnotatorsFromDB(), datasetNames, languages, null);
 		double results[][] = loadLatestResults(eType, matching, annotatorNames, datasetNames, languages);
 		double correlations[][] = calculateCorrelations(results, datasetNames);
-		return generateJson(results, correlations, annotatorNames, datasetNames);
+		return generateJson(results, correlations, annotatorNames, datasetNames, languages, leaderBoard);
 
+	}
+
+	private String[] loadAnnotatorsFromDB() {
+		Set<String> annotatorNames = dao.getAnnotators();
+		String annotatorNameArray[] = annotatorNames.toArray(new String[annotatorNames.size()]);
+		Arrays.sort(annotatorNameArray);
+		return annotatorNameArray;
+	}
+
+	private String[] loadLanguages() {
+		Set<String> languages = dao.getAllLangauges();
+		String languagesArray[] = languages.toArray(new String[languages.size()]);
+		Arrays.sort(languagesArray);
+		return languagesArray;
 	}
 
 	private double[][] loadLatestResults(ExperimentType experimentType, Matching matching, String[] annotatorNames,
@@ -120,7 +137,64 @@ public class ExperimentOverviewController {
 		return results;
 	}
 
+	private String loadLeaderBoard(ExperimentType experimentType, String[] annotatorNames, String[] datasetNames,
+			String[] languages, Calendar challengeDate) {
+
+		StringBuilder listsAsJson = new StringBuilder("{ \"datasets\": [ {");
+
+		int count = 0;
+		for (String language : languages) {
+			
+			for (String dataset : datasetNames) {		
+				List<ExperimentTaskResult> leaderList = new ArrayList<ExperimentTaskResult>();
+
+				listsAsJson.append("\"language\" : \"").append(language).append("\" , ");
+				listsAsJson.append("\"datasetName\" : \"").append(dataset).append("\", ");
+				for (String annotator : annotatorNames) {
+					ExperimentTaskResult result;
+					if (challengeDate == null) {
+						result = dao.getBestResult(experimentType.name(), annotator, dataset, language);
+					} else {
+
+						result = dao.getBestResult(experimentType.name(), annotator, dataset, language,
+								new Timestamp(challengeDate.getTimeInMillis()));
+					}
+					if (result != null) {
+						leaderList.add(result);
+
+					}
+				}
+				Collections.sort(leaderList, new LeaderBoardComparator(experimentType));
+				//Get only top 10
+				leaderList = leaderList.subList(0, Math.min(10, leaderList.size()));
+				listsAsJson.append(" \"leader\" : [");
+				int count2 = 0;
+				for (ExperimentTaskResult expResults : leaderList) {
+					String annotator = expResults.annotator;
+					listsAsJson.append("{ \"annotatorName\" : \"").append(annotator).append("\", \"macrof1\": \"");
+					listsAsJson.append(expResults.results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX]).append("\", \"microf1\": \"");;
+					listsAsJson.append(expResults.results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX]).append("\"}");
+
+					if (count2 < leaderList.size() - 1) {
+						listsAsJson.append(", ");
+					}
+
+					count2++;
+				}
+				listsAsJson.append("]}");
+				if (count < datasetNames.length - 1)
+					listsAsJson.append(", {");
+				count++;
+			}
+		}
+
+		listsAsJson.append("]}");
+
+		return listsAsJson.toString();
+	}
+
 	private String[] loadAnnotators(ExperimentType eType) {
+		//get annotators from table
 		Set<String> annotatorNames = annotators.getAdapterNamesForExperiment(eType);
 		String annotatorNameArray[] = annotatorNames.toArray(new String[annotatorNames.size()]);
 		Arrays.sort(annotatorNameArray);
@@ -128,6 +202,7 @@ public class ExperimentOverviewController {
 	}
 
 	private String[] loadDatasets(ExperimentType eType) {
+		//get datasets from table
 		Set<String> datasetNames = datasets.getAdapterNamesForExperiment(eType);
 		String datasetNameArray[] = datasetNames.toArray(new String[datasetNames.size()]);
 		Arrays.sort(datasetNameArray);
@@ -211,15 +286,16 @@ public class ExperimentOverviewController {
 	}
 
 	private String generateJson(double[][] results, double[][] correlations, String annotatorNames[],
-			String datasetNames[]) {
+			String datasetNames[], String[] languages, String leaderBoard) {
 		StringBuilder jsonBuilder = new StringBuilder();
 		// jsonBuilder.append("results=");
-		jsonBuilder.append('[');
+		jsonBuilder.append("{ \"table\": [");
 		jsonBuilder.append(generateJSonTableString(results, datasetNames, annotatorNames, "Micro F1-measure"));
 		jsonBuilder.append(',');
 		jsonBuilder.append(generateJSonTableString(correlations, CORRELATION_TABLE_COLUMN_HEADINGS, annotatorNames,
 				"Correlations"));
-		jsonBuilder.append(']');
+		jsonBuilder.append("], \"leaderboard\" : ").append(leaderBoard);
+		jsonBuilder.append('}');
 		return jsonBuilder.toString();
 	}
 

@@ -81,7 +81,7 @@ table {
 				</div>
 			</div>
 
-			<div class="col-md-12" style="visibility:hidden;">
+			<div class="col-md-12" style="visibility: hidden;">
 				<div class="control-group">
 					<label class="col-md-4 control-label">Matching</label>
 					<div id="matching" class="col-md-8"></div>
@@ -115,7 +115,15 @@ table {
 			<tbody></tbody>
 		</table>
 	</div>
-	<div class="container" style="visibility:hidden;">
+
+	<div class="container">
+		<div class="col-md-12">
+			<h2>Leaderboards</h2>
+		</div>
+		<div class="container-fluid" id="leaderboard">
+		</div>
+	</div>
+	<div class="container" style="visibility: hidden;">
 		<div class="form-horizontal">
 			<div class="col-md-12">
 				<h2>Annotator &ndash; Dataset feature correlations</h2>
@@ -132,13 +140,15 @@ table {
 			</div>
 		</div>
 	</div>
-	<div class="container-fluid" style="visibility:hidden;">
+	<div class="container-fluid" style="visibility: hidden;">
 		<table id="correlationsTable"
 			class="table table-hover table-condensed">
 			<thead></thead>
 			<tbody></tbody>
 		</table>
 	</div>
+
+
 
 	<script type="text/javascript">
 		function loadMatchings() {
@@ -239,16 +249,58 @@ table {
 				matching : $('#matching input:checked').val(),
 				ajax : 'false'
 			}, function(data) {
-				var tableData = data[0];
+				var tableData = data.table[0];
 				showTable(tableData, "resultsTable");
 				drawSpiderDiagram(tableData, "resultsChart");
-				tableData = data[1];
+				tableData = data.table[1];
 				showTable(tableData, "correlationsTable");
 				drawSpiderDiagram(tableData, "correlationsChart");
+				$("#leaderboard").html("");
+				for (var i = 0; i < data.leaderboard.datasets.length; i++) {
+					var tableData2 = data.leaderboard.datasets[i];
+					createLeaderBoard(tableData2, "leaderboard");
+				}
 			}).fail(function() {
 				console.log("error loading data for table");
 			});
 		};
+
+		function createLeaderBoard(tableData, tableElementId) {
+			if (tableData.leader.length == 0) {
+				return;
+			}
+			//http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
+			var str = tableData.datasetName.replace(/\s/g, "")
+					+ tableData.language;
+			var newID = str + "bod";
+			var bootDiv = "<div id=\"" + newID + "\" class=\"col-md-12\"></div>";
+			$("#" + tableElementId).prepend(bootDiv);
+
+			var tbl_body = "";
+			var experimentType = $('#expTypes input:checked').val();
+
+			var measure = "F1 measure";
+			var tbl_hd = "<tr><th>AnnotatorName</th><th>Macro F1</th><th>Micro F1</th></tr>";
+			var tbl = "<h3>Dataset: "
+					+ tableData.datasetName
+					+ " ("
+					+ tableData.language
+					+ ")</h3><table id=\"" + tableData.datasetName+tableData.language + "\" class=\"table table-hover table-condensed\">";
+			tbl += tbl_hd;
+			var leader = tableData.leader;
+			for (var i = 0; i < leader.length; i++) {
+				var tbl_row = "<tr>";
+				tbl_row += "<td>" + leader[i].annotatorName + "</td>";
+				tbl_row += "<td>" + leader[i].macrof1 + "</td>";
+				tbl_row += "<td>" + leader[i].microf1 + "</td>";
+				tbl_row += "</tr>";
+				tbl_body += tbl_row;
+			}
+			;
+			tbl += tbl_body;
+			tbl += "</table>";
+			$("#" + newID).prepend("<div class=\"col-md-8\">" + tbl + "</div>");
+		}
 
 		function showTable(tableData, tableElementId) {
 			//http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
