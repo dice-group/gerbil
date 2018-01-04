@@ -17,6 +17,7 @@
 package org.aksw.gerbil.evaluate.impl;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
@@ -68,6 +69,8 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
         int trueStmts = gold.listLiteralStatements(null, truthValueGold, 1.0).toList().size();
         int falseStmts = gold.listLiteralStatements(null, truthValueGold, 0.0).toList().size();
 
+        //remove all non number values (NAN, INFINITY, etc)
+        cleanTruthValues(annotator, truthValueProp);
         List<Statement> sortedStatements = annotator.listStatements(null, truthValueProp, (RDFNode) null).toList();
 
         Collections.sort(sortedStatements, new StatementComparator());
@@ -99,7 +102,31 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
                 new StringEvaluationResult(ROC_NAME, curve.toString()) };
     }
 
-    public String getTruthValueURI() {
+    /**
+     * Method to clean the model from not number values, such as Infinity and NAN
+     * @param annotator
+     * @param truthValueProp 
+     */
+    private void cleanTruthValues(Model annotator, Property truthValueProp) {
+		StmtIterator statements = annotator.listStatements(null, truthValueProp, (RDFNode)null);
+		List<Statement> removeStmts = new LinkedList<Statement>();
+		while(statements.hasNext()) {
+			Statement stmt = statements.next();
+			try{
+				Double value = stmt.getLiteral().getDouble();
+				if(value.isInfinite() || value.isNaN()) {
+					//value cannot be processed so remove the statment
+					removeStmts.add(stmt);
+				}
+			}catch(NumberFormatException e) {
+				//not double so remove
+				removeStmts.add(stmt);
+			}
+		}
+		annotator.remove(removeStmts);
+	}
+
+	public String getTruthValueURI() {
         return truthValueURI;
     }
 
