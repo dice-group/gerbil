@@ -108,6 +108,14 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
     public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
         return performAnnotation(document, TypedSpan.class);
     }
+           
+    public List<TypedNamedEntity> performRE(Document document) throws GerbilException {
+        return performAnnotation(document, TypedNamedEntity.class);
+    }
+    
+    public List<TypedNamedEntity> performSRE(Document document) throws GerbilException {
+        return performAnnotation(document, TypedNamedEntity.class);
+    }
 
     protected <T extends Marking> List<T> performAnnotation(Document document, Class<T> resultClass)
             throws GerbilException {
