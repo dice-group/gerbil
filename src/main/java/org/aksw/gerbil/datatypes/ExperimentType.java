@@ -142,6 +142,8 @@ public enum ExperimentType implements Describable {
      * types.
      */
     RT2KB("RT2KB", "The annotator gets a text and shall recognize entities inside and their types.");
+    RE("RE", "The Annotaor gets the pre annotated text and recognize the relation among the Pre-identified entities."),
+    SRE("SRE", "The Annotator gets a text and shall recognize entities inside and their types along with their relations.");
 
     private String label;
     private String description;
@@ -269,6 +271,11 @@ public enum ExperimentType implements Describable {
         case OKE_Task2: {
             return type == OKE_Task2;
         }
+        case RE: {
+        	return type == RE;
+        }
+        case SRE: {
+        	return type == SRE;
         }
         return false;
     }
