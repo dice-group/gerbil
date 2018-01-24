@@ -66,8 +66,9 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
         Property truthValueProp = annotator.getProperty(truthValueURI);
         Property truthValueGold = gold.getProperty(truthValueURI);
 
-        int trueStmts = gold.listLiteralStatements(null, truthValueGold, 1.0).toList().size();
-        int falseStmts = gold.listLiteralStatements(null, truthValueGold, 0.0).toList().size();
+        // Count the true and false statements (make sure we accept double and float values
+        int trueStmts = gold.listLiteralStatements(null, truthValueGold, 1.0).toList().size() + gold.listLiteralStatements(null, truthValueGold, 1.0f).toList().size();
+        int falseStmts = gold.listLiteralStatements(null, truthValueGold, 0.0).toList().size()+ gold.listLiteralStatements(null, truthValueGold, 0.0f).toList().size();
 
         //remove all non number values (NAN, INFINITY, etc)
         cleanTruthValues(annotator, truthValueProp);
