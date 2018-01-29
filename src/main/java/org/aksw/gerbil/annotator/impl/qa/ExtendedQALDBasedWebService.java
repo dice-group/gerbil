@@ -101,7 +101,7 @@ public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator impl
         	Object json = null;
         	try {
         		json = ExtendedQALDJSONLoader.readJson(stream, ExtendedJson.class); 
-        	}catch(UnrecognizedPropertyException e) {
+        	}catch(Exception e) {
         		//can be ignored, it is just not an extended json obnject
         	}
         	List<IQuestion>  questions;
