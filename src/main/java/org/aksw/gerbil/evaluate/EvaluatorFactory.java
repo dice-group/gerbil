@@ -220,6 +220,10 @@ public class EvaluatorFactory {
                     new SubTaskAverageCalculator<TypedNamedEntity>(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
                     new DoubleResultComparator());
         }
+        case RE2KB:
+        	//TODO new EXP
+        case KE2KB:
+        	//TODO new EXP
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
         }
@@ -269,6 +273,10 @@ public class EvaluatorFactory {
                     dataset)));
             return;
         }
+        case RE2KB:
+        	//TODO new EXP
+        case KE2KB:
+        	//TODO new EXP
         default: {
             throw new RuntimeException();
         }

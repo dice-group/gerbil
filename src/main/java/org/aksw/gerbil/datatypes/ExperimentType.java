@@ -141,7 +141,18 @@ public enum ExperimentType implements Describable {
      * The annotator gets a text and shall recognize entities inside and their
      * types.
      */
-    RT2KB("RT2KB", "The annotator gets a text and shall recognize entities inside and their types.");
+    RT2KB("RT2KB", "The annotator gets a text and shall recognize entities inside and their types."),
+    		
+    /**
+     * The annotator gets a text and several already linked entities and shall recognize their relationship inside the text.
+     */
+    RE2KB("RE2KB", "The annotator gets a text and several already linked entities and shall recognize their relationship inside the text."),
+    
+    /**
+     * The annotator gets a text and shall recognize entities inside and the relationship between them.
+     */
+    KE2KB("KE2KB", "The annotator gets a text and shall recognize entities inside and the relationship between them.")
+    ;
 
     private String label;
     private String description;
