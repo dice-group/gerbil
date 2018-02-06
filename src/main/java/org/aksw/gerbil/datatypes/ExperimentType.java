@@ -141,9 +141,17 @@ public enum ExperimentType implements Describable {
      * The annotator gets a text and shall recognize entities inside and their
      * types.
      */
-    RT2KB("RT2KB", "The annotator gets a text and shall recognize entities inside and their types.");
+    RT2KB("RT2KB", "The annotator gets a text and shall recognize entities inside and their types."),
+    /**
+     * The annotator gets a pre-annotated text and shall recognize the relations among the entities.
+     */
     RE("RE", "The Annotaor gets the pre annotated text and recognize the relation among the Pre-identified entities."),
-    SRE("SRE", "The Annotator gets a text and shall recognize entities inside and their types along with their relations.");
+    
+    /**
+     * The annotator gets a text and shall recognize entities inside and their
+     * types along with the relations.
+     */
+    KE("KE", "The Annotator gets a text and shall recognize entities inside and their types along with their relations.");
 
     private String label;
     private String description;
@@ -187,6 +195,10 @@ public enum ExperimentType implements Describable {
             case OKE_Task2: {
                 return false;
             }
+            case RE: {
+            	return false;
+            }
+            case KE:
             }
         }
         case Sc2KB: {
@@ -244,6 +256,11 @@ public enum ExperimentType implements Describable {
             case OKE_Task2: {
                 return false;
             }
+            case RE: {
+                return false;
+            }
+            case KE:
+            }
             }
         }
         case C2KB: {
@@ -274,8 +291,22 @@ public enum ExperimentType implements Describable {
         case RE: {
         	return type == RE;
         }
-        case SRE: {
-        	return type == SRE;
+        case KE:{
+            switch (type) {
+            case ERec: 
+            case ETyping:
+            case RT2KB: 
+            case C2KB: 
+            case A2KB:
+            case D2KB:
+            case OKE_Task1:
+            case OKE_Task2: {
+                return false;
+            }
+            case RE:
+            case KE: 
+            }
+        }
         }
         return false;
     }
