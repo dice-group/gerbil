@@ -30,6 +30,8 @@ import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.annotator.RT2KBAnnotator;
+import org.aksw.gerbil.annotator.REAnnotator;
+import org.aksw.gerbil.annotator.KEAnnotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -82,6 +84,10 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
             break;
         case Sc2KB:
             break;
+        case RE:
+            return new SingleInstanceSecuringREAnnotator((REAnnotator) annotator);
+        case KE:
+            return new SingleInstanceSecuringKEAnnotator((KEAnnotator) annotator);
         default:
             break;
 
@@ -218,6 +224,40 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
             return SingleInstanceSecuringAnnotatorDecorator.performOKETask2(this, document);
         }
     }
+    
+    private static class SingleInstanceSecuringREAnnotator extends SingleInstanceSecuringAnnotatorDecorator implements REAnnotator {
+
+    	protected SingleInstanceSecuringREAnnotator(REAnnotator decoratedAnnotator) {
+    		super(decoratedAnnotator);
+    	}
+    	
+    	@Override
+        public List<Span> performRETask(Document document) throws GerbilException {
+            return SingleInstanceSecuringAnnotatorDecorator.performRETask(this, document);
+        }
+    }
+    
+    private static class SingleInstanceSecuringKEAnnotator extends SingleInstanceSecuringOKETask1Annotator implements KEAnnotator {
+
+    	protected SingleInstanceSecuringKEAnnotator(KEAnnotator decoratedAnnotator) {
+    		super(decoratedAnnotator);
+    	}
+    	
+    	@Override
+        public List<TypedNamedEntity> performKETask(Document document) throws GerbilException {
+            return SingleInstanceSecuringAnnotatorDecorator.performKETask(this, document);
+        }
+    	
+    	@Override
+        public List<TypedNamedEntity> performTask1(Document document) throws GerbilException {
+            return SingleInstanceSecuringAnnotatorDecorator.performOKETask1(this, document);
+        }
+    	
+    	@Override
+        public List<Span> performRETask(Document document) throws GerbilException {
+            return SingleInstanceSecuringAnnotatorDecorator.performRETask(this, document);
+        }
+    }	
 
     protected static List<Meaning> performC2KB(SingleInstanceSecuringAnnotatorDecorator decorator, Document document)
             throws GerbilException {
@@ -362,7 +402,43 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         }
         return result;
     }
+    
+    protected static List<Span> performRETask(SingleInstanceSecuringAnnotatorDecorator decorator, Document document)
+            throws GerbilException {
+        List<Span> result = null;
+        try {
+            decorator.semaphore.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.error("Interrupted while waiting for the Annotator's semaphore.", e);
+            throw new GerbilException("Interrupted while waiting for the Annotator's semaphore.", e,
+                    ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
+        try {
+            result = ((REAnnotator) decorator.getDecoratedAnnotator()).performRETask(document);
+        } finally {
+            decorator.semaphore.release();
+        }
+        return result;
+    }
 
+    protected static List<TypedNamedEntity> performKETask(SingleInstanceSecuringAnnotatorDecorator decorator,
+            Document document) throws GerbilException {
+        List<TypedNamedEntity> result = null;
+        try {
+            decorator.semaphore.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.error("Interrupted while waiting for the Annotator's semaphore.", e);
+            throw new GerbilException("Interrupted while waiting for the Annotator's semaphore.", e,
+                    ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
+        try {
+            result = ((KEAnnotator) decorator.getDecoratedAnnotator()).performKETask(document);
+        } finally {
+            decorator.semaphore.release();
+        }
+        return result;
+    }
+    
     /**
      * Registers the given {@link Annotator} (if it is not already present in
      * the registration) and returns its semaphore.
