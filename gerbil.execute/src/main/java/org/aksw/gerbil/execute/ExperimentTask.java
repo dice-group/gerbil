@@ -143,6 +143,14 @@ public class ExperimentTask implements Task {
 			default:
 				break;
             }
+            //set if task should be published
+            expResult.setPublish(configuration.getPublish());
+            //also set it in the subtasks
+            if(expResult.getSubTasks()!=null) {
+            	for(ExperimentTaskResult subResults : expResult.getSubTasks()) {
+            		subResults.setPublish(configuration.getPublish());
+            	}
+            }
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
             LOGGER.info("Task Finished " + configuration.toString());

@@ -25,11 +25,12 @@
 }
 
 .text-right {
-	text-align:right ;
+	text-align: right;
 }
 
 .text-right a {
-	cursor: pointer; cursor: hand;
+	cursor: pointer;
+	cursor: hand;
 }
 
 #type>option {
@@ -98,16 +99,16 @@
 			<div class="form-group">
 				<div class="col-md-2"></div>
 				<div class="col-md-2 text-right">
-					<label class="control-label" for="type">Task</label>
-					<a title="The Semantic Web Challenge tasks you want to participate in.">
-							<span class="glyphicon glyphicon-question-sign"></span>
-					</a>	
-				</div>		
+					<label class="control-label" for="type">Task</label> <a
+						title="The Semantic Web Challenge tasks you want to participate in.">
+						<span class="glyphicon glyphicon-question-sign"></span>
+					</a>
+				</div>
 				<div class="col-md-4">
 					<select id="type" style="display: none;">
 					</select>
 				</div>
-				
+
 			</div>
 
 			<div class="row">
@@ -118,9 +119,9 @@
 			<!--System dropdown filled by loadAnnotator() function -->
 			<div class="form-group">
 				<div class="col-md-2"></div>
-					<div class="col-md-2 text-right">
-						<label class="control-label" for="annotator">Submission</label>
-					<a title="To participate you need to enter a name of your participating system and your mail address and you have to select the file containing the answers of your system for the task selected above.">
+				<div class="col-md-2 text-right">
+					<label class="control-label" for="annotator">Submission</label> <a
+						title="To participate you need to enter a name of your participating system and your mail address and you have to select the file containing the answers of your system for the task selected above.">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
 				</div>
@@ -128,16 +129,13 @@
 					<div id="uploadAnswers">
 						<span> Upload a file with answers:</span>
 						<div>
-							<label for="nameAnswerFile">Name of participating system:</label> <input
-								class="form-control" type="text" id="nameAnswerFile" name="name"
-								placeholder="Type something" /> 
-                                
-                            <label for="emailAnswerFile">E-mail address:</label> <input
-								class="form-control" type="text" id="emailAnswerFile" name="name"
-								placeholder="Type something" />
-
-								<br> <br> <span
-								class="btn btn-success fileinput-button"> <i
+							<label for="nameAnswerFile">Name of participating system:</label>
+							<input class="form-control" type="text" id="nameAnswerFile"
+								name="name" placeholder="Type something" /> <label
+								for="emailAnswerFile">E-mail address:</label> <input
+								class="form-control" type="text" id="emailAnswerFile"
+								name="name" placeholder="Type something" /> <br> <br>
+							<span class="btn btn-success fileinput-button"> <i
 								class="glyphicon glyphicon-plus"></i> <span>Select
 									file...</span> <!-- The file input field used as target for the file upload widget -->
 								<input id="answerFileUpload" type="file" name="files[]">
@@ -169,9 +167,10 @@
 			<!--Dataset dropdown filled by loadDatasets() function -->
 			<div class="form-group">
 				<div class="col-md-2"></div>
-					<div class="col-md-2 text-right">
-						<label class="control-label" for="datasets">Reference dataset</label>					
-					<a title="Please select the dataset for which your system generated the answers.">
+				<div class="col-md-2 text-right">
+					<label class="control-label" for="datasets">Reference
+						dataset</label> <a
+						title="Please select the dataset for which your system generated the answers.">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</a>
 				</div>
@@ -180,8 +179,27 @@
 					</select>
 				</div>
 			</div>
-			
-
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<hr />
+				</div>
+			</div>
+			<c:if test="${!challengeEnded}">
+				<div class="form-group">
+					<div class="col-md-2"></div>
+					<div class="col-md-2 text-right">
+						<label class="control-label" for="publish">Publish</label> <a
+							title="Show your results in the leaderboard."> <span
+							class="glyphicon glyphicon-question-sign"></span>
+						</a>
+					</div>
+					<div class="col-md-4">
+						<div class="checkbox">
+							<input id="publish" type="checkbox">
+						</div>
+					</div>
+				</div>
+			</c:if>
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2">
 					<hr />
@@ -191,19 +209,22 @@
 				<label class="col-md-4 control-label" for="datasets">Disclaimer</label>
 				<div class="checkbox">
 					<label> <input id="disclaimerCheckbox" type="checkbox">
-                        I agree to all data provided being stored and processed. <br/> Any recourse to courts of law is excluded.
-						<!--I have read and understand the <a
+						I agree to all data provided being stored and processed. <br />
+						Any recourse to courts of law is excluded. <!--I have read and understand the <a
 						href="https://github.com/AKSW/gerbil/wiki/Disclaimer">disclaimer</a>.-->
 					</label>
 				</div>
 			</div>
+
 			<div class="col-md-8 col-md-offset-2">
-			<c:if test="${challengeEnded}">
-				<div id="warningChallengeEnded" class="alert alert-warning"
-								role="alert">
-					<strong>Warning!</strong> Challenge ended <c:if test="${challengeDate != null}">at ${challengeDate}</c:if>. Results will not occur in Leaderboard.
-				</div>
-			</c:if>
+				<c:if test="${challengeEnded}">
+					<div id="warningChallengeEnded" class="alert alert-warning"
+						role="alert">
+						<strong>Warning!</strong> Challenge ended
+						<c:if test="${challengeDate != null}">at ${challengeDate}</c:if>
+						. Results will not occur in Leaderboard.
+					</div>
+				</c:if>
 			</div>
 			<!-- Button -->
 			<div class="form-group">
@@ -423,6 +444,7 @@
 			data.annotator = annotator;
 			data.dataset = dataset;
 			data.answerFiles = answerFiles;
+			data.publish = $('#publish:checked').length == 1;
 			$
 					.ajax('${execute}', {
 						data : {

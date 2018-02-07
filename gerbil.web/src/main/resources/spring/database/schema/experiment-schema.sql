@@ -4,11 +4,14 @@ experimentType VARCHAR(10),
 matching VARCHAR(50),
 annotatorName VARCHAR(100),
 datasetName VARCHAR(100),
+publish BOOLEAN DEFAULT TRUE,
 errorCount int,
 state int,
 lastChanged TIMESTAMP,
 version VARCHAR(20)
 );
+
+-- ALTER TABLE ExperimentTasks ADD COLUMN publish BOOLEAN DEFAULT TRUE;
 
 CREATE TABLE IF NOT EXISTS Experiments (
   id VARCHAR(300) NOT NULL,

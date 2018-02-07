@@ -54,7 +54,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     private final static String INSERT_TASK = "INSERT INTO ExperimentTasks (annotatorName, datasetName, experimentType, matching, state, lastChanged) VALUES (:annotatorName, :datasetName, :experimentType, :matching, :state, :lastChanged)";
     private final static String SET_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE id=:id";
-    private final static String SET_EXPERIMENT_TASK_RESULT = "UPDATE ExperimentTasks SET  errorCount=:errorCount, lastChanged=:lastChanged WHERE id=:id";
+    private final static String SET_EXPERIMENT_TASK_RESULT = "UPDATE ExperimentTasks SET publish=:publish, errorCount=:errorCount, lastChanged=:lastChanged WHERE id=:id";
     private final static String CONNECT_TASK_EXPERIMENT = "INSERT INTO Experiments (id, taskId) VALUES(:id, :taskId)";
     private final static String GET_TASK_STATE = "SELECT state FROM ExperimentTasks WHERE id=:id";
     private final static String GET_EXPERIMENT_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching,  state, errorCount, lastChanged, taskId FROM ExperimentTasks t, Experiments e WHERE e.id=:id AND e.taskId=t.id";
@@ -82,11 +82,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_VERSION_OF_EXPERIMENT_TASK = "SELECT version FROM ExperimentTasks_Version WHERE id=:id";
     private final static String INSERT_VERSION_OF_EXPERIMENT_TASK = "INSERT INTO ExperimentTasks_Version (id, version) VALUES(:id,:version)";
 
-	private static final String GET_BEST_EXPERIMENT_TASK_RESULTS = "SELECT exp.datasetName, exp.annotatorName, exp.experimentType, addi.value AS result, exp.state, exp.errorCount, lastChanged, exp.Id FROM ExperimentTasks exp join ExperimentTasks_AdditionalResults addi ON exp.Id=addi.taskId WHERE exp.annotatorName=:annotator AND exp.datasetName=:dataset AND exp.experimentType=:experimentType AND (addi.resultId=0 OR addi.resultId=3) ORDER BY result DESC";
+	private static final String GET_BEST_EXPERIMENT_TASK_RESULTS = "SELECT exp.datasetName, exp.annotatorName, exp.experimentType, addi.value AS result, exp.state, exp.errorCount, lastChanged, exp.Id FROM ExperimentTasks exp join ExperimentTasks_AdditionalResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND exp.annotatorName=:annotator AND exp.datasetName=:dataset AND exp.experimentType=:experimentType AND (addi.resultId=0 OR addi.resultId=3) ORDER BY result DESC";
 
 	private static final String GET_ALL_ANNOTATORS = "SELECT DISTINCT annotatorName FROM ExperimentTasks";
 
-	private static final String GET_BEST_EXPERIMENT_DATE_TASK_RESULTS = "SELECT exp.datasetName, exp.annotatorName, exp.experimentType, addi.value AS result, exp.state, exp.errorCount, lastChanged, exp.Id FROM ExperimentTasks exp join ExperimentTasks_AdditionalResults addi ON exp.Id=addi.taskId WHERE exp.annotatorName=:annotator AND exp.datasetName=:dataset AND exp.experimentType=:experimentType AND (addi.resultId=0 OR addi.resultId=3) AND exp.lastChanged <= :before ORDER BY result DESC";;
+	private static final String GET_BEST_EXPERIMENT_DATE_TASK_RESULTS = "SELECT exp.datasetName, exp.annotatorName, exp.experimentType, addi.value AS result, exp.state, exp.errorCount, lastChanged, exp.Id FROM ExperimentTasks exp join ExperimentTasks_AdditionalResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND exp.annotatorName=:annotator AND exp.datasetName=:dataset AND exp.experimentType=:experimentType AND (addi.resultId=0 OR addi.resultId=3) AND exp.lastChanged <= :before ORDER BY result DESC";;
 	
     private final NamedParameterJdbcTemplate template;
 
@@ -197,7 +197,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("id", experimentTaskId);
 //        parameters.addValue("F1", result.getF1Measure());
 //        parameters.addValue("Precision", result.getPrecision());
-//        parameters.addValue("Recall", result.getRecall());
+        parameters.addValue("publish", result.getPublish());
         parameters.addValue("errorCount", result.getErrorCount());
         parameters.addValue("lastChanged", new java.sql.Timestamp(result.timestamp));
 
@@ -411,7 +411,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
 
     protected void insertSubTask(ExperimentTaskResult subTask, int experimentTaskId) {
-        subTask.idInDb = createTask(subTask.annotator, subTask.dataset, subTask.type.name(), subTask.matching.name(), ""+experimentTaskId);
+        subTask.idInDb = createTask(subTask.annotator, subTask.dataset, subTask.type.name(), subTask.matching.name(),  ""+experimentTaskId);
         setExperimentTaskResult(subTask.idInDb, subTask);
         addSubTaskRelation(experimentTaskId, subTask.idInDb);
     }

@@ -130,7 +130,7 @@ public interface ExperimentDAO extends Closeable {
      *         newly created experiment task.
      */
     public int connectCachedResultOrCreateTask(String annotatorName, String datasetName, String experimentType,
-            String matching, String experimentId);
+            String matching,  String experimentId);
 
     /**
      * Creates a new experiment task with the given preferences, sets its GERBIL
@@ -152,7 +152,7 @@ public interface ExperimentDAO extends Closeable {
      *            the id of the experiment
      * @return the id of the newly created experiment task.
      */
-    public int createTask(String annotatorName, String datasetName,  String experimentType, String matching,
+    public int createTask(String annotatorName, String datasetName,  String experimentType, String matching, 
             String experimentId);
 
     /**

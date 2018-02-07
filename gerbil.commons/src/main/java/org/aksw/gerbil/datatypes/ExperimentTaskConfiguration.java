@@ -27,6 +27,7 @@ public class ExperimentTaskConfiguration {
     public ExperimentType type;
     public Matching matching;
     public String questionLanguage;
+	private boolean publish;
 
     public ExperimentTaskConfiguration(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
             ExperimentType type, Matching matching) {
@@ -103,4 +104,13 @@ public class ExperimentTaskConfiguration {
         return "eTConfig(\"" + annotatorConfig.getName() + "\",\"" + datasetConfig.getName() + "\",\"" + type.name()
                 + "\",\"" + matching.name() + "\")";
     }
+
+
+	public void setPublish(boolean publish) {
+		this.publish = publish;
+	}
+	
+	public boolean getPublish() {
+		return publish;
+	}
 }

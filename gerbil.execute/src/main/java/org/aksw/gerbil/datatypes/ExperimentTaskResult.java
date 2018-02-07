@@ -53,6 +53,7 @@ public class ExperimentTaskResult {
      * {@link ExperimentDAO#TASK_FINISHED}, else this should be null.
      */
     public String stateMsg = null;
+	private boolean publish;
 
     public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
             double results[], int state, int errorCount, long timestamp) {
@@ -344,4 +345,12 @@ public class ExperimentTaskResult {
             return subTasks.size();
         }
     }
+
+	public boolean getPublish() {
+		return publish;
+	}
+	
+	public void setPublish(boolean publish) {
+		this.publish = publish;
+	}
 }

@@ -193,7 +193,7 @@ public class MainController {
         for (int i = 0; i < jsonAnswerFiles.size(); i++) {
             answerFiles[i] = (String) jsonAnswerFiles.get(i);
         }
-
+        boolean publish = (boolean) configuration.get("publish");
         ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[(annotators.length * datasets.length)
                 + answerFiles.length];
         int count = 0;
@@ -214,6 +214,9 @@ public class MainController {
         		LOGGER.debug("Created config: {}", configs[count]);
         		++count;
         	}
+        }
+        for(ExperimentTaskConfiguration config : configs) {
+        	config.setPublish(publish);
         }
 
         String experimentId = IDCreator.getInstance().createID();
