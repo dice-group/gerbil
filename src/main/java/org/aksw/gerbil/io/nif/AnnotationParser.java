@@ -30,11 +30,11 @@ import java.util.TimeZone;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
-import org.aksw.gerbil.transfer.nif.OARelation;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.ProvenanceInfo;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
-import org.aksw.gerbil.transfer.nif.data.OARelationImpl;
+import org.aksw.gerbil.transfer.nif.data.RelationImpl;
 import org.aksw.gerbil.transfer.nif.data.ProvenanceInfoImpl;
 import org.aksw.gerbil.transfer.nif.data.RelationImpl;
 import org.aksw.gerbil.transfer.nif.data.ScoredAnnotation;
@@ -222,7 +222,7 @@ public class AnnotationParser {
 							marking = new ScoredRelationImpl(new Triple(s, p, o), confidence);
 						} else {
 							// It has been disambiguated without a confidence
-							marking = new RelationImpl(new Triple(s, p, o));
+							marking = new RelationImpl(s.toString(), p.toString(), o.toString());
 						}
 					} else {
 						// The relation is incomplete
@@ -296,7 +296,7 @@ public class AnnotationParser {
 					Node subject = nifModel.listObjectsOfProperty(relationStmtNode, RDF.subject).next().asNode();
 					Node predicate = nifModel.listObjectsOfProperty(relationStmtNode, RDF.predicate).next().asNode();
 					Node object = nifModel.listObjectsOfProperty(relationStmtNode, RDF.object).next().asNode();
-					OARelation relation = new OARelationImpl(subject.getURI(), predicate.getURI(), object.toString(true));
+					Relation relation = new RelationImpl(subject.toString(), predicate.toString(), object.toString(true));
 					markings.add(relation);
 				}
 				
