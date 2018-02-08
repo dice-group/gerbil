@@ -55,15 +55,16 @@ import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
+import org.aksw.gerbil.transfer.nif.OARelation;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 import org.aksw.gerbil.web.config.RootConfig;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
 
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 @SuppressWarnings("deprecation")
 public class EvaluatorFactory {
@@ -221,7 +222,9 @@ public class EvaluatorFactory {
                     new DoubleResultComparator());
         }
         case RE2KB:
-        	//TODO new EXP
+        	return new ConfidenceBasedFMeasureCalculator<OARelation>(new MatchingsCounterImpl<OARelation>(
+                    (MatchingsSearcher<OARelation>) MatchingsSearcherFactory
+                            .createSpanMatchingsSearcher(configuration.matching)));
         case KE2KB:
         	//TODO new EXP
         default: {

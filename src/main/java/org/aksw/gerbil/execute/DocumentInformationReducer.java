@@ -29,8 +29,8 @@ import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.filter.MarkingFilter;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
 
 /**
  * This class reduces the information contained inside a given document. It is
