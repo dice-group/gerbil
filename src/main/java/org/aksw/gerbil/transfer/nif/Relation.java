@@ -1,5 +1,6 @@
 package org.aksw.gerbil.transfer.nif;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -9,13 +10,13 @@ import java.util.Set;
  */
 public interface Relation extends Marking {
 
-    public void setRelation(String subject, String predicate, String object);
+	public void setRelation(Meaning subject, Meaning predicate, Meaning object);
     
-    public Set<String>[] getRelation();
+    public List<Meaning> getRelation();
     
-    public Set<String> getSubject();
+    public Meaning getSubject();
     
-    public Set<String> getPredicate();
+    public Meaning getPredicate();
     
-    public Set<String> getObject();
+    public Meaning getObject();
 }

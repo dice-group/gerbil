@@ -219,10 +219,12 @@ public class AnnotationParser {
 						nodeIter = nifModel.listObjectsOfProperty(annotationResource, ITSRDF.taConfidence);
 						if (nodeIter.hasNext()) {
 							confidence = nodeIter.next().asLiteral().getDouble();
-							marking = new ScoredRelationImpl(new Triple(s, p, o), confidence);
+							marking = new ScoredRelationImpl(new Annotation(s.toString()), 
+									new Annotation(p.toString()), 
+									new Annotation(o.toString()), confidence);
 						} else {
 							// It has been disambiguated without a confidence
-							marking = new RelationImpl(s.toString(), p.toString(), o.toString());
+							marking = new RelationImpl(new Annotation(s.toString()), new Annotation(p.toString()), new Annotation(o.toString()));
 						}
 					} else {
 						// The relation is incomplete
@@ -296,7 +298,9 @@ public class AnnotationParser {
 					Node subject = nifModel.listObjectsOfProperty(relationStmtNode, RDF.subject).next().asNode();
 					Node predicate = nifModel.listObjectsOfProperty(relationStmtNode, RDF.predicate).next().asNode();
 					Node object = nifModel.listObjectsOfProperty(relationStmtNode, RDF.object).next().asNode();
-					Relation relation = new RelationImpl(subject.toString(), predicate.toString(), object.toString(true));
+					Relation relation = new RelationImpl(new Annotation(subject.toString()), 
+							new Annotation(predicate.toString()), 
+							new Annotation(object.toString()));
 					markings.add(relation);
 				}
 				

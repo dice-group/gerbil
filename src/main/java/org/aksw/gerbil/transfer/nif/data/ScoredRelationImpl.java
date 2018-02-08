@@ -1,27 +1,33 @@
 package org.aksw.gerbil.transfer.nif.data;
 
+import java.util.Set;
+
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.ScoredMarking;
-import org.apache.jena.graph.Triple;
 
 public class ScoredRelationImpl extends RelationImpl implements ScoredMarking {
 
     protected double confidence;
 
-    public ScoredRelationImpl(Triple relation, double confidence) {
-        super(relation);
-        setConfidence(confidence);
+
+    public ScoredRelationImpl(Relation relation, double confidence) throws CloneNotSupportedException {
+        this((Meaning)relation.getSubject().clone(), 
+        		(Meaning)relation.getPredicate().clone(), 
+        		(Meaning)relation.getObject().clone(), confidence);
     }
 
-    public ScoredRelationImpl(Relation relation, double confidence) {
-        this(relation.getRelation(), confidence);
+    public ScoredRelationImpl(ScoredRelationImpl relation) throws CloneNotSupportedException {
+        this(relation, relation.getConfidence());
+    }
+    
+    public ScoredRelationImpl(Meaning subject, Meaning predicate, Meaning object, double confidence) {
+    	super(subject, predicate, object);
+    	setConfidence(confidence);
     }
 
-    public ScoredRelationImpl(ScoredRelationImpl relation) {
-        this(relation.getRelation(), relation.getConfidence());
-    }
 
-    @Override
+	@Override
     public double getConfidence() {
         return confidence;
     }
@@ -63,9 +69,11 @@ public class ScoredRelationImpl extends RelationImpl implements ScoredMarking {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append('(');
-        builder.append(relation.toString());
-        builder.append(", ");
+        builder.append("([");
+        builder.append(this.getSubject()).append(", ");
+        builder.append(this.getPredicate()).append(", ");
+        builder.append(this.getObject());
+        builder.append("], ");
         builder.append(confidence);
         builder.append(')');
         return builder.toString();

@@ -38,6 +38,7 @@ import org.aksw.gerbil.transfer.nif.vocabulary.PROV;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.vocabulary.RDF;
 
 public class AnnotationWriter {
@@ -125,9 +126,9 @@ public class AnnotationWriter {
 
         Resource relationAsResource = nifModel.createResource(uriBuilder.toString());
         nifModel.add(relationAsResource, RDF.type, RDF.Statement);
-        nifModel.add(relationAsResource, RDF.subject, nifModel.asRDFNode(relation.getRelation().getSubject()));
-        nifModel.add(relationAsResource, RDF.predicate, nifModel.asRDFNode(relation.getRelation().getPredicate()));
-        nifModel.add(relationAsResource, RDF.object, nifModel.asRDFNode(relation.getRelation().getObject()));
+        nifModel.add(relationAsResource, RDF.subject, ResourceFactory.createResource(relation.getSubject().getUris().iterator().next()));
+        nifModel.add(relationAsResource, RDF.predicate, ResourceFactory.createResource(relation.getPredicate().getUris().iterator().next()));
+        nifModel.add(relationAsResource, RDF.object, ResourceFactory.createResource(relation.getObject().getUris().iterator().next()));
         nifModel.add(relationAsResource, NIF.referenceContext, documentAsResource);
         if (relation instanceof ScoredMarking) {
             nifModel.add(relationAsResource, ITSRDF.taConfidence,
