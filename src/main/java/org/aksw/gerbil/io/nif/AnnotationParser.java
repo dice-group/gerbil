@@ -30,10 +30,11 @@ import java.util.TimeZone;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
+import org.aksw.gerbil.transfer.nif.OARelation;
 import org.aksw.gerbil.transfer.nif.ProvenanceInfo;
-import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.aksw.gerbil.transfer.nif.data.OARelationImpl;
 import org.aksw.gerbil.transfer.nif.data.ProvenanceInfoImpl;
 import org.aksw.gerbil.transfer.nif.data.RelationImpl;
 import org.aksw.gerbil.transfer.nif.data.ScoredAnnotation;
@@ -55,7 +56,6 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -296,8 +296,7 @@ public class AnnotationParser {
 					Node subject = nifModel.listObjectsOfProperty(relationStmtNode, RDF.subject).next().asNode();
 					Node predicate = nifModel.listObjectsOfProperty(relationStmtNode, RDF.predicate).next().asNode();
 					Node object = nifModel.listObjectsOfProperty(relationStmtNode, RDF.object).next().asNode();
-					Relation relation = new RelationImpl(
-							new Triple(subject, predicate, object));
+					OARelation relation = new OARelationImpl(subject.getURI(), predicate.getURI(), object.toString(true));
 					markings.add(relation);
 				}
 				
