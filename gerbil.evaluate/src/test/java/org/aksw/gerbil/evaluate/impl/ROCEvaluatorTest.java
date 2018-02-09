@@ -75,6 +75,64 @@ public class ROCEvaluatorTest {
 		EvaluationResult result = eval.compareModel(anno, gold)[0];
 		Assert.assertEquals(0.5, (double) result.getValue(), DELTA);
 	}
+	
+    @Test
+    public void testEqualRank() {
+        Model anno = ModelFactory.createDefaultModel();
+
+        Model gold = ModelFactory.createDefaultModel();
+
+        Resource s1 = ResourceFactory.createResource("http://test.com/stmt1");
+        Resource s2 = ResourceFactory.createResource("http://test.com/stmt2");
+        Resource s3 = ResourceFactory.createResource("http://test.com/stmt3");
+        Resource s4 = ResourceFactory.createResource("http://test.com/stmt4");
+
+        Property p = ResourceFactory.createProperty(ROCEvaluator.DEFAULT_TRUTH_VALUE_URI);
+
+        gold.addLiteral(s4, p, 1.0);
+        gold.addLiteral(s3, p, 1.0);
+        gold.addLiteral(s2, p, 0.0);
+        gold.addLiteral(s1, p, 0.0);
+
+        anno.addLiteral(s4, p, 1.0);
+        anno.addLiteral(s3, p, 1.0);
+        anno.addLiteral(s2, p, 1.0);
+        anno.addLiteral(s1, p, 1.0);
+
+        ROCEvaluator<Model> eval = new ROCEvaluator<Model>();
+        eval.setTruthValueURI(ROCEvaluator.DEFAULT_TRUTH_VALUE_URI);
+        EvaluationResult result = eval.compareModel(anno, gold)[0];
+        Assert.assertEquals(0.5, (double) result.getValue(), DELTA);
+    }
+    
+    @Test
+    public void testEqualRank2() {
+        Model anno = ModelFactory.createDefaultModel();
+
+        Model gold = ModelFactory.createDefaultModel();
+
+        Resource s1 = ResourceFactory.createResource("http://test.com/stmt1");
+        Resource s2 = ResourceFactory.createResource("http://test.com/stmt2");
+        Resource s3 = ResourceFactory.createResource("http://test.com/stmt3");
+        Resource s4 = ResourceFactory.createResource("http://test.com/stmt4");
+
+        Property p = ResourceFactory.createProperty(ROCEvaluator.DEFAULT_TRUTH_VALUE_URI);
+
+        gold.addLiteral(s4, p, 1.0);
+        gold.addLiteral(s3, p, 1.0);
+        gold.addLiteral(s2, p, 0.0);
+        gold.addLiteral(s1, p, 0.0);
+
+        anno.addLiteral(s4, p, 1.0);
+        anno.addLiteral(s3, p, 0.5);
+        anno.addLiteral(s2, p, 0.5);
+        anno.addLiteral(s1, p, 0.0);
+
+        ROCEvaluator<Model> eval = new ROCEvaluator<Model>();
+        eval.setTruthValueURI(ROCEvaluator.DEFAULT_TRUTH_VALUE_URI);
+        EvaluationResult result = eval.compareModel(anno, gold)[0];
+        Assert.assertEquals(7.0/8.0, (double) result.getValue(), DELTA);
+    }
 
 	@Test
 	public void curveTest() {
