@@ -150,7 +150,7 @@ public class ROCEvaluatorTest {
 		Assert.assertEquals(1.0, b.x, DELTA);
 		Assert.assertEquals(1.0, b.y, DELTA);
 
-		double auc = curve.calcualteAUC();
+		double auc = curve.calculateAUC();
 		Assert.assertEquals(1.0, auc, DELTA);
 
 		curve = new ROCCurve(2, 2);
@@ -168,7 +168,7 @@ public class ROCEvaluatorTest {
 		Assert.assertEquals(1.0, b.x, DELTA);
 		Assert.assertEquals(1.0, b.y, DELTA);
 
-		auc = curve.calcualteAUC();
+		auc = curve.calculateAUC();
 		Assert.assertEquals(0.0, auc, DELTA);
 
 		curve = new ROCCurve(2, 2);
@@ -192,7 +192,7 @@ public class ROCEvaluatorTest {
 		Assert.assertEquals(1.0, d.x, DELTA);
 		Assert.assertEquals(1.0, d.y, DELTA);
 
-		auc = curve.calcualteAUC();
+		auc = curve.calculateAUC();
 		Assert.assertEquals(0.25, auc, DELTA);
 
 		curve = new ROCCurve(2, 2);
@@ -216,7 +216,7 @@ public class ROCEvaluatorTest {
 		Assert.assertEquals(1.0, d.x, DELTA);
 		Assert.assertEquals(1.0, d.y, DELTA);
 
-		auc = curve.calcualteAUC();
+		auc = curve.calculateAUC();
 		Assert.assertEquals(0.75, auc, DELTA);
 
 		// Test curve with missing values
@@ -236,7 +236,7 @@ public class ROCEvaluatorTest {
 		Assert.assertEquals(1.0, c.x, DELTA);
 		Assert.assertEquals(1.0, c.y, DELTA);
 
-		auc = curve.calcualteAUC();
+		auc = curve.calculateAUC();
 		Assert.assertEquals(0.5, auc, DELTA);
 
 	}

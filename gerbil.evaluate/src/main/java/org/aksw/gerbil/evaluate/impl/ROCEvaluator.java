@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.evaluate.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,32 +73,56 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
 
         //remove all non number values (NAN, INFINITY, etc)
         cleanTruthValues(annotator, truthValueProp);
-        List<Statement> sortedStatements = annotator.listStatements(null, truthValueProp, (RDFNode) null).toList();
-
-        Collections.sort(sortedStatements, new StatementComparator());
-        ROCCurve curve = new ROCCurve(trueStmts, falseStmts);
-
-        for (Statement stmt : sortedStatements) {
+        List<Statement> statements = annotator.listStatements(null, truthValueProp, (RDFNode) null).toList();
+        List<DoubleBooleanPair> evalStatements = new ArrayList<>(statements.size()); 
+        for (Statement stmt : statements) {
             // Get the same triple from the gold standard
             Resource checkStmt = stmt.getSubject();
+            double predictedValue = stmt.getObject().asLiteral().getDouble();
             StmtIterator stIt = gold.listStatements(checkStmt, truthValueGold, (RDFNode) null);
             // if such a triple exists
             if (stIt.hasNext()) {
                 Double truthValue = stIt.next().getDouble();
                 // We don't want to check whether it is equal to one or zero, so let's check
                 // whether it is larger than 0.5 ;-)
-                if (truthValue > 0.5) {
-                    curve.addUp();
-                } else {
-                    curve.addRight();
-                }
+                evalStatements.add(new DoubleBooleanPair(predictedValue, (truthValue > 0.5)));
             } else {
                 // ignore it
                 LOGGER.info("The system answer contained the following unknown statement: {}", stmt.toString());
             }
         }
+        
+        Collections.sort(evalStatements);
+        
+        ROCCurve curve = new ROCCurve(trueStmts, falseStmts);
+        int trueResults = 0, falseResults = 0;
+        for (int i = 0; i < evalStatements.size(); ++i) {
+            DoubleBooleanPair current = evalStatements.get(i);
+            if(current.goldFlag) {
+                ++trueResults;
+            } else {
+                ++falseResults;
+            }
+            // If this is the last pair OR the next pair has a different predicted value
+            if((i == (evalStatements.size() - 1)) || (evalStatements.get(i + 1).predictedValue != current.predictedValue)) {
+                // check if there are only steps up
+                if(falseResults == 0) {
+                    for (int j = 0; j < trueResults; ++j) {
+                        curve.addUp();
+                    }
+                } else if(trueResults == 0) {
+                    for (int j = 0; j < falseResults; ++j) {
+                        curve.addRight();
+                    }
+                } else {
+                    curve.addDiagonally(trueResults, falseResults);
+                }
+                trueResults = 0;
+                falseResults = 0;
+            }
+        }
         curve.finishCurve();
-        auc = curve.calcualteAUC();
+        auc = curve.calculateAUC();
 
         return new EvaluationResult[] { new DoubleEvaluationResult(AUC_NAME, auc),
                 new StringEvaluationResult(ROC_NAME, curve.toString()) };
@@ -135,4 +160,33 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
         this.truthValueURI = truthValueURI;
     }
 
+    protected static class DoubleBooleanPair implements Comparable<DoubleBooleanPair> {
+        public double predictedValue;
+        public boolean goldFlag;
+        
+        public DoubleBooleanPair() {
+        }
+        
+        public DoubleBooleanPair(double predictedValue, boolean goldFlag) {
+            this.predictedValue = predictedValue;
+            this.goldFlag = goldFlag;
+        }
+
+        @Override
+        public int compareTo(DoubleBooleanPair o) {
+            int compareResult = Double.compare(predictedValue, o.predictedValue);
+            return (compareResult == 0) ? 0 : -compareResult;
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append('(');
+            builder.append(predictedValue);
+            builder.append(',');
+            builder.append(goldFlag ? '1' : '0');
+            builder.append(')');
+            return builder.toString();
+        }
+    }
 }
