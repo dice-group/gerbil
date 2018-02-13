@@ -54,6 +54,7 @@ import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Relation;
@@ -226,8 +227,8 @@ public class EvaluatorFactory {
         	return new ConfidenceBasedFMeasureCalculator<Relation>(new MatchingsCounterImpl<Relation>(
         			 new EqualsBasedMatchingsSearcher<Relation>()));
         case KE2KB:
-        	return new ConfidenceBasedFMeasureCalculator<Meaning>(new MatchingsCounterImpl<Meaning>(
-                    new EqualsBasedMatchingsSearcher<Meaning>()));
+        	return new ConfidenceBasedFMeasureCalculator<Marking>(new MatchingsCounterImpl<Marking>(
+                    new EqualsBasedMatchingsSearcher<Marking>()));
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
         }

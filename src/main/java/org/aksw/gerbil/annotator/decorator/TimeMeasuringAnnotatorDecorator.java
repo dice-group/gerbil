@@ -225,7 +225,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
 		}
 
 		@Override
-		public List<Meaning> performKE2KBTask(Document document) throws GerbilException {
+		public List<Marking> performKE2KBTask(Document document) throws GerbilException {
 			return TimeMeasuringAnnotatorDecorator.performKE2KBTask(this, document);
 		}
 
@@ -272,10 +272,10 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
 		return result;
 	}
 
-	protected static List<Meaning> performKE2KBTask(TimeMeasuringAnnotatorDecorator timeMeasurer,
+	protected static List<Marking> performKE2KBTask(TimeMeasuringAnnotatorDecorator timeMeasurer,
 			Document document) throws GerbilException {
 		long startTime = System.currentTimeMillis();
-		List<Meaning> result = null;
+		List<Marking> result = null;
 		result = ((KE2KBAnnotator) timeMeasurer.getDecoratedAnnotator()).performKE2KBTask(document);
 		timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
 		return result;

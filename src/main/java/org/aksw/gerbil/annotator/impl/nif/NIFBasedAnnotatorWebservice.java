@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator implements OKETask2Annotator,
-        OKETask1Annotator, A2KBAnnotator, EntityTyper, KE2KBAnnotator {
+        OKETask1Annotator, A2KBAnnotator, EntityTyper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NIFBasedAnnotatorWebservice.class);
 
@@ -169,15 +169,4 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
         return url;
     }
 
-	@Override
-	public List<Relation> performRE2KBTask(Document document) throws GerbilException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Meaning> performKE2KBTask(Document document) throws GerbilException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

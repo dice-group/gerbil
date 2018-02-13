@@ -166,7 +166,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
 		}
 
 		@Override
-		public List<Meaning> performKE2KBTask(Document document) throws GerbilException {
+		public List<Marking> performKE2KBTask(Document document) throws GerbilException {
 			return ErrorCountingAnnotatorDecorator.performKE2KB(this, document);
 
 		}
@@ -315,9 +315,9 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         return result;
 	}
 
-    public static List<Meaning> performKE2KB(ErrorCountingAnnotatorDecorator errorCounter,
+    public static List<Marking> performKE2KB(ErrorCountingAnnotatorDecorator errorCounter,
 			Document document) throws GerbilException {
-    	List<Meaning> result = null;
+    	List<Marking> result = null;
         try {
             result = ((KE2KBAnnotator) errorCounter.getDecoratedAnnotator()).performKE2KBTask(document);
         } catch (Exception e) {
@@ -330,7 +330,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
                         + e.getLocalizedMessage());
             }
             errorCounter.increaseErrorCount();
-            return new ArrayList<Meaning>(0);
+            return new ArrayList<Marking>(0);
         }
         if (printDebugMsg && LOGGER.isDebugEnabled()) {
             logResult(result, errorCounter.getName(), "Meaning");

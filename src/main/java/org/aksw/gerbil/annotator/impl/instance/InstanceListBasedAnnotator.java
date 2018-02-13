@@ -120,8 +120,8 @@ public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2K
 	}
 
 	@Override
-	public List<Meaning> performKE2KBTask(Document document) throws GerbilException {
-        return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), Meaning.class);
+	public List<Marking> performKE2KBTask(Document document) throws GerbilException {
+        return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), Marking.class);
 
 	}
 }

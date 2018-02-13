@@ -36,6 +36,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Relation;
@@ -143,7 +144,7 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 		}
 
 		@Override
-		public List<Meaning> performKE2KBTask(Document document) throws GerbilException {
+		public List<Marking> performKE2KBTask(Document document) throws GerbilException {
 			return SingleInstanceSecuringAnnotatorDecorator.performKE2KB(this, document);
 
 		}
@@ -374,9 +375,9 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 		return result;
 	}
 	
-	protected static List<Meaning> performKE2KB(SingleInstanceSecuringAnnotatorDecorator decorator,
+	protected static List<Marking> performKE2KB(SingleInstanceSecuringAnnotatorDecorator decorator,
 			Document document) throws GerbilException {
-		List<Meaning> result = null;
+		List<Marking> result = null;
 		try {
 			decorator.semaphore.acquire();
 		} catch (InterruptedException e) {
