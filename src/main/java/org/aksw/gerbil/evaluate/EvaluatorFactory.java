@@ -43,6 +43,7 @@ import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.matching.MatchingsSearcherFactory;
 import org.aksw.gerbil.matching.impl.ClassifiedMeaningMatchingsSearcher;
 import org.aksw.gerbil.matching.impl.CompoundMatchingsSearcher;
+import org.aksw.gerbil.matching.impl.EqualsBasedMatchingsSearcher;
 import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.matching.impl.StrongSpanMatchingsSearcher;
@@ -55,7 +56,7 @@ import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
-import org.aksw.gerbil.transfer.nif.OARelation;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
@@ -222,11 +223,11 @@ public class EvaluatorFactory {
                     new DoubleResultComparator());
         }
         case RE2KB:
-        	return new ConfidenceBasedFMeasureCalculator<OARelation>(new MatchingsCounterImpl<OARelation>(
-                    (MatchingsSearcher<OARelation>) MatchingsSearcherFactory
-                            .createSpanMatchingsSearcher(configuration.matching)));
+        	return new ConfidenceBasedFMeasureCalculator<Relation>(new MatchingsCounterImpl<Relation>(
+        			 new EqualsBasedMatchingsSearcher<Relation>()));
         case KE2KB:
-        	//TODO new EXP
+        	return new ConfidenceBasedFMeasureCalculator<Meaning>(new MatchingsCounterImpl<Meaning>(
+                    new EqualsBasedMatchingsSearcher<Meaning>()));
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
         }
@@ -242,6 +243,8 @@ public class EvaluatorFactory {
         case D2KB:
         case ETyping:
         case C2KB:
+        case RE2KB:
+        case KE2KB:
             // Since the OKE challenge tasks are using the results of their
             // subtasks, the definition of subtasks is part of their evaluation
             // creation
@@ -276,10 +279,7 @@ public class EvaluatorFactory {
                     dataset)));
             return;
         }
-        case RE2KB:
-        	//TODO new EXP
-        case KE2KB:
-        	//TODO new EXP
+
         default: {
             throw new RuntimeException();
         }

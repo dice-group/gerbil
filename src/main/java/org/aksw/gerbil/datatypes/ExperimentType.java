@@ -280,6 +280,17 @@ public enum ExperimentType implements Describable {
         case OKE_Task2: {
             return type == OKE_Task2;
         }
+        case RE2KB:{
+        	return type == RE2KB;
+        }
+        case KE2KB:{
+        	switch(type) {
+        	case RE2KB:
+        	case KE2KB:
+        	case ERec:
+        		return true;
+        	}
+        }
         }
         return false;
     }

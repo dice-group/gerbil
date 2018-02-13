@@ -256,6 +256,8 @@ public class MainController {
         case OKE_Task2:
         case A2KB:
         case ERec:
+        case KE2KB:
+        case RE2KB:
         case RT2KB:
         case Sa2KB:
             return new ModelMap("Matching",

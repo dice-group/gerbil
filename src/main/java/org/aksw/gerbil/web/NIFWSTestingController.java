@@ -94,6 +94,15 @@ public class NIFWSTestingController {
                 annotator.performRT2KBTask(document);
                 break;
             }
+            case RE2KB: {
+            	annotator.performRE2KBTask(document);
+            	break;
+            }
+            case KE2KB: {
+            	annotator.performKE2KBTask(document);
+            	break;
+            }
+            
             default: {
                 throw new IllegalArgumentException("Got an unknown experiment type \"" + experimentType + "\".");
             }

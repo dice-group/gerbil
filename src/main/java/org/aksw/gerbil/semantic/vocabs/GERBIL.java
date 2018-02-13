@@ -58,6 +58,8 @@ public class GERBIL {
     public static final Resource RT2KB = resource("RT2KB");
     public static final Resource Sa2KB = resource("Sa2KB");
     public static final Resource Sc2KB = resource("Sc2KB");
+    public static final Resource RE2KB = resource("RE2KB");
+    public static final Resource KE2KB = resource("KE2KB");
     public static final Resource OKE2015_Task1 = resource("OKE2015_Task1");
     public static final Resource OKE2015_Task2 = resource("OKE2015_Task2");
     public static final Resource ERec = resource("ERec");
@@ -125,6 +127,10 @@ public class GERBIL {
             return ETyping;
         case RT2KB:
             return RT2KB;
+        case RE2KB:
+        	return RE2KB;
+        case KE2KB:
+        	return KE2KB;
         }
         LOGGER.error("Got an unknown experiment type: " + type.name());
         return null;

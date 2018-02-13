@@ -25,8 +25,10 @@ import org.aksw.gerbil.annotator.C2KBAnnotator;
 import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
+import org.aksw.gerbil.annotator.KE2KBAnnotator;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
+import org.aksw.gerbil.annotator.RE2KBAnnotator;
 import org.aksw.gerbil.annotator.RT2KBAnnotator;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
@@ -56,6 +58,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
@@ -217,6 +220,8 @@ public class ExperimentTask implements Task {
         case Sc2KB:
         case OKE_Task1: // falls through
         case OKE_Task2:
+        case RE2KB:
+        case KE2KB:
         case ETyping: {
             if (annotatorSameAsRetriever != null) {
                 for (List<? extends Meaning> result : results) {
@@ -492,6 +497,50 @@ public class ExperimentTask implements Task {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
                 prepareAnnotatorResults(results, globalRetriever);
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case RE2KB: {
+            try {
+                List<List<Relation>> results = new ArrayList<List<Relation>>(dataset.size());
+                List<List<Relation>> goldStandard = new ArrayList<List<Relation>>(dataset.size());
+                RE2KBAnnotator recognizer = ((RE2KBAnnotator) annotator);
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a single text
+                    results.add(recognizer.performRE2KBTask(DocumentInformationReducer.reduceToTextAndEntities(document)));
+                    goldStandard.add(document.getMarkings(Relation.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case KE2KB: {
+            try {
+                List<List<Meaning>> results = new ArrayList<List<Meaning>>(dataset.size());
+                List<List<Meaning>> goldStandard = new ArrayList<List<Meaning>>(dataset.size());
+                KE2KBAnnotator recognizer = ((KE2KBAnnotator) annotator);
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a single text
+                    results.add(recognizer.performKE2KBTask(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings(Meaning.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
