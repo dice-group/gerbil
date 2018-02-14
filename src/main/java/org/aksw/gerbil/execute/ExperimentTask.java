@@ -530,7 +530,7 @@ public class ExperimentTask implements Task {
 				for (Document document : dataset.getInstances()) {
 					// reduce the document to a single text
 					results.add(
-							recognizer.performRE2KBTask(DocumentInformationReducer.reduceToTextAndEntities(document)));
+							recognizer.performRE2KBTask(DocumentInformationReducer.reduceToTextAndTypedEntities(document)));
 					goldStandard.add(document.getMarkings(Relation.class));
 					taskState.increaseExperimentStepCount();
 				}
