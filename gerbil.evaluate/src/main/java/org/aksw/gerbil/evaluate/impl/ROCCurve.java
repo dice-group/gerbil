@@ -168,9 +168,9 @@ public class ROCCurve {
                 } else {
                     // this is a diagonal
                     // rectangle "under B"
-                    aup = pointB.y * (pointB.x - pointA.x);
-                    // triangle from B to A
-                    aup += 0.5 * (pointA.y - pointB.y) * (pointB.x - pointA.x);
+                    aup = pointA.y * (pointB.x - pointA.x);
+                    // triangle from A to B
+                    aup += 0.5 * (pointB.y - pointA.y) * (pointB.x - pointA.x);
                 }
                 auc += aup;
             }
