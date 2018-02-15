@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>gerbil-swc</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<packaging>pom</packaging>
 	<inceptionYear>2017</inceptionYear>
 	<name>Gerbil Extension for the ISWC2017 Semantic Web Challenge</name>
