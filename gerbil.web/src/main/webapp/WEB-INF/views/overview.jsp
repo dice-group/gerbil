@@ -329,16 +329,18 @@ table {
 				datasets.push(dataset);
 			}
 			if(datasets.length >= 1){
-	 			var canvas = "<div class=\"col-md-4\"><canvas id=\"";
+	 			var canvas = "<div class=\"col-md-4\" style=\"position: relative;  margin: auto; height: 60%;\"><canvas id=\"";
 				canvas += tableData.datasetName;
-				canvas += "roc\" width=\"350\" height=\"350\"></canvas></div>";
+
+				
+				canvas += "roc\"></canvas></div>";
 				$("#" + id).append(canvas);
 				var ctx = document.getElementById(tableData.datasetName + "roc").getContext('2d');
 	 			
 	 			var myLineChart = new Chart(ctx, {
    		 			type: 'scatter',
    			 		data : { "datasets" : datasets},
-   			 		options: { responsive: false, layout : { padding: {top : 50} }, scales: {yAxes: [{ticks: {max : 1, beginAtZero:true}}], xAxes : [{ticks: {max : 1, beginAtZero:true}}]}}
+   			 		options: {maintainAspectRatio: false, layout : { padding: {top : 50} }, scales: {yAxes: [{ticks: {max : 1, beginAtZero:true}}], xAxes : [{ticks: {max : 1, beginAtZero:true}}]}}
 				});
 			}
 		}
