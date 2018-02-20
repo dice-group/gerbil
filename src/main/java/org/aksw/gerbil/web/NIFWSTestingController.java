@@ -94,12 +94,12 @@ public class NIFWSTestingController {
                 annotator.performRT2KBTask(document);
                 break;
             }
-            case RE2KB: {
-            	annotator.performRE2KBTask(document);
+            case RE: {
+            	annotator.performRETask(document);
             	break;
             }
-            case KE2KB: {
-            	annotator.performKE2KBTask(document);
+            case OKE2018Task4: {
+            	annotator.performOKE2018Task4(document);
             	break;
             }
             

@@ -10,7 +10,7 @@ import org.aksw.gerbil.annotator.C2KBAnnotator;
 import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
-import org.aksw.gerbil.annotator.KE2KBAnnotator;
+import org.aksw.gerbil.annotator.OKE2018Task4Annotator;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
@@ -25,7 +25,7 @@ import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 
 public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2KBAnnotator, C2KBAnnotator,
-        D2KBAnnotator, EntityRecognizer, EntityTyper, OKETask1Annotator, OKETask2Annotator, KE2KBAnnotator {
+        D2KBAnnotator, EntityRecognizer, EntityTyper, OKETask1Annotator, OKETask2Annotator, OKE2018Task4Annotator {
 
     /*
      * The mapping has been changed to contain the length since we encountered
@@ -114,13 +114,13 @@ public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2K
     }
 
 	@Override
-	public List<Relation> performRE2KBTask(Document document) throws GerbilException {
+	public List<Relation> performRETask(Document document) throws GerbilException {
         return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), Relation.class);
 
 	}
 
 	@Override
-	public List<Marking> performKE2KBTask(Document document) throws GerbilException {
+	public List<Marking> performOKE2018Task4(Document document) throws GerbilException {
         return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), Marking.class);
 
 	}

@@ -20,12 +20,10 @@ import java.util.List;
 
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
 
-public interface KE2KBAnnotator extends RE2KBAnnotator, EntityRecognizer  {
+public interface REAnnotator extends Annotator {
 
-    public List<Marking> performKE2KBTask(Document document) throws GerbilException;
+    public List<Relation> performRETask(Document document) throws GerbilException;
 }

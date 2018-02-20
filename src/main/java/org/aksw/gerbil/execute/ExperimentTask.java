@@ -25,10 +25,10 @@ import org.aksw.gerbil.annotator.C2KBAnnotator;
 import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
-import org.aksw.gerbil.annotator.KE2KBAnnotator;
+import org.aksw.gerbil.annotator.OKE2018Task4Annotator;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
-import org.aksw.gerbil.annotator.RE2KBAnnotator;
+import org.aksw.gerbil.annotator.REAnnotator;
 import org.aksw.gerbil.annotator.RT2KBAnnotator;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
@@ -229,13 +229,13 @@ public class ExperimentTask implements Task {
 			return;
 		}
 		// relations need to be handled extra
-		case KE2KB:
+		case OKE2018Task4:
 			if (annotatorSameAsRetriever != null) {
 				for (List<? extends Meaning> result : results) {
 					SameAsRetrieverUtils.addSameURIsToMeanings(annotatorSameAsRetriever, result);
 				}
 			}
-		case RE2KB:
+		case RE:
 			return;
 		case ERec:// falls through
 		default:
@@ -522,15 +522,15 @@ public class ExperimentTask implements Task {
 			}
 			break;
 		}
-		case RE2KB: {
+		case RE: {
 			try {
 				List<List<Relation>> results = new ArrayList<List<Relation>>(dataset.size());
 				List<List<Relation>> goldStandard = new ArrayList<List<Relation>>(dataset.size());
-				RE2KBAnnotator recognizer = ((RE2KBAnnotator) annotator);
+				REAnnotator recognizer = ((REAnnotator) annotator);
 				for (Document document : dataset.getInstances()) {
 					// reduce the document to a single text
 					results.add(
-							recognizer.performRE2KBTask(DocumentInformationReducer.reduceToTextAndTypedEntities(document)));
+							recognizer.performRETask(DocumentInformationReducer.reduceToTextAndTypedEntities(document)));
 					goldStandard.add(document.getMarkings(Relation.class));
 					taskState.increaseExperimentStepCount();
 				}
@@ -547,14 +547,14 @@ public class ExperimentTask implements Task {
 			}
 			break;
 		}
-		case KE2KB: {
+		case OKE2018Task4: {
 			try {
 				List<List<Marking>> results = new ArrayList<List<Marking>>(dataset.size());
 				List<List<Marking>> goldStandard = new ArrayList<List<Marking>>(dataset.size());
-				KE2KBAnnotator recognizer = ((KE2KBAnnotator) annotator);
+				OKE2018Task4Annotator recognizer = ((OKE2018Task4Annotator) annotator);
 				for (Document document : dataset.getInstances()) {
 					// reduce the document to a single text
-					results.add(recognizer.performKE2KBTask(DocumentInformationReducer.reduceToPlainText(document)));
+					results.add(recognizer.performOKE2018Task4(DocumentInformationReducer.reduceToPlainText(document)));
 					goldStandard.add(document.getMarkings(Marking.class));
 					taskState.increaseExperimentStepCount();
 				}

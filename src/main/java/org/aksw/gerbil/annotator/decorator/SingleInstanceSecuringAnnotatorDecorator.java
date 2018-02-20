@@ -27,10 +27,10 @@ import org.aksw.gerbil.annotator.C2KBAnnotator;
 import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
-import org.aksw.gerbil.annotator.KE2KBAnnotator;
+import org.aksw.gerbil.annotator.OKE2018Task4Annotator;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
-import org.aksw.gerbil.annotator.RE2KBAnnotator;
+import org.aksw.gerbil.annotator.REAnnotator;
 import org.aksw.gerbil.annotator.RT2KBAnnotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -80,10 +80,10 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 			return new SingleInstanceSecuringOKETask2Annotator((OKETask2Annotator) annotator);
 		case RT2KB:
 			return new SingleInstanceSecuringRT2KBAnnotator((RT2KBAnnotator) annotator);
-		case RE2KB:
-			return new SingleInstanceSecuringRE2KBAnnotator((RE2KBAnnotator) annotator);
-		case KE2KB:
-			return new SingleInstanceSecuringKE2KBAnnotator((KE2KBAnnotator) annotator);
+		case RE:
+			return new SingleInstanceSecuringREAnnotator((REAnnotator) annotator);
+		case OKE2018Task4:
+			return new SingleInstanceSecuringOKE2018Task4Annotator((OKE2018Task4Annotator) annotator);
 		case Rc2KB:
 			break;
 		case Sa2KB:
@@ -110,30 +110,30 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 		}
 	}
 
-	private static class SingleInstanceSecuringRE2KBAnnotator extends SingleInstanceSecuringAnnotatorDecorator
-			implements RE2KBAnnotator {
+	private static class SingleInstanceSecuringREAnnotator extends SingleInstanceSecuringAnnotatorDecorator
+			implements REAnnotator {
 
-		public SingleInstanceSecuringRE2KBAnnotator(RE2KBAnnotator decoratedAnnotator) {
+		public SingleInstanceSecuringREAnnotator(REAnnotator decoratedAnnotator) {
 			super(decoratedAnnotator);
 		}
 
 		@Override
-		public List<Relation> performRE2KBTask(Document document) throws GerbilException {
-			return SingleInstanceSecuringAnnotatorDecorator.performRE2KB(this, document);
+		public List<Relation> performRETask(Document document) throws GerbilException {
+			return SingleInstanceSecuringAnnotatorDecorator.performRE(this, document);
 
 		}
 	}
 
-	private static class SingleInstanceSecuringKE2KBAnnotator extends SingleInstanceSecuringAnnotatorDecorator
-			implements KE2KBAnnotator {
+	private static class SingleInstanceSecuringOKE2018Task4Annotator extends SingleInstanceSecuringAnnotatorDecorator
+			implements OKE2018Task4Annotator {
 
-		public SingleInstanceSecuringKE2KBAnnotator(KE2KBAnnotator decoratedAnnotator) {
+		public SingleInstanceSecuringOKE2018Task4Annotator(OKE2018Task4Annotator decoratedAnnotator) {
 			super(decoratedAnnotator);
 		}
 
 		@Override
-		public List<Relation> performRE2KBTask(Document document) throws GerbilException {
-			return SingleInstanceSecuringAnnotatorDecorator.performRE2KB(this, document);
+		public List<Relation> performRETask(Document document) throws GerbilException {
+			return SingleInstanceSecuringAnnotatorDecorator.performRE(this, document);
 
 		}
 
@@ -144,9 +144,25 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 		}
 
 		@Override
-		public List<Marking> performKE2KBTask(Document document) throws GerbilException {
-			return SingleInstanceSecuringAnnotatorDecorator.performKE2KB(this, document);
+		public List<Marking> performOKE2018Task4(Document document) throws GerbilException {
+			return SingleInstanceSecuringAnnotatorDecorator.performOKE2018Task4(this, document);
 
+		}
+
+		@Override
+		public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
+			return SingleInstanceSecuringAnnotatorDecorator.performExtraction(this, document);
+
+		}
+
+		@Override
+		public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
+			return SingleInstanceSecuringAnnotatorDecorator.performD2KBTask(this, document);
+		}
+
+		@Override
+		public List<Meaning> performC2KB(Document document) throws GerbilException {
+			return SingleInstanceSecuringAnnotatorDecorator.performC2KB(this, document);
 		}
 	}
 
@@ -357,7 +373,7 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 		return result;
 	}
 	
-	protected static List<Relation> performRE2KB(SingleInstanceSecuringAnnotatorDecorator decorator,
+	protected static List<Relation> performRE(SingleInstanceSecuringAnnotatorDecorator decorator,
 			Document document) throws GerbilException {
 		List<Relation> result = null;
 		try {
@@ -368,14 +384,14 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 					ErrorTypes.UNEXPECTED_EXCEPTION);
 		}
 		try {
-			result = ((RE2KBAnnotator) decorator.getDecoratedAnnotator()).performRE2KBTask(document);
+			result = ((REAnnotator) decorator.getDecoratedAnnotator()).performRETask(document);
 		} finally {
 			decorator.semaphore.release();
 		}
 		return result;
 	}
 	
-	protected static List<Marking> performKE2KB(SingleInstanceSecuringAnnotatorDecorator decorator,
+	protected static List<Marking> performOKE2018Task4(SingleInstanceSecuringAnnotatorDecorator decorator,
 			Document document) throws GerbilException {
 		List<Marking> result = null;
 		try {
@@ -386,7 +402,7 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 					ErrorTypes.UNEXPECTED_EXCEPTION);
 		}
 		try {
-			result = ((KE2KBAnnotator) decorator.getDecoratedAnnotator()).performKE2KBTask(document);
+			result = ((OKE2018Task4Annotator) decorator.getDecoratedAnnotator()).performOKE2018Task4(document);
 		} finally {
 			decorator.semaphore.release();
 		}
