@@ -216,7 +216,7 @@ public class ROCCurve {
             // calculate it and end up with 0.999...
             x = 1.0;
         } else {
-            x = last.x + rightStepsCount * stepLengthRight;
+            x = last.x + stepsRight * stepLengthRight;
         }
         double y = 0.0;
         upStepsCount += stepsUp;
@@ -225,7 +225,7 @@ public class ROCCurve {
             // calculate it and end up with 0.999...
             y = 1.0;
         } else {
-            y = last.y + upStepsCount * stepLengthUp;
+            y = last.y + stepsUp * stepLengthUp;
         }
         points.add(new Point(x, y));
         lastDir = DIRECTION.DIAGONALLY;
