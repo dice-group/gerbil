@@ -329,7 +329,7 @@ table {
 				datasets.push(dataset);
 			}
 			if(datasets.length >= 1){
-	 			var canvas = "<div class=\"col-md-4\" style=\"position: relative;  margin: auto; height: 60%;\"><canvas id=\"";
+	 			var canvas = "<div class=\"col-md-4\" style=\"position: relative;  margin: auto; height: 100%;\"><canvas id=\"";
 				canvas += tableData.datasetName;
 
 				
