@@ -38,6 +38,7 @@ import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 
 /**
@@ -79,6 +80,10 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
             break;
         case Sc2KB:
             break;
+        case RE:
+            return new TimeMeasuringREAnnotator((REAnnotator) annotator);
+        case KE:
+            return new TimeMeasuringKEAnnotator((KEAnnotator) annotator);
         default:
             break;
         }
@@ -209,6 +214,36 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
             return TimeMeasuringAnnotatorDecorator.performOKETask2(this, document);
         }
     }
+             
+    private static class TimeMeasuringREAnnotator extends TimeMeasuringAnnotatorDecorator implements 
+    		REAnnotator {
+
+    	protected TimeMeasuringREAnnotator(REAnnotator decoratedAnnotator) {
+    		super(decoratedAnnotator);
+    	}
+    	
+    	@Override
+    	public List<Relation> performRETask(Document document) throws GerbilException {
+            return TimeMeasuringAnnotatorDecorator.performRETask(this, document);
+        }
+    }
+    
+    private static class TimeMeasuringKEAnnotator extends TimeMeasuringOKETask1Annotator implements KEAnnotator {
+
+    	protected TimeMeasuringKEAnnotator(KEAnnotator decoratedAnnotator) {
+    		super(decoratedAnnotator);
+    	}
+    	
+    	@Override
+    	public List<Relation> performRETask(Document document) throws GerbilException {
+            return TimeMeasuringAnnotatorDecorator.performRETask(this, document);
+        }
+    	
+    	@Override
+        public List<Meaning> performKETask(Document document) throws GerbilException {
+            return TimeMeasuringAnnotatorDecorator.performKETask(this, document);
+        }
+    }
 
     protected static List<Meaning> performC2KB(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
             throws GerbilException {
@@ -278,6 +313,24 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         long startTime = System.currentTimeMillis();
         List<TypedSpan> result = null;
         result = ((RT2KBAnnotator) timeMeasurer.getDecoratedAnnotator()).performRT2KBTask(document);
+        timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
+        return result;
+    }
+                
+    protected static List<Relation> performRETask(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
+            throws GerbilException {
+        long startTime = System.currentTimeMillis();
+        List<Relation> result = null;
+        result = ((REAnnotator) timeMeasurer.getDecoratedAnnotator()).performRETask(document);
+        timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
+        return result;
+    }
+
+    protected static List<Meaning> performKETask(TimeMeasuringAnnotatorDecorator timeMeasurer,
+            Document document) throws GerbilException {
+        long startTime = System.currentTimeMillis();
+        List<Meaning> result = null;
+        result = ((KEAnnotator) timeMeasurer.getDecoratedAnnotator()).performKETask(document);
         timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
         return result;
     }
