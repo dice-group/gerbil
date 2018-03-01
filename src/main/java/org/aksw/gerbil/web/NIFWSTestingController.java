@@ -95,11 +95,11 @@ public class NIFWSTestingController {
                 break;
             }
             case RE: {
-                annotator.performRE(document);
+                annotator.performRETask(document);
                 break;
             }
-            case SRE: {
-                annotator.performSRE(document);
+            case KE: {
+                annotator.performKETask(document);
                 break;
             }
             default: {
