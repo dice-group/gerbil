@@ -40,6 +40,7 @@ import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,7 +233,7 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
     	}
     	
     	@Override
-        public List<Span> performRETask(Document document) throws GerbilException {
+        public List<Relation> performRETask(Document document) throws GerbilException {
             return SingleInstanceSecuringAnnotatorDecorator.performRETask(this, document);
         }
     }
@@ -244,17 +245,12 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
     	}
     	
     	@Override
-        public List<TypedNamedEntity> performKETask(Document document) throws GerbilException {
+        public List<Meaning> performKETask(Document document) throws GerbilException {
             return SingleInstanceSecuringAnnotatorDecorator.performKETask(this, document);
         }
     	
     	@Override
-        public List<TypedNamedEntity> performTask1(Document document) throws GerbilException {
-            return SingleInstanceSecuringAnnotatorDecorator.performOKETask1(this, document);
-        }
-    	
-    	@Override
-        public List<Span> performRETask(Document document) throws GerbilException {
+        public List<Relation> performRETask(Document document) throws GerbilException {
             return SingleInstanceSecuringAnnotatorDecorator.performRETask(this, document);
         }
     }	
@@ -403,9 +399,9 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         return result;
     }
     
-    protected static List<Span> performRETask(SingleInstanceSecuringAnnotatorDecorator decorator, Document document)
+    protected static List<Relation> performRETask(SingleInstanceSecuringAnnotatorDecorator decorator, Document document)
             throws GerbilException {
-        List<Span> result = null;
+        List<Relation> result = null;
         try {
             decorator.semaphore.acquire();
         } catch (InterruptedException e) {
@@ -421,9 +417,9 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
         return result;
     }
 
-    protected static List<TypedNamedEntity> performKETask(SingleInstanceSecuringAnnotatorDecorator decorator,
+    protected static List<Meaning> performKETask(SingleInstanceSecuringAnnotatorDecorator decorator,
             Document document) throws GerbilException {
-        List<TypedNamedEntity> result = null;
+        List<Meaning> result = null;
         try {
             decorator.semaphore.acquire();
         } catch (InterruptedException e) {
