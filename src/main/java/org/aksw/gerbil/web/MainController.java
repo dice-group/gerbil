@@ -259,7 +259,8 @@ public class MainController {
         case RT2KB:
         case Sa2KB:
         case RE:
-        case SRE:
+        	return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
+        case KE:
             return new ModelMap("Matching",
                     Lists.newArrayList(Matching.WEAK_ANNOTATION_MATCH, Matching.STRONG_ANNOTATION_MATCH));
         default:
