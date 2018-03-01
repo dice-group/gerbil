@@ -113,7 +113,7 @@ function yesno()
 # Check for dependencies
 echo "Checking dependencies..."
 file="gerbil_data/gerbil_data.zip"
-url="https://github.com/AKSW/gerbil/releases/download/v1.2.5/gerbil_data.zip"
+url="https://github.com/dice-group/gerbil/releases/download/v1.2.6/gerbil_data.zip"
 
 if [ ! -d "gerbil_data" ]; then
     mkdir -p "gerbil_data" || error "Could not create gerbil_data directory"
