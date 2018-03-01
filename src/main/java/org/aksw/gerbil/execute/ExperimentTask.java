@@ -28,6 +28,8 @@ import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.annotator.RT2KBAnnotator;
+import org.aksw.gerbil.annotator.REAnnotator;
+import org.aksw.gerbil.annotator.KEAnnotator;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
@@ -58,6 +60,7 @@ import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.apache.commons.io.IOUtils;
@@ -212,6 +215,8 @@ public class ExperimentTask implements Task {
         case A2KB:// falls through
         case C2KB:
         case D2KB:
+        case RE:
+        case KE:
         case Rc2KB:
         case Sa2KB:
         case Sc2KB:
@@ -486,6 +491,49 @@ public class ExperimentTask implements Task {
                     results.add(okeTask2Annotator.performTask2(DocumentInformationReducer
                             .reduceToTextAndEntities(document)));
                     goldStandard.add(document.getMarkings(TypedNamedEntity.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                prepareAnnotatorResults(results, globalRetriever);
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case RE: {
+            try {
+                List<List<Relation>> results = new ArrayList<List<Relation>>(dataset.size());
+                List<List<Relation>> goldStandard = new ArrayList<List<Relation>>(dataset.size());
+                REAnnotator ReAnnotator = ((REAnnotator) annotator);
+                for (Document document : dataset.getInstances()) {
+                    results.add(ReAnnotator.performRETask(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings(Relation.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case KE: {
+            try {
+                List<List<Meaning>> results = new ArrayList<List<Meaning>>(dataset.size());
+                List<List<Meaning>> goldStandard = new ArrayList<List<Meaning>>(dataset.size());
+                KEAnnotator keAnnotator = ((KEAnnotator) annotator);
+                for (Document document : dataset.getInstances()) {
+                    results.add(keAnnotator.performKETask(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings(Meaning.class));
                     taskState.increaseExperimentStepCount();
                 }
                 if (annotatorOutputWriter != null) {
