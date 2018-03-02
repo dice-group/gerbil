@@ -29,8 +29,8 @@ import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.filter.MarkingFilter;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
 
 /**
  * This class reduces the information contained inside a given document. It is
@@ -66,5 +66,18 @@ public class DocumentInformationReducer {
             }
         }
         return new DocumentImpl(document.getText(), document.getDocumentURI(), markings);
+    }
+    
+    public static Document reduceToTextAndTypedEntities(Document document) {
+    	 MarkingFilter<TypedNamedEntity> filter = new TypeBasedMarkingFilter<TypedNamedEntity>(false,
+                 RDFS.Class.getURI(), OWL.Class.getURI());
+         List<TypedNamedEntity> namedEntities = document.getMarkings(TypedNamedEntity.class);
+         List<Marking> markings = new ArrayList<Marking>(namedEntities.size());
+         for (TypedNamedEntity tne : namedEntities) {
+             if (filter.isMarkingGood(tne)) {
+                 markings.add(new TypedNamedEntity(tne.getStartPosition(), tne.getLength(), tne.getUris(), tne.getTypes()));
+             }
+         }
+         return new DocumentImpl(document.getText(), document.getDocumentURI(), markings);
     }
 }

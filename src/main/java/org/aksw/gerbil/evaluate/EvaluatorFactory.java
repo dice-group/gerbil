@@ -43,6 +43,7 @@ import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.matching.MatchingsSearcherFactory;
 import org.aksw.gerbil.matching.impl.ClassifiedMeaningMatchingsSearcher;
 import org.aksw.gerbil.matching.impl.CompoundMatchingsSearcher;
+import org.aksw.gerbil.matching.impl.EqualsBasedMatchingsSearcher;
 import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.matching.impl.StrongSpanMatchingsSearcher;
@@ -53,17 +54,20 @@ import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
+import org.aksw.gerbil.transfer.nif.TypedMarking;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 import org.aksw.gerbil.web.config.RootConfig;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
 
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 @SuppressWarnings("deprecation")
 public class EvaluatorFactory {
@@ -220,6 +224,26 @@ public class EvaluatorFactory {
                     new SubTaskAverageCalculator<TypedNamedEntity>(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
                     new DoubleResultComparator());
         }
+        case RE:
+        	return new ConfidenceBasedFMeasureCalculator<Relation>(new MatchingsCounterImpl<Relation>(
+        			 new EqualsBasedMatchingsSearcher<Relation>()));
+        case OKE2018Task4:
+            ExperimentTaskConfiguration subTaskConfig;
+            List<SubTaskEvaluator> evaluators = new ArrayList<SubTaskEvaluator>();
+            
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.RE, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new ClassSubTaskEvaluator<>(subTaskConfig, (Evaluator<Marking>) createEvaluator(
+                    ExperimentType.RE, subTaskConfig, dataset), Relation.class));
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.A2KB, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new ClassSubTaskEvaluator<Meaning>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
+                    ExperimentType.A2KB, subTaskConfig, dataset, classifier,inferencer ), Meaning.class));
+            
+            
+            return new ConfidenceScoreEvaluatorDecorator(
+                    new SubTaskAverageCalculator(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
+                    new DoubleResultComparator());
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
         }
@@ -235,6 +259,9 @@ public class EvaluatorFactory {
         case D2KB:
         case ETyping:
         case C2KB:
+        case RE:
+        case OKE2018Task4:
+       
             // Since the OKE challenge tasks are using the results of their
             // subtasks, the definition of subtasks is part of their evaluation
             // creation
@@ -242,6 +269,7 @@ public class EvaluatorFactory {
         case OKE_Task2: {
             return;
         }
+        	
         case Sa2KB: // falls through
         case A2KB: {
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
@@ -269,6 +297,7 @@ public class EvaluatorFactory {
                     dataset)));
             return;
         }
+
         default: {
             throw new RuntimeException();
         }

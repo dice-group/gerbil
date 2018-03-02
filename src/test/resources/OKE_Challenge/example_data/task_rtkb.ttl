@@ -1,0 +1,123 @@
+@prefix nif:		<http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix itsrdf:		<http://www.w3.org/2005/11/its/rdf#> .
+@prefix dul:		<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix xsd:		<http://www.w3.org/2001/XMLSchema#> .
+@prefix dbpedia:	<http://dbpedia.org/resource/> .
+@prefix rdf:		<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix oke:		<http://aksw.org/notInWiki/> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242>
+		a				nif:String, nif:RFC5147String, nif:Context ;
+		nif:beginIndex	"0"^^xsd:nonNegativeInteger ;
+		nif:endIndex	"242"^^xsd:nonNegativeInteger ;
+		nif:isString	"Albert Modiano (1912–77, born in Paris), was of Italian Jewish origin; on his paternal side he was descended from a Sephardic family of Thessaloniki, Greece. His mother, Louisa Colpijn (1918-2015), was an actress also known as Louisa Colpeyn."@en .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,14>
+		a						nif:String, nif:RFC5147String, nif:Phrase ;
+		nif:anchorOf			"Albert Modiano"@en ;
+		nif:beginIndex			"0"^^xsd:nonNegativeInteger ;
+		nif:endIndex			"14"^^xsd:nonNegativeInteger ;
+		nif:referenceContext	<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242> ;
+		itsrdf:taIdentRef		oke:Albert_Modiano ;
+		itsrdf:taClassRef		dul:Person ;
+		itsrdf:taSource			"DBpedia 2014"^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=33,38>
+		a						nif:String, nif:RFC5147String, nif:Phrase ;
+		nif:anchorOf			"Paris"@en ;
+		nif:beginIndex			"33"^^xsd:nonNegativeInteger ;
+		nif:endIndex			"38"^^xsd:nonNegativeInteger ;
+		nif:referenceContext	<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242> ;
+		itsrdf:taIdentRef		dbpedia:Paris ;
+		itsrdf:taClassRef		dul:Place ;
+		itsrdf:taSource			"DBpedia 2014"^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=74,77>
+		a						nif:String, nif:RFC5147String, nif:Phrase ;
+		nif:anchorOf			"his"@en ;
+		nif:beginIndex			"74"^^xsd:nonNegativeInteger ;
+		nif:endIndex			"77"^^xsd:nonNegativeInteger ;
+		nif:referenceContext	<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242> ;
+		itsrdf:taIdentRef		oke:Albert_Modiano ;
+		itsrdf:taClassRef		dul:Person ;
+		itsrdf:taSource			"DBpedia 2014"^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=92,94>
+		a						nif:String, nif:RFC5147String, nif:Phrase ;
+		nif:anchorOf			"he"@en ;
+		nif:beginIndex			"92"^^xsd:nonNegativeInteger ;
+		nif:endIndex			"94"^^xsd:nonNegativeInteger ;
+		nif:referenceContext	<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242> ;
+		itsrdf:taIdentRef		oke:Albert_Modiano ;
+		itsrdf:taClassRef		dul:Person ;
+		itsrdf:taSource			"DBpedia 2014"^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=116,132>
+		a						nif:String, nif:RFC5147String, nif:Phrase ;
+		nif:anchorOf			"Sephardic family"@en ;
+		nif:beginIndex			"116"^^xsd:nonNegativeInteger ;
+		nif:endIndex			"132"^^xsd:nonNegativeInteger ;
+		nif:referenceContext	<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242> ;
+		itsrdf:taIdentRef		oke:Sephardi_family ;
+		itsrdf:taClassRef		dul:Organization ;
+		itsrdf:taSource			"DBpedia 2014"^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=136,156>
+		a						nif:String, nif:RFC5147String, nif:Phrase ;
+		nif:anchorOf			"Thessaloniki, Greece"@en ;
+		nif:beginIndex			"136"^^xsd:nonNegativeInteger ;
+		nif:endIndex			"156"^^xsd:nonNegativeInteger ;
+		nif:referenceContext	<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242> ;
+		itsrdf:taIdentRef		dbpedia:Thessaloniki ;
+		itsrdf:taClassRef		dul:Place ;
+		itsrdf:taSource			"DBpedia 2014"^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=158,161>
+		a						nif:String, nif:RFC5147String, nif:Phrase ;
+		nif:anchorOf			"His"@en ;
+		nif:beginIndex			"158"^^xsd:nonNegativeInteger ;
+		nif:endIndex			"161"^^xsd:nonNegativeInteger ;
+		nif:referenceContext	<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242> ;
+		itsrdf:taIdentRef		oke:Albert_Modiano ;
+		itsrdf:taClassRef		dul:Person ;
+		itsrdf:taSource			"DBpedia 2014"^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=162,168>
+		a						nif:String, nif:RFC5147String, nif:Phrase ;
+		nif:anchorOf			"mother"@en ;
+		nif:beginIndex			"162"^^xsd:nonNegativeInteger ;
+		nif:endIndex			"168"^^xsd:nonNegativeInteger ;
+		nif:referenceContext	<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242> ;
+		itsrdf:taIdentRef		dbpedia:Mother ;
+		itsrdf:taClassRef		dul:Role ;
+		itsrdf:taSource			"DBpedia 2014"^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=170,184>
+		a						nif:String, nif:RFC5147String, nif:Phrase ;
+		nif:anchorOf			"Louisa Colpijn"@en ;
+		nif:beginIndex			"170"^^xsd:nonNegativeInteger ;
+		nif:endIndex			"184"^^xsd:nonNegativeInteger ;
+		nif:referenceContext	<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242> ;
+		itsrdf:taIdentRef		oke:Louisa_Colpijn ;
+		itsrdf:taClassRef		dul:Person ;
+		itsrdf:taSource			"DBpedia 2014"^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=205,212>
+		a						nif:String, nif:RFC5147String, nif:Phrase ;
+		nif:anchorOf			"actress"@en ;
+		nif:beginIndex			"205"^^xsd:nonNegativeInteger ;
+		nif:endIndex			"212"^^xsd:nonNegativeInteger ;
+		nif:referenceContext	<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242> ;
+		itsrdf:taIdentRef		dbpedia:Actor ;
+		itsrdf:taClassRef		dul:Role ;
+		itsrdf:taSource			"DBpedia 2014"^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=227,241>
+		a						nif:String, nif:RFC5147String, nif:Phrase ;
+		nif:anchorOf			"Louisa Colpeyn"@en ;
+		nif:beginIndex			"227"^^xsd:nonNegativeInteger ;
+		nif:endIndex			"241"^^xsd:nonNegativeInteger ;
+		nif:referenceContext	<http://www.ontologydesignpatterns.org/data/oke-challenge-2015/task-1/document-75#char=0,242> ;
+		itsrdf:taIdentRef		oke:Louisa_Colpeyn ;
+		itsrdf:taClassRef		dul:Person ;
+		itsrdf:taSource			"DBpedia 2014"^^xsd:string .

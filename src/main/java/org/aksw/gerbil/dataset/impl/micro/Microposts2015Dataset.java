@@ -89,7 +89,9 @@ public class Microposts2015Dataset extends AbstractDataset implements
 
 		for (String line : lines) {
 			String[] annotation = line.split("\t");
-
+			if(annotation.length<3)
+				continue;
+			
 			int start = Integer.parseInt(annotation[1]);
 			int end = Integer.parseInt(annotation[2]);
 			int length = end - start;

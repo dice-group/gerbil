@@ -25,8 +25,10 @@ import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
 import org.aksw.gerbil.annotator.EntityTyper;
+import org.aksw.gerbil.annotator.OKE2018Task4Annotator;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
+import org.aksw.gerbil.annotator.REAnnotator;
 import org.aksw.gerbil.annotator.RT2KBAnnotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -38,6 +40,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
@@ -85,6 +88,10 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             return new ErrorCountingOKETask2Annotator((OKETask2Annotator) annotator, maxErrors);
         case RT2KB:
             return new ErrorCountingRT2KBAnnotator((RT2KBAnnotator) annotator, maxErrors);
+        case RE:
+        	return new ErrorCountingREAnnotator((REAnnotator) annotator, maxErrors);
+        case OKE2018Task4:
+        	return new ErrorCountingOKE2018Task4Annotator((OKE2018Task4Annotator) annotator, maxErrors);
         case Rc2KB:
             break;
         case Sa2KB:
@@ -139,6 +146,59 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         public List<Span> performRecognition(Document document) throws GerbilException {
             return ErrorCountingAnnotatorDecorator.performRecognition(this, document);
         }
+    }
+
+    private static class ErrorCountingOKE2018Task4Annotator extends ErrorCountingAnnotatorDecorator implements OKE2018Task4Annotator {
+
+		protected ErrorCountingOKE2018Task4Annotator(Annotator decoratedAnnotator, int maxErrors) {
+			super(decoratedAnnotator, maxErrors);
+		}
+
+		@Override
+		public List<Relation> performRETask(Document document) throws GerbilException {
+			return ErrorCountingAnnotatorDecorator.performRE(this, document);
+		}
+
+		@Override
+		public List<Span> performRecognition(Document document) throws GerbilException {
+			return ErrorCountingAnnotatorDecorator.performRecognition(this, document);
+
+		}
+
+		@Override
+		public List<Marking> performOKE2018Task4(Document document) throws GerbilException {
+			return ErrorCountingAnnotatorDecorator.performOKE2018Task4(this, document);
+
+		}
+
+		@Override
+		public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
+			return ErrorCountingAnnotatorDecorator.performExtraction(this, document);
+		}
+
+		@Override
+		public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
+			return ErrorCountingAnnotatorDecorator.performD2KBTask(this, document);
+		}
+
+		@Override
+		public List<Meaning> performC2KB(Document document) throws GerbilException {
+			return ErrorCountingAnnotatorDecorator.performC2KB(this, document);
+		}
+
+    }
+    
+    private static class ErrorCountingREAnnotator extends ErrorCountingAnnotatorDecorator implements REAnnotator {
+
+		protected ErrorCountingREAnnotator(Annotator decoratedAnnotator, int maxErrors) {
+			super(decoratedAnnotator, maxErrors);
+		}
+
+		@Override
+		public List<Relation> performRETask(Document document) throws GerbilException {
+			return ErrorCountingAnnotatorDecorator.performRE(this, document);
+		}
+
     }
 
     private static class ErrorCountingA2KBAnnotator extends ErrorCountingD2KBAnnotator implements A2KBAnnotator {
@@ -247,7 +307,53 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         LOGGER.debug(builder.toString());
     }
 
-    protected static List<Meaning> performC2KB(ErrorCountingAnnotatorDecorator errorCounter, Document document)
+    public static List<Relation> performRE(ErrorCountingAnnotatorDecorator errorCounter,
+			Document document) throws GerbilException {
+    	List<Relation> result = null;
+        try {
+            result = ((REAnnotator) errorCounter.getDecoratedAnnotator()).performRETask(document);
+        } catch (Exception e) {
+            if (errorCounter.getErrorCount() == 0) {
+                // Log only the first exception completely
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + ")", e);
+            } else {
+                // Log only the Exception message without the stack trace
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + "): "
+                        + e.getLocalizedMessage());
+            }
+            errorCounter.increaseErrorCount();
+            return new ArrayList<Relation>(0);
+        }
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
+            logResult(result, errorCounter.getName(), "Relation");
+        }
+        return result;
+	}
+
+    public static List<Marking> performOKE2018Task4(ErrorCountingAnnotatorDecorator errorCounter,
+			Document document) throws GerbilException {
+    	List<Marking> result = null;
+        try {
+            result = ((OKE2018Task4Annotator) errorCounter.getDecoratedAnnotator()).performOKE2018Task4(document);
+        } catch (Exception e) {
+            if (errorCounter.getErrorCount() == 0) {
+                // Log only the first exception completely
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + ")", e);
+            } else {
+                // Log only the Exception message without the stack trace
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + "): "
+                        + e.getLocalizedMessage());
+            }
+            errorCounter.increaseErrorCount();
+            return new ArrayList<Marking>(0);
+        }
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
+            logResult(result, errorCounter.getName(), "Meaning");
+        }
+        return result;
+	}
+    
+	protected static List<Meaning> performC2KB(ErrorCountingAnnotatorDecorator errorCounter, Document document)
             throws GerbilException {
         List<Meaning> result = null;
         try {
