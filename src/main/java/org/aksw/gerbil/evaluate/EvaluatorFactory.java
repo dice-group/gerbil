@@ -230,13 +230,9 @@ public class EvaluatorFactory {
         	ExperimentTaskConfiguration subTaskConfig;
             List<SubTaskEvaluator<Meaning>> evaluators = new ArrayList<SubTaskEvaluator<Meaning>>();
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.ERec, configuration.matching);
+                    ExperimentType.OKE_Task1, configuration.matching);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
-                    ExperimentType.ERec, subTaskConfig, dataset)));
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
-                    ExperimentType.D2KB, subTaskConfig, dataset)));
+                    ExperimentType.OKE_Task1, subTaskConfig, dataset)));
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.RE, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
