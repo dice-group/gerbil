@@ -2,7 +2,7 @@ GERBIL
 ========
 <i>General Entity Annotator Benchmark</i>
 
-<img src="https://travis-ci.org/AKSW/gerbil.svg?branch=master"></img>
+[![Build Status](https://travis-ci.org/dice-group/gerbil.svg?branch=master)](https://travis-ci.org/dice-group/gerbil)
 [![Project Stats](https://www.openhub.net/p/GERBIL-Benchmark/widgets/project_thin_badge.gif)](https://www.openhub.net/p/GERBIL-Benchmark)
 [![BCH compliance](https://bettercodehub.com/edge/badge/AKSW/gerbil)](https://bettercodehub.com/)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/962549badbc74930ad83bf2707c44762)](https://www.codacy.com/app/dice-group/gerbil?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dice-group/gerbil&amp;utm_campaign=Badge_Grade)
