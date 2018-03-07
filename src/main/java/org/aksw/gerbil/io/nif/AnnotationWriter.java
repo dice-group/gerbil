@@ -38,6 +38,7 @@ import org.aksw.gerbil.transfer.nif.vocabulary.PROV;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.vocabulary.RDF;
 
 public class AnnotationWriter {
@@ -74,12 +75,8 @@ public class AnnotationWriter {
             nifModel.add(annotationAsResource, NIF.confidence,
                     Double.toString(((ScoredAnnotation) annotation).getConfidence()), XSDDatatype.XSDstring);
         }
-        
-        if (annotation.getProvenanceInfo() != null) {
-            nifModel.add(annotationAsResource, PROV.wasGeneratedBy,
-                    nifModel.getResource(generateProvenanceInfoUri(annotation.getProvenanceInfo(), documentURI)));
-            nifModel.add(annotationAsResource, RDF.type, PROV.Entity);
-        }
+
+        addProvenanceInfoLink(annotation, annotationAsResource, nifModel, documentURI);
     }
 
     public void addProvenanceInfo(Model nifModel, Resource documentResource, String documentURI,
@@ -129,20 +126,16 @@ public class AnnotationWriter {
 
         Resource relationAsResource = nifModel.createResource(uriBuilder.toString());
         nifModel.add(relationAsResource, RDF.type, RDF.Statement);
-        nifModel.add(relationAsResource, RDF.subject, nifModel.asRDFNode(relation.getRelation().getSubject()));
-        nifModel.add(relationAsResource, RDF.predicate, nifModel.asRDFNode(relation.getRelation().getPredicate()));
-        nifModel.add(relationAsResource, RDF.object, nifModel.asRDFNode(relation.getRelation().getObject()));
+        nifModel.add(relationAsResource, RDF.subject, ResourceFactory.createResource(relation.getSubject().getUris().iterator().next()));
+        nifModel.add(relationAsResource, RDF.predicate, ResourceFactory.createResource(relation.getPredicate().getUris().iterator().next()));
+        nifModel.add(relationAsResource, RDF.object, ResourceFactory.createResource(relation.getObject().getUris().iterator().next()));
         nifModel.add(relationAsResource, NIF.referenceContext, documentAsResource);
         if (relation instanceof ScoredMarking) {
             nifModel.add(relationAsResource, ITSRDF.taConfidence,
                     nifModel.createTypedLiteral(((ScoredMarking) relation).getConfidence(), XSDDatatype.XSDdouble));
         }
-        
-        if (relation.getProvenanceInfo() != null) {
-            nifModel.add(relationAsResource, PROV.wasGeneratedBy,
-                    nifModel.getResource(generateProvenanceInfoUri(relation.getProvenanceInfo(), documentURI)));
-            nifModel.add(relationAsResource, RDF.type, PROV.Entity);
-        }
+
+        addProvenanceInfoLink(relation, relationAsResource, nifModel, documentURI);
     }
 
     public void addSpan(final Model nifModel, final Resource documentAsResource, final String text,
@@ -184,10 +177,15 @@ public class AnnotationWriter {
             }
         }
         
-        if (span.getProvenanceInfo() != null) {
-            nifModel.add(spanAsResource, PROV.wasGeneratedBy,
-                    nifModel.getResource(generateProvenanceInfoUri(span.getProvenanceInfo(), documentURI)));
-            nifModel.add(spanAsResource, RDF.type, PROV.Entity);
+        addProvenanceInfoLink(span, spanAsResource, nifModel, documentURI);
+    }
+    
+    protected void addProvenanceInfoLink(Marking marking, Resource markingResource, Model nifModel, String documentURI) {
+        if (marking.getProvenanceInfo() != null) {
+            Resource provInfo = nifModel.getResource(generateProvenanceInfoUri(marking.getProvenanceInfo(), documentURI));
+            nifModel.add(markingResource, PROV.wasGeneratedBy, provInfo);
+            nifModel.add(provInfo, PROV.generated, markingResource);
+            nifModel.add(markingResource, RDF.type, PROV.Entity);
         }
     }
 }

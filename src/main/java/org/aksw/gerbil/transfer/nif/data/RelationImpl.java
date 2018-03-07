@@ -1,59 +1,90 @@
 package org.aksw.gerbil.transfer.nif.data;
 
+import java.util.LinkedList;
+import java.util.List;
+import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.Relation;
-import org.apache.jena.graph.Triple;
 
 public class RelationImpl extends AbstractMarkingImpl implements Relation {
 
-    protected Triple relation;
+	private Meaning subject;
+	private Meaning predicate;
+	private Meaning object;
+	
+	public RelationImpl() {
+		
+	}
+	
+	public RelationImpl(Relation relation) throws CloneNotSupportedException {
+		this((Meaning)relation.getSubject().clone(), 
+				(Meaning)relation.getPredicate().clone(), 
+				(Meaning)relation.getObject().clone());
+	}
+	
+	public RelationImpl(Meaning subject, Meaning predicate, Meaning object) {
+		this.subject = subject;
+		this.predicate = predicate;
+		this.object = object;
+	}
 
-    public RelationImpl(Triple relation) {
-        setRelation(relation);
-    }
+	@Override
+	public void setRelation(Meaning subject, Meaning predicate, Meaning object) {
+		this.subject = subject;
+		this.predicate = predicate;
+		this.object = object;
+	}
 
-    public RelationImpl(Relation relation) {
-        this(relation.getRelation());
-    }
+	@Override
+	public List<Meaning> getRelation() {
+		List<Meaning> relation = new LinkedList<Meaning>();
+		relation.add(subject);
+		relation.add(predicate);
+		relation.add(object);
+		return relation;
+	}
 
-    @Override
-    public void setRelation(Triple relation) {
-        this.relation = relation;
-    }
+	@Override
+	public Meaning getSubject() {
+		return subject;
+	}
 
-    @Override
-    public Triple getRelation() {
-        return relation;
-    }
+	@Override
+	public Meaning getPredicate() {
+		return predicate;
+	}
 
-    @Override
-    public String toString() {
-        return relation.toString();
-    }
+	@Override
+	public Meaning getObject() {
+		return object;
+	}
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return new RelationImpl(this);
-    }
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return new RelationImpl((Meaning)subject.clone(), (Meaning)predicate.clone(), (Meaning)object.clone());
+	}
 
-    @Override
-    public int hashCode() {
-        return ((relation == null) ? 0 : relation.hashCode());
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        RelationImpl other = (RelationImpl) obj;
-        if (relation == null) {
-            if (other.relation != null)
-                return false;
-        } else if (!relation.equals(other.relation))
-            return false;
-        return true;
-    }
+	@Override 
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append('(');
+		builder.append(subject).append(", ");
+		builder.append(predicate).append(", ");
+		builder.append(object);
+		builder.append(')');
+		return builder.toString();
+	}
+	
+	@Override
+	public boolean equals(Object anotherObj) {
+		if(anotherObj instanceof Relation) {
+			Relation otherRel = (Relation) anotherObj;
+			//check if sameAs applies
+			boolean equal = this.subject.equals(otherRel.getSubject());
+			equal &= this.predicate.equals(otherRel.getPredicate());
+			equal &= this.object.equals(otherRel.getObject());
+			return equal;
+		}
+		return false;
+	}
+	
 }

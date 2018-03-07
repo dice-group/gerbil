@@ -49,6 +49,7 @@ public class PROV {
 	public static final Resource Entity = resource("Entity");
 
 	public static final Property endedAtTime = property("endedAtTime");
+	public static final Property generated = property("generated");
     public static final Property startedAtTime = property("startedAtTime");
 	public static final Property wasGeneratedBy = property("wasGeneratedBy");
 	public static final Property wasAssociatedWith = property("wasAssociatedWith");
