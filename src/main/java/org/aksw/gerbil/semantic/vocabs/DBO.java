@@ -16,9 +16,9 @@
  */
 package org.aksw.gerbil.semantic.vocabs;
 
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 /**
  * The DBpedia ontology vocabulary (http://dbpedia.org/ontology/). <b>Note</b>

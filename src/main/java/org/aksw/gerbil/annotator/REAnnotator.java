@@ -14,21 +14,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.semantic.sameas.impl.model;
+package org.aksw.gerbil.annotator;
 
-import org.apache.jena.rdf.model.Model;
+import java.util.List;
 
-public class RDFModelBasedSameAsRetriever extends AbstractRDFModelBasedSameAsRetriever {
+import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.transfer.nif.Relation;
+import org.aksw.gerbil.transfer.nif.Span;
 
-    private Model model;
+public interface REAnnotator extends Annotator {
 
-    public RDFModelBasedSameAsRetriever(Model model) {
-        this.model = model;
-    }
-
-    @Override
-    protected Model getModel(String uri) {
-        return model;
-    }
-
+    public List<Relation> performRETask(Document document) throws GerbilException;
 }
