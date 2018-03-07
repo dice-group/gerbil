@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-
+<html>
 <head>
 <link rel="stylesheet"
 	href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
@@ -120,9 +120,7 @@ table {
 			<div class="col-md-12">
 				<h2>Annotator &ndash; Dataset feature correlations</h2>
 				<p>The table as well as the diagram contain the pearson
-					correlations between the annotators and the dataset features. Note
-					that the diagram only shows the absolute values of the correlation.
-					For the correlation type, you should take a look at the table.</p>
+					correlations between the annotators and the dataset features.</p>
 			</div>
 			<!-- <div class="container-fluid"> -->
 			<div class="col-md-12">
@@ -241,10 +239,10 @@ table {
 			}, function(data) {
 				var tableData = data[0];
 				showTable(tableData, "resultsTable");
-				drawSpiderDiagram(tableData, "resultsChart");
+				drawSpiderDiagram(tableData, "resultsChart", false);
 				tableData = data[1];
 				showTable(tableData, "correlationsTable");
-				drawSpiderDiagram(tableData, "correlationsChart");
+				drawSpiderDiagram(tableData, "correlationsChart", true);
 			}).fail(function() {
 				console.log("error loading data for table");
 			});
@@ -274,7 +272,7 @@ table {
 			$("#" + tableElementId + " tbody").html(tbl_body);
 		}
 
-		function drawSpiderDiagram(tableData, chartElementId) {
+		function drawSpiderDiagram(tableData, chartElementId, isCorrChart) {
 			//draw spider chart
 			var chartData = [];
 			//Legend titles  ['Smartphone','Tablet'];
@@ -308,7 +306,7 @@ table {
 			});
 			//[[{axis:"Email",value:0.71},{axis:"aa",value:0}],[{axis:"Email",value:0.71},{axis:"aa",value:0.1},]];
 			console.log("start drawing into " + chartElementId);
-			drawChart(chartData, LegendOptions, chartElementId);
+			drawChart(chartData, LegendOptions, chartElementId, isCorrChart);
 			// add the svg namespace
 			//$('#' + chartElementId + ' svg').attr("xmlns:svg",
 			//		"http://www.w3.org/2000/svg").attr("xmlns",
@@ -327,3 +325,4 @@ table {
 		});
 	</script>
 </body>
+</html>

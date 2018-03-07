@@ -151,8 +151,13 @@ public enum ExperimentType implements Describable {
     /**
      * The annotator gets a text and shall recognize entities inside and the relationship between them.
      */
-    OKE2018Task4("OKE2018Task4", "The annotator gets a text and shall recognize entities inside and the relationship between them.")
-    ;
+    OKE2018Task4("OKE2018Task4", "The annotator gets a text and shall recognize entities inside and the relationship between them."),
+  
+     /**
+     * The annotator gets a text and shall recognize entities inside and their
+     * types along with the relations.
+     */
+    KE("KE", "The Annotator gets a text and shall recognize entities inside and their types along with their relations.");
 
     private String label;
     private String description;
@@ -190,6 +195,10 @@ public enum ExperimentType implements Describable {
             case Rc2KB: {
                 return true;
             }
+            case RE: {
+            	return false;
+            }
+            case KE:
             case ETyping: // falls through
             case RT2KB:
             case OKE_Task1:
@@ -215,6 +224,8 @@ public enum ExperimentType implements Describable {
             case C2KB: {
                 return true;
             }
+            case RE:
+            case KE:
             }
         }
         case Rc2KB: {
@@ -234,6 +245,8 @@ public enum ExperimentType implements Describable {
             case C2KB: {
                 return true;
             }
+            case RE:
+            case KE:
             }
         }
         case RT2KB: {
@@ -249,9 +262,14 @@ public enum ExperimentType implements Describable {
             case Sa2KB:
             case Sc2KB:
             case Rc2KB:
+            case RE: {
+                return false;
+            }
+            case KE:
             case OKE_Task1:
             case OKE_Task2: {
                 return false;
+            }
             }
             }
         }
@@ -290,6 +308,37 @@ public enum ExperimentType implements Describable {
         	case ERec:
         		return true;
         	}
+        case KE:{
+            switch (type) {
+            case ERec: 
+            	return true;
+            case ETyping:
+            	return true;
+            case RT2KB: 
+            	return true;
+            case C2KB: 
+            	return true;
+            case A2KB:
+            	return true;
+            case D2KB:
+            	return true;
+            case OKE_Task1:
+            	return true;
+            case OKE_Task2: {
+                return false;
+            }
+            case RE:
+            	return true;
+            case KE: 
+            	return true;
+            case Sa2KB:
+            	return true;
+            case Sc2KB:
+            	return true;
+            case Rc2KB:
+            	return true;
+            }
+            }
         }
         }
         return false;

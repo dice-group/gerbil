@@ -54,6 +54,10 @@ public class AnnotatorAnalyzer {
             analyze(config, ExperimentType.ETyping);
         } else if (config.isApplicableForExperiment(ExperimentType.ERec)) {
             analyze(config, ExperimentType.ERec);
+        } else if (config.isApplicableForExperiment(ExperimentType.RE)) {
+            analyze(config, ExperimentType.RE);
+        } else if (config.isApplicableForExperiment(ExperimentType.SRE)) {
+            analyze(config, ExperimentType.SRE);
         } else {
             LOGGER.error("Can not analyze the Annotator with the following config: " + config.toString());
         }

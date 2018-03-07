@@ -1,21 +1,44 @@
-function drawChart(data, LegendOptions, chartElementId){
+function drawChart(data, LegendOptions, chartElementId, isCorrelationChart){
 	var w = 500,
 	h = 500;
 
-	//var colorscale = d3.scale.category10();
-	var colorscale = function(i) {
-		return colorForString(LegendOptions[i].sub());
-	}
+//	var colorscale = d3.scale.category10();
+//	var colorscale = function(i) {
+//		return colorForString(LegendOptions[i].sub());
+//	}
 	
 	//Options for the Radar chart, other than default
-	var mycfg = {
-	  w: w,
-	  h: h,
-	  maxValue: 0.6,
-	  levels: 6,
-	  ExtraWidthX: 300,
-	  colorscale: colorscale
-	}
+	var mycfg;
+    if(isCorrelationChart) {
+      console.log("drawing as corr chart.");
+	  mycfg = {
+  	    w: w,
+	    h: h,
+	    maxValue: 1.0,
+        minValue: -1.0,
+        opacityArea: 0,
+        activeOpacityArea: 0.5,
+        inactiveOpacityArea: 0,
+        specialCircSegments: [0],
+	    levels: 6,
+	    ExtraWidthX: 300,
+        numberFormat: d3.format('+.2f'),
+	    color: d3.scale.category20()
+	  }
+    } else {
+	  mycfg = {
+  	    w: w,
+	    h: h,
+	    maxValue: 0.6,
+	    levels: 6,
+	    ExtraWidthX: 300,
+        opacityArea: 0.05,
+        activeOpacityArea: 0.5,
+        inactiveOpacityArea: 0,
+        numberFormat: d3.format('.2f'),
+	    color: d3.scale.category20()
+	  }
+    }
 	
 	//Call function to draw the Radar chart
 	//Will expect that data is in %'s
@@ -59,7 +82,7 @@ function drawChart(data, LegendOptions, chartElementId){
 		  .attr("y", function(d, i){ return i * 20;})
 		  .attr("width", 10)
 		  .attr("height", 10)
-		  .style("fill", function(d, i){ return colorscale(i);})
+		  .style("fill", function(d, i){ return mycfg.color(i);})
 		  ;
 		//Create text next to squares
 		legend.selectAll('text')

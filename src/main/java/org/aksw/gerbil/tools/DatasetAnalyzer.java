@@ -82,6 +82,10 @@ public class DatasetAnalyzer {
             analyze(config, ExperimentType.C2KB);
         } else if (config.isApplicableForExperiment(ExperimentType.ERec)) {
             analyze(config, ExperimentType.ERec);
+        } else if (config.isApplicableForExperiment(ExperimentType.RE)) {
+            analyze(config, ExperimentType.RE);
+        } else if (config.isApplicableForExperiment(ExperimentType.SRE)) {
+            analyze(config, ExperimentType.SRE);
         } else {
             LOGGER.error("Can not analyze the dataset with the following config: " + config.toString());
         }

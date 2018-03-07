@@ -251,20 +251,32 @@ public class SpotlightClient {
         }
 
         jsonObject = (JSONObject) jsonObject.get("annotation");
-        JSONArray resources = (JSONArray) jsonObject.get("surfaceForm");
-        JSONObject resource;
-        int start;
-        int length;
-        if (resources != null) {
-            for (Object res : resources.toArray()) {
-                resource = (JSONObject) res;
-                start = Integer.parseInt((String) resource.get("@offset"));
-                length = ((String) resource.get("@name")).length();
-                markings.add(new SpanImpl(start, length));
+        // If there are surface forms
+        if (jsonObject.containsKey("surfaceForm")) {
+            Object surfaceFormContainer = jsonObject.get("surfaceForm");
+            // If there is an array of surface forms
+            if (surfaceFormContainer instanceof JSONArray) {
+                JSONArray resources = (JSONArray) jsonObject.get("surfaceForm");
+                JSONObject resource;
+                if (resources != null) {
+                    for (Object res : resources.toArray()) {
+                        resource = (JSONObject) res;
+                        addSpan(resource, markings);
+                    }
+                }
+            } else {
+                // If there is only one surface form
+                addSpan((JSONObject) surfaceFormContainer, markings);
             }
         }
 
         return markings;
+    }
+
+    protected static void addSpan(JSONObject resource, List<Span> markings) {
+        int start = Integer.parseInt((String) resource.get("@offset"));
+        int length = ((String) resource.get("@name")).length();
+        markings.add(new SpanImpl(start, length));
     }
 
     public List<TypedNamedEntity> disambiguate(Document document) throws GerbilException {

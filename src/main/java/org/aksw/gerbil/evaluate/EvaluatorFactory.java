@@ -61,6 +61,7 @@ import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedMarking;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 import org.aksw.gerbil.web.config.RootConfig;
@@ -244,6 +245,18 @@ public class EvaluatorFactory {
             return new ConfidenceScoreEvaluatorDecorator(
                     new SubTaskAverageCalculator(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
                     new DoubleResultComparator());
+        case KE: {
+        	ExperimentTaskConfiguration subTaskConfig;
+            List<SubTaskEvaluator<Meaning>> evaluators = new ArrayList<SubTaskEvaluator<Meaning>>();
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.OKE_Task1, configuration.matching);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
+                    ExperimentType.OKE_Task1, subTaskConfig, dataset)));
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.RE, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
+                    ExperimentType.RE, subTaskConfig, dataset)));
+        }
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
         }
@@ -297,7 +310,17 @@ public class EvaluatorFactory {
                     dataset)));
             return;
         }
-
+        case KE: {
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.OKE_Task1, configuration.matching);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.OKE_Task1, subTaskConfig,
+                    dataset)));
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.RE, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.RE, subTaskConfig,
+                    dataset)));
+            return;
+        }
         default: {
             throw new RuntimeException();
         }
