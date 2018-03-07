@@ -21,22 +21,33 @@ import java.util.Collection;
 import org.aksw.gerbil.datatypes.marking.MeaningsContainingMarking;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.Relation;
 
 public class SameAsRetrieverUtils {
 
-    public static void addSameURIsToMarkings(SameAsRetriever retriever, Collection<? extends Marking> markings) {
-        for (Marking marking : markings) {
-            if (marking instanceof Meaning) {
-                retriever.addSameURIs(((Meaning) marking).getUris());
-            } else if (marking instanceof MeaningsContainingMarking) {
-                addSameURIsToMeanings(retriever, ((MeaningsContainingMarking) marking).getMeanings());
-            }
-        }
-    }
+	public static void addSameURIsToMarkings(SameAsRetriever retriever, Collection<? extends Marking> markings) {
+		for (Marking marking : markings) {
+			if (marking instanceof Meaning) {
+				retriever.addSameURIs(((Meaning) marking).getUris());
+			} else if (marking instanceof MeaningsContainingMarking) {
+				addSameURIsToMeanings(retriever, ((MeaningsContainingMarking) marking).getMeanings());
+			} else if (marking instanceof Relation) {
+				addSameURIsToRelation(retriever, (Relation) marking);
+			}
+		}
+	}
 
-    public static void addSameURIsToMeanings(SameAsRetriever retriever, Collection<? extends Meaning> meanings) {
-        for (Meaning meaning : meanings) {
-            retriever.addSameURIs(meaning.getUris());
-        }
-    }
+	public static void addSameURIsToRelation(SameAsRetriever retriever, Relation relation) {
+		retriever.addSameURIs(relation.getSubject().getUris());
+		retriever.addSameURIs(relation.getPredicate().getUris());
+		retriever.addSameURIs(relation.getObject().getUris());
+
+	}
+
+
+	public static void addSameURIsToMeanings(SameAsRetriever retriever, Collection<? extends Meaning> meanings) {
+		for (Meaning meaning : meanings) {
+			retriever.addSameURIs(meaning.getUris());
+		}
+	}
 }

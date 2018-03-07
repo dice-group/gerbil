@@ -107,7 +107,7 @@ public class HierarchicalMatchingsCounter<T extends TypedMarking> {
             } else {
                 documentCounts = new EvaluationCounts();
                 documentCounts.falseNegatives = 1;
-                documentCounts.falsePositives = 1;
+                documentCounts.falsePositives = 0;
             }
             localCounts.add(documentCounts);
         }

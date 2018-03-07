@@ -95,8 +95,12 @@ public class NIFWSTestingController {
                 break;
             }
             case RE: {
-                annotator.performRETask(document);
-                break;
+            	annotator.performRETask(document);
+            	break;
+            }
+            case OKE2018Task4: {
+            	annotator.performOKE2018Task4(document);
+            	break;
             }
             case KE: {
                 annotator.performKETask(document);
