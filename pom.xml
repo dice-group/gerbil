@@ -13,7 +13,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>gerbil</artifactId>
-	<version>1.2.5</version>
+	<version>1.2.6</version>
 	<name>General Entity Annotator Benchmark</name>
 	<description>This project is a benchmark for entity annotation and disambiguation tools.</description>
 	<inceptionYear>2014</inceptionYear>
@@ -64,11 +64,7 @@
 			<artifactId>jena-arq</artifactId>
 			<version>${jena.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.jsonld-java</groupId>
-			<artifactId>jsonld-java-jena</artifactId>
-			<version>${jsonld-java-jena.version}</version>
-		</dependency>
+
 
 		<!-- Google Guava -->
 		<dependency>
