@@ -83,8 +83,8 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
 			return new TimeMeasuringREAnnotator((REAnnotator) annotator);
 		case OKE2018Task4:
 			return new TimeMeasuringOKE2018Task4Annotator((OKE2018Task4Annotator) annotator);
-    case KE:
-      return new TimeMeasuringKEAnnotator((KEAnnotator) annotator);
+		case KE:
+			return new TimeMeasuringKEAnnotator((KEAnnotator) annotator);
 		case Rc2KB:
 			break;
 		case Sa2KB:
@@ -263,7 +263,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
 
 	}
   
-  private static class TimeMeasuringKEAnnotator extends TimeMeasuringOKETask1Annotator implements KEAnnotator {
+	private static class TimeMeasuringKEAnnotator extends TimeMeasuringOKETask1Annotator implements KEAnnotator {
 
     	protected TimeMeasuringKEAnnotator(KEAnnotator decoratedAnnotator) {
     		super(decoratedAnnotator);
@@ -275,10 +275,10 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
       }
     	
     	@Override
-        public List<Meaning> performKETask(Document document) throws GerbilException {
+        public List<Marking> performKETask(Document document) throws GerbilException {
             return TimeMeasuringAnnotatorDecorator.performKETask(this, document);
       }
-  }
+	}
 	
 	private static class TimeMeasuringOKETask2Annotator extends TimeMeasuringAnnotatorDecorator
 			implements OKETask2Annotator {
@@ -320,14 +320,14 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
 		return result;
 	}
 	
-  protected static List<Meaning> performKETask(TimeMeasuringAnnotatorDecorator timeMeasurer,
-         Document document) throws GerbilException {
-    long startTime = System.currentTimeMillis();
-    List<Meaning> result = null;
-    result = ((KEAnnotator) timeMeasurer.getDecoratedAnnotator()).performKETask(document);
-    timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
-    return result;
-  }
+	protected static List<Marking> performKETask(TimeMeasuringAnnotatorDecorator timeMeasurer,
+			Document document) throws GerbilException {
+		long startTime = System.currentTimeMillis();
+		List<Marking> result = null;
+		result = ((KEAnnotator) timeMeasurer.getDecoratedAnnotator()).performKETask(document);
+		timeMeasurer.addCallRuntime(System.currentTimeMillis() - startTime);
+		return result;
+	}
     
 	protected static List<MeaningSpan> performD2KBTask(TimeMeasuringAnnotatorDecorator timeMeasurer, Document document)
 			throws GerbilException {
