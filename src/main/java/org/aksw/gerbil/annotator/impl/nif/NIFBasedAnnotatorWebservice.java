@@ -22,6 +22,7 @@ import java.util.List;
 import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityTyper;
 import org.aksw.gerbil.annotator.OKE2018Task4Annotator;
+import org.aksw.gerbil.annotator.KEAnnotator;
 import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.annotator.http.AbstractHttpBasedAnnotator;
@@ -111,15 +112,10 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
     public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
         return performAnnotation(document, TypedSpan.class);
     }
-           
-   @Override
-    public List<Relation> performRETask(Document document) throws GerbilException {
-        return performAnnotation(document, Relation.class);
-    }
     
     @Override
-    public List<Meaning> performKETask(Document document) throws GerbilException {
-        return performAnnotation(document, Meaning.class);
+    public List<Marking> performKETask(Document document) throws GerbilException {
+        return performAnnotation(document, Marking.class);
     }
 
     protected <T extends Marking> List<T> performAnnotation(Document document, Class<T> resultClass)
