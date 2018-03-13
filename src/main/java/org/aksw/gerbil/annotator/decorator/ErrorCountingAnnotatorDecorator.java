@@ -95,16 +95,14 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         	return new ErrorCountingREAnnotator((REAnnotator) annotator, maxErrors);
         case OKE2018Task4:
         	return new ErrorCountingOKE2018Task4Annotator((OKE2018Task4Annotator) annotator, maxErrors);
+        case KE:
+        	return new ErrorCountingKEAnnotator((KEAnnotator) annotator, maxErrors);
         case Rc2KB:
             break;
         case Sa2KB:
             break;
         case Sc2KB:
             break;
-        case RE:
-            return new ErrorCountingREAnnotator((REAnnotator) annotator, maxErrors);
-        case KE:
-            return new ErrorCountingKEAnnotator((KEAnnotator) annotator, maxErrors);
         default:
             break;
 
@@ -295,18 +293,6 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
-    private static class ErrorCountingREAnnotator extends ErrorCountingAnnotatorDecorator implements REAnnotator {
-    	
-        protected ErrorCountingREAnnotator(REAnnotator decoratedAnnotator, int maxErrors) {
-            super(decoratedAnnotator, maxErrors);
-        }
-        
-        @Override
-        public List<Relation> performRETask(Document document) throws GerbilException {
-            return ErrorCountingAnnotatorDecorator.performRETask(this, document);
-        }
-    }
-
     private static class ErrorCountingKEAnnotator extends ErrorCountingOKETask1Annotator implements KEAnnotator {
 
         protected ErrorCountingKEAnnotator(KEAnnotator decoratedAnnotator, int maxErrors) {
@@ -315,11 +301,11 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         
         @Override
         public List<Relation> performRETask(Document document) throws GerbilException {
-            return ErrorCountingAnnotatorDecorator.performRETask(this, document);
+            return ErrorCountingAnnotatorDecorator.performRE(this, document);
         }
         
         @Override
-        public List<Meaning> performKETask(Document document) throws GerbilException {
+        public List<Marking> performKETask(Document document) throws GerbilException {
             return ErrorCountingAnnotatorDecorator.performKETask(this, document);
         }
     }
@@ -572,33 +558,10 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
         return result;
     }
-    
-    protected static List<Relation> performRETask(ErrorCountingAnnotatorDecorator errorCounter, Document document)
-            throws GerbilException {
-        List<Relation> result = null;
-        try {
-            result = ((REAnnotator) errorCounter.getDecoratedAnnotator()).performRETask(document);
-        } catch (Exception e) {
-            if (errorCounter.getErrorCount() == 0) {
-                // Log only the first exception completely
-                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + ")", e);
-            } else {
-                // Log only the Exception message without the stack trace
-                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + "): "
-                        + e.getLocalizedMessage());
-            }
-            errorCounter.increaseErrorCount();
-            return new ArrayList<Relation>(0);
-        }
-        if (printDebugMsg && LOGGER.isDebugEnabled()) {
-            logResult(result, errorCounter.getName(), "Relation");
-        }
-        return result;
-    }
-
-    protected static List<Meaning> performKETask(ErrorCountingAnnotatorDecorator errorCounter,
+   
+    protected static List<Marking> performKETask(ErrorCountingAnnotatorDecorator errorCounter,
             Document document) throws GerbilException {
-        List<Meaning> result = null;
+        List<Marking> result = null;
         try {
             result = ((KEAnnotator) errorCounter.getDecoratedAnnotator()).performKETask(document);
         } catch (Exception e) {
@@ -611,10 +574,10 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
                         + e.getLocalizedMessage());
             }
             errorCounter.increaseErrorCount();
-            return new ArrayList<Meaning>(0);
+            return new ArrayList<Marking>(0);
         }
         if (printDebugMsg && LOGGER.isDebugEnabled()) {
-            logResult(result, errorCounter.getName(), "Meaning");
+            logResult(result, errorCounter.getName(), "Marking");
         }
         return result;
     }
