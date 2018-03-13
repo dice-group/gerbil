@@ -87,6 +87,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 			return new SingleInstanceSecuringREAnnotator((REAnnotator) annotator);
 		case OKE2018Task4:
 			return new SingleInstanceSecuringOKE2018Task4Annotator((OKE2018Task4Annotator) annotator);
+		case KE:
+			return new SingleInstanceSecuringKEAnnotator((KEAnnotator) annotator);
 		case Rc2KB:
 			break;
 		case Sa2KB:
@@ -176,13 +178,13 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
     	}
     	
     	@Override
-        public List<Meaning> performKETask(Document document) throws GerbilException {
+        public List<Marking> performKETask(Document document) throws GerbilException {
             return SingleInstanceSecuringAnnotatorDecorator.performKETask(this, document);
         }
     	
     	@Override
         public List<Relation> performRETask(Document document) throws GerbilException {
-            return SingleInstanceSecuringAnnotatorDecorator.performRETask(this, document);
+            return SingleInstanceSecuringAnnotatorDecorator.performRE(this, document);
         }
     }
 
@@ -430,9 +432,9 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 	}
   
   
- protected static List<Meaning> performKETask(SingleInstanceSecuringAnnotatorDecorator decorator,
+	protected static List<Marking> performKETask(SingleInstanceSecuringAnnotatorDecorator decorator,
             Document document) throws GerbilException {
-        List<Meaning> result = null;
+        List<Marking> result = null;
         try {
             decorator.semaphore.acquire();
         } catch (InterruptedException e) {
