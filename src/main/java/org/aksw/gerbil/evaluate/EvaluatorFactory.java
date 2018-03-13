@@ -225,10 +225,11 @@ public class EvaluatorFactory {
                     new SubTaskAverageCalculator<TypedNamedEntity>(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
                     new DoubleResultComparator());
         }
-        case RE:
+        case RE:{
         	return new ConfidenceBasedFMeasureCalculator<Relation>(new MatchingsCounterImpl<Relation>(
         			 new EqualsBasedMatchingsSearcher<Relation>()));
-        case OKE2018Task4:
+        }
+        case OKE2018Task4:{
             ExperimentTaskConfiguration subTaskConfig;
             List<SubTaskEvaluator> evaluators = new ArrayList<SubTaskEvaluator>();
             
@@ -245,17 +246,23 @@ public class EvaluatorFactory {
             return new ConfidenceScoreEvaluatorDecorator(
                     new SubTaskAverageCalculator(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
                     new DoubleResultComparator());
+        }
         case KE: {
         	ExperimentTaskConfiguration subTaskConfig;
-            List<SubTaskEvaluator<Meaning>> evaluators = new ArrayList<SubTaskEvaluator<Meaning>>();
+            List<SubTaskEvaluator> evaluators = new ArrayList<SubTaskEvaluator>();
+            
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.OKE_Task1, configuration.matching);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
-                    ExperimentType.OKE_Task1, subTaskConfig, dataset)));
+            evaluators.add(new ClassSubTaskEvaluator<Marking>(subTaskConfig, (Evaluator<Marking>) createEvaluator(
+                    ExperimentType.OKE_Task1, subTaskConfig, dataset, classifier,inferencer ), Marking.class));
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.RE, Matching.STRONG_ENTITY_MATCH);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
-                    ExperimentType.RE, subTaskConfig, dataset)));
+            evaluators.add(new ClassSubTaskEvaluator<>(subTaskConfig, (Evaluator<Marking>) createEvaluator(
+                    ExperimentType.RE, subTaskConfig, dataset), Relation.class));
+            
+            return new ConfidenceScoreEvaluatorDecorator(
+                    new SubTaskAverageCalculator(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
+                    new DoubleResultComparator());
         }
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
@@ -278,6 +285,7 @@ public class EvaluatorFactory {
             // Since the OKE challenge tasks are using the results of their
             // subtasks, the definition of subtasks is part of their evaluation
             // creation
+        case KE:
         case OKE_Task1:
         case OKE_Task2: {
             return;
@@ -307,17 +315,6 @@ public class EvaluatorFactory {
             // evaluators.add(createEvaluator(ExperimentType.ELink,
             // configuration, dataset));
             evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.ETyping, subTaskConfig,
-                    dataset)));
-            return;
-        }
-        case KE: {
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.OKE_Task1, configuration.matching);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.OKE_Task1, subTaskConfig,
-                    dataset)));
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.RE, Matching.STRONG_ENTITY_MATCH);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.RE, subTaskConfig,
                     dataset)));
             return;
         }
