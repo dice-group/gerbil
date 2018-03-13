@@ -30,7 +30,6 @@ import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.annotator.REAnnotator;
 import org.aksw.gerbil.annotator.RT2KBAnnotator;
-import org.aksw.gerbil.annotator.REAnnotator;
 import org.aksw.gerbil.annotator.KEAnnotator;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
@@ -240,8 +239,8 @@ public class ExperimentTask implements Task {
 			}
 		case RE:
 			return;
-    case KE:
-        return;
+		case KE:
+			return;
 		case ERec:// falls through
 		default:
 			// nothing to do
@@ -579,20 +578,22 @@ public class ExperimentTask implements Task {
 			break;
 		}
 
-  case KE: {
+		case KE: {
             try {
-                List<List<Meaning>> results = new ArrayList<List<Meaning>>(dataset.size());
-                List<List<Meaning>> goldStandard = new ArrayList<List<Meaning>>(dataset.size());
+                List<List<Marking>> results = new ArrayList<List<Marking>>(dataset.size());
+                List<List<Marking>> goldStandard = new ArrayList<List<Marking>>(dataset.size());
                 KEAnnotator keAnnotator = ((KEAnnotator) annotator);
                 for (Document document : dataset.getInstances()) {
                     results.add(keAnnotator.performKETask(DocumentInformationReducer.reduceToPlainText(document)));
-                    goldStandard.add(document.getMarkings(Meaning.class));
+                    goldStandard.add(document.getMarkings(Marking.class));
                     taskState.increaseExperimentStepCount();
                 }
                 if (annotatorOutputWriter != null) {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
-                prepareAnnotatorResults(results, globalRetriever);
+                prepareRelations(results, globalRetriever);
+                prepareRelations(goldStandard, globalRetriever);
+                
                 evalResult = evaluate(evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
