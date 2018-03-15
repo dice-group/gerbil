@@ -203,6 +203,14 @@
 					+ experimentId
 					+ "</a>";
 			}
+			// If this is the AKSW instance of GERBIL SW
+			if(origin == "http://gerbil-sw.aksw.org") {
+				content += " and <a href=\"http://w3id.org/gerbil/sw/experiment"
+					+ experimentId
+					+ "\">http://w3id.org/gerbil/sw/experiment"
+					+ experimentId
+					+ "</a>";
+			}
 			$("#experimentUri").html(content);
 		});
 	</script>
