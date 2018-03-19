@@ -13,6 +13,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.systems.ASystem;
+import org.aksw.qa.systems.GANSWER2;
 import org.aksw.qa.systems.HAWK;
 import org.aksw.qa.systems.OKBQA;
 import org.aksw.qa.systems.QAKIS;
@@ -36,6 +37,7 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 	public static final String OKBQA_SYSTEM_NAME = "OKBQA";
 	public static final String QANARY_SYSTEM_WIKIDATA_NAME = "QANARY (wikidata)";
 	public static final String QANARY_SYSTEM_DBPEDIA_NAME = "QANARY (DBpedia)";
+	public static final String GANSWER2_SYSTEM_NAME = "GANSWER2";
 	private static final int DEFAULT_WAITING_TIME = 60000;
 	private static final String MAXIMUM_TIME_TO_WAIT_KEY = "org.aksw.gerbil.annotator.http.HttpManagement.maxWaitingTime";
 	
@@ -86,6 +88,10 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 		}
 		case QANARY_SYSTEM_DBPEDIA_NAME:{
 			qaSystem = new QANARY(url, QANARY_SYSTEM_DBPEDIA_KBNAME);
+			break;
+		}
+		case GANSWER2_SYSTEM_NAME:{
+			qaSystem = new GANSWER2(url);
 			break;
 		}
 		default:
