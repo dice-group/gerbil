@@ -39,7 +39,7 @@ import org.simpleframework.transport.connect.SocketConnection;
 
 public class QanaryWebServiceTest {
 
-	private static final String QANARY_URI = "http://wdaqua-qanary.univ-st-etienne.fr/gerbil";
+	private static final String QANARY_URI = "http://wdaqua-core1.univ-st-etienne.fr/gerbil";
 
 	// protected Semaphore taskEndedMutex = new Semaphore(0);
 

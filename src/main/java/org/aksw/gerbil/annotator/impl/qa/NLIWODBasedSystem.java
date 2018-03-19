@@ -38,7 +38,11 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 	public static final String QANARY_SYSTEM_DBPEDIA_NAME = "QANARY (DBpedia)";
 	private static final int DEFAULT_WAITING_TIME = 60000;
 	private static final String MAXIMUM_TIME_TO_WAIT_KEY = "org.aksw.gerbil.annotator.http.HttpManagement.maxWaitingTime";
-
+	
+	//GERBIL Issue 241: Adding KB names for QANARY
+	public static final String QANARY_SYSTEM_WIKIDATA_KBNAME = "wikidata";
+	public static final String QANARY_SYSTEM_DBPEDIA_KBNAME = "dbpedia";
+	
 	protected ASystem qaSystem;
 
 	public NLIWODBasedSystem(String systemName) throws GerbilException {
@@ -77,11 +81,11 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 			break;
 		}
 		case QANARY_SYSTEM_WIKIDATA_NAME: {
-			qaSystem = new QANARY(url);
+			qaSystem = new QANARY(url, QANARY_SYSTEM_WIKIDATA_KBNAME);
 			break;
 		}
 		case QANARY_SYSTEM_DBPEDIA_NAME:{
-			qaSystem = new QANARY(url);
+			qaSystem = new QANARY(url, QANARY_SYSTEM_DBPEDIA_KBNAME);
 			break;
 		}
 		default:
