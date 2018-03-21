@@ -287,8 +287,15 @@ public enum ExperimentType implements Describable {
         	switch(type) {
         	case RE:
         	case OKE2018Task4:
-        	case ERec:
+        	case A2KB:
+        	case C2KB: // falls through
+            case D2KB:
+            case ERec:
+            case Sa2KB:
+            case Sc2KB:
+            case Rc2KB: {
         		return true;
+            }
         	}
         }
         }
