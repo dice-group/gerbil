@@ -204,10 +204,10 @@
 					+ "</a>";
 			}
 			// If this is the AKSW instance of GERBIL SW
-			if(origin == "http://gerbil-swcd.aksw.org") {
-				content += " and <a href=\"http://w3id.org/gerbil/sw/experiment"
+			if(origin == "http://gerbil-kbc.aksw.org" || origin == "http://gerbil-sw.aksw.org" || origin == "http://swc2017.aksw.org") {
+				content += " and <a href=\"http://w3id.org/gerbil/kbc/experiment"
 					+ experimentId
-					+ "\">http://w3id.org/gerbil/sw/experiment"
+					+ "\">http://w3id.org/gerbil/kbc/experiment"
 					+ experimentId
 					+ "</a>";
 			}
