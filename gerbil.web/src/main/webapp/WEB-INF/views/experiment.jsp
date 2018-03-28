@@ -117,7 +117,7 @@
  								var ctx = document.getElementById("${task.hashCode()}").getContext('2d');
  								var myLineChart = new Chart(ctx, {
     								type: 'scatter',
-   		 							data : { datasets : [{showLine : true, label : "", lineTension : 0, fill : false, borderColor : "#0084e5", ${task.roc}}]},
+   		 							data : { datasets : [{showLine : true, label : "", lineTension : 0, fill : true, pointRadius : 0, borderColor : "#0084e5", ${task.roc}}]},
    		 							options: { legend: {display: false} , scales: {yAxes: [{ticks: {max : 1, beginAtZero:true}}], xAxes : [{ticks: {max : 1, beginAtZero:true}}]}}
 								});
  								</script>
