@@ -19,8 +19,8 @@ package org.aksw.gerbil.semantic.sameas.impl.model;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.RdfModelContainingDataset;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.vocabulary.OWL;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.vocabulary.OWL;
 
 public class DatasetBasedSameAsRetriever extends RDFModelBasedSameAsRetriever {
 

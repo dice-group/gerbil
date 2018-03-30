@@ -141,7 +141,18 @@ public enum ExperimentType implements Describable {
      * The annotator gets a text and shall recognize entities inside and their
      * types.
      */
-    RT2KB("RT2KB", "The annotator gets a text and shall recognize entities inside and their types.");
+    RT2KB("RT2KB", "The annotator gets a text and shall recognize entities inside and their types."),
+    		
+    /**
+     * The annotator gets a text and several already linked entities and shall recognize their relationship inside the text.
+     */
+    RE("RE", "The annotator gets a text and several already linked entities and shall recognize their relationship inside the text."),
+    
+    /**
+     * The annotator gets a text and shall recognize entities inside and the relationship between them.
+     */
+    OKE2018Task4("OKE2018Task4", "The annotator gets a text and shall recognize entities inside and the relationship between them.")
+    ;
 
     private String label;
     private String description;
@@ -268,6 +279,24 @@ public enum ExperimentType implements Describable {
         }
         case OKE_Task2: {
             return type == OKE_Task2;
+        }
+        case RE:{
+        	return type == RE;
+        }
+        case OKE2018Task4:{
+        	switch(type) {
+        	case RE:
+        	case OKE2018Task4:
+        	case A2KB:
+        	case C2KB: // falls through
+            case D2KB:
+            case ERec:
+            case Sa2KB:
+            case Sc2KB:
+            case Rc2KB: {
+        		return true;
+            }
+        	}
         }
         }
         return false;

@@ -243,6 +243,7 @@ public class MainController {
         }
         switch (type) {
         case C2KB:
+        case RE:
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
         case D2KB:
         case ETyping:
@@ -251,11 +252,13 @@ public class MainController {
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ANNOTATION_MATCH));
         case Rc2KB:
         case Sc2KB:
+        	
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
         case OKE_Task1:
         case OKE_Task2:
         case A2KB:
         case ERec:
+        case OKE2018Task4:
         case RT2KB:
         case Sa2KB:
             return new ModelMap("Matching",

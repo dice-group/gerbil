@@ -24,8 +24,8 @@ import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
 
 public class TypeBasedMarkingFilterTest {
 
