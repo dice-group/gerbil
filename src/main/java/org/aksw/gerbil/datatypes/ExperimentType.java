@@ -191,9 +191,11 @@ public enum ExperimentType implements Describable {
                 return true;
             }
             case ETyping: // falls through
+            case RE:
             case RT2KB:
             case OKE_Task1:
-            case OKE_Task2: {
+            case OKE_Task2:
+            case OKE2018Task4: {
                 return false;
             }
             }
@@ -205,9 +207,11 @@ public enum ExperimentType implements Describable {
             case A2KB:
             case D2KB:
             case ETyping:
+            case RE:
             case RT2KB:
             case OKE_Task1:
-            case OKE_Task2: {
+            case OKE_Task2:
+            case OKE2018Task4: {
                 return false;
             }
             case Sc2KB: // falls through
@@ -224,10 +228,12 @@ public enum ExperimentType implements Describable {
             case Sc2KB:
             case A2KB:
             case D2KB:
+            case RE:
             case RT2KB:
             case ETyping:
             case OKE_Task1:
-            case OKE_Task2: {
+            case OKE_Task2:
+            case OKE2018Task4: {
                 return false;
             }
             case Rc2KB: // falls through
@@ -249,8 +255,10 @@ public enum ExperimentType implements Describable {
             case Sa2KB:
             case Sc2KB:
             case Rc2KB:
+            case RE:
             case OKE_Task1:
-            case OKE_Task2: {
+            case OKE_Task2:
+            case OKE2018Task4: {
                 return false;
             }
             }
@@ -269,7 +277,9 @@ public enum ExperimentType implements Describable {
         }
         case OKE_Task1: {
             switch (type) {
-            case OKE_Task2: {
+            case RE:
+            case OKE_Task2:
+            case OKE2018Task4: {
                 return false;
             }
             default: {
@@ -295,6 +305,12 @@ public enum ExperimentType implements Describable {
             case Sc2KB:
             case Rc2KB: {
         		return true;
+            }
+            case ETyping:
+            case OKE_Task1:
+            case OKE_Task2:
+            case RT2KB: {
+                return false;
             }
         	}
         }
