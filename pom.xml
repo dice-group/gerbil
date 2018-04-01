@@ -310,7 +310,7 @@
 		<dependency>
 			<groupId>org.aksw</groupId>
 			<artifactId>gerbil.nif.transfer</artifactId>
-			<version>1.2.5-jena3.1-SNAPSHOT</version>
+			<version>1.2.6-jena3.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
