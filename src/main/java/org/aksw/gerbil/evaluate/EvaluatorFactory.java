@@ -240,7 +240,7 @@ public class EvaluatorFactory {
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.A2KB, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new ClassSubTaskEvaluator<Meaning>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
-                    ExperimentType.A2KB, subTaskConfig, dataset, classifier,inferencer ), Meaning.class));
+                    ExperimentType.A2KB, subTaskConfig, dataset, classifier, inferencer ), Meaning.class));
             
             
             return new ConfidenceScoreEvaluatorDecorator(
@@ -250,15 +250,25 @@ public class EvaluatorFactory {
         case KE: {
         	ExperimentTaskConfiguration subTaskConfig;
             List<SubTaskEvaluator> evaluators = new ArrayList<SubTaskEvaluator>();
+            UriKBClassifier okeClassifierTask1 = new ExactWhiteListBasedUriKBClassifier(Arrays.asList(
+                    "http://www.ontologydesignpatterns.org/ont/d0.owl#Location",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"));
             
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.OKE_Task1, configuration.matching);
-            evaluators.add(new ClassSubTaskEvaluator<Marking>(subTaskConfig, (Evaluator<Marking>) createEvaluator(
-                    ExperimentType.OKE_Task1, subTaskConfig, dataset, classifier,inferencer ), Marking.class));
+                    ExperimentType.A2KB, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new ClassSubTaskEvaluator<Meaning>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
+                    ExperimentType.A2KB, subTaskConfig, dataset, classifier, inferencer), Meaning.class));
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new ClassSubTaskEvaluator<Meaning>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
+                    ExperimentType.ETyping, subTaskConfig, dataset, okeClassifierTask1, inferencer), Meaning.class));
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.RE, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new ClassSubTaskEvaluator<>(subTaskConfig, (Evaluator<Marking>) createEvaluator(
                     ExperimentType.RE, subTaskConfig, dataset), Relation.class));
+
             
             return new ConfidenceScoreEvaluatorDecorator(
                     new SubTaskAverageCalculator(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
