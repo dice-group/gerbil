@@ -29,7 +29,7 @@ public class EqualsBasedMatchingsSearcher<T extends Marking> implements Matching
             }
         } else {
             for (int i = 0; i < annotatorResult.size(); ++i) {
-                if (expectedElement.equals(annotatorResult.get(i))) {
+                if ((!alreadyUsedResults.get(i)) && expectedElement.equals(annotatorResult.get(i))) {
                     matchings.set(i);
                 }
             }
