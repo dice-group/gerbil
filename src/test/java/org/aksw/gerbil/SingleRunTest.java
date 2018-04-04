@@ -21,7 +21,10 @@ import java.util.concurrent.Semaphore;
 
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
+import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
+import org.aksw.gerbil.dataset.InitializableDataset;
+import org.aksw.gerbil.dataset.InstanceListBasedDataset;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -58,6 +61,10 @@ public class SingleRunTest implements TaskObserver {
 
     private static final boolean USE_SAME_AS_RETRIEVAL = false;
     private static final boolean USE_ENTITY_CHECKING = false;
+    
+    private static final boolean SHORTEN_DATASET = false;
+    private static final int SHORTENED_SET_START_ID = 0;
+    private static final int SHORTENED_SET_END_ID = 3;
 
     private static final SameAsRetriever SAME_AS_RETRIEVER = USE_SAME_AS_RETRIEVAL
             ? SameAsRetrieverSingleton4Tests.getInstance() : null;
@@ -85,6 +92,13 @@ public class SingleRunTest implements TaskObserver {
         Assert.assertNotNull(annotatorConfig);
         DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE);
         Assert.assertNotNull(datasetConfig);
+
+        if (SHORTEN_DATASET) {
+            Dataset d = datasetConfig.getDataset(EXPERIMENT_TYPE);
+            ((InitializableDataset) d).init();
+            datasetConfig = new InstanceListBasedDataset(datasetConfig.getName(),
+                    d.getInstances().subList(SHORTENED_SET_START_ID, SHORTENED_SET_END_ID), EXPERIMENT_TYPE);
+        }
 
         DefeatableOverseer overseer = RootConfig.createOverseer();
         overseer.addObserver(this);
