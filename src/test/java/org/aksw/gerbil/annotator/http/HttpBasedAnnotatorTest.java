@@ -30,7 +30,7 @@ import org.aksw.gerbil.annotator.SingletonAnnotatorConfigImpl;
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
-import org.aksw.gerbil.dataset.TestDataset;
+import org.aksw.gerbil.dataset.InstanceListBasedDataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -159,9 +159,9 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
 
     @Test
     public void test() throws NoSuchMethodException, SecurityException, InterruptedException {
-        TestDataset datasets[] = new TestDataset[NUMBER_OF_DATASETS];
+        InstanceListBasedDataset datasets[] = new InstanceListBasedDataset[NUMBER_OF_DATASETS];
         for (int i = 0; i < datasets.length; ++i) {
-            datasets[i] = new TestDataset("test dataset " + i, Arrays.asList(DOCUMENTS), ExperimentType.D2KB);
+            datasets[i] = new InstanceListBasedDataset("test dataset " + i, Arrays.asList(DOCUMENTS), ExperimentType.D2KB);
         }
         AnnotatorConfigurationImpl fastAnnotator = new AnnotatorConfigurationImpl(FAST_ANNOTATOR_NAME, false,
                 NIFBasedAnnotatorWebservice.class.getConstructor(String.class, String.class),
@@ -203,9 +203,9 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
     @Test
     @Ignore
     public void testWithSingletonAnnotators() throws NoSuchMethodException, SecurityException, InterruptedException {
-        TestDataset datasets[] = new TestDataset[NUMBER_OF_DATASETS];
+        InstanceListBasedDataset datasets[] = new InstanceListBasedDataset[NUMBER_OF_DATASETS];
         for (int i = 0; i < datasets.length; ++i) {
-            datasets[i] = new TestDataset("test dataset " + i, Arrays.asList(DOCUMENTS), ExperimentType.D2KB);
+            datasets[i] = new InstanceListBasedDataset("test dataset " + i, Arrays.asList(DOCUMENTS), ExperimentType.D2KB);
         }
         AnnotatorConfigurationImpl fastAnnotator = new SingletonAnnotatorConfigImpl(FAST_ANNOTATOR_NAME, false,
                 NIFBasedAnnotatorWebservice.class.getConstructor(String.class, String.class),

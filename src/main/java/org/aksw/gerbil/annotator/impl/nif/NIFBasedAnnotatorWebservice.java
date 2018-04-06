@@ -17,6 +17,7 @@
 package org.aksw.gerbil.annotator.impl.nif;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.A2KBAnnotator;
@@ -40,11 +41,13 @@ import org.aksw.gerbil.transfer.nif.TurtleNIFDocumentParser;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +64,8 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
     private NIFDocumentCreator nifCreator = new TurtleNIFDocumentCreator();
     private NIFDocumentParser nifParser = new TurtleNIFDocumentParser();
 
+    private List<Header> additionalHeader = new LinkedList<Header>();
+    
     public NIFBasedAnnotatorWebservice(String url) {
         super();
         this.url = url;
@@ -70,6 +75,33 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
         super(name);
         this.url = url;
     }
+    
+    public NIFBasedAnnotatorWebservice(String url, String name, String additionalHeader) {
+    	this(url, name);
+    	createHeader(additionalHeader);
+    }
+    
+    private void createHeader(String additionalHeader) {
+    	if(additionalHeader.isEmpty()) {
+    		return;
+    	}
+    	//format is "-H name value -H name value ..."
+    	String[] nameValuePairs = additionalHeader.trim().split("-H\\s+");
+    	for(String nameValuePair : nameValuePairs) {
+    		if(nameValuePair.isEmpty()) {
+    			continue;
+    		}
+    		String[] pair = nameValuePair.trim().split("\\s+"); 
+    		if(pair.length!=2) {
+    			//wrong format
+    			LOGGER.warn("Additional Header has wrong format {}", nameValuePair);
+    			continue;
+    		}
+    		this.getAdditionalHeader().add(new BasicHeader(pair[0], pair[1]));
+    		LOGGER.info("Set additional header: {}", nameValuePair);
+    	}
+    }
+    
 
     @Override
     public List<Meaning> performC2KB(Document document) throws GerbilException {
@@ -117,7 +149,7 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
         return document.getMarkings(resultClass);
     }
 
-    protected Document request(Document document) throws GerbilException {
+    public Document request(Document document) throws GerbilException {
         // give the document a URI
         document.setDocumentURI(DOCUMENT_URI + documentCount);
         ++documentCount;
@@ -137,7 +169,10 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
         request.addHeader(HttpHeaders.CONTENT_TYPE, nifCreator.getHttpContentType() + ";charset=UTF-8");
         request.addHeader(HttpHeaders.ACCEPT, nifParser.getHttpContentType());
         request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
-
+        for(Header header : getAdditionalHeader()) {
+        	request.addHeader(header);
+        }
+        
         entity = null;
         CloseableHttpResponse response = null;
         try {
@@ -179,6 +214,20 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
 	public List<Marking> performOKE2018Task4(Document document) throws GerbilException {
         return performAnnotation(document, Marking.class);
 
+	}
+
+	/**
+	 * @return the additionalHeader
+	 */
+	public List<Header> getAdditionalHeader() {
+		return additionalHeader;
+	}
+
+	/**
+	 * @param additionalHeader the additionalHeader to set
+	 */
+	public void setAdditionalHeader(List<Header> additionalHeader) {
+		this.additionalHeader = additionalHeader;
 	}
 
 }

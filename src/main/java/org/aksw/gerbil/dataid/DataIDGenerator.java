@@ -28,10 +28,10 @@ import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.semantic.vocabs.CUBE;
 import org.aksw.gerbil.semantic.vocabs.GERBIL;
 import org.aksw.gerbil.web.ExperimentTaskStateHelper;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 
 import com.carrotsearch.hppc.IntDoubleOpenHashMap;
-import com.github.jsonldjava.jena.JenaJSONLD;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -83,7 +83,7 @@ public class DataIDGenerator {
         OutputStream o = new ByteArrayOutputStream();
 
         // creating json-ld output format
-        RDFDataMgr.write(o, model, JenaJSONLD.JSONLD);
+        RDFDataMgr.write(o, model, Lang.JSONLD);
 
         return o.toString();
     }

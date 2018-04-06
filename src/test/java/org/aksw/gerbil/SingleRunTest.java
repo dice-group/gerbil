@@ -21,7 +21,10 @@ import java.util.concurrent.Semaphore;
 
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
+import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
+import org.aksw.gerbil.dataset.InitializableDataset;
+import org.aksw.gerbil.dataset.InstanceListBasedDataset;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -51,13 +54,17 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    private static final String ANNOTATOR_NAME = "DBpedia Spotlight";
-    private static final String DATASET_NAME = "MSNBC";
-    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.A2KB;
-    private static final Matching MATCHING = Matching.WEAK_ANNOTATION_MATCH;
+    private static final String ANNOTATOR_NAME = "FOX";
+    private static final String DATASET_NAME = "OKE 2018 Task 3 dataset";
+    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.RE;
+    private static final Matching MATCHING = Matching.STRONG_ANNOTATION_MATCH;
 
     private static final boolean USE_SAME_AS_RETRIEVAL = false;
     private static final boolean USE_ENTITY_CHECKING = false;
+    
+    private static final boolean SHORTEN_DATASET = false;
+    private static final int SHORTENED_SET_START_ID = 0;
+    private static final int SHORTENED_SET_END_ID = 3;
 
     private static final SameAsRetriever SAME_AS_RETRIEVER = USE_SAME_AS_RETRIEVAL
             ? SameAsRetrieverSingleton4Tests.getInstance() : null;
@@ -86,6 +93,13 @@ public class SingleRunTest implements TaskObserver {
         DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE);
         Assert.assertNotNull(datasetConfig);
 
+        if (SHORTEN_DATASET) {
+            Dataset d = datasetConfig.getDataset(EXPERIMENT_TYPE);
+            ((InitializableDataset) d).init();
+            datasetConfig = new InstanceListBasedDataset(datasetConfig.getName(),
+                    d.getInstances().subList(SHORTENED_SET_START_ID, SHORTENED_SET_END_ID), EXPERIMENT_TYPE);
+        }
+
         DefeatableOverseer overseer = RootConfig.createOverseer();
         overseer.addObserver(this);
 
@@ -94,6 +108,7 @@ public class SingleRunTest implements TaskObserver {
 
         Experimenter experimenter = new Experimenter(overseer, new SimpleLoggingDAO4Debugging(), SAME_AS_RETRIEVER,
                 new EvaluatorFactory(), taskConfigs, "SingleRunTest");
+        experimenter.setAnnotatorOutputWriter(RootConfig.getAnnotatorOutputWriter());
         experimenter.run();
 
         mutex.acquire();
