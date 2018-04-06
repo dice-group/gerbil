@@ -193,7 +193,9 @@ public enum ExperimentType implements Describable {
             case RE: {
             	return false;
             }
-            case KE:
+            case KE: {
+            	return false;
+            }
             case Sa2KB:
             case Sc2KB:
             case Rc2KB: {
@@ -326,7 +328,7 @@ public enum ExperimentType implements Describable {
             case Sc2KB:
             case Rc2KB:
             default: { 
-            	return true; }
+            	return false; }
             }
         }
         }
