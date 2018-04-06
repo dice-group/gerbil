@@ -19,6 +19,7 @@ package org.aksw.gerbil.tools;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
@@ -27,6 +28,9 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.Relation;
+import org.aksw.gerbil.transfer.nif.Span;
+import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.apache.commons.io.IOUtils;
@@ -39,16 +43,28 @@ public class DatasetAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasetAnalyzer.class);
 
     public static void main(String[] args) {
-        // List<DatasetConfiguration> datasetConfigs = DatasetsConfig
-        // .datasets(RootConfig.getEntityCheckerManager(),
-        // RootConfig.createSameAsRetriever()).getConfigurations();
+        List<DatasetConfiguration> datasetConfigs = DatasetsConfig
+                .datasets(/*RootConfig.getEntityCheckerManager(), RootConfig.createSameAsRetriever()*/ null, null).getConfigurations();
 
-        List<DatasetConfiguration> datasetConfigs = DatasetsConfig.datasets(null, null).getConfigurations();
+        // List<DatasetConfiguration> datasetConfigs =
+        // DatasetsConfig.datasets(null, null).getConfigurations();
+
+        // List<DatasetConfiguration> datasetConfigs = Arrays.asList(
+        // new NIFFileDatasetConfig("P1 Path", "pt_bengal_path_100.ttl", false,
+        // ExperimentType.A2KB, null, null),
+        // new NIFFileDatasetConfig("P2 Star", "pt_bengal_star_100.ttl", false,
+        // ExperimentType.A2KB, null, null),
+        // new NIFFileDatasetConfig("P3 Sym", "pt_bengal_sym_100.ttl", false,
+        // ExperimentType.A2KB, null, null),
+        // new NIFFileDatasetConfig("P4 Hybrid", "pt_bengal_hybrid_100.ttl",
+        // false, ExperimentType.A2KB, null,
+        // null));
+
         PrintStream output = null;
         try {
             output = new PrintStream("datasetAnalyzation.log");
             output.println(
-                    "name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, numberOfEEs, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
+                    "name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, numberOfEEs, numberOfRelations, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
             DatasetAnalyzer analyzer = new DatasetAnalyzer(output);
             for (DatasetConfiguration config : datasetConfigs) {
                 try {
@@ -74,6 +90,8 @@ public class DatasetAnalyzer {
     public void analyzeDataset(DatasetConfiguration config) throws GerbilException {
         if (config.isApplicableForExperiment(ExperimentType.D2KB)) {
             analyze(config, ExperimentType.D2KB);
+        } else if (config.isApplicableForExperiment(ExperimentType.RE)) {
+            analyze(config, ExperimentType.RE);
         } else if (config.isApplicableForExperiment(ExperimentType.ETyping)) {
             analyze(config, ExperimentType.ETyping);
         } else if (config.isApplicableForExperiment(ExperimentType.OKE_Task2)) {
@@ -115,14 +133,16 @@ public class DatasetAnalyzer {
         int annotationsSum = 0;
         int tokensSum = 0;
         int eeCount = 0;
+        int reCount = 0;
         for (Document document : documents) {
-            annotationsSum += document.getMarkings().size();
+            annotationsSum += document.getMarkings().stream().filter(m -> (m instanceof Span) || (m instanceof Annotation)).count();
             tokensSum += countTokensInText(document.getText());
             for (Meaning meaning : document.getMarkings(Meaning.class)) {
-                if (!classifier.containsKBUri(meaning.getUris())) {
-                    ++eeCount;
-                }
+                    if (!classifier.containsKBUri(meaning.getUris())) {
+                        ++eeCount;
+                    }
             }
+            reCount += document.getMarkings().stream().filter(m -> m instanceof Relation).count();
         }
         // average entities per document
         output.print((double) annotationsSum / (double) documents.size());
@@ -141,6 +161,9 @@ public class DatasetAnalyzer {
         output.print(',');
         // number of EEs
         output.print(eeCount);
+        output.print(',');
+        // number of REs
+        output.print(reCount);
         output.print(',');
 
         output.println();

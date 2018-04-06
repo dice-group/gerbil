@@ -22,7 +22,7 @@ import java.util.List;
 import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
-import org.aksw.gerbil.dataset.TestDataset;
+import org.aksw.gerbil.dataset.InstanceListBasedDataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
@@ -65,25 +65,25 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
                 new TestAnnotatorConfiguration(INSTANCES, ExperimentType.ERec),
-                new TestDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.STRONG_ANNOTATION_MATCH);
+                new InstanceListBasedDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.STRONG_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 2;
         configuration = new ExperimentTaskConfiguration(new TestAnnotatorConfiguration(INSTANCES, ExperimentType.ERec),
-                new TestDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.WEAK_ANNOTATION_MATCH);
+                new InstanceListBasedDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.WEAK_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 3;
         configuration = new ExperimentTaskConfiguration(new TestAnnotatorConfiguration(INSTANCES, ExperimentType.A2KB),
-                new TestDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.STRONG_ANNOTATION_MATCH);
+                new InstanceListBasedDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.STRONG_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 4;
         configuration = new ExperimentTaskConfiguration(new TestAnnotatorConfiguration(INSTANCES, ExperimentType.A2KB),
-                new TestDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.WEAK_ANNOTATION_MATCH);
+                new InstanceListBasedDataset(INSTANCES, ExperimentType.ERec), ExperimentType.ERec, Matching.WEAK_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
     }
@@ -94,13 +94,13 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
                 new TestAnnotatorConfiguration(INSTANCES, ExperimentType.D2KB),
-                new TestDataset(INSTANCES, ExperimentType.D2KB), ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
+                new InstanceListBasedDataset(INSTANCES, ExperimentType.D2KB), ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 2;
         configuration = new ExperimentTaskConfiguration(new TestAnnotatorConfiguration(INSTANCES, ExperimentType.A2KB),
-                new TestDataset(INSTANCES, ExperimentType.D2KB), ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
+                new InstanceListBasedDataset(INSTANCES, ExperimentType.D2KB), ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
     }
@@ -111,13 +111,13 @@ public class SimpleExperimentTaskTest extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
                 new TestAnnotatorConfiguration(INSTANCES, ExperimentType.A2KB),
-                new TestDataset(INSTANCES, ExperimentType.A2KB), ExperimentType.A2KB, Matching.STRONG_ANNOTATION_MATCH);
+                new InstanceListBasedDataset(INSTANCES, ExperimentType.A2KB), ExperimentType.A2KB, Matching.STRONG_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
 
         experimentTaskId = 2;
         configuration = new ExperimentTaskConfiguration(new TestAnnotatorConfiguration(INSTANCES, ExperimentType.A2KB),
-                new TestDataset(INSTANCES, ExperimentType.A2KB), ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH);
+                new InstanceListBasedDataset(INSTANCES, ExperimentType.A2KB), ExperimentType.A2KB, Matching.WEAK_ANNOTATION_MATCH);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new EverythingCorrectTestingObserver(this, experimentTaskId, experimentDAO));
     }

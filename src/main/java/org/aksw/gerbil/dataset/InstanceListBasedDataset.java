@@ -23,15 +23,15 @@ import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.utils.ClosePermitionGranter;
 
-public class TestDataset extends AbstractDatasetConfiguration implements Dataset {
+public class InstanceListBasedDataset extends AbstractDatasetConfiguration implements Dataset {
 
     private List<Document> instances;
 
-    public TestDataset(List<Document> instances, ExperimentType applicableForExperiment) {
+    public InstanceListBasedDataset(List<Document> instances, ExperimentType applicableForExperiment) {
         this("TestDataset", instances, applicableForExperiment);
     }
 
-    public TestDataset(String name, List<Document> instances, ExperimentType applicableForExperiment) {
+    public InstanceListBasedDataset(String name, List<Document> instances, ExperimentType applicableForExperiment) {
         super(name, false, applicableForExperiment, null, null);
         this.instances = instances;
     }
