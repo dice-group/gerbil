@@ -18,7 +18,6 @@ package org.aksw.gerbil.evaluate.impl;
 
 import java.util.List;
 
-import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
@@ -41,25 +40,16 @@ public class ModelComparator<T extends Model> implements Evaluator<T> {
     public static final String PRECISION_NAME = "Precision";
     public static final String RECALL_NAME = "Recall";
 
-    public static String[] predicates = {};
-//    = {
-//    	"http://ont.thomsonreuters.com/mdaas/isDomiciledIn",
-//    	"http://www.w3.org/2006/vcard/ns#organization-name",
-//		"http://www.w3.org/2006/vcard/ns#hasURL",
-//		"http://permid.org/ontology/organization/hasLatestOrganizationFoundedDate",
-//		"http://permid.org/ontology/organization/hasHeadquartersPhoneNumber",	
-//    	"http://ont.thomsonreuters.com/mdaas/organizationFoundedYear",
-//    	"http://ont.thomsonreuters.com/mdaas/organizationWebsite",
-//    	"http://ont.thomsonreuters.com/mdaas/organizationCity",
-//    	"http://ont.thomsonreuters.com/mdaas/headquartersFax",
-//    	"http://ont.thomsonreuters.com/mdaas/headquartersAddress"};
-
-	private static final String PROPERTIES_GERBIL_KEY = "org.aksw.gerbil.modelcomparator.properties";
+    protected String[] predicates;
+    /**
+     * If set to {@code true} the precision will be reduced for statements that have
+     * one of the given predicates but are not in the gold standard.
+     */
+	protected boolean punishAdditionalAnnotatorStmts;
     
-    public ModelComparator() {
-        super();
-        predicates = GerbilConfiguration.getInstance().getStringArray(PROPERTIES_GERBIL_KEY);
-   	
+    public ModelComparator(String predicates[], boolean punishAdditionalAnnotatorStmts) {
+        this.predicates = predicates;
+        this.punishAdditionalAnnotatorStmts = punishAdditionalAnnotatorStmts;
     }
 
     @Override
@@ -72,7 +62,9 @@ public class ModelComparator<T extends Model> implements Evaluator<T> {
 	public EvaluationResult[] compareModel(Model annotator, Model gold) {
 		annotator = reduceModel(annotator);
 		gold = reduceModel(gold); //just in case
-		annotator = cleansify(annotator, gold);
+		if(!punishAdditionalAnnotatorStmts) {
+		    annotator = cleansify(annotator, gold);
+		}
 		
 		long tp = annotator.intersection(gold).size();
 		long fp = annotator.difference(gold).size();
@@ -104,13 +96,17 @@ public class ModelComparator<T extends Model> implements Evaluator<T> {
 		return cleaned;
 	}
 
-	public static Model reduceModel(Model annotator){
-		Model reducedModel = ModelFactory.createDefaultModel();
-		for(String predicate : predicates){
-			Property prop = annotator.createProperty(predicate);
-			reducedModel.add(annotator.listStatements(null, prop, (RDFNode)null));
-		}
-		return reducedModel;
+	public Model reduceModel(Model annotator){
+		return reduceModel(annotator, predicates);
 	}
+
+    public static Model reduceModel(Model annotator, String[] predicates){
+        Model reducedModel = ModelFactory.createDefaultModel();
+        for(String predicate : predicates){
+            Property prop = annotator.createProperty(predicate);
+            reducedModel.add(annotator.listStatements(null, prop, (RDFNode)null));
+        }
+        return reducedModel;
+    }
 	
 }

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gerbil.web</groupId>
   <artifactId>gerbil.web</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.4-SNAPSHOT</version>
   	<name>General Entity Annotator Benchmark - Semantic Web Challenge Extension - Web</name>
 	<description>This project is a benchmark for entity annotation and disambiguation tools extended towards the semantic Web Challenge at ISWC 2017</description>
 	<inceptionYear>2014</inceptionYear>
@@ -22,12 +22,12 @@
   	<dependency>
   		<groupId>gerbil.commons</groupId>
   		<artifactId>gerbil.commons</artifactId>
-  		<version>0.0.3</version>
+  		<version>0.0.4-SNAPSHOT</version>
   	</dependency>
   	<dependency>
   		<groupId>gerbil.evaluate</groupId>
   		<artifactId>gerbil.evaluate</artifactId>
-  		<version>0.0.3</version>
+  		<version>0.0.4-SNAPSHOT</version>
   	</dependency>
   			<!-- JUnit -->
 		<dependency>
@@ -39,12 +39,12 @@
 		<dependency>
 			<groupId>gerbil.dataset</groupId>
 			<artifactId>gerbil.dataset</artifactId>
-			<version>0.0.3</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gerbil.annotator</groupId>
 			<artifactId>gerbil.annotator</artifactId>
-			<version>0.0.3</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>gerbil.execute</groupId>
 			<artifactId>gerbil.execute</artifactId>
-			<version>0.0.3</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
   </dependencies>
   

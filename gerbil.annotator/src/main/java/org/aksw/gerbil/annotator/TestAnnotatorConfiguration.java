@@ -24,9 +24,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.apache.jena.rdf.model.Model;
-import org.junit.Ignore;
 
-@Ignore
 public class TestAnnotatorConfiguration extends AbstractAdapterConfiguration implements AnnotatorConfiguration {
 
     private Annotator annotator;

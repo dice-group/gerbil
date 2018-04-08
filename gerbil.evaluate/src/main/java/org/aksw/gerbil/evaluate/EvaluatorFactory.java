@@ -51,6 +51,8 @@ public class EvaluatorFactory {
 
 	private static final String GERBIL_HTTP_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY = "org.aksw.gerbil.dataset.converter.domain";
 
+    public static final String SWC2017_TASK1_PROPERTIES_KEY = "org.aksw.gerbil.modelcomparator.swc2017.task1.properties";
+    public static final String SWC2018_TASK1_PROPERTIES_KEY = "org.aksw.gerbil.modelcomparator.swc2018.task1.properties";
 //	private static final String GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY = null;
 //
 //	private static final String GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY = null;
@@ -128,7 +130,7 @@ public class EvaluatorFactory {
         switch (type) {
         //case Task1/Task2
         case SWC1:
-        	return new ModelComparator();
+        	return new ModelComparator(GerbilConfiguration.getInstance().getStringArray(SWC2017_TASK1_PROPERTIES_KEY), false);
         case SWC2:
         	return new ROCEvaluator();
 //        case ETyping: {
@@ -141,7 +143,9 @@ public class EvaluatorFactory {
 //                                    inferencer)), FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator()),
 //                    true);
 //        }
-        
+
+        case SWC2018T1:
+            return new ModelComparator(GerbilConfiguration.getInstance().getStringArray(SWC2018_TASK1_PROPERTIES_KEY), true);
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
         }
@@ -166,6 +170,7 @@ public class EvaluatorFactory {
             // creation
         case SWC1:
         case SWC2:
+        case SWC2018T1:
         case OKE_Task1:
         case OKE_Task2: {
             return;

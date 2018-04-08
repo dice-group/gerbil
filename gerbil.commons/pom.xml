@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gerbil.commons</groupId>
   <artifactId>gerbil.commons</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.4-SNAPSHOT</version>
 <name>General Entity Annotator Benchmark - Semantic Web Challenge Extension - Commons</name>
 	<description>This project is a benchmark for entity annotation and disambiguation tools extended towards the semantic Web Challenge at ISWC 2017</description>
 	<inceptionYear>2014</inceptionYear>
@@ -326,6 +326,10 @@
 					<groupId>org.aksw.qa</groupId>
 					<artifactId>commons</artifactId>
 				</exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -341,6 +345,10 @@
 					<groupId>mysql</groupId>
 					<artifactId>mysql-connector-java</artifactId>
 				</exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>

@@ -5,20 +5,18 @@ import static org.junit.Assert.assertTrue;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.EvaluationResult;
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.NodeFactory;
-import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.Test;
 
 public class ModelComparatorTest {
 
+    private static final String[] PREDICATES = GerbilConfiguration.getInstance().getStringArray(EvaluatorFactory.SWC2017_TASK1_PROPERTIES_KEY);
 	
 //	@Test
 	public void isomporphTest() {
@@ -41,7 +39,6 @@ public class ModelComparatorTest {
 		
 		expected.addLiteral(s, p, l2);
 		test.addLiteral(s, p, l1);
-		
 	}
 	
 	@Test
@@ -68,7 +65,6 @@ public class ModelComparatorTest {
 	
 	@Test
 	public void checkReduce(){
-		ModelComparator cmp = new ModelComparator();
 		Model anno = ModelFactory.createDefaultModel();
 		Model expected = ModelFactory.createDefaultModel();
 		Property p1 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/isDomiciledIn");
@@ -81,10 +77,10 @@ public class ModelComparatorTest {
 		expected.addLiteral(s, p1, 0.0);
 		anno.addLiteral(s, p2, 0.0);
 		
-		Model test = ModelComparator.reduceModel(anno);
+		Model test = ModelComparator.reduceModel(anno, PREDICATES);
 		assertTrue(expected.isIsomorphicWith(test));
 		
-		ModelComparator<Model> evaluator = new ModelComparator<Model>();
+		ModelComparator<Model> evaluator = new ModelComparator<Model>(PREDICATES, false);
 		EvaluationResult[] result = evaluator.compareModel(anno, expected);
 		assertEquals(result[0].getValue(), 1.0);
 		assertEquals(result[1].getValue(), 1.0);
@@ -95,8 +91,6 @@ public class ModelComparatorTest {
 	
 	@Test
 	public void compareModel(){
-		ModelComparator cmp = new ModelComparator();
-
 		Model anno = ModelFactory.createDefaultModel();
 		
 		Model gold = ModelFactory.createDefaultModel();
@@ -116,7 +110,7 @@ public class ModelComparatorTest {
 		anno.addLiteral(s2, p, 0.0);
 		anno.addLiteral(s1, p, 0.0);
 		
-		ModelComparator<Model> evaluator = new ModelComparator<Model>();
+		ModelComparator<Model> evaluator = new ModelComparator<Model>(PREDICATES, false);
 		EvaluationResult[] result = evaluator.compareModel(anno, gold);
 		assertEquals(result[0].getValue(), 1.0);
 		assertEquals(result[1].getValue(), 1.0);

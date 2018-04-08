@@ -155,7 +155,12 @@ public enum ExperimentType implements Describable {
     /**
      * Relation Extraction 2KB.
      */
-    RE2KB("RE2KB", "The system gets a quesiton and shall extract all triples that are present.");
+    RE2KB("RE2KB", "The system gets a quesiton and shall extract all triples that are present."),
+    
+    /**
+     * Fact Extraction for the ISWC SWC 2018 Task 1.
+     */
+    SWC2018T1("SWC 2018 Task 1", "The system should extract costumer - supplier relationships and provide proofs for them.");
 
     private String label;
     private String description;

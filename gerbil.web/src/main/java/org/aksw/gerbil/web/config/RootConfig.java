@@ -120,6 +120,7 @@ public class RootConfig {
     
     
     private static final String AVAILABLE_EXPERIMENT_TYPES_KEY = "org.aksw.gerbil.web.MainController.availableExperimentTypes";
+    private static final String SORT_EXPERIMENT_TYPES_KEY = "org.aksw.gerbil.web.MainController.sortAlphabetically";
 
     private static final String LABEL_INDEX_PATH_KEY = "org.aksw.agdistis.util.TripleIndex.path";
 
@@ -346,7 +347,9 @@ public class RootConfig {
             return new ExperimentType[0];
         } else {
             ExperimentType typesArray[] = types.toArray(new ExperimentType[types.size()]);
-            Arrays.sort(typesArray);
+            if (config.containsKey(SORT_EXPERIMENT_TYPES_KEY) && config.getBoolean(SORT_EXPERIMENT_TYPES_KEY)) {
+                Arrays.sort(typesArray);
+            }
             return typesArray;
         }
     }

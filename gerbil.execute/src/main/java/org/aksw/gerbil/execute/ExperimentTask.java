@@ -106,22 +106,29 @@ public class ExperimentTask implements Task {
                         + "\" experimentType=\"" + configuration.type.name() + "\".",
                         ErrorTypes.ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT);
             }
+
+            List<Evaluator<?>> evaluators = new ArrayList<Evaluator<?>>();
+            evFactory.addEvaluators(evaluators, configuration, dataset);
             
             Annotator decoratedAnnotator = annotator;
             // Add decroatoring evaluators
             TimeMeasuringAnnotatorDecorator timeMeasurer = TimeMeasuringAnnotatorDecorator
                     .createDecorator(configuration.type, decoratedAnnotator);
-            decoratedAnnotator = timeMeasurer;
+            if(timeMeasurer != null) {
+                decoratedAnnotator = timeMeasurer;
+                evaluators.add(timeMeasurer);
+            }
             ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator
                     .createDecorator(configuration.type, decoratedAnnotator, dataset.size());
-            decoratedAnnotator = errorCounter;
-            decoratedAnnotator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type,
+            if(errorCounter != null) {
+                decoratedAnnotator = errorCounter;
+                evaluators.add(errorCounter);
+            }
+            Annotator securingDecorator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type,
                     decoratedAnnotator);
-
-            List<Evaluator<?>> evaluators = new ArrayList<Evaluator<?>>();
-            evFactory.addEvaluators(evaluators, configuration, dataset);
-            evaluators.add(timeMeasurer);
-            evaluators.add(errorCounter);
+            if(securingDecorator != null) {
+                decoratedAnnotator = securingDecorator;
+            }
 
             // Prepare dataset for the experiment
             // prepareDataset(dataset);
@@ -135,6 +142,7 @@ public class ExperimentTask implements Task {
             ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[0],
                     ExperimentDAO.TASK_FINISHED, 0);
             switch(configuration.type){
+            case SWC2018T1:
             case SWC1:	
             	transformResults(result, expResult);
             	break;
@@ -165,7 +173,6 @@ public class ExperimentTask implements Task {
             IOUtils.closeQuietly(dataset);
         }
     }
-
 
     /**
      * Prepares the given annotator results for the evaluation, i.e., performs a
@@ -268,6 +275,7 @@ public class ExperimentTask implements Task {
             List<Evaluator<? extends Model>> evaluators, ExperimentTaskState state) throws GerbilException {
         EvaluationResult evalResult = null;
         switch (configuration.type) {
+        case SWC2018T1: //falls through
         case SWC1: {
         	List<List<Model>> results = new ArrayList<List<Model>>(dataset.size());
             List<List<Model>> goldStandard = new ArrayList<List<Model>>(dataset.size());
