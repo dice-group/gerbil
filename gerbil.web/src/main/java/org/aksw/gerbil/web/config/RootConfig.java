@@ -18,7 +18,9 @@ package org.aksw.gerbil.web.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -325,7 +327,8 @@ public class RootConfig {
 
     public static ExperimentType[] getAvailableExperimentTypes() {
         Configuration config = GerbilConfiguration.getInstance();
-        Set<ExperimentType> types = new HashSet<ExperimentType>();
+        boolean sortTypes = config.containsKey(SORT_EXPERIMENT_TYPES_KEY) && config.getBoolean(SORT_EXPERIMENT_TYPES_KEY);
+        Collection<ExperimentType> types = sortTypes ? new HashSet<ExperimentType>() : new ArrayList<>();
         if (config.containsKey(AVAILABLE_EXPERIMENT_TYPES_KEY)) {
             String typeNames[] = config.getStringArray(AVAILABLE_EXPERIMENT_TYPES_KEY);
             ExperimentType type = null;
@@ -347,7 +350,7 @@ public class RootConfig {
             return new ExperimentType[0];
         } else {
             ExperimentType typesArray[] = types.toArray(new ExperimentType[types.size()]);
-            if (config.containsKey(SORT_EXPERIMENT_TYPES_KEY) && config.getBoolean(SORT_EXPERIMENT_TYPES_KEY)) {
+            if (sortTypes) {
                 Arrays.sort(typesArray);
             }
             return typesArray;
