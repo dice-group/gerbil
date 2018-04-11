@@ -42,7 +42,7 @@ public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator impl
 
 	
     public static void main(String[] argc) throws GerbilException, IOException{
-    	ExtendedQALDBasedWebService service = new ExtendedQALDBasedWebService("http://wdaqua-qanary.univ-st-etienne.fr/gerbil");
+    	ExtendedQALDBasedWebService service = new ExtendedQALDBasedWebService("http://wdaqua-core1.univ-st-etienne.fr/gerbil");
     	Document document = new DocumentImpl();
     	document.setText("When was Barack Obama born?");
     	service.answerQuestion(document, "en");
