@@ -1,6 +1,7 @@
 package org.aksw.gerbil.qa.datatypes;
 
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.ProvenanceInfo;
 
 public class AnswerType implements Marking {
 
@@ -45,4 +46,16 @@ public class AnswerType implements Marking {
     public Object clone() {
         return new AnswerType(type);
     }
+
+	@Override
+	public void setProvenanceInfo(ProvenanceInfo provencance) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ProvenanceInfo getProvenanceInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

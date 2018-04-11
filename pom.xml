@@ -24,7 +24,7 @@
 		<junit.version>4.11</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.17.RELEASE</spring.version>
-		<jena.version>3.1.0</jena.version>
+		<jena.version>3.5.0</jena.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
 		<war.warName>gerbil</war.warName>
 		<maven.tomcat.path>/gerbil</maven.tomcat.path>
@@ -58,14 +58,15 @@
 		<dependency>
 			<groupId>org.aksw</groupId>
 			<artifactId>gerbil.nif.transfer</artifactId>
-			<version>1.2.6</version>
+			<version>1.2.5-jena3.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.jena</groupId>
+					<artifactId>jena-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- Jena for using JSON-LD -->
-		<dependency>
-			<groupId>org.apache.jena</groupId>
-			<artifactId>jena-core</artifactId>
-			<version>3.1.0</version>
-		</dependency>
 
 		<!-- Google Guava -->
 		<dependency>
@@ -354,6 +355,10 @@
 					<groupId>com.github.jsonld-java</groupId>
 					<artifactId>jsonld-java-sesame</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.apache.jena</groupId>
+					<artifactId>jena-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -370,6 +375,12 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
 			<version>3.6.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.jena</groupId>
+					<artifactId>jena-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 

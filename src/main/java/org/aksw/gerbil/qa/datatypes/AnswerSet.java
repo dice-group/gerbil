@@ -3,6 +3,7 @@ package org.aksw.gerbil.qa.datatypes;
 import java.util.Set;
 
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.ProvenanceInfo;
 
 import com.google.common.collect.Sets;
 
@@ -61,4 +62,16 @@ public class AnswerSet<T> implements Marking {
         builder.append("]");
         return builder.toString();
     }
+
+	@Override
+	public void setProvenanceInfo(ProvenanceInfo provencance) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ProvenanceInfo getProvenanceInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
