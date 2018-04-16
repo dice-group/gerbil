@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <dataset id="dbpedia-test">
-<question aggregation="false" answertype="date" id="1" onlydbo="true">
+<question aggregation="false" answertype="string" id="1" onlydbo="true">
 <string lang="en">When was Barack Obama born?</string>
 <query><![CDATA[
 PREFIX res: <http://dbpedia.org/resource/> 
@@ -8,10 +8,10 @@ PREFIX dbo: <http://dbpedia.org/ontology/>
 Select ?s WHERE {res:Barack_Obama dbo:birthDate ?s }
 ]]></query>
 <answers>
-<answer>1961-08-04</answer>
+<answer>1961-08-04T00:00:00Z</answer>
 </answers>
 </question>
-<question aggregation="false" answertype="date" id="2" onlydbo="true">
+<question aggregation="false" answertype="string" id="2" onlydbo="true">
 <string lang="en">When was Barack Obama born?</string>
 <query><![CDATA[
 PREFIX res: <http://dbpedia.org/resource/> 
@@ -19,7 +19,7 @@ PREFIX dbo: <http://dbpedia.org/ontology/>
 Select ?s WHERE {res:Barack_Obama dbo:birthDate ?s }
 ]]></query>
 <answers>
-<answer>1961-08-04+02:00</answer>
+<answer>1961-08-04T00:00:00Z</answer>
 </answers>
 </question>
 

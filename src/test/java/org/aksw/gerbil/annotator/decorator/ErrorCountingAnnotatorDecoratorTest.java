@@ -63,7 +63,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
     public void testTaskCanceling() {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTask task = new ExperimentTask(2, db, null, new EvaluatorFactory(),
-                new ExperimentTaskConfiguration(new ErrorCausingAnnotatorConfig(30), new SimpleTestDatasetConfig(1000),
+                new ExperimentTaskConfiguration(new ErrorCausingAnnotatorConfig(100), new SimpleTestDatasetConfig(1000),
                         ExperimentType.ERec, Matching.STRONG_ENTITY_MATCH));
         task.run();
         Assert.assertTrue(db.getExperimentState(2) < 0);
@@ -135,7 +135,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         public SimpleTestDataset(int size) {
             instances = new ArrayList<Document>(size);
             for (int i = 0; i < size; ++i) {
-                instances.add(new DocumentImpl("", Integer.toString(i), new ArrayList<Marking>(0)));
+                instances.add(new DocumentImpl("text "+i, "http://text.com/"+Integer.toString(i), new ArrayList<Marking>(0)));
             }
         }
 

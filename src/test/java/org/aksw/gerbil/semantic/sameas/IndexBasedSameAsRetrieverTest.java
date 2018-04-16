@@ -61,7 +61,7 @@ public class IndexBasedSameAsRetrieverTest {
         }
     }
 
-//    @Test
+    @Test
     public void test() throws GerbilException {
 //        IndexBasedSameAsRetriever retriever = new IndexBasedSameAsRetriever("lucene_index");
 //        Set<String> uris = retriever.retrieveSameURIs(uri);

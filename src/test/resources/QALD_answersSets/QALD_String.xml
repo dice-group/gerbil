@@ -8,6 +8,6 @@ WHERE {
         res:Croissant dbo:creator ?x .
         ?x text:"founder of" ?name . 
 }
-]]></pseudoquery><answers><answer>Croissant</answer></answers></question>
+]]></pseudoquery><answers><answer>http://www.wikidata.org/entity/Q18182706</answer></answers></question>
 
 </dataset>

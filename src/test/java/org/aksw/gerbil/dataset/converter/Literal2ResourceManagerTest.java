@@ -13,7 +13,7 @@ public class Literal2ResourceManagerTest {
 	@Test
 	public void test(){
 		Literal2ResourceManager m = new Literal2ResourceManager();
-		assertTrue(m.getResourcesForLiteral("test").isEmpty());
+		assertTrue(m.getResourcesForLiteral("test").iterator().next().equals("test"));
 		Literal2Resource converter = new SPARQLBasedLiteral2Resource("http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org");
 		m.registerLiteral2Resource(converter);
 		Set<String> tmp = m.getResourcesForLiteral("Deutschland", "de");
@@ -29,7 +29,7 @@ public class Literal2ResourceManagerTest {
 		m = new Literal2ResourceManager();
 		Literal2Resource converterEs2 = new SPARQLBasedLiteral2Resource("http://es.dbpedia.org/sparql");
 		m.registerLiteral2Resource(converterEs2);
-		tmp = m.getResourcesForLiteral("Abel I de Dinamarca@es", null);
+		tmp = m.getResourcesForLiteral("\"Abel I de Dinamarca\"@es", null);
 		assertTrue(tmp.size()==2);
 		assertTrue(tmp.contains("http://dbpedia.org/resource/Abel,_King_of_Denmark"));
 		assertTrue(tmp.contains("http://es.dbpedia.org/resource/Abel_I_de_Dinamarca"));

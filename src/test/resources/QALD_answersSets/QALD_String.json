@@ -28,8 +28,8 @@
           "results": { "bindings": [
             {
               "proj": {
-                "type": "text",
-                "value": "Croissant"
+                "type": "uri",
+                "value": "http://www.wikidata.org/entity/Q18182706"
               }
             }] }
         }

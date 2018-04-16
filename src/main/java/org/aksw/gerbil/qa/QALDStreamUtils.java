@@ -1,5 +1,7 @@
 package org.aksw.gerbil.qa;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -13,6 +15,10 @@ import org.aksw.qa.commons.load.LoaderController;
 import org.aksw.qa.commons.load.json.EJQuestionFactory;
 import org.aksw.qa.commons.load.json.ExtendedJson;
 import org.aksw.qa.commons.load.json.ExtendedQALDJSONLoader;
+import org.aksw.qa.commons.load.json.QaldJson;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class QALDStreamUtils {
 
@@ -58,9 +64,22 @@ public class QALDStreamUtils {
 		try {
 			switch (streamType) {
 			case JSON:
-
-				if (null == (questions = EJQuestionFactory.getQuestionsFromExtendedJson((ExtendedJson) ExtendedQALDJSONLoader.readJson(in, ExtendedJson.class)))) {
-					throw new IllegalArgumentException("Could not load JSON stream");
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				byte[] buf = new byte[1024];
+				int n = 0;
+				while ((n = in.read(buf)) >= 0)
+				    baos.write(buf, 0, n);
+				byte[] content = baos.toByteArray();
+				//test if extended json
+				try {
+					if (null == (questions = EJQuestionFactory.getQuestionsFromExtendedJson((ExtendedJson) ExtendedQALDJSONLoader.readJson(new ByteArrayInputStream(content), ExtendedJson.class)))) {
+						throw new IllegalArgumentException("Could not load JSON stream");
+					}
+				}catch(JsonParseException | JsonMappingException e) {
+					//test if qald
+					if (null == (questions = EJQuestionFactory.getQuestionsFromJson((QaldJson) ExtendedQALDJSONLoader.readJson(new ByteArrayInputStream(content), QaldJson.class)))) {
+						throw new IllegalArgumentException("Could not load JSON stream");
+					}
 				}
 				break;
 			case XML:

@@ -14,10 +14,17 @@ import org.apache.jena.rdf.model.ResourceFactory;
 public class SPARQLBasedLiteral2Resource extends AbstractLiteral2Resource {
 
 	private String endpoint;
-	private String queryString = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?res WHERE {?res rdfs:label ";
+	private String queryString = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT DISTINCT ?res ";
+	private String whereClause = " WHERE {?res rdfs:label ";
+	private String defaultGraph = "";
 	
 	public SPARQLBasedLiteral2Resource(String endpoint) {
 		this.endpoint = endpoint;
+	}
+	
+	public SPARQLBasedLiteral2Resource(String endpoint, String defaultGraph) {
+		this.endpoint = endpoint;
+		this.defaultGraph = defaultGraph;
 	}
 
 	@Override
@@ -28,11 +35,11 @@ public class SPARQLBasedLiteral2Resource extends AbstractLiteral2Resource {
 		    qLang="en";
 		    if(literal.lastIndexOf("@")!=-1){
 			    qLang = literal.substring(literal.lastIndexOf("@")+1, literal.length());
+			    literal = literal.substring(1, literal.lastIndexOf("@")-1);
 		    }
-		    literal = literal.substring(0, literal.lastIndexOf("@"));
 		}
-		StringBuilder queryString = new StringBuilder(this.queryString).
-				append(literal).append("@").append(qLang).append("}");
+		StringBuilder queryString = new StringBuilder(this.queryString).append(defaultGraph).append(whereClause).append("\"")
+				.append(literal).append("\"").append("@").append(qLang).append("}");
 		Query q;
 		try {
 			q = QueryFactory.create(queryString.toString());

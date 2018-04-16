@@ -27,6 +27,10 @@ public class Literal2ResourceManager extends AbstractLiteral2Resource {
 	@Override
 	public Set<String> getResourcesForLiteral(String literal, String qLang) {
 		Set<String> ret = new HashSet<String>();
+		if(registeredConverter.isEmpty()) {
+			// just add literal
+			ret.add(literal);
+		}
 		for(Literal2Resource converter : registeredConverter){
 			ret.addAll(converter.getResourcesForLiteral(literal, qLang));
 		}

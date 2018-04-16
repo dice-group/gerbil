@@ -13,6 +13,7 @@ import org.aksw.gerbil.http.HttpManagement;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.aksw.simba.topicmodeling.concurrent.tasks.TaskObserver;
@@ -76,9 +77,12 @@ public class ExtendedQALDBasedWebServiceTest implements TaskObserver {
         document.setText("correct");
 
         List<Marking> results = service.answerQuestion(document, "en");
-        AnswerSet<String> answer = (AnswerSet<String>) results.get(results.size() - 1);
-        String test = answer.getAnswers().iterator().next();
-        assertTrue(correctAnswer.equals(test));
+        AnswerSet<Object> answer = (AnswerSet<Object>) results.get(results.size() - 1);
+        Object test = answer.getAnswers().iterator().next();
+        if(test instanceof Annotation)
+        	assertTrue(correctAnswer.equals(((Annotation)test).getUri()));
+        if(test instanceof String)
+        	assertTrue(correctAnswer.equals(test));
         System.out.println("Test done. Everything is ok");
 
         System.out.println("Testing now: Response Json is wrong");
