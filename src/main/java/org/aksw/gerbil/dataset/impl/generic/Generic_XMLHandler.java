@@ -55,8 +55,6 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 
 	@Override
 	public void startDocument() throws SAXException {
-		// state = 0;
-		// nes.clear();
 		currentNE = null;
 		super.startDocument();
 	}
@@ -72,8 +70,6 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 			buffer.setLength(0);
 			readSw = true;
 		}
-		// LOGGER.warn("Found an unknown XML tag name \"" + localName + "\". It will be
-		// ignored.");
 		super.startElement(uri, localName, qName, attributes);
 	}
 

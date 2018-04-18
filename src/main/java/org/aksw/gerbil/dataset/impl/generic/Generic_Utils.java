@@ -16,7 +16,14 @@ import org.slf4j.LoggerFactory;
 
 public class Generic_Utils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Generic_Utils.class);
-
+	/**
+	 * Method to create a Document by making use of the params
+	 * @param dsName - dataset name
+	 * @param fileName - file name
+	 * @param text - content of the file
+	 * @param nes - named entity markings
+	 * @return - Generated Document
+	 */
 	public static Document createDocument(String dsName, String fileName, String text, List<Generic_NamedEntity> nes) {
 		String documentUri = generateDocumentUri(dsName, fileName);
 		List<Marking> markings = new ArrayList<Marking>(nes.size());
@@ -71,7 +78,12 @@ public class Generic_Utils {
 		}
 		document.getMarkings().removeAll(markingsToRemove);
 	}
-
+	/**
+	 * Method to generate a URI making use of dataset name and the file name
+	 * @param dsName - name of the dataset
+	 * @param fileName - name of the file
+	 * @return - Generated document URI
+	 */
 	public static String generateDocumentUri(String dsName, String fileName) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("http://");
