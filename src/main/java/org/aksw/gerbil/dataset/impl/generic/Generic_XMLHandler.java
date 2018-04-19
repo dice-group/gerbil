@@ -157,6 +157,10 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 			}
 			break;
 		}
+		default: {
+			LOGGER.warn("Found an unknown XML tag name \"" + localName + "\". It will be ignored.");
+			break;
+		}
 		}
 		super.endElement(uri, localName, qName);
 	}
