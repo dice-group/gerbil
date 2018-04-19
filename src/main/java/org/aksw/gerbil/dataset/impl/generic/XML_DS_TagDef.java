@@ -14,15 +14,15 @@ public class XML_DS_TagDef {
 	public static final int ENT_NM_LABEL_CODE = 1313;
 	public static final int ENT_URI_LABEL_CODE = 1314;
 	
-	private String doc_label;
-	private String text_label;
-	private String id_label;
-	private String mark_col_label;
-	private String mark_label;
-	private String strt_label;
-	private String len_label;
-	private String entity_name_label;
-	private String entity_uri_label;
+	private String docLabel;
+	private String textLabel;
+	private String idLabel;
+	private String markColLabel;
+	private String markLabel;
+	private String strtLabel;
+	private String lenLabel;
+	private String entityNameLabel;
+	private String entityUriLabel;
 	
 	private Map<String,Integer> codeMap;
 
@@ -32,92 +32,136 @@ public class XML_DS_TagDef {
 		
 		this.codeMap = new HashMap<>();
 		
-		this.doc_label = doc_label;
-		if(this.doc_label!=null)
-			this.codeMap.put(this.doc_label, DOC_LABEL_CODE);
-		this.text_label = text_label;
-		if(this.text_label!=null)
-			this.codeMap.put(this.text_label, TEXT_LABEL_CODE);
-		this.id_label = id_label;
-		if(this.id_label!=null)
-			this.codeMap.put(this.id_label, ID_LABEL_CODE);
-		this.mark_col_label = mark_col_label;
-		if(this.mark_col_label!=null)
-			this.codeMap.put(this.mark_col_label, MARK_COL_LABEL_CODE);
-		this.mark_label = mark_label;
-		if(this.mark_label!=null)
-			this.codeMap.put(this.mark_label, MARK_LABEL_CODE);
-		this.strt_label = strt_label;
-		if(this.strt_label!=null)
-			this.codeMap.put(this.strt_label, STRT_LABEL_CODE);
-		this.len_label = len_label;
-		if(this.len_label!=null)
-			this.codeMap.put(this.len_label, LEN_LABEL_CODE);
-		this.entity_name_label = entity_name_label;
-		if(this.entity_name_label!=null)
-			this.codeMap.put(this.entity_name_label, ENT_NM_LABEL_CODE);
-		this.entity_uri_label = entity_uri_label;
-		if(this.entity_uri_label!=null)
-			this.codeMap.put(this.entity_uri_label, ENT_URI_LABEL_CODE);
+		this.docLabel = doc_label;
+		if(this.docLabel!=null)
+			this.codeMap.put(this.docLabel, DOC_LABEL_CODE);
+		this.textLabel = text_label;
+		if(this.textLabel!=null)
+			this.codeMap.put(this.textLabel, TEXT_LABEL_CODE);
+		this.idLabel = id_label;
+		if(this.idLabel!=null)
+			this.codeMap.put(this.idLabel, ID_LABEL_CODE);
+		this.markColLabel = mark_col_label;
+		if(this.markColLabel!=null)
+			this.codeMap.put(this.markColLabel, MARK_COL_LABEL_CODE);
+		this.markLabel = mark_label;
+		if(this.markLabel!=null)
+			this.codeMap.put(this.markLabel, MARK_LABEL_CODE);
+		this.strtLabel = strt_label;
+		if(this.strtLabel!=null)
+			this.codeMap.put(this.strtLabel, STRT_LABEL_CODE);
+		this.lenLabel = len_label;
+		if(this.lenLabel!=null)
+			this.codeMap.put(this.lenLabel, LEN_LABEL_CODE);
+		this.entityNameLabel = entity_name_label;
+		if(this.entityNameLabel!=null)
+			this.codeMap.put(this.entityNameLabel, ENT_NM_LABEL_CODE);
+		this.entityUriLabel = entity_uri_label;
+		if(this.entityUriLabel!=null)
+			this.codeMap.put(this.entityUriLabel, ENT_URI_LABEL_CODE);
 		
 		
-	}
-	public String getDoc_label() {
-		return doc_label;
-	}
-	public void setDoc_label(String doc_label) {
-		this.doc_label = doc_label;
-	}
-	public String getText_label() {
-		return text_label;
-	}
-	public void setText_label(String text_label) {
-		this.text_label = text_label;
-	}
-	public String getMark_col_label() {
-		return mark_col_label;
-	}
-	public void setMark_col_label(String mark_col_label) {
-		this.mark_col_label = mark_col_label;
-	}
-	public String getMark_label() {
-		return mark_label;
-	}
-	public void setMark_label(String mark_label) {
-		this.mark_label = mark_label;
-	}
-	public String getStrt_label() {
-		return strt_label;
-	}
-	public void setStrt_label(String strt_label) {
-		this.strt_label = strt_label;
-	}
-	public String getLen_label() {
-		return len_label;
-	}
-	public void setLen_label(String len_label) {
-		this.len_label = len_label;
-	}
-	public String getEntity_name_label() {
-		return entity_name_label;
-	}
-	public void setEntity_name_label(String entity_name_label) {
-		this.entity_name_label = entity_name_label;
-	}
-	public String getEntity_uri_label() {
-		return entity_uri_label;
-	}
-	public void setEntity_uri_label(String entity_uri_label) {
-		this.entity_uri_label = entity_uri_label;
-	}
-	
-	public String getId_label() {
-		return id_label;
 	}
 
-	public void setId_label(String id_label) {
-		this.id_label = id_label;
+	public String getDocLabel() {
+		return docLabel;
 	}
+
+
+	public void setDocLabel(String docLabel) {
+		this.docLabel = docLabel;
+	}
+
+
+	public String getTextLabel() {
+		return textLabel;
+	}
+
+
+	public void setTextLabel(String textLabel) {
+		this.textLabel = textLabel;
+	}
+
+
+	public String getIdLabel() {
+		return idLabel;
+	}
+
+
+	public void setIdLabel(String idLabel) {
+		this.idLabel = idLabel;
+	}
+
+
+	public String getMarkColLabel() {
+		return markColLabel;
+	}
+
+
+	public void setMarkColLabel(String markColLabel) {
+		this.markColLabel = markColLabel;
+	}
+
+
+	public String getMarkLabel() {
+		return markLabel;
+	}
+
+
+	public void setMarkLabel(String markLabel) {
+		this.markLabel = markLabel;
+	}
+
+
+	public String getStrtLabel() {
+		return strtLabel;
+	}
+
+
+	public void setStrtLabel(String strtLabel) {
+		this.strtLabel = strtLabel;
+	}
+
+
+	public String getLenLabel() {
+		return lenLabel;
+	}
+
+
+	public void setLenLabel(String lenLabel) {
+		this.lenLabel = lenLabel;
+	}
+
+
+	public String getEntityNameLabel() {
+		return entityNameLabel;
+	}
+
+
+	public void setEntityNameLabel(String entityNameLabel) {
+		this.entityNameLabel = entityNameLabel;
+	}
+
+
+	public String getEntityUriLabel() {
+		return entityUriLabel;
+	}
+
+
+	public void setEntityUriLabel(String entityUriLabel) {
+		this.entityUriLabel = entityUriLabel;
+	}
+
+
+	public Map<String, Integer> getCodeMap() {
+		return codeMap;
+	}
+
+
+	public void setCodeMap(Map<String, Integer> codeMap) {
+		this.codeMap = codeMap;
+	}
+
 
 	public Integer getMatchCode(String qName) {
 		return codeMap.get(qName);

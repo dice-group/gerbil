@@ -36,7 +36,6 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 	private String curDocId;
 	private String curDocText;
 	private List<Document> documents;
-	private Document curDoc;
 	protected List<Generic_NamedEntity> nes;
 	protected boolean readSw = false;
 	protected Generic_NamedEntity currentNE;
@@ -62,9 +61,9 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		readSw = false;
-		if (tagDef.getMark_col_label().equals(qName)) {
+		if (tagDef.getMarkColLabel().equals(qName)) {
 			nes = new ArrayList<Generic_NamedEntity>();
-		} else if (tagDef.getMark_label().equals(qName)) {
+		} else if (tagDef.getMarkLabel().equals(qName)) {
 			currentNE = new Generic_NamedEntity();
 		} else if (tagDef.getMatchCode(qName) != null) {
 			buffer.setLength(0);
@@ -87,11 +86,10 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 			return;
 		switch (res) {
 		case XML_DS_TagDef.DOC_LABEL_CODE: {
-			curDoc = Generic_Utils.createDocument(dsName, curDocId, curDocText, nes);
+			Document curDoc = Generic_Utils.createDocument(dsName, curDocId, curDocText, nes);
 			// Add document to list and reset values
 			documents.add(curDoc);
 			curDocId = null;
-			curDoc = null;
 			curDocText = null;
 			break;
 		}
@@ -117,8 +115,8 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 				currentNE.setSurfaceForm(buffer.toString().trim());
 				currentNE.setLength(currentNE.getSurfaceForm().length());
 			} else {
-				LOGGER.error("Found a \"" + tagDef.getEntity_name_label() + "\" tag outside of a \""
-						+ tagDef.getMark_label() + "\" tag. It will be ignored.");
+				LOGGER.error("Found a \"" + tagDef.getEntityNameLabel() + "\" tag outside of a \""
+						+ tagDef.getMarkLabel() + "\" tag. It will be ignored.");
 			}
 			break;
 		}
@@ -131,7 +129,7 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 					LOGGER.error("Couldn't parse the start position of a named entity. buffer=\"" + buffer + "\"");
 				}
 			} else {
-				LOGGER.error("Found a \"" + tagDef.getStrt_label() + "\" tag outside of a \"" + tagDef.getMark_label()
+				LOGGER.error("Found a \"" + tagDef.getStrtLabel() + "\" tag outside of a \"" + tagDef.getMarkLabel()
 						+ "\" tag. It will be ignored.");
 			}
 			break;
@@ -145,7 +143,7 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 					LOGGER.error("Couldn't parse the length of a named entity. buffer=\"" + buffer + "\"");
 				}
 			} else {
-				LOGGER.error("Found a \"" + tagDef.getLen_label() + "\" tag outside of a \"" + tagDef.getMark_label()
+				LOGGER.error("Found a \"" + tagDef.getLenLabel() + "\" tag outside of a \"" + tagDef.getMarkLabel()
 						+ "\" tag. It will be ignored.");
 			}
 			break;
@@ -154,13 +152,10 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 			if (currentNE != null) {
 				currentNE.addUri(buffer.toString().trim());
 			} else {
-				LOGGER.error("Found a \"" + tagDef.getEntity_uri_label() + "\" tag outside of a \""
-						+ tagDef.getMark_label() + "\" tag. It will be ignored.");
+				LOGGER.error("Found a \"" + tagDef.getEntityUriLabel() + "\" tag outside of a \""
+						+ tagDef.getMarkLabel() + "\" tag. It will be ignored.");
 			}
 			break;
-		}
-		default: {
-			// nothing to do
 		}
 		}
 		super.endElement(uri, localName, qName);
