@@ -34,16 +34,13 @@ public class Tweet4NeedDatasetTest {
 	 * The test file cotains two special cases. One marking with the URI "*null*"
 	 * and two markings that are overlapping.
 	 */
-	private static final String TEST_TEXT_DIR = "C:\\Users\\Nikit\\Desktop\\tweet4need";
+	private static final String TEST_TEXT_DIR = "src/test/resources/datasets/twitterneed/";
 	private static final String DATASET_NAME = "t4nTestDataset";
 
-	private static final String EXPECTED_DOCUMENT_URI = "http://t4nTestDataset/1000000000582";
-	private static final String EXPECTED_TEXT = "RT @superjaberwocky: KXLB: Students have been bussed to the Bozeman Public Library because of smoke blowing to Hawthorne School. #bozexplod";
+	private static final String EXPECTED_DOCUMENT_URI = "http://t4nTestDataset/100000000001";
+	private static final String EXPECTED_TEXT = "John Oliver is the best anchor ever. #lwn";
 	private static final Marking EXPECTED_MARKINGS[] = new Marking[] {
-			(Marking) new NamedEntity(21, 4, new HashSet<String>(Arrays.asList("http://en.wikipedia.org/wiki/KXLB","http://dbpedia.org/resource/KXLB"))),
-			(Marking) new NamedEntity(60, 22,
-					new HashSet<String>(Arrays.asList("http://en.wikipedia.org/wiki/Bozeman_Public_Library","http://dbpedia.org/resource/Bozeman_Public_Library"))),
-			(Marking) new NamedEntity(111, 16, new HashSet<String>(Arrays.asList("http://www.bsd7.org/hawthorne/"))) };
+			(Marking) new NamedEntity(0, 11, new HashSet<String>(Arrays.asList("http://dbpedia.org/resource/John_Oliver"))) };
 
 	@Test
 	public void test() throws GerbilException {
