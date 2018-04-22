@@ -240,7 +240,11 @@ public class ExperimentTask implements Task {
 		case RE:
 			return;
 		case KE:
-			return;
+			if (annotatorSameAsRetriever != null) {
+				for (List<? extends Meaning> result : results) {
+					SameAsRetrieverUtils.addSameURIsToMeanings(annotatorSameAsRetriever, result);
+				}
+			}
 		case ERec:// falls through
 		default:
 			// nothing to do
