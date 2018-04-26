@@ -17,6 +17,7 @@
 package org.aksw.gerbil.evaluate;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.aksw.agdistis.util.TripleIndex;
 import org.aksw.gerbil.config.GerbilConfiguration;
@@ -26,6 +27,8 @@ import org.aksw.gerbil.dataset.converter.Literal2ResourceManager;
 import org.aksw.gerbil.dataset.converter.impl.SPARQLBasedLiteral2Resource;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
+import org.aksw.gerbil.evaluate.impl.DoubleResultComparator;
 import org.aksw.gerbil.evaluate.impl.ModelComparator;
 import org.aksw.gerbil.evaluate.impl.ROCEvaluator;
 import org.aksw.gerbil.matching.Matching;
@@ -34,197 +37,212 @@ import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 @SuppressWarnings("deprecation")
 public class EvaluatorFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EvaluatorFactory.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EvaluatorFactory.class);
 
-    private static final String DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY = "org.aksw.gerbil.evaluate.DefaultWellKnownKB";
-    private static final String DEFAULT_WELL_KNOWN_KBS[] = loadDefaultKBs();
+	private static final String DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY = "org.aksw.gerbil.evaluate.DefaultWellKnownKB";
+	private static final String DEFAULT_WELL_KNOWN_KBS[] = loadDefaultKBs();
 
-    protected static final UrlValidator URL_VALIDATOR = new UrlValidator();
+	protected static final UrlValidator URL_VALIDATOR = new UrlValidator();
 
 	private static final String GERBIL_HTTP_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY = "org.aksw.gerbil.dataset.converter.domain";
 
-    public static final String SWC2017_TASK1_PROPERTIES_KEY = "org.aksw.gerbil.modelcomparator.swc2017.task1.properties";
-    public static final String SWC2018_TASK1_PROPERTIES_KEY = "org.aksw.gerbil.modelcomparator.swc2018.task1.properties";
-//	private static final String GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY = null;
-//
-//	private static final String GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY = null;
+	public static final String SWC2017_TASK1_PROPERTIES_KEY = "org.aksw.gerbil.modelcomparator.swc2017.task1.properties";
+	public static final String SWC2018_TASK1_PROPERTIES_KEY = "org.aksw.gerbil.modelcomparator.swc2018.task1.properties";
+	public static final String TRUTH_VALUE_URI_GERBIL_KEY = "org.aksw.gerbil.evaluator.roc.truthProperty";
 
-    protected UriKBClassifier globalClassifier = null;
-    protected SubClassInferencer inferencer = null;
-    protected TripleIndex index = null;
-    protected Literal2ResourceManager converterManager = new Literal2ResourceManager();
+	private static final String SWC2018_TASK1_CONFIDENCE_KEY = "org.aksw.gerbil.confidencescore.swc2018.task1.confidenceURI";
 
-    public EvaluatorFactory() {
-        this(null, null);
-    }
+	// private static final String
+	// GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY = null;
+	//
+	// private static final String
+	// GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY = null;
 
-    private static String[] loadDefaultKBs() {
-        String kbs[] = GerbilConfiguration.getInstance().getStringArray(DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY);
-        if (kbs == null) {
-            LOGGER.error("Couldn't load the list of well known KBs. This GERBIL instance might not work as expected!");
-        }
-        return kbs;
-    }
+	protected UriKBClassifier globalClassifier = null;
+	protected SubClassInferencer inferencer = null;
+	protected TripleIndex index = null;
+	protected Literal2ResourceManager converterManager = new Literal2ResourceManager();
 
-    public EvaluatorFactory(UriKBClassifier globalClassifier) {
-        this(globalClassifier, null);
-    }
+	public EvaluatorFactory() {
+		this(null, null);
+	}
 
-    public EvaluatorFactory(SubClassInferencer inferencer) {
-        this(null, inferencer);
-    }
+	private static String[] loadDefaultKBs() {
+		String kbs[] = GerbilConfiguration.getInstance().getStringArray(DEFAULT_WELL_KNOWN_KBS_PARAMETER_KEY);
+		if (kbs == null) {
+			LOGGER.error("Couldn't load the list of well known KBs. This GERBIL instance might not work as expected!");
+		}
+		return kbs;
+	}
 
-    public EvaluatorFactory(UriKBClassifier globalClassifier, SubClassInferencer inferencer) {
-        if (globalClassifier != null) {
-            this.globalClassifier = globalClassifier;
-        } else {
-            this.globalClassifier = new SimpleWhiteListBasedUriKBClassifier(DEFAULT_WELL_KNOWN_KBS);
-        }
-        if (inferencer != null) {
-            this.inferencer = inferencer;
-        } else {
-            this.inferencer = new SimpleSubClassInferencer(ModelFactory.createDefaultModel());
-        }
-        //if(GerbilConfig has key Index)
-        //try catch(use SPARQL based)
-        //if(GerbilConfig has SPARQL key) 
-        if(GerbilConfiguration.getInstance().containsKey(GERBIL_HTTP_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY)){
-        	//add SPARQLBased...
-        	for(String domain : GerbilConfiguration.getInstance().getStringArray(GERBIL_HTTP_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY)){
-        		Literal2Resource converter = new SPARQLBasedLiteral2Resource(domain);
-        		converterManager.registerLiteral2Resource(converter);
-        	}
-    	}
-        
-//        if(GerbilConfiguration.getInstance().containsKey(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY)){
-//        	String folder = GerbilConfiguration.getInstance().getString(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY);
-//        	for(String domain : GerbilConfiguration.getInstance().getStringArray(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY)){
-//        		Literal2Resource converter = null;
-//        		try{
-//        			converter = new IndexBasedLiteral2Resource(folder, domain);
-//        		}
-//        		catch(Exception e){
-//        			converter = new SPARQLBasedLiteral2Resource(domain);        		
-//        		}
-//       			converterManager.registerLiteral2Resource(converter);
-//        	}
-//        }
-    }
+	public EvaluatorFactory(UriKBClassifier globalClassifier) {
+		this(globalClassifier, null);
+	}
 
-    @SuppressWarnings("rawtypes")
-    protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset) {
-        return createEvaluator(type, configuration, dataset, globalClassifier, inferencer);
-    }
+	public EvaluatorFactory(SubClassInferencer inferencer) {
+		this(null, inferencer);
+	}
 
-    @SuppressWarnings({"rawtypes" })
-    protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration,
-            Dataset dataset, UriKBClassifier classifier, SubClassInferencer inferencer) {
-        switch (type) {
-        //case Task1/Task2
-        case SWC1:
-        	return new ModelComparator(GerbilConfiguration.getInstance().getStringArray(SWC2017_TASK1_PROPERTIES_KEY), false);
-        case SWC2:
-        	return new ROCEvaluator();
-//        case ETyping: {
-//            return new SearcherBasedNotMatchingMarkingFilter<TypedSpan>(
-//                    new StrongSpanMatchingsSearcher<TypedSpan>(),
-//                    new ConfidenceScoreEvaluatorDecorator<TypedSpan>(new HierarchicalFMeasureCalculator<TypedSpan>(
-//                            new HierarchicalMatchingsCounter<TypedSpan>(
-//                                    (MatchingsSearcher<TypedSpan>) MatchingsSearcherFactory
-//                                            .createSpanMatchingsSearcher(configuration.matching), classifier,
-//                                    inferencer)), FMeasureCalculator.MICRO_F1_SCORE_NAME, new DoubleResultComparator()),
-//                    true);
-//        }
+	public EvaluatorFactory(UriKBClassifier globalClassifier, SubClassInferencer inferencer) {
+		if (globalClassifier != null) {
+			this.globalClassifier = globalClassifier;
+		} else {
+			this.globalClassifier = new SimpleWhiteListBasedUriKBClassifier(DEFAULT_WELL_KNOWN_KBS);
+		}
+		if (inferencer != null) {
+			this.inferencer = inferencer;
+		} else {
+			this.inferencer = new SimpleSubClassInferencer(ModelFactory.createDefaultModel());
+		}
+		// if(GerbilConfig has key Index)
+		// try catch(use SPARQL based)
+		// if(GerbilConfig has SPARQL key)
+		if (GerbilConfiguration.getInstance().containsKey(GERBIL_HTTP_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY)) {
+			// add SPARQLBased...
+			for (String domain : GerbilConfiguration.getInstance()
+					.getStringArray(GERBIL_HTTP_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY)) {
+				Literal2Resource converter = new SPARQLBasedLiteral2Resource(domain);
+				converterManager.registerLiteral2Resource(converter);
+			}
+		}
 
-        case SWC2018T1:
-            return new ModelComparator(GerbilConfiguration.getInstance().getStringArray(SWC2018_TASK1_PROPERTIES_KEY), true);
-        default: {
-            throw new IllegalArgumentException("Got an unknown Experiment Type.");
-        }
-        }
-    }
+		// if(GerbilConfiguration.getInstance().containsKey(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY)){
+		// String folder =
+		// GerbilConfiguration.getInstance().getString(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_FOLDER_KEY);
+		// for(String domain :
+		// GerbilConfiguration.getInstance().getStringArray(GERBIL_INDEX_LITERAL_2_RESOURCE_CONVERTER_DOMAIN_KEY)){
+		// Literal2Resource converter = null;
+		// try{
+		// converter = new IndexBasedLiteral2Resource(folder, domain);
+		// }
+		// catch(Exception e){
+		// converter = new SPARQLBasedLiteral2Resource(domain);
+		// }
+		// converterManager.registerLiteral2Resource(converter);
+		// }
+		// }
+	}
 
-    @SuppressWarnings({ "unchecked" })
-    protected void addSubTaskEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration,
-            Dataset dataset) {
-        ExperimentTaskConfiguration subTaskConfig;
-        switch (configuration.type) {
-        case AIT2KB: // falls through
-        case AType:
-        case C2KB:
-        case D2KB:
-        case ERec:
-        case ETyping:
-        case P2KB:
-        case RE2KB:
-            // Since the OKE challenge tasks are using the results of their
-            // subtasks, the definition of subtasks is part of their evaluation
-            // creation
-        case SWC1:
-        case SWC2:
-        case SWC2018T1:
-        case OKE_Task1:
-        case OKE_Task2: {
-            return;
-        }
-        case Sa2KB: // falls through
-        case A2KB: {
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.ERec, configuration.matching);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.ERec, subTaskConfig,
-                    dataset)));
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
-            // evaluators.add(createEvaluator(ExperimentType.ELink,
-            // configuration, dataset));
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.D2KB, subTaskConfig,
-                    dataset)));
-            return;
-        }
-        case QA: {
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-            		 configuration.questionLanguage, ExperimentType.AIT2KB, configuration.matching);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.AIT2KB, subTaskConfig,
-                    dataset)));
+	@SuppressWarnings("rawtypes")
+	protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration,
+			Dataset dataset) {
+		return createEvaluator(type, configuration, dataset, globalClassifier, inferencer);
+	}
 
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-            		 configuration.questionLanguage, ExperimentType.AType, Matching.STRONG_ENTITY_MATCH);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.AType, subTaskConfig,
-                    dataset)));
+	@SuppressWarnings({ "rawtypes" })
+	protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
+			UriKBClassifier classifier, SubClassInferencer inferencer) {
+		String[] additional = dataset.getAdditionalProperties();
 
-    
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-            		 configuration.questionLanguage, ExperimentType.P2KB, Matching.STRONG_ENTITY_MATCH);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.P2KB, subTaskConfig,
-                    dataset)));
+		switch (type) {
+		// case Task1/Task2
 
-            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-            		 configuration.questionLanguage, ExperimentType.RE2KB, Matching.STRONG_ENTITY_MATCH);
-            evaluators.add(new SubTaskEvaluator<>(subTaskConfig, createEvaluator(ExperimentType.RE2KB, subTaskConfig,
-                    dataset)));
-            return;
-        }
-        default: {
-            throw new RuntimeException();
-        }
-        }
-    }
+		case SWC1:
+			if (additional == null) {
+				additional = GerbilConfiguration.getInstance().getStringArray(SWC2017_TASK1_PROPERTIES_KEY);
+			}
+			return new ModelComparator(additional, false);
+		case SWC2:
+			String truthValueURI = GerbilConfiguration.getInstance().getString(TRUTH_VALUE_URI_GERBIL_KEY);
+			if (additional != null) {
+				truthValueURI = additional[0];
+			}
+			return new ROCEvaluator(truthValueURI);
 
-    public void addEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration, Dataset dataset) {
-        converterManager.setQuestionLanguage(configuration.getQuestionLanguage());
-    	evaluators.add(createEvaluator(configuration.type, configuration, dataset));
-        addSubTaskEvaluators(evaluators, configuration, dataset);
-    }
-    
-    public Literal2ResourceManager getConverterManager(){
-    	return converterManager;
-    }
+		case SWC2018T1:
+			if (additional == null) {
+				additional = GerbilConfiguration.getInstance().getStringArray(SWC2018_TASK1_PROPERTIES_KEY);
+			}
+			return new ConfidenceScoreEvaluatorDecorator<Model>(new ModelComparator<Model>(additional, true),
+					ModelComparator.F1_SCORE_NAME, new DoubleResultComparator(),
+					GerbilConfiguration.getInstance().getString(SWC2018_TASK1_CONFIDENCE_KEY));
+		default: {
+			throw new IllegalArgumentException("Got an unknown Experiment Type.");
+		}
+		}
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	protected void addSubTaskEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration,
+			Dataset dataset) {
+		ExperimentTaskConfiguration subTaskConfig;
+		switch (configuration.type) {
+		case AIT2KB: // falls through
+		case AType:
+		case C2KB:
+		case D2KB:
+		case ERec:
+		case ETyping:
+		case P2KB:
+		case RE2KB:
+			// Since the OKE challenge tasks are using the results of their
+			// subtasks, the definition of subtasks is part of their evaluation
+			// creation
+		case SWC1:
+		case SWC2:
+		case SWC2018T1:
+		case OKE_Task1:
+		case OKE_Task2: {
+			return;
+		}
+		case Sa2KB: // falls through
+		case A2KB: {
+			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+					ExperimentType.ERec, configuration.matching);
+			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
+					createEvaluator(ExperimentType.ERec, subTaskConfig, dataset)));
+			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+					ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
+			// evaluators.add(createEvaluator(ExperimentType.ELink,
+			// configuration, dataset));
+			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
+					createEvaluator(ExperimentType.D2KB, subTaskConfig, dataset)));
+			return;
+		}
+		case QA: {
+			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+					configuration.questionLanguage, ExperimentType.AIT2KB, configuration.matching);
+			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
+					createEvaluator(ExperimentType.AIT2KB, subTaskConfig, dataset)));
+
+			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+					configuration.questionLanguage, ExperimentType.AType, Matching.STRONG_ENTITY_MATCH);
+			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
+					createEvaluator(ExperimentType.AType, subTaskConfig, dataset)));
+
+			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+					configuration.questionLanguage, ExperimentType.P2KB, Matching.STRONG_ENTITY_MATCH);
+			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
+					createEvaluator(ExperimentType.P2KB, subTaskConfig, dataset)));
+
+			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+					configuration.questionLanguage, ExperimentType.RE2KB, Matching.STRONG_ENTITY_MATCH);
+			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
+					createEvaluator(ExperimentType.RE2KB, subTaskConfig, dataset)));
+			return;
+		}
+		default: {
+			throw new RuntimeException();
+		}
+		}
+	}
+
+	public void addEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration,
+			Dataset dataset) {
+		converterManager.setQuestionLanguage(configuration.getQuestionLanguage());
+		evaluators.add(createEvaluator(configuration.type, configuration, dataset));
+		addSubTaskEvaluators(evaluators, configuration, dataset);
+	}
+
+	public Literal2ResourceManager getConverterManager() {
+		return converterManager;
+	}
 }

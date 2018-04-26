@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.annotator.SWCTask1System;
 import org.aksw.gerbil.annotator.SWCTask2System;
 import org.aksw.gerbil.annotator.impl.AbstractAnnotator;
@@ -20,6 +21,7 @@ public class InstanceListBasedAnnotator extends AbstractAnnotator implements SWC
     protected Map<String, Model> uriInstanceMapping;
 
     protected List<Model> model;
+    
     
     public InstanceListBasedAnnotator(String annotatorName, List<Model> instances) {
         super(annotatorName);

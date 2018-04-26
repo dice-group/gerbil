@@ -19,6 +19,7 @@ package org.aksw.gerbil.annotator.decorator;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.annotator.SWCTask1System;
 import org.aksw.gerbil.annotator.SWCTask2System;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -49,6 +50,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
     public static TimeMeasuringAnnotatorDecorator createDecorator(ExperimentType type, Annotator annotator) {
         switch (type) {
         //case T1/T2
+        case SWC2018T1:
         case SWC1:
             return new TimeMeasuringSWC1Annotator((SWCTask1System) annotator);
         case SWC2:
@@ -61,7 +63,16 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
     }
 
 
+	@Override
+	public File2SystemEntry getFileMapping() {
+		return decoratedAnnotator.getFileMapping();
+	}
 
+
+	@Override
+	public void setFileMapping(File2SystemEntry entry) {
+		decoratedAnnotator.setFileMapping(entry);
+	}
     
     private static class TimeMeasuringSWC1Annotator extends TimeMeasuringAnnotatorDecorator implements SWCTask1System {
 

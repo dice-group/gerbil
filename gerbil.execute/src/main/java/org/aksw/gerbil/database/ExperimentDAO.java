@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 
@@ -247,4 +248,10 @@ public interface ExperimentDAO extends Closeable {
 	public ExperimentTaskResult getBestResult(String name, String annotator, String dataset, Timestamp challengeDate);
 	
 	public Set<String> getAnnotators();
+	
+	public void setFile2SystemMapping(int experimentTaskId, String fileName, String systemName, String email);
+	public void setFile2SystemMapping(int experimentTaskId, File2SystemEntry entry);
+
+
+	public List<File2SystemEntry> getFile2SystemByID(int experimentTaskId);
 }

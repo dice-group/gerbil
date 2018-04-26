@@ -27,32 +27,40 @@ import org.apache.jena.rdf.model.Model;
 
 public class TestAnnotatorConfiguration extends AbstractAdapterConfiguration implements AnnotatorConfiguration {
 
-    private Annotator annotator;
+	private Annotator annotator;
 
-    public TestAnnotatorConfiguration(List<Model> instances, ExperimentType applicableForExperiment) {
-        this("Test-" + applicableForExperiment.name(), false, instances, applicableForExperiment);
-    }
+	public TestAnnotatorConfiguration(List<Model> instances, ExperimentType applicableForExperiment) {
+		this("Test-" + applicableForExperiment.name(), false, instances, applicableForExperiment);
+	}
 
-    public TestAnnotatorConfiguration(String annotatorName, boolean couldBeCached, List<Model> instances,
-            ExperimentType applicableForExperiment) {
-        super(annotatorName, couldBeCached, applicableForExperiment);
-        annotator = new InstanceListBasedAnnotator(annotatorName, instances);
-    }
+	public TestAnnotatorConfiguration(String annotatorName, boolean couldBeCached, List<Model> instances,
+			ExperimentType applicableForExperiment) {
+		super(annotatorName, couldBeCached, applicableForExperiment);
+		annotator = new InstanceListBasedAnnotator(annotatorName, instances);
+	}
 
-    @Override
-    public Annotator getAnnotator(ExperimentType experimentType) throws GerbilException {
-        if (applicableForExperiment.equalsOrContainsType(experimentType)) {
-            try {
-                return loadAnnotator(experimentType);
-            } catch (Exception e) {
-                throw new GerbilException(e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
-            }
-        }
-        return null;
-    }
+	@Override
+	public Annotator getAnnotator(ExperimentType experimentType) throws GerbilException {
+		if (applicableForExperiment.equalsOrContainsType(experimentType)) {
+			try {
+				return loadAnnotator(experimentType);
+			} catch (Exception e) {
+				throw new GerbilException(e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
+			}
+		}
+		return null;
+	}
 
-    protected Annotator loadAnnotator(ExperimentType type) throws Exception {
-        return annotator;
-    }
+	protected Annotator loadAnnotator(ExperimentType type) throws Exception {
+		return annotator;
+	}
+
+	@Override
+	public void setFileMapping(File2SystemEntry entry) {
+		if(annotator!=null) {
+			annotator.setFileMapping(entry);
+		}
+	}
+
 
 }

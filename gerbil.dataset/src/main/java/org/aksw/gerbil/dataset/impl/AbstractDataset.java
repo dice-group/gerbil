@@ -17,7 +17,9 @@
 package org.aksw.gerbil.dataset.impl;
 
 import java.io.IOException;
+import java.util.Properties;
 
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.utils.ClosePermitionGranter;
 
@@ -26,7 +28,8 @@ public abstract class AbstractDataset implements Dataset {
     protected String name;
     protected ClosePermitionGranter granter;
     protected String qLang;
-    
+    private File2SystemEntry entry;
+	private String[] additional;  
     
     public AbstractDataset() {
     }
@@ -57,6 +60,7 @@ public abstract class AbstractDataset implements Dataset {
         }
     }
 
+    
     protected void performClose() throws IOException {
         // nothing to do
     }
@@ -67,5 +71,15 @@ public abstract class AbstractDataset implements Dataset {
     
     public String getQuestionLanguage(){
     	return qLang;
+    }
+    
+    @Override
+    public void setAdditionalProperties(String[] additionalProperties) {
+    	this.additional = additionalProperties;
+    }
+    
+    @Override
+    public String[] getAdditionalProperties() {
+    	return this.additional;
     }
 }

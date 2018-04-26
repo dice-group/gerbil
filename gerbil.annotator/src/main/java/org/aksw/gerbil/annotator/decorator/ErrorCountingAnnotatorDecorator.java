@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.annotator.SWCTask1System;
 import org.aksw.gerbil.annotator.SWCTask2System;
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -57,6 +58,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         int maxErrors = (int) Math.ceil(AMOUNT_OF_TOLERATED_ERRORS * numberOfExpectedCalls);
         switch (type) {
         //T1/T2
+        case SWC2018T1:
         case SWC1:
             return new ErrorCountingSWCTask1System((SWCTask1System) annotator, maxErrors);
         case SWC2:
@@ -68,6 +70,17 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         LOGGER.error("Couldn't generate a ErrorCountingAnnotatorDecorator for the given annotator. Returning null.");
         return null;
     }
+    
+	@Override
+	public File2SystemEntry getFileMapping() {
+		return decoratedAnnotator.getFileMapping();
+	}
+
+
+	@Override
+	public void setFileMapping(File2SystemEntry entry) {
+		decoratedAnnotator.setFileMapping(entry);
+	}
 
 
     private static class ErrorCountingSWCTask2System extends ErrorCountingAnnotatorDecorator
@@ -82,6 +95,9 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
     	public List<Model> performTask2(Model model) throws GerbilException {
     		return ErrorCountingAnnotatorDecorator.performSWCTask2(this, model);
     	}
+
+
+
     }
 
     

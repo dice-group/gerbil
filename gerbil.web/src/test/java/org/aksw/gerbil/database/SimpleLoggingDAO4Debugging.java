@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,5 +147,23 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public void setFile2SystemMapping(int experimentTaskId, String fileName, String systemName, String email) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setFile2SystemMapping(int experimentTaskId, File2SystemEntry entry) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<File2SystemEntry> getFile2SystemByID(int experimentTaskId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

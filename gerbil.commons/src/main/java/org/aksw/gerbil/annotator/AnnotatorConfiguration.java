@@ -32,4 +32,6 @@ public interface AnnotatorConfiguration extends AdapterConfiguration {
      *             if an error occurs while loading the annotator
      */
     public Annotator getAnnotator(ExperimentType type) throws GerbilException;
+    
+    public void setFileMapping(File2SystemEntry entry);
 }

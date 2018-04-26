@@ -14,29 +14,33 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.dataset;
+package org.aksw.gerbil.utils.filter;
 
-import java.io.Closeable;
 import java.util.List;
-import java.util.Properties;
 
-import org.aksw.gerbil.utils.ClosePermitionGranter;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 
-public interface Dataset extends Closeable {
+public interface ModelFilter<T extends Model> {
 
-    public int size();
+	
+    /**
+     * Returns true if the marking is good and does not have to be filtered out.
+     * 
+     * @param marking
+     * @return
+     */
+    public boolean isEntityGood(Resource res);
 
-    public String getName();
+    /**
+     * Returns a filtered list based on the given list.
+     * 
+     * @param markings
+     * @return
+     */
+    public List<T> filterModel(T model);
 
-    public void setName(String name);
-
-    public List<Model> getInstances();
-    
-    public void setClosePermitionGranter(ClosePermitionGranter granter);
-    
-    public void setAdditionalProperties(String[] additional);
-    
-    public String[] getAdditionalProperties();
-
+    public List<List<T>> filter2ListOfLists(T model);
 }

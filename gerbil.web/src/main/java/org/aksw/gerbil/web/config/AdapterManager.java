@@ -20,7 +20,9 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.annotator.InstanceListBasedConfigurationImpl;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
@@ -117,12 +119,15 @@ public class AdapterManager {
                 String fileName = uploadedFilesPath+File.separator+name.substring(name.lastIndexOf('(')+1, name.lastIndexOf(')'));
                 // remove "AF_" from the name
                 name = name.substring(AF_PREFIX.length(), name.indexOf('('));
+                File2SystemEntry fileMapping = new File2SystemEntry(fileName, name, email,-1);
                 name += "("+email+")";
                 try {
                 	
-                    return new InstanceListBasedConfigurationImpl(name, false,
+                    AnnotatorConfiguration system =  new InstanceListBasedConfigurationImpl(name, false,
                     		new RDFFileDatasetConfig(name, fileName, false, type, null, null),
                             type);
+                    system.setFileMapping(fileMapping);
+                    return system;
                 } catch (Exception e) {
                     LOGGER.error(
                             "Exception while trying to create an annotator configuration for a uploaded SWC answer file. Returning null.",

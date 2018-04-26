@@ -27,4 +27,8 @@ public interface Annotator extends Closeable {
     public void setName(String name);
     
     public void setClosePermitionGranter(ClosePermitionGranter granter);
+    
+    public File2SystemEntry getFileMapping();
+
+    public void setFileMapping(File2SystemEntry entry);
 }

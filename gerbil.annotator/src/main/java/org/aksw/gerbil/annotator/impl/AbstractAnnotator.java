@@ -19,12 +19,14 @@ package org.aksw.gerbil.annotator.impl;
 import java.io.IOException;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.utils.ClosePermitionGranter;
 
 public abstract class AbstractAnnotator implements Annotator {
 
     protected String name;
     protected ClosePermitionGranter granter;
+	protected File2SystemEntry fileMapping;
 
     public AbstractAnnotator() {
     }
@@ -58,4 +60,15 @@ public abstract class AbstractAnnotator implements Annotator {
     protected void performClose() throws IOException {
         // nothing to do
     }
+    
+    @Override
+    public File2SystemEntry getFileMapping() {
+    	return this.fileMapping;
+    }
+    
+    @Override
+    public void setFileMapping(File2SystemEntry entry ) {
+    	this.fileMapping= entry;
+    }
+
 }

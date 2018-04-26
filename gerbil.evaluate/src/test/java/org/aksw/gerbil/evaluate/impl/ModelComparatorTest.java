@@ -16,7 +16,7 @@ import org.junit.Test;
 
 public class ModelComparatorTest {
 
-    private static final String[] PREDICATES = GerbilConfiguration.getInstance().getStringArray(EvaluatorFactory.SWC2017_TASK1_PROPERTIES_KEY);
+    private static final String[] PREDICATES = new String[] {"http://ont.thomsonreuters.com/mdaas/isDomiciledIn"};
 	
 //	@Test
 	public void isomporphTest() {
@@ -68,7 +68,7 @@ public class ModelComparatorTest {
 		Model anno = ModelFactory.createDefaultModel();
 		Model expected = ModelFactory.createDefaultModel();
 		Property p1 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/isDomiciledIn");
-		Property p2 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/isDomiciledIn");
+		Property p2 = ResourceFactory.createProperty("http://ont.thomsonreuters.com/mdaas/isDomiciledIn2");
 		
 		Resource s = ResourceFactory.createResource("http://test.com/stmt1");
 

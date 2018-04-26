@@ -17,6 +17,7 @@
 package org.aksw.gerbil.dataset.impl.sw;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -32,7 +33,18 @@ public class FileBasedRDFDataset extends AbstractRDFDataset {
 
     private String filePath;
 
-
+    public FileBasedRDFDataset(String filePath, String name, String additional) {
+        super(name);
+        this.filePath = filePath;
+        this.setAdditionalProperties(additional.split(" "));
+//        this.language = RDFLanguages.nameToLang(language);
+//        if (this.language == null) {
+//            this.language = fileExtToLang(filePath);
+//        }
+//        if (this.language == null) {
+//            throw new IllegalArgumentException("Couldn't determine language of dataset.");
+//        }
+    }
 
     public FileBasedRDFDataset(String filePath, String name) {
         super(name);

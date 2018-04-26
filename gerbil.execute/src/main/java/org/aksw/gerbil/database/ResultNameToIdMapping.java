@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.ModelComparator;
 import org.aksw.gerbil.evaluate.impl.ROCEvaluator;
 
@@ -49,6 +50,7 @@ public class ResultNameToIdMapping {
             nameToIdMap.put(ModelComparator.RECALL_NAME, 2);
             nameToIdMap.put(ROCEvaluator.AUC_NAME, 3);
             nameToIdMap.put(ROCEvaluator.ROC_NAME, 4);
+            nameToIdMap.put(ConfidenceScoreEvaluatorDecorator.CONFIDENCE_SCORE_THRESHOLD_RESULT_NAME, 5);
             
 
             nameToIdMap.put(TimeMeasuringAnnotatorDecorator.AVG_TIME_RESULT_NAME, 20);

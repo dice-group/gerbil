@@ -28,10 +28,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class)
+//@RunWith(Parameterized.class)
 public class IndexBasedSameAsRetrieverTest {
 
-    @Parameters
+//    @Parameters
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         testConfigs.add(new Object[] { null, null });

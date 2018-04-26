@@ -34,6 +34,8 @@ import org.aksw.gerbil.exceptions.GerbilException;
 public class InstanceListBasedConfigurationImpl extends AbstractAdapterConfiguration implements AnnotatorConfiguration {
 
     protected DatasetConfiguration datasetConfig;
+    
+    private File2SystemEntry fileMapping;
 
     public InstanceListBasedConfigurationImpl(String annotatorName, boolean couldBeCached,
             DatasetConfiguration datasetConfig, ExperimentType applicableForExperiment) {
@@ -67,7 +69,9 @@ public class InstanceListBasedConfigurationImpl extends AbstractAdapterConfigura
         if (dataset == null) {
             return null;
         }
-        return new InstanceListBasedAnnotator(getName(), dataset.getInstances());
+        Annotator system =  new InstanceListBasedAnnotator(getName(), dataset.getInstances());
+        system.setFileMapping(fileMapping);
+        return system;
     }
 
     @Override
@@ -91,4 +95,10 @@ public class InstanceListBasedConfigurationImpl extends AbstractAdapterConfigura
         builder.append(')');
         return builder.toString();
     }
+
+	@Override
+	public void setFileMapping(File2SystemEntry entry) {
+		this.fileMapping=entry;
+	}
+
 }

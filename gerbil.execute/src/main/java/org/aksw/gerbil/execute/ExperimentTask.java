@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.annotator.SWCTask1System;
 import org.aksw.gerbil.annotator.SWCTask2System;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
@@ -66,6 +67,7 @@ public class ExperimentTask implements Task {
     private ExperimentTaskState taskState = null;
     private AnnotatorOutputWriter annotatorOutputWriter = null;
     private SameAsRetriever globalRetriever = null;
+
 
     public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever,
             org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration) {
@@ -161,6 +163,7 @@ public class ExperimentTask implements Task {
             }
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
+            experimentDAO.setFile2SystemMapping(experimentTaskId, decoratedAnnotator.getFileMapping());
             LOGGER.info("Task Finished " + configuration.toString());
         } catch (GerbilException e) {
             LOGGER.error("Got an error while running the task. Storing the error code in the db...", e);

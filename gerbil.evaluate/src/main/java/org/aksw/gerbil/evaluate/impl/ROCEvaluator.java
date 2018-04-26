@@ -54,6 +54,11 @@ public class ROCEvaluator<T extends Model> implements Evaluator<T> {
         truthValueURI = GerbilConfiguration.getInstance().getString(TRUTH_VALUE_URI_GERBIL_KEY);
     }
 
+    public ROCEvaluator(String truthValueURI) {
+    	super();
+    	this.truthValueURI=truthValueURI;
+    }
+    
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
             EvaluationResultContainer results) {

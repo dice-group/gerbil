@@ -13,6 +13,14 @@ version VARCHAR(20)
 
 -- ALTER TABLE ExperimentTasks ADD COLUMN publish BOOLEAN DEFAULT TRUE;
 
+CREATE TABLE IF NOT EXISTS File2System (
+id int NOT NULL, 
+file VARCHAR(150) NOT NULL,
+system VARCHAR(50) NOT NULL,
+email VARCHAR(100) NOT NULL,
+PRIMARY KEY (id, system, file)
+);
+
 CREATE TABLE IF NOT EXISTS Experiments (
   id VARCHAR(300) NOT NULL,
   taskId int NOT NULL,

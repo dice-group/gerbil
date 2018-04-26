@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.annotator.SWCTask1System;
 import org.aksw.gerbil.annotator.SWCTask2System;
 import org.aksw.gerbil.datatypes.ErrorTypes;
@@ -48,6 +49,7 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 
     public static SingleInstanceSecuringAnnotatorDecorator createDecorator(ExperimentType type, Annotator annotator) {
         switch (type) {
+        case SWC2018T1:
         case SWC1:
             return new SingleInstanceSecuringSWC1System((SWCTask1System) annotator);
         case SWC2:
@@ -60,6 +62,18 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
                 "Couldn't generate a SingleInstanceSecuringAnnotatorDecorator for the given annotator. Returning null.");
         return null;
     }
+    
+    
+	@Override
+	public File2SystemEntry getFileMapping() {
+		return decoratedAnnotator.getFileMapping();
+	}
+
+
+	@Override
+	public void setFileMapping(File2SystemEntry entry) {
+		decoratedAnnotator.setFileMapping(entry);
+	}
 
     private static class SingleInstanceSecuringSWC1System extends SingleInstanceSecuringAnnotatorDecorator
             implements SWCTask1System {

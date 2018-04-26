@@ -35,6 +35,7 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
 
     protected Constructor<? extends Annotator> constructor;
     protected Object constructorArgs[];
+	private File2SystemEntry fileMapping;
 
     public AnnotatorConfigurationImpl(String annotatorName, boolean couldBeCached,
             Constructor<? extends Annotator> constructor, Object constructorArgs[],
@@ -61,6 +62,7 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
     protected Annotator loadAnnotator() throws Exception {
         Annotator instance = constructor.newInstance(constructorArgs);
         instance.setName(this.getName());
+        instance.setFileMapping(fileMapping);
         return instance;
     }
 
@@ -87,4 +89,11 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
         builder.append(')');
         return builder.toString();
     }
+
+	@Override
+	public void setFileMapping(File2SystemEntry entry) {
+		this.fileMapping = entry;
+	}
+    
+    
 }

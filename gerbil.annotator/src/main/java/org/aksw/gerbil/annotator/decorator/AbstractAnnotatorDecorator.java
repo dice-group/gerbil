@@ -19,6 +19,7 @@ package org.aksw.gerbil.annotator.decorator;
 import java.io.IOException;
 
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.utils.ClosePermitionGranter;
 
 /**
@@ -59,4 +60,7 @@ public abstract class AbstractAnnotatorDecorator implements AnnotatorDecorator {
     public void setClosePermitionGranter(ClosePermitionGranter granter) {
         decoratedAnnotator.setClosePermitionGranter(granter);
     }
+    
+
+
 }

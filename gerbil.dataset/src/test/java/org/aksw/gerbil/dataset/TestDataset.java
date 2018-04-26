@@ -18,6 +18,7 @@ package org.aksw.gerbil.dataset;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.utils.ClosePermitionGranter;
@@ -60,6 +61,18 @@ public class TestDataset extends AbstractDatasetConfiguration implements Dataset
     public void setClosePermitionGranter(ClosePermitionGranter granter) {
         // nothing to do
     }
+
+	@Override
+	public void setAdditionalProperties(String[] additional) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String[] getAdditionalProperties() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 
