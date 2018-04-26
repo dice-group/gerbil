@@ -11,7 +11,7 @@
 </head>
 <body class="container">
 	<%@include file="navbar.jsp"%>
-	GERBIL SWC is the evaluation platform for the Semantic Web Challenge at ISWC 2017.<br>
+	GERBIL SWC is the evaluation platform for the Semantic Web Challenge at ISWC 2018.<br>
 	Challenge Website: <a href="https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/">https://iswc2017.semanticweb.org/calls/iswc-semantic-web-challenge-2017/</a>
 	
 	<h5>Challenge organizers</h5>
