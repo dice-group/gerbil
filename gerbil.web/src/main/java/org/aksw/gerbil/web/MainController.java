@@ -194,8 +194,7 @@ public class MainController {
             answerFiles[i] = (String) jsonAnswerFiles.get(i);
         }
         boolean publish = (boolean) configuration.get("publish");
-        ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[(annotators.length * datasets.length)
-                + answerFiles.length];
+        ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[((answerFiles.length + annotators.length) * datasets.length)];
         int count = 0;
         // create all annotator - dataset combinations
         for (String annotator : annotators) {

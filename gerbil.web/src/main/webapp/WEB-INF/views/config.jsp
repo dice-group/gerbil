@@ -157,6 +157,32 @@
 							</div>
 						</div>
 					</div>
+					<hr />
+					<div>
+						<span> Or add a webservice via URI:</span>
+						<div>
+							<label for="nameAnnotator">Name:</label> <input
+								class="form-control" type="text" id="nameAnnotator" name="name"
+								placeholder="Type something" /> <label for="URIAnnotator">URI:</label>
+							<input class="form-control" type="text" id="URIAnnotator"
+								name="URI" placeholder="Type something" />
+						</div>
+						<div>
+							<!-- list to be filled by button press and javascript function addAnnotator -->
+							<ul id="annotatorList"
+								style="margin-top: 15px; list-style-type: none;">
+							</ul>
+						</div>
+						<div id="warningEmptyAnnotator" class="alert alert-warning"
+							role="alert">
+							<button type="button" class="close" data-dismiss="alert"></button>
+							<strong>Warning!</strong> Enter a name and an URI.
+						</div>
+
+						<input type="button" id="addAnnotator"
+							class="btn btn-primary pull-right" value="Add annotator"
+							style="margin-top: 15px" />
+					</div>
 				</div>
 			</div>
 			<div class="row">
@@ -175,8 +201,38 @@
 					</a>
 				</div>
 				<div class="col-md-4">
-					<select id="dataset" style="display: none;">
+					<select id="dataset" multiple="true" style="display: none;">
+						
 					</select>
+					<hr />
+					<div>
+						<span> Or upload a dataset:</span>
+						<div>
+							<label for="nameDataset">Name:</label> <input
+								class="form-control" type="text" id="nameDataset" name="name"
+								placeholder="Type something" /> <br> <span
+								class="btn btn-success fileinput-button"> <i
+								class="glyphicon glyphicon-plus"></i> <span>Select
+									file...</span> <!-- The file input field used as target for the file upload widget -->
+								<input id="fileupload" type="file" name="files[]">
+							</span> <br> <br>
+							<!-- The global progress bar -->
+							<div id="progress" class="progress">
+								<div class="progress-bar progress-bar-success"></div>
+							</div>
+							<div>
+								<!-- list to be filled by button press and javascript function addDataset -->
+								<ul class="unstyled" id="datasetList"
+									style="margin-top: 15px; list-style-type: none;">
+								</ul>
+							</div>
+							<div id="warningEmptyDataset" class="alert alert-warning"
+								role="alert">
+								<button type="button" class="close" data-dismiss="alert"></button>
+								<strong>Warning!</strong> Enter a name.
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row">
@@ -242,6 +298,7 @@
 		// Adds the given data to the given (multi) select element. It is assumed that data is an array of Strings that are used as label and value of the single options.
 		function addDataToSelect(elementId, data) {
 			var formattedData = [];
+
 			for (var i = 0; i < data.length; i++) {
 				var dat = {};
 				dat.label = data[i];
@@ -374,30 +431,11 @@
 				$('#warningEmptyAnnotator').show();
 			} else {
 				// If this is not a question answering web ervice 
-				if ($('#type').val() != "QA") {
-					$('#infoAnnotatorTest').show();
-					$.getJSON('${testNifWs}', {
-						experimentType : $('#type').val(),
-						url : uri
-					},
-							function(data) {
-								$('#infoAnnotatorTest').hide();
-								if (data.testOk === true) {
-									addItemToList('#annotatorList', name + "("
-											+ uri + ")");
-									$('#nameAnnotator').val('');
-									$('#URIAnnotator').val('');
-								} else {
-									$('span#annotatorTestErrorMsg').text(
-											data.errorMsg);
-									$('#dangerAnnotatorTestError').show();
-								}
-							});
-				} else {
-					addItemToList('#annotatorList', name + "(" + uri + ")");
-					$('#nameAnnotator').val('');
-					$('#URIAnnotator').val('');
-				}
+
+				addItemToList('#annotatorList', name + "(" + uri + ")");
+				$('#nameAnnotator').val('');
+				$('#URIAnnotator').val('');
+
 			}
 			//check showing run button if something is changed in dropdown menu
 			checkExperimentConfiguration();
@@ -405,7 +443,9 @@
 		// Adds the values of the elements from the given array to the given list
 		function addToList(list, array) {
 			$(array).each(function() {
-				list.push($(this).val());
+				if(!$(this).val()){
+					list.push($(this).val());
+				}
 			});
 		}
 		// Adds the text of the elements from the given array to the given list adding the given prefix 
@@ -425,13 +465,18 @@
 			var annotator = [];
 			addToList(annotator, annotatorMultiselect);
 			addToList(annotator, $("#annotatorList li span.li_content"),
-					"NIFWS_");
+					"RDFWS_");
+
 			//fetch list of selected and manually added datasets
 			var datasetMultiselect = $('#dataset option:selected');
 			var dataset = [];
 			addToList(dataset, datasetMultiselect);
-			addToList(dataset, $("#datasetList li span.li_content"), "NIFDS_");
-			
+			addToList(dataset, $("#datasetList li span.li_content"), "RDFDS_");
+			// 			if(dataset.length>1){
+			// 				var tmpDataset = dataset[1];
+			// 				dataset=[tmpDataset];
+			// 			}
+
 			var answerFiles = [];
 			addToList(answerFiles, $("#answerFileList li span.li_content"),
 					"AF_");
@@ -579,8 +624,7 @@
 							var email = $('#emailAnswerFile').val();
 							$.each(data.result.files, function(index, file) {
 								addItemToList($('#answerFileList'), name + "("
-										+ email + ")" + "("
-										+ file.name + ")");
+										+ email + ")" + "(" + file.name + ")");
 								$('#nameAnswerFile').val('');
 							});
 						},

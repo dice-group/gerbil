@@ -24,6 +24,8 @@ import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.annotator.InstanceListBasedConfigurationImpl;
+import org.aksw.gerbil.annotator.RDFWebServiceConfiguration;
+import org.aksw.gerbil.annotator.impl.sw.RDFWebServiceSystem;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
@@ -48,6 +50,10 @@ public class AdapterManager {
     private static final String UPLOADED_FILES_PATH_PROPERTY_KEY = "org.aksw.gerbil.UploadPath";
     private static final String UPLOADED_DATASET_SUFFIX = " (uploaded)";
     private static final String UPLOADED_DATASET_PREFIX = "NIFDS_";
+
+	private static final String RDF_PREFIX = "RDFDS_";
+
+	private static final String RDF_WS_PREFIX = "RDFWS_";
 
     @Autowired
     @Qualifier("annotators")
@@ -105,6 +111,19 @@ public class AdapterManager {
                 // return new NIFWebserviceAnnotatorConfiguration(uri, name,
                 // false, type);
             }
+            if(name.startsWith(RDF_WS_PREFIX)){
+            	int pos = name.lastIndexOf('(');
+                if (pos < 0) {
+                    LOGGER.error("Couldn't parse the definition of this NIF based web service \"" + name
+                            + "\". Returning null.");
+                    return null;
+                }
+                //String uri = name.substring(pos + 1, name.length() - 1);
+                // remove "NIFWS_" from the name
+                String uri = name.substring(pos + 1, name.length() - 1);
+                name = name.substring(RDF_WS_PREFIX.length(), pos) + NIF_WS_SUFFIX;
+                return new RDFWebServiceConfiguration(name, false, type, uri);
+            }
             if (name.startsWith(AF_PREFIX)) {
                 String uploadedFilesPath = GerbilConfiguration.getInstance()
                         .getString(UPLOADED_FILES_PATH_PROPERTY_KEY);
@@ -149,7 +168,7 @@ public class AdapterManager {
                 }
             }
         } else {
-            if (name.startsWith(UPLOADED_DATASET_PREFIX)) {
+            if (name.startsWith(UPLOADED_DATASET_PREFIX) || name.startsWith(RDF_PREFIX)) {
                 String uploadedFilesPath = GerbilConfiguration.getInstance()
                         .getString(UPLOADED_FILES_PATH_PROPERTY_KEY);
                 if (uploadedFilesPath == null) {
@@ -167,7 +186,11 @@ public class AdapterManager {
                 }
                 String uri = uploadedFilesPath + name.substring(brackets[0] + 1, brackets[1]);
                 // remove dataset prefix from the name
-                name = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]) + UPLOADED_DATASET_SUFFIX;
+                int len = RDF_PREFIX.length();
+                if(name.startsWith(UPLOADED_DATASET_PREFIX)) {
+                	len = UPLOADED_DATASET_PREFIX.length();
+                }
+                name = name.substring(len, brackets[0]) + UPLOADED_DATASET_SUFFIX;
                 return new RDFFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
             }
             if (name.startsWith(AF_PREFIX)) {
@@ -183,6 +206,7 @@ public class AdapterManager {
                 String datasetName = name.substring(brackets[0] + 1, brackets[1]);
                 return getDatasetConfig(datasetName, type);
             }
+
         }
         LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
         return null;
