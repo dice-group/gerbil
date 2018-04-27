@@ -61,6 +61,7 @@ public class TurtleNIFWriterTest {
         testConfigs.add(new Object[] { "task2.ttl" });
         testConfigs.add(new Object[] { "task4.ttl" });
         testConfigs.add(new Object[] { "prov.ttl" });
+        testConfigs.add(new Object[] { "task5.ttl" });
         return testConfigs;
     }
 
