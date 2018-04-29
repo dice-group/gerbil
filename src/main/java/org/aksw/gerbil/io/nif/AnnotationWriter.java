@@ -35,6 +35,7 @@ import org.aksw.gerbil.transfer.nif.data.ScoredAnnotation;
 import org.aksw.gerbil.transfer.nif.vocabulary.ITSRDF;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
 import org.aksw.gerbil.transfer.nif.vocabulary.PROV;
+import org.aksw.gerbil.transfer.nif.vocabulary.OA;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
