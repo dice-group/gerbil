@@ -558,7 +558,7 @@ public class ExperimentTask implements Task {
 							answerAnnotation = (Annotation) answer;
 							globalRetriever.addSameURIs(answerAnnotation.getUris());
 							addAnswers.add(answerAnnotation);
-						} else {
+						} else if (answer!=null){
 							if(urlValidator.isValid(answer.toString())) {
 								answerAnnotation = new Annotation(answer.toString());
 								globalRetriever.addSameURIs(answerAnnotation.getUris());	
