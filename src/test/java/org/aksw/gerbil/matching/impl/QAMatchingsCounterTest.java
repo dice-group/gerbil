@@ -24,7 +24,9 @@ import java.util.Map;
 
 import org.aksw.agdistis.util.Triple;
 import org.aksw.agdistis.util.TripleIndex;
+import org.aksw.gerbil.dataset.converter.Literal2Resource;
 import org.aksw.gerbil.dataset.converter.Literal2ResourceManager;
+import org.aksw.gerbil.dataset.converter.impl.SPARQLBasedLiteral2Resource;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
@@ -45,24 +47,24 @@ public class QAMatchingsCounterTest {
             new MatchingTestExample<>(new AnswerSet[] {}, new AnswerSet[] {}, new int[] { 0, 0, 0 }),
             // test case with empty annotator results
             new MatchingTestExample<AnswerSet>(
-                    new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1")) }, new AnswerSet[] {},
+                    new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb.com/1")) }, new AnswerSet[] {},
                     new int[] { 0, 1, 0 }),
             // test case with empty gold standard
             new MatchingTestExample<AnswerSet>(new AnswerSet[] {}, new AnswerSet[] { new AnswerSet<String>(
-                    Sets.newHashSet("http://kb/1")) }, new int[] { 0, 0, 1 }),
+                    Sets.newHashSet("http://kb.com/1")) }, new int[] { 0, 0, 1 }),
             // test case with single exact matching AnswerSets
             new MatchingTestExample<AnswerSet>(
-                    new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1")) },
-                    new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1")) }, new int[] { 1, 0, 0 }),
+                    new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb.com/1")) },
+                    new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb.com/1")) }, new int[] { 1, 0, 0 }),
             // test case with several exact matching AnswerSets
-            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1",
-                    "http://kb/2", "http://kb/3")) }, new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet(
-                    "http://kb/1", "http://kb/2", "http://kb/3")) }, new int[] { 3, 0, 0 }),
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb.com/1",
+                    "http://kb.com/2", "http://kb.com/3")) }, new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet(
+                    "http://kb.com/1", "http://kb.com/2", "http://kb.com/3")) }, new int[] { 3, 0, 0 }),
             // test case with several exact matching AnswerSets with a different
             // order
-            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1",
-                    "http://kb/2", "http://kb/3")) }, new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet(
-                    "http://kb/2", "http://kb/3", "http://kb/1")) }, new int[] { 3, 0, 0 }),
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb.com/1",
+                    "http://kb.com/2", "http://kb.com/3")) }, new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet(
+                    "http://kb.com/2", "http://kb.com/3", "http://kb.com/1")) }, new int[] { 3, 0, 0 }),
             // the same test case with expected ResourceAnswerSets and given
             // String answer sets
             new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet(
@@ -73,18 +75,18 @@ public class QAMatchingsCounterTest {
             // the same test case with expected ResourceAnswerSets and given
             // String answer sets and URIs that are not valid for the given URL
             // validator but match the expected URIs
-            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/2",
-                    "http://kb/3", "http://kb/1")) }, new AnswerSet[] { new ResourceAnswerSet(Sets.newHashSet(
-                    new Annotation("http://kb/1"), new Annotation("http://kb/2"), new Annotation("http://kb/3"))) },
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb.com/2",
+                    "http://kb.com/3", "http://kb.com/1")) }, new AnswerSet[] { new ResourceAnswerSet(Sets.newHashSet(
+                    new Annotation("http://kb.com/1"), new Annotation("http://kb.com/2"), new Annotation("http://kb.com/3"))) },
                     new int[] { 3, 0, 0 }),
             // test case with one exact matching AnswerSets, one wrong matching
             // and a missing matching
-            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1",
-                    "http://ukb/2")) }, new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb/1",
-                    "http://kb/2", "http://kb/3")) }, new int[] { 1, 1, 2 }),
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb.com/1",
+                    "http://ukb.com/2")) }, new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("http://kb.com/1",
+                    "http://kb.com/2", "http://kb.com/3")) }, new int[] { 1, 1, 2 }),
             // The Annotator returned the label of the resource instead of the
             // correct resource
-            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("Paris")) },
+            new MatchingTestExample<AnswerSet>(new AnswerSet[] { new AnswerSet<String>(Sets.newHashSet("\"Paris\"@en")) },
                     new AnswerSet[] { new ResourceAnswerSet(Sets.newHashSet(new Annotation(
                             "http://dbpedia.org/resource/Paris"))) }, new int[] { 1, 1, 0 }) };
 
@@ -99,6 +101,8 @@ public class QAMatchingsCounterTest {
         labelToUriMapping.put("Paris", new String[] { "http://dbpedia.org/resource/Paris",
                 "http://dbpedia.org/resource/Paris,_Arkansas" });
         Literal2ResourceManager emptyManager = new Literal2ResourceManager();
+        Literal2Resource converter = new SPARQLBasedLiteral2Resource("http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org");
+        emptyManager.registerLiteral2Resource(converter);
         this.counter = new QAMatchingsCounter(new MockupIndex(labelToUriMapping), new UrlValidator(),
                 new DummyUriKbClassifier(), emptyManager);
         // this.counter = new QAMatchingsCounter(RootConfig.createTripleIndex(),

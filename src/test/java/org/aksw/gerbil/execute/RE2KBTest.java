@@ -68,7 +68,7 @@ public class RE2KBTest extends AbstractExperimentTaskTest {
         try {
             return new DatasetConfigurationImpl("QALD_Test_dataset", false,
                     FileBasedQALDDataset.class.getConstructor(String.class, String.class, QALDStreamType.class),
-                    new Object[] { "QALD_Test_dataset", "src/test/resources/datasets/QALD_test.json",
+                    new Object[] { "QALD_Test_dataset", "src/test/resources/datasets/QALD_test3.json",
                             QALDStreamType.JSON },
                     ExperimentType.QA, null, null);
         } catch (NoSuchMethodException e) {

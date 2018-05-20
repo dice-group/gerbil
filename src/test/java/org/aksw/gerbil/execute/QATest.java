@@ -69,7 +69,7 @@ public class QATest extends AbstractExperimentTaskTest {
             return new DatasetConfigurationImpl("QALD_Test_dataset", false,
                     FileBasedQALDDataset.class.getConstructor(String.class, String.class, QALDStreamType.class),
                     new Object[] { "QALD_Test_dataset", "src/test/resources/datasets/QALD_test.json",
-                            QALDStreamType.JSON },
+                            QALDStreamType.JSON},
                     ExperimentType.QA, null, null);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();

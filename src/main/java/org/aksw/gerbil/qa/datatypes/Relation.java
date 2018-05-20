@@ -7,6 +7,7 @@ import java.util.List;
 import org.aksw.gerbil.datatypes.marking.MeaningsContainingMarking;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.ProvenanceInfo;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 
 /**
@@ -128,4 +129,16 @@ public class Relation implements Marking, MeaningsContainingMarking {
         }
         return builder.toString();
     }
+
+	@Override
+	public void setProvenanceInfo(ProvenanceInfo provencance) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ProvenanceInfo getProvenanceInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

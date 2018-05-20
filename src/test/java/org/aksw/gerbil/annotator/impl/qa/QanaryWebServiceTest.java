@@ -39,7 +39,7 @@ import org.simpleframework.transport.connect.SocketConnection;
 
 public class QanaryWebServiceTest {
 
-	private static final String QANARY_URI = "http://wdaqua-qanary.univ-st-etienne.fr/gerbil";
+	private static final String QANARY_URI = "http://wdaqua-core1.univ-st-etienne.fr/gerbil";
 
 	// protected Semaphore taskEndedMutex = new Semaphore(0);
 
@@ -55,12 +55,20 @@ public class QanaryWebServiceTest {
 			document.setText(question);
 			List<Marking> annotationAnswers = service.answerQuestion(document, "en");
 			for (Marking m : annotationAnswers) {
+				if(!(m instanceof AnswerSet)) {
+					continue;
+				}
 				AnswerSet a = (AnswerSet) m;
-				String sA = (String) a.getAnswers().iterator().next();
+				Object sA = (Object) a.getAnswers().iterator().next();
 				String sG = (String) it.next();
 				System.out.println("Annotator answer: " + sA);
 				System.out.println("Golden Std: " + sG);
-				assertTrue(sA.equals(sG));
+				if(sA instanceof Annotation) {
+					assertTrue(((Annotation)sA).getUri().equals(sG));
+				}
+				else {
+					assertTrue(sA.equals(sG));
+				}
 			}
 		}
 	}

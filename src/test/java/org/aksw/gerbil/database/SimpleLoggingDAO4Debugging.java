@@ -17,8 +17,10 @@
 package org.aksw.gerbil.database;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.slf4j.Logger;
@@ -126,5 +128,30 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     public ExperimentTaskResult getResultOfExperimentTask(int experimentTaskId) {
         return null;
     }
+
+	@Override
+	public ExperimentTaskResult getBestResult(String expType, String annotator, String dataset, String language) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ExperimentTaskResult getBestResult(String expType, String annotator, String dataset, String language,
+			Timestamp timestamp) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<String> getAllLangauges() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<String> getAnnotators() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

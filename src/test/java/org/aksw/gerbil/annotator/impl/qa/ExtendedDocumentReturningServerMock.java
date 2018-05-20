@@ -65,16 +65,16 @@ public class ExtendedDocumentReturningServerMock implements Container {
         OutputStream out = null;
         try {
         	byte data[]="xmasdöl".getBytes();
-        	if(content.equals("query=json")){
+        	if(content.startsWith("query=json")){
         		data = getWrongJSON().getBytes("UTF-8");
         	}
-        	else if(content.equals("query=correct")){
+        	else if(content.startsWith("query=correct")){
         		data = getCorrectJSON().getBytes("UTF-8");
         	}
         	
             
             response.setCode(Status.OK.code);
-            if(content.equals("query=contentType")){
+            if(content.startsWith("query=contentType")){
             	response.setValue("Content-Type", ContentType.APPLICATION_XML + ";charset=utf-8");
             }
             else {

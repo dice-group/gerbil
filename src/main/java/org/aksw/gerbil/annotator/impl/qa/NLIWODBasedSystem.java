@@ -13,6 +13,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.systems.ASystem;
+import org.aksw.qa.systems.GANSWER2;
 import org.aksw.qa.systems.HAWK;
 import org.aksw.qa.systems.OKBQA;
 import org.aksw.qa.systems.QAKIS;
@@ -20,6 +21,7 @@ import org.aksw.qa.systems.QANARY;
 import org.aksw.qa.systems.SINA;
 import org.aksw.qa.systems.START;
 import org.aksw.qa.systems.YODA;
+import org.aksw.qa.systems.QUEPY;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.shared.PrefixMapping;
@@ -34,11 +36,17 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 	public static final String START_SYSTEM_NAME = "START";
 	public static final String YODA_SYSTEM_NAME = "YODA";
 	public static final String OKBQA_SYSTEM_NAME = "OKBQA";
-	public static final String QANARY_SYSTEM_WIKIDATA_NAME = "QANARY (wikidata)";
-	public static final String QANARY_SYSTEM_DBPEDIA_NAME = "QANARY (DBpedia)";
+	public static final String QANARY_SYSTEM_WIKIDATA_NAME = "wdaqua-core1 (wikidata)";
+	public static final String QANARY_SYSTEM_DBPEDIA_NAME = "wdaqua-core1 (DBpedia)";
+	public static final String GANSWER2_SYSTEM_NAME = "gAnswer2";
+	public static final String QUEPY = "QUEPY";
 	private static final int DEFAULT_WAITING_TIME = 60000;
 	private static final String MAXIMUM_TIME_TO_WAIT_KEY = "org.aksw.gerbil.annotator.http.HttpManagement.maxWaitingTime";
-
+	
+	//GERBIL Issue 241: Adding KB names for QANARY
+	public static final String QANARY_SYSTEM_WIKIDATA_KBNAME = "wikidata";
+	public static final String QANARY_SYSTEM_DBPEDIA_KBNAME = "dbpedia";
+	
 	protected ASystem qaSystem;
 
 	public NLIWODBasedSystem(String systemName) throws GerbilException {
@@ -77,11 +85,19 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 			break;
 		}
 		case QANARY_SYSTEM_WIKIDATA_NAME: {
-			qaSystem = new QANARY(url);
+			qaSystem = new QANARY(url, QANARY_SYSTEM_WIKIDATA_KBNAME);
 			break;
 		}
 		case QANARY_SYSTEM_DBPEDIA_NAME:{
-			qaSystem = new QANARY(url);
+			qaSystem = new QANARY(url, QANARY_SYSTEM_DBPEDIA_KBNAME);
+			break;
+		}
+		case GANSWER2_SYSTEM_NAME:{
+			qaSystem = new GANSWER2(url);
+			break;
+		}
+		case QUEPY:{
+			qaSystem = new QUEPY(url);
 			break;
 		}
 		default:
