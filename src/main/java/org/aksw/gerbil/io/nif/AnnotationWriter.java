@@ -127,13 +127,14 @@ public class AnnotationWriter {
 
         Resource relationAsResource = nifModel.createResource(uriBuilder.toString());
         nifModel.add(relationAsResource, RDF.type, RDF.Statement);
+        nifModel.add(relationAsResource, RDF.type, OA.Annotation);
         nifModel.add(relationAsResource, RDF.subject, ResourceFactory.createResource(relation.getSubject().getUris().iterator().next()));
         nifModel.add(relationAsResource, RDF.predicate, ResourceFactory.createResource(relation.getPredicate().getUris().iterator().next()));
         nifModel.add(relationAsResource, RDF.object, ResourceFactory.createResource(relation.getObject().getUris().iterator().next()));
-        nifModel.add(relationAsResource, OA.hasTarget, documentAsResource);
         Resource relationAsResource2 = nifModel.createResource();
+        nifModel.add(relationAsResource, OA.hasTarget, relationAsResource2);
         nifModel.add(relationAsResource2, RDF.type, OA.SpecificResource);
-        nifModel.add(relationAsResource2, OA.hasSource, documentURI);
+        nifModel.add(relationAsResource2, OA.hasSource, documentAsResource);
         
                 if (relation instanceof ScoredMarking) {
             nifModel.add(relationAsResource, ITSRDF.taConfidence,
