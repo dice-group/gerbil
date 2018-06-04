@@ -1,0 +1,66 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+@prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dbr: <http://dbpedia.org/resource/> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@prefix aksw: <http://aksw.org/notInWiki/> . 
+@prefix oa: <http://www.w3.org/ns/oa#> .
+
+<https://www.theguardian.com/football/2017/mar/21/bastian-schweinsteiger-chicago-fire-manchester-united#char=0,65>
+        a               nif:RFC5147String , nif:String , nif:Context ;
+        nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex    "65"^^xsd:nonNegativeInteger ;
+        nif:isString    "Bastian Schweinsteiger joins Chicago Fire from Manchester United."^^xsd:string .
+
+<https://www.theguardian.com/football/2017/mar/21/bastian-schweinsteiger-chicago-fire-manchester-united#char=0,22>
+        a                     nif:RFC5147String , nif:String , nif:Phrase ;
+        <http://gerbil.aksw.org/eaglet/vocab#hasCheckResult>
+                <http://gerbil.aksw.org/eaglet/vocab#Good> ;
+        nif:anchorOf          "Bastian Schweinsteiger"^^xsd:string ;
+        nif:beginIndex        "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "22"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <https://www.theguardian.com/football/2017/mar/21/bastian-schweinsteiger-chicago-fire-manchester-united#char=0,65> ;
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/Bastian_Schweinsteiger> ;
+		itsrdf:taClassRef  	  dbo:Person .
+		
+<https://www.theguardian.com/football/2017/mar/21/bastian-schweinsteiger-chicago-fire-manchester-united#char=29,41>
+        a                     nif:RFC5147String , nif:String , nif:Phrase ;
+        <http://gerbil.aksw.org/eaglet/vocab#hasCheckResult>
+                <http://gerbil.aksw.org/eaglet/vocab#Good> ;
+        nif:anchorOf          "Chicago Fire"^^xsd:string ;
+        nif:beginIndex        "29"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "41"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <https://www.theguardian.com/football/2017/mar/21/bastian-schweinsteiger-chicago-fire-manchester-united#char=0,65> ;
+        itsrdf:taClassRef  	  dbo:Organisation ;
+		itsrdf:taIdentRef     <http://dbpedia.org/resource/Chicago_Fire_Soccer_Club> .
+		
+<https://www.theguardian.com/football/2017/mar/21/bastian-schweinsteiger-chicago-fire-manchester-united#char=47,64>
+        a                     nif:RFC5147String , nif:String , nif:Phrase ;
+        <http://gerbil.aksw.org/eaglet/vocab#hasCheckResult>
+                <http://gerbil.aksw.org/eaglet/vocab#Good> ;
+        nif:anchorOf          "Manchester United"^^xsd:string ;
+        nif:beginIndex        "47"^^xsd:nonNegativeInteger ;
+        nif:endIndex          "64"^^xsd:nonNegativeInteger ;
+        nif:referenceContext  <https://www.theguardian.com/football/2017/mar/21/bastian-schweinsteiger-chicago-fire-manchester-united#char=0,65> ;
+        itsrdf:taClassRef  	  dbo:Organisation ;
+		itsrdf:taIdentRef     <http://dbpedia.org/resource/Manchester_United_F.C> .
+
+[]
+  a  rdf:Statement , oa:Annotation ;
+  rdf:subject  dbr:Bastian_Schweinsteiger ;
+  rdf:predicate  dbo:formerTeam ;
+  rdf:object  dbr:Manchester_United_F.C ;
+  oa:hasTarget [
+    a oa:SpecificResource;
+    oa:hasSource <https://www.theguardian.com/football/2017/mar/21/bastian-schweinsteiger-chicago-fire-manchester-united#char=0,65>  ] .
+	
+[]
+  a  rdf:Statement , oa:Annotation ;
+  rdf:subject  dbr:Bastian_Schweinsteiger ;
+  rdf:predicate  dbo:club ;
+  rdf:object  dbr:Chicago_Fire_Soccer_Club ;
+  oa:hasTarget [
+    a oa:SpecificResource;
+    oa:hasSource <https://www.theguardian.com/football/2017/mar/21/bastian-schweinsteiger-chicago-fire-manchester-united#char=0,65>  ] .
