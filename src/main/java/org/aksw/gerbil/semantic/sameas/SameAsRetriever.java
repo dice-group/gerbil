@@ -21,4 +21,5 @@ import java.util.Set;
 public interface SameAsRetriever extends SingleUriSameAsRetriever {
 
     public void addSameURIs(Set<String> uris);
+
 }
