@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 
 /**
@@ -84,6 +85,18 @@ public interface ExperimentDAO extends Closeable {
      *         experiment
      */
     public List<ExperimentTaskResult> getResultsOfExperiment(String experimentId);
+    
+    /**
+     * Returns the results of the experiment tasks that are connected to the
+     * experiment with the given experiment id. Note that before retrieving the
+     * results of an experiment its state should be checked.
+     * 
+     * @param experimentId
+     *            if of the experiment
+     * @return a list of experiment task results that are connected to the
+     *         experiment
+     */
+    public List<ExperimentTaskStatus> getResultsOfExperimentNew(String experimentId);
 
     /**
      * Returns the result of the experiment task with the given ID or null if
@@ -233,4 +246,26 @@ public interface ExperimentDAO extends Closeable {
      * @return a list of all running experiment tasks.
      */
     public List<ExperimentTaskResult> getAllRunningExperimentTasks();
+    
+    /**
+     * Returns a list of all running experiment tasks.
+     * 
+     * @return a list of all running experiment tasks.
+     */
+    public List<ExperimentTaskStatus> getAllRunningExperimentTasksNew();
+    
+    /**
+     * Returns a list of all result names
+     * 
+     * @return a list of all result names
+     */
+    public List<String> getAllResultNames();
+
+	void setExperimentTaskResultNew(int experimentTaskId, ExperimentTaskStatus result);
+
+	int createTaskNew(String annotatorName, String datasetName, String experimentType, String matching,
+			String experimentId);
+
+	int connectCachedResultOrCreateTaskNew(String annotatorName, String datasetName, String experimentType,
+			String matching, String experimentId);
 }

@@ -106,6 +106,24 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
             return CACHED_EXPERIMENT_TASK_CAN_BE_USED;
         }
     }
+    
+    @Override
+    public synchronized int connectCachedResultOrCreateTaskNew(String annotatorName, String datasetName,
+            String experimentType, String matching, String experimentId) {
+        int experimentTaskId = EXPERIMENT_TASK_NOT_CACHED;
+        if (resultDurability > 0) {
+            experimentTaskId = getCachedExperimentTaskIdNew(annotatorName, datasetName, experimentType, matching);
+        } else {
+            LOGGER.warn("The durability of results is <= 0. I won't be able to cache results.");
+        }
+        if (experimentTaskId == EXPERIMENT_TASK_NOT_CACHED) {
+            return createTaskNew(annotatorName, datasetName, experimentType, matching, experimentId);
+        } else {
+            LOGGER.debug("Could reuse cached task (id={}).", experimentTaskId);
+            connectExistingTaskWithExperiment(experimentTaskId, experimentId);
+            return CACHED_EXPERIMENT_TASK_CAN_BE_USED;
+        }
+    }
 
     /**
      * The method checks whether there exists an experiment task with the given
@@ -129,6 +147,9 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      *         couldn't be found.
      */
     protected abstract int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType,
+            String matching);
+    
+    protected abstract int getCachedExperimentTaskIdNew(String annotatorName, String datasetName, String experimentType,
             String matching);
 
     /**

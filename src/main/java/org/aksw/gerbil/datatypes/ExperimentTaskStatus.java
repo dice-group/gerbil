@@ -26,7 +26,7 @@ import java.util.Map;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.matching.Matching;
 
-public class ExperimentTask {
+public class ExperimentTaskStatus {
 
 	public int state;
 	public String version;
@@ -39,7 +39,7 @@ public class ExperimentTask {
 	public String gerbilVersion;
 	public Map<String, TaskResult> resultsMap;
 
-	public List<ExperimentTask> subTasks;
+	public List<ExperimentTaskStatus> subTasks;
 
 	/**
 	 * Contains the error message if {@link #state} !=
@@ -47,12 +47,12 @@ public class ExperimentTask {
 	 */
 	public String stateMsg = null;
 
-	public ExperimentTask(String annotator, String dataset, ExperimentType type, Matching matching, int state,
+	public ExperimentTaskStatus(String annotator, String dataset, ExperimentType type, Matching matching, int state,
 			String version, long timestamp, int idInDb) {
 		this(annotator, dataset, type, matching, state, version, timestamp, idInDb, null);
 	}
 
-	public ExperimentTask(String annotator, String dataset, ExperimentType type, Matching matching, int state,
+	public ExperimentTaskStatus(String annotator, String dataset, ExperimentType type, Matching matching, int state,
 			String version, long timestamp, int idInDb, String gerbilVersion) {
 		this.annotator = annotator;
 		this.dataset = dataset;
@@ -64,6 +64,12 @@ public class ExperimentTask {
 		this.idInDb = idInDb;
 		this.gerbilVersion = gerbilVersion;
 	}
+	
+	public ExperimentTaskStatus(ExperimentTaskConfiguration configuration, int state,
+            int errorCount) {
+        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
+                configuration.matching, state, null, (new java.util.Date()).getTime(), -1);
+    }
 
 	public void setState(int state) {
 		this.state = state;
@@ -147,18 +153,18 @@ public class ExperimentTask {
 		return (subTasks != null) && (subTasks.size() > 0);
 	}
 
-	public List<ExperimentTask> getSubTasks() {
+	public List<ExperimentTaskStatus> getSubTasks() {
 		return subTasks;
 	}
 
-	public void addSubTask(ExperimentTask subTaskResult) {
+	public void addSubTask(ExperimentTaskStatus subTaskResult) {
 		if (subTasks == null) {
-			subTasks = new ArrayList<ExperimentTask>();
+			subTasks = new ArrayList<ExperimentTaskStatus>();
 		}
 		subTasks.add(subTaskResult);
 	}
 
-	public void setSubTasks(List<ExperimentTask> subTasks) {
+	public void setSubTasks(List<ExperimentTaskStatus> subTasks) {
 		this.subTasks = subTasks;
 	}
 

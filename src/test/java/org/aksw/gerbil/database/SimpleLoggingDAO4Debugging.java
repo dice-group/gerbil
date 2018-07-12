@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,5 +127,43 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     public ExperimentTaskResult getResultOfExperimentTask(int experimentTaskId) {
         return null;
     }
+
+	@Override
+	public List<ExperimentTaskStatus> getResultsOfExperimentNew(String experimentId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ExperimentTaskStatus> getAllRunningExperimentTasksNew() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getAllResultNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setExperimentTaskResultNew(int experimentTaskId, ExperimentTaskStatus result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int createTaskNew(String annotatorName, String datasetName, String experimentType, String matching,
+			String experimentId) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	protected int getCachedExperimentTaskIdNew(String annotatorName, String datasetName, String experimentType,
+			String matching) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }

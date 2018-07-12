@@ -18,7 +18,9 @@ package org.aksw.gerbil.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,11 +28,14 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.aksw.gerbil.Experimenter;
+import org.aksw.gerbil.ExperimenterNew;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.dataid.DataIDGenerator;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
@@ -65,6 +70,8 @@ public class MainController {
     private static final String GOOGLE_ANALYTICS_FILE_NAME = "google1d91bc68c8a56517.html";
 
     private static boolean isInitialized = false;
+    
+    private static final String RESNAME_PROP = "org.aksw.gerbil.database.ResultNameSequence";
 
     private static synchronized void initialize(ExperimentDAO dao) {
         if (!isInitialized) {
@@ -140,7 +147,7 @@ public class MainController {
      * @param experimentData
      * @return
      */
-    @RequestMapping("/execute")
+    /*@RequestMapping("/execute")
     public @ResponseBody String execute(@RequestParam(value = "experimentData") String experimentData) {
         LOGGER.debug("Got request on /execute with experimentData={}", experimentData);
         Object obj = JSONValue.parse(experimentData);
@@ -180,11 +187,63 @@ public class MainController {
         exp.run();
 
         return experimentId;
+    }*/
+    
+    /**
+     * expects a string like {"type":"A2KB","matching":
+     * "Mw - weak annotation match" ,"annotator":["A2KB one","A2KB two"
+     * ],"dataset":["datasets"]}
+     * 
+     * @param experimentData
+     * @return
+     */
+    @RequestMapping("/execute")
+    public @ResponseBody String executeNew(@RequestParam(value = "experimentData") String experimentData) {
+        LOGGER.debug("Got request on /execute with experimentData={}", experimentData);
+        Object obj = JSONValue.parse(experimentData);
+        JSONObject configuration = (JSONObject) obj;
+        String typeString = (String) configuration.get("type");
+        ExperimentType type = null;
+        try {
+            type = ExperimentType.valueOf(typeString);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", typeString);
+            return null;
+        }
+        String matching = (String) configuration.get("matching");
+        JSONArray jsonAnnotators = (JSONArray) configuration.get("annotator");
+        String[] annotators = new String[jsonAnnotators.size()];
+        for (int i = 0; i < jsonAnnotators.size(); i++) {
+            annotators[i] = (String) jsonAnnotators.get(i);
+        }
+        JSONArray jsonDataset = (JSONArray) configuration.get("dataset");
+        String[] datasets = new String[jsonDataset.size()];
+        for (int i = 0; i < jsonDataset.size(); i++) {
+            datasets[i] = (String) jsonDataset.get(i);
+        }
+        ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[annotators.length * datasets.length];
+        int count = 0;
+        for (String annotator : annotators) {
+            for (String dataset : datasets) {
+                configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, type),
+                        adapterManager.getDatasetConfig(dataset, type), type, getMatching(matching));
+                LOGGER.debug("Created config: {}", configs[count]);
+                ++count;
+            }
+        }
+        String experimentId = IDCreator.getInstance().createID();
+        ExperimenterNew exp = new ExperimenterNew(overseer, dao, globalRetriever, evFactory, configs, experimentId);
+        exp.setAnnotatorOutputWriter(annotatorOutputWriter);
+        exp.run();
+
+        return experimentId;
     }
 
     @RequestMapping("/experiment")
     public ModelAndView experiment(@RequestParam(value = "id") String id, HttpServletRequest request) {
         LOGGER.debug("Got request on /experiment with id={}", id);
+        // TODO Remove this variable
+    	long qryStrtTm = System.currentTimeMillis();
         dataIdGenerator = new DataIDGenerator(getURLBase(request));
         List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
         ExperimentTaskStateHelper.setStatusLines(results);
@@ -223,6 +282,61 @@ public class MainController {
         model.addObject("additionalResultNames",
                 ResultNameToIdMapping.getInstance().getNamesOfResultIds(additionalResultIds));
         model.addObject("additionalResults", additionalResults);
+        // TODO Remove this sysout
+        System.out.println("Total elapsed time for Experiment data request for id "+id+" is :"+(System.currentTimeMillis()-qryStrtTm)+" ms");
+        return model;
+    }
+    
+    @RequestMapping("/experimentnew")
+    public ModelAndView experimentNew(@RequestParam(value = "id") String id, HttpServletRequest request) {
+        LOGGER.debug("Got request on /experiment with id={}", id);
+        // TODO Remove this variable
+    	long qryStrtTm = System.currentTimeMillis();
+        dataIdGenerator = new DataIDGenerator(getURLBase(request));
+        List<ExperimentTaskStatus> results = dao.getResultsOfExperimentNew(id);
+        ExperimentTaskStateHelper.setStatusLinesNew(results);
+        ModelAndView model = new ModelAndView();
+        model.setViewName("experiment-new");
+        model.addObject("tasks", results);
+        int currentExperimentID=-1;
+        int currentState = 0;
+        
+        // Initializing set of resNames from DB
+        Set<String> resNamesDb = new HashSet<>();
+        List<ExperimentTaskStatus> tasks = dao.getAllRunningExperimentTasksNew();
+        boolean curStateNtAcqrd = true;
+        for(ExperimentTaskStatus r : results){
+        	resNamesDb.addAll(r.resultsMap.keySet());
+        	if(curStateNtAcqrd) {
+	        	if(r.state==0){
+	        		continue;
+	        	}
+	        	if(tasks.contains(r)){
+	        		currentState = r.state;
+	        		currentExperimentID = tasks.indexOf(r);
+	        		curStateNtAcqrd = false;
+	        		//break;
+	        	}
+        	}
+        }
+        // Fetch Result Name sequence from property file
+        String[] resNamesDlmtd = GerbilConfiguration.getInstance()
+        .getStringArray(RESNAME_PROP);
+        List<String> fnlRsltNms = new ArrayList<>();
+        boolean isRemoved = false;
+        for(String seqEntry : resNamesDlmtd) {
+        	isRemoved = resNamesDb.remove(seqEntry);
+        	if(isRemoved) {
+        		fnlRsltNms.add(seqEntry);
+        	}
+        }
+        fnlRsltNms.addAll(resNamesDb);
+        model.addObject("resultNames",fnlRsltNms);
+        model.addObject("currentState", currentState);
+        model.addObject("currentExperimentID", currentExperimentID);
+        model.addObject("workers", RootConfig.getNoOfWorkers());
+        // TODO Remove this sysout
+        System.out.println("Total elapsed time for Experiment data request for id "+id+" is :"+(System.currentTimeMillis()-qryStrtTm)+" ms");
         return model;
     }
 

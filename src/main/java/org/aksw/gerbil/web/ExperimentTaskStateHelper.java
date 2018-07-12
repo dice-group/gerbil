@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 
 public class ExperimentTaskStateHelper {
@@ -45,6 +46,31 @@ public class ExperimentTaskStateHelper {
 
     public static void setStatusLines(List<ExperimentTaskResult> results) {
         for (ExperimentTaskResult result : results) {
+            if (!taskFinished(result)) {
+                result.stateMsg = getStateText(result);
+            }
+        }
+    }
+    
+    
+    public static boolean taskFinished(ExperimentTaskStatus result) {
+        return result.state == ExperimentDAO.TASK_FINISHED;
+    }
+
+    public static String getStateText(ExperimentTaskStatus result) {
+        if (result.state == ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET) {
+            return TASK_RUNNING_TEXT;
+        }
+        ErrorTypes errorType = ErrorTypes.getErrorType(result.state);
+        if (errorType != null) {
+            return errorType.getDescription();
+        } else {
+            return STATE_UNKNOWN_TEXT;
+        }
+    }
+
+    public static void setStatusLinesNew(List<ExperimentTaskStatus> results) {
+        for (ExperimentTaskStatus result : results) {
             if (!taskFinished(result)) {
                 result.stateMsg = getStateText(result);
             }

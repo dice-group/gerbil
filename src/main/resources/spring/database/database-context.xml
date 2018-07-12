@@ -32,7 +32,8 @@
     </bean>
     <!-- Initialize the database -->
     <jdbc:initialize-database data-source="databaseDataSource">
-        <jdbc:script location="classpath:spring/database/schema/experiment-schema.sql" />
+        <jdbc:script location="classpath:spring/database/schema/experiment_new.sql" />
+        <!-- <jdbc:script location="classpath:spring/database/schema/experiment-schema.sql" /> -->
     </jdbc:initialize-database>
 
     <!-- Test DataSource using an in-memory Database H2 -->

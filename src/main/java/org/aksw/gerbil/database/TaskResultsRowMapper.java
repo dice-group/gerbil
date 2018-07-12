@@ -19,7 +19,7 @@ package org.aksw.gerbil.database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.aksw.gerbil.datatypes.ExperimentTask;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.TaskResult;
 import org.springframework.jdbc.core.RowMapper;
@@ -50,8 +50,8 @@ import org.springframework.jdbc.core.RowMapper;
  * 
  */
 public class TaskResultsRowMapper implements RowMapper<TaskResult> {
-	private ExperimentTask relatedTask;
-	public TaskResultsRowMapper(ExperimentTask relatedTask) {
+	private ExperimentTaskStatus relatedTask;
+	public TaskResultsRowMapper(ExperimentTaskStatus relatedTask) {
 		this.relatedTask = relatedTask;
 	}
 	@Override
