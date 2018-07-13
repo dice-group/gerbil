@@ -193,7 +193,7 @@ public class MainController {
         List<ExperimentTaskStatus> results = dao.getResultsOfExperiment(id);
         ExperimentTaskStateHelper.setStatusLines(results);
         ModelAndView model = new ModelAndView();
-        model.setViewName("experiment-new");
+        model.setViewName("experiment");
         model.addObject("tasks", results);
         int currentExperimentID=-1;
         int currentState = 0;
