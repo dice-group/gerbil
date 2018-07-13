@@ -16,11 +16,9 @@
  */
 package org.aksw.gerbil.database;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +86,7 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
     public long getResultDurability() {
         return resultDurability;
     }
-
+    
     @Override
     public synchronized int connectCachedResultOrCreateTask(String annotatorName, String datasetName,
             String experimentType, String matching, String experimentId) {
@@ -142,21 +140,6 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      */
     protected abstract void connectExistingTaskWithExperiment(int experimentTaskId, String experimentId);
 
-    @Deprecated
-    @Override
-    public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching) {
-        List<String[]> experimentTasks = getAnnotatorDatasetCombinations(experimentType, matching);
-        List<ExperimentTaskResult> results = new ArrayList<ExperimentTaskResult>(experimentTasks.size());
-        ExperimentTaskResult result;
-        for (String combination[] : experimentTasks) {
-            result = getLatestExperimentTaskResult(experimentType, matching, combination[0], combination[1]);
-            if (result != null) {
-                results.add(result);
-            }
-        }
-        return results;
-    }
-
     /**
      * This method returns a list of annotator dataset combinations for the given experimentType and matching that exist
      * inside the database. The first element of every array contains the name of an annotator and the second element is
@@ -170,22 +153,4 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      */
     @Deprecated
     protected abstract List<String[]> getAnnotatorDatasetCombinations(String experimentType, String matching);
-
-    /**
-     * Returns the result of the most recent finished experiment task with the given experiment type, matchin, annotator
-     * and dataset.
-     * 
-     * @param annotatorName
-     *            the name with which the annotator can be identified
-     * @param datasetName
-     *            the name of the dataset
-     * @param experimentType
-     *            the name of the experiment type
-     * @param matching
-     *            the name of the matching used
-     * @return the result of the most recent experiment task or null if no such task exists
-     */
-    @Deprecated
-    protected abstract ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
-            String annotatorName, String datasetName);
 }

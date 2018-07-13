@@ -19,14 +19,14 @@ package org.aksw.gerbil.database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
-import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.matching.Matching;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
+import org.aksw.gerbil.datatypes.TaskResult;
 import org.springframework.jdbc.core.RowMapper;
 
 /**
- * Creates {@link ExperimentTaskResult} instances from a given {@link ResultSet}. Note that the following mapping is
- * expected (column index - value):
+ * Creates {@link ExperimentTaskResult} instances from a given
+ * {@link ResultSet}. Note that the following mapping is expected (column index
+ * - value):
  * 
  * <ul>
  * <li>1 - annotator name</li>
@@ -48,21 +48,19 @@ import org.springframework.jdbc.core.RowMapper;
  * @author m.roeder
  * 
  */
-public class ExperimentTaskResultRowMapper implements RowMapper<ExperimentTaskResult> {
-
-    @Override
-    public ExperimentTaskResult mapRow(ResultSet resultSet, int rowId) throws SQLException {
-        int idInDatabase = -1;
-        try {
-            idInDatabase = resultSet.getInt(14);
-        } catch (Exception e) {
-            // nothing to do
-        }
-        return new ExperimentTaskResult(resultSet.getString(1), resultSet.getString(2),
-                ExperimentType.valueOf(resultSet.getString(3)), Matching.valueOf(resultSet.getString(4)),
-                new double[] { resultSet.getDouble(5), resultSet.getDouble(6), resultSet.getDouble(7),
-                        resultSet.getDouble(8), resultSet.getDouble(9), resultSet.getDouble(10) },
-                resultSet.getInt(11), resultSet.getInt(12), resultSet.getTimestamp(13).getTime(), idInDatabase);
-    }
+public class TaskResultsRowMapper implements RowMapper<TaskResult> {
+	private ExperimentTaskStatus relatedTask;
+	public TaskResultsRowMapper(ExperimentTaskStatus relatedTask) {
+		this.relatedTask = relatedTask;
+	}
+	@Override
+	public TaskResult mapRow(ResultSet resultSet, int rowId) throws SQLException {
+		String resultName = resultSet.getString(1);
+		String resultType = resultSet.getString(2);
+		Object resultValue = resultSet.getObject(3);
+		TaskResult result = new TaskResult(resultValue,resultType);
+		relatedTask.getResultsMap().put(resultName, result);
+		return result;
+	}
 
 }

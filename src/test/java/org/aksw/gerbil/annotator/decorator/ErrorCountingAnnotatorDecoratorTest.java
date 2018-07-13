@@ -29,7 +29,7 @@ import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.impl.AbstractDataset;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -53,9 +53,10 @@ public class ErrorCountingAnnotatorDecoratorTest {
                 new ExperimentTaskConfiguration(new ErrorCausingAnnotatorConfig(5), new SimpleTestDatasetConfig(100),
                         ExperimentType.ERec, Matching.STRONG_ENTITY_MATCH));
         task.run();
-        ExperimentTaskResult result = db.getTaskResult(1);
+        ExperimentTaskStatus result = db.getTaskResult(1);
         Assert.assertNotNull(result);
-        Assert.assertEquals(5, result.errorCount);
+        int errCount = (Integer) result.getResultsMap().get("Error Count").getResValue();
+        Assert.assertEquals(5, errCount);
         Assert.assertTrue(result.state >= 0);
     }
 
