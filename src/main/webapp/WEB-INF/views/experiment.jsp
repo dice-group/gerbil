@@ -29,6 +29,9 @@
 #type>option {
 	text-align: right;
 }
+.gerbil-experiment-warn {
+	color: red;
+}
 </style>
 
 </head>
@@ -53,7 +56,7 @@
 		</c:forEach>
 		<c:choose>
 			<c:when test="${workers<currentExperimentID && currentState!=0}">
-				<font color="red"> Experiments could take a while <br> <c:out
+				<font class="gerbil-experiment-warn"> Experiments could take a while <br> <c:out
 						value="${currentExperimentID} Experiments before yours on ${workers} Worker" />
 				</font>
 			</c:when>
@@ -82,7 +85,7 @@
 						<th></th>
 					</c:if>
 					<c:forEach var="resName" items="${resultNames}">
-						<th>${resName}</th>
+						<th>${resName}<c:out value="${task.timestampstring}" /></th>
 					</c:forEach>
 					<th>Timestamp</th>
 					<th>GERBIL version</th>
@@ -92,8 +95,8 @@
 				<c:forEach var="task" varStatus="taskId" items="${tasks}">
 					<c:if test="${empty task.stateMsg}">
 						<tr>
-							<td>${task.annotator}</td>
-							<td>${task.dataset}</td>
+							<td><c:out value="${task.annotator}" /></td>
+							<td><c:out value="${task.dataset}" /></td>
 							<c:if test="${hasSubTasks}">
 								<td></td>
 							</c:if>
@@ -106,14 +109,14 @@
 										<c:otherwise> </c:otherwise>
 									</c:choose></td>
 							</c:forEach>
-							<td>${task.timestampstring}</td>
-							<td>${task.version}</td>
+							<td><c:out value="${task.timestampstring}" /></td>
+							<td><c:out value="${task.version}" /></td>
 						</tr>
 						<c:forEach var="subTask" items="${task.subTasks}">
 							<tr>
-								<td>${subTask.annotator}</td>
-								<td>${subTask.dataset}</td>
-								<td>${subTask.type.label}</td>
+								<td><c:out value="${subTask.annotator}" /></td>
+								<td><c:out value="${subTask.dataset}" /></td>
+								<td><c:out value="${subTask.type.label}" /></td>
 								<c:forEach var="resName" items="${resultNames}">
 									<td><c:choose>
 										<c:when test="${subTask.resultsMap.get(resName).getResValue()!=null}">
@@ -123,22 +126,22 @@
 										<c:otherwise> </c:otherwise>
 									</c:choose></td>
 								</c:forEach>
-								<td>${subTask.timestampstring}</td>
-								<td>${subTask.version}</td>
+								<td><c:out value="${subTask.timestampstring}" /></td>
+								<td><c:out value="${subTask.version}" /></td>
 							</tr>
 						</c:forEach>
 					</c:if>
 					<c:if test="${!empty task.stateMsg}">
 						<tr>
-							<td>${task.annotator}</td>
-							<td>${task.dataset}</td>
+							<td><c:out value="${task.annotator}" /></td>
+							<td><c:out value="${task.dataset}" /></td>
 							<c:if test="${hasSubTasks}">
 								<td></td>
 							</c:if>
 							<td colspan="${additionalResultsCount + 7}"
-								style="text-align: center">${task.stateMsg}</td>
-							<td>${task.timestampstring}</td>
-							<td>${task.version}</td>
+								style="text-align: center"><c:out value="${task.stateMsg}" /></td>
+							<td><c:out value="${task.timestampstring}}" /></td>
+							<td><c:out value="${task.version}" /></td>
 						</tr>
 					</c:if>
 				</c:forEach>
