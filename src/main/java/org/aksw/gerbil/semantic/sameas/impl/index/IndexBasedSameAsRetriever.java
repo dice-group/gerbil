@@ -16,8 +16,6 @@
  */
 package org.aksw.gerbil.semantic.sameas.impl.index;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +23,6 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.index.Searcher;
 import org.aksw.gerbil.utils.URIValidator;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

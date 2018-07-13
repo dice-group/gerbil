@@ -19,7 +19,6 @@ package org.aksw.gerbil.tools;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
