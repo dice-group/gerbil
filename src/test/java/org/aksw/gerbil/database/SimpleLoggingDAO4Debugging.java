@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +31,7 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     private int nextTaskId = 0;
 
     @Override
-    public List<ExperimentTaskResult> getResultsOfExperiment(String experimentId) {
+    public List<ExperimentTaskStatus> getResultsOfExperiment(String experimentId) {
         return null;
     }
 
@@ -48,11 +47,11 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     }
 
     @Override
-    public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskResult result) {
+    public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskStatus result) {
         setExperimentTaskResult(experimentTaskId, result, false);
     }
 
-    protected void setExperimentTaskResult(int experimentTaskId, ExperimentTaskResult result, boolean isSubTask) {
+    protected void setExperimentTaskResult(int experimentTaskId, ExperimentTaskStatus result, boolean isSubTask) {
         if (isSubTask) {
             LOGGER.info("Setting result of " + result.type.name() + " sub task of " + experimentTaskId + " to "
                     + result.toString());
@@ -60,7 +59,7 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
             LOGGER.info("Setting result of task " + experimentTaskId + " to " + result.toString());
         }
         if (result.hasSubTasks()) {
-            for (ExperimentTaskResult subTask : result.subTasks) {
+            for (ExperimentTaskStatus subTask : result.subTasks) {
                 setExperimentTaskResult(experimentTaskId, subTask, true);
             }
         }
@@ -103,14 +102,8 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     }
 
     @Override
-    protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
-            String annotatorName, String datasetName) {
-        return null;
-    }
-
-    @Override
-    public List<ExperimentTaskResult> getAllRunningExperimentTasks() {
-        return new ArrayList<ExperimentTaskResult>(0);
+    public List<ExperimentTaskStatus> getAllRunningExperimentTasks() {
+        return new ArrayList<ExperimentTaskStatus>(0);
     }
 
     @Override
@@ -118,52 +111,14 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     }
 
     @Override
-    public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching,
+    public List<ExperimentTaskStatus> getLatestResultsOfExperiments(String experimentType, String matching,
             String[] annotatorNames, String[] datasetNames) {
         return null;
     }
 
     @Override
-    public ExperimentTaskResult getResultOfExperimentTask(int experimentTaskId) {
+    public ExperimentTaskStatus getResultOfExperimentTask(int experimentTaskId) {
         return null;
     }
-
-	@Override
-	public List<ExperimentTaskStatus> getResultsOfExperimentNew(String experimentId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<ExperimentTaskStatus> getAllRunningExperimentTasksNew() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<String> getAllResultNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setExperimentTaskResultNew(int experimentTaskId, ExperimentTaskStatus result) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public int createTaskNew(String annotatorName, String datasetName, String experimentType, String matching,
-			String experimentId) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	protected int getCachedExperimentTaskIdNew(String annotatorName, String datasetName, String experimentType,
-			String matching) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 }

@@ -70,6 +70,11 @@ public class ExperimentTaskStatus {
         this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
                 configuration.matching, state, null, (new java.util.Date()).getTime(), -1);
     }
+	
+	public ExperimentTaskStatus(String annotator, String dataset, ExperimentType type, Matching matching, int state) {
+        this(annotator, dataset, type, matching, state, null, (new java.util.Date()).getTime(), -1,
+                null);
+    }
 
 	public void setState(int state) {
 		this.state = state;

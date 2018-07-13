@@ -19,18 +19,18 @@ package org.aksw.gerbil.database;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 
 public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4Debugging {
 
-    private IntObjectOpenHashMap<ExperimentTaskResult> results = new IntObjectOpenHashMap<ExperimentTaskResult>();
+    private IntObjectOpenHashMap<ExperimentTaskStatus> results = new IntObjectOpenHashMap<ExperimentTaskStatus>();
     private IntIntOpenHashMap states = new IntIntOpenHashMap();
 
     @Override
-    public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskResult result) {
+    public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskStatus result) {
         super.setExperimentTaskResult(experimentTaskId, result);
         results.put(experimentTaskId, result);
     }
@@ -41,7 +41,7 @@ public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4De
         states.put(experimentTaskId, state);
     }
 
-    public ExperimentTaskResult getTaskResult(int experimentTaskId) {
+    public ExperimentTaskStatus getTaskResult(int experimentTaskId) {
         if (results.containsKey(experimentTaskId)) {
             return results.get(experimentTaskId);
         } else {
@@ -64,18 +64,12 @@ public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4De
     }
 
     @Override
-    protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
-            String annotatorName, String datasetName) {
-        return null;
-    }
-
-    @Override
-    public List<ExperimentTaskResult> getResultsOfExperiment(String experimentId) {
-        List<ExperimentTaskResult> resultsOfExperiment = new ArrayList<ExperimentTaskResult>(
+    public List<ExperimentTaskStatus> getResultsOfExperiment(String experimentId) {
+        List<ExperimentTaskStatus> resultsOfExperiment = new ArrayList<ExperimentTaskStatus>(
                 results.size() + states.size());
         for (int i = 0; i < results.allocated.length; ++i) {
             if (results.allocated[i]) {
-                resultsOfExperiment.add((ExperimentTaskResult) ((Object[]) results.values)[i]);
+                resultsOfExperiment.add((ExperimentTaskStatus) ((Object[]) results.values)[i]);
             }
         }
         return resultsOfExperiment;
