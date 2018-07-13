@@ -63,7 +63,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
 
     private static final double AMOUNT_OF_TOLERATED_ERRORS = 0.25;
 
-    public static final String ERROR_COUNT_RESULT_NAME = "error count";
+    public static final String ERROR_COUNT_RESULT_NAME = "Error Count";
 
     private static boolean printDebugMsg = true;
 

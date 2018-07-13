@@ -191,4 +191,58 @@ public class ExperimentTaskStatus {
 	public void setResultsMap(Map<String, TaskResult> resultsMap) {
 		this.resultsMap = resultsMap;
 	}
+	
+	 @Override
+	    public String toString() {
+	        StringBuilder builder = new StringBuilder();
+	        builder.append("ExperimentTaskResult(state=");
+	        builder.append(state);
+	        builder.append(",taskId=");
+	        builder.append(idInDb);
+	        builder.append(")");
+	        return builder.toString();
+	    }
+
+	    @Override
+	    public int hashCode() {
+	        final int prime = 31;
+	        int result = 1;
+	        result = prime * result + ((annotator == null) ? 0 : annotator.hashCode());
+	        result = prime * result + ((dataset == null) ? 0 : dataset.hashCode());
+	        result = prime * result + ((matching == null) ? 0 : matching.hashCode());
+	        result = prime * result + state;
+	        result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
+	        result = prime * result + ((type == null) ? 0 : type.hashCode());
+	        return result;
+	    }
+
+	    @Override
+	    public boolean equals(Object obj) {
+	        if (this == obj)
+	            return true;
+	        if (obj == null)
+	            return false;
+	        if (getClass() != obj.getClass())
+	            return false;
+	        ExperimentTaskStatus other = (ExperimentTaskStatus) obj;
+	        if (annotator == null) {
+	            if (other.annotator != null)
+	                return false;
+	        } else if (!annotator.equals(other.annotator))
+	            return false;
+	        if (dataset == null) {
+	            if (other.dataset != null)
+	                return false;
+	        } else if (!dataset.equals(other.dataset))
+	            return false;
+	        if (matching != other.matching)
+	            return false;
+	        if (state != other.state)
+	            return false;
+	        if (timestamp != other.timestamp)
+	            return false;
+	        if (type != other.type)
+	            return false;
+	        return true;
+	    }
 }

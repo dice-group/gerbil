@@ -117,7 +117,6 @@ public class ExperimentDAOImplJUnitTest {
                         ExperimentDAO.TASK_FINISHED);
             	resMap = tempExTask.getResultsMap();
             	//add random double entries
-            	 resMap = new HashMap<>();
                 for(String dResName : resNameArr) {
                 	tempTaskRes = new TaskResult(random.nextDouble(), "DOUBLE");
                 	resMap.put(dResName, tempTaskRes);
@@ -133,7 +132,7 @@ public class ExperimentDAOImplJUnitTest {
                         i == 8 ? ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET
                                 : ErrorTypes.UNEXPECTED_EXCEPTION.getErrorCode());
 	            //add random double entries
-            	resMap = new HashMap<>();
+            	resMap = tempExTask.getResultsMap();
             	for(String dResName : resNameArr) {
             		tempTaskRes = new TaskResult(0d, "DOUBLE");
             		resMap.put(dResName, tempTaskRes);
@@ -167,8 +166,8 @@ public class ExperimentDAOImplJUnitTest {
                 // different
                 originalResult = null;
                 for (ExperimentTaskStatus result : results) {
-                	double resErrCount = (Double) result.getResultsMap().get(errorCountName).getResValue();
-                	double retResErrCount = (Double) retrievedResult.getResultsMap().get(errorCountName).getResValue();
+                	int resErrCount = (Integer) result.getResultsMap().get(errorCountName).getResValue();
+                	int retResErrCount = (Integer) retrievedResult.getResultsMap().get(errorCountName).getResValue();
                     if ((result.state == retrievedResult.state) && (result.annotator.equals(retrievedResult.annotator))
                     		&& (resErrCount == retResErrCount)
                             && (result.dataset.equals(retrievedResult.dataset))

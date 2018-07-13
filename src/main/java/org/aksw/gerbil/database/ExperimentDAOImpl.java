@@ -57,16 +57,20 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String SET_UNFINISHED_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE state=:unfinishedState";
     @Deprecated
     private final static String GET_LATEST_EXPERIMENT_TASKS = "SELECT DISTINCT annotatorName, datasetName FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching";
-    private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT tasks.systemName, tasks.datasetName, tasks.experimentType, tasks.matching, tasks.state, tasks.version, tasks.lastChanged, tasks.id FROM ExperimentTasks tasks, (SELECT datasetName, annotatorName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState AND systemName IN (:annotatorNames) AND datasetName IN (:datasetNames) GROUP BY datasetName, annotatorName) pairs WHERE tasks.systemName=pairs.systemName AND tasks.datasetName=pairs.datasetName AND tasks.experimentType=:experimentType AND tasks.matching=:matching AND tasks.lastChanged=pairs.lastChanged";
+    private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT tasks.systemName, tasks.datasetName, tasks.experimentType, tasks.matching, tasks.state, tasks.version, tasks.lastChanged, tasks.id FROM ExperimentTasks tasks, (SELECT datasetName, systemName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState AND systemName IN (:annotatorNames) AND datasetName IN (:datasetNames) GROUP BY datasetName, systemName) pairs WHERE tasks.systemName=pairs.systemName AND tasks.datasetName=pairs.datasetName AND tasks.experimentType=:experimentType AND tasks.matching=:matching AND tasks.lastChanged=pairs.lastChanged";
     private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT systemName, datasetName, experimentType, matching, state, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
     private final static String SHUTDOWN = "SHUTDOWN";
 
     private final static String GET_TASK_RESULTS_DOUBLE = "SELECT rn.name, 'DOUBLE' AS Type, dr.resvalue FROM ExperimentTasks_DoubleResults dr, ResultNames rn WHERE dr.resultId = rn.id and dr.taskId = :taskId";
     private final static String GET_TASK_RESULTS_INTEGER = "SELECT rn.name, 'INT' AS Type, ir.resvalue FROM ExperimentTasks_IntResults ir, ResultNames rn WHERE ir.resultId = rn.id and ir.taskId = :taskId";
-    private final static String INSERT_DOUBLE_RESULT = "INSERT INTO ExperimentTasks_DoubleResults(taskId, resultId, value) select :taskId, id, :value from ResultNames where name = :resName";
-    private final static String INSERT_INT_RESULT = "INSERT INTO ExperimentTasks_IntResults(taskId, resultId, value) select :taskId, id, :value from ResultNames where name = :resName";
+    private final static String INSERT_DOUBLE_RESULT = "INSERT INTO ExperimentTasks_DoubleResults(taskId, resultId, resvalue) select :taskId, id, :value from ResultNames where name = :resName";
+    private final static String INSERT_INT_RESULT = "INSERT INTO ExperimentTasks_IntResults(taskId, resultId, resvalue) select :taskId, id, :value from ResultNames where name = :resName";
     private final static String GET_SUB_TASK_RESULTS = "SELECT systemName, datasetName, experimentType, matching, state, version, lastChanged, subTaskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
     private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
+    
+    public static final String[] RES_NAME_ARR = {"Micro F1 score", "Micro Precision", "Micro Recall", "Macro F1 score"
+    		, "Macro Precision", "Macro Recall"};
+    public static final String ERROR_COUNT_NAME = "Error Count";
     
     private final NamedParameterJdbcTemplate template;
 
@@ -278,7 +282,25 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         TaskResultsRowMapper resultMapper = new TaskResultsRowMapper(result);
         this.template.query(GET_TASK_RESULTS_DOUBLE, parameters, resultMapper);
         this.template.query(GET_TASK_RESULTS_INTEGER, parameters, resultMapper);
+        setDefaultResultMap(result);
         // this.template.query(GET_TASK_RESULTS_BLOB, parameters, resultMapper);
+    }
+    
+    public void setDefaultResultMap(ExperimentTaskStatus result) {
+    	Map<String, TaskResult> resMap = result.getResultsMap();
+    	TaskResult tempRes;
+    	for(String dResName: RES_NAME_ARR) {
+    		//Add a default double entry
+    		if(resMap.get(dResName)==null) {
+    			tempRes = new TaskResult(0d, "DOUBLE");
+    			resMap.put(dResName, tempRes);
+    		}
+    	}
+    	
+    	if(resMap.get(ERROR_COUNT_NAME)==null) {
+    		tempRes = new TaskResult(0, "INT");
+        	resMap.put(ERROR_COUNT_NAME, tempRes);
+    	}
     }
     
     protected void insertSubTask(ExperimentTaskStatus subTask, int experimentTaskId) {
