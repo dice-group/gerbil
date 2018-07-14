@@ -59,7 +59,7 @@
 		</c:forEach>
 		<c:choose>
 			<c:when test="${workers<currentExperimentID && currentState!=0}">
-				<span class="gerbil-experiment-warn"> Experiments could take a while <br> <c:out
+				<span styleClass="gerbil-experiment-warn"> Experiments could take a while <br> <c:out
 						value="${currentExperimentID} Experiments before yours on ${workers} Worker" />
 				</span>
 			</c:when>
@@ -141,8 +141,8 @@
 							<c:if test="${hasSubTasks}">
 								<td></td>
 							</c:if>
-							<td colspan="${resultNames.size()}"
-								class="gerbil-center-align"><c:out value="${task.stateMsg}" /></td>
+							<td colspan="${fn:escapeXml(resultNames.size())}"
+								styleClass="gerbil-center-align"><c:out value="${task.stateMsg}" /></td>
 							<td><c:out value="${task.timestampstring}}" /></td>
 							<td><c:out value="${task.version}" /></td>
 						</tr>
