@@ -32,6 +32,9 @@
 .gerbil-experiment-warn {
 	color: red;
 }
+.gerbil-center-align {
+	text-align: center;
+}
 </style>
 
 </head>
@@ -56,9 +59,9 @@
 		</c:forEach>
 		<c:choose>
 			<c:when test="${workers<currentExperimentID && currentState!=0}">
-				<font class="gerbil-experiment-warn"> Experiments could take a while <br> <c:out
+				<span class="gerbil-experiment-warn"> Experiments could take a while <br> <c:out
 						value="${currentExperimentID} Experiments before yours on ${workers} Worker" />
-				</font>
+				</span>
 			</c:when>
 			<c:when test="${currentState}==0">
     			Your Experiments finished			
@@ -85,7 +88,7 @@
 						<th></th>
 					</c:if>
 					<c:forEach var="resName" items="${resultNames}">
-						<th>${resName}<c:out value="${task.timestampstring}" /></th>
+						<th><c:out value="${resName}" /></th>
 					</c:forEach>
 					<th>Timestamp</th>
 					<th>GERBIL version</th>
@@ -138,8 +141,8 @@
 							<c:if test="${hasSubTasks}">
 								<td></td>
 							</c:if>
-							<td colspan="${additionalResultsCount + 7}"
-								style="text-align: center"><c:out value="${task.stateMsg}" /></td>
+							<td colspan="${resultNames.size()}"
+								class="gerbil-center-align"><c:out value="${task.stateMsg}" /></td>
 							<td><c:out value="${task.timestampstring}}" /></td>
 							<td><c:out value="${task.version}" /></td>
 						</tr>
