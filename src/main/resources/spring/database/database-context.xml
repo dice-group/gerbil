@@ -38,8 +38,8 @@
     <!-- Test DataSource using an in-memory Database H2 -->
     <beans profile="test">
         <bean id="databaseDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-            <property name="driverClassName" value="org.h2.Driver" />
-            <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;MODE=MySQL;" />
+            <property name="driverClassName" value="${gerbil.jdbc.driverClassName}" />
+            <property name="url" value="jdbc:hsqldb:mem:gerbiltestmemdb" />
         </bean>
         <jdbc:initialize-database data-source="databaseDataSource">
 

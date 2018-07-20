@@ -16,12 +16,14 @@
  */
 package org.aksw.gerbil.execute;
 
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
+import org.aksw.gerbil.datatypes.TaskResult;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
@@ -122,16 +124,17 @@ public abstract class AbstractExperimentTaskTest {
         @Override
         protected void testTaskResults(Task task) {
             Assert.assertEquals(ExperimentDAO.TASK_FINISHED, experimentDAO.getExperimentState(experimentTaskId));
-            ExperimentTaskResult result = experimentDAO.getTaskResult(experimentTaskId);
+            ExperimentTaskStatus result = experimentDAO.getTaskResult(experimentTaskId);
             String errorMsg = "Error for system " + result.annotator + " on dataset " + result.dataset
                     + " in Experiment " + result.type.getName();
-            Assert.assertEquals(errorMsg, expectedResults[MACRO_PREC_INDEX], result.getMacroPrecision(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MACRO_REC_INDEX], result.getMacroRecall(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MACRO_F1_INDEX], result.getMacroF1Measure(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MICRO_PREC_INDEX], result.getMicroPrecision(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MICRO_REC_INDEX], result.getMicroRecall(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MICRO_F1_INDEX], result.getMicroF1Measure(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[ERROR_COUNT_INDEX], result.getErrorCount(), DELTA);
+            Map<String, TaskResult> resMap = result.getResultsMap();
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_PREC_INDEX], (Double) resMap.get("Macro Precision").getResValue(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_REC_INDEX], (Double) resMap.get("Macro Recall").getResValue(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_F1_INDEX], (Double) resMap.get("Macro F1 score").getResValue(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_PREC_INDEX], (Double) resMap.get("Micro Precision").getResValue(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_REC_INDEX], (Double) resMap.get("Micro Recall").getResValue(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_F1_INDEX], (Double) resMap.get("Micro F1 score").getResValue(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[ERROR_COUNT_INDEX], (Integer) resMap.get("Error Count").getResValue(), DELTA);
         }
     }
 }

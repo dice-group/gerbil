@@ -19,7 +19,6 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.utils.WikipediaHelper;
 import org.json.JSONObject;
 import org.slf4j.Logger;

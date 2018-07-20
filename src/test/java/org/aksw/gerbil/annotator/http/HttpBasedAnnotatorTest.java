@@ -32,7 +32,7 @@ import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.InstanceListBasedDataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.http.HttpManagement;
@@ -189,11 +189,11 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         Assert.assertTrue("Expected all experiments to have been finished.",
                 taskEndedMutex.tryAcquire(configs.length, TEST_WAITING_TIME, TimeUnit.MILLISECONDS));
 
-        List<ExperimentTaskResult> results = experimentDAO.getResultsOfExperiment(EXPERIMENT_ID);
-        for (ExperimentTaskResult result : results) {
+        List<ExperimentTaskStatus> results = experimentDAO.getResultsOfExperiment(EXPERIMENT_ID);
+        for (ExperimentTaskStatus result : results) {
             Assert.assertFalse(result.annotator.equals(SLOW_ANNOTATOR_NAME));
             Assert.assertEquals(ExperimentDAO.TASK_FINISHED, result.state);
-            Assert.assertEquals(1.0, result.results[0], 0.000001);
+            Assert.assertEquals(1.0,(Double) result.getResultsMap().get("Micro F1 score").getResValue(), 0.000001);
         }
         // make sure that the fast server didn't throw anything (the slow server
         // might has thrown something)
@@ -233,11 +233,11 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         Assert.assertTrue("Expected all experiments to have been finished.",
                 taskEndedMutex.tryAcquire(configs.length, TEST_WAITING_TIME, TimeUnit.MILLISECONDS));
 
-        List<ExperimentTaskResult> results = experimentDAO.getResultsOfExperiment(EXPERIMENT_ID);
-        for (ExperimentTaskResult result : results) {
+        List<ExperimentTaskStatus> results = experimentDAO.getResultsOfExperiment(EXPERIMENT_ID);
+        for (ExperimentTaskStatus result : results) {
             Assert.assertFalse(result.annotator.equals(SLOW_ANNOTATOR_NAME));
             Assert.assertEquals(ExperimentDAO.TASK_FINISHED, result.state);
-            Assert.assertEquals(1.0, result.results[0], 0.000001);
+            Assert.assertEquals(1.0, (Double) result.getResultsMap().get("Micro F1 score").getResValue(), 0.000001);
         }
         // make sure that the fast server didn't throw anything (the slow server
         // might has thrown something)

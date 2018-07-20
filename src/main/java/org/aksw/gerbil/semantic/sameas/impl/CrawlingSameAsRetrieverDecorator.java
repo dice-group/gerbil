@@ -16,8 +16,6 @@
  */
 package org.aksw.gerbil.semantic.sameas.impl;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;

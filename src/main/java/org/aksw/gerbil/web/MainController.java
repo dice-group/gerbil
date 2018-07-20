@@ -18,7 +18,9 @@ package org.aksw.gerbil.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,11 +28,11 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.aksw.gerbil.Experimenter;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
-import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.dataid.DataIDGenerator;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
@@ -65,6 +67,8 @@ public class MainController {
     private static final String GOOGLE_ANALYTICS_FILE_NAME = "google1d91bc68c8a56517.html";
 
     private static boolean isInitialized = false;
+    
+    private static final String RESNAME_PROP = "org.aksw.gerbil.database.ResultNameSequence";
 
     private static synchronized void initialize(ExperimentDAO dao) {
         if (!isInitialized) {
@@ -131,7 +135,7 @@ public class MainController {
     public ModelAndView index() {
         return new ModelAndView("index");
     }
-
+   
     /**
      * expects a string like {"type":"A2KB","matching":
      * "Mw - weak annotation match" ,"annotator":["A2KB one","A2KB two"
@@ -186,43 +190,48 @@ public class MainController {
     public ModelAndView experiment(@RequestParam(value = "id") String id, HttpServletRequest request) {
         LOGGER.debug("Got request on /experiment with id={}", id);
         dataIdGenerator = new DataIDGenerator(getURLBase(request));
-        List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
+        List<ExperimentTaskStatus> results = dao.getResultsOfExperiment(id);
         ExperimentTaskStateHelper.setStatusLines(results);
         ModelAndView model = new ModelAndView();
         model.setViewName("experiment");
         model.addObject("tasks", results);
         int currentExperimentID=-1;
         int currentState = 0;
-        List<ExperimentTaskResult> tasks = dao.getAllRunningExperimentTasks();
-        for(ExperimentTaskResult r : results){
-        	if(r.state==0){
-        		continue;
-        	}
-        	if(tasks.contains(r)){
-        		currentState = r.state;
-        		currentExperimentID = tasks.indexOf(r);
-        		break;
+        
+        // Initializing set of resNames from DB
+        Set<String> resNamesDb = new HashSet<>();
+        List<ExperimentTaskStatus> tasks = dao.getAllRunningExperimentTasks();
+        boolean curStateNtAcqrd = true;
+        for(ExperimentTaskStatus r : results){
+        	resNamesDb.addAll(r.resultsMap.keySet());
+        	if(curStateNtAcqrd) {
+	        	if(r.state==0){
+	        		continue;
+	        	}
+	        	if(tasks.contains(r)){
+	        		currentState = r.state;
+	        		currentExperimentID = tasks.indexOf(r);
+	        		curStateNtAcqrd = false;
+	        		//break;
+	        	}
         	}
         }
+        // Fetch Result Name sequence from property file
+        String[] resNamesDlmtd = GerbilConfiguration.getInstance()
+        .getStringArray(RESNAME_PROP);
+        List<String> fnlRsltNms = new ArrayList<>();
+        boolean isRemoved = false;
+        for(String seqEntry : resNamesDlmtd) {
+        	isRemoved = resNamesDb.remove(seqEntry);
+        	if(isRemoved) {
+        		fnlRsltNms.add(seqEntry);
+        	}
+        }
+        fnlRsltNms.addAll(resNamesDb);
+        model.addObject("resultNames",fnlRsltNms);
         model.addObject("currentState", currentState);
         model.addObject("currentExperimentID", currentExperimentID);
         model.addObject("workers", RootConfig.getNoOfWorkers());
-        model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
-        int additionalResultIds[] = ResultNameToIdMapping.getInstance().listAdditionalResultIds(results);
-        // we need Double objects to make sure that they can be null
-        Double additionalResults[][] = new Double[results.size()][additionalResultIds.length];
-        ExperimentTaskResult result;
-        for (int i = 0; i < additionalResults.length; ++i) {
-            result = results.get(i);
-            for (int j = 0; j < additionalResultIds.length; ++j) {
-                if (result.hasAdditionalResult(additionalResultIds[j])) {
-                    additionalResults[i][j] = result.getAdditionalResult(additionalResultIds[j]);
-                }
-            }
-        }
-        model.addObject("additionalResultNames",
-                ResultNameToIdMapping.getInstance().getNamesOfResultIds(additionalResultIds));
-        model.addObject("additionalResults", additionalResults);
         return model;
     }
 

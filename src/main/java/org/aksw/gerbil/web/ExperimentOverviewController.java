@@ -28,7 +28,7 @@ import java.util.Set;
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.utils.DatasetMetaData;
@@ -98,19 +98,19 @@ public class ExperimentOverviewController {
 			dataset2Index.put(datasetNames[i], i);
 		}
 
-		List<ExperimentTaskResult> expResults = dao.getLatestResultsOfExperiments(experimentType.name(),
+		List<ExperimentTaskStatus> expResults = dao.getLatestResultsOfExperiments(experimentType.name(),
 				matching.name(), annotatorNames, datasetNames);
 		double results[][] = new double[annotatorNames.length][datasetNames.length];
 		for (int i = 0; i < results.length; ++i) {
 			Arrays.fill(results[i], NOT_AVAILABLE_SENTINAL);
 		}
 		int row, col;
-		for (ExperimentTaskResult result : expResults) {
+		for (ExperimentTaskStatus result : expResults) {
 			if (annotator2Index.containsKey(result.annotator) && dataset2Index.containsKey(result.dataset)) {
 				row = annotator2Index.get(result.annotator);
 				col = dataset2Index.get(result.dataset);
 				if (result.state == ExperimentDAO.TASK_FINISHED) {
-					results[row][col] = result.getMicroF1Measure();
+					results[row][col] = (Double) result.getResultsMap().get("Micro F1 score").getResValue();
 				} else {
 					results[row][col] = result.state;
 				}
