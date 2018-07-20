@@ -52,17 +52,19 @@ public class Tweet4NeedDatasetTest {
 		Tweet4NeedDataset dataset = new Tweet4NeedDataset(TEST_TEXT_DIR);
 		dataset.setName(DATASET_NAME);
 		dataset.init();
+		boolean testPassed = true;
 		for (Document document : dataset.getInstances()) {
 			if (document.getDocumentURI().equals(EXPECTED_DOCUMENT_URI1)) {
-				performTest(document, EXPECTED_TEXT1, EXPECTED_MARKINGS1);
+				testPassed = performTest(document, EXPECTED_TEXT1, EXPECTED_MARKINGS1);
 			} else if (document.getDocumentURI().equals(EXPECTED_DOCUMENT_URI2)) {
-				performTest(document, EXPECTED_TEXT2, EXPECTED_MARKINGS2);
+				testPassed = performTest(document, EXPECTED_TEXT2, EXPECTED_MARKINGS2);
 			}
+			Assert.assertTrue(testPassed);
 		}
 		IOUtils.closeQuietly(dataset);
 	}
 
-	private void performTest(Document document, String text, Marking[] markings) {
+	private boolean performTest(Document document, String text, Marking[] markings) {
 		Assert.assertEquals(text, document.getText());
 
 		Set<Marking> expectedNEs = new HashSet<Marking>(Arrays.asList(markings));
@@ -71,6 +73,7 @@ public class Tweet4NeedDatasetTest {
 					expectedNEs.contains(marking));
 		}
 		Assert.assertEquals(expectedNEs.size(), document.getMarkings().size());
+		return true;
 	}
 
 	public static void main(String[] args) throws GerbilException {
