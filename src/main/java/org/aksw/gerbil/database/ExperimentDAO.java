@@ -20,7 +20,7 @@ import java.io.Closeable;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 
 /**
  * This interface defines the methods a class has to implement for making the
@@ -83,7 +83,7 @@ public interface ExperimentDAO extends Closeable {
      * @return a list of experiment task results that are connected to the
      *         experiment
      */
-    public List<ExperimentTaskResult> getResultsOfExperiment(String experimentId);
+    public List<ExperimentTaskStatus> getResultsOfExperiment(String experimentId);
 
     /**
      * Returns the result of the experiment task with the given ID or null if
@@ -93,7 +93,7 @@ public interface ExperimentDAO extends Closeable {
      *            the id of the experiment task
      * @return the experiment task or null if this task does not exist.
      */
-    public ExperimentTaskResult getResultOfExperimentTask(int experimentTaskId);
+    public ExperimentTaskStatus getResultOfExperimentTask(int experimentTaskId);
 
     /**
      * This method is called with the description of an experiment task and an
@@ -125,8 +125,8 @@ public interface ExperimentDAO extends Closeable {
      *         an experiment task with the given preferences or the id of the
      *         newly created experiment task.
      */
-    public int connectCachedResultOrCreateTask(String annotatorName, String datasetName, String experimentType,
-            String matching, String experimentId);
+    int connectCachedResultOrCreateTask(String annotatorName, String datasetName, String experimentType,
+			String matching, String experimentId);
 
     /**
      * Creates a new experiment task with the given preferences, sets its GERBIL
@@ -146,8 +146,8 @@ public interface ExperimentDAO extends Closeable {
      *            the id of the experiment
      * @return the id of the newly created experiment task.
      */
-    public int createTask(String annotatorName, String datasetName, String experimentType, String matching,
-            String experimentId);
+    int createTask(String annotatorName, String datasetName, String experimentType, String matching,
+			String experimentId);
 
     /**
      * This method updates the result of the already existing experiment task,
@@ -161,7 +161,7 @@ public interface ExperimentDAO extends Closeable {
      * @param result
      *            the result of this experiment task
      */
-    public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskResult result);
+    void setExperimentTaskResult(int experimentTaskId, ExperimentTaskStatus result);
 
     /**
      * Sets the state of the already existing experiment task, identified by the
@@ -204,33 +204,20 @@ public interface ExperimentDAO extends Closeable {
      *            the name of the experiment type
      * @param matching
      *            the name of the matching used
-     * @return a list of the latest results available in the database.
-     */
-    @Deprecated
-    public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching);
-
-    /**
-     * Returns the latest results for experiments with the given experiment type
-     * and matching type. Note that the experiment tasks of which the results
-     * are returned should be finished.
-     * 
-     * @param experimentType
-     *            the name of the experiment type
-     * @param matching
-     *            the name of the matching used
      * @param annotatorNames
      *            the names of annotators for which the data should be collected
      * @param datasetNames
      *            the names of datasets for which the data should be collected
      * @return a list of the latest results available in the database.
      */
-    public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching,
+    public List<ExperimentTaskStatus> getLatestResultsOfExperiments(String experimentType, String matching,
             String annotatorNames[], String datasetNames[]);
-
+    
     /**
      * Returns a list of all running experiment tasks.
      * 
      * @return a list of all running experiment tasks.
      */
-    public List<ExperimentTaskResult> getAllRunningExperimentTasks();
+    public List<ExperimentTaskStatus> getAllRunningExperimentTasks();
+
 }

@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.vocabs.DBO;
-
+import org.aksw.gerbil.utils.URIValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.Property;
@@ -35,6 +35,7 @@ public abstract class AbstractRDFModelBasedSameAsRetriever implements SameAsRetr
 
     protected abstract Model getModel(String uri);
 
+    
     @Override
     public Set<String> retrieveSameURIs(String uri) {
         if ((uri == null) || (uri.isEmpty())) {
@@ -67,7 +68,8 @@ public abstract class AbstractRDFModelBasedSameAsRetriever implements SameAsRetr
             NodeIterator iterator = model.listObjectsOfProperty(resource, sameAsProperty);
             while (iterator.hasNext()) {
                 foundUri = iterator.next().asResource().getURI();
-                if (!uris.contains(foundUri)) {
+                
+                if (!uris.contains(foundUri) && URIValidator.isValidURI(foundUri)) {
                     uris.add(foundUri);
                     findLinks(foundUri, uris, model);
                 }
@@ -77,7 +79,7 @@ public abstract class AbstractRDFModelBasedSameAsRetriever implements SameAsRetr
             ResIterator iterator = model.listSubjectsWithProperty(sameAsProperty, resource);
             while (iterator.hasNext()) {
                 foundUri = iterator.next().getURI();
-                if (!uris.contains(foundUri)) {
+                if (!uris.contains(foundUri)  && URIValidator.isValidURI(foundUri)) {
                     uris.add(foundUri);
                     findLinks(foundUri, uris, model);
                 }
@@ -85,6 +87,8 @@ public abstract class AbstractRDFModelBasedSameAsRetriever implements SameAsRetr
         }
     }
 
+
+    
     @Override
     public void addSameURIs(Set<String> uris) {
         Set<String> temp = new HashSet<String>();

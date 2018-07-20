@@ -13,7 +13,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>gerbil</artifactId>
-	<version>1.2.6</version>
+	<version>1.2.7</version>
 	<name>General Entity Annotator Benchmark</name>
 	<description>This project is a benchmark for entity annotation and disambiguation tools.</description>
 	<inceptionYear>2014</inceptionYear>
@@ -310,7 +310,12 @@
 		<dependency>
 			<groupId>org.aksw</groupId>
 			<artifactId>gerbil.nif.transfer</artifactId>
-			<version>1.2.6-jena3.1-SNAPSHOT</version>
+			<version>1.2.7-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.6</version>
 		</dependency>
 	</dependencies>
 

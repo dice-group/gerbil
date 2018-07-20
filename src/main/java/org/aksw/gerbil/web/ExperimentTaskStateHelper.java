@@ -20,18 +20,19 @@ import java.util.List;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ErrorTypes;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 
 public class ExperimentTaskStateHelper {
 
     private static final String TASK_RUNNING_TEXT = "The experiment is still running.";
     private static final String STATE_UNKNOWN_TEXT = "The state of this experiment is unknown.";
-
-    public static boolean taskFinished(ExperimentTaskResult result) {
+    
+    
+    public static boolean taskFinished(ExperimentTaskStatus result) {
         return result.state == ExperimentDAO.TASK_FINISHED;
     }
 
-    public static String getStateText(ExperimentTaskResult result) {
+    public static String getStateText(ExperimentTaskStatus result) {
         if (result.state == ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET) {
             return TASK_RUNNING_TEXT;
         }
@@ -43,8 +44,8 @@ public class ExperimentTaskStateHelper {
         }
     }
 
-    public static void setStatusLines(List<ExperimentTaskResult> results) {
-        for (ExperimentTaskResult result : results) {
+    public static void setStatusLines(List<ExperimentTaskStatus> results) {
+        for (ExperimentTaskStatus result : results) {
             if (!taskFinished(result)) {
                 result.stateMsg = getStateText(result);
             }

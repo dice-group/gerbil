@@ -62,8 +62,6 @@ public class RT2KBTest extends AbstractExperimentTaskTest {
 
 	}
 
-	private static final String TEXTS[] = new String[] {
-			"Albert Modiano (1912–77, born in Paris), was of Italian Jewish origin; on his paternal side he was descended from a Sephardic family of Thessaloniki, Greece. His mother, Louisa Colpijn (1918-2015), was an actress also known as Louisa Colpeyn." };
 	private static final DatasetConfiguration GOLD_STD = new NIFFileDatasetConfig("OKE_Task1",
 			"src/test/resources/OKE_Challenge/example_data/task_rtkb.ttl", false, ExperimentType.RT2KB, null, null);
 	private static final String ANNOTATOR_FILE_NAME = "src/test/resources/OKE_Challenge/example_data/task_rtkb_annotator.ttl";

@@ -18,19 +18,24 @@ package org.aksw.gerbil.database;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
+import org.aksw.gerbil.datatypes.TaskResult;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 
 public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4Debugging {
 
-    private IntObjectOpenHashMap<ExperimentTaskResult> results = new IntObjectOpenHashMap<ExperimentTaskResult>();
+    private IntObjectOpenHashMap<ExperimentTaskStatus> results = new IntObjectOpenHashMap<ExperimentTaskStatus>();
     private IntIntOpenHashMap states = new IntIntOpenHashMap();
+    public static final String[] RES_NAME_ARR = {"Micro F1 score", "Micro Precision", "Micro Recall", "Macro F1 score"
+    		, "Macro Precision", "Macro Recall"};
+    public static final String ERROR_COUNT_NAME = "Error Count";
 
     @Override
-    public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskResult result) {
+    public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskStatus result) {
         super.setExperimentTaskResult(experimentTaskId, result);
         results.put(experimentTaskId, result);
     }
@@ -41,7 +46,7 @@ public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4De
         states.put(experimentTaskId, state);
     }
 
-    public ExperimentTaskResult getTaskResult(int experimentTaskId) {
+    public ExperimentTaskStatus getTaskResult(int experimentTaskId) {
         if (results.containsKey(experimentTaskId)) {
             return results.get(experimentTaskId);
         } else {
@@ -64,21 +69,36 @@ public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4De
     }
 
     @Override
-    protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
-            String annotatorName, String datasetName) {
-        return null;
-    }
-
-    @Override
-    public List<ExperimentTaskResult> getResultsOfExperiment(String experimentId) {
-        List<ExperimentTaskResult> resultsOfExperiment = new ArrayList<ExperimentTaskResult>(
+    public List<ExperimentTaskStatus> getResultsOfExperiment(String experimentId) {
+        List<ExperimentTaskStatus> resultsOfExperiment = new ArrayList<ExperimentTaskStatus>(
                 results.size() + states.size());
+        ExperimentTaskStatus tempExTask;
         for (int i = 0; i < results.allocated.length; ++i) {
             if (results.allocated[i]) {
-                resultsOfExperiment.add((ExperimentTaskResult) ((Object[]) results.values)[i]);
+            	tempExTask = (ExperimentTaskStatus) ((Object[]) results.values)[i];
+            	setResultMap(tempExTask);
+                resultsOfExperiment.add(tempExTask);
             }
         }
+        
         return resultsOfExperiment;
+    }
+    
+    public void setResultMap(ExperimentTaskStatus result) {
+    	Map<String, TaskResult> resMap = result.getResultsMap();
+    	TaskResult tempRes;
+    	for(String dResName: RES_NAME_ARR) {
+    		//Add a default double entry
+    		if(resMap.get(dResName)==null) {
+    			tempRes = new TaskResult(0d, "DOUBLE");
+    			resMap.put(dResName, tempRes);
+    		}
+    	}
+    	
+    	if(resMap.get(ERROR_COUNT_NAME)==null) {
+    		tempRes = new TaskResult(0, "INT");
+        	resMap.put(ERROR_COUNT_NAME, tempRes);
+    	}
     }
 
 }
