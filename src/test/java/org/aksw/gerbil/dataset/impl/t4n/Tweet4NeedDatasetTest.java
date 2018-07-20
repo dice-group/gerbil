@@ -37,10 +37,15 @@ public class Tweet4NeedDatasetTest {
 	private static final String TEST_TEXT_DIR = "src/test/resources/datasets/twitterneed/";
 	private static final String DATASET_NAME = "t4nTestDataset";
 
-	private static final String EXPECTED_DOCUMENT_URI = "http://t4nTestDataset/100000000001";
-	private static final String EXPECTED_TEXT = "John Oliver is the best anchor ever. #lwn";
-	private static final Marking EXPECTED_MARKINGS[] = new Marking[] {
-			(Marking) new NamedEntity(0, 11, new HashSet<String>(Arrays.asList("http://dbpedia.org/resource/John_Oliver"))) };
+	private static final String EXPECTED_DOCUMENT_URI1 = "http://t4nTestDataset/100000000001";
+	private static final String EXPECTED_TEXT1 = "John Oliver is the best anchor ever. #lwn";
+	private static final Marking EXPECTED_MARKINGS1[] = new Marking[] { (Marking) new NamedEntity(0, 11,
+			new HashSet<String>(Arrays.asList("http://dbpedia.org/resource/John_Oliver"))) };
+
+	private static final String EXPECTED_DOCUMENT_URI2 = "http://t4nTestDataset/100000000003";
+	private static final String EXPECTED_TEXT2 = "I believe in Cristiano Ronaldo #CR7Forever";
+	private static final Marking EXPECTED_MARKINGS2[] = new Marking[] { (Marking) new NamedEntity(13, 17,
+			new HashSet<String>(Arrays.asList("http://dbpedia.org/resource/Cristiano_Ronaldo"))) };
 
 	@Test
 	public void test() throws GerbilException {
@@ -48,18 +53,24 @@ public class Tweet4NeedDatasetTest {
 		dataset.setName(DATASET_NAME);
 		dataset.init();
 		for (Document document : dataset.getInstances()) {
-			if (document.getDocumentURI().equals(EXPECTED_DOCUMENT_URI)) {
-				Assert.assertEquals(EXPECTED_TEXT, document.getText());
-
-				Set<Marking> expectedNEs = new HashSet<Marking>(Arrays.asList(EXPECTED_MARKINGS));
-				for (Marking marking : document.getMarkings()) {
-					Assert.assertTrue("Couldn't find " + marking.toString() + " inside " + expectedNEs.toString(),
-							expectedNEs.contains(marking));
-				}
-				Assert.assertEquals(expectedNEs.size(), document.getMarkings().size());
+			if (document.getDocumentURI().equals(EXPECTED_DOCUMENT_URI1)) {
+				performTest(document, EXPECTED_TEXT1, EXPECTED_MARKINGS1);
+			} else if (document.getDocumentURI().equals(EXPECTED_DOCUMENT_URI2)) {
+				performTest(document, EXPECTED_TEXT2, EXPECTED_MARKINGS2);
 			}
 		}
 		IOUtils.closeQuietly(dataset);
+	}
+
+	private void performTest(Document document, String text, Marking[] markings) {
+		Assert.assertEquals(text, document.getText());
+
+		Set<Marking> expectedNEs = new HashSet<Marking>(Arrays.asList(markings));
+		for (Marking marking : document.getMarkings()) {
+			Assert.assertTrue("Couldn't find " + marking.toString() + " inside " + expectedNEs.toString(),
+					expectedNEs.contains(marking));
+		}
+		Assert.assertEquals(expectedNEs.size(), document.getMarkings().size());
 	}
 
 	public static void main(String[] args) throws GerbilException {

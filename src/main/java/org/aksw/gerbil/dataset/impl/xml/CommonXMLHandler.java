@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.dataset.impl.generic;
+package org.aksw.gerbil.dataset.impl.xml;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,19 +26,25 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class Generic_XMLHandler extends DefaultHandler implements Generic_Result {
+/**
+ * Handler class that parses the XML Documents from a dataset into NIF Document
+ * 
+ * @author Nikit
+ *
+ */
+public class CommonXMLHandler extends DefaultHandler implements GenericResult {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(Generic_XMLHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CommonXMLHandler.class);
 	// To be provided by user
-	private XML_DS_TagDef tagDef;
+	private CommonXMLTagDef tagDef;
 	private String dsName;
 	// fetched from XML
 	private String curDocId;
 	private String curDocText;
 	private List<Document> documents;
-	protected List<Generic_NamedEntity> nes;
+	protected List<XMLNamedEntity> nes;
 	protected boolean readSw = false;
-	protected Generic_NamedEntity currentNE;
+	protected XMLNamedEntity currentNE;
 	protected StringBuilder buffer = new StringBuilder();
 
 	@Override
@@ -46,7 +52,7 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 		return this.documents;
 	}
 
-	public Generic_XMLHandler(String dsName, XML_DS_TagDef tagDef) {
+	public CommonXMLHandler(String dsName, CommonXMLTagDef tagDef) {
 		this.dsName = dsName;
 		this.tagDef = tagDef;
 		this.documents = new ArrayList<>();
@@ -62,9 +68,9 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		readSw = false;
 		if (tagDef.getMarkColLabel().equals(qName)) {
-			nes = new ArrayList<Generic_NamedEntity>();
+			nes = new ArrayList<XMLNamedEntity>();
 		} else if (tagDef.getMarkLabel().equals(qName)) {
-			currentNE = new Generic_NamedEntity();
+			currentNE = new XMLNamedEntity();
 		} else if (tagDef.getMatchCode(qName) != null) {
 			buffer.setLength(0);
 			readSw = true;
@@ -85,23 +91,23 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 		if (res == null)
 			return;
 		switch (res) {
-		case XML_DS_TagDef.DOC_LABEL_CODE: {
-			Document curDoc = Generic_Utils.createDocument(dsName, curDocId, curDocText, nes);
+		case CommonXMLTagDef.DOC_LABEL_CODE: {
+			Document curDoc = XMLDataUtil.createDocument(dsName, curDocId, curDocText, nes);
 			// Add document to list and reset values
 			documents.add(curDoc);
 			curDocId = null;
 			curDocText = null;
 			break;
 		}
-		case XML_DS_TagDef.ID_LABEL_CODE: {
+		case CommonXMLTagDef.ID_LABEL_CODE: {
 			curDocId = buffer.toString().trim();
 			break;
 		}
-		case XML_DS_TagDef.TEXT_LABEL_CODE: {
+		case CommonXMLTagDef.TEXT_LABEL_CODE: {
 			curDocText = buffer.toString().trim();
 			break;
 		}
-		case XML_DS_TagDef.MARK_LABEL_CODE: {
+		case CommonXMLTagDef.MARK_LABEL_CODE: {
 			if (currentNE.isComplete()) {
 				nes.add(currentNE);
 			} else {
@@ -110,7 +116,7 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 			currentNE = null;
 			break;
 		}
-		case XML_DS_TagDef.ENT_NM_LABEL_CODE: {
+		case CommonXMLTagDef.ENT_NM_LABEL_CODE: {
 			if (currentNE != null) {
 				currentNE.setSurfaceForm(buffer.toString().trim());
 				currentNE.setLength(currentNE.getSurfaceForm().length());
@@ -120,7 +126,7 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 			}
 			break;
 		}
-		case XML_DS_TagDef.STRT_LABEL_CODE: {
+		case CommonXMLTagDef.STRT_LABEL_CODE: {
 			if (currentNE != null) {
 				try {
 					int offset = Integer.parseInt(buffer.toString().trim());
@@ -134,7 +140,7 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 			}
 			break;
 		}
-		case XML_DS_TagDef.LEN_LABEL_CODE: {
+		case CommonXMLTagDef.LEN_LABEL_CODE: {
 			if (currentNE != null) {
 				try {
 					int length = Integer.parseInt(buffer.toString().trim());
@@ -148,7 +154,7 @@ public class Generic_XMLHandler extends DefaultHandler implements Generic_Result
 			}
 			break;
 		}
-		case XML_DS_TagDef.ENT_URI_LABEL_CODE: {
+		case CommonXMLTagDef.ENT_URI_LABEL_CODE: {
 			if (currentNE != null) {
 				currentNE.addUri(buffer.toString().trim());
 			} else {

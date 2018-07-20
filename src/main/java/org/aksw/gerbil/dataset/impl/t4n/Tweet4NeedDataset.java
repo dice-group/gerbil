@@ -16,15 +16,21 @@
  */
 package org.aksw.gerbil.dataset.impl.t4n;
 
-import org.aksw.gerbil.dataset.impl.generic.GenericDataset;
-import org.aksw.gerbil.dataset.impl.generic.XML_DS_TagDef;
+import org.aksw.gerbil.dataset.impl.xml.GenericXMLDataset;
+import org.aksw.gerbil.dataset.impl.xml.CommonXMLTagDef;
 import org.aksw.gerbil.exceptions.GerbilException;
 
-public class Tweet4NeedDataset extends GenericDataset {
+/**
+ * Dataset Adapter for TwitterNEED
+ * 
+ * @author Nikit
+ *
+ */
+public class Tweet4NeedDataset extends GenericXMLDataset {
 	private static final String dsName = "tweet4need";
-	private static final XML_DS_TagDef TAG_DEF;
+	private static final CommonXMLTagDef TAG_DEF;
 	static {
-		TAG_DEF = new XML_DS_TagDef("Tweet", "TweetText", "TweetId", "Mentions", "Mention", "StartIndx", null, "Text",
+		TAG_DEF = new CommonXMLTagDef("Tweet", "TweetText", "TweetId", "Mentions", "Mention", "StartIndx", null, "Text",
 				"Entity");
 	}
 

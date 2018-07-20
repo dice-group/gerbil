@@ -26,5 +26,17 @@
 </Mention>
 </Mentions>
 </Tweet>
+<Tweet>
+<TweetId>100000000003</TweetId>
+<TweetText>I believe in Cristiano Ronaldo #CR7Forever</TweetText>
+<TweetGroup>0</TweetGroup>
+<Mentions>
+<Mention>
+<Text>Cristiano Ronaldo</Text>
+<StartIndx>13</StartIndx>
+<Entity>http://dbpedia.org/resource/Cristiano_Ronaldo</Entity>
+</Mention>
+</Mentions>
+</Tweet>
 </Tweets>
 </TweetsCollection>

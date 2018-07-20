@@ -1,4 +1,4 @@
-package org.aksw.gerbil.dataset.impl.generic;
+package org.aksw.gerbil.dataset.impl.xml;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,21 +14,33 @@ import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Generic_Utils {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Generic_Utils.class);
+/**
+ * Container class for the Util methods used in XML Dataset parsing
+ * 
+ * @author Nikit
+ *
+ */
+public class XMLDataUtil {
+	private static final Logger LOGGER = LoggerFactory.getLogger(XMLDataUtil.class);
+
 	/**
 	 * Method to create a Document by making use of the params
-	 * @param dsName - dataset name
-	 * @param fileName - file name
-	 * @param text - content of the file
-	 * @param nes - named entity markings
+	 * 
+	 * @param dsName
+	 *            - dataset name
+	 * @param fileName
+	 *            - file name
+	 * @param text
+	 *            - content of the file
+	 * @param nes
+	 *            - named entity markings
 	 * @return - Generated Document
 	 */
-	public static Document createDocument(String dsName, String fileName, String text, List<Generic_NamedEntity> nes) {
+	public static Document createDocument(String dsName, String fileName, String text, List<XMLNamedEntity> nes) {
 		String documentUri = generateDocumentUri(dsName, fileName);
 		List<Marking> markings = new ArrayList<Marking>(nes.size());
 		String retrievedSurfaceForm;
-		for (Generic_NamedEntity ne : nes) {
+		for (XMLNamedEntity ne : nes) {
 			retrievedSurfaceForm = text.substring(ne.getStartPosition(), ne.getStartPosition() + ne.getLength());
 			if (!retrievedSurfaceForm.equals(ne.getSurfaceForm())) {
 				LOGGER.warn("In document " + documentUri + ", the expected surface form of the named entity " + ne
@@ -51,7 +63,7 @@ public class Generic_Utils {
 	public static void mergeSubNamedEntity(Document document) {
 		List<NamedEntity> spanList = document.getMarkings(NamedEntity.class);
 		NamedEntity nes[] = spanList.toArray(new NamedEntity[spanList.size()]);
-		Arrays.sort(nes, new SpanComparator());
+		Arrays.sort(nes, new LengthBasedSpanComparator());
 		Set<Marking> markingsToRemove = new HashSet<Marking>();
 		boolean uriOverlapping;
 		Iterator<String> uriIterator;
@@ -78,10 +90,14 @@ public class Generic_Utils {
 		}
 		document.getMarkings().removeAll(markingsToRemove);
 	}
+
 	/**
 	 * Method to generate a URI making use of dataset name and the file name
-	 * @param dsName - name of the dataset
-	 * @param fileName - name of the file
+	 * 
+	 * @param dsName
+	 *            - name of the dataset
+	 * @param fileName
+	 *            - name of the file
 	 * @return - Generated document URI
 	 */
 	public static String generateDocumentUri(String dsName, String fileName) {

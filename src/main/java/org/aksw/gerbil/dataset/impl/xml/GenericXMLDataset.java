@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.dataset.impl.generic;
+package org.aksw.gerbil.dataset.impl.xml;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,16 +26,20 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 
-public class GenericDataset extends AbstractDataset implements InitializableDataset {
-
-	// private static final Logger LOGGER =
-	// LoggerFactory.getLogger(GenericDataset.class);
+/**
+ * Class to help parse all the XML files in a provided directory into NIF
+ * documents
+ * 
+ * @author Nikit
+ *
+ */
+public class GenericXMLDataset extends AbstractDataset implements InitializableDataset {
 
 	protected List<Document> documents;
 	protected String textsDirectory;
-	protected XML_DS_TagDef tagDef;
+	protected CommonXMLTagDef tagDef;
 
-	public GenericDataset(String textsDirectory, String dsName, XML_DS_TagDef tagDef) throws GerbilException {
+	public GenericXMLDataset(String textsDirectory, String dsName, CommonXMLTagDef tagDef) throws GerbilException {
 		this.textsDirectory = textsDirectory;
 		this.name = dsName;
 		this.tagDef = tagDef;
@@ -62,8 +66,8 @@ public class GenericDataset extends AbstractDataset implements InitializableData
 					"The given text directory (" + textDir.getAbsolutePath() + ") is not existing or not a directory.",
 					ErrorTypes.DATASET_LOADING_ERROR);
 		}
-		Generic_XMLParser parser = new Generic_XMLParser();
-		Generic_Result parsedResult;
+		CommonXMLParser parser = new CommonXMLParser();
+		GenericResult parsedResult;
 		List<Document> documents = new ArrayList<Document>();
 		for (File dsFile : textDir.listFiles()) {
 			// parse the annotation file

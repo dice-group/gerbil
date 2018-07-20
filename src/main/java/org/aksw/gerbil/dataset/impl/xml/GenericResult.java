@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.dataset.impl.generic;
+package org.aksw.gerbil.dataset.impl.xml;
 
 import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.Document;
 
-public interface Generic_Result {
+public interface GenericResult {
 
     public List<Document> getDocuments();
     
