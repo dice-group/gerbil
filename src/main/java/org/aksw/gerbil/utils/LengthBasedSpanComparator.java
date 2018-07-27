@@ -1,4 +1,4 @@
-package org.aksw.gerbil.dataset.impl.xml;
+package org.aksw.gerbil.utils;
 
 import java.util.Comparator;
 

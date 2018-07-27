@@ -16,14 +16,16 @@
  */
 package org.aksw.gerbil.dataset.impl.t4n;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.aksw.gerbil.dataset.impl.xml.XMLDataUtil;
+import org.aksw.gerbil.dataset.impl.xml.XMLNamedEntity;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,49 +33,86 @@ import org.junit.Test;
 public class Tweet4NeedDatasetTest {
 
 	/*
-	 * The test file cotains two special cases. One marking with the URI "*null*"
+	 * The test file contains two special cases. One marking with the URI "*null*"
 	 * and two markings that are overlapping.
 	 */
 	private static final String TEST_TEXT_DIR = "src/test/resources/datasets/twitterneed/";
 	private static final String DATASET_NAME = "t4nTestDataset";
 
-	private static final String EXPECTED_DOCUMENT_URI1 = "http://t4nTestDataset/100000000001";
-	private static final String EXPECTED_TEXT1 = "John Oliver is the best anchor ever. #lwn";
-	private static final Marking EXPECTED_MARKINGS1[] = new Marking[] { (Marking) new NamedEntity(0, 11,
-			new HashSet<String>(Arrays.asList("http://dbpedia.org/resource/John_Oliver"))) };
+	private static final String EXPCTD_DOC1_ID = "100000000001";
+	private static final String EXPCTD_DOC1_TEXT = "John Oliver is the best anchor ever. #lwn";
+	private static final String EXPCTD_DOC1_ENTITY1_URI = "http://dbpedia.org/resource/John_Oliver";
+	private static final Integer EXPCTD_DOC1_ENTITY1_STARTPOS = 0;
+	private static final Integer EXPCTD_DOC1_ENTITY1_LEN = 11;
 
-	private static final String EXPECTED_DOCUMENT_URI2 = "http://t4nTestDataset/100000000003";
-	private static final String EXPECTED_TEXT2 = "I believe in Cristiano Ronaldo #CR7Forever";
-	private static final Marking EXPECTED_MARKINGS2[] = new Marking[] { (Marking) new NamedEntity(13, 17,
-			new HashSet<String>(Arrays.asList("http://dbpedia.org/resource/Cristiano_Ronaldo"))) };
+	private static final String EXPCTD_DOC2_ID = "100000000002";
+	private static final String EXPCTD_DOC2_TEXT = "Gerbil is the best tool ever. #qabenchmarking";
+	private static final String EXPCTD_DOC2_ENTITY1_URI = "http://dbpedia.org/resource/Gerbil";
+	private static final Integer EXPCTD_DOC2_ENTITY1_STARTPOS = 0;
+	private static final Integer EXPCTD_DOC2_ENTITY1_LEN = 6;
+
+	private static final String EXPCTD_DOC3_ID = "100000000003";
+	private static final String EXPCTD_DOC3_TEXT = "I believe in Cristiano Ronaldo #CR7Forever";
+	private static final String EXPCTD_DOC3_ENTITY1_URI = "http://dbpedia.org/resource/Cristiano_Ronaldo";
+	private static final Integer EXPCTD_DOC3_ENTITY1_STARTPOS = 13;
+	private static final Integer EXPCTD_DOC3_ENTITY1_LEN = 17;
+
+	private static final Map<String, Document> DOC_MAP = new HashMap<>();
+	static {
+		// Generate Documents
+		// Doc1
+		Document doc = createTestDocument(DATASET_NAME, EXPCTD_DOC1_ID, EXPCTD_DOC1_TEXT, EXPCTD_DOC1_ENTITY1_URI,
+				EXPCTD_DOC1_ENTITY1_STARTPOS, EXPCTD_DOC1_ENTITY1_LEN);
+		DOC_MAP.put(doc.getDocumentURI(), doc);
+		// Doc2
+		doc = createTestDocument(DATASET_NAME, EXPCTD_DOC2_ID, EXPCTD_DOC2_TEXT, EXPCTD_DOC2_ENTITY1_URI,
+				EXPCTD_DOC2_ENTITY1_STARTPOS, EXPCTD_DOC2_ENTITY1_LEN);
+		DOC_MAP.put(doc.getDocumentURI(), doc);
+		// Doc3
+		doc = createTestDocument(DATASET_NAME, EXPCTD_DOC3_ID, EXPCTD_DOC3_TEXT, EXPCTD_DOC3_ENTITY1_URI,
+				EXPCTD_DOC3_ENTITY1_STARTPOS, EXPCTD_DOC3_ENTITY1_LEN);
+		DOC_MAP.put(doc.getDocumentURI(), doc);
+	}
+
+	public static Document createTestDocument(String dsName, String docId, String docText, String entityUri,
+			Integer startPos, Integer length) {
+		XMLNamedEntity entity = new XMLNamedEntity();
+		entity.addUri(entityUri);
+		entity.setStartPosition(startPos);
+		entity.setLength(length);
+		List<XMLNamedEntity> entityList = new ArrayList<>();
+		entityList.add(entity);
+		Document doc1 = XMLDataUtil.createDocument(dsName, docId, docText, entityList);
+		return doc1;
+	}
 
 	@Test
 	public void test() throws GerbilException {
 		Tweet4NeedDataset dataset = new Tweet4NeedDataset(TEST_TEXT_DIR);
 		dataset.setName(DATASET_NAME);
 		dataset.init();
-		boolean testPassed = true;
+		// clone docmap
+		Map<String, Document> docMap = new HashMap<>(DOC_MAP);
+		Document expectedDoc;
 		for (Document document : dataset.getInstances()) {
-			if (document.getDocumentURI().equals(EXPECTED_DOCUMENT_URI1)) {
-				testPassed = performTest(document, EXPECTED_TEXT1, EXPECTED_MARKINGS1);
-			} else if (document.getDocumentURI().equals(EXPECTED_DOCUMENT_URI2)) {
-				testPassed = performTest(document, EXPECTED_TEXT2, EXPECTED_MARKINGS2);
+			expectedDoc = docMap.remove(document.getDocumentURI());
+			if (expectedDoc != null) {
+				performTest(document, expectedDoc);
 			}
-			Assert.assertTrue(testPassed);
 		}
+		Assert.assertEquals(0, docMap.size());
 		IOUtils.closeQuietly(dataset);
 	}
 
-	private boolean performTest(Document document, String text, Marking[] markings) {
-		Assert.assertEquals(text, document.getText());
+	private void performTest(Document doc1, Document doc2) {
+		Assert.assertEquals(doc2.getText(), doc1.getText());
 
-		Set<Marking> expectedNEs = new HashSet<Marking>(Arrays.asList(markings));
-		for (Marking marking : document.getMarkings()) {
+		List<Marking> expectedNEs = doc2.getMarkings();
+		for (Marking marking : doc1.getMarkings()) {
 			Assert.assertTrue("Couldn't find " + marking.toString() + " inside " + expectedNEs.toString(),
 					expectedNEs.contains(marking));
 		}
-		Assert.assertEquals(expectedNEs.size(), document.getMarkings().size());
-		return true;
+		Assert.assertEquals(expectedNEs.size(), doc1.getMarkings().size());
 	}
 
 	public static void main(String[] args) throws GerbilException {

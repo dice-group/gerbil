@@ -11,6 +11,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.aksw.gerbil.utils.LengthBasedSpanComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

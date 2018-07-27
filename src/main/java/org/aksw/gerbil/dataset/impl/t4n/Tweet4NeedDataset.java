@@ -28,11 +28,8 @@ import org.aksw.gerbil.exceptions.GerbilException;
  */
 public class Tweet4NeedDataset extends GenericXMLDataset {
 	private static final String dsName = "tweet4need";
-	private static final CommonXMLTagDef TAG_DEF;
-	static {
-		TAG_DEF = new CommonXMLTagDef("Tweet", "TweetText", "TweetId", "Mentions", "Mention", "StartIndx", null, "Text",
-				"Entity");
-	}
+	private static final CommonXMLTagDef TAG_DEF = new CommonXMLTagDef("Tweet", "TweetText", "TweetId", "Mentions",
+			"Mention", "StartIndx", null, "Text", "Entity");
 
 	public Tweet4NeedDataset(String datasetDir) throws GerbilException {
 		super(datasetDir, dsName, TAG_DEF);
