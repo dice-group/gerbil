@@ -190,11 +190,12 @@ public enum ExperimentType implements Describable {
             case A2KB:
             case D2KB:
             case ERec:
-            case RE: {
-            	return false;
-            }
+            case RE:
             case KE: {
             	return false;
+            }
+            case OKE2018Task4: {
+                return false;
             }
             case Sa2KB:
             case Sc2KB:
@@ -218,7 +219,12 @@ public enum ExperimentType implements Describable {
             case ETyping:
             case RT2KB:
             case RE:
-            case KE:
+            case KE: {
+            	return false;
+            }
+            case OKE2018Task4: {
+                return false;
+            }
             case OKE_Task1:
             case OKE_Task2: {
                 return false;
@@ -240,7 +246,12 @@ public enum ExperimentType implements Describable {
             case RT2KB:
             case ETyping:
             case RE:
-            case KE:
+            case KE: {
+            	return false;
+            }
+            case OKE2018Task4: {
+                return false;
+            }
             case OKE_Task1:
             case OKE_Task2: {
                 return false;
@@ -261,7 +272,12 @@ public enum ExperimentType implements Describable {
             case RE: {
                 return false;
             }
-            case KE:
+            case KE: {
+            	return false;
+            }
+            case OKE2018Task4: {
+                return false;
+            }
             case C2KB: // falls through
             case A2KB:
             case D2KB:
@@ -305,6 +321,7 @@ public enum ExperimentType implements Describable {
         case OKE2018Task4:{
         	switch(type) {
         	case RE:
+        	case KE:
         	case OKE2018Task4:
         	case ERec:
         		return true;
@@ -323,7 +340,8 @@ public enum ExperimentType implements Describable {
                 return false;
             }
             case RE:
-            case KE: 
+            case KE:
+            case OKE2018Task4:
             case Sa2KB:
             case Sc2KB:
             case Rc2KB:
