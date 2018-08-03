@@ -262,8 +262,8 @@ public class EvaluatorFactory {
                     ExperimentType.A2KB, subTaskConfig, dataset, classifier, inferencer), Meaning.class));
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
-            evaluators.add(new ClassSubTaskEvaluator<Meaning>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
-                    ExperimentType.ETyping, subTaskConfig, dataset, okeClassifierTask1, inferencer), Meaning.class));
+            evaluators.add(new ClassSubTaskEvaluator<TypedNamedEntity>(subTaskConfig, (Evaluator<TypedNamedEntity>) createEvaluator(
+                    ExperimentType.ETyping, subTaskConfig, dataset, okeClassifierTask1, inferencer), TypedNamedEntity.class));
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.RE, Matching.STRONG_ENTITY_MATCH);
             evaluators.add(new ClassSubTaskEvaluator<>(subTaskConfig, (Evaluator<Marking>) createEvaluator(
