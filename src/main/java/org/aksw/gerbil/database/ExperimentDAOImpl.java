@@ -65,8 +65,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
     private final static String SHUTDOWN = "SHUTDOWN";
 
-    private final static String GET_ADDITIONAL_RESULTS = "SELECT resultId, value FROM ExperimentTasks_AdditionalResults WHERE taskId=:taskId";
-    private final static String INSERT_ADDITIONAL_RESULT = "INSERT INTO ExperimentTasks_AdditionalResults(taskId, resultId, value) VALUES (:taskId, :resultId, :value)";
+    private final static String GET_ADDITIONAL_RESULTS = "SELECT resultId, value FROM ExperimentResultsDouble WHERE taskId=:taskId UNION SELECT resultId, value FROM ExperimentResultsInt WHERE taskId=:taskId";
+    private final static String INSERT_RESULT_DOUBLE = "INSERT INTO ExperimentResultsDouble(taskId, resultId, value) VALUES (:taskId, :resultId, :value)";
+    private final static String INSERT_RESULT_INT = "INSERT INTO ExperimentResultsInt(taskId, resultId, value) VALUES (:taskId, :resultId, :value)";
     private final static String GET_SUB_TASK_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, subTaskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
     private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
 
@@ -172,10 +173,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         this.template.update(SET_EXPERIMENT_TASK_RESULT, parameters);
         if (result.hasAdditionalResults()) {
             for (int i = 0; i < result.additionalResults.allocated.length; ++i) {
-                if ((result.additionalResults.allocated[i]) && (result.additionalResults.keys[i] >= 6)) {
-                    addAdditionaResult(experimentTaskId, result.additionalResults.keys[i],
-                            result.additionalResults.values[i]);
-                }
+                if ((result.additionalResults.allocated[i]) && (result.additionalResults.keys[i] >= 0)) {
+                    addAdditionalResult(experimentTaskId, result.additionalResults.keys[i], result.additionalResults.values[i]);          
+               }
             }
         }
         if (result.hasSubTasks()) {
@@ -185,12 +185,20 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         }
     }
 
-    protected void addAdditionaResult(int taskId, int resultId, double value) {
+    protected void addAdditionalResult(int taskId, int resultId, double value) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("taskId", taskId);
         parameters.addValue("resultId", resultId);
         parameters.addValue("value", value);
-        this.template.update(INSERT_ADDITIONAL_RESULT, parameters);
+        this.template.update(INSERT_RESULT_DOUBLE, parameters);
+    }
+    
+    protected void addAdditionalResult(int taskId, int resultId, int value) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", taskId);
+        parameters.addValue("resultId", resultId);
+        parameters.addValue("value", value);
+        this.template.update(INSERT_RESULT_INT, parameters);
     }
 
     @Override

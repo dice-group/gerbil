@@ -310,8 +310,15 @@ public class ExperimentTaskResult {
             return 0;
         }
     }
-
+    
     public void addAdditionalResult(int resultId, double value) {
+        if (additionalResults == null) {
+            additionalResults = new IntDoubleOpenHashMap();
+        }
+        additionalResults.put(resultId, value);
+    }
+    
+    public void addAdditionalResult(int resultId, int value) {
         if (additionalResults == null) {
             additionalResults = new IntDoubleOpenHashMap();
         }
