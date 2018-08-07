@@ -190,13 +190,6 @@ public enum ExperimentType implements Describable {
             case A2KB:
             case D2KB:
             case ERec:
-            case RE:
-            case KE: {
-            	return false;
-            }
-            case OKE2018Task4: {
-                return false;
-            }
             case Sa2KB:
             case Sc2KB:
             case Rc2KB: {
@@ -205,9 +198,14 @@ public enum ExperimentType implements Describable {
             case ETyping: // falls through
             case RT2KB:
             case OKE_Task1:
-            case OKE_Task2: {
-                return false;
+            case OKE_Task2:
+            case RE:	
+            case OKE2018Task4:
+            case KE:	
+            {               
+            	return false;
             }
+
             }
         }
         case Sc2KB: {
@@ -219,12 +217,8 @@ public enum ExperimentType implements Describable {
             case ETyping:
             case RT2KB:
             case RE:
-            case KE: {
-            	return false;
-            }
-            case OKE2018Task4: {
-                return false;
-            }
+            case KE:
+            case OKE2018Task4: 
             case OKE_Task1:
             case OKE_Task2: {
                 return false;
@@ -246,12 +240,8 @@ public enum ExperimentType implements Describable {
             case RT2KB:
             case ETyping:
             case RE:
-            case KE: {
-            	return false;
-            }
-            case OKE2018Task4: {
-                return false;
-            }
+            case KE:
+            case OKE2018Task4:
             case OKE_Task1:
             case OKE_Task2: {
                 return false;
@@ -270,12 +260,8 @@ public enum ExperimentType implements Describable {
                 return true;
             }
             case RE:
-            case KE: {
-            	return false;
-            }
-            case OKE2018Task4: {
-                return false;
-            }
+            case KE: 
+            case OKE2018Task4:
             case C2KB: // falls through
             case A2KB:
             case D2KB:
@@ -302,9 +288,9 @@ public enum ExperimentType implements Describable {
         }
         case OKE_Task1: {
             switch (type) {
-            case OKE_Task2: {
-                return false;
-            }
+            case OKE_Task2:
+            case RE:
+            case OKE2018Task4:	
             case KE: {
                 return false;
             }
@@ -321,13 +307,27 @@ public enum ExperimentType implements Describable {
         }
         case OKE2018Task4:{
         	switch(type) {
-            case OKE2018Task4:
+        	case OKE2018Task4:
         	case RE:
-        	case KE:
         	case ERec:
+        	case C2KB: // falls through
+        	case A2KB:
+            case D2KB:
+            case Sa2KB:
+            case Sc2KB:
+            case Rc2KB: {
         		return true;
-        	}
-        }	
+            }
+            case ETyping: // falls through
+            case OKE_Task1:
+            case OKE_Task2:
+            case RT2KB:
+        	case KE:
+        	{
+                return false;
+            }
+        }
+        }		
         case KE:{
             switch (type) {
             case OKE_Task2: {
@@ -338,6 +338,7 @@ public enum ExperimentType implements Describable {
             }
             }
         }
+
         }
         return false;
     }
