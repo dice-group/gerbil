@@ -137,7 +137,7 @@ public static Collection<Object[]> data() {
 		ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
 				new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.KE),
 				new TestDataset(Arrays.asList(goldStandards), ExperimentType.KE), ExperimentType.KE, matching);
-		runTest(experimentTaskId, experimentDAO, new HTTPBasedSameAsRetriever(), new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
+		runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
 				new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
 	}
 
