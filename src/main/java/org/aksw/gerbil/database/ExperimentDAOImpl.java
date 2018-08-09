@@ -52,8 +52,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String SET_EXPERIMENT_TASK_RESULT = "UPDATE ExperimentTasks SET microF1=:microF1 , microPrecision=:microPrecision, microRecall=:microRecall, macroF1=:macroF1, macroPrecision=:macroPrecision, macroRecall=:macroRecall, errorCount=:errorCount, lastChanged=:lastChanged WHERE id=:id";
     private final static String CONNECT_TASK_EXPERIMENT = "INSERT INTO Experiments (id, taskId) VALUES(:id, :taskId)";
     private final static String GET_TASK_STATE = "SELECT state FROM ExperimentTasks WHERE id=:id";
-    private final static String GET_EXPERIMENT_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, taskId FROM ExperimentTasks t, Experiments e WHERE e.id=:id AND e.taskId=t.id";
-    private final static String GET_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, id FROM ExperimentTasks t WHERE id=:id";
+    private final static String GET_EXPERIMENT_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, version, taskId FROM ExperimentTasks t, Experiments e WHERE e.id=:id AND e.taskId=t.id";
+    private final static String GET_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, version, id FROM ExperimentTasks t WHERE id=:id";
     private final static String GET_CACHED_TASK = "SELECT id FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND lastChanged>:lastChanged AND state>:errorState ORDER BY lastChanged DESC LIMIT 1";
     private final static String GET_HIGHEST_EXPERIMENT_ID = "SELECT id FROM Experiments ORDER BY id DESC LIMIT 1";
     private final static String SET_UNFINISHED_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE state=:unfinishedState";
@@ -62,7 +62,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     @Deprecated
     private final static String GET_LATEST_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE annotatorName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState ORDER BY lastChanged DESC LIMIT 1";
     private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT tasks.annotatorName, tasks.datasetName, tasks.experimentType, tasks.matching, tasks.microF1, tasks.microPrecision, tasks.microRecall, tasks.macroF1, tasks.macroPrecision, tasks.macroRecall, tasks.state, tasks.errorCount, tasks.lastChanged, tasks.id FROM ExperimentTasks tasks, (SELECT datasetName, annotatorName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState AND annotatorName IN (:annotatorNames) AND datasetName IN (:datasetNames) GROUP BY datasetName, annotatorName) pairs WHERE tasks.annotatorName=pairs.annotatorName AND tasks.datasetName=pairs.datasetName AND tasks.experimentType=:experimentType AND tasks.matching=:matching AND tasks.lastChanged=pairs.lastChanged";
-    private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
+    private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, version FROM ExperimentTasks WHERE state=:unfinishedState";
     private final static String SHUTDOWN = "SHUTDOWN";
 
     private final static String GET_ADDITIONAL_RESULTS = "SELECT resultId, value FROM ExperimentTasks_AdditionalResults WHERE taskId=:taskId";
@@ -70,10 +70,6 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_SUB_TASK_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching, microF1, microPrecision, microRecall, macroF1, macroPrecision, macroRecall, state, errorCount, lastChanged, subTaskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
     private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
 
-    
-    // FIXME remove the following two statements by removing the experiment task
-    // version workaround
-    private final static String GET_VERSION_OF_EXPERIMENT_TASK = "SELECT version FROM ExperimentTasks WHERE id=:id";
 
     private final NamedParameterJdbcTemplate template;
 
@@ -94,29 +90,15 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         
         List<ExperimentTaskResult> result = this.template.query(GET_EXPERIMENT_RESULTS, parameters,
                 new ExperimentTaskResultRowMapper());
-        // FIXME remove this ugly workaround regarding the version of an
-        // experiment task
+        
         for (ExperimentTaskResult e : result) {
-            getVersion(e);
             addAdditionalResults(e);
             addSubTasks(e);
         }
         return result;
     }
 
-    // FIXME remove this method and implement a better version handling
-    private void getVersion(ExperimentTaskResult result) {
-    	 MapSqlParameterSource parameters = new MapSqlParameterSource();
-         parameters.addValue("id", result.idInDb);
-         List<String> queryResult = this.template.query(GET_VERSION_OF_EXPERIMENT_TASK, parameters, new StringRowMapper());
-         if (queryResult.size() > 0) {
-        	 result.gerbilVersion =  queryResult.get(0);
-         } else {
-             result.gerbilVersion = "1.0.0";
-         }    	 
-         
-    }
-
+   
     @Override
     public int createTask(String annotatorName, String datasetName, String experimentType, String matching,
             String experimentId) {
@@ -365,9 +347,6 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
             return null;
         }
         ExperimentTaskResult result = results.get(0);
-        // FIXME remove this ugly workaround regarding the version of an
-        // experiment task
-        getVersion(result);
         addAdditionalResults(result);
         addSubTasks(result);
         return result;
