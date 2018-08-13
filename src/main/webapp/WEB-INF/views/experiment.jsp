@@ -46,7 +46,11 @@
 	<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script
 		src="/gerbil/webjars/tablesorter/2.15.5/js/jquery.tablesorter.js"></script>
-
+		
+	<script type="application/ld+json">
+	${dataid}
+	</script>
+	
 	<%@include file="navbar.jsp"%>
 	<h1>GERBIL Experiment</h1>
 	<c:if test="${not empty tasks}">
@@ -58,18 +62,18 @@
 			</c:if>
 		</c:forEach>
 		<c:choose>
-			<c:when test="${workers<currentExperimentID && currentState!=0}">
-				<span styleClass="gerbil-experiment-warn"> Experiments could take a while <br> <c:out
-						value="${currentExperimentID} Experiments before yours on ${workers} Worker" />
+			<c:when test="${isRunning && precedingTaskCount > workers}">
+				<span class="gerbil-experiment-warn"> Experiments could take a while <br> <c:out
+						value="There are ${precedingTaskCount} other tasks pending before your latest task on ${workers} Worker(s)." />
 				</span>
 			</c:when>
-			<c:when test="${currentState}==0">
-    			Your Experiments finished			
+			<c:when test="${!isRunning}">
+    			Your Experiments are completed			
     		</c:when>
 			<c:otherwise>
 			</c:otherwise>
 		</c:choose>
-
+		<br>
 		<br>
 	Experiment URI: <span id="experimentUri"></span>
 		<br>
@@ -142,8 +146,8 @@
 								<td></td>
 							</c:if>
 							<td colspan="${fn:escapeXml(resultNames.size())}"
-								styleClass="gerbil-center-align"><c:out value="${task.stateMsg}" /></td>
-							<td><c:out value="${task.timestampstring}}" /></td>
+								class="gerbil-center-align"><c:out value="${task.stateMsg}" /></td>
+							<td><c:out value="${task.timestampstring}" /></td>
 							<td><c:out value="${task.version}" /></td>
 						</tr>
 					</c:if>

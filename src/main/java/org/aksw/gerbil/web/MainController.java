@@ -191,30 +191,29 @@ public class MainController {
         LOGGER.debug("Got request on /experiment with id={}", id);
         dataIdGenerator = new DataIDGenerator(getURLBase(request));
         List<ExperimentTaskStatus> results = dao.getResultsOfExperiment(id);
+        
         ExperimentTaskStateHelper.setStatusLines(results);
         ModelAndView model = new ModelAndView();
         model.setViewName("experiment");
         model.addObject("tasks", results);
-        int currentExperimentID=-1;
-        int currentState = 0;
+        int precedingTaskCount=0;
         
         // Initializing set of resNames from DB
         Set<String> resNamesDb = new HashSet<>();
-        List<ExperimentTaskStatus> tasks = dao.getAllRunningExperimentTasks();
-        boolean curStateNtAcqrd = true;
+        
+        //List<ExperimentTaskStatus> tasks = dao.getAllRunningExperimentTasks();
+        boolean isRunning = false;
         for(ExperimentTaskStatus r : results){
         	resNamesDb.addAll(r.resultsMap.keySet());
-        	if(curStateNtAcqrd) {
-	        	if(r.state==0){
-	        		continue;
-	        	}
-	        	if(tasks.contains(r)){
-	        		currentState = r.state;
-	        		currentExperimentID = tasks.indexOf(r);
-	        		curStateNtAcqrd = false;
-	        		//break;
-	        	}
+        	if(!isRunning && r.state==ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET) {
+	        		isRunning = true;
         	}
+        }
+        if(isRunning) {
+        	// Fetch the Id of the last record
+        	int lastTaskId = results.get(results.size()-1).idInDb;
+    		// Fetch the total number of running tasks before the last record of current experiment
+        	precedingTaskCount = dao.countPrecedingRunningTasks(lastTaskId);
         }
         // Fetch Result Name sequence from property file
         String[] resNamesDlmtd = GerbilConfiguration.getInstance()
@@ -229,9 +228,11 @@ public class MainController {
         }
         fnlRsltNms.addAll(resNamesDb);
         model.addObject("resultNames",fnlRsltNms);
-        model.addObject("currentState", currentState);
-        model.addObject("currentExperimentID", currentExperimentID);
+        model.addObject("isRunning", isRunning);
+        // Number of Preceding running experiment tasks
+        model.addObject("precedingTaskCount",precedingTaskCount);
         model.addObject("workers", RootConfig.getNoOfWorkers());
+        model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
         return model;
     }
 
