@@ -161,13 +161,13 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", experimentTaskId);
-        parameters.addValue("microF1", result.getMicroF1Measure());
+        /*parameters.addValue("microF1", result.getMicroF1Measure());
         parameters.addValue("microPrecision", result.getMicroPrecision());
         parameters.addValue("microRecall", result.getMicroRecall());
         parameters.addValue("macroF1", result.getMacroF1Measure());
         parameters.addValue("macroPrecision", result.getMacroPrecision());
         parameters.addValue("macroRecall", result.getMacroRecall());
-        parameters.addValue("errorCount", result.getErrorCount());
+        parameters.addValue("errorCount", result.getErrorCount());*/
         parameters.addValue("lastChanged", new java.sql.Timestamp(result.timestamp));
 
         this.template.update(SET_EXPERIMENT_TASK_RESULT, parameters);

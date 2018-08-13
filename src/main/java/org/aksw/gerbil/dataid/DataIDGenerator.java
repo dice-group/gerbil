@@ -174,7 +174,7 @@ public class DataIDGenerator {
         // If this task has been finished
         if (ExperimentTaskStateHelper.taskFinished(result)) {
             // creating and setting literals for the current experiment
-            model.add(experimentTask, GERBIL.microF1,
+           /* model.add(experimentTask, GERBIL.microF1,
                     model.createTypedLiteral(String.valueOf(result.getMicroF1Measure()), XSDDatatype.XSDdecimal));
             model.add(experimentTask, GERBIL.microPrecision,
                     model.createTypedLiteral(String.valueOf(result.getMicroPrecision()), XSDDatatype.XSDdecimal));
@@ -186,7 +186,7 @@ public class DataIDGenerator {
                     model.createTypedLiteral(String.valueOf(result.getMacroPrecision()), XSDDatatype.XSDdecimal));
             model.add(experimentTask, GERBIL.macroRecall,
                     model.createTypedLiteral(String.valueOf(result.getMacroRecall()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(String.valueOf(result.errorCount)));
+            model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(String.valueOf(result.errorCount)));*/
 
             if (result.hasAdditionalResults()) {
                 IntDoubleOpenHashMap additionalResults = result.getAdditionalResults();

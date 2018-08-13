@@ -206,7 +206,7 @@ public class ExperimentTaskResult {
         StringBuilder builder = new StringBuilder();
         builder.append("ExperimentTaskResult(state=");
         builder.append(state);
-        builder.append(",micF1=");
+/*        builder.append(",micF1=");
         builder.append(results[MICRO_F1_MEASURE_INDEX]);
         builder.append(",micPrecision=");
         builder.append(results[MICRO_PRECISION_INDEX]);
@@ -219,7 +219,7 @@ public class ExperimentTaskResult {
         builder.append(",macRecall=");
         builder.append(results[MACRO_RECALL_INDEX]);
         builder.append(",errors=");
-        builder.append(errorCount);
+        builder.append(errorCount);*/
         if (hasAdditionalResults()) {
             for (int i = 0; i < additionalResults.allocated.length; ++i) {
                 if (additionalResults.allocated[i]) {
