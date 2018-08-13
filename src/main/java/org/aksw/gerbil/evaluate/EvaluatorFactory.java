@@ -59,7 +59,6 @@ import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
-import org.aksw.gerbil.transfer.nif.TypedMarking;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
@@ -238,7 +237,7 @@ public class EvaluatorFactory {
             evaluators.add(new ClassSubTaskEvaluator<>(subTaskConfig, (Evaluator<Marking>) createEvaluator(
                     ExperimentType.RE, subTaskConfig, dataset), Relation.class));
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-                    ExperimentType.A2KB, Matching.STRONG_ENTITY_MATCH);
+                    ExperimentType.A2KB, configuration.matching);
             evaluators.add(new ClassSubTaskEvaluator<Meaning>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
                     ExperimentType.A2KB, subTaskConfig, dataset, classifier, inferencer ), Meaning.class));
             

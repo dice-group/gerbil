@@ -24,7 +24,7 @@ import java.util.List;
 import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
-import org.aksw.gerbil.dataset.TestDataset;
+import org.aksw.gerbil.dataset.InstanceListBasedDataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
@@ -120,7 +120,7 @@ public class OKE2018Task4Test extends AbstractExperimentTaskTest {
 		SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
 		ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
 				new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.OKE2018Task4),
-				new TestDataset(Arrays.asList(goldStandards), ExperimentType.OKE2018Task4), ExperimentType.OKE2018Task4, matching);
+				new InstanceListBasedDataset(Arrays.asList(goldStandards), ExperimentType.OKE2018Task4), ExperimentType.OKE2018Task4, matching);
 		runTest(experimentTaskId, experimentDAO, new HTTPBasedSameAsRetriever(), new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
 				new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
 	}
