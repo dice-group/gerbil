@@ -58,7 +58,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     @Deprecated
     private final static String GET_LATEST_EXPERIMENT_TASKS = "SELECT DISTINCT annotatorName, datasetName FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching";
     private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT tasks.systemName, tasks.datasetName, tasks.experimentType, tasks.matching, tasks.state, tasks.version, tasks.lastChanged, tasks.id FROM ExperimentTasks tasks, (SELECT datasetName, systemName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState AND systemName IN (:annotatorNames) AND datasetName IN (:datasetNames) GROUP BY datasetName, systemName) pairs WHERE tasks.systemName=pairs.systemName AND tasks.datasetName=pairs.datasetName AND tasks.experimentType=:experimentType AND tasks.matching=:matching AND tasks.lastChanged=pairs.lastChanged";
-    private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT systemName, datasetName, experimentType, matching, state, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
+    private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT systemName, datasetName, experimentType, matching, state, version, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
     private final static String SHUTDOWN = "SHUTDOWN";
 
     private final static String GET_TASK_RESULTS_DOUBLE = "SELECT rn.name, 'DOUBLE' AS Type, dr.resvalue FROM ExperimentTasks_DoubleResults dr, ResultNames rn WHERE dr.resultId = rn.id and dr.taskId = :taskId";
