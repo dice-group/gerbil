@@ -31,7 +31,7 @@ import org.aksw.gerbil.web.ExperimentTaskStateHelper;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 
-import com.carrotsearch.hppc.IntDoubleOpenHashMap;
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -173,23 +173,9 @@ public class DataIDGenerator {
 
         // If this task has been finished
         if (ExperimentTaskStateHelper.taskFinished(result)) {
-            // creating and setting literals for the current experiment
-           /* model.add(experimentTask, GERBIL.microF1,
-                    model.createTypedLiteral(String.valueOf(result.getMicroF1Measure()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.microPrecision,
-                    model.createTypedLiteral(String.valueOf(result.getMicroPrecision()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.microRecall,
-                    model.createTypedLiteral(String.valueOf(result.getMicroRecall()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroF1,
-                    model.createTypedLiteral(String.valueOf(result.getMacroF1Measure()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroPrecision,
-                    model.createTypedLiteral(String.valueOf(result.getMacroPrecision()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.macroRecall,
-                    model.createTypedLiteral(String.valueOf(result.getMacroRecall()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(String.valueOf(result.errorCount)));*/
 
             if (result.hasAdditionalResults()) {
-                IntDoubleOpenHashMap additionalResults = result.getAdditionalResults();
+                IntObjectOpenHashMap additionalResults = result.getAdditionalResults();
                 String propertyUri;
                 ResultNameToIdMapping mapping = ResultNameToIdMapping.getInstance();
                 for (int i = 0; i < additionalResults.allocated.length; ++i) {
