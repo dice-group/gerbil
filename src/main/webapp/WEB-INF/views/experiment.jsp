@@ -1,7 +1,7 @@
 <%@page import="org.aksw.gerbil.web.ExperimentTaskStateHelper"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%
 	request.setAttribute("additionalResultsCount",
@@ -54,27 +54,25 @@
 	<c:if test="${not empty tasks}">
 		<c:set var="hasSubTasks" value="false" />
 		<c:forEach var="task" items="${tasks}">
-				
+
 			<c:if test="${task.numberOfSubTasks > 0}">
 				<c:set var="hasSubTasks" value="true" />
 			</c:if>
 		</c:forEach>
 		<c:choose>
-    		<c:when test="${workers<currentExperimentID && currentState!=0}" >
-				<font color="red">
-				Experiments could take a while
-				<br>
-				<c:out value="${currentExperimentID} Experiments before yours on ${workers} Worker"/>
+			<c:when test="${workers<currentExperimentID && currentState!=0}">
+				<font color="red"> Experiments could take a while <br> <c:out
+						value="${currentExperimentID} Experiments before yours on ${workers} Worker" />
 				</font>
-    		</c:when>
-    		<c:when test="${currentState}==0" >
+			</c:when>
+			<c:when test="${currentState}==0">
     			Your Experiments finished			
     		</c:when>
-    		<c:otherwise>
-    		</c:otherwise>
+			<c:otherwise>
+			</c:otherwise>
 		</c:choose>
 
-				<br>
+		<br>
 	Experiment URI: <span id="experimentUri"></span>
 		<br>
 	Type: <c:out value="${tasks[0].type.label}" />
@@ -91,14 +89,7 @@
 					<c:if test="${hasSubTasks}">
 						<th></th>
 					</c:if>
-					<th>Micro F1</th>
-					<th>Micro Precision</th>
-					<th>Micro Recall</th>
-					<th>Macro F1</th>
-					<th>Macro Precision</th>
-					<th>Macro Recall</th>
-					<!-- <th>State</th> -->
-					<th>Error Count</th>
+
 					<!-- for every additional result -->
 					<c:forEach items="${additionalResultNames}" var="name">
 						<th>${name}</th>
@@ -114,24 +105,11 @@
 							<td>${task.annotator}</td>
 							<td>${task.dataset}</td>
 							<c:if test="${hasSubTasks}">
-								<td></td>
+								<th></th>
 							</c:if>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.microF1Measure}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.microPrecision}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.microRecall}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.macroF1Measure}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.macroPrecision}" /></td>
-							<td><fmt:formatNumber type="number" maxFractionDigits="4"
-									value="${task.macroRecall}" /></td>
 							<!-- <td>${task.state}</td> -->
-							<td>${task.errorCount}</td>
 							<!-- for every additional result -->
-							<c:forEach items="${additionalResults[taskId.count - 1]}"
+							<c:forEach items="${additionalResults[taskId.index]}"
 								var="additionalResult">
 								<td><c:if test="${not empty additionalResult}">
 										<fmt:formatNumber type="number" maxFractionDigits="4"
@@ -141,29 +119,21 @@
 							<td>${task.timestampstring}</td>
 							<td>${task.gerbilVersion}</td>
 						</tr>
-						<c:forEach var="subTask" items="${task.subTasks}">
+						<c:forEach var="subTask" varStatus="subTaskId"
+							items="${task.subTasks}">
 							<tr>
 								<td>${task.annotator}</td>
 								<td>${task.dataset}</td>
 								<td>${subTask.type.label}</td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.microF1Measure}" /></td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.microPrecision}" /></td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.microRecall}" /></td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.macroF1Measure}" /></td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.macroPrecision}" /></td>
-								<td><fmt:formatNumber type="number" maxFractionDigits="4"
-										value="${subTask.macroRecall}" /></td>
-								<!--<td colspan="3"></td> -->
-								<td>${task.errorCount}</td>
 								<!-- for every additional result -->
-								<c:forEach items="${additionalResultNames}" var="name">
-									<td></td>
+								<c:forEach items="${additionalResults[subTaskId.index + 1]}"
+									var="additionalResult">
+									<td><c:if test="${not empty additionalResult}">
+											<fmt:formatNumber type="number" maxFractionDigits="4"
+												value="${additionalResult}" />
+										</c:if></td>
 								</c:forEach>
+
 								<td>${task.timestampstring}</td>
 								<td>${task.gerbilVersion}</td>
 							</tr>
@@ -173,9 +143,9 @@
 						<tr>
 							<td>${task.annotator}</td>
 							<td>${task.dataset}</td>
-							<c:if test="${hasSubTasks}">
+							<!--<c:if test="${hasSubTasks}">
 								<td></td>
-							</c:if>
+							</c:if>-->
 							<td colspan="${additionalResultsCount + 7}"
 								style="text-align: center">${task.stateMsg}</td>
 							<td>${task.timestampstring}</td>
@@ -190,38 +160,37 @@
 
 
 	<script type="text/javascript">
-		$(document).ready(function() {
-			$("#resultTable").tablesorter({
-				sortList : [ [ 0, 0 ], [ 1, 0 ] ]
-			});
+		$(document)
+				.ready(
+						function() {
+							$("#resultTable").tablesorter({
+								sortList : [ [ 0, 0 ], [ 1, 0 ] ]
+							});
 
-			// print the URI of the experiment
-			var origin = window.location.origin;
-			var experimentId = window.location.search;
-			var content = "<a href=\"/gerbil/experiment"
+							// print the URI of the experiment
+							var origin = window.location.origin;
+							var experimentId = window.location.search;
+							var content = "<a href=\"/gerbil/experiment"
 				+ experimentId
 				+ "\">"
-				+ origin
-				+ "/gerbil/experiment"
-				+ experimentId
-				+ "</a>";
-			// If this is the AKSW instance of GERBIL
-			if(origin == "http://gerbil.aksw.org") {
-				content += " and <a href=\"http://w3id.org/gerbil/experiment"
+									+ origin
+									+ "/gerbil/experiment"
+									+ experimentId + "</a>";
+							// If this is the AKSW instance of GERBIL
+							if (origin == "http://gerbil.aksw.org") {
+								content += " and <a href=\"http://w3id.org/gerbil/experiment"
 					+ experimentId
 					+ "\">http://w3id.org/gerbil/experiment"
-					+ experimentId
-					+ "</a>";
-			}
-			// If this is the AKSW instance of GERBIL QA
-			if(origin == "http://gerbil-qa.aksw.org") {
-				content += " and <a href=\"http://w3id.org/gerbil/qa/experiment"
+										+ experimentId + "</a>";
+							}
+							// If this is the AKSW instance of GERBIL QA
+							if (origin == "http://gerbil-qa.aksw.org") {
+								content += " and <a href=\"http://w3id.org/gerbil/qa/experiment"
 					+ experimentId
 					+ "\">http://w3id.org/gerbil/qa/experiment"
-					+ experimentId
-					+ "</a>";
-			}
-			$("#experimentUri").html(content);
-		});
+										+ experimentId + "</a>";
+							}
+							$("#experimentUri").html(content);
+						});
 	</script>
 </body>
