@@ -54,15 +54,14 @@ public class ExperimentTaskResultRowMapper implements RowMapper<ExperimentTaskRe
     public ExperimentTaskResult mapRow(ResultSet resultSet, int rowId) throws SQLException {
         int idInDatabase = -1;
         try {
-            idInDatabase = resultSet.getInt(14);
+            idInDatabase = resultSet.getInt(8);
         } catch (Exception e) {
             // nothing to do
         }
         return new ExperimentTaskResult(resultSet.getString(1), resultSet.getString(2),
-                ExperimentType.valueOf(resultSet.getString(3)), Matching.valueOf(resultSet.getString(4)),
-                new double[] { resultSet.getDouble(5), resultSet.getDouble(6), resultSet.getDouble(7),
-                        resultSet.getDouble(8), resultSet.getDouble(9), resultSet.getDouble(10) },
-                resultSet.getInt(11), resultSet.getInt(12), resultSet.getTimestamp(13).getTime(), idInDatabase);
+                ExperimentType.valueOf(resultSet.getString(3)), Matching.valueOf(resultSet.getString(4)),              
+                resultSet.getInt(5),
+                resultSet.getTimestamp(6).getTime(), resultSet.getString(7), idInDatabase);
     }
 
 }
