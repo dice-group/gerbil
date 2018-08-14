@@ -18,9 +18,14 @@ package org.aksw.gerbil.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -55,6 +60,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.google.common.collect.Lists;
 
 @Controller
@@ -186,42 +192,39 @@ public class MainController {
     public ModelAndView experiment(@RequestParam(value = "id") String id, HttpServletRequest request) {
         LOGGER.debug("Got request on /experiment with id={}", id);
         dataIdGenerator = new DataIDGenerator(getURLBase(request));
+
         List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
         ExperimentTaskStateHelper.setStatusLines(results);
         ModelAndView model = new ModelAndView();
         model.setViewName("experiment");
         model.addObject("tasks", results);
-        int currentExperimentID=-1;
-        int currentState = 0;
-        List<ExperimentTaskResult> tasks = dao.getAllRunningExperimentTasks();
-        for(ExperimentTaskResult r : results){
-        	if(r.state==0){
-        		continue;
+        
+        List<ExperimentTaskResult> listOfTasks = new ArrayList<ExperimentTaskResult>();
+        for (int i = 0; i < results.size(); i++) {
+        	ExperimentTaskResult mainTaskResult = results.get(i);
+        	listOfTasks.add(mainTaskResult);
+        	if(mainTaskResult.hasSubTasks()){
+        		List<ExperimentTaskResult> subTasks = mainTaskResult.getSubTasks();
+        		listOfTasks.addAll(subTasks);
+        		
         	}
-        	if(tasks.contains(r)){
-        		currentState = r.state;
-        		currentExperimentID = tasks.indexOf(r);
-        		break;
-        	}
-        }
-        model.addObject("currentState", currentState);
-        model.addObject("currentExperimentID", currentExperimentID);
-        model.addObject("workers", RootConfig.getNoOfWorkers());
-        model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
-        int additionalResultIds[] = ResultNameToIdMapping.getInstance().listAdditionalResultIds(results);
-        // we need Double objects to make sure that they can be null
-        Double additionalResults[][] = new Double[results.size()][additionalResultIds.length];
-        ExperimentTaskResult result;
+		}
+
+        int taskadditionalResultIds[] = ResultNameToIdMapping.getInstance().listAdditionalResultIds(listOfTasks);
+        Object additionalResults[][] = new Object[listOfTasks.size()][taskadditionalResultIds.length];
+        ExperimentTaskResult taskResult;
         for (int i = 0; i < additionalResults.length; ++i) {
-            result = results.get(i);
-            for (int j = 0; j < additionalResultIds.length; ++j) {
-                if (result.hasAdditionalResult(additionalResultIds[j])) {
-                    additionalResults[i][j] = result.getAdditionalResult(additionalResultIds[j]);
+        	taskResult = listOfTasks.get(i);
+            for (int j = 0; j < taskadditionalResultIds.length; ++j) {
+                if (taskResult.hasAdditionalResult(taskadditionalResultIds[j])) {
+                	additionalResults[i][j] = taskResult.getAdditionalResult(taskadditionalResultIds[j]);
                 }
             }
         }
+       
+        
         model.addObject("additionalResultNames",
-                ResultNameToIdMapping.getInstance().getNamesOfResultIds(additionalResultIds));
+              ResultNameToIdMapping.getInstance().getNamesOfResultIds(taskadditionalResultIds));
         model.addObject("additionalResults", additionalResults);
         return model;
     }
