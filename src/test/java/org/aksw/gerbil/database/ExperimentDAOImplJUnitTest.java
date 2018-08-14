@@ -16,7 +16,6 @@
  */
 package org.aksw.gerbil.database;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -227,5 +226,16 @@ public class ExperimentDAOImplJUnitTest {
         Assert.assertEquals("annotator1", results.get(0).annotator);
         Assert.assertEquals("dataset1", results.get(0).dataset);
         Assert.assertEquals(0, results.get(0).state);
+    }
+    
+    @Test
+    public void testCountPrecedingRunningTasks() {
+        this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-23456");
+        this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-23456");
+        this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-234567");
+        this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-234567");
+        int lastTaskId = this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-2345678");
+        int precedingCount = this.dao.countPrecedingRunningTasks(lastTaskId);
+        Assert.assertEquals(4, precedingCount);
     }
 }
