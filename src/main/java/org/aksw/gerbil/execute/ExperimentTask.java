@@ -17,6 +17,7 @@
 package org.aksw.gerbil.execute;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.A2KBAnnotator;
@@ -142,7 +143,7 @@ public class ExperimentTask implements Task {
 
 			// create result object
 			// FIXME Fix this workaround
-			ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[6],
+			ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new Object[6],
 					ExperimentDAO.TASK_FINISHED, 0);
 			transformResults(result, expResult);
 
@@ -265,7 +266,7 @@ public class ExperimentTask implements Task {
 	protected void transformResults(EvaluationResult result, ExperimentTaskResult expResult) {
 		if (result instanceof SubTaskResult) {
 			ExperimentTaskResult subTask = new ExperimentTaskResult(((SubTaskResult) result).getConfiguration(),
-					new double[6], ExperimentDAO.TASK_FINISHED, 0);
+					new Object[6], ExperimentDAO.TASK_FINISHED, 0);
 			List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
 			for (EvaluationResult tempResult : tempResults) {
 				transformResults(tempResult, subTask);
@@ -277,53 +278,61 @@ public class ExperimentTask implements Task {
 				transformResults(tempResult, expResult);
 			}
 		} else if (result instanceof DoubleEvaluationResult) {
+			int resultId = ResultNameToIdMapping.getInstance().getResultId(result.getName());
 			switch (result.getName()) {
 			case FMeasureCalculator.MACRO_F1_SCORE_NAME: {
 				expResult.results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
 						.getValueAsDouble();
+				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MACRO_PRECISION_NAME: {
 				expResult.results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
 						.getValueAsDouble();
+				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MACRO_RECALL_NAME: {
 				expResult.results[ExperimentTaskResult.MACRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
 						.getValueAsDouble();
+				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MICRO_F1_SCORE_NAME: {
 				expResult.results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
 						.getValueAsDouble();
+				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MICRO_PRECISION_NAME: {
 				expResult.results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
 						.getValueAsDouble();
+				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MICRO_RECALL_NAME: {
 				expResult.results[ExperimentTaskResult.MICRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
 						.getValueAsDouble();
+				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			default: {
-				int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
-				if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
+				if (resultId == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
 					LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
 				} else {
-					expResult.addAdditionalResult(id, ((DoubleEvaluationResult) result).getValueAsDouble());
+					expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				}
 			}
 			}
 			return;
 		} else if (result instanceof IntEvaluationResult) {
+			int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
 			if (result.getName().equals(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME)) {
 				expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
+				expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
 				return;
 			}
-			int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
+			
 			if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
 				LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
 			} else {
