@@ -125,12 +125,12 @@ public abstract class AbstractExperimentTaskTest {
             ExperimentTaskResult result = experimentDAO.getTaskResult(experimentTaskId);
             String errorMsg = "Error for system " + result.annotator + " on dataset " + result.dataset
                     + " in Experiment " + result.type.getName();
-            Assert.assertEquals(errorMsg, expectedResults[MACRO_PREC_INDEX], result.getMacroPrecision(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MACRO_REC_INDEX], result.getMacroRecall(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MACRO_F1_INDEX], result.getMacroF1Measure(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MICRO_PREC_INDEX], result.getMicroPrecision(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MICRO_REC_INDEX], result.getMicroRecall(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MICRO_F1_INDEX], result.getMicroF1Measure(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_PREC_INDEX], (double)result.getMacroPrecision(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_REC_INDEX], (double)result.getMacroRecall(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_F1_INDEX], (double)result.getMacroF1Measure(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_PREC_INDEX], (double)result.getMicroPrecision(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_REC_INDEX], (double)result.getMicroRecall(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_F1_INDEX], (double)result.getMicroF1Measure(), DELTA);
             Assert.assertEquals(errorMsg, expectedResults[ERROR_COUNT_INDEX], result.getErrorCount(), DELTA);
         }
     }
