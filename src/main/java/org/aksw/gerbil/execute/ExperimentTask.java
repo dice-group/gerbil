@@ -272,6 +272,8 @@ public class ExperimentTask implements Task {
 				transformResults(tempResult, subTask);
 			}
 			expResult.addSubTask(subTask);
+			subTask.addAdditionalResult(ResultNameToIdMapping.getInstance().getResultId(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME),
+					0);
 		} else if (result instanceof EvaluationResultContainer) {
 			List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
 			for (EvaluationResult tempResult : tempResults) {
@@ -336,6 +338,7 @@ public class ExperimentTask implements Task {
 			if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
 				LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
 			} else {
+				expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
 				expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
 			}
 		}
