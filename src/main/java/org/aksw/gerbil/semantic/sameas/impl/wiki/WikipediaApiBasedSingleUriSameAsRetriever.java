@@ -17,6 +17,8 @@
 package org.aksw.gerbil.semantic.sameas.impl.wiki;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +26,7 @@ import java.util.Set;
 import org.aksw.gerbil.http.AbstractHttpRequestEmitter;
 import org.aksw.gerbil.semantic.sameas.SingleUriSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.SimpleDomainExtractor;
+import org.aksw.gerbil.utils.URIValidator;
 import org.aksw.gerbil.utils.WikipediaHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -75,13 +78,19 @@ public class WikipediaApiBasedSingleUriSameAsRetriever extends AbstractHttpReque
         if ((redirectedTitle != null) && (!title.equals(redirectedTitle))) {
             Set<String> uris = new HashSet<String>();
             uris.add(uri);
-            uris.add(WikipediaHelper.getWikipediaUri(domain, redirectedTitle));
+            String wikiUri = WikipediaHelper.getWikipediaUri(domain, redirectedTitle);
+            if(URIValidator.isValidURI(wikiUri)) {
+            	uris.add(wikiUri);
+            }
             return uris;
         } else {
             return null;
         }
     }
 
+
+
+    
     public String queryRedirect(String domain, String title) {
         StringBuilder urlBuilder = new StringBuilder(150);
         urlBuilder.append(URL_PROTOCOL_PART);

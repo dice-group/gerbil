@@ -16,6 +16,8 @@
  */
 package org.aksw.gerbil.semantic.sameas.impl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -23,6 +25,7 @@ import java.util.Set;
 
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetrieverDecorator;
+import org.aksw.gerbil.utils.URIValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,9 +76,10 @@ public class CrawlingSameAsRetrieverDecorator extends AbstractSameAsRetrieverDec
             // if new URIs have been retrieved
             if (newUris != null) {
                 for (String newUri : newUris) {
+                	
                     // check whether the URI was really not known before and add
                     // it to the queue and the result set
-                    if (!uris.contains(newUri)) {
+                    if (!uris.contains(newUri) && URIValidator.isValidURI(newUri)) {
                         if (debugCrawling && LOGGER.isDebugEnabled()) {
                             LOGGER.debug(uri + " -> " + newUri);
                         }
@@ -94,5 +98,6 @@ public class CrawlingSameAsRetrieverDecorator extends AbstractSameAsRetrieverDec
     public void setDebugCrawling(boolean debugCrawling) {
         this.debugCrawling = debugCrawling;
     }
+
 
 }

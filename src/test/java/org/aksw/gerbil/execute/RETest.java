@@ -24,7 +24,7 @@ import java.util.List;
 import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
-import org.aksw.gerbil.dataset.TestDataset;
+import org.aksw.gerbil.dataset.InstanceListBasedDataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
@@ -37,7 +37,6 @@ import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.RelationImpl;
-import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -122,7 +121,7 @@ public class RETest extends AbstractExperimentTaskTest {
 		SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
 		ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
 				new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.RE),
-				new TestDataset(Arrays.asList(goldStandards), ExperimentType.RE), ExperimentType.RE, matching);
+				new InstanceListBasedDataset(Arrays.asList(goldStandards), ExperimentType.RE), ExperimentType.RE, matching);
 		runTest(experimentTaskId, experimentDAO, null, new EvaluatorFactory(), configuration,
 				new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
 	}
