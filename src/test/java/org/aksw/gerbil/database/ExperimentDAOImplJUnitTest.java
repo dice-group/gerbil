@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -101,18 +102,16 @@ public class ExperimentDAOImplJUnitTest {
         Set<ExperimentTaskResult> results = new HashSet<ExperimentTaskResult>();
         Random random = new Random();
         for (int i = 0; i < 10; ++i) {
-            if (i < 8) {
+        	java.util.Date today = new java.util.Date();
+            if (i < 8) {           	
                 results.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2KB,
-                        Matching.STRONG_ANNOTATION_MATCH,
-                        new double[] { random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(),
-                                random.nextFloat(), random.nextFloat() },
-                        ExperimentDAO.TASK_FINISHED, random.nextInt()));
+                        Matching.STRONG_ANNOTATION_MATCH, ExperimentDAO.TASK_FINISHED,today.getTime(), GerbilConfiguration.getGerbilVersion(), random.nextInt()));
             } else {
                 results.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2KB,
-                        Matching.STRONG_ANNOTATION_MATCH, new double[6],
+                        Matching.STRONG_ANNOTATION_MATCH, 
                         i == 8 ? ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET
                                 : ErrorTypes.UNEXPECTED_EXCEPTION.getErrorCode(),
-                        0));
+                                today.getTime(), GerbilConfiguration.getGerbilVersion(), 0));
             }
         }
 
