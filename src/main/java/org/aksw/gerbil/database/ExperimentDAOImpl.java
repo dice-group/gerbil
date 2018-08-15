@@ -168,7 +168,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         if(value instanceof Integer){
         	parameters.addValue("value", (int)value);
         	this.template.update(INSERT_RESULT_INT, parameters);
-        } if(value instanceof Double){
+        } else {
         	parameters.addValue("value", (double)value);
         	this.template.update(INSERT_RESULT_DOUBLE, parameters);
         }
