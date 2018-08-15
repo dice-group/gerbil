@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.matching.Matching;
 
@@ -103,6 +104,14 @@ public class ExperimentTaskResult {
             int errorCount) {
         this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
                 configuration.matching, results, state, errorCount, (new java.util.Date()).getTime());
+    }
+    
+    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, int state,
+            int errorCount) {
+//    	public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
+//                int state,  long timestamp, String gerbilVersion, int idInDb)
+        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
+                configuration.matching, state, (new java.util.Date()).getTime(), GerbilConfiguration.getGerbilVersion(), -1);
     }
 
     public Object[] getResults() {
@@ -220,20 +229,20 @@ public class ExperimentTaskResult {
         StringBuilder builder = new StringBuilder();
         builder.append("ExperimentTaskResult(state=");
         builder.append(state);
-        builder.append(",micF1=");
-        builder.append(results[MICRO_F1_MEASURE_INDEX]);
-        builder.append(",micPrecision=");
-        builder.append(results[MICRO_PRECISION_INDEX]);
-        builder.append(",micRecall=");
-        builder.append(results[MICRO_RECALL_INDEX]);
-        builder.append(",macF1=");
-        builder.append(results[MACRO_F1_MEASURE_INDEX]);
-        builder.append(",macPrecision=");
-        builder.append(results[MACRO_PRECISION_INDEX]);
-        builder.append(",macRecall=");
-        builder.append(results[MACRO_RECALL_INDEX]);
-        builder.append(",errors=");
-        builder.append(errorCount);
+//        builder.append(",micF1=");
+//        builder.append(results[MICRO_F1_MEASURE_INDEX]);
+//        builder.append(",micPrecision=");
+//        builder.append(results[MICRO_PRECISION_INDEX]);
+//        builder.append(",micRecall=");
+//        builder.append(results[MICRO_RECALL_INDEX]);
+//        builder.append(",macF1=");
+//        builder.append(results[MACRO_F1_MEASURE_INDEX]);
+//        builder.append(",macPrecision=");
+//        builder.append(results[MACRO_PRECISION_INDEX]);
+//        builder.append(",macRecall=");
+//        builder.append(results[MACRO_RECALL_INDEX]);
+//        builder.append(",errors=");
+//        builder.append(errorCount);
         if (hasAdditionalResults()) {
             for (int i = 0; i < additionalResults.allocated.length; ++i) {
                 if (additionalResults.allocated[i]) {
