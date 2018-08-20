@@ -227,4 +227,20 @@ public class ExperimentDAOImplJUnitTest {
         Assert.assertEquals("dataset1", results.get(0).dataset);
         Assert.assertEquals(0, results.get(0).state);
     }
+    
+    @Test
+    public void testCountPrecedingRunningTasks() {
+        int taskId1 = this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-23456");
+        int taskId2 = this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-23456");
+        this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-234567");
+        this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-234567");
+        int lastTaskId = this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-2345678");
+        int precedingCount = this.dao.countPrecedingRunningTasks(lastTaskId);
+        Assert.assertEquals(4, precedingCount);
+        // Changing state
+        this.dao.setExperimentState(taskId1, ExperimentDAO.TASK_FINISHED);
+        this.dao.setExperimentState(taskId2, ExperimentDAO.TASK_FINISHED);
+        precedingCount = this.dao.countPrecedingRunningTasks(lastTaskId);
+        Assert.assertEquals(2, precedingCount);
+    }
 }

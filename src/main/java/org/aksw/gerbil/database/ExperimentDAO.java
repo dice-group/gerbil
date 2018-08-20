@@ -219,5 +219,12 @@ public interface ExperimentDAO extends Closeable {
      * @return a list of all running experiment tasks.
      */
     public List<ExperimentTaskStatus> getAllRunningExperimentTasks();
+    
+    /**
+     * Counts the number of running experiments before the provided taskId
+     * @param lastTaskId - provided task Id
+     * @return number of running tasks before provided id
+     */
+	Integer countPrecedingRunningTasks(int lastTaskId);
 
 }

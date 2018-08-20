@@ -51,14 +51,14 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String SET_EXPERIMENT_TASK_RESULT = "UPDATE ExperimentTasks SET lastChanged=:lastChanged WHERE id=:id";
     private final static String CONNECT_TASK_EXPERIMENT = "INSERT INTO Experiments (id, taskId) VALUES(:id, :taskId)";
     private final static String GET_TASK_STATE = "SELECT state FROM ExperimentTasks WHERE id=:id";
-    private final static String GET_EXPERIMENT_RESULTS = "SELECT systemName, datasetName, experimentType, matching, state, version, lastChanged, taskId FROM ExperimentTasks t, Experiments e WHERE e.id=:id AND e.taskId=t.id";
+    private final static String GET_EXPERIMENT_RESULTS = "SELECT systemName, datasetName, experimentType, matching, state, version, lastChanged, taskId FROM ExperimentTasks t, Experiments e WHERE e.id=:id AND e.taskId=t.id ORDER BY t.id";
     private final static String GET_CACHED_TASK = "SELECT id FROM ExperimentTasks WHERE systemName=:annotatorName AND datasetName=:datasetName AND experimentType=:experimentType AND matching=:matching AND lastChanged>:lastChanged AND state>:errorState ORDER BY lastChanged DESC LIMIT 1";
     private final static String GET_HIGHEST_EXPERIMENT_ID = "SELECT id FROM Experiments ORDER BY id DESC LIMIT 1";
     private final static String SET_UNFINISHED_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE state=:unfinishedState";
     @Deprecated
     private final static String GET_LATEST_EXPERIMENT_TASKS = "SELECT DISTINCT annotatorName, datasetName FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching";
     private final static String GET_LATEST_EXPERIMENT_TASK_RESULTS = "SELECT tasks.systemName, tasks.datasetName, tasks.experimentType, tasks.matching, tasks.state, tasks.version, tasks.lastChanged, tasks.id FROM ExperimentTasks tasks, (SELECT datasetName, systemName, MAX(lastChanged) AS lastChanged FROM ExperimentTasks WHERE experimentType=:experimentType AND matching=:matching AND state<>:unfinishedState AND systemName IN (:annotatorNames) AND datasetName IN (:datasetNames) GROUP BY datasetName, systemName) pairs WHERE tasks.systemName=pairs.systemName AND tasks.datasetName=pairs.datasetName AND tasks.experimentType=:experimentType AND tasks.matching=:matching AND tasks.lastChanged=pairs.lastChanged";
-    private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT systemName, datasetName, experimentType, matching, state, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
+    private final static String GET_RUNNING_EXPERIMENT_TASKS = "SELECT systemName, datasetName, experimentType, matching, state, version, lastChanged FROM ExperimentTasks WHERE state=:unfinishedState";
     private final static String SHUTDOWN = "SHUTDOWN";
 
     private final static String GET_TASK_RESULTS_DOUBLE = "SELECT rn.name, 'DOUBLE' AS Type, dr.resvalue FROM ExperimentTasks_DoubleResults dr, ResultNames rn WHERE dr.resultId = rn.id and dr.taskId = :taskId";
@@ -67,6 +67,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String INSERT_INT_RESULT = "INSERT INTO ExperimentTasks_IntResults(taskId, resultId, resvalue) select :taskId, id, :value from ResultNames where name = :resName";
     private final static String GET_SUB_TASK_RESULTS = "SELECT systemName, datasetName, experimentType, matching, state, version, lastChanged, subTaskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
     private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
+    
+    private final static String GET_RUNNING_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks where state = :unfinishedState AND id < :lastTaskId";
     
     public static final String[] RES_NAME_ARR = {"Micro F1 score", "Micro Precision", "Micro Recall", "Macro F1 score"
     		, "Macro Precision", "Macro Recall"};
@@ -354,5 +356,13 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                 return null;
             }
         });
+    }
+    @Override
+    public Integer countPrecedingRunningTasks(int lastTaskId) {
+    	MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("lastTaskId", lastTaskId);
+        parameters.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
+    	List<Integer> result = this.template.query(GET_RUNNING_EXP_COUNT, parameters, new IntegerRowMapper());
+        return result.get(0);
     }
 }

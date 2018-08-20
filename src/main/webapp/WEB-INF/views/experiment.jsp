@@ -32,6 +32,9 @@
 .gerbil-experiment-warn {
 	color: red;
 }
+.gerbil-center-align {
+	text-align: center;
+}
 </style>
 
 </head>
@@ -43,7 +46,11 @@
 	<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script
 		src="/gerbil/webjars/tablesorter/2.15.5/js/jquery.tablesorter.js"></script>
-
+		
+	<script type="application/ld+json">
+	${dataid}
+	</script>
+	
 	<%@include file="navbar.jsp"%>
 	<h1>GERBIL Experiment</h1>
 	<c:if test="${not empty tasks}">
@@ -55,18 +62,18 @@
 			</c:if>
 		</c:forEach>
 		<c:choose>
-			<c:when test="${workers<currentExperimentID && currentState!=0}">
-				<font class="gerbil-experiment-warn"> Experiments could take a while <br> <c:out
-						value="${currentExperimentID} Experiments before yours on ${workers} Worker" />
-				</font>
+			<c:when test="${isRunning && precedingTaskCount > workers}">
+				<span class="gerbil-experiment-warn"> Experiments could take a while <br> <c:out
+						value="There are ${precedingTaskCount} other tasks pending before your latest task on ${workers} Worker(s)." />
+				</span>
 			</c:when>
-			<c:when test="${currentState}==0">
-    			Your Experiments finished			
+			<c:when test="${!isRunning}">
+    			Your Experiments are completed			
     		</c:when>
 			<c:otherwise>
 			</c:otherwise>
 		</c:choose>
-
+		<br>
 		<br>
 	Experiment URI: <span id="experimentUri"></span>
 		<br>
@@ -85,7 +92,7 @@
 						<th></th>
 					</c:if>
 					<c:forEach var="resName" items="${resultNames}">
-						<th>${resName}<c:out value="${task.timestampstring}" /></th>
+						<th><c:out value="${resName}" /></th>
 					</c:forEach>
 					<th>Timestamp</th>
 					<th>GERBIL version</th>
@@ -138,9 +145,9 @@
 							<c:if test="${hasSubTasks}">
 								<td></td>
 							</c:if>
-							<td colspan="${additionalResultsCount + 7}"
-								style="text-align: center"><c:out value="${task.stateMsg}" /></td>
-							<td><c:out value="${task.timestampstring}}" /></td>
+							<td colspan="${fn:escapeXml(resultNames.size())}"
+								class="gerbil-center-align"><c:out value="${task.stateMsg}" /></td>
+							<td><c:out value="${task.timestampstring}" /></td>
 							<td><c:out value="${task.version}" /></td>
 						</tr>
 					</c:if>

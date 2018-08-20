@@ -121,4 +121,9 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
         return null;
     }
 
+	@Override
+	public Integer countPrecedingRunningTasks(int lastTaskId) {
+		return null;
+	}
+
 }
