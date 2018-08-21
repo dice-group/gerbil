@@ -18,6 +18,7 @@ package org.aksw.gerbil.execute;
 
 import java.util.concurrent.Semaphore;
 
+import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
@@ -125,13 +126,13 @@ public abstract class AbstractExperimentTaskTest {
             ExperimentTaskResult result = experimentDAO.getTaskResult(experimentTaskId);
             String errorMsg = "Error for system " + result.annotator + " on dataset " + result.dataset
                     + " in Experiment " + result.type.getName();
-            Assert.assertEquals(errorMsg, expectedResults[MACRO_PREC_INDEX], (double)result.getMacroPrecision(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MACRO_REC_INDEX], (double)result.getMacroRecall(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MACRO_F1_INDEX], (double)result.getMacroF1Measure(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MICRO_PREC_INDEX], (double)result.getMicroPrecision(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MICRO_REC_INDEX], (double)result.getMicroRecall(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[MICRO_F1_INDEX], (double)result.getMicroF1Measure(), DELTA);
-            Assert.assertEquals(errorMsg, expectedResults[ERROR_COUNT_INDEX], result.getErrorCount(), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_PREC_INDEX], (double)result.getExpResults(ExperimentTaskResult.MACRO_PRECISION_INDEX), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_REC_INDEX], (double)result.getExpResults(ExperimentTaskResult.MACRO_RECALL_INDEX), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MACRO_F1_INDEX], (double)result.getExpResults(ExperimentTaskResult.MACRO_F1_MEASURE_INDEX), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_PREC_INDEX], (double)result.getExpResults(ExperimentTaskResult.MICRO_PRECISION_INDEX), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_REC_INDEX], (double)result.getExpResults(ExperimentTaskResult.MICRO_RECALL_INDEX), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[MICRO_F1_INDEX], (double)result.getExpResults(ExperimentTaskResult.MICRO_F1_MEASURE_INDEX), DELTA);
+            Assert.assertEquals(errorMsg, expectedResults[ERROR_COUNT_INDEX], (int)result.getExpResults(28), DELTA);
         }
     }
 }
