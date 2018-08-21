@@ -193,7 +193,7 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         for (ExperimentTaskResult result : results) {
             Assert.assertFalse(result.annotator.equals(SLOW_ANNOTATOR_NAME));
             Assert.assertEquals(ExperimentDAO.TASK_FINISHED, result.state);
-            Assert.assertEquals(1.0, (double) result.results[0], 0.000001);
+            Assert.assertEquals(1.0, (double) result.getExpResults(ExperimentTaskResult.MICRO_F1_MEASURE_INDEX), 0.000001);
         }
         // make sure that the fast server didn't throw anything (the slow server
         // might has thrown something)
@@ -237,7 +237,7 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         for (ExperimentTaskResult result : results) {
             Assert.assertFalse(result.annotator.equals(SLOW_ANNOTATOR_NAME));
             Assert.assertEquals(ExperimentDAO.TASK_FINISHED, result.state);
-            Assert.assertEquals(1.0, (double) result.results[0], 0.000001);
+            Assert.assertEquals(1.0, (double) result.getExpResults(ExperimentTaskResult.MICRO_F1_MEASURE_INDEX), 0.000001);
         }
         // make sure that the fast server didn't throw anything (the slow server
         // might has thrown something)
