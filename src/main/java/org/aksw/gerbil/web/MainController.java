@@ -217,7 +217,7 @@ public class MainController {
         	taskResult = listOfTasks.get(i);
             for (int j = 0; j < taskadditionalResultIds.length; ++j) {
                 if (taskResult.hasAdditionalResult(taskadditionalResultIds[j])) {
-                	additionalResults[i][j] = taskResult.getAdditionalResult(taskadditionalResultIds[j]);
+                	additionalResults[i][j] = taskResult.getExpResults(taskadditionalResultIds[j]);
                 }
             }
         }
