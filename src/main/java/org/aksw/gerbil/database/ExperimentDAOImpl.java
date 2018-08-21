@@ -147,9 +147,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
         this.template.update(SET_EXPERIMENT_TASK_RESULT, parameters);
         if (result.hasAdditionalResults()) {
-            for (int i = 0; i < result.additionalResults.allocated.length; ++i) {
-                if ((result.additionalResults.allocated[i]) && (result.additionalResults.keys[i] >= 0)) {
-                    addAdditionalResult(experimentTaskId, result.additionalResults.keys[i], result.additionalResults.values[i]);          
+            for (int i = 0; i < result.expResults.allocated.length; ++i) {
+                if ((result.expResults.allocated[i]) && (result.expResults.keys[i] >= 0)) {
+                    addAdditionalResult(experimentTaskId, result.expResults.keys[i], result.expResults.values[i]);          
                }
             }
         }
@@ -308,7 +308,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                 new IntDoublePairRowMapper());
 
         for (IntDoublePair a : addResults) {
-            result.addAdditionalResult(a.first, a.second);
+            result.addExpResults(a.first, a.second);
         }
     }
 
