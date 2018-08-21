@@ -38,9 +38,10 @@ public class ExperimentTaskResult {
     public static final int MACRO_F1_MEASURE_INDEX = 3;
     public static final int MACRO_PRECISION_INDEX = 4;
     public static final int MACRO_RECALL_INDEX = 5;
-
+    @Deprecated
     public Object results[];
     public int state;
+    @Deprecated
     public int errorCount;
     public long timestamp;
     public String annotator;
@@ -49,7 +50,7 @@ public class ExperimentTaskResult {
     public Matching matching;
     public int idInDb;
     public String gerbilVersion;
-    public IntObjectOpenHashMap<Object> additionalResults = null;
+    public IntObjectOpenHashMap<Object> expResults = null;
     public List<ExperimentTaskResult> subTasks;
 
     /**
@@ -79,7 +80,7 @@ public class ExperimentTaskResult {
         this.gerbilVersion = gerbilVersion;
         this.idInDb = idInDb; 
     }
-
+ @Deprecated
     public ExperimentTaskResult(String annotator, String dataset, ExperimentType type, Matching matching,
             Object results[], int state, int errorCount, long timestamp, int idInDb, String gerbilVersion) {
         this.annotator = annotator;
@@ -100,46 +101,52 @@ public class ExperimentTaskResult {
                 null);
     }
 
+    
     public ExperimentTaskResult(ExperimentTaskConfiguration configuration, Object results[], int state,
             int errorCount) {
         this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
                 configuration.matching, results, state, errorCount, (new java.util.Date()).getTime());
     }
     
-    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, int state,
-            int errorCount) {
+    public ExperimentTaskResult(ExperimentTaskConfiguration configuration, int state
+            ) {
         this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
                 configuration.matching, state, (new java.util.Date()).getTime(), GerbilConfiguration.getGerbilVersion(), -1);
     }
 
+    @Deprecated
     public Object[] getResults() {
         return results;
     }
 
+    @Deprecated
     public void setResults(Object results[]) {
         this.results = results;
     }
 
+    @Deprecated
     public Object getMicroF1Measure() {
         return results[MICRO_F1_MEASURE_INDEX];
     }
 
+    @Deprecated
     public Object getMicroPrecision() {
         return results[MICRO_PRECISION_INDEX];
     }
 
+    @Deprecated
     public Object getMicroRecall() {
         return results[MICRO_RECALL_INDEX];
     }
-
+    @Deprecated
     public Object getMacroF1Measure() {
         return results[MACRO_F1_MEASURE_INDEX];
     }
-
+    @Deprecated
     public Object getMacroPrecision() {
         return results[MACRO_PRECISION_INDEX];
     }
-
+    @Deprecated
     public Object getMacroRecall() {
         return results[MACRO_RECALL_INDEX];
     }
@@ -151,11 +158,11 @@ public class ExperimentTaskResult {
     public int getState() {
         return state;
     }
-
+    @Deprecated
     public int getErrorCount() {
         return errorCount;
     }
-
+    @Deprecated
     public void setErrorCount(int errorCount) {
         this.errorCount = errorCount;
     }
@@ -228,12 +235,12 @@ public class ExperimentTaskResult {
         builder.append("ExperimentTaskResult(state=");
         builder.append(state);
         if (hasAdditionalResults()) {
-            for (int i = 0; i < additionalResults.allocated.length; ++i) {
-                if (additionalResults.allocated[i]) {
+            for (int i = 0; i < expResults.allocated.length; ++i) {
+                if (expResults.allocated[i]) {
                     builder.append(',');
-                    builder.append(additionalResults.keys[i]);
+                    builder.append(expResults.keys[i]);
                     builder.append('=');
-                    builder.append(additionalResults.values[i]);
+                    builder.append(expResults.values[i]);
                 }
             }
         }
@@ -247,9 +254,9 @@ public class ExperimentTaskResult {
         int result = 1;
         result = prime * result + ((annotator == null) ? 0 : annotator.hashCode());
         result = prime * result + ((dataset == null) ? 0 : dataset.hashCode());
-        result = prime * result + errorCount;
+      //  result = prime * result + errorCount;
         result = prime * result + ((matching == null) ? 0 : matching.hashCode());
-        result = prime * result + Arrays.hashCode(results);
+      //  result = prime * result + Arrays.hashCode(results);
         result = prime * result + state;
         result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
         result = prime * result + ((type == null) ? 0 : type.hashCode());
@@ -275,12 +282,12 @@ public class ExperimentTaskResult {
                 return false;
         } else if (!dataset.equals(other.dataset))
             return false;
-        if (errorCount != other.errorCount)
-            return false;
+//        if (errorCount != other.errorCount)
+//            return false;
         if (matching != other.matching)
             return false;
-        if (!Arrays.equals(results, other.results))
-            return false;
+//        if (!Arrays.equals(results, other.results))
+//            return false;
         if (state != other.state)
             return false;
         if (timestamp != other.timestamp)
@@ -291,42 +298,42 @@ public class ExperimentTaskResult {
     }
 
     public boolean hasAdditionalResults() {
-        return (additionalResults != null) && (additionalResults.size() > 0);
+        return (expResults != null) && (expResults.size() > 0);
     }
 
     public boolean hasAdditionalResult(int id) {
-        return (additionalResults != null) && (additionalResults.containsKey(id));
+        return (expResults != null) && (expResults.containsKey(id));
     }
 
-    public IntObjectOpenHashMap<Object> getAdditionalResults() {
-        return additionalResults;
+    public IntObjectOpenHashMap<Object> getExpResults() {
+        return expResults;
     }
 
-    public int[] getAdditionalResultIds() {
+    public int[] getExpResultIds() {
         if (hasAdditionalResults()) {
-            return additionalResults.keys().toArray();
+            return expResults.keys().toArray();
         } else {
             return new int[0];
         }
     }
 
-    public Object getAdditionalResult(int id) {
-        if (additionalResults != null) {
-            return additionalResults.get(id);
+    public Object getExpResults(int id) {
+        if (expResults != null) {
+            return expResults.get(id);
         } else {
             return 0;
         }
     }
     
-    public void addAdditionalResult(int resultId, Object value) {
-        if (additionalResults == null) {
-            additionalResults = new IntObjectOpenHashMap<Object>();
+    public void addExpResults(int resultId, Object value) {
+        if (expResults == null) {
+            expResults = new IntObjectOpenHashMap<Object>();
         }
-        additionalResults.put(resultId, value);
+        expResults.put(resultId, value);
     }
     
-    public void setAdditionalResults(IntObjectOpenHashMap<Object> additionalResults) {
-        this.additionalResults = additionalResults;
+    public void setExpResults(IntObjectOpenHashMap<Object> experimentResults) {
+        this.expResults = experimentResults;
     }
 
     public boolean hasSubTasks() {
