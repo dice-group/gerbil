@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.execute.ExperimentTask;
 import org.aksw.gerbil.matching.Matching;
 import org.junit.Assert;
 import org.junit.Test;
@@ -104,8 +106,16 @@ public class ExperimentDAOImplJUnitTest {
         for (int i = 0; i < 10; ++i) {
         	java.util.Date today = new java.util.Date();
             if (i < 8) {           	
-                results.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2KB,
-                        Matching.STRONG_ANNOTATION_MATCH, ExperimentDAO.TASK_FINISHED,today.getTime(), GerbilConfiguration.getGerbilVersion(), random.nextInt()));
+            	ExperimentTaskResult result = new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2KB,
+                        Matching.STRONG_ANNOTATION_MATCH, ExperimentDAO.TASK_FINISHED,today.getTime(), GerbilConfiguration.getGerbilVersion(), random.nextInt());
+            	result.addExpResults(ExperimentTaskResult.MACRO_F1_MEASURE_INDEX, random.nextDouble());
+            	result.addExpResults(ExperimentTaskResult.MACRO_PRECISION_INDEX, random.nextDouble());
+            	result.addExpResults(ExperimentTaskResult.MACRO_RECALL_INDEX, random.nextDouble());
+            	result.addExpResults(ExperimentTaskResult.MICRO_F1_MEASURE_INDEX, random.nextDouble());
+            	result.addExpResults(ExperimentTaskResult.MICRO_PRECISION_INDEX, random.nextDouble());
+            	result.addExpResults(ExperimentTaskResult.MICRO_RECALL_INDEX, random.nextDouble());
+            	result.addExpResults(ResultNameToIdMapping.getInstance().getResultId(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME), random.nextInt());
+                results.add(result);
             } else {
                 results.add(new ExperimentTaskResult("annotator1", "dataset" + i, ExperimentType.D2KB,
                         Matching.STRONG_ANNOTATION_MATCH, 
@@ -139,7 +149,7 @@ public class ExperimentDAOImplJUnitTest {
                 for (ExperimentTaskResult result : results) {
                     if ((result.state == retrievedResult.state) && (result.annotator.equals(retrievedResult.annotator))
                             && (result.dataset.equals(retrievedResult.dataset))
-                            && (result.errorCount == retrievedResult.errorCount)
+                            && (result.getExpResults(28) == retrievedResult.getExpResults(28))
                             && (result.matching == retrievedResult.matching) && (result.type == retrievedResult.type)) {
                         originalResult = result;
                         break;
