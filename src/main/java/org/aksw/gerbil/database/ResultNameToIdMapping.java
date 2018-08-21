@@ -19,6 +19,7 @@ package org.aksw.gerbil.database;
 import java.util.Arrays;
 import java.util.List;
 
+import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.marking.MarkingClasses;
@@ -81,7 +82,8 @@ public class ResultNameToIdMapping {
             nameToIdMap.put(MarkingClasses.GS_IN_KB.getLabel() + " " + FMeasureCalculator.MICRO_F1_SCORE_NAME, 25);
             nameToIdMap.put(MarkingClasses.GS_IN_KB.getLabel() + " " + FMeasureCalculator.MICRO_PRECISION_NAME, 26);
             nameToIdMap.put(MarkingClasses.GS_IN_KB.getLabel() + " " + FMeasureCalculator.MICRO_RECALL_NAME, 27);
-
+            nameToIdMap.put(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME, 28);
+            
             instance = new ResultNameToIdMapping(nameToIdMap, IntObjectOpenHashMap.from(nameToIdMap.values().toArray(),
                     nameToIdMap.keys().toArray(String.class)));
         }
@@ -109,7 +111,7 @@ public class ResultNameToIdMapping {
         IntOpenHashSet ids = new IntOpenHashSet();
         for (ExperimentTaskResult result : results) {
             if (result.hasAdditionalResults()) {
-                ids.addAll(result.getAdditionalResults().keys());
+                ids.addAll(result.getExpResults().keys());
             }
         }
         int idArray[] = ids.toArray();

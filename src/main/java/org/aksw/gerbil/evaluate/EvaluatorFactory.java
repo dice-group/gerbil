@@ -60,6 +60,7 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 import org.aksw.gerbil.web.config.RootConfig;
@@ -223,10 +224,11 @@ public class EvaluatorFactory {
                     new SubTaskAverageCalculator<TypedNamedEntity>(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
                     new DoubleResultComparator());
         }
-        case RE:
+        case RE:{
         	return new ConfidenceBasedFMeasureCalculator<Relation>(new MatchingsCounterImpl<Relation>(
         			 new EqualsBasedMatchingsSearcher<Relation>()));
-        case OKE2018Task4:
+        }
+        case OKE2018Task4:{
             ExperimentTaskConfiguration subTaskConfig;
             List<SubTaskEvaluator> evaluators = new ArrayList<SubTaskEvaluator>();
             
@@ -237,12 +239,40 @@ public class EvaluatorFactory {
             subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
                     ExperimentType.A2KB, configuration.matching);
             evaluators.add(new ClassSubTaskEvaluator<Meaning>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
-                    ExperimentType.A2KB, subTaskConfig, dataset, classifier,inferencer ), Meaning.class));
+                    ExperimentType.A2KB, subTaskConfig, dataset, classifier, inferencer ), Meaning.class));
             
             
             return new ConfidenceScoreEvaluatorDecorator(
                     new SubTaskAverageCalculator(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
                     new DoubleResultComparator());
+        }
+        case KE: {
+        	ExperimentTaskConfiguration subTaskConfig;
+            List<SubTaskEvaluator> evaluators = new ArrayList<SubTaskEvaluator>();
+            UriKBClassifier okeClassifierTask1 = new ExactWhiteListBasedUriKBClassifier(Arrays.asList(
+                    "http://www.ontologydesignpatterns.org/ont/d0.owl#Location",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Organization",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Person",
+                    "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Role"));
+            
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.A2KB, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new ClassSubTaskEvaluator<Meaning>(subTaskConfig, (Evaluator<Meaning>) createEvaluator(
+                    ExperimentType.A2KB, subTaskConfig, dataset, classifier, inferencer), Meaning.class));
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.ETyping, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new ClassSubTaskEvaluator<TypedNamedEntity>(subTaskConfig, (Evaluator<TypedNamedEntity>) createEvaluator(
+                    ExperimentType.ETyping, subTaskConfig, dataset, okeClassifierTask1, inferencer), TypedNamedEntity.class));
+            subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
+                    ExperimentType.RE, Matching.STRONG_ENTITY_MATCH);
+            evaluators.add(new ClassSubTaskEvaluator<>(subTaskConfig, (Evaluator<Marking>) createEvaluator(
+                    ExperimentType.RE, subTaskConfig, dataset), Relation.class));
+
+            
+            return new ConfidenceScoreEvaluatorDecorator(
+                    new SubTaskAverageCalculator(evaluators), FMeasureCalculator.MICRO_F1_SCORE_NAME,
+                    new DoubleResultComparator());
+        }
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
         }
@@ -264,6 +294,7 @@ public class EvaluatorFactory {
             // Since the OKE challenge tasks are using the results of their
             // subtasks, the definition of subtasks is part of their evaluation
             // creation
+        case KE:
         case OKE_Task1:
         case OKE_Task2: {
             return;
@@ -296,7 +327,6 @@ public class EvaluatorFactory {
                     dataset)));
             return;
         }
-
         default: {
             throw new RuntimeException();
         }

@@ -17,6 +17,7 @@
 package org.aksw.gerbil.execute;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.A2KBAnnotator;
@@ -30,6 +31,7 @@ import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.annotator.REAnnotator;
 import org.aksw.gerbil.annotator.RT2KBAnnotator;
+import org.aksw.gerbil.annotator.KEAnnotator;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
@@ -61,6 +63,7 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.apache.commons.io.IOUtils;
@@ -140,8 +143,8 @@ public class ExperimentTask implements Task {
 
 			// create result object
 			// FIXME Fix this workaround
-			ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[6],
-					ExperimentDAO.TASK_FINISHED, 0);
+			ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, 
+					ExperimentDAO.TASK_FINISHED);
 			transformResults(result, expResult);
 
 			// store result
@@ -237,6 +240,12 @@ public class ExperimentTask implements Task {
 			}
 		case RE:
 			return;
+		case KE:
+			if (annotatorSameAsRetriever != null) {
+				for (List<? extends Meaning> result : results) {
+					SameAsRetrieverUtils.addSameURIsToMeanings(annotatorSameAsRetriever, result);
+				}
+			}
 		case ERec:// falls through
 		default:
 			// nothing to do
@@ -257,69 +266,80 @@ public class ExperimentTask implements Task {
 	protected void transformResults(EvaluationResult result, ExperimentTaskResult expResult) {
 		if (result instanceof SubTaskResult) {
 			ExperimentTaskResult subTask = new ExperimentTaskResult(((SubTaskResult) result).getConfiguration(),
-					new double[6], ExperimentDAO.TASK_FINISHED, 0);
+					ExperimentDAO.TASK_FINISHED);
 			List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
 			for (EvaluationResult tempResult : tempResults) {
 				transformResults(tempResult, subTask);
 			}
 			expResult.addSubTask(subTask);
+			subTask.addExpResults(ResultNameToIdMapping.getInstance().getResultId(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME),
+					0);
 		} else if (result instanceof EvaluationResultContainer) {
 			List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
 			for (EvaluationResult tempResult : tempResults) {
 				transformResults(tempResult, expResult);
 			}
 		} else if (result instanceof DoubleEvaluationResult) {
+			int resultId = ResultNameToIdMapping.getInstance().getResultId(result.getName());
 			switch (result.getName()) {
 			case FMeasureCalculator.MACRO_F1_SCORE_NAME: {
-				expResult.results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
+//				expResult.results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MACRO_PRECISION_NAME: {
-				expResult.results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
+//				expResult.results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MACRO_RECALL_NAME: {
-				expResult.results[ExperimentTaskResult.MACRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
+//				expResult.results[ExperimentTaskResult.MACRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MICRO_F1_SCORE_NAME: {
-				expResult.results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
+//				expResult.results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MICRO_PRECISION_NAME: {
-				expResult.results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
+//				expResult.results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MICRO_RECALL_NAME: {
-				expResult.results[ExperimentTaskResult.MICRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
+//				expResult.results[ExperimentTaskResult.MICRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			default: {
-				int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
-				if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
+				if (resultId == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
 					LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
 				} else {
-					expResult.addAdditionalResult(id, ((DoubleEvaluationResult) result).getValueAsDouble());
+					expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				}
 			}
 			}
 			return;
 		} else if (result instanceof IntEvaluationResult) {
+			int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
 			if (result.getName().equals(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME)) {
-				expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
+			//	expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
+				expResult.addExpResults(id, ((IntEvaluationResult) result).getValueAsInt());
 				return;
 			}
-			int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
+			
 			if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
 				LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
 			} else {
-				expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
+			//	expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
+				expResult.addExpResults(id, ((IntEvaluationResult) result).getValueAsInt());
 			}
 		}
 	}
@@ -410,6 +430,7 @@ public class ExperimentTask implements Task {
 				List<List<Span>> results = new ArrayList<List<Span>>(dataset.size());
 				List<List<Span>> goldStandard = new ArrayList<List<Span>>(dataset.size());
 				EntityRecognizer recognizer = ((EntityRecognizer) annotator);
+        
 				for (Document document : dataset.getInstances()) {
 					// reduce the document to a single text
 					results.add(recognizer.performRecognition(DocumentInformationReducer.reduceToPlainText(document)));
@@ -432,7 +453,6 @@ public class ExperimentTask implements Task {
 				List<List<TypedSpan>> results = new ArrayList<List<TypedSpan>>(dataset.size());
 				List<List<TypedSpan>> goldStandard = new ArrayList<List<TypedSpan>>(dataset.size());
 				EntityTyper typer = ((EntityTyper) annotator);
-
 				for (Document document : dataset.getInstances()) {
 					// reduce the document to a text and a list of Spans
 					results.add(typer.performTyping(DocumentInformationReducer.reduceToTextAndSpans(document)));
@@ -455,6 +475,7 @@ public class ExperimentTask implements Task {
 				List<List<TypedSpan>> results = new ArrayList<List<TypedSpan>>(dataset.size());
 				List<List<TypedSpan>> goldStandard = new ArrayList<List<TypedSpan>>(dataset.size());
 				RT2KBAnnotator extractor = (RT2KBAnnotator) annotator;
+        
 				for (Document document : dataset.getInstances()) {
 					// reduce the document to a single text
 					results.add(extractor.performRT2KBTask(DocumentInformationReducer.reduceToPlainText(document)));
@@ -477,7 +498,7 @@ public class ExperimentTask implements Task {
 				List<List<TypedNamedEntity>> results = new ArrayList<List<TypedNamedEntity>>(dataset.size());
 				List<List<TypedNamedEntity>> goldStandard = new ArrayList<List<TypedNamedEntity>>(dataset.size());
 				OKETask1Annotator okeTask1Annotator = ((OKETask1Annotator) annotator);
-
+        
 				for (Document document : dataset.getInstances()) {
 					// reduce the document to a text and a list of Spans
 					results.add(
@@ -572,6 +593,31 @@ public class ExperimentTask implements Task {
 			}
 			break;
 		}
+
+		case KE: {
+            try {
+                List<List<Marking>> results = new ArrayList<List<Marking>>(dataset.size());
+                List<List<Marking>> goldStandard = new ArrayList<List<Marking>>(dataset.size());
+                KEAnnotator keAnnotator = ((KEAnnotator) annotator);
+                for (Document document : dataset.getInstances()) {
+                    results.add(keAnnotator.performKETask(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings(Marking.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                prepareRelations(results, globalRetriever);
+                prepareRelations(goldStandard, globalRetriever);
+                
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
 		default:
 			throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
 					ErrorTypes.UNEXPECTED_EXCEPTION);

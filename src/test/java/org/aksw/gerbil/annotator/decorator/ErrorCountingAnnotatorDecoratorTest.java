@@ -55,7 +55,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         task.run();
         ExperimentTaskResult result = db.getTaskResult(1);
         Assert.assertNotNull(result);
-        Assert.assertEquals(5, result.errorCount);
+        Assert.assertEquals(5, result.getExpResults(28));
         Assert.assertTrue(result.state >= 0);
     }
 

@@ -30,6 +30,8 @@ import org.aksw.gerbil.annotator.OKETask1Annotator;
 import org.aksw.gerbil.annotator.OKETask2Annotator;
 import org.aksw.gerbil.annotator.REAnnotator;
 import org.aksw.gerbil.annotator.RT2KBAnnotator;
+import org.aksw.gerbil.annotator.REAnnotator;
+import org.aksw.gerbil.annotator.KEAnnotator;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
@@ -43,6 +45,7 @@ import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +95,8 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         	return new ErrorCountingREAnnotator((REAnnotator) annotator, maxErrors);
         case OKE2018Task4:
         	return new ErrorCountingOKE2018Task4Annotator((OKE2018Task4Annotator) annotator, maxErrors);
+        case KE:
+        	return new ErrorCountingKEAnnotator((KEAnnotator) annotator, maxErrors);
         case Rc2KB:
             break;
         case Sa2KB:
@@ -288,6 +293,23 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
     }
 
+    private static class ErrorCountingKEAnnotator extends ErrorCountingOKETask1Annotator implements KEAnnotator {
+
+        protected ErrorCountingKEAnnotator(KEAnnotator decoratedAnnotator, int maxErrors) {
+            super(decoratedAnnotator, maxErrors);
+        }
+        
+        @Override
+        public List<Relation> performRETask(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performRE(this, document);
+        }
+        
+        @Override
+        public List<Marking> performKETask(Document document) throws GerbilException {
+            return ErrorCountingAnnotatorDecorator.performKETask(this, document);
+        }
+    }
+    
     protected static void logResult(List<? extends Marking> result, String annotatorName, String markingName) {
         StringBuilder builder = new StringBuilder();
         builder.append('[');
@@ -536,7 +558,30 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         }
         return result;
     }
-
+   
+    protected static List<Marking> performKETask(ErrorCountingAnnotatorDecorator errorCounter,
+            Document document) throws GerbilException {
+        List<Marking> result = null;
+        try {
+            result = ((KEAnnotator) errorCounter.getDecoratedAnnotator()).performKETask(document);
+        } catch (Exception e) {
+            if (errorCounter.getErrorCount() == 0) {
+                // Log only the first exception completely
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + ")", e);
+            } else {
+                // Log only the Exception message without the stack trace
+                LOGGER.error("Got an Exception from the annotator (" + errorCounter.getName() + "): "
+                        + e.getLocalizedMessage());
+            }
+            errorCounter.increaseErrorCount();
+            return new ArrayList<Marking>(0);
+        }
+        if (printDebugMsg && LOGGER.isDebugEnabled()) {
+            logResult(result, errorCounter.getName(), "Marking");
+        }
+        return result;
+    }
+    
     protected int errorCount = 0;
     protected int maxErrors;
 
