@@ -143,8 +143,8 @@ public class ExperimentTask implements Task {
 
 			// create result object
 			// FIXME Fix this workaround
-			ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new Object[6],
-					ExperimentDAO.TASK_FINISHED, 0);
+			ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, 
+					ExperimentDAO.TASK_FINISHED);
 			transformResults(result, expResult);
 
 			// store result
@@ -266,13 +266,13 @@ public class ExperimentTask implements Task {
 	protected void transformResults(EvaluationResult result, ExperimentTaskResult expResult) {
 		if (result instanceof SubTaskResult) {
 			ExperimentTaskResult subTask = new ExperimentTaskResult(((SubTaskResult) result).getConfiguration(),
-					new Object[6], ExperimentDAO.TASK_FINISHED, 0);
+					ExperimentDAO.TASK_FINISHED);
 			List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
 			for (EvaluationResult tempResult : tempResults) {
 				transformResults(tempResult, subTask);
 			}
 			expResult.addSubTask(subTask);
-			subTask.addAdditionalResult(ResultNameToIdMapping.getInstance().getResultId(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME),
+			subTask.addExpResults(ResultNameToIdMapping.getInstance().getResultId(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME),
 					0);
 		} else if (result instanceof EvaluationResultContainer) {
 			List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
@@ -283,46 +283,46 @@ public class ExperimentTask implements Task {
 			int resultId = ResultNameToIdMapping.getInstance().getResultId(result.getName());
 			switch (result.getName()) {
 			case FMeasureCalculator.MACRO_F1_SCORE_NAME: {
-				expResult.results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
-				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
+//				expResult.results[ExperimentTaskResult.MACRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MACRO_PRECISION_NAME: {
-				expResult.results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
-				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
+//				expResult.results[ExperimentTaskResult.MACRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MACRO_RECALL_NAME: {
-				expResult.results[ExperimentTaskResult.MACRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
-				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
+//				expResult.results[ExperimentTaskResult.MACRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MICRO_F1_SCORE_NAME: {
-				expResult.results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
-				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
+//				expResult.results[ExperimentTaskResult.MICRO_F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MICRO_PRECISION_NAME: {
-				expResult.results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
-				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
+//				expResult.results[ExperimentTaskResult.MICRO_PRECISION_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			case FMeasureCalculator.MICRO_RECALL_NAME: {
-				expResult.results[ExperimentTaskResult.MICRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
-						.getValueAsDouble();
-				expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
+//				expResult.results[ExperimentTaskResult.MICRO_RECALL_INDEX] = ((DoubleEvaluationResult) result)
+//						.getValueAsDouble();
+				expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				return;
 			}
 			default: {
 				if (resultId == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
 					LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
 				} else {
-					expResult.addAdditionalResult(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
+					expResult.addExpResults(resultId, ((DoubleEvaluationResult) result).getValueAsDouble());
 				}
 			}
 			}
@@ -330,16 +330,16 @@ public class ExperimentTask implements Task {
 		} else if (result instanceof IntEvaluationResult) {
 			int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
 			if (result.getName().equals(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME)) {
-				expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
-				expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
+			//	expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
+				expResult.addExpResults(id, ((IntEvaluationResult) result).getValueAsInt());
 				return;
 			}
 			
 			if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
 				LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
 			} else {
-				expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
-				expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
+			//	expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
+				expResult.addExpResults(id, ((IntEvaluationResult) result).getValueAsInt());
 			}
 		}
 	}
