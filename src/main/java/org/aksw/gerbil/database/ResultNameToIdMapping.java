@@ -111,7 +111,7 @@ public class ResultNameToIdMapping {
         IntOpenHashSet ids = new IntOpenHashSet();
         for (ExperimentTaskResult result : results) {
             if (result.hasAdditionalResults()) {
-                ids.addAll(result.getAdditionalResults().keys());
+                ids.addAll(result.getExpResults().keys());
             }
         }
         int idArray[] = ids.toArray();
