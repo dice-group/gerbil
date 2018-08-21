@@ -175,7 +175,7 @@ public class DataIDGenerator {
         if (ExperimentTaskStateHelper.taskFinished(result)) {
 
             if (result.hasAdditionalResults()) {
-                IntObjectOpenHashMap additionalResults = result.getAdditionalResults();
+                IntObjectOpenHashMap additionalResults = result.getExpResults();
                 String propertyUri;
                 ResultNameToIdMapping mapping = ResultNameToIdMapping.getInstance();
                 for (int i = 0; i < additionalResults.allocated.length; ++i) {
