@@ -33,16 +33,10 @@ import org.springframework.jdbc.core.RowMapper;
  * <li>2 - dataset name</li>
  * <li>3 - experiment type</li>
  * <li>4 - matching</li>
- * <li>5 - micro F1 measure</li>
- * <li>6 - micro precision</li>
- * <li>7 - micro recall</li>
- * <li>8 - macro F1 measure</li>
- * <li>9 - macro precision</li>
- * <li>10 - macro recall</li>
- * <li>11 - state</li>
- * <li>12 - error count</li>
- * <li>13 - timestamp</li>
- * <li>14 - id inside the database (optional)</li>
+ * <li>5 - state</li>
+ * <li>6 - timestamp</li>
+ * <li>7 - version</li>
+ * <li>8 - id inside the database (optional)</li>
  * </ul>
  * 
  * @author m.roeder
