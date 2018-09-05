@@ -65,7 +65,15 @@ public enum ErrorTypes {
     /**
      * The annotator needed too much time and has been interrupted.
      */
-    ANNOTATOR_NEEDED_TOO_MUCH_TIME(-109, "The annotator needed too much time and has been interrupted.");
+    ANNOTATOR_NEEDED_TOO_MUCH_TIME(-109, "The annotator needed too much time and has been interrupted."),
+    /**
+     * Input RDF file is not valid
+     */
+    RDF_IS_NOT_VALID(-110, "The input RDF file is invalid."), 
+    /**
+     * Input RDF file has no file extension
+     */
+    FAILED_TO_DETERMINE_CONTENT_TYPE(-111, "The input RDF file has no file extension.");
 
     private ErrorTypes(int errorCode, String description) {
         this.errorCode = errorCode;
@@ -84,6 +92,7 @@ public enum ErrorTypes {
     public String getDescription() {
         return description;
     }
+
 
     /**
      * Checks whether the given code is an error code and returns the error

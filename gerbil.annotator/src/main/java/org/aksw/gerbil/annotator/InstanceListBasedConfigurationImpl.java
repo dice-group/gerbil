@@ -23,6 +23,7 @@ import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.apache.jena.riot.RiotException;
 
 /**
  * Contains all information needed to load an annotator for a specific
@@ -57,7 +58,10 @@ public class InstanceListBasedConfigurationImpl extends AbstractAdapterConfigura
                 } else {
                     throw e;
                 }
+            } catch(RiotException e) {
+            	throw new GerbilException(e, ErrorTypes.RDF_IS_NOT_VALID);
             } catch (Exception e) {
+
                 throw new GerbilException(e, ErrorTypes.ANNOTATOR_LOADING_ERROR);
             }
         }

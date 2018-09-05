@@ -24,6 +24,7 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.model.DatasetBasedSameAsRetriever;
+import org.apache.jena.riot.RiotException;
 
 public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfiguration
         implements DatasetConfiguration {
@@ -47,7 +48,14 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
         if (applicableForExperiment.equalsOrContainsType(experimentType)) {
             try {
                 return getPreparedDataset();
-            } catch (Exception e) {
+            } catch(RiotException e) {
+                throw new GerbilException(e, ErrorTypes.RDF_IS_NOT_VALID);
+
+            }
+            catch(GerbilException e) {
+            	throw e;
+            }
+            catch (Exception e) {
                 throw new GerbilException(e, ErrorTypes.DATASET_LOADING_ERROR);
             }
         }
