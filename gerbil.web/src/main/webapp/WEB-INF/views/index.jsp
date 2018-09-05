@@ -29,7 +29,7 @@ ol li {
 	<div class="jumbotron">
 		<div class="container">
 			<h1>Semantic Web Challenge 2018</h1>
-			<p>Welcome to the evaluation platform for the Semantic Web Challenge at <a href="https://iswc2018.semanticweb.org">ISWC 2018</a>. </p>
+			<p>Welcome to the evaluation platform for the Semantic Web Challenge at <a href="http://iswc2018.semanticweb.org">ISWC 2018</a>. </p>
             <p>This year’s challenge is centered on fact extraction from Internet sources to create new relationships within a knowledge graph. The graph in question is the <a href="http://permid.org/">Thomson Reuters permid.org</a> open dataset of organizations, people and financial entities. The relationships to find are supply chain relationships, indicating a supplier/customer relationship between two organizations.</p>
             <p>More details on the challenge can be found <a href="http://iswc2018.semanticweb.org/semantic-web-challenge-2018/">here</a>. </p>
 			<p>This evaluation platform is based on the <a href="http://gerbil.aksw.org">GERBIL</a> framework and is powered by the <a href="http://project-hobbit.eu">HOBBIT</a> project. <!-- It offers an easy-to-use web-based platform for the Semantic Web Challenge 2017 at the ISWC.</p>
