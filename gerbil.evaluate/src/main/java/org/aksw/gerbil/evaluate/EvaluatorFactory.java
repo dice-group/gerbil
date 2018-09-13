@@ -27,6 +27,7 @@ import org.aksw.gerbil.dataset.converter.Literal2ResourceManager;
 import org.aksw.gerbil.dataset.converter.impl.SPARQLBasedLiteral2Resource;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.impl.ConfidenceBasedModelComparator;
 import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.DoubleResultComparator;
 import org.aksw.gerbil.evaluate.impl.ModelComparator;
@@ -161,9 +162,11 @@ public class EvaluatorFactory {
 			if (additional == null) {
 				additional = GerbilConfiguration.getInstance().getStringArray(SWC2018_TASK1_PROPERTIES_KEY);
 			}
-			return new ConfidenceScoreEvaluatorDecorator<Model>(new ModelComparator<Model>(additional, true),
-					ModelComparator.F1_SCORE_NAME, new DoubleResultComparator(),
-					GerbilConfiguration.getInstance().getString(SWC2018_TASK1_CONFIDENCE_KEY));
+			return new ConfidenceBasedModelComparator(additional, ModelComparator.F1_SCORE_NAME, true,
+					new DoubleResultComparator(), GerbilConfiguration.getInstance().getString(SWC2018_TASK1_CONFIDENCE_KEY));
+//			return new ConfidenceScoreEvaluatorDecorator<Model>(new ModelComparator<Model>(additional, true),
+//					ModelComparator.F1_SCORE_NAME, new DoubleResultComparator(),
+//					GerbilConfiguration.getInstance().getString(SWC2018_TASK1_CONFIDENCE_KEY));
 		default: {
 			throw new IllegalArgumentException("Got an unknown Experiment Type.");
 		}

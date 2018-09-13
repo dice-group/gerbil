@@ -27,6 +27,7 @@ import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.matching.scored.ScoredEvaluationCountsArray;
 import org.aksw.gerbil.utils.filter.ConfidenceScoreBasedModelFilter;
 import org.aksw.gerbil.utils.filter.ModelFilter;
 import org.apache.jena.rdf.model.Model;
@@ -59,9 +60,12 @@ public class ConfidenceScoreEvaluatorDecorator<T extends Model> extends Abstract
 	@Override
 	public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
 			EvaluationResultContainer results) {
+
+		
 		// Get first Model
 		T annotatorModel = annotatorResults.get(0).get(0);
 		// create a list of confidence scores
+		
 		double scores[] = getConfidenceScores(annotatorModel);
 		Arrays.sort(scores);
 
@@ -72,6 +76,7 @@ public class ConfidenceScoreEvaluatorDecorator<T extends Model> extends Abstract
 		for (int i = 0; i < scores.length; ++i) {
 			// evaluate the result using the current confidence
 			currentResult = evaluate(annotatorResults, goldStandard, results, scores[i],scores[scores.length-1]);
+			
 			bestResult = getBetterResult(currentResult, bestResult);
 			if (bestResult == currentResult) {
 				bestScoreId = i;

@@ -21,7 +21,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.Test;
 
-public class ConfidenceScoreModelBasedEvaluatorTest {
+public class ConfidenceBasedModelEvaluatorTest {
 
 	private static final String[] PREDICATES = new String[] { "http://ont.thomsonreuters.com/mdaas/isDomiciledIn1",
 			"http://ont.thomsonreuters.com/mdaas/isDomiciledIn2" };
@@ -29,8 +29,7 @@ public class ConfidenceScoreModelBasedEvaluatorTest {
 	@Test
 	public void compareModel() {
 		EvaluationResultContainer results = new EvaluationResultContainer();
-		Evaluator<Model> evaluator = new ConfidenceScoreEvaluatorDecorator<Model>(
-				new ModelComparator<Model>(PREDICATES, false), ModelComparator.F1_SCORE_NAME,
+		Evaluator<Model> evaluator = new ConfidenceBasedModelComparator(PREDICATES, ModelComparator.F1_SCORE_NAME, false,
 				new DoubleResultComparator(), "http://confidence.com");
 
 		Model anno = ModelFactory.createDefaultModel();
@@ -60,7 +59,7 @@ public class ConfidenceScoreModelBasedEvaluatorTest {
 		//////// FIRST all true check
 
 		evaluator.evaluate(annoList, goldList, results);
-		checkResults(results, new double[] { 1, 1, 1, 1 });
+		checkResults(results, new double[] { 1, 1, 1, 0 });
 
 		//////// SECOND ALL FALSE check
 		gold.removeAll();
@@ -70,7 +69,7 @@ public class ConfidenceScoreModelBasedEvaluatorTest {
 		anno.addLiteral(s1, p, 0.8);
 		results = new EvaluationResultContainer();
 		evaluator.evaluate(annoList, goldList, results);
-		checkResults(results, new double[] { 0, 0, 0, 0.8 });
+		checkResults(results, new double[] { 0, 0, 0, 0 });
 
 		//////// THIRD 0.5 CONFIDENCE = 0.8 check
 		gold.removeAll();
@@ -83,7 +82,7 @@ public class ConfidenceScoreModelBasedEvaluatorTest {
 		anno.addLiteral(s2, p, 0.7);
 		results = new EvaluationResultContainer();
 		evaluator.evaluate(annoList, goldList, results);
-		 checkResults(results, new double[] { 2.0/3, 1, 0.5, 0.7 });
+		 checkResults(results, new double[] { 2.0/3, 1, 0.5, 0.8 });
 
 		//////// FOURTH all TRUE
 		gold.removeAll();
@@ -92,7 +91,7 @@ public class ConfidenceScoreModelBasedEvaluatorTest {
 		anno.addLiteral(s1, p1, 0.0);
 		results = new EvaluationResultContainer();
 		evaluator.evaluate(annoList, goldList, results);
-		checkResults(results, new double[] { 1, 1, 1, 1 });
+		checkResults(results, new double[] { 1, 1, 1, 0 });
 
 		//////// FITHT all FALSE
 		gold.removeAll();
@@ -101,7 +100,7 @@ public class ConfidenceScoreModelBasedEvaluatorTest {
 		anno.addLiteral(s1, p1, 1.0);
 		results = new EvaluationResultContainer();
 		evaluator.evaluate(annoList, goldList, results);
-		checkResults(results, new double[] { 0, 0, 0, 1 });
+		checkResults(results, new double[] { 0, 0, 0, 0 });
 
 		//////// THIRD 0.5 CONFIDENCE = 0.8 check
 		gold.removeAll();
@@ -112,7 +111,7 @@ public class ConfidenceScoreModelBasedEvaluatorTest {
 		anno.addLiteral(s2, p2, 1.0);
 		results = new EvaluationResultContainer();
 		evaluator.evaluate(annoList, goldList, results);
-		checkResults(results, new double[] { 0.5, 0.5, 0.5, 1.0 });
+		checkResults(results, new double[] { 0.5, 0.5, 0.5, 0});
 
 	}
 

@@ -100,11 +100,18 @@ public class ModelComparator<T extends Model> implements Evaluator<T> {
 		return reduceModel(annotator, predicates);
 	}
 
-    public static Model reduceModel(Model annotator, String[] predicates){
+	public Model reduceModel(Model annotator, Property... ignore){
+		return reduceModel(annotator, predicates, ignore);
+	}
+	
+	public static Model reduceModel(Model annotator, String[] predicates, Property... ignore){
         Model reducedModel = ModelFactory.createDefaultModel();
         for(String predicate : predicates){
             Property prop = annotator.createProperty(predicate);
             reducedModel.add(annotator.listStatements(null, prop, (RDFNode)null));
+        }
+        for(Property predicate : ignore){
+            reducedModel.add(annotator.listStatements(null, predicate, (RDFNode)null));
         }
         return reducedModel;
     }
