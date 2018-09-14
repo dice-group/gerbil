@@ -199,6 +199,12 @@ public class ExperimentTaskStatus {
 	        builder.append(state);
 	        builder.append(",taskId=");
 	        builder.append(idInDb);
+	        for(String key : resultsMap.keySet()) {
+                builder.append(',');
+	            builder.append(key);
+	            builder.append('=');
+	            builder.append(resultsMap.get(key).toString());
+	        }
 	        builder.append(")");
 	        return builder.toString();
 	    }
