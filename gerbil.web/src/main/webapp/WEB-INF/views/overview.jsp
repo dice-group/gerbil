@@ -315,7 +315,7 @@ table {
 					+ "</h3><table id=\"" + tableData.datasetName + "\" class=\"table table-hover table-condensed\">";
 			tbl += tbl_hd;
 			var leader = tableData.leader;
-			var url = window.location.protocol + "/gerbil/experiment?id=";
+			var url = window.location.protocol +"//"+ window.location.host + "/gerbil/experiment?id=";
 
 			for (var i = 0; i < leader.length; i++) {
 				//TODO add elements from tableData
