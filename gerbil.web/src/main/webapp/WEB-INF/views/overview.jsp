@@ -63,6 +63,8 @@ table {
 	font-size: 14px;
 	font-family: "Helvetica Neue", Helvetica;
 }
+
+
 </style>
 
 <body>
@@ -71,6 +73,8 @@ table {
 		<c:url var="experimentoverview" value="/experimentoverview" />
 		<c:url var="matchings" value="/matchings" />
 		<c:url var="exptypes" value="/exptypes" />
+
+		
 
 		<%@include file="navbar.jsp"%>
 		<h1>Leaderboards</h1>
@@ -82,7 +86,7 @@ table {
 				</div>
 			</div>
 
-			<div class="col-md-12" style="visibility:hidden;">
+			<div class="col-md-12" style="visibility: hidden;">
 				<div class="control-group">
 					<label class="col-md-4 control-label">Matching</label>
 					<div id="matching" class="col-md-8"></div>
@@ -110,13 +114,13 @@ table {
 		</div>
 	</div>
 	<div class="container-fluid" id="resultsTable">
-<!-- 		<table id="resultsTable" class="table table-hover table-condensed"> -->
-<!-- 			<thead></thead> -->
-<!-- 			<tbody></tbody> -->
-<!-- 		</table> -->
-		 
+		<!-- 		<table id="resultsTable" class="table table-hover table-condensed"> -->
+		<!-- 			<thead></thead> -->
+		<!-- 			<tbody></tbody> -->
+		<!-- 		</table> -->
+
 	</div>
-	<div class="container" style="visibility:hidden;">
+	<div class="container" style="visibility: hidden;">
 		<div class="form-horizontal">
 			<div class="col-md-12">
 				<h2>Annotator &ndash; Dataset feature correlations</h2>
@@ -133,7 +137,7 @@ table {
 			</div>
 		</div>
 	</div>
-	<div class="container-fluid" style="visibility:hidden;">
+	<div class="container-fluid" style="visibility: hidden;">
 		<table id="correlationsTable"
 			class="table table-hover table-condensed">
 			<thead></thead>
@@ -236,91 +240,105 @@ table {
 		};
 
 		function loadTables() {
+			
 			$.getJSON('${experimentoverview}', {
 				experimentType : $('#expTypes input:checked').val(),
 				ajax : 'false'
 			}, function(data) {
 				$("#resultsTable").html("");
-				for(var i = 0; i < data.datasets.length; i++) {
+				for (var i = 0; i < data.datasets.length; i++) {
 					var tableData = data.datasets[i];
 					showTable(tableData, "resultsTable");
 				}
+
 			}).fail(function(data) {
 				console.log("error loading data for table");
+
 			});
 		};
-		
+
 		function initLoading() {
+
 			var param = getUrlParameter("task");
-			if(param=='SWC1'||param=='SWC2'){
+			if (param == 'SWC1' || param == 'SWC2') {
+
 				$.getJSON('${experimentoverview}', {
 					experimentType : param,
 					ajax : 'false'
 				}, function(data) {
 					$("#resultsTable").html("");
-					for(var i = 0; i < data.datasets.length; i++) {
+					for (var i = 0; i < data.datasets.length; i++) {
 						var tableData = data.datasets[i];
 						showTable(tableData, "resultsTable");
 					}
+
 				}).fail(function() {
 					console.log("error loading data for table");
+
 				});
 			}
+
 		}
-		
+
 		function getUrlParameter(sParam) {
-		    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-		        sURLVariables = sPageURL.split('&'),
-		        sParameterName,
-		        i;
+			var sPageURL = decodeURIComponent(window.location.search
+					.substring(1)), sURLVariables = sPageURL.split('&'), sParameterName, i;
 
-		    for (i = 0; i < sURLVariables.length; i++) {
-		        sParameterName = sURLVariables[i].split('=');
+			for (i = 0; i < sURLVariables.length; i++) {
+				sParameterName = sURLVariables[i].split('=');
 
-		        if (sParameterName[0] === sParam) {
-		            return sParameterName[1] === undefined ? true : sParameterName[1];
-		        }
-		    }
+				if (sParameterName[0] === sParam) {
+					return sParameterName[1] === undefined ? true
+							: sParameterName[1];
+				}
+			}
 		};
 
 		function showTable(tableData, tableElementId) {
-			
 			//http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
 			var str = tableData.datasetName.replace(/\s/g, "");
 			var newID = str + "bod";
 			var bootDiv = "<div id=\"" + newID + "\" class=\"col-md-12\"></div>";
-		    $("#" + tableElementId).prepend(bootDiv);
-		    
+			$("#" + tableElementId).prepend(bootDiv);
+
 			var tbl_body = "";
 			var experimentType = $('#expTypes input:checked').val();
-			
-		    var measure = "F1 measure";
-		    if(experimentType==="SWC2"){
-		    	measure = "Area Under Curve (AUC)";
-		    }
-			var tbl_hd = "<tr><th>AnnotatorName</th><th>" + measure + "</th></tr>";
-			var tbl="<h3>Dataset: "+tableData.datasetName+"</h3><table id=\"" + tableData.datasetName + "\" class=\"table table-hover table-condensed\">";
-			tbl+=tbl_hd;
+
+			var measure = "F1 measure";
+			if (experimentType === "SWC2") {
+				measure = "Area Under Curve (AUC)";
+			}
+			var tbl_hd = "<tr><th>AnnotatorName</th><th>" + measure
+					+ "</th></tr>";
+			var tbl = "<h3>Dataset: "
+					+ tableData.datasetName
+					+ "</h3><table id=\"" + tableData.datasetName + "\" class=\"table table-hover table-condensed\">";
+			tbl += tbl_hd;
 			var leader = tableData.leader;
-			for(var i = 0; i < leader.length; i++) {
+			var url = window.location.protocol + "/gerbil/experiment?id=";
+
+			for (var i = 0; i < leader.length; i++) {
 				//TODO add elements from tableData
 				var tbl_row = "<tr>";
-				tbl_row+="<td>"+leader[i].annotatorName+"</td>";
-				tbl_row+="<td>"+leader[i].value+"</td>";
-				tbl_row+="</tr>";
-				tbl_body+=tbl_row;
-			};
-			tbl+=tbl_body;
-			tbl+="</table>";
+
+				tbl_row += "<td> <a href=\""+url+leader[i].id+"\"> <span class=\"glyphicon glyphicon-search\"></span></a> "
+						+ leader[i].annotatorName + " </td>";
+				tbl_row += "<td>" + leader[i].value + "</td>";
+				tbl_row += "</tr>";
+				tbl_body += tbl_row;
+			}
+			;
+			tbl += tbl_body;
+			tbl += "</table>";
 			$("#" + newID).prepend("<div class=\"col-md-8\">" + tbl + "</div>");
-			if(experimentType==="SWC2"){
+			if (experimentType === "SWC2") {
 				createROC(tableData, newID);
 			}
 		}
 
 		function createROC(tableData, id) {
 			var datasets = [];
-			for(var i=0;i<tableData.rocs.length;i++){
+			for (var i = 0; i < tableData.rocs.length; i++) {
 				var dataset = tableData.rocs[i];
 				dataset.showLine = true;
 				dataset.lineTension = 0;
@@ -328,33 +346,56 @@ table {
 				dataset.borderColor = getRandomColor();
 				datasets.push(dataset);
 			}
-			if(datasets.length >= 1){
-	 			var canvas = "<div class=\"col-md-4\" style=\"position: relative;  margin: auto; height: 100%;\"><canvas id=\"";
+			if (datasets.length >= 1) {
+				var canvas = "<div class=\"col-md-4\" style=\"position: relative;  margin: auto; height: 100%;\"><canvas id=\"";
 				canvas += tableData.datasetName;
 
 				
 				canvas += "roc\"></canvas></div>";
 				$("#" + id).append(canvas);
-				var ctx = document.getElementById(tableData.datasetName + "roc").getContext('2d');
-	 			
-	 			var myLineChart = new Chart(ctx, {
-   		 			type: 'scatter',
-   			 		data : { "datasets" : datasets},
-   			 		options: {maintainAspectRatio: false, layout : { padding: {top : 50} }, scales: {yAxes: [{ticks: {max : 1, beginAtZero:true}}], xAxes : [{ticks: {max : 1, beginAtZero:true}}]}}
+				var ctx = document
+						.getElementById(tableData.datasetName + "roc")
+						.getContext('2d');
+
+				var myLineChart = new Chart(ctx, {
+					type : 'scatter',
+					data : {
+						"datasets" : datasets
+					},
+					options : {
+						maintainAspectRatio : false,
+						layout : {
+							padding : {
+								top : 50
+							}
+						},
+						scales : {
+							yAxes : [ {
+								ticks : {
+									max : 1,
+									beginAtZero : true
+								}
+							} ],
+							xAxes : [ {
+								ticks : {
+									max : 1,
+									beginAtZero : true
+								}
+							} ]
+						}
+					}
 				});
 			}
 		}
 
 		function getRandomColor() {
-    		var letters = '0123456789ABCDEF'.split('');
-    		var color = '#';
-  	  		for (var i = 0; i < 6; i++ ) {
-      	  		color += letters[Math.floor(Math.random() * 16)];
-   	 		}
-    		return color;
+			var letters = '0123456789ABCDEF'.split('');
+			var color = '#';
+			for (var i = 0; i < 6; i++) {
+				color += letters[Math.floor(Math.random() * 16)];
+			}
+			return color;
 		}
-
-		
 
 		function drawSpiderDiagram(tableData, chartElementId) {
 			//draw spider chart

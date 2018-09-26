@@ -82,12 +82,7 @@
 			</exclusions>
 		</dependency>
 
-		<!-- NERD -->
-		<dependency>
-			<groupId>fr.eurecom.nerd</groupId>
-			<artifactId>client</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+
 
 		<!-- slf4j: Logging API -->
 		<dependency>

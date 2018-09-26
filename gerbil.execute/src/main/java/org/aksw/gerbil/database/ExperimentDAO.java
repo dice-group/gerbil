@@ -254,4 +254,6 @@ public interface ExperimentDAO extends Closeable {
 
 
 	public List<File2SystemEntry> getFile2SystemByID(int experimentTaskId);
+
+	public String getTaskId(int id);
 }
