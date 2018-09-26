@@ -321,7 +321,7 @@ table {
 				//TODO add elements from tableData
 				var tbl_row = "<tr>";
 
-				tbl_row += "<td> <a href=\""+url+leader[i].id+"\"> <span class=\"glyphicon glyphicon-search\"></span></a> "
+				tbl_row += "<td> <a title=\""+url+leader[i].id+"\" href=\""+url+leader[i].id+"\"> <span class=\"glyphicon glyphicon-search\"></span></a> "
 						+ leader[i].annotatorName + " </td>";
 				tbl_row += "<td>" + leader[i].value + "</td>";
 				tbl_row += "</tr>";
