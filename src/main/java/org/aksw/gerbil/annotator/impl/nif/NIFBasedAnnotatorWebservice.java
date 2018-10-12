@@ -17,6 +17,7 @@
 package org.aksw.gerbil.annotator.impl.nif;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -143,10 +144,15 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
         return performAnnotation(document, TypedSpan.class);
     }
 
+    @SuppressWarnings("unchecked")
     protected <T extends Marking> List<T> performAnnotation(Document document, Class<T> resultClass)
             throws GerbilException {
         document = request(document);
-        return document.getMarkings(resultClass);
+        if(document != null) {
+            return document.getMarkings(resultClass);
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     public Document request(Document document) throws GerbilException {
@@ -176,13 +182,14 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
         
         entity = null;
         CloseableHttpResponse response = null;
+        Document responseDoc = null;
         try {
             response = sendRequest(request, true);
             // receive NIF document
             entity = response.getEntity();
             // read response and parse NIF
             try {
-                document = nifParser.getDocumentFromNIFStream(entity.getContent());
+                responseDoc = nifParser.getDocumentFromNIFStream(entity.getContent());
             } catch (Exception e) {
                 LOGGER.error("Couldn't parse the response.", e);
                 throw new GerbilException("Couldn't parse the response.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
@@ -198,7 +205,7 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
             IOUtils.closeQuietly(response);
         }
         LOGGER.info("Finished request for {}", document.getDocumentURI());
-        return document;
+        return responseDoc;
     }
 
     public String getUrl() {
