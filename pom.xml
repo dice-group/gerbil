@@ -64,11 +64,6 @@
 			<artifactId>jena-arq</artifactId>
 			<version>${jena.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.jsonld-java</groupId>
-			<artifactId>jsonld-java-jena</artifactId>
-			<version>${jsonld-java-jena.version}</version>
-		</dependency>
 
 		<!-- Google Guava -->
 		<dependency>
@@ -130,7 +125,6 @@
 			<groupId>org.simpleframework</groupId>
 			<artifactId>simple</artifactId>
 			<version>5.1.6</version>
-			<scope>test</scope>
 		</dependency>
 		<!-- ~~~~~~~~~~~~~~~~~~~ End Testing ~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- BABELFY -->
