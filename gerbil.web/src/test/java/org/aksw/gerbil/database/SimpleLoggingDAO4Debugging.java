@@ -166,4 +166,10 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
 		return null;
 	}
 
+    @Override
+    public String getTaskId(int id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
