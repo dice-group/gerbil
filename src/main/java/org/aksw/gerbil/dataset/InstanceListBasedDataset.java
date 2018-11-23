@@ -19,7 +19,9 @@ package org.aksw.gerbil.dataset;
 import java.io.IOException;
 import java.util.List;
 
+import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.utils.ClosePermitionGranter;
 
@@ -33,6 +35,12 @@ public class InstanceListBasedDataset extends AbstractDatasetConfiguration imple
 
     public InstanceListBasedDataset(String name, List<Document> instances, ExperimentType applicableForExperiment) {
         super(name, false, applicableForExperiment, null, null);
+        this.instances = instances;
+    }
+
+    public InstanceListBasedDataset(String name, List<Document> instances, ExperimentType applicableForExperiment,
+            EntityCheckerManager entityCheckerManager, SameAsRetriever globalRetriever) {
+        super(name, false, applicableForExperiment, entityCheckerManager, globalRetriever);
         this.instances = instances;
     }
 
