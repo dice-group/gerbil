@@ -139,7 +139,7 @@ public class ExperimentOverviewController {
 			for(ExperimentTaskResult expResults : leaderList){
 				String annotator = expResults.annotator.substring(0, expResults.annotator.lastIndexOf("(")).replace("\"", "\\\"");
 				listsAsJson.append("{ \"annotatorName\" : \"").append(annotator).append("\", \"value\": \"");
-				listsAsJson.append(expResults.results[0]).append("\"}");
+				listsAsJson.append(expResults.results[0]).append("\", \"id\": \"").append(dao.getTaskId(expResults.idInDb)).append("\"}");
 							
 				if(count2<leaderList.size()-1) {
 					listsAsJson.append(", ");

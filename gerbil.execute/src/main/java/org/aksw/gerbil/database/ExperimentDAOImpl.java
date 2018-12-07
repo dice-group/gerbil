@@ -57,6 +57,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 	private final static String SET_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE id=:id";
 	private final static String SET_EXPERIMENT_TASK_RESULT = "UPDATE ExperimentTasks SET publish=:publish, errorCount=:errorCount, lastChanged=:lastChanged WHERE id=:id";
 	private final static String CONNECT_TASK_EXPERIMENT = "INSERT INTO Experiments (id, taskId) VALUES(:id, :taskId)";
+	private final static String GET_EXPERIMENT_TASKID = "SELECT id FROM Experiments WHERE taskId=:taskId";
+
 	private final static String GET_TASK_STATE = "SELECT state FROM ExperimentTasks WHERE id=:id";
 	private final static String GET_EXPERIMENT_RESULTS = "SELECT annotatorName, datasetName, experimentType, matching,  state, errorCount, lastChanged, taskId FROM ExperimentTasks t, Experiments e WHERE e.id=:id AND e.taskId=t.id";
 	private final static String GET_EXPERIMENT_TASK_RESULT = "SELECT annotatorName, datasetName, experimentType, matching, state, errorCount, lastChanged, id FROM ExperimentTasks t WHERE id=:id";
@@ -343,6 +345,13 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 	public Set<String> getAnnotators() {
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		return new HashSet<String>(this.template.queryForList(GET_ALL_ANNOTATORS, params, String.class));
+	}
+	
+	@Override
+	public String getTaskId(int id) {
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("taskId", id);
+		return this.template.query(GET_EXPERIMENT_TASKID, params, new StringRowMapper()).get(0);
 	}
 
 	@Override
