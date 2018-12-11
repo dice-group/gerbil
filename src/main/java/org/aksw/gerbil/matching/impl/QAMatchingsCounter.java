@@ -146,15 +146,13 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
 			} else {
 				// The given String might be a label. Try to find all matching
 				// resources
+				
 				for (String received : converterManager.getResourcesForLiteral(answer)) {
 					annotations.add(new Annotation(received));
 				}
-				// FIXME: What if answer literal contains escaped @
-				// Remove Lang from literal and exchange from answers.
-				if (answer.contains("@")) {
-					String literal = answer.substring(0, answer.lastIndexOf("@"));
-					answers.remove(answer);
-					answers.add(literal);
+				if (answer.matches(".*@\\w\\w(-\\w\\w\\w\\w)?$")) {
+					answer = answer.substring(0, answer.lastIndexOf("@"));
+					
 				}
 			}
 		}

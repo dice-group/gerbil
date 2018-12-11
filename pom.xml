@@ -300,6 +300,7 @@
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>commons</artifactId>
 			<version>0.4.20</version>
+
 			<exclusions>
 				<exclusion>
 					<groupId>mysql</groupId>
@@ -343,7 +344,9 @@
 		<dependency>
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>datasets</artifactId>
+
 			<version>0.5.15</version>
+
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
