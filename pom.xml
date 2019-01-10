@@ -8,8 +8,7 @@
 	See the GNU Lesser General Public License for more details. You should have 
 	received a copy of the GNU Lesser General Public License along with General 
 	Entity Annotator Benchmark. If not, see <http://www.gnu.org/licenses/>. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
@@ -300,8 +299,7 @@
 		<dependency>
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>commons</artifactId>
-			<version>0.4.21</version>
-
+			<version>0.4.22</version>
 			<exclusions>
 				<exclusion>
 					<groupId>mysql</groupId>
@@ -345,8 +343,7 @@
 		<dependency>
 			<groupId>org.aksw.qa</groupId>
 			<artifactId>datasets</artifactId>
-			<version>0.5.16</version>
-
+			<version>0.5.17</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
