@@ -1,10 +1,11 @@
 #!/bin/bash
 
-gerbil_home=/workspace/code/thirdparty/gerbil/
+export gerbil_home=/workspace/code/thirdparty/gerbil/
+
 gerbil_data=$gerbil_home/gerbil_data
 
 data_url="https://github.com/dice-group/gerbil/releases/download/v1.2.6/gerbil_data.zip"
-sameas_url="http://139.18.2.164/mroeder/gerbil/dbpedia_index.zip"
+mapping_url="http://139.18.2.164/mroeder/gerbil/dbpedia_index.zip"
 index_url="http://139.18.2.164/mroeder/gerbil/dbpedia_check_index.zip"
 
 # Check for dependencies
@@ -27,7 +28,7 @@ then
   mkdir -p "./gerbil_data/indexes/"
 
   echo " .. downloading mappings to $zipped_mapping_file"
-  curl --retry 4 -L -o "$zipped_sameas_file" "$sameas_url"
+  curl --retry 4 -L -o "$zipped_mapping_file" "$mapping_url"
     
   echo "extracting .."
   unzip "$zipped_mapping_file" -d "$mapping_file"
@@ -43,7 +44,7 @@ fi
 
 echo "starting the docker container"
 
-docker pull philippkuntschik/gerbil:latest
+docker pull philippkuntschik/gerbil:dev
 
 docker run  -d \
             --rm \
