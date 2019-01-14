@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export gerbil_home=/workspace/code/thirdparty/gerbil/
+export gerbil_home=~/gerbil/
 
 gerbil_data=$gerbil_home/gerbil_data
 
@@ -19,11 +19,12 @@ then
   
   mapping_file="$gerbil_data/indexes/dbpedia"
   index_file="$gerbil_data/indexes/dbpedia_check"
-    
+  
   echo " .. downloading gerbil_data file to $zipped_data_file"
   curl --retry 4 -L -o "$zipped_data_file" "$data_url"
 
   echo "extracting .."
+  mkdir -p "$gerbil_home"
   unzip "$zipped_data_file" -d "$gerbil_home"
   mkdir -p "./gerbil_data/indexes/"
 
@@ -44,7 +45,7 @@ fi
 
 echo "starting the docker container"
 
-docker pull philippkuntschik/gerbil:dev
+docker pull philippkuntschik/gerbil:latest
 
 docker run  -d \
             --rm \
