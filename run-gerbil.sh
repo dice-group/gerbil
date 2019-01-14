@@ -43,10 +43,12 @@ fi
 
 echo "starting the docker container"
 
+docker pull philippkuntschik/gerbil:latest
+
 docker run  -d \
             --rm \
             --name gerbil \
             -p 8080:8080 \
             -v $gerbil_data/:/gerbil_data \
             -v /var/logs/:/logs/ \
-            local/gerbil
+            philippkuntschik/gerbil
