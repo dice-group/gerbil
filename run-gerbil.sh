@@ -43,7 +43,7 @@ fi
 
 echo "starting the docker container"
 
-docker run  -it \
+docker run  -d \
             --rm \
             --name gerbil \
             -p 8080:8080 \
