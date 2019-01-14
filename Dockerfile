@@ -1,6 +1,6 @@
 FROM tomcat:7-jre8-alpine
 
-RUN touch 20180507.txt
+RUN touch 20190114.txt
 
 VOLUME /tmp
 
