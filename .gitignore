@@ -1,8 +1,10 @@
-*.class
++*.class
 *.cache
 .classpath
 .project
 target
+download
+gerbil_data
 bin
 .settings
 gerbil_keys.properties
