@@ -1,7 +1,23 @@
+#############################
+# BUILD THE WAR FILE
+#############################
+
+FROM maven:3-jdk-8 AS build
+
+COPY src /tmp/src/
+COPY repository /tmp/repository/
+COPY pom.xml /tmp/
+
+WORKDIR /tmp/
+
+RUN mvn package -U -DskipTests
+
+#############################
+# BUILD THE DOCKER CONTAINER
+#############################
+
 FROM tomcat:7-jre8-alpine
 
-RUN touch 20190114.txt
+RUN touch 20190115.txt
 
-VOLUME /tmp
-
-COPY target/gerbil-1.2.7.war webapps/gerbil.war
+COPY --from=build /tmp/target/gerbil-*.war $CATALINA_HOME/webapps/$gerbil.war

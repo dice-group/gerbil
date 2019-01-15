@@ -26,7 +26,7 @@ then
   echo "extracting .."
   mkdir -p "$gerbil_home"
   unzip "$zipped_data_file" -d "$gerbil_home"
-  mkdir -p "./gerbil_data/indexes/"
+  mkdir -p "$gerbil_data/indexes/"
 
   echo " .. downloading mappings to $zipped_mapping_file"
   curl --retry 4 -L -o "$zipped_mapping_file" "$mapping_url"
