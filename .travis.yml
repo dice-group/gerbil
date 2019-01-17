@@ -3,10 +3,10 @@ language: java
 #Following https://docs.travis-ci.com/user/languages/java/ we have to run an update for JDK 8
 sudo: false
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
+#addons:
+#  apt:
+#    packages:
+#      - oracle-java8-installer
       
 jdk:  
   - oraclejdk8
