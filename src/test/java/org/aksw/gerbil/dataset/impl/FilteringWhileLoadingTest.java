@@ -17,15 +17,10 @@
 package org.aksw.gerbil.dataset.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
-import org.aksw.gerbil.semantic.kb.UriKBClassifier;
-import org.aksw.gerbil.test.EntityCheckerManagerSingleton4Tests;
-import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.junit.Assert;
@@ -37,15 +32,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class FilteringWhileLoadingTest {
 
-    /**
-     * @see org.aksw.gerbil.evaluate.EvaluatorFactory
-     */
-    private static UriKBClassifier loadInKBClassifier() {
-        String kbs[] = GerbilConfiguration.getInstance().getStringArray("org.aksw.gerbil.evaluate.DefaultWellKnownKB");
-        return new SimpleWhiteListBasedUriKBClassifier(kbs);
-    }
-
-    private static final UriKBClassifier GLOBAL_CLASSIFIER = loadInKBClassifier();
+    public static final String[] KNOWN_KBS = new String[] {"http://dbpedia.org", "http://en.dbpedia.org/" };
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -69,12 +56,10 @@ public class FilteringWhileLoadingTest {
 
     @Test
     public void run() {
+        SimpleWhiteListBasedUriKBClassifier classifier = new SimpleWhiteListBasedUriKBClassifier(KNOWN_KBS);
+        
         Meaning meaning = new Annotation(uri);
-        // sameAs retrieval
-        SameAsRetrieverSingleton4Tests.getInstance().addSameURIs(meaning.getUris());
-        // check for URI existance
-        EntityCheckerManagerSingleton4Tests.getInstance().checkMeanings(Arrays.asList(meaning));
         // check whether the set contains URIs of the KB
-        Assert.assertEquals(expectedInKb, GLOBAL_CLASSIFIER.containsKBUri(meaning.getUris()));
+        Assert.assertEquals(expectedInKb, classifier.containsKBUri(meaning.getUris()));
     }
 }
