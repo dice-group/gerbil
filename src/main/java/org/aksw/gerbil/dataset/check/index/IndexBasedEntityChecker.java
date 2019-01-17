@@ -25,14 +25,22 @@ public class IndexBasedEntityChecker implements EntityChecker, Closeable {
 
     public static IndexBasedEntityChecker create(String indexDirPath) {
         Directory indexDirectory = null;
-        try {
-            indexDirectory = FSDirectory.open(new File(indexDirPath).toPath());
-            IndexReader indexReader = DirectoryReader.open(indexDirectory);
-            IndexSearcher indexSearcher = new IndexSearcher(indexReader);
-            return new IndexBasedEntityChecker(indexSearcher, indexDirectory, indexReader);
-        } catch (IOException e) {
-            LOGGER.error("Exception while trying to open index for entity checking. Returning null.", e);
-            IOUtils.closeQuietly(indexDirectory);
+        File directoryPath = new File(indexDirPath);
+        if (directoryPath.exists() && directoryPath.isDirectory() && (directoryPath.list().length > 0)) {
+            try {
+                indexDirectory = FSDirectory.open(directoryPath.toPath());
+                IndexReader indexReader = DirectoryReader.open(indexDirectory);
+                IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+                return new IndexBasedEntityChecker(indexSearcher, indexDirectory, indexReader);
+            } catch (IOException e) {
+                LOGGER.error("Exception while trying to open index for entity checking. Returning null.", e);
+                IOUtils.closeQuietly(indexDirectory);
+                return null;
+            }
+        } else {
+            LOGGER.warn(
+                    "The configured path to the entity checking index (\"{}\") does not exist,  is not a directory or is an empty directory. Returning null.",
+                    directoryPath.toString());
             return null;
         }
     }

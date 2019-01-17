@@ -3,10 +3,11 @@ language: java
 #Following https://docs.travis-ci.com/user/languages/java/ we have to run an update for JDK 8
 sudo: false
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
+# The following lines have been removed since they caused build errors in Travis
+#addons:
+#  apt:
+#    packages:
+#      - oracle-java8-installer
       
 jdk:  
   - oraclejdk8
