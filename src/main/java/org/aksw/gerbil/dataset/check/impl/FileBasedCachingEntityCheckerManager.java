@@ -90,9 +90,7 @@ public class FileBasedCachingEntityCheckerManager extends EntityCheckerManagerIm
         if (!cacheFile.exists() || cacheFile.isDirectory()) {
             return null;
         }
-        ObjectInputStream ois = null;
-        try {
-            ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(cacheFile)));
+        try(ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(cacheFile)))) {
             // first, read the number of URIs
             int count = ois.readInt();
             String uri;
@@ -104,8 +102,6 @@ public class FileBasedCachingEntityCheckerManager extends EntityCheckerManagerIm
             return cache;
         } catch (Exception e) {
             LOGGER.error("Exception while reading cache file.", e);
-        } finally {
-            IOUtils.closeQuietly(ois);
         }
         return null;
     }

@@ -60,6 +60,9 @@ public class FileBasedCachingEntityCheckerManagerImplTest implements EntityCheck
     @Test
     public void test() throws IOException, InterruptedException {
         File cacheFile = File.createTempFile("temp_", ".cache");
+        // Remove the file as the manager should create it by itself
+        cacheFile.delete();
+        
         FileBasedCachingEntityCheckerManager manager = FileBasedCachingEntityCheckerManager.create(CACHE_DURATION,
                 cacheFile);
         manager.registerEntityChecker("http://aksw.org/", this);
