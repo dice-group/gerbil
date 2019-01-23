@@ -1,7 +1,7 @@
-# #!/bin/bash
+#!/bin/bash
 
 export PROJECT="gerbil"
-VERSION=`mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec`
+VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
 
 # build the docker container
 docker build --no-cache -t philippkuntschik/$PROJECT .
