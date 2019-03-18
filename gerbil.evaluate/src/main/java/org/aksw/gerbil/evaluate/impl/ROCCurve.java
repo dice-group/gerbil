@@ -31,7 +31,7 @@ public class ROCCurve {
         if (falseStmts == 0) {
             // FIXME throw Exception ?
         } else {
-            stepLengthRight = 1.0 / trueStmts;
+            stepLengthRight = 1.0 / falseStmts;
         }
         this.trueStmts = trueStmts;
         this.falseStmts = falseStmts;
