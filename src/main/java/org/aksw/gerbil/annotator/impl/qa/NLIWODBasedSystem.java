@@ -1,5 +1,6 @@
 package org.aksw.gerbil.annotator.impl.qa;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.sparql.core.Prologue;
+import org.reflections.Reflections;
 
 
 public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
@@ -101,8 +103,26 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 			break;
 		}
 		default:
-			throw new GerbilException("Got an unknown system name \""
-					+ systemName + "\".", ErrorTypes.ANNOTATOR_LOADING_ERROR);
+			Reflections ref = new Reflections("org.aksw.qa.systems");
+			boolean hasSystem=false;
+			for(Class<? extends ASystem> sys : ref.getSubTypesOf(ASystem.class)) {
+				if(sys.getSimpleName().equals(systemName)) {
+					try {
+						if(url==null || url.isEmpty()) {
+							qaSystem = sys.newInstance();
+						}else {
+							qaSystem = sys.getConstructor(String.class).newInstance(url);
+						}
+						hasSystem=true;
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+						continue;
+					}
+				}
+			}
+			if(!hasSystem) {
+				throw new GerbilException("Got an unknown system name \""
+						+ systemName + "\".", ErrorTypes.ANNOTATOR_LOADING_ERROR);
+			}
 		}
 		qaSystem.setSocketTimeOutMs(maxWaitingTime);
 
@@ -126,6 +146,7 @@ public class NLIWODBasedSystem extends AbstractAnnotator implements QASystem {
 				return new ArrayList<Marking>(0);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
 		}
 	}
