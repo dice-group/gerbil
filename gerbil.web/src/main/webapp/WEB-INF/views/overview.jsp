@@ -312,7 +312,7 @@ table {
 					+ "</th></tr>";
 			var tbl = "<h3>Dataset: "
 					+ tableData.datasetName
-					+ "</h3><table id=\"" + tableData.datasetName + "\" class=\"table table-hover table-condensed\">";
+					+ "</h3><table id=\"" + tableData.datasetName.replace(/[^a-z0-9]/gi,'z') + "\" class=\"table table-hover table-condensed\">";
 			tbl += tbl_hd;
 			var leader = tableData.leader;
 			var url = window.location.protocol +"//"+ window.location.host + "/gerbil/experiment?id=";
