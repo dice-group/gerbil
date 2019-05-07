@@ -296,7 +296,7 @@ table {
 
 		function showTable(tableData, tableElementId) {
 			//http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
-			var str = tableData.datasetName.replace(/\s/g, "");
+			var str = tableData.datasetName.replace(/\s/g, "").replace(/[^a-z0-9]/gi,'z');
 			var newID = str + "bod";
 			var bootDiv = "<div id=\"" + newID + "\" class=\"col-md-12\"></div>";
 			$("#" + tableElementId).prepend(bootDiv);
