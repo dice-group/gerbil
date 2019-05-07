@@ -14,7 +14,7 @@ version VARCHAR(20)
 -- ALTER TABLE ExperimentTasks ADD COLUMN publish BOOLEAN DEFAULT TRUE;
 
 CREATE TABLE IF NOT EXISTS File2System (
-id int NOT NULL, 
+id int NOT NULL FOREIGN KEY REFERENCES ExperimentTasks(id), 
 file VARCHAR(150) NOT NULL,
 system VARCHAR(50) NOT NULL,
 email VARCHAR(100) NOT NULL,
@@ -23,7 +23,7 @@ PRIMARY KEY (id, system, file)
 
 CREATE TABLE IF NOT EXISTS Experiments (
   id VARCHAR(300) NOT NULL,
-  taskId int NOT NULL,
+  taskId int NOT NULL FOREIGN KEY REFERENCES ExperimentTasks(id),
   PRIMARY KEY (id, taskId)
 );
 
@@ -37,27 +37,42 @@ CREATE INDEX ExperimentTaskConfig ON ExperimentTasks (matching,experimentType,an
 
 -- Changes from version 1.0.0 to 1.1.0
 CREATE TABLE IF NOT EXISTS ExperimentTasks_Version (
-id int PRIMARY KEY,
+id int PRIMARY KEY FOREIGN KEY REFERENCES ExperimentTasks(id),
 version VARCHAR(20)
 );
 
 -- Changes from version 1.1.0 to OKE2015
 CREATE TABLE IF NOT EXISTS ExperimentTasks_AdditionalResults (
 resultId int NOT NULL,
-taskId int NOT NULL,
+taskId int NOT NULL FOREIGN KEY REFERENCES ExperimentTasks(id),
 value double,
 PRIMARY KEY (resultId, taskId)
 );
 
 CREATE TABLE IF NOT EXISTS ExperimentTasks_ROC (
-taskId int NOT NULL,
+taskId int NOT NULL FOREIGN KEY REFERENCES ExperimentTasks(id),
 roc BLOB,
 PRIMARY KEY (taskID)
 );
 
 CREATE TABLE IF NOT EXISTS ExperimentTasks_SubTasks (
-taskId int NOT NULL,
-subTaskId int NOT NULL,
+taskId int NOT NULL FOREIGN KEY REFERENCES ExperimentTasks(id),
+subTaskId int NOT NULL FOREIGN KEY REFERENCES ExperimentTasks(id),
 PRIMARY KEY (taskId, subTaskId)
 );
 
+-- Add foreign keys where they are missing
+-- (ALTER should be executed only once for updating old DBs
+-- ALTER TABLE File2System
+-- ADD FOREIGN KEY (id) REFERENCES ExperimentTasks(id);
+-- ALTER TABLE Experiments
+-- ADD FOREIGN KEY (taskid) REFERENCES ExperimentTasks(id);
+-- ALTER TABLE ExperimentTasks_Version
+-- ADD FOREIGN KEY (id) REFERENCES ExperimentTasks(id);
+-- ALTER TABLE ExperimentTasks_AdditionalResults
+-- ADD FOREIGN KEY (taskid) REFERENCES ExperimentTasks(id);
+-- ALTER TABLE ExperimentTasks_ROC
+-- ADD FOREIGN KEY (taskid) REFERENCES ExperimentTasks(id);
+-- ALTER TABLE ExperimentTasks_SubTasks
+-- ADD FOREIGN KEY (taskid) REFERENCES ExperimentTasks(id),
+-- ADD FOREIGN KEY (subTaskId) REFERENCES ExperimentTasks(id);
