@@ -74,5 +74,6 @@ PRIMARY KEY (taskId, subTaskId)
 -- ALTER TABLE ExperimentTasks_ROC
 -- ADD FOREIGN KEY (taskid) REFERENCES ExperimentTasks(id);
 -- ALTER TABLE ExperimentTasks_SubTasks
--- ADD FOREIGN KEY (taskid) REFERENCES ExperimentTasks(id),
+-- ADD FOREIGN KEY (taskid) REFERENCES ExperimentTasks(id);
+-- ALTER TABLE ExperimentTasks_SubTasks
 -- ADD FOREIGN KEY (subTaskId) REFERENCES ExperimentTasks(id);
