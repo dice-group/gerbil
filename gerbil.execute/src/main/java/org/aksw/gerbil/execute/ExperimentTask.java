@@ -148,6 +148,7 @@ public class ExperimentTask implements Task {
             case SWC1:	
             	transformResults(result, expResult);
             	break;
+	    case SWC_2019:
             case SWC2:
             	transformResults(result, expResult);
 			default:
@@ -293,6 +294,7 @@ public class ExperimentTask implements Task {
             evalResult = evaluate(evaluators, results, goldStandard);
             break;
         }
+	case SWC_2019:
         case SWC2: {
         	List<List<Model>> results = new ArrayList<List<Model>>(dataset.size());
             List<List<Model>> goldStandard = new ArrayList<List<Model>>(dataset.size());
