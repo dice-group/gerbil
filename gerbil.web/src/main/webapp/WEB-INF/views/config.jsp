@@ -88,7 +88,7 @@
 		value="/webResources/js/jquery.fileupload.js" />
 	<script src="${jqueryfileupload}"></script>
 	<%@include file="navbar.jsp"%>
-	<h1>SWC 2018 Submission</h1>
+	<h1>SWC 2019 Submission</h1>
 
 
 	<form id="configForm" class="form-horizontal">

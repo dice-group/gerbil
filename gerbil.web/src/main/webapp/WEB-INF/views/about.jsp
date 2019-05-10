@@ -11,14 +11,14 @@
 </head>
 <body class="container">
 	<%@include file="navbar.jsp"%>
-	GERBIL SWC is the evaluation platform for the Semantic Web Challenge at ISWC 2018.<br>
-	Challenge Website: <a href="http://iswc2018.semanticweb.org/calls/iswc-semantic-web-challenge-2018/">http://iswc2018.semanticweb.org/calls/iswc-semantic-web-challenge-2018/</a>
+	GERBIL SWC is the evaluation platform for the Semantic Web Challenge at ISWC 2019.<br>
+	Challenge Website: <a href="https://dice-group.github.io/semantic-web-challenge.github.io/">https://dice-group.github.io/semantic-web-challenge.github.io/</a>
 	
 	<h5>Challenge organizers</h5>
 	<ul>
-		<li>Dan Bennett (Thomson Reuters, Eagan, MN, USA)</li>
 	    <li>Axel Ngonga (University of Paderborn, Germany)</li>
-	    <li>Heiko Paulheim (University of Mannheim, Germany)</li>
+	    <li>Michael Röder (University of Paderborn, Germany)</li>
+	    <li>Zafar Habeeb Syed (University of Paderborn, Germany)</li>
 	</ul>
 	<h5>Developers</h5>
 	<ul>
