@@ -145,7 +145,7 @@ public class ExperimentOverviewController {
 					listsAsJson.append(", ");
 				}
 				
-				if(experimentType.equals(ExperimentType.SWC2)) {
+				if(experimentType.equals(ExperimentType.SWC2) || experimentType.equals(ExperimentType.SWC_2019)) {
 					if(firstRoc&&expResults.getRoc()!=null) {
 						rocs.append("{\"label\" : \"").append(annotator).append("\", ");
 						rocs.append(expResults.getRoc()).append("}");
@@ -160,7 +160,7 @@ public class ExperimentOverviewController {
 				
 				count2++;
 			}
-			if(experimentType.equals(ExperimentType.SWC2)) {
+			if(experimentType.equals(ExperimentType.SWC2) || experimentType.equals(ExperimentType.SWC_2019)) {
 				rocs.append("]");
 			}
 			listsAsJson.append("]").append(rocs).append("}");
