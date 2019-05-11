@@ -136,6 +136,7 @@ public class GoldStdEvalTest extends AbstractExperimentTaskTest {
             expectedResults.put(ModelComparator.RECALL_NAME, 1.0);
             break;
         }
+        case SWC_2019:
         case SWC2:{
             expectedResults.put(ROCEvaluator.AUC_NAME, 1.0);
             break;

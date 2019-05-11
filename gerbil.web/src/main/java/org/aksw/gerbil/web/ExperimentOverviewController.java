@@ -114,7 +114,7 @@ public class ExperimentOverviewController {
 		for(String dataset : datasetNames){
 			List<ExperimentTaskResult> leaderList = new ArrayList<ExperimentTaskResult>();
 			StringBuilder rocs = new StringBuilder("");
-			if(experimentType.equals(ExperimentType.SWC2)) {
+			if(experimentType.equals(ExperimentType.SWC2) || experimentType.equals(ExperimentType.SWC_2019)) {
 				rocs.append(", \"rocs\" : [");
 			}
 			listsAsJson.append("\"datasetName\" : \"").append(dataset).append("\", ");

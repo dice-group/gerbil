@@ -53,6 +53,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
         case SWC2018T1:
         case SWC1:
             return new TimeMeasuringSWC1Annotator((SWCTask1System) annotator);
+        case SWC_2019:
         case SWC2:
         	return new TimeMeasuringSWC2Annotator((SWCTask2System) annotator);
         default:

@@ -61,6 +61,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         case SWC2018T1:
         case SWC1:
             return new ErrorCountingSWCTask1System((SWCTask1System) annotator, maxErrors);
+        case SWC_2019:
         case SWC2:
             return new ErrorCountingSWCTask2System((SWCTask2System) annotator, maxErrors);
         default:

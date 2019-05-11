@@ -151,6 +151,7 @@ public class EvaluatorFactory {
 				additional = GerbilConfiguration.getInstance().getStringArray(SWC2017_TASK1_PROPERTIES_KEY);
 			}
 			return new ModelComparator(additional, false);
+        case SWC_2019:
 		case SWC2:
 			String truthValueURI = GerbilConfiguration.getInstance().getString(TRUTH_VALUE_URI_GERBIL_KEY);
 			if (additional != null) {
@@ -191,6 +192,7 @@ public class EvaluatorFactory {
 			// creation
 		case SWC1:
 		case SWC2:
+        case SWC_2019:
 		case SWC2018T1:
 		case OKE_Task1:
 		case OKE_Task2: {
