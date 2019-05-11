@@ -74,9 +74,9 @@ public enum ExperimentType implements Describable {
             "The input for the annotator is a text with entities that already have been marked inside. The annotator should link all these mentioned entities to a knowledge base."),
 
     SWC1("KB population", "Knowledge graph population: given the name and type of a subject entity, (e.g., a company) and a relation, (e.g., CEO) participants are expected to provide the value(s) for the relation."),
-    SWC_2019("FactChecking - SWC 2019", "Knowledge graph validation: given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement."),
+    SWC_2019("Fact Checking - SWC 2019", "Knowledge graph validation: given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement."),
     
-	SWC2("FactChecking", "Knowledge graph validation: given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement."),
+	SWC2("Fact Checking", "Knowledge graph validation: given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement."),
     /**
      * Scored - annotate to KB
      * <p>
