@@ -305,7 +305,7 @@ table {
 			var experimentType = $('#expTypes input:checked').val();
 
 			var measure = "F1 measure";
-			if (experimentType === "SWC2") {
+			if ((experimentType === "SWC2") || experimentType === "SWC_2019") {
 				measure = "Area Under Curve (AUC)";
 			}
 			var tbl_hd = "<tr><th>AnnotatorName</th><th>" + measure
