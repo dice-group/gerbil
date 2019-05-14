@@ -24,7 +24,7 @@ public class Indexer extends LuceneConstants {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(Indexer.class);
 
-	private IndexWriter writer;
+	public IndexWriter writer;
 	private Directory dir;
 	
 
