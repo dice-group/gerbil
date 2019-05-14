@@ -293,6 +293,17 @@ table {
 				}
 			}
 		};
+		
+		/**
+		 * Function that determines whether the given experiment type
+		 * will lead to a ROC curve as result.
+		 *
+		 * @param {String} the experiment type
+		 * @return {boolean} true, if the experiment type is known to create ROC curves.
+		 */
+		function isROCExperiment(experimentType) {
+			return (experimentType === "SWC2") || (experimentType === "SWC_2019");
+		};
 
 		function showTable(tableData, tableElementId) {
 			//http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
@@ -305,7 +316,7 @@ table {
 			var experimentType = $('#expTypes input:checked').val();
 
 			var measure = "F1 measure";
-			if ((experimentType === "SWC2") || experimentType === "SWC_2019") {
+			if (isROCExperiment(experimentType)) {
 				measure = "Area Under Curve (AUC)";
 			}
 			var tbl_hd = "<tr><th>AnnotatorName</th><th>" + measure
@@ -331,7 +342,7 @@ table {
 			tbl += tbl_body;
 			tbl += "</table>";
 			$("#" + newID).prepend("<div class=\"col-md-8\">" + tbl + "</div>");
-			if (experimentType === "SWC2") {
+			if (isROCExperiment(experimentType)) {
 				createROC(tableData, newID);
 			}
 		}
