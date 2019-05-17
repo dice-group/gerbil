@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.ModelComparator;
 import org.aksw.gerbil.evaluate.impl.ROCEvaluator;
@@ -78,7 +77,7 @@ public class ResultNameToIdMapping {
         return idToNameMap.getOrDefault(id, null);
     }
 
-    public int[] listAdditionalResultIds(List<ExperimentTaskResult> results) {
+    /*public int[] listAdditionalResultIds(List<ExperimentTaskResult> results) {
         IntOpenHashSet ids = new IntOpenHashSet();
         for (ExperimentTaskResult result : results) {
             if (result.hasAdditionalResults()) {
@@ -88,7 +87,7 @@ public class ResultNameToIdMapping {
         int idArray[] = ids.toArray();
         Arrays.sort(idArray);
         return idArray;
-    }
+    }*/
 
     public String[] getNamesOfResultIds(int[] additionalResultIds) {
         String names[] = new String[additionalResultIds.length];

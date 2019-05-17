@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,10 +144,10 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
 
     @Deprecated
     @Override
-    public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching) {
+    public List<ExperimentTaskStatus> getLatestResultsOfExperiments(String experimentType, String matching) {
         List<String[]> experimentTasks = getAnnotatorDatasetCombinations(experimentType, matching);
-        List<ExperimentTaskResult> results = new ArrayList<ExperimentTaskResult>(experimentTasks.size());
-        ExperimentTaskResult result;
+        List<ExperimentTaskStatus> results = new ArrayList<ExperimentTaskStatus>(experimentTasks.size());
+        ExperimentTaskStatus result;
         for (String combination[] : experimentTasks) {
             result = getLatestExperimentTaskResult(experimentType, matching, combination[0], combination[1]);
             if (result != null) {
@@ -186,6 +186,6 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      * @return the result of the most recent experiment task or null if no such task exists
      */
     @Deprecated
-    protected abstract ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
+    protected abstract ExperimentTaskStatus getLatestExperimentTaskResult(String experimentType, String matching,
             String annotatorName, String datasetName);
 }

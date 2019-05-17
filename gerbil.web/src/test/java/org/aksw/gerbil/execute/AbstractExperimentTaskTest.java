@@ -20,10 +20,9 @@ import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import org.aksw.gerbil.database.ExperimentDAO;
-import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
@@ -116,14 +115,12 @@ public abstract class AbstractExperimentTaskTest {
         @Override
         protected void testTaskResults(Task task) {
             Assert.assertEquals(ExperimentDAO.TASK_FINISHED, experimentDAO.getExperimentState(experimentTaskId));
-            ExperimentTaskResult result = experimentDAO.getTaskResult(experimentTaskId);
+            ExperimentTaskStatus result = experimentDAO.getTaskResult(experimentTaskId);
             String errorMsg = "Error for system " + result.annotator + " on dataset " + result.dataset
                     + " in Experiment " + result.type.getName();
-            ResultNameToIdMapping mapping = ResultNameToIdMapping.getInstance();
             for(String key : expectedResults.keySet()) {
-                int keyId = mapping.getResultId(key);
-                Assert.assertTrue(errorMsg, result.getAdditionalResults().containsKey(keyId));
-                Assert.assertEquals(errorMsg, (Double) expectedResults.get(key), result.getAdditionalResults().get(keyId), DELTA);
+                Assert.assertTrue(errorMsg, result.getResultsMap().containsKey(key));
+                Assert.assertEquals(errorMsg, (Double) expectedResults.get(key), Double.parseDouble(result.getResultsMap().get(key).getResValue().toString()), DELTA);
             }
         }
     }

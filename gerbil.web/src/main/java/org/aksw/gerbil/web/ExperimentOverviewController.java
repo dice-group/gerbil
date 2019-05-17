@@ -23,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -32,8 +31,9 @@ import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.impl.ROCEvaluator;
 import org.aksw.gerbil.utils.DatasetMetaData;
 import org.aksw.gerbil.utils.DatasetMetaDataMapping;
 import org.aksw.gerbil.utils.PearsonsSampleCorrelationCoefficient;
@@ -112,14 +112,14 @@ public class ExperimentOverviewController {
 		
 		int count=0;
 		for(String dataset : datasetNames){
-			List<ExperimentTaskResult> leaderList = new ArrayList<ExperimentTaskResult>();
+			List<ExperimentTaskStatus> leaderList = new ArrayList<ExperimentTaskStatus>();
 			StringBuilder rocs = new StringBuilder("");
 			if(experimentType.equals(ExperimentType.SWC2) || experimentType.equals(ExperimentType.SWC_2019)) {
 				rocs.append(", \"rocs\" : [");
 			}
 			listsAsJson.append("\"datasetName\" : \"").append(dataset).append("\", ");
 			for(String annotator : annotatorNames){	
-				ExperimentTaskResult result;
+				ExperimentTaskStatus result;
 				if(challengeDate==null) {
 					result = dao.getBestResult(experimentType.name(), annotator, dataset);
 				}
@@ -132,28 +132,28 @@ public class ExperimentOverviewController {
 					
 				}
 			}
-			Collections.sort(leaderList, new LeaderBoardComparator(experimentType));
+			// Collections.sort(leaderList, new LeaderBoardComparator(experimentType));
 			listsAsJson.append(" \"leader\" : [");
 			int count2=0;
 			boolean firstRoc=true;
-			for(ExperimentTaskResult expResults : leaderList){
+			for(ExperimentTaskStatus expResults : leaderList){
 				String annotator = expResults.annotator.substring(0, expResults.annotator.lastIndexOf("(")).replace("\"", "\\\"");
 				listsAsJson.append("{ \"annotatorName\" : \"").append(annotator).append("\", \"value\": \"");
-				listsAsJson.append(expResults.results[0]).append("\", \"id\": \"").append(dao.getTaskId(expResults.idInDb)).append("\"}");
+				listsAsJson.append(expResults.resultsMap.get(ROCEvaluator.AUC_NAME).getResValue()).append("\", \"id\": \"").append(dao.getTaskId(expResults.idInDb)).append("\"}");
 							
 				if(count2<leaderList.size()-1) {
 					listsAsJson.append(", ");
 				}
 				
 				if(experimentType.equals(ExperimentType.SWC2) || experimentType.equals(ExperimentType.SWC_2019)) {
-					if(firstRoc&&expResults.getRoc()!=null) {
+					if(firstRoc&&expResults.resultsMap.get(ROCEvaluator.ROC_NAME)!=null) {
 						rocs.append("{\"label\" : \"").append(annotator).append("\", ");
-						rocs.append(expResults.getRoc()).append("}");
+						rocs.append(expResults.resultsMap.get(ROCEvaluator.ROC_NAME).getResValue()).append("}");
 						firstRoc=false;
 					}
-					else if(expResults.getRoc()!=null){
+					else if(expResults.resultsMap.get(ROCEvaluator.ROC_NAME)!=null){
 						rocs.append(", {\"label\" : \"").append(annotator).append("\", ");
-						rocs.append(expResults.getRoc()).append("}");
+						rocs.append(expResults.resultsMap.get(ROCEvaluator.ROC_NAME).getResValue()).append("}");
 					}
 					
 				}
