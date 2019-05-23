@@ -1,5 +1,6 @@
 package org.aksw.gerbil.database;
 
+import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -30,7 +31,16 @@ public class TaskResultsRowMapper implements RowMapper<TaskResult> {
 	public TaskResult mapRow(ResultSet resultSet, int rowId) throws SQLException {
 		String resultName = resultSet.getString(1);
 		String resultType = resultSet.getString(2);
-		Object resultValue = resultSet.getObject(3);
+		Object resultValue = null;
+		if(resultType.equalsIgnoreCase("BLOB")) {
+			Blob rocBlob = resultSet.getBlob(3);
+			byte[] bdata = rocBlob.getBytes(1, (int) rocBlob.length());
+			resultValue = new String(bdata);
+		}
+		else {
+			resultValue = resultSet.getObject(3);
+		}
+		
 		TaskResult result = new TaskResult(resultValue,resultType);
 		relatedTask.getResultsMap().put(resultName, result);
 		return result;

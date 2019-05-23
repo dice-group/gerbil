@@ -242,7 +242,7 @@ public class MainController {
         List<ExperimentTaskStatus> results = dao.getResultsOfExperiment(id);
         Boolean hasRoc = false;
         for(ExperimentTaskStatus result : results){
-        	resNamesDb.addAll(result.resultsMap.keySet());
+        	resNamesDb.addAll(result.getResultsMap().keySet());
         	String annotator = result.getAnnotator();
         	annotator = annotator.substring(0, annotator.lastIndexOf("("));
         	result.setAnnotator(annotator);

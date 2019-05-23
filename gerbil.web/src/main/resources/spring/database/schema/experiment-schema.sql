@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS Experiments (
 );
 
 DROP INDEX IF EXISTS ExperimentTaskConfig;
-CREATE INDEX ExperimentTaskConfig ON ExperimentTasks (matching,experimentType,annotatorName,datasetName);
+CREATE INDEX ExperimentTaskConfig ON ExperimentTasks (matching,experimentType,systemName,datasetName);
 
 
 -- ExperimentTasks_AdditionalResults renamed to ExperimentTasks_DoubleResults

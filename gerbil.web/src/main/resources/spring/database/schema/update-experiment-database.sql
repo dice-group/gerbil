@@ -48,7 +48,7 @@ insert into ExperimentTasks_DoubleResults (resultId, taskId, resvalue)
 select resultId, taskId, value from ExperimentTasks_AdditionalResults;
 --rocBlob
 insert into ExperimentTasks_BlobResults (resultId, taskId, resvalue)
-select 29, taskId, roc from ExperimentTasks_ROC;
+select 4, taskId, roc from ExperimentTasks_ROC;
 
 
 -- copy data from ExperimentTasks_Version to ExperimentTasks
@@ -63,5 +63,5 @@ alter table ExperimentTasks
 drop table ExperimentTasks_Version;
 -- Drop AdditionalResults table
 drop table ExperimentTasks_AdditionalResults;
--- Drop AdditionalResults table
-drop table ExperimentTasks_BlobResults;
+-- Drop ExperimentTasks_ROC table
+drop table ExperimentTasks_ROC;

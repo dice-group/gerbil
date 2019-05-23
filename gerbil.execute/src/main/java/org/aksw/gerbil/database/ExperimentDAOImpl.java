@@ -160,7 +160,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 	private MapSqlParameterSource createTaskParameters(String annotatorName, String datasetName, String experimentType,
 			String matching) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
-		parameters.addValue("systemName", annotatorName);
+		parameters.addValue("annotatorName", annotatorName);
 		parameters.addValue("datasetName", datasetName);
 		parameters.addValue("experimentType", experimentType);
 		parameters.addValue("matching", matching);
