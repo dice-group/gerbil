@@ -105,7 +105,7 @@ public abstract class AbstractExperimentTaskTest {
 
     }
 
-    protected static class F1MeasureTestingObserver extends ExceptionExpectingTestTaskObserver {
+    protected static class F1MeasureTestingObserver extends StatusCheckingTestTaskObserver {
 
         public static int MACRO_PREC_INDEX = 0;
         public static int MACRO_REC_INDEX = 1;
@@ -141,14 +141,23 @@ public abstract class AbstractExperimentTaskTest {
             Assert.assertEquals(errorMsg, expectedResults[ERROR_COUNT_INDEX], (Integer) resMap.get("Error Count").getResValue(), DELTA);
         }
     }
-    
-    public static class ExceptionExpectingTestTaskObserver extends AbstractJUnitTestTaskObserver {
+
+    /**
+     * {@link AbstractJUnitTestTaskObserver} instance which checks a the given task
+     * for its status after its termination. It compares the tasks status with the
+     * given expected status and throws an {@link AssertionError} if they
+     * do not match.
+     * 
+     * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
+     *
+     */
+    public static class StatusCheckingTestTaskObserver extends AbstractJUnitTestTaskObserver {
         
         protected int experimentTaskId;
         protected SimpleLoggingResultStoringDAO4Debugging experimentDAO;
         protected int expectedStatus;
 
-        public ExceptionExpectingTestTaskObserver(AbstractExperimentTaskTest testInstance, 
+        public StatusCheckingTestTaskObserver(AbstractExperimentTaskTest testInstance, 
                 int experimentTaskId,
                 SimpleLoggingResultStoringDAO4Debugging experimentDAO, int expectedStatus) {
             super(testInstance);
@@ -158,15 +167,9 @@ public abstract class AbstractExperimentTaskTest {
         }
         
         @Override
-        public void reportTaskThrowedException(Task task, Throwable t) {
-            super.reportTaskThrowedException(task, t);
-        }
-
-        @Override
         protected void testTaskResults(Task task) {
             Assert.assertEquals("The experiment has not the expected status.", 
                     expectedStatus , experimentDAO.getExperimentState(experimentTaskId));
         }
-        
     }
 }

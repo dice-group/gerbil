@@ -26,6 +26,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.matching.Matching;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -42,13 +43,21 @@ public class EmptyDatasetTest extends AbstractExperimentTaskTest {
     @SuppressWarnings("unchecked")
     @Test
     public void test() {
+        try {
         int experimentTaskId = 1;
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
                 new TestAnnotatorConfiguration(Collections.EMPTY_LIST, EXPERIMENT_TYPE),
                 new InstanceListBasedDataset(Collections.EMPTY_LIST, EXPERIMENT_TYPE), EXPERIMENT_TYPE, MATCHING);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
-                new ExceptionExpectingTestTaskObserver(this, experimentTaskId, experimentDAO,
+                new StatusCheckingTestTaskObserver(this, experimentTaskId, experimentDAO,
                         ErrorTypes.DATASET_EMPTY_ERROR.getErrorCode()));
+        } catch(AssertionError e) {
+            throw e;
+        } catch(Exception e) {
+            // not necessary but it makes Codacy happy
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
     }
 }
