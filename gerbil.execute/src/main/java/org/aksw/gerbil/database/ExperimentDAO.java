@@ -243,9 +243,9 @@ public interface ExperimentDAO extends Closeable {
      */
     public List<ExperimentTaskStatus> getAllRunningExperimentTasks();
 
-	public ExperimentTaskStatus getBestResult(String name, String annotator, String dataset);
+	public List<ExperimentTaskStatus> getBestResults(String name, String dataset);
 
-	public ExperimentTaskStatus getBestResult(String name, String annotator, String dataset, Timestamp challengeDate);
+	public List<ExperimentTaskStatus> getBestResults(String name, String dataset, Timestamp challengeDate);
 	
 	public Set<String> getAnnotators();
 	

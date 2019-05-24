@@ -75,7 +75,7 @@
 						<th>${resName}</th>
 					</c:forEach>
 					
-					<c:if test="${!empty task.stateMsg}">
+					<c:if test="${!empty tasks[0].stateMsg}">
 					<th colspan="7"
 								style="text-align: center">Error Message</th>
 					</c:if>						
@@ -145,7 +145,7 @@
 									</td>
 								</c:forEach>
 								<td>${task.timestampstring}</td>
-								<td>${task.gerbilVersion}</td>
+								<td>${task.version}</td>
 							</tr>
 						</c:forEach>
 					</c:if>
@@ -159,7 +159,7 @@
 							<td colspan="7"
 								style="text-align: center">${task.stateMsg}</td>
 							<td>${task.timestampstring}</td>
-							<td>${task.gerbilVersion}</td>
+							<td>${task.version}</td>
 						</tr>
 					</c:if>
 				</c:forEach>

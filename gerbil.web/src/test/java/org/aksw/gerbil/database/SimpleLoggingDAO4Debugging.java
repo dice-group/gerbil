@@ -131,13 +131,13 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     }
 
     @Override
-    public ExperimentTaskStatus getBestResult(String name, String annotator, String dataset) {
+    public List<ExperimentTaskStatus> getBestResults(String name, String dataset) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public ExperimentTaskStatus getBestResult(String name, String annotator, String dataset, Timestamp challengeDate) {
+    public List<ExperimentTaskStatus> getBestResults(String name, String dataset, Timestamp challengeDate) {
         // TODO Auto-generated method stub
         return null;
     }

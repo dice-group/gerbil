@@ -127,9 +127,6 @@ public class MainController {
     @Autowired
     private AdapterManager adapterManager;
 
-    // DataID URL is generated automatically in the experiment method?
-    private DataIDGenerator dataIdGenerator;
-
     private ExperimentType[] availableExperimentTypes = RootConfig.getAvailableExperimentTypes();
 
     private AnnotatorOutputWriter annotatorOutputWriter = RootConfig.getAnnotatorOutputWriter();
@@ -237,7 +234,6 @@ public class MainController {
     @RequestMapping("/experiment")
     public ModelAndView experiment(@RequestParam(value = "id") String id, HttpServletRequest request) {
         LOGGER.debug("Got request on /experiment with id={}", id);
-        dataIdGenerator = new DataIDGenerator(getURLBase(request));
         Set<String> resNamesDb = new HashSet<>();
         List<ExperimentTaskStatus> results = dao.getResultsOfExperiment(id);
         Boolean hasRoc = false;

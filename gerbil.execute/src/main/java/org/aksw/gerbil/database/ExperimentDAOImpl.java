@@ -87,13 +87,12 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 	private final static String GET_SUB_TASK_RESULTS = "SELECT systemName, datasetName, experimentType, matching, state, version, lastChanged, subTaskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
 	private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
 
-	//TODO : Fixing needed
-	private static final String GET_BEST_EXPERIMENT_TASK_RESULTS = "SELECT exp.systemName, exp.datasetName, exp.experimentType, exp.matching, exp.state, exp.version, lastChanged, exp.Id, addi.resvalue AS result FROM ExperimentTasks exp join ExperimentTasks_DoubleResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND exp.systemName=:annotator AND exp.datasetName=:dataset AND exp.experimentType=:experimentType AND (addi.resultId=0 OR addi.resultId=3) ORDER BY result DESC";
+	private static final String GET_BEST_EXPERIMENT_TASK_RESULTS = "select inExp.systemName, outExp.datasetName, outExp.experimentType, outExp.matching, outExp.state, outExp.version, outExp.lastChanged, outExp.id, inExp.result from ExperimentTasks outExp, (SELECT exp.systemName, max(addi.resvalue) AS result FROM ExperimentTasks exp join ExperimentTasks_DoubleResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND (addi.resultId=0 OR addi.resultId=3) and addi.resvalue <> sqrt(-1) and exp.experimentType = :experimentType and exp.datasetName = :dataset GROUP by exp.systemName) as inExp, ExperimentTasks_DoubleResults outAddi WHERE outExp.publish='true' AND (outAddi.resultId=0 OR outAddi.resultId=3) and outExp.Id=outAddi.taskId and outExp.systemName = inExp.systemName and inExp.result = outAddi.resvalue and outExp.state = 0 ORDER BY inExp.result DESC;";
 
 	private static final String GET_ALL_ANNOTATORS = "SELECT DISTINCT systemName FROM ExperimentTasks";
 	
-	//TODO : Fixing needed
-	private static final String GET_BEST_EXPERIMENT_DATE_TASK_RESULTS = "SELECT exp.systemName, exp.datasetName, exp.experimentType, exp.matching, exp.state, exp.version, lastChanged, exp.Id, addi.resvalue AS result FROM ExperimentTasks exp join ExperimentTasks_DoubleResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND exp.systemName=:annotator AND exp.datasetName=:dataset AND exp.experimentType=:experimentType AND (addi.resultId=0 OR addi.resultId=3) AND exp.lastChanged <= :before ORDER BY result DESC";
+	private static final String GET_BEST_EXPERIMENT_DATE_TASK_RESULTS = "select inExp.systemName, outExp.datasetName, outExp.experimentType, outExp.matching, outExp.state, outExp.version, outExp.lastChanged, outExp.id, inExp.result from ExperimentTasks outExp, (SELECT exp.systemName, max(addi.resvalue) AS result FROM ExperimentTasks exp join ExperimentTasks_DoubleResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND (addi.resultId=0 OR addi.resultId=3) and addi.resvalue <> sqrt(-1) and exp.experimentType = :experimentType and exp.datasetName = :dataset and exp.lastChanged <= :before GROUP by exp.systemName) as inExp, ExperimentTasks_DoubleResults outAddi WHERE outExp.publish='true' AND (outAddi.resultId=0 OR outAddi.resultId=3) and outExp.Id=outAddi.taskId and outExp.systemName = inExp.systemName and inExp.result = outAddi.resvalue and outExp.state = 0 ORDER BY inExp.result DESC;";
+
 
 	private static final String SET_FILE2SYSTEM_MAPPING = "INSERT INTO File2System (id, file, system, email) VALUES(:id, :file, :system, :email)";
 	private static final String GET_FILE2SYSTEM_MAPPING = "SELECT id, file, system, email FRO File2System WHERE id=:id";
@@ -315,13 +314,6 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 		parameters.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
 		List<ExperimentTaskStatus> results = this.template.query(GET_LATEST_EXPERIMENT_TASK_RESULTS, parameters,
 				new ExperimentTaskStatusRowMapper());
-		// FIXME remove this ugly workaround regarding the version of an
-		// experiment task
-		// We had to took this part out, because it needs to much time and the
-		// version isn't used inside the overview
-		// for (ExperimentTaskResult e : result) {
-		// addVersion(e);
-		// }
 
 		for (ExperimentTaskStatus result : results) {
 			addAllResults(result);
@@ -400,10 +392,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 	}
 
 	@Override
-	public ExperimentTaskStatus getBestResult(String experimentType, String annotator, String dataset) {
+	public List<ExperimentTaskStatus> getBestResults(String experimentType, String dataset) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("experimentType", experimentType);
-		parameters.addValue("annotator", annotator);
 		parameters.addValue("dataset", dataset);
 
 		List<ExperimentTaskStatus> result = this.template.query(GET_BEST_EXPERIMENT_TASK_RESULTS, parameters,
@@ -413,15 +404,14 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 		}
 		if (result.isEmpty())
 			return null;
-		return result.get(0);
+		return result;
 	}
 
 	@Override
-	public ExperimentTaskStatus getBestResult(String experimentType, String annotator, String dataset,
+	public List<ExperimentTaskStatus> getBestResults(String experimentType, String dataset,
 			Timestamp challengeDate) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("experimentType", experimentType);
-		parameters.addValue("annotator", annotator);
 		parameters.addValue("dataset", dataset);
 		parameters.addValue("before", challengeDate);
 
@@ -432,7 +422,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 		}
 		if (result.isEmpty())
 			return null;
-		return result.get(0);
+		return result;
 	}
 
 	@Override
