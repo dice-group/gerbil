@@ -66,6 +66,10 @@ public abstract class AbstractExperimentTaskTest {
         Assert.assertNull("Got an exception: " + testError + " " + configuration.toString(), testError);
         SameAsRetrieverSingleton4Tests.storeCache();
     }
+    
+    protected Throwable getTestError() {
+        return testError;
+    }
 
     protected static abstract class AbstractJUnitTestTaskObserver implements TaskObserver {
 
@@ -92,12 +96,16 @@ public abstract class AbstractExperimentTaskTest {
             // If there was no error we have to release the mutex here
             testInstance.mutex.release();
         }
+        
+        protected AbstractExperimentTaskTest getTestInstance() {
+            return testInstance;
+        }
 
         protected abstract void testTaskResults(Task task);
 
     }
 
-    protected static class F1MeasureTestingObserver extends AbstractJUnitTestTaskObserver {
+    protected static class F1MeasureTestingObserver extends StatusCheckingTestTaskObserver {
 
         public static int MACRO_PREC_INDEX = 0;
         public static int MACRO_REC_INDEX = 1;
@@ -109,15 +117,11 @@ public abstract class AbstractExperimentTaskTest {
 
         private static final double DELTA = 0.0000001;
 
-        private int experimentTaskId;
-        private SimpleLoggingResultStoringDAO4Debugging experimentDAO;
         private double expectedResults[];
 
         public F1MeasureTestingObserver(AbstractExperimentTaskTest testInstance, int experimentTaskId,
                 SimpleLoggingResultStoringDAO4Debugging experimentDAO, double expectedResults[]) {
-            super(testInstance);
-            this.experimentTaskId = experimentTaskId;
-            this.experimentDAO = experimentDAO;
+            super(testInstance, experimentTaskId, experimentDAO, ExperimentDAO.TASK_FINISHED);
             this.expectedResults = expectedResults;
         }
 
@@ -135,6 +139,37 @@ public abstract class AbstractExperimentTaskTest {
             Assert.assertEquals(errorMsg, expectedResults[MICRO_REC_INDEX], (Double) resMap.get("Micro Recall").getResValue(), DELTA);
             Assert.assertEquals(errorMsg, expectedResults[MICRO_F1_INDEX], (Double) resMap.get("Micro F1 score").getResValue(), DELTA);
             Assert.assertEquals(errorMsg, expectedResults[ERROR_COUNT_INDEX], (Integer) resMap.get("Error Count").getResValue(), DELTA);
+        }
+    }
+
+    /**
+     * {@link AbstractJUnitTestTaskObserver} instance which checks a the given task
+     * for its status after its termination. It compares the tasks status with the
+     * given expected status and throws an {@link AssertionError} if they
+     * do not match.
+     * 
+     * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
+     *
+     */
+    public static class StatusCheckingTestTaskObserver extends AbstractJUnitTestTaskObserver {
+        
+        protected int experimentTaskId;
+        protected SimpleLoggingResultStoringDAO4Debugging experimentDAO;
+        protected int expectedStatus;
+
+        public StatusCheckingTestTaskObserver(AbstractExperimentTaskTest testInstance, 
+                int experimentTaskId,
+                SimpleLoggingResultStoringDAO4Debugging experimentDAO, int expectedStatus) {
+            super(testInstance);
+            this.experimentTaskId = experimentTaskId;
+            this.experimentDAO = experimentDAO;
+            this.expectedStatus = expectedStatus;
+        }
+        
+        @Override
+        protected void testTaskResults(Task task) {
+            Assert.assertEquals("The experiment has not the expected status.", 
+                    expectedStatus , experimentDAO.getExperimentState(experimentTaskId));
         }
     }
 }
