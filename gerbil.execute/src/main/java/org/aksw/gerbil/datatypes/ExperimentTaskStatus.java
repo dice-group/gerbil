@@ -38,7 +38,6 @@ public class ExperimentTaskStatus {
 	public ExperimentType type;
 	public Matching matching;
 	public int idInDb;
-	public String gerbilVersion;
 	public Map<String, TaskResult> resultsMap;
 
 	public List<ExperimentTaskStatus> subTasks;
@@ -66,7 +65,6 @@ public class ExperimentTaskStatus {
 		this.version = version;
 		this.timestamp = timestamp;
 		this.idInDb = idInDb;
-		this.gerbilVersion = gerbilVersion;
 	}
 	
 	public ExperimentTaskStatus(ExperimentTaskConfiguration configuration, int state) {
@@ -148,14 +146,6 @@ public class ExperimentTaskStatus {
 
 	public void setStateMsg(String stateMsg) {
 		this.stateMsg = stateMsg;
-	}
-
-	public String getGerbilVersion() {
-		return gerbilVersion;
-	}
-
-	public void setGerbilVersion(String gerbilVersion) {
-		this.gerbilVersion = gerbilVersion;
 	}
 
 	public boolean hasSubTasks() {

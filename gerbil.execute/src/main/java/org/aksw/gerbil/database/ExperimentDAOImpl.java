@@ -360,7 +360,6 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 				new ExperimentTaskStatusRowMapper());
 		expTask.setSubTasks(subTasks);
 		for (ExperimentTaskStatus subTask : subTasks) {
-			subTask.gerbilVersion = expTask.gerbilVersion;
 			addAllResults(subTask);
 		}
 	}
