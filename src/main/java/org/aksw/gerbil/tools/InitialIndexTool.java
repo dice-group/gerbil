@@ -280,7 +280,7 @@ public class InitialIndexTool {
 
 	}
 
-	private static Set<String> getDownloadsOfUrl(String url, String[] downloadSuffix) throws IOException {
+	static Set<String> getDownloadsOfUrl(String url, String[] downloadSuffix) throws IOException {
 		URL site = new URL(url);
 		Set<String> downloads = new HashSet<String>();
 		StringBuilder doc = new StringBuilder();

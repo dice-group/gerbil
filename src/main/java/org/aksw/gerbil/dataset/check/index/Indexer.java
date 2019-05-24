@@ -10,6 +10,7 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
@@ -52,14 +53,21 @@ public class Indexer {
         IOUtils.closeQuietly(indexDirectory);
     }
 
-    public void index(String uri) {
+    public long index(String uri) {
         Document document = new Document();
         document.add(new StringField(IndexBasedEntityChecker.URI_FIELD_NAME, uri, Field.Store.NO));
         try {
-            indexWriter.addDocument(document);
+        	Term term = new Term(IndexBasedEntityChecker.URI_FIELD_NAME, uri);
+            long seqNo = indexWriter.updateDocument(term, document);
+            return seqNo;
         } catch (IOException e) {
             LOGGER.error("Couldn't write uri to index.", e);
             e.printStackTrace();
         }
+        return -1;
+    }
+    
+    public int docs() {
+    	return indexWriter.numDocs();
     }
 }
