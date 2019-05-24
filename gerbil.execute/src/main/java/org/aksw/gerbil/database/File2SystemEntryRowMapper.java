@@ -20,8 +20,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.aksw.gerbil.annotator.File2SystemEntry;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
-import org.aksw.gerbil.datatypes.ExperimentType;
 import org.springframework.jdbc.core.RowMapper;
 
 /**

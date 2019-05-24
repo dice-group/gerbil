@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.datatypes.ErrorTypes;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 
 /**
  * This interface defines the methods a class has to implement for making the
@@ -86,7 +86,7 @@ public interface ExperimentDAO extends Closeable {
      * @return a list of experiment task results that are connected to the
      *         experiment
      */
-    public List<ExperimentTaskResult> getResultsOfExperiment(String experimentId);
+    public List<ExperimentTaskStatus> getResultsOfExperiment(String experimentId);
 
     /**
      * Returns the result of the experiment task with the given ID or null if
@@ -96,7 +96,7 @@ public interface ExperimentDAO extends Closeable {
      *            the id of the experiment task
      * @return the experiment task or null if this task does not exist.
      */
-    public ExperimentTaskResult getResultOfExperimentTask(int experimentTaskId);
+    public ExperimentTaskStatus getResultOfExperimentTask(int experimentTaskId);
 
     /**
      * This method is called with the description of an experiment task and an
@@ -168,7 +168,7 @@ public interface ExperimentDAO extends Closeable {
      * @param result
      *            the result of this experiment task
      */
-    public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskResult result);
+    public void setExperimentTaskResult(int experimentTaskId, ExperimentTaskStatus result);
 
     /**
      * Sets the state of the already existing experiment task, identified by the
@@ -214,7 +214,7 @@ public interface ExperimentDAO extends Closeable {
      * @return a list of the latest results available in the database.
      */
     @Deprecated
-    public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching);
+    public List<ExperimentTaskStatus> getLatestResultsOfExperiments(String experimentType, String matching);
 
     /**
      * Returns the latest results for experiments with the given experiment type
@@ -233,7 +233,7 @@ public interface ExperimentDAO extends Closeable {
      * 			  the languages for which the data should be collected
      * @return a list of the latest results available in the database.
      */
-    public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching,
+    public List<ExperimentTaskStatus> getLatestResultsOfExperiments(String experimentType, String matching,
             String annotatorNames[], String datasetNames[]);
 
     /**
@@ -241,11 +241,11 @@ public interface ExperimentDAO extends Closeable {
      * 
      * @return a list of all running experiment tasks.
      */
-    public List<ExperimentTaskResult> getAllRunningExperimentTasks();
+    public List<ExperimentTaskStatus> getAllRunningExperimentTasks();
 
-	public ExperimentTaskResult getBestResult(String name, String annotator, String dataset);
+	public List<ExperimentTaskStatus> getBestResults(String name, String dataset);
 
-	public ExperimentTaskResult getBestResult(String name, String annotator, String dataset, Timestamp challengeDate);
+	public List<ExperimentTaskStatus> getBestResults(String name, String dataset, Timestamp challengeDate);
 	
 	public Set<String> getAnnotators();
 	

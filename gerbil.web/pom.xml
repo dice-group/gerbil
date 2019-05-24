@@ -57,6 +57,13 @@
 			<artifactId>gerbil.execute</artifactId>
 			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
+		
+		<dependency>
+			<!-- Only bundled with java 1.6+ -->
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
+		</dependency>
   </dependencies>
   
   	<build>

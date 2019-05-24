@@ -19,7 +19,7 @@ package org.aksw.gerbil.database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.matching.Matching;
 import org.springframework.jdbc.core.RowMapper;
@@ -42,20 +42,19 @@ import org.springframework.jdbc.core.RowMapper;
  * @author m.roeder
  * 
  */
-public class ExperimentTaskResultRowMapper implements RowMapper<ExperimentTaskResult> {
+public class ExperimentTaskStatusRowMapper implements RowMapper<ExperimentTaskStatus> {
 
     @Override
-    public ExperimentTaskResult mapRow(ResultSet resultSet, int rowId) throws SQLException {
+    public ExperimentTaskStatus mapRow(ResultSet resultSet, int rowId) throws SQLException {
         int idInDatabase = -1;
         try {
             idInDatabase = resultSet.getInt(8);
         } catch (Exception e) {
             // nothing to do
         }
-        return new ExperimentTaskResult(resultSet.getString(1), resultSet.getString(2),
+        return new ExperimentTaskStatus(resultSet.getString(1), resultSet.getString(2),
                 ExperimentType.valueOf(resultSet.getString(3)), Matching.valueOf(resultSet.getString(4)),
-                new double[] { },
-                resultSet.getInt(5), resultSet.getInt(6), resultSet.getTimestamp(7).getTime(), idInDatabase);
+                resultSet.getInt(5), resultSet.getString(6), resultSet.getTimestamp(7).getTime(), idInDatabase);
     }
 
 }

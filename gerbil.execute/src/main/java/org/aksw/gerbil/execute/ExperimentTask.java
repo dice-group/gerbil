@@ -20,19 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.annotator.SWCTask1System;
 import org.aksw.gerbil.annotator.SWCTask2System;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
 import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
 import org.aksw.gerbil.database.ExperimentDAO;
-import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentTaskState;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
+import org.aksw.gerbil.datatypes.TaskResult;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
@@ -141,8 +140,7 @@ public class ExperimentTask implements Task {
             evFactory.getConverterManager().close();
             // create result object
             // FIXME Fix this workaround
-            ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[0],
-                    ExperimentDAO.TASK_FINISHED, 0);
+            ExperimentTaskStatus expResult = new ExperimentTaskStatus(configuration, ExperimentDAO.TASK_FINISHED);
             switch(configuration.type){
             case SWC2018T1:
             case SWC1:	
@@ -158,7 +156,7 @@ public class ExperimentTask implements Task {
             expResult.setPublish(configuration.getPublish());
             //also set it in the subtasks
             if(expResult.getSubTasks()!=null) {
-            	for(ExperimentTaskResult subResults : expResult.getSubTasks()) {
+            	for(ExperimentTaskStatus subResults : expResult.getSubTasks()) {
             		subResults.setPublish(configuration.getPublish());
             	}
             }
@@ -212,10 +210,12 @@ public class ExperimentTask implements Task {
         }
     }
 
-    protected void transformResults(EvaluationResult result, ExperimentTaskResult expResult) {
+    protected void transformResults(EvaluationResult result, ExperimentTaskStatus expResult) {
+    	TaskResult taskRes=null;
+    	String resType = null;
+		String resName=result.getName();
         if (result instanceof SubTaskResult) {
-            ExperimentTaskResult subTask = new ExperimentTaskResult(((SubTaskResult) result).getConfiguration(),
-                    new double[0], ExperimentDAO.TASK_FINISHED, 0);
+        	ExperimentTaskStatus subTask = new ExperimentTaskStatus(((SubTaskResult) result).getConfiguration(),  ExperimentDAO.TASK_FINISHED);
             List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
             for (EvaluationResult tempResult : tempResults) {
                 transformResults(tempResult, subTask);
@@ -227,51 +227,15 @@ public class ExperimentTask implements Task {
                 transformResults(tempResult, expResult);
             }
         } else if (result instanceof DoubleEvaluationResult) {
-//            switch (result.getName()) {
-//            case ModelComparator.F1_SCORE_NAME: {
-//                expResult.results[ExperimentTaskResult.F1_MEASURE_INDEX] = ((DoubleEvaluationResult) result)
-//                        .getValueAsDouble();
-//                return;
-//            }
-//            case ModelComparator.PRECISION_NAME: {
-//                expResult.results[ExperimentTaskResult.PRECISION_INDEX] = ((DoubleEvaluationResult) result)
-//                        .getValueAsDouble();
-//                return;
-//            }
-//            case ModelComparator.RECALL_NAME: {
-//                expResult.results[ExperimentTaskResult.RECALL_INDEX] = ((DoubleEvaluationResult) result)
-//                        .getValueAsDouble();
-//                return;
-//            }
-            
-//            default: {
-                int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
-                if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
-                    LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
-                } else {
-                    expResult.addAdditionalResult(id, ((DoubleEvaluationResult) result).getValueAsDouble());
-
-                }
-            return;
+        	resType = "DOUBLE";
         } else if (result instanceof StringEvaluationResult) {
-            int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
-            if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
-                LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
-            } else {
-//                expResult.addAdditionalResult(id, ((StringEvaluationResult) result).getValue().toString());
-            	  expResult.setRoc(result.getValue().toString());
-            }
+        	resType = "BLOB";
         } else if (result instanceof IntEvaluationResult) {
-            if (result.getName().equals(ErrorCountingAnnotatorDecorator.ERROR_COUNT_RESULT_NAME)) {
-                expResult.errorCount = ((IntEvaluationResult) result).getValueAsInt();
-                return;
-            }
-            int id = ResultNameToIdMapping.getInstance().getResultId(result.getName());
-            if (id == ResultNameToIdMapping.UKNOWN_RESULT_TYPE) {
-                LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
-            } else {
-                expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
-            }
+        	resType = "INT";
+        }
+        if(resType!=null && resName!=null) {
+        	taskRes = new TaskResult(result.getValue(), resType);
+        	expResult.getResultsMap().put(resName, taskRes);
         }
     }
 

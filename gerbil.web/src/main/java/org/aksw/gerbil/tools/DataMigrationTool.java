@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.ExperimentDAOImpl;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,14 +71,14 @@ public class DataMigrationTool {
 
     private static void performMigration(ExperimentDAO source, ExperimentDAO target) {
         // make sure the target experiment is not already existing
-        List<ExperimentTaskResult> targetExpTaskResults = target.getResultsOfExperiment(TARGET_EXPERIMENT_ID);
+        List<ExperimentTaskStatus> targetExpTaskResults = target.getResultsOfExperiment(TARGET_EXPERIMENT_ID);
         if ((targetExpTaskResults != null) && (targetExpTaskResults.size() > 0)) {
             LOGGER.error("The target experiment {} is already existing. Aborting.", TARGET_EXPERIMENT_ID);
             return;
         }
         // retrieve the experiment task results we would like to migrate
-        ExperimentTaskResult migratingTasks[] = new ExperimentTaskResult[SOURCE_EXPERIMENTS.length];
-        Map<String, List<ExperimentTaskResult>> cache = new HashMap<String, List<ExperimentTaskResult>>();
+        ExperimentTaskStatus migratingTasks[] = new ExperimentTaskStatus[SOURCE_EXPERIMENTS.length];
+        Map<String, List<ExperimentTaskStatus>> cache = new HashMap<String, List<ExperimentTaskStatus>>();
         for (int i = 0; i < SOURCE_EXPERIMENTS.length; ++i) {
             migratingTasks[i] = retrieveTask(SOURCE_EXPERIMENTS[i], source, cache);
             if (migratingTasks[i] == null) {
@@ -109,9 +109,9 @@ public class DataMigrationTool {
      * @param cache
      * @return
      */
-    private static ExperimentTaskResult retrieveTask(String[] experimentDesc, ExperimentDAO source,
-            Map<String, List<ExperimentTaskResult>> cache) {
-        List<ExperimentTaskResult> experimentTasks;
+    private static ExperimentTaskStatus retrieveTask(String[] experimentDesc, ExperimentDAO source,
+            Map<String, List<ExperimentTaskStatus>> cache) {
+        List<ExperimentTaskStatus> experimentTasks;
         if (cache.containsKey(experimentDesc[SOURCE_EXPERIMENT_ID_INDEX])) {
             experimentTasks = cache.get(experimentDesc[SOURCE_EXPERIMENT_ID_INDEX]);
         } else {
@@ -123,7 +123,7 @@ public class DataMigrationTool {
                     experimentDesc[SOURCE_EXPERIMENT_ID_INDEX]);
             return null;
         }
-        for (ExperimentTaskResult result : experimentTasks) {
+        for (ExperimentTaskStatus result : experimentTasks) {
             if (result.annotator.equals(experimentDesc[SOURCE_ANNOTATOR_INDEX])
                     && result.dataset.equals(experimentDesc[SOURCE_DATASET_INDEX])) {
                 return result;
@@ -132,7 +132,7 @@ public class DataMigrationTool {
         return null;
     }
 
-    private static void prepare(ExperimentTaskResult experimentTaskResult) {
+    private static void prepare(ExperimentTaskStatus experimentTaskResult) {
         // Here, the task result can be prepared for the migration, e.g.,
         // transformed into a new version.
         // In most cases this is not needed and this method can be left empty

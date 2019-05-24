@@ -21,9 +21,12 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -32,12 +35,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
-import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.dataid.DataIDGenerator;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.datatypes.TaskResult;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.evaluate.impl.ROCEvaluator;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
@@ -70,6 +74,10 @@ public class MainController {
     private static final String GOOGLE_ANALYTICS_FILE_NAME = "google1d91bc68c8a56517.html";
 
 	private static final String GERBIL_PROPERTIES_CHALLENGE_END_KEY = "org.aksw.gerbil.challenge.enddate";
+	
+	private static final String RESNAME_PROP = "org.aksw.gerbil.database.ResultNameSequence";
+	// Fetch Result Name sequence from property file
+	private static final String[] RESNAMES_DELIMITED = GerbilConfiguration.getInstance().getStringArray(RESNAME_PROP);
 
     private static boolean isInitialized = false;
     
@@ -118,9 +126,6 @@ public class MainController {
 
     @Autowired
     private AdapterManager adapterManager;
-
-    // DataID URL is generated automatically in the experiment method?
-    private DataIDGenerator dataIdGenerator;
 
     private ExperimentType[] availableExperimentTypes = RootConfig.getAvailableExperimentTypes();
 
@@ -229,39 +234,41 @@ public class MainController {
     @RequestMapping("/experiment")
     public ModelAndView experiment(@RequestParam(value = "id") String id, HttpServletRequest request) {
         LOGGER.debug("Got request on /experiment with id={}", id);
-        dataIdGenerator = new DataIDGenerator(getURLBase(request));
-        List<ExperimentTaskResult> results = dao.getResultsOfExperiment(id);
+        Set<String> resNamesDb = new HashSet<>();
+        List<ExperimentTaskStatus> results = dao.getResultsOfExperiment(id);
         Boolean hasRoc = false;
-        for(ExperimentTaskResult result : results){
+        for(ExperimentTaskStatus result : results){
+        	resNamesDb.addAll(result.getResultsMap().keySet());
         	String annotator = result.getAnnotator();
         	annotator = annotator.substring(0, annotator.lastIndexOf("("));
         	result.setAnnotator(annotator);
-        	if(result.roc != null) {
-        		result.roc = result.roc.replace("roc", "data");
+        	Map<String, TaskResult> resMap = result.getResultsMap();
+        	
+        	if(resMap.get(ROCEvaluator.ROC_NAME) != null) {
+        		TaskResult taskRes = resMap.get(ROCEvaluator.ROC_NAME);
+        		String rocVal = (String) taskRes.getResValue();
+        		rocVal = rocVal.replace("roc", "data");
+        		taskRes.setResValue(rocVal);
         		hasRoc = true;
         	}
         }
         ExperimentTaskStateHelper.setStatusLines(results);
         ModelAndView model = new ModelAndView();
-        model.setViewName("experiment");
+        model.setViewName("experiment-new");
         model.addObject("tasks", results);
-        model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
-        int additionalResultIds[] = ResultNameToIdMapping.getInstance().listAdditionalResultIds(results);
-        // we need Double objects to make sure that they can be null
-        Object additionalResults[][] = new Double[results.size()][additionalResultIds.length];
-        ExperimentTaskResult result;
-        for (int i = 0; i < additionalResults.length; ++i) {
-            result = results.get(i);
-            for (int j = 0; j < additionalResultIds.length; ++j) {
-                if (result.hasAdditionalResult(additionalResultIds[j])) {
-                    additionalResults[i][j] = result.getAdditionalResult(additionalResultIds[j]);
-                }
-            }
+        // model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
+       
+        List<String> fnlRsltNms = new ArrayList<>();
+        boolean isRemoved = false;
+        for(String seqEntry : RESNAMES_DELIMITED) {
+        	isRemoved = resNamesDb.remove(seqEntry);
+        	if(isRemoved) {
+        		fnlRsltNms.add(seqEntry);
+        	}	        	
         }
+        fnlRsltNms.addAll(resNamesDb);
+        model.addObject("resultNames",fnlRsltNms);
         model.addObject("hasRoc", hasRoc);
-        model.addObject("additionalResultNames",
-                ResultNameToIdMapping.getInstance().getNamesOfResultIds(additionalResultIds));
-        model.addObject("additionalResults", additionalResults);
         return model;
     }
 

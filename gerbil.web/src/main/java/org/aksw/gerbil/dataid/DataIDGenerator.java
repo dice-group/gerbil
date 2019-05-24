@@ -22,9 +22,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import org.aksw.gerbil.database.ResultNameToIdMapping;
-import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
+import org.aksw.gerbil.datatypes.TaskResult;
 import org.aksw.gerbil.semantic.vocabs.CUBE;
 import org.aksw.gerbil.semantic.vocabs.GERBIL;
 import org.aksw.gerbil.web.ExperimentTaskStateHelper;
@@ -37,8 +38,6 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
-
-import com.carrotsearch.hppc.IntDoubleOpenHashMap;
 
 public class DataIDGenerator {
 
@@ -68,7 +67,7 @@ public class DataIDGenerator {
         return model;
     }
 
-    public String createDataIDModel(List<ExperimentTaskResult> results, String eID) {
+    public String createDataIDModel(List<ExperimentTaskStatus> results, String eID) {
         // If the experiment is not existing (== there are no results), return
         // an empty String
         if (results.size() == 0) {
@@ -88,7 +87,7 @@ public class DataIDGenerator {
         return o.toString();
     }
 
-    public void addToModel(Model model, List<ExperimentTaskResult> results, String eID) {
+    public void addToModel(Model model, List<ExperimentTaskStatus> results, String eID) {
         if (results.size() == 0) {
             return;
         }
@@ -96,8 +95,8 @@ public class DataIDGenerator {
         Resource experiment = createExperimentResource(model, eID);
 
         boolean first = true;
-        Iterator<ExperimentTaskResult> resultIterator = results.iterator();
-        ExperimentTaskResult result;
+        Iterator<ExperimentTaskStatus> resultIterator = results.iterator();
+        ExperimentTaskStatus result;
         // iterating over the experiments
         while (resultIterator.hasNext()) {
             result = resultIterator.next();
@@ -131,11 +130,11 @@ public class DataIDGenerator {
         return experiment;
     }
 
-    public void addExperimentTask(Model model, ExperimentTaskResult result, Resource experiment) {
+    public void addExperimentTask(Model model, ExperimentTaskStatus result, Resource experiment) {
         addExperimentTask(model, result, experiment, null);
     }
 
-    public void addExperimentTask(Model model, ExperimentTaskResult result, Resource experiment,
+    public void addExperimentTask(Model model, ExperimentTaskStatus result, Resource experiment,
             Resource superExpTask) {
         List<Resource> experimentTasks = new ArrayList<Resource>();
         createExperimentTask(model, result, superExpTask, experimentTasks);
@@ -148,7 +147,7 @@ public class DataIDGenerator {
         }
     }
 
-    public void createExperimentTask(Model model, ExperimentTaskResult result, Resource superExpTask,
+    public void createExperimentTask(Model model, ExperimentTaskStatus result, Resource superExpTask,
             List<Resource> experimentTasks) {
         // create Resource
         Resource experimentTask = model.createResource(generateExperimentTaskUri(result.idInDb));
@@ -183,25 +182,24 @@ public class DataIDGenerator {
 //                    model.createTypedLiteral(String.valueOf(result.getPrecision()), XSDDatatype.XSDdecimal));
 //            model.add(experimentTask, GERBIL.microRecall,
 //                    model.createTypedLiteral(String.valueOf(result.getRecall()), XSDDatatype.XSDdecimal));
-            model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(String.valueOf(result.errorCount)));
+           // model.add(experimentTask, GERBIL.errorCount, model.createTypedLiteral(String.valueOf(result.errorCount)));
 
-            if (result.hasAdditionalResults()) {
-                IntDoubleOpenHashMap additionalResults = result.getAdditionalResults();
-                String propertyUri;
-                ResultNameToIdMapping mapping = ResultNameToIdMapping.getInstance();
-                for (int i = 0; i < additionalResults.allocated.length; ++i) {
-                    if (additionalResults.allocated[i]) {
-                        propertyUri = mapping.getResultName(additionalResults.keys[i]);
-                        if (propertyUri != null) {
-                            propertyUri = GERBIL.getURI() + propertyUri.replace(" ", "_");
-                            model.add(experimentTask, model.createProperty(propertyUri), model.createTypedLiteral(
-                                    String.valueOf(additionalResults.values[i]), XSDDatatype.XSDdecimal));
-                        }
-                    }
-                }
+            if (result.getResultsMap().size()>0) {
+            	Map<String, TaskResult> resMap = result.getResultsMap();
+            	for(String resName : resMap.keySet()) {
+            		resName =  GERBIL.getURI() + resName.replace(" ", "_");
+            		TaskResult taskRes = resMap.get(resName);
+            		if(taskRes.getResType().equalsIgnoreCase("DOUBLE")) {
+            		 model.add(experimentTask, model.createProperty(resName), model.createTypedLiteral(
+                             String.valueOf(taskRes.getResValue()), XSDDatatype.XSDdecimal));
+            		} else if(taskRes.getResType().equalsIgnoreCase("INT")) {
+            		 model.add(experimentTask, model.createProperty(resName), model.createTypedLiteral(
+                             String.valueOf(taskRes.getResValue())));
+            		}
+            	}
             }
             if (result.hasSubTasks()) {
-                for (ExperimentTaskResult subResult : result.getSubTasks()) {
+                for (ExperimentTaskStatus subResult : result.getSubTasks()) {
                     createExperimentTask(model, subResult, experimentTask, experimentTasks);
                 }
             }
