@@ -354,21 +354,24 @@
 			<artifactId>datasets</artifactId>
 			<version>0.5.17</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.github.jsonld-java/jsonld-java -->
+
+		<dependency>
+			<groupId>org.aksw.simba</groupId>
+			<artifactId>qaldbench</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
 			<version>3.6.0</version>
-
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-core</artifactId>
 			<version>3.6.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.aksw.simba</groupId>
-			<artifactId>qaldbench</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 

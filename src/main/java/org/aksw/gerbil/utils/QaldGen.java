@@ -27,7 +27,7 @@ public class QaldGen {
 	private static void replaceParamVal(String[] args, String param, String tmpFileName) {
 		for(int index = 0 ; index<args.length;index++){
 			 if(args[index].equals(param))
-		 			 args[index] = tmpFileName;
+		 			 args[index+1] = tmpFileName;
 		}
 	}
 
