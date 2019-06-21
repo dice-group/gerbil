@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 
 @SuppressWarnings("rawtypes")
 public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
@@ -125,14 +126,26 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
 		 */
 		EvaluationCounts stringCounts = countMatchings(annotatorStrings, goldStdStrings);
 		stringCounts.falsePositives=0;
-		Set<String> diff = Sets.difference(annotatorStrings, goldStdStrings);
-//		Set<String> remove = Sets.intersection(annotatorStrings, goldStdStrings);
-//		annotatorStrings.removeAll(remove);
-		annotatorAnnotations.addAll(forceAnnotationCreation(new HashSet<String>(diff)));
+		SetView<String> diff = Sets.difference(annotatorStrings, goldStdStrings);
+		
+		Set<String> annotatorDiff = new HashSet<String>(annotatorStrings);
+		annotatorDiff.removeAll(goldStdStrings);
+		Set<String> goldDiff = new HashSet<String>(goldStdStrings);
+		goldDiff.removeAll(annotatorStrings);
+		annotatorAnnotations.addAll(forceAnnotationCreation(annotatorDiff));
+		goldStdAnnotations.addAll(forceAnnotationCreation(goldDiff));
+
 		EvaluationCounts annotationCounts = meaningMatchingsCounter.countMatchings(annotatorAnnotations,
 				goldStdAnnotations);
-		global.add(stringCounts);
-		global.add(annotationCounts);
+		//all which are found can be added
+		global.setTruePositives(stringCounts.truePositives+annotationCounts.truePositives);
+		/*
+		 * all which are not found by the system will be viewed in the anno comp,
+		 * as the string comp will guide the fn and fp through and the annotation comp will 
+		 * then check if they are really fp / fn or if they were an annotation in the other set
+		 */
+		global.setFalseNegatives(annotationCounts.falseNegatives);
+		global.setFalsePositives(annotationCounts.falsePositives);
 		return global;
 
 	}
