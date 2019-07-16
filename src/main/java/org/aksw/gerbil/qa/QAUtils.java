@@ -1,5 +1,6 @@
 package org.aksw.gerbil.qa;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -259,9 +260,14 @@ public class QAUtils {
      */
     public static AnswerSet<Annotation> transformToAnnotations(Set<String> answers) {
         for (String goldenAnswer : answers) {
-            if (!URL_VALIDATOR.isValid(goldenAnswer)) {
-                return null;
-            }
+        	try{
+        		URI.create(goldenAnswer);
+        	}catch(Exception e) {
+        		return null;
+        	}
+//            if (!URL_VALIDATOR.isValid(goldenAnswer)) {
+//                return null;
+//            }
         }
         Set<Annotation> annotations = new HashSet<>();
         for (String goldenAnswer : answers) {
