@@ -31,6 +31,7 @@ import javax.sql.rowset.serial.SerialBlob;
 
 import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.datatypes.ChallengeDescr;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.TaskResult;
@@ -91,12 +92,17 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
 	private static final String GET_ALL_ANNOTATORS = "SELECT DISTINCT systemName FROM ExperimentTasks";
 	
-	private static final String GET_BEST_EXPERIMENT_DATE_TASK_RESULTS = "select inExp.systemName, outExp.datasetName, outExp.experimentType, outExp.matching, outExp.state, outExp.version, outExp.lastChanged, outExp.id, inExp.result from ExperimentTasks outExp, (SELECT exp.systemName, max(addi.resvalue) AS result FROM ExperimentTasks exp join ExperimentTasks_DoubleResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND (addi.resultId=0 OR addi.resultId=3) and addi.resvalue <> sqrt(-1) and exp.experimentType = :experimentType and exp.datasetName = :dataset and exp.lastChanged <= :before GROUP by exp.systemName) as inExp, ExperimentTasks_DoubleResults outAddi WHERE outExp.publish='true' AND (outAddi.resultId=0 OR outAddi.resultId=3) and outExp.Id=outAddi.taskId and outExp.systemName = inExp.systemName and inExp.result = outAddi.resvalue and outExp.state = 0 and outExp.datasetName = :dataset ORDER BY inExp.result DESC;";
+	private static final String GET_BEST_EXPERIMENT_DATE_TASK_RESULTS = "select inExp.systemName, outExp.datasetName, outExp.experimentType, outExp.matching, outExp.state, outExp.version, outExp.lastChanged, outExp.id, inExp.result from ExperimentTasks outExp, (SELECT exp.systemName, max(addi.resvalue) AS result FROM ExperimentTasks exp join ExperimentTasks_DoubleResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND (addi.resultId=0 OR addi.resultId=3) and addi.resvalue <> sqrt(-1) and exp.experimentType = :experimentType and exp.datasetName = :dataset and exp.lastChanged <= :before and exp.lastChanged >= :after GROUP by exp.systemName) as inExp, ExperimentTasks_DoubleResults outAddi WHERE outExp.publish='true' AND (outAddi.resultId=0 OR outAddi.resultId=3) and outExp.Id=outAddi.taskId and outExp.systemName = inExp.systemName and inExp.result = outAddi.resvalue and outExp.state = 0 and outExp.datasetName = :dataset ORDER BY inExp.result DESC;";
 
 
 	private static final String SET_FILE2SYSTEM_MAPPING = "INSERT INTO File2System (id, file, system, email) VALUES(:id, :file, :system, :email)";
-	private static final String GET_FILE2SYSTEM_MAPPING = "SELECT id, file, system, email FRO File2System WHERE id=:id";
+	private static final String GET_FILE2SYSTEM_MAPPING = "SELECT id, file, system, email FROM File2System WHERE id=:id";
 
+	private static final String GET_CHALLENGE_DESCRIPTIONS = "SELECT startDate, endDate, name FROM ChallengeDescriptions";
+	private final static String INSERT_CHALLENGE_DESCRIPTIONS = "INSERT INTO ChallengeDescriptions(startDate, endDate, name) VALUES (:startDate, :endDate, :name)";
+	private static final String GET_CHALLENGE_DESCRIPTION = "SELECT startDate, endDate, name FROM ChallengeDescriptions WHERE startDate=:startDate and endDate=:endDate and name=:name";
+	
+	
 	private final NamedParameterJdbcTemplate template;
 
 	public ExperimentDAOImpl(DataSource dataSource) {
@@ -408,11 +414,12 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
 	@Override
 	public List<ExperimentTaskStatus> getBestResults(String experimentType, String dataset,
-			Timestamp challengeDate) {
+			Timestamp start, Timestamp end) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("experimentType", experimentType);
 		parameters.addValue("dataset", dataset);
-		parameters.addValue("before", challengeDate);
+		parameters.addValue("after", start);
+		parameters.addValue("before", end);
 
 		List<ExperimentTaskStatus> result = this.template.query(GET_BEST_EXPERIMENT_DATE_TASK_RESULTS, parameters,
 				new ExperimentTaskStatusRowMapper());
@@ -424,6 +431,35 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 		return result;
 	}
 
+
+	public boolean isChallengeInDB(ChallengeDescr challenge){
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("startDate", challenge.getStartDate());
+		parameters.addValue("endDate", challenge.getEndDate());
+		parameters.addValue("name", challenge.getName());
+		List<ChallengeDescr> result = this.template.query(GET_CHALLENGE_DESCRIPTION, parameters,
+				new ChallengeDescrRowMapper());
+		return !result.isEmpty();
+	}
+	
+	
+	public List<ChallengeDescr> getAllChallenges(){
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+		List<ChallengeDescr> result = this.template.query(GET_CHALLENGE_DESCRIPTIONS, parameters,
+				new ChallengeDescrRowMapper());
+		return result;
+	}
+	
+	public void addChallenge(ChallengeDescr challenge) {
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("startDate", challenge.getStartDate());
+		parameters.addValue("endDate", challenge.getEndDate());
+		parameters.addValue("name", challenge.getName());
+		this.template.update(INSERT_CHALLENGE_DESCRIPTIONS, parameters);
+	}
+	
+	
 	@Override
 	public void setFile2SystemMapping(int experimentTaskId, String fileName, String systemName, String email) {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();

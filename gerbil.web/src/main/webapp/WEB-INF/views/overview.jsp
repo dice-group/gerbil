@@ -9,6 +9,9 @@
 <title>Overview</title>
 <script type="text/javascript"
 	src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+	          type="text/css" media="all"/>
 <script type="text/javascript"
 	src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
@@ -21,6 +24,10 @@
 <script type="text/javascript" src="/gerbil/webResources/js/Chart.js"></script>
 <link rel="icon" type="image/png"
 	href="/gerbil/webResources/gerbilicon_transparent.png">
+<link rel="stylesheet" href="/gerbil/webResources/css/slider.css"/>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/v4-shims.css">
+  <script src="https://use.fontawesome.com/559bb5497a.js"></script>
 </head>
 <style>
 table {
@@ -85,13 +92,25 @@ table {
 					<div id="expTypes" class="col-md-8"></div>
 				</div>
 			</div>
-
+			<div class="col-md-12">
+				<div class="control-group">
+					<label class="col-md-4 control-label">Show Archive</label>
+					<div class="col-md-8">
+						<label class="switch">
+  						<input onchange="toggleArchive()" value="false" id="sliderArchive" type="checkbox">
+  							<span class="slider round"></span>
+					</label>
+					</div>
+					
+				</div>
+			</div>
 			<div class="col-md-12" style="visibility: hidden;">
 				<div class="control-group">
 					<label class="col-md-4 control-label">Matching</label>
 					<div id="matching" class="col-md-8"></div>
 				</div>
 			</div>
+
 			<div class="col-md-12">
 				<div class="control-group">
 					<label class="col-md-4 control-label"></label>
@@ -99,8 +118,10 @@ table {
 						<button id="show" type="button" class="btn btn-default">Show
 							leaderboard!</button>
 					</div>
+					
 				</div>
 			</div>
+
 			<!-- <div class="col-md-12">
 				<h2>Leaderboards</h2>
 				<p>The tables will show the ranking of current participants.</p>
@@ -114,6 +135,14 @@ table {
 		</div>
 	</div>
 	<div class="container-fluid" id="resultsTable">
+		<!-- 		<table id="resultsTable" class="table table-hover table-condensed"> -->
+		<!-- 			<thead></thead> -->
+		<!-- 			<tbody></tbody> -->
+		<!-- 		</table> -->
+
+	</div>
+	
+		<div class="container-fluid" id="archiveTable">
 		<!-- 		<table id="resultsTable" class="table table-hover table-condensed"> -->
 		<!-- 			<thead></thead> -->
 		<!-- 			<tbody></tbody> -->
@@ -146,7 +175,21 @@ table {
 	</div>
 
 	<script type="text/javascript">
-		initLoading();
+		var archive = false;	
+		//initLoading();
+		var archiveIsLoaded =false;
+		
+		String.prototype.hashCode = function() {
+			  var hash = 0, i, chr;
+			  if (this.length === 0) return hash;
+			  for (i = 0; i < this.length; i++) {
+			    chr   = this.charCodeAt(i);
+			    hash  = ((hash << 5) - hash) + chr;
+			    hash |= 0; // Convert to 32bit integer
+			  }
+			  return hash;
+			};
+		
 		function loadMatchings() {
 			$
 					.getJSON(
@@ -236,7 +279,11 @@ table {
 
 								$('[data-toggle="tooltip"]').tooltip();
 
-							});
+							}).done(function(){
+									initLoading();
+									
+								});
+			
 		};
 
 		function loadTables() {
@@ -248,7 +295,8 @@ table {
 				$("#resultsTable").html("");
 				for (var i = 0; i < data.datasets.length; i++) {
 					var tableData = data.datasets[i];
-					showTable(tableData, "resultsTable");
+					var experimentType = $('#expTypes input:checked').val();
+					showTable(tableData, "resultsTable", experimentType, null);
 				}
 
 			}).fail(function(data) {
@@ -256,12 +304,51 @@ table {
 
 			});
 		};
+		
+		function loadArchive() {
+			if(archiveIsLoaded === true){
+				//just show cached results
+				return;
+			}
+			$.getJSON('experimentarchive', {
+				ajax : 'false'
+			}, function(data) {
+				$("#archiveTable").html("");
+				for(var i = 0; i < data.archive.length; i++){
+					var challenge = data.archive[i].challenge;
+					var etypes = data.archive[i].results;
+					var challengeId = challenge.name.concat(challenge.start).concat(challenge.end).hashCode();
+					for(var j = 0; j < etypes.length; j++){
+						var type = etypes[j].type;
+						var results = etypes[j].results;
+						
+						for (var k = 0; k < results.datasets.length; k++) {
+							var tableData = results.datasets[k];
+							showTable(tableData, "archiveTable", type, challengeId);
+						}
+						$("#archiveTable").prepend("<div class=\"col-md-12\"><h2>Type: "+type+"</h2></div>");
+					}
+					$("#archiveTable").prepend("<div class=\"col-md-12\"><h1>"+challenge.name+"</h1><p>(from "+challenge.startDate+" to "+challenge.endDate+")"+"</p></div>");
+				}
+
+				archiveIsLoaded = true;
+				window.location.hash = window.location.hash;
+			}).fail(function(data) {
+				console.log("error loading archive");
+
+			});
+
+			
+		};
 
 		function initLoading() {
-
+	
 			var param = getUrlParameter("task");
-			if (param == 'SWC1' || param == 'SWC2') {
-
+			
+			if (param != null) {
+				$('#'+param).prop('checked', true);
+				
+				
 				$.getJSON('${experimentoverview}', {
 					experimentType : param,
 					ajax : 'false'
@@ -271,15 +358,45 @@ table {
 						var tableData = data.datasets[i];
 						showTable(tableData, "resultsTable");
 					}
+					window.location.hash = window.location.hash;
 
 				}).fail(function() {
 					console.log("error loading data for table");
 
 				});
 			}
+			var isArchive = getUrlParameter("archive");
+			if(isArchive === 'true'){
+				toggleArchive();
+				$('#sliderArchive').val(true);
+				$('#sliderArchive').prop('checked', true);
+				
+			}
+			
+			
 
 		}
 
+		function toggleArchive(){
+			archive = !archive;
+			$('#sliderArchive').prop('checked', archive);
+			$('#sliderArchive').val(archive);
+			//TODO show set archive param
+			if(archive){
+				
+				loadArchive();
+				$('#expTypes *').attr("disabled", "disabled").off('click');
+				$('#resultsTable ').hide();
+				$('#archiveTable').show();
+				
+			}
+			else {
+				$('#expTypes *').removeAttr("disabled").on('click');
+				$('#resultsTable ').show();
+				$('#archiveTable').hide();
+			}
+		}
+		
 		function getUrlParameter(sParam) {
 			var sPageURL = decodeURIComponent(window.location.search
 					.substring(1)), sURLVariables = sPageURL.split('&'), sParameterName, i;
@@ -305,15 +422,20 @@ table {
 			return (experimentType === "SWC2") || (experimentType === "SWC_2019");
 		};
 
-		function showTable(tableData, tableElementId) {
+		function showTable(tableData, tableElementId, experimentType, challengeId) {
 			//http://stackoverflow.com/questions/1051061/convert-json-array-to-an-html-table-in-jquery
-			var str = tableData.datasetName.replace(/\s/g, "").replace(/[^a-z0-9]/gi,'z');
+			var cid = "";
+			var challengePre ="";
+			if(challengeId != null){
+				challengePre = challengeId
+				cid = "&cid="+challengeId;
+			}
+			var str = challengePre+experimentType+tableData.datasetName.replace(/\s/g, "").replace(/[^a-z0-9]/gi,'z');
 			var newID = str + "bod";
 			var bootDiv = "<div id=\"" + newID + "\" class=\"col-md-12\"></div>";
 			$("#" + tableElementId).prepend(bootDiv);
 
 			var tbl_body = "";
-			var experimentType = $('#expTypes input:checked').val();
 
 			var measure = "F1 measure";
 			if (isROCExperiment(experimentType)) {
@@ -321,7 +443,14 @@ table {
 			}
 			var tbl_hd = "<tr><th>AnnotatorName</th><th>" + measure
 					+ "</th></tr>";
-			var tbl = "<h3>Dataset: "
+			
+			var path = "?archive="+archive+cid;
+			if(!archive){
+				path +="&task="+experimentType;
+			}
+			path+="#name"+tableData.datasetName.replace(/[^a-z0-9]/gi,'z');
+			
+			var tbl = "<h3 id=\"name" + tableData.datasetName.replace(/[^a-z0-9]/gi,'z') + "\"><a title=\""+window.location.host+window.location.pathname+path+"\" class=\"reflink\" href=\"overview.html"+path+"\"><i class=\"fas fa-link\"></i></a> Dataset: "
 					+ tableData.datasetName
 					+ "</h3><table id=\"" + tableData.datasetName.replace(/[^a-z0-9]/gi,'z') + "\" class=\"table table-hover table-condensed\">";
 			tbl += tbl_hd;
@@ -454,10 +583,15 @@ table {
 			//creating the radioboxes
 			//++++++++++++
 			loadExperimentTypes();
-
+			
+			
+			
 			$("#show").click(function(e) {
 				loadTables();
 			});
+			
 		});
+		
+		
 	</script>
 </body>

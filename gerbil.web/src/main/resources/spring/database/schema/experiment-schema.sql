@@ -69,3 +69,11 @@ subTaskId int NOT NULL FOREIGN KEY REFERENCES ExperimentTasks(id),
 PRIMARY KEY (taskId, subTaskId)
 );
 
+-- Challenge Descriptions
+CREATE TABLE IF NOT EXISTS ChallengeDescriptions (
+startDate TIMESTAMP NOT NULL,
+endDate TIMESTAMP NOT NULL,
+name VARCHAR(300) NOT NULL,
+PRIMARY KEY (startDate, endDate, name)
+);
+

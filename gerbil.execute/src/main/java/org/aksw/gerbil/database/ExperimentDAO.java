@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.annotator.File2SystemEntry;
+import org.aksw.gerbil.datatypes.ChallengeDescr;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 
@@ -245,7 +246,12 @@ public interface ExperimentDAO extends Closeable {
 
 	public List<ExperimentTaskStatus> getBestResults(String name, String dataset);
 
-	public List<ExperimentTaskStatus> getBestResults(String name, String dataset, Timestamp challengeDate);
+	public List<ExperimentTaskStatus> getBestResults(String name, String dataset, Timestamp start, Timestamp end);
+	
+	public List<ChallengeDescr> getAllChallenges();
+	
+	public void addChallenge(ChallengeDescr challenge);
+	public boolean isChallengeInDB(ChallengeDescr challenge);
 	
 	public Set<String> getAnnotators();
 	

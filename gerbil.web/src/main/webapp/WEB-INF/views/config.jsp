@@ -240,7 +240,7 @@
 					<hr />
 				</div>
 			</div>
-			<c:if test="${!challengeEnded}">
+			<c:if test="${!challengeTooLate && !challengeTooEarly}">
 				<div class="form-group">
 					<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
@@ -273,11 +273,19 @@
 			</div>
 
 			<div class="col-md-8 col-md-offset-2">
-				<c:if test="${challengeEnded}">
+				<c:if test="${challengeTooLate}">
 					<div id="warningChallengeEnded" class="alert alert-warning"
 						role="alert">
-						<strong>Warning!</strong> Challenge ended
-						<c:if test="${challengeDate != null}">at ${challengeDate}</c:if>
+						<strong>Warning!</strong> Challenge '${challengeName}' ended
+						<c:if test="${challengeEnd != null}">at ${challengeEnd}</c:if>
+						. Results will not occur in Leaderboard.
+					</div>
+				</c:if>
+				<c:if test="${challengeTooEarly}">
+					<div id="warningChallengeNotStarted" class="alert alert-warning"
+						role="alert">
+						<strong>Warning!</strong> Challenge '${challengeName}' not started yet. It starts at
+						<c:if test="${challengeStart != null}">at ${challengeStart}</c:if>
 						. Results will not occur in Leaderboard.
 					</div>
 				</c:if>

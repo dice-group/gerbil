@@ -16,6 +16,9 @@
  */
 package org.aksw.gerbil.datatypes;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
@@ -183,6 +186,15 @@ public enum ExperimentType implements Describable {
 
     public String getName() {
         return name();
+    }
+    
+    public static List<ExperimentType> getKBCTypes(){
+    	List<ExperimentType> types = new LinkedList<ExperimentType>();
+    	types.add(ExperimentType.SWC1);
+    	types.add(ExperimentType.SWC2);
+    	types.add(ExperimentType.SWC2018T1);
+    	types.add(ExperimentType.SWC_2019);
+    	return types;
     }
 
     public boolean equalsOrContainsType(ExperimentType type) {
