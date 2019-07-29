@@ -202,7 +202,16 @@ public class ExperimentOverviewController {
 			for(ExperimentTaskStatus expResults : leaderList){
 				String annotator = expResults.annotator.substring(0, expResults.annotator.lastIndexOf("(")).replace("\"", "\\\"");
 				listsAsJson.append("{ \"annotatorName\" : \"").append(annotator).append("\", \"value\": \"");
-				listsAsJson.append(expResults.resultsMap.get(ROCEvaluator.AUC_NAME).getResValue()).append("\", \"id\": \"").append(dao.getTaskId(expResults.idInDb)).append("\"}");
+				if(expResults.resultsMap.containsKey(ROCEvaluator.AUC_NAME)) {
+					listsAsJson.append(expResults.resultsMap.get(ROCEvaluator.AUC_NAME).getResValue()).append("\", \"id\": \"").append(dao.getTaskId(expResults.idInDb)).append("\"}");					
+				}
+				else if(expResults.resultsMap.containsKey("F1 score")) {
+					listsAsJson.append(expResults.resultsMap.get("F1 score").getResValue()).append("\", \"id\": \"").append(dao.getTaskId(expResults.idInDb)).append("\"}");
+				}
+				else {
+					listsAsJson.append("undefined").append("\", \"id\": \"").append(dao.getTaskId(expResults.idInDb)).append("\"}");
+				}
+
 							
 				if(count2<leaderList.size()-1) {
 					listsAsJson.append(", ");
