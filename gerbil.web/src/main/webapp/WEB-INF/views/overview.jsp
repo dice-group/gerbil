@@ -448,9 +448,9 @@ table {
 			if(!archive){
 				path +="&task="+experimentType;
 			}
-			path+="#name"+ cid + tableData.datasetName.replace(/[^a-z0-9]/gi,'z');
+			path+="#name"+ challengePre + tableData.datasetName.replace(/[^a-z0-9]/gi,'z');
 			
-			var tbl = "<h3 id=\"name" + cid + tableData.datasetName.replace(/[^a-z0-9]/gi,'z') + "\"><a title=\""+window.location.host+window.location.pathname+path+"\" class=\"reflink\" href=\"overview.html"+path+"\"><i class=\"fas fa-link\"></i></a> Dataset: "
+			var tbl = "<h3 id=\"name" + challengePre + tableData.datasetName.replace(/[^a-z0-9]/gi,'z') + "\"><a title=\""+window.location.host+window.location.pathname+path+"\" class=\"reflink\" href=\"overview.html"+path+"\"><i class=\"fas fa-link\"></i></a> Dataset: "
 					+ tableData.datasetName
 					+ "</h3><table id=\"" + tableData.datasetName.replace(/[^a-z0-9]/gi,'z') + "\" class=\"table table-hover table-condensed\">";
 			tbl += tbl_hd;
