@@ -318,17 +318,26 @@ table {
 					var challenge = data.archive[i].challenge;
 					var etypes = data.archive[i].results;
 					var challengeId = challenge.name.concat(challenge.start).concat(challenge.end).hashCode();
+					var cempty= true;
 					for(var j = 0; j < etypes.length; j++){
 						var type = etypes[j].type;
 						var results = etypes[j].results;
-						
+						var dempty = true;
 						for (var k = 0; k < results.datasets.length; k++) {
 							var tableData = results.datasets[k];
-							showTable(tableData, "archiveTable", type, challengeId);
+							if(tableData.leader.length > 0){
+								dempty = false;
+								cempty=false;
+								showTable(tableData, "archiveTable", type, challengeId);
+							}
 						}
-						$("#archiveTable").prepend("<div class=\"col-md-12\"><h2>Type: "+type+"</h2></div>");
+						if(!dempty){
+							$("#archiveTable").prepend("<div class=\"col-md-12\"><h2>Type: "+type+"</h2></div>");
+						}
 					}
-					$("#archiveTable").prepend("<div class=\"col-md-12\"><h1>"+challenge.name+"</h1><p>(from "+challenge.startDate+" to "+challenge.endDate+")"+"</p></div>");
+					if(!cempty){
+						$("#archiveTable").prepend("<div class=\"col-md-12\"><h1>"+challenge.name+"</h1><p>(from "+challenge.startDate+" to "+challenge.endDate+")"+"</p></div>");
+					}
 				}
 
 				archiveIsLoaded = true;
