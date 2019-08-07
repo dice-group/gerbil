@@ -1,5 +1,8 @@
 language: java
 
+# Following https://travis-ci.community/t/error-installing-oraclejdk8-expected-feature-release-number-in-range-of-9-to-14-but-got-8/3766/7 the trusty the installation of oracle JDK 8 will not fail on trusty while it fails on newer distributions
+dist: trusty
+
 #Following https://docs.travis-ci.com/user/languages/java/ we have to run an update for JDK 8
 sudo: false
 
