@@ -106,6 +106,11 @@ public class ExperimentTask implements Task {
 				throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
 						+ configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
 			}
+			// Check the dataset
+			if (dataset.size() == 0) {
+			    throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
+                        + configuration.type.name() + "\".", ErrorTypes.DATASET_EMPTY_ERROR);
+			}
 
 			// Create annotator
 			annotator = (Annotator) configuration.annotatorConfig.getAnnotator(configuration.type);

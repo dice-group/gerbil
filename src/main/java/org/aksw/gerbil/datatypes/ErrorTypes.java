@@ -35,6 +35,10 @@ public enum ErrorTypes {
      * The dataset couldn't be loaded.
      */
     DATASET_LOADING_ERROR(-104, "The dataset couldn't be loaded."),
+    /**
+     * The dataset appears not .
+     */
+    DATASET_EMPTY_ERROR(-110, "The dataset appeared to be empty."),
 
     /**
      * The annotator does not support the experiment type.
