@@ -329,7 +329,7 @@ public class RootConfig {
                         }
                     }
                 } else {
-                    LOGGER.error(
+                    LOGGER.warn(
                             "Couldn't create index based entity checker for index \"{}\". Creating HTTP based checker.",
                             namespaces.get(0));
                     // use HTTP based checker
