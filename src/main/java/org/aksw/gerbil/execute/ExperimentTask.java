@@ -148,6 +148,7 @@ public class ExperimentTask implements Task {
 			transformResults(result, expResult);
 
 			// store result
+            LOGGER.info("Setting experiment results: " + expResult.toString());
 			experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
 			LOGGER.info("Task Finished " + configuration.toString());
 		} catch (GerbilException e) {
