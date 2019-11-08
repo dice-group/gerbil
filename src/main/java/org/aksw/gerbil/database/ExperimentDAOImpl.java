@@ -29,6 +29,8 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.TaskResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -45,6 +47,7 @@ import org.springframework.jdbc.support.KeyHolder;
  */
 public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentDAOImpl.class);
 
     private final static String INSERT_TASK = "INSERT INTO ExperimentTasks (systemName, datasetName, experimentType, matching, state, lastChanged, version) VALUES (:annotatorName, :datasetName, :experimentType, :matching, :state, :lastChanged, :version)";
     private final static String SET_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE id=:id";
@@ -151,10 +154,13 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
            for(String resName : resMap.keySet()) {
         	   tempResult = resMap.get(resName);
         	   tempType = tempResult.getResType();
-        	   if(tempType.equalsIgnoreCase("DOUBLE")) {
+        	   if(DOUBLE_RESULT_TYPE.equalsIgnoreCase(tempType)) {
         		   addDoubleResult(experimentTaskId, resName, Double.parseDouble(tempResult.getResValue().toString()));
-        	   } else if(tempType.equalsIgnoreCase("INT")) {
+        	   } else if(INT_RESULT_TYPE.equalsIgnoreCase(tempType)) {
         		   addIntResult(experimentTaskId, resName, Integer.parseInt(tempResult.getResValue().toString()));
+        	   } else {
+        	       LOGGER.error("Got a result (\"{}\") with an unknown result type (\"{}\"). It will be ignored.",
+        	               resName, tempType);
         	   }
            }
         }
@@ -165,7 +171,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         }
     }
     
-    protected void addDoubleResult(int taskId, String resName, double value) {
+    protected void addDoubleResult(int taskId, String resName, double value) throws DataAccessException {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("taskId", taskId);
         parameters.addValue("resName", resName);
@@ -173,7 +179,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         this.template.update(INSERT_DOUBLE_RESULT, parameters);
     }
     
-    protected void addIntResult(int taskId, String resName, int value) {
+    protected void addIntResult(int taskId, String resName, int value) throws DataAccessException {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("taskId", taskId);
         parameters.addValue("resName", resName);
@@ -294,13 +300,15 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     	for(String dResName: RES_NAME_ARR) {
     		//Add a default double entry
     		if(resMap.get(dResName)==null) {
-    			tempRes = new TaskResult(0d, "DOUBLE");
+    		    LOGGER.info("Got an experiment task ({}) without the expected \"{}\" result. Setting it to 0.", result, dResName);
+    			tempRes = new TaskResult(0d, DOUBLE_RESULT_TYPE);
     			resMap.put(dResName, tempRes);
     		}
     	}
     	
     	if(resMap.get(ERROR_COUNT_NAME)==null) {
-    		tempRes = new TaskResult(0, "INT");
+            LOGGER.info("Got an experiment task ({}) without the expected \"" + ERROR_COUNT_NAME + "\" result. Setting it to 0.", result);
+    		tempRes = new TaskResult(0, INT_RESULT_TYPE);
         	resMap.put(ERROR_COUNT_NAME, tempRes);
     	}
     }

@@ -274,10 +274,10 @@ public class ExperimentTask implements Task {
 				transformResults(tempResult, expResult);
 			}
 		} else if (result instanceof DoubleEvaluationResult) {
-			taskRes = new TaskResult(((DoubleEvaluationResult) result).getValueAsDouble(), "DOUBLE");
+			taskRes = new TaskResult(((DoubleEvaluationResult) result).getValueAsDouble(), ExperimentDAO.DOUBLE_RESULT_TYPE);
 			
 		} else if (result instanceof IntEvaluationResult) {
-			taskRes = new TaskResult(((IntEvaluationResult) result).getValueAsInt(), "INT");
+			taskRes = new TaskResult(((IntEvaluationResult) result).getValueAsInt(), ExperimentDAO.INT_RESULT_TYPE);
 		}
 		if(taskRes!=null && resName!=null) {
 			expResult.getResultsMap().put(resName, taskRes);
