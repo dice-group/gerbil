@@ -48,7 +48,6 @@ public class DatabaseConfig implements WebMvcConfigurer {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
                 "/spring/database/database-context.xml");
         ExperimentDAO database = context.getBean(ExperimentDAO.class);
-        database.initialize();
         context.close();
         return database;
     }

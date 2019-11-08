@@ -19,6 +19,7 @@ package org.aksw.gerbil.database;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,8 @@ import org.springframework.jdbc.support.KeyHolder;
 public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentDAOImpl.class);
+    
+    private final static String INSERT_RESULT_NAME = "INSERT INTO ResultNames (name) VALUES (:name)";
 
     private final static String INSERT_TASK = "INSERT INTO ExperimentTasks (systemName, datasetName, experimentType, matching, state, lastChanged, version) VALUES (:annotatorName, :datasetName, :experimentType, :matching, :state, :lastChanged, :version)";
     private final static String SET_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE id=:id";
@@ -86,6 +89,27 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     public ExperimentDAOImpl(DataSource dataSource, long resultDurability) {
         super(resultDurability);
         this.template = new NamedParameterJdbcTemplate(dataSource);
+    }
+    
+    @Override
+    public void initialize() {
+        super.initialize();
+        // Add the result names
+        List<String> names = new ArrayList<String>(Arrays.asList(RES_NAME_ARR));
+        names.add(ERROR_COUNT_NAME);
+        insertResultNames(names);
+        LOGGER.info("ExperimentDAO initialized.");
+    }
+    
+    private void insertResultNames(List<String> names) {
+        for(String name : names) {
+            MapSqlParameterSource parameters = new MapSqlParameterSource();
+            parameters.addValue("name", name);
+            int rows = this.template.update(INSERT_RESULT_NAME, parameters);
+            if(rows == 0) {
+                LOGGER.info("Insertion of {} did not change anything.", name);
+            }
+        }
     }
 
     @Override
