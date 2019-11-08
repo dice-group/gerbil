@@ -44,7 +44,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/file")
-@PropertySource("gerbil.properties")
+@PropertySource("classpath:gerbil.properties")
 public class FileUploadController {
 
     private static final transient Logger logger = LoggerFactory.getLogger(FileUploadController.class);
