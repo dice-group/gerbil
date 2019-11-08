@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * This {@link Configuration} creates the {@link ExperimentDAO} bean by loading the XML config from the class path.
@@ -32,7 +32,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * 
  */
 @Configuration
-public class DatabaseConfig extends WebMvcConfigurerAdapter {
+public class DatabaseConfig implements WebMvcConfigurer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(DatabaseConfig.class);
 
