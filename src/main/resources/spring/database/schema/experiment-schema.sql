@@ -61,3 +61,8 @@ taskId int NOT NULL FOREIGN KEY REFERENCES ExperimentTasks(id),
 subTaskId int NOT NULL FOREIGN KEY REFERENCES ExperimentTasks(id),
 PRIMARY KEY (taskId, subTaskId)
 );
+
+-- Rename Derczynski dataset
+UPDATE ExperimentTasks
+SET datasetName = 'Derczynski IPM NEL'
+WHERE datasetName = 'Derczynski';
