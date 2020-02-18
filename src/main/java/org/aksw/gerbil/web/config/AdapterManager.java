@@ -39,11 +39,11 @@ public class AdapterManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdapterManager.class);
 
-    private static final String NIF_WS_PREFIX = "NIFWS_";
-    private static final String NIF_WS_SUFFIX = " (NIF WS)";
+    public static final String NIF_WS_PREFIX = "NIFWS_";
+    public static final String NIF_WS_SUFFIX = " (NIF WS)";
     private static final String UPLOADED_FILES_PATH_PROPERTY_KEY = "org.aksw.gerbil.UploadPath";
-    private static final String UPLOADED_DATASET_SUFFIX = " (uploaded)";
-    private static final String UPLOADED_DATASET_PREFIX = "NIFDS_";
+    public static final String UPLOADED_DATASET_SUFFIX = " (uploaded)";
+    public static final String UPLOADED_DATASET_PREFIX = "NIFDS_";
 
     @Autowired
     @Qualifier("annotators")

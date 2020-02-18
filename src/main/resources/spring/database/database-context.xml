@@ -11,11 +11,6 @@
         /> -->
     <context:property-placeholder location="classpath:gerbil.properties" />
 
-    <bean id="experimentDAO" class="org.aksw.gerbil.database.ExperimentDAOImpl" destroy-method="close">
-        <constructor-arg name="dataSource" ref="databaseDataSource" />
-        <property name="resultDurability" value="${gerbil.database.resultDurability}" />
-    </bean>
-
     <!-- Bean providing connection to database -->
     <!-- <bean id="databaseDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
         destroy-method="close"> -->
@@ -30,22 +25,28 @@
             <property name="maxPoolSize" value="${gerbil.jdbc.maxPoolSize}" />
             <property name="maxIdleTime" value="${gerbil.jdbc.maxIdleTime}" /> -->
     </bean>
-    <!-- Initialize the database -->
+    <!-- Initialize the database (has to be done before defining the experimentDAO bean!) -->
     <jdbc:initialize-database data-source="databaseDataSource">
         <jdbc:script location="classpath:spring/database/schema/experiment-schema.sql" />
     </jdbc:initialize-database>
+
+    <bean id="experimentDAO" class="org.aksw.gerbil.database.ExperimentDAOImpl" destroy-method="close" init-method="initialize">
+        <constructor-arg name="dataSource" ref="databaseDataSource" />
+        <property name="resultDurability" value="${gerbil.database.resultDurability}" />
+    </bean>
 
     <!-- Test DataSource using an in-memory Database H2 -->
     <beans profile="test">
         <bean id="databaseDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
             <property name="driverClassName" value="${gerbil.jdbc.driverClassName}" />
             <property name="url" value="jdbc:hsqldb:mem:gerbiltestmemdb" />
+            <!-- <property name="url" value="jdbc:hsqldb:file:target/test-db/gerbil.db" /> -->
         </bean>
-        <jdbc:initialize-database data-source="databaseDataSource">
+        <!-- <jdbc:initialize-database data-source="databaseDataSource">
 
             <jdbc:script location="classpath:mock/schema/experiment-schema.sql" />
             <jdbc:script location="classpath:mock/data/experiment-insert-test.sql" />
-        </jdbc:initialize-database>
+        </jdbc:initialize-database> -->
     </beans>
 
 </beans>

@@ -14,17 +14,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>gerbil</artifactId>
-	<version>1.2.7</version>
+	<version>1.2.8-SNAPSHOT</version>
 	<name>General Entity Annotator Benchmark</name>
-	<description>This project is a benchmark for entity annotation and disambiguation tools.</description>
+	<description>This project is a benchmarking framework for entity annotation and disambiguation tools.</description>
 	<inceptionYear>2014</inceptionYear>
 
 	<properties>
 		<java.version>1.8</java.version>
 		<slf4j.version>1.7.6</slf4j.version>
-		<junit.version>4.11</junit.version>
+		<junit.version>4.12</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>3.2.17.RELEASE</spring.version>
+		<spring.version>5.2.1.RELEASE</spring.version>
 		<jena.version>3.1.0</jena.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
 	</properties>
@@ -64,8 +64,16 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
 			<version>${jena.version}</version>
+			<exclusions>
+			    <exclusion>
+			    </exclusion>
+			</exclusions>
 		</dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.0</version>
+        </dependency>
 
 		<!-- Google Guava -->
 		<dependency>
@@ -208,7 +216,7 @@
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			<version>1.2</version>
+			<version>1.4</version>
 		</dependency>
 		<!-- Servlet -->
 		<dependency>
@@ -328,7 +336,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
-			<version>1.15</version>
+			<version>1.19</version>
 		</dependency>
 			<dependency>
 				<groupId>com.google.code.externalsortinginjava</groupId>
