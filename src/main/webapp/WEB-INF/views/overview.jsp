@@ -292,10 +292,10 @@ table {
 							if (v == "n.a." || v.indexOf("error") > -1) {
 								tmp.value = 0;
 							} else {
-								// if the number is negative make it poositive
-								if (v.indexOf("-") > -1) {
-									v = v.replace("-", "+");
-								}
+								// if the number is negative make it positive
+								//if (v.indexOf("-") > -1) {
+								//	v = v.replace("-", "+");
+								//}
 								tmp.value = v;
 							}
 							annotatorResults.push(tmp);
