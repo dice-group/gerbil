@@ -83,7 +83,8 @@ public class InitialIndexTool {
 			String line;
 			String old = null;
 			//long total = 0; has never been used
-			long size = 0, rounds = 0;
+			long size = 0;
+			long rounds = 0;
 			Date start = Calendar.getInstance().getTime();
 			Set<String> sameAsBlock = new HashSet<String>();
 			while ((line = br.readLine()) != null) {
@@ -119,7 +120,8 @@ public class InitialIndexTool {
 	}
 
 	public static void index(Indexer index) throws GerbilException {
-		int offset = 0, limit = 10000;
+		int offset = 0;
+		int limit = 10000;
 		boolean test = true;
 
 		Query q = QueryFactory.create(SPARQL_GET);
@@ -128,7 +130,8 @@ public class InitialIndexTool {
 		// Create here!
 		Set<String> sameAsBlock = new HashSet<String>();
 		RDFNode old = null;
-		int rounds = 0, size = 0;
+		int rounds = 0;
+		int size = 0;
 		long total = 0;
 		Date start = Calendar.getInstance().getTime();
 		do {
@@ -329,7 +332,9 @@ public class InitialIndexTool {
 		// Create here!
 		Set<String> sameAsBlock = new HashSet<String>();
 
-		long total = 0, size = 0, rounds = 0;
+		long total = 0;
+		long size = 0;
+		long rounds = 0;
 		String line = "";
 		String old = null;
 		Date start = Calendar.getInstance().getTime();

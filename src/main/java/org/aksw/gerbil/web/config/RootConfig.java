@@ -303,7 +303,7 @@ public class RootConfig {
         List<String> namespaces = config.getList(HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY);
         if (!namespaces.isEmpty()) {
             for (String namespace : namespaces) {
-                manager.registerEntityChecker(namespace.toString(), new HttpBasedEntityChecker(namespace.toString()));
+                manager.registerEntityChecker(namespace, new HttpBasedEntityChecker(namespace));
             }
         }
         @SuppressWarnings("rawtypes")
@@ -320,7 +320,7 @@ public class RootConfig {
                         if (first) {
                             first = false;
                         } else {
-                            manager.registerEntityChecker(namespace.toString(), indexBasedChecker);
+                            manager.registerEntityChecker(namespace, indexBasedChecker);
                         }
                     }
                 } else {
@@ -329,8 +329,8 @@ public class RootConfig {
                             namespaces.get(0));
                     // use HTTP based checker
                     for (String namespace : namespaces) {
-                        manager.registerEntityChecker(namespace.toString(),
-                                new HttpBasedEntityChecker(namespace.toString()));
+                        manager.registerEntityChecker(namespace,
+                                new HttpBasedEntityChecker(namespace));
                     }
                 }
             }
