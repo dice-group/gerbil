@@ -2,6 +2,7 @@
 *.cache
 .classpath
 .project
+.DS_STORE
 target
 download
 gerbil_data

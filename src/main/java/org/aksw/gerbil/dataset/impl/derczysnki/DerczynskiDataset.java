@@ -82,6 +82,14 @@ public class DerczynskiDataset extends AbstractDataset implements
 				tweet.append(line + "\n");
 				line = reader.readLine();
 			}
+			//check if there is a tweet to be added
+			if(tweet.length() > 0) {
+				// Get Markings
+				markings = findMarkings(tweet.toString());
+				// Save last tweet
+				documents.add(new DocumentImpl(realTweet.toString(),
+						documentUriPrefix + tweetIndex, markings));
+			}
 		} catch (IOException e) {
 			throw new GerbilException("Exception while reading dataset.", e,
 					ErrorTypes.DATASET_LOADING_ERROR);
