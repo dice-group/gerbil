@@ -53,8 +53,8 @@ public class HttpManagement {
     public static final long DEFAULT_CHECK_INTERVAL = 10000;
     public static final int DEFAULT_PROXY_PORT = 8080;
     /**
-     * The time the system should wait before sending a new request to a domain
-     * that could block the system.
+     * The time the system should wait before sending a new request to a domain that
+     * could block the system.
      */
     private static final long BLOCKING_DOMAIN_WAITING_TIME = 500;
 
@@ -206,6 +206,9 @@ public class HttpManagement {
             DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
             builder.setRoutePlanner(routePlanner);
         }
+        // Use a redirect strategy that allows the "direct redirect" of POST requests
+        // without creating a completely new request
+        builder.setRedirectStrategy(new SimpleRedirectStrategy()).build();
 
         return builder;
     }

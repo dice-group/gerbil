@@ -4,23 +4,19 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,16 +28,8 @@ import java.util.regex.Pattern;
 
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.index.Indexer;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.lang.time.DurationFormatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.code.externalsorting.ExternalSort;
-import com.google.common.collect.Lists;
-
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -52,10 +40,11 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.lang.CollectorStreamRDF;
-import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFBase;
-import org.apache.jena.util.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.code.externalsorting.ExternalSort;
 
 public class InitialIndexTool {
 
@@ -93,7 +82,9 @@ public class InitialIndexTool {
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line;
 			String old = null;
-			long total = 0, size = 0, rounds = 0;
+			//long total = 0; has never been used
+			long size = 0;
+			long rounds = 0;
 			Date start = Calendar.getInstance().getTime();
 			Set<String> sameAsBlock = new HashSet<String>();
 			while ((line = br.readLine()) != null) {
@@ -106,7 +97,7 @@ public class InitialIndexTool {
 				} else if (old != null) {
 					// Enitity is finished
 					index.index(old.toString(), sameAsBlock);
-					total += sameAsBlock.size();
+					// total += sameAsBlock.size();
 
 					sameAsBlock.clear();
 					// Add Uri
@@ -129,7 +120,8 @@ public class InitialIndexTool {
 	}
 
 	public static void index(Indexer index) throws GerbilException {
-		int offset = 0, limit = 10000;
+		int offset = 0;
+		int limit = 10000;
 		boolean test = true;
 
 		Query q = QueryFactory.create(SPARQL_GET);
@@ -138,7 +130,8 @@ public class InitialIndexTool {
 		// Create here!
 		Set<String> sameAsBlock = new HashSet<String>();
 		RDFNode old = null;
-		int rounds = 0, size = 0;
+		int rounds = 0;
+		int size = 0;
 		long total = 0;
 		Date start = Calendar.getInstance().getTime();
 		do {
@@ -339,7 +332,9 @@ public class InitialIndexTool {
 		// Create here!
 		Set<String> sameAsBlock = new HashSet<String>();
 
-		long total = 0, size = 0, rounds = 0;
+		long total = 0;
+		long size = 0;
+		long rounds = 0;
 		String line = "";
 		String old = null;
 		Date start = Calendar.getInstance().getTime();

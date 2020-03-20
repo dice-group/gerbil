@@ -53,7 +53,6 @@ import org.aksw.gerbil.semantic.sameas.impl.wiki.WikipediaApiBasedSingleUriSameA
 import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
-import org.aksw.gerbil.utils.ConsoleLogger;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.DefeatableOverseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.ExecutorBasedOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
@@ -80,9 +79,6 @@ import org.apache.jena.rdf.model.ModelFactory;
  * <li>Starts a component scan inside the package
  * <code>org.aksw.gerbil.web.config</code> searching for other
  * {@link Configuration}s</li>
- * <li>Replaces the streams used by <code>System.out</code> and
- * <code>System.err</code> by two {@link ConsoleLogger} objects. (This is a very
- * ugly workaround that should be fixed in the near future)</li>
  * </ul>
  * 
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
@@ -90,10 +86,9 @@ import org.apache.jena.rdf.model.ModelFactory;
  * @author Didier Cherix
  * 
  */
-@SuppressWarnings("deprecation")
 @org.springframework.context.annotation.Configuration
 @ComponentScan(basePackages = "org.aksw.gerbil.web.config")
-@PropertySource("gerbil.properties")
+@PropertySource("classpath:gerbil.properties")
 public class RootConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RootConfig.class);
@@ -308,7 +303,7 @@ public class RootConfig {
         List<String> namespaces = config.getList(HTTP_BASED_ENTITY_CHECKING_NAMESPACE_KEY);
         if (!namespaces.isEmpty()) {
             for (String namespace : namespaces) {
-                manager.registerEntityChecker(namespace.toString(), new HttpBasedEntityChecker(namespace.toString()));
+                manager.registerEntityChecker(namespace, new HttpBasedEntityChecker(namespace));
             }
         }
         @SuppressWarnings("rawtypes")
@@ -325,7 +320,7 @@ public class RootConfig {
                         if (first) {
                             first = false;
                         } else {
-                            manager.registerEntityChecker(namespace.toString(), indexBasedChecker);
+                            manager.registerEntityChecker(namespace, indexBasedChecker);
                         }
                     }
                 } else {
@@ -334,8 +329,8 @@ public class RootConfig {
                             namespaces.get(0));
                     // use HTTP based checker
                     for (String namespace : namespaces) {
-                        manager.registerEntityChecker(namespace.toString(),
-                                new HttpBasedEntityChecker(namespace.toString()));
+                        manager.registerEntityChecker(namespace,
+                                new HttpBasedEntityChecker(namespace));
                     }
                 }
             }
