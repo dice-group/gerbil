@@ -54,11 +54,6 @@ public class AdapterManager {
     private AdapterList<DatasetConfiguration> datasets;
 
     @Autowired
-    @Qualifier("datasetfolder")
-    private AdapterList<DatasetConfiguration> datasetfolder;
-
-
-    @Autowired
     private EntityCheckerManager entityCheckerManager;
 
     @Autowired
@@ -69,9 +64,6 @@ public class AdapterManager {
     }
 
     public Set<String> getDatasetNamesForExperiment(ExperimentType type) {
-        return datasets.getAdapterNamesForExperiment(type);
-    }
-    public Set<String> getDatasetFolderForExperiment(ExperimentType type) {
         return datasets.getAdapterNamesForExperiment(type);
     }
 

@@ -41,10 +41,6 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
         this.globalRetriever = globalRetriever;
     }
 
-    public AbstractDatasetConfiguration(String name, boolean couldBeCached, ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager, SameAsRetriever globalRetriever, String datasetName) {
-        super(datasetName);
-    }
-
     @Override
     public Dataset getDataset(ExperimentType experimentType) throws GerbilException {
         // for (int i = 0; i < applicableForExperiments.length; ++i) {
