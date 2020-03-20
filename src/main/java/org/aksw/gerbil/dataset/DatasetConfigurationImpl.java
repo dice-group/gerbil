@@ -29,9 +29,9 @@ public class DatasetConfigurationImpl extends AbstractDatasetConfiguration {
     protected Object constructorArgs[];
 
     public DatasetConfigurationImpl(String datasetName, boolean couldBeCached,
-            Constructor<? extends Dataset> constructor, Object constructorArgs[],
-            ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
-            SameAsRetriever globalRetriever) {
+                                    Constructor<? extends Dataset> constructor, Object[] constructorArgs,
+                                    ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
+                                    SameAsRetriever globalRetriever) {
         super(datasetName, couldBeCached, applicableForExperiment, entityCheckerManager, globalRetriever);
         this.constructor = constructor;
         this.constructorArgs = constructorArgs;

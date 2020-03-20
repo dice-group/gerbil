@@ -64,6 +64,7 @@ public class GERBIL {
     public static final Resource OKE2015_Task2 = resource("OKE2015_Task2");
     public static final Resource ERec = resource("ERec");
     public static final Resource ETyping = resource("ETyping");
+    public static final Resource MT = resource("MT");
 
     public static final Resource StrongAnnoMatch = resource("StrongAnnoMatch");
     public static final Resource WeakAnnoMatch = resource("WeakAnnoMatch");
@@ -131,6 +132,8 @@ public class GERBIL {
         	return RE;
         case OKE2018Task4:
         	return OKE2018Task4;
+            case MT:
+                return MT;
         }
         LOGGER.error("Got an unknown experiment type: " + type.name());
         return null;

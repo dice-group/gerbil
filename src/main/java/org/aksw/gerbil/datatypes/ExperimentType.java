@@ -151,7 +151,9 @@ public enum ExperimentType implements Describable {
     /**
      * The annotator gets a text and shall recognize entities inside and the relationship between them.
      */
-    OKE2018Task4("OKE2018Task4", "The annotator gets a text and shall recognize entities inside and the relationship between them.")
+    OKE2018Task4("OKE2018Task4", "The annotator gets a text and shall recognize entities inside and the relationship between them."),
+
+    MT("MT", "Machine Translation.")
     ;
 
     private String label;
@@ -185,6 +187,7 @@ public enum ExperimentType implements Describable {
             case A2KB:
             case D2KB:
             case ERec:
+                case MT:
             case Sa2KB:
             case Sc2KB:
             case Rc2KB: {
@@ -209,6 +212,7 @@ public enum ExperimentType implements Describable {
             case ETyping:
             case RE:
             case RT2KB:
+                case MT:
             case OKE_Task1:
             case OKE_Task2:
             case OKE2018Task4: {
@@ -230,6 +234,7 @@ public enum ExperimentType implements Describable {
             case D2KB:
             case RE:
             case RT2KB:
+                case MT:
             case ETyping:
             case OKE_Task1:
             case OKE_Task2:
@@ -253,6 +258,7 @@ public enum ExperimentType implements Describable {
             case A2KB:
             case D2KB:
             case Sa2KB:
+                case MT:
             case Sc2KB:
             case Rc2KB:
             case RE:
@@ -282,6 +288,7 @@ public enum ExperimentType implements Describable {
             case OKE2018Task4: {
                 return false;
             }
+                case MT:
             default: {
                 return true;
             }
@@ -314,6 +321,9 @@ public enum ExperimentType implements Describable {
             }
         	}
         }
+            case MT: {
+                return type == MT;
+            }
         }
         return false;
     }

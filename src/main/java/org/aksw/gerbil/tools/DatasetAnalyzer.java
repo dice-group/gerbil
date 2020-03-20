@@ -99,7 +99,10 @@ public class DatasetAnalyzer {
             analyze(config, ExperimentType.C2KB);
         } else if (config.isApplicableForExperiment(ExperimentType.ERec)) {
             analyze(config, ExperimentType.ERec);
-        } else {
+        }else if (config.isApplicableForExperiment(ExperimentType.MT)) {
+            analyze(config, ExperimentType.MT);
+        }
+        else {
             LOGGER.error("Can not analyze the dataset with the following config: " + config.toString());
         }
     }

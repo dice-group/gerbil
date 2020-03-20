@@ -181,6 +181,7 @@ public class ExperimentTask implements Task {
 		case Sc2KB:
 		case OKE_Task1: // falls through
 		case OKE_Task2:
+			case MT:
 		case ETyping: {
 			SameAsRetriever retriever = DatasetBasedSameAsRetriever.create(dataset);
 			if (retriever != null) {
@@ -241,6 +242,7 @@ public class ExperimentTask implements Task {
 		case RE:
 			return;
 		case ERec:// falls through
+			case MT:
 		default:
 			// nothing to do
 			return;
@@ -531,6 +533,32 @@ public class ExperimentTask implements Task {
 			}
 			break;
 		}
+			case MT:{
+				try {
+					List<List<Marking>> results = new ArrayList<List<Marking>>(dataset.size());
+					List<List<Marking>> goldStandard = new ArrayList<List<Marking>>(dataset.size());
+					OKE2018Task4Annotator recognizer = ((OKE2018Task4Annotator) annotator);
+					for (Document document : dataset.getInstances()) {
+						// reduce the document to a single text
+						results.add(recognizer.performOKE2018Task4(DocumentInformationReducer.reduceToPlainText(document)));
+						goldStandard.add(document.getMarkings(Marking.class));
+						taskState.increaseExperimentStepCount();
+					}
+					if (annotatorOutputWriter != null) {
+						annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+					}
+					prepareRelations(results, globalRetriever);
+					prepareRelations(goldStandard, globalRetriever);
+
+					evalResult = evaluate(evaluators, results, goldStandard);
+				} catch (GerbilException e) {
+					throw e;
+				} catch (Exception e) {
+					throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+				}
+				break;
+
+			}
 		default:
 			throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
 					ErrorTypes.UNEXPECTED_EXCEPTION);

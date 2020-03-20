@@ -273,6 +273,7 @@ public class MainController {
         case Sa2KB:
             return new ModelMap("Matching",
                     Lists.newArrayList(Matching.WEAK_ANNOTATION_MATCH, Matching.STRONG_ANNOTATION_MATCH));
+            case MT:
         default:
             return new ModelMap("Matching", Lists.newArrayList("none"));
         }
@@ -302,6 +303,7 @@ public class MainController {
         Collections.sort(list);
         return list;
     }
+
 
     /**
      * This mapping is needed to authenticate us against Google Analytics. It
