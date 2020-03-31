@@ -99,20 +99,6 @@
                 <hr />
             </div>
         </div>
-        <!--Matching dropdown filled by loadMatching() function -->
-       <%-- <div class="form-group">
-            <label class="col-md-4 control-label" for="annotator">Matching</label>
-            <div class="col-md-4">
-                <select id="matching" style="display: none;">
-                </select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <hr />
-            </div>
-        </div>--%>
-        <!--Annotator dropdown filled by loadAnnotator() function -->
         <div class="form-group">
             <label class="col-md-4 control-label" for="annotator">System</label>
             <div class="col-md-4">
@@ -122,14 +108,14 @@
                 <div>
                     <span> Upload  a file with MT output:</span>
                     <div>
-                      <%--  <label for="nameAnnotator">Name:</label> <input
-                            class="form-control" type="text" id="nameAnnotator" name="name"
-                            placeholder="Type something" />--%>
+                        <%--  <label for="nameAnnotator">Name:</label> <input
+                              class="form-control" type="text" id="nameAnnotator" name="name"
+                              placeholder="Type something" />--%>
                         <%--  <label for="URIAnnotator">Output file:</label>
                         <input class="form-control" type="text" id="URIAnnotator"
                                name="URI" placeholder="Type something" />--%>
-                          <span    class="btn btn-success fileinput-button"> <i
-                              class="glyphicon glyphicon-plus"></i> <span>Select
+                        <span    class="btn btn-success fileinput-button"> <i
+                                class="glyphicon glyphicon-plus"></i> <span>Select
 									output file...</span> <!-- The file input field used as target for the source file upload widget -->
                           <input id="outputfileupload" type="file" name="files[]">
                           </span>
@@ -137,33 +123,6 @@
                     <div>
                     </div>
                 </div>
-
-                   <%-- <div>
-                        <!-- list to be filled by button press and javascript function addAnnotator -->
-                        <ul id="annotatorList"
-                            style="margin-top: 15px; list-style-type: none;">
-                        </ul>
-                    </div>
-                    <div id="warningEmptyAnnotator" class="alert alert-warning"
-                         role="alert">
-                        <button type="button" class="close" data-dismiss="alert"></button>
-                        <strong>Warning!</strong> Enter a name and an URI.
-                    </div>
-                    <div id="infoAnnotatorTest" class="alert alert-info" role="alert">
-                        <button type="button" class="close" data-dismiss="alert"></button>
-                        <strong>Please wait</strong> while the communication with your
-                        annotator is tested...
-                    </div>
-                    <div id="dangerAnnotatorTestError" class="alert alert-danger"
-                         role="alert">in
-                        <button type="button" class="close" data-dismiss="alert"></button>
-                        <strong>Warning!</strong> There was an error while testing the
-                        annotator.<br> <span id="annotatorTestErrorMsg"></span>
-                    </div>
-                    <input type="button" id="addAnnotator"
-                           class="btn btn-primary pull-right" value="Add another annotator"
-                           style="margin-top: 15px" />
-                </div>--%>
             </div>
         </div>
         <div class="row">
@@ -175,8 +134,10 @@
         <div class="form-group">
             <label class="col-md-4 control-label" for="datasets">Dataset</label>
             <div class="col-md-4">
-            <select id="setdata" style="display: none;">
-            </select>
+                <select id="setdata" style="display: none;">
+                    <option id="menu" class="optionGroup"></option>
+                    <option id="submenu" class="optionChild"></option>
+                </select>
 
                 <hr/>
                 <div>
@@ -191,7 +152,7 @@
 								<input id="srcfileupload" type="file" name="files[]">
 							</span>
                         <span class="btn btn-success fileinput-button"> <i
-                            class="glyphicon glyphicon-plus"></i> <span>Select
+                                class="glyphicon glyphicon-plus"></i> <span>Select
 									target file...</span> <!-- The file input field used as target for the target file upload widget -->
                         <input id="reffileupload" type="file" name="files[]">
                         </span>
@@ -357,21 +318,66 @@
     }
 
     function loadDatasets() {
-        $('#setdata').html('');
+        $('#menu').html('');
+        $('#submenu').html('');
         $.getJSON('${datasets}', {
             experimentType : $('#type').val(),
             ajax : 'false'
         }, function(data) {
             var formattedData = [];
+            var mainGroup = [];
+            var dropdown = [];
+            var datasets;
             for (var i = 0; i < data.length; i++) {
                 var dat = {};
                 dat.label = data[i];
                 dat.value = data[i];
                 formattedData.push(dat);
+                var name = formattedData[i].value;
+                var group = {};
+                var subgroup = {};
+                var n = name.split("/",2);
+
+                datasets = { key: n[0], value: n[1] };
+                for (var value of Object.values(datasets)) {
+                    alert(value);
+                }
+                group.label = n[0];
+                group.value = n[0];
+                subgroup.label = n[1];
+                subgroup.value = n[1];
+                //  window.alert("Group: "+n[0]+" Dataset: "+n[1]);
+                mainGroup.push(group);
+                dropdown.push(subgroup);
             }
-            $('#setdata').multiselect('dataprovider', formattedData);
-            $('#setdata').multiselect('rebuild');
+
+            const keys = Object.keys(datasets)
+            for (const key of keys) {
+                const obj = datasets.reduce(function (acc, x) {
+                    if (!acc[x.key]) acc[x.key] = [];
+                    acc[x.key].push(x.value);
+                    return acc;
+                }, {});
+            }
+            $('#menu').multiselect('dataprovider', mainGroup);
+            $('#menu').multiselect('rebuild');
+            $('#submenu').multiselect('dataprovider', dropdown);
+            $('#submenu').multiselect('rebuild');
+
         });
+    }
+
+    function getGrouped(array, groups) {
+        var grouped = groups.map(function (a) {
+            return { name: a, data: [] };
+        });
+
+        array.personas.forEach(function (a) {
+            groups.forEach(function (k, i) {
+                grouped[i].data.push(a[k]);
+            });
+        });
+        return grouped;
     }
     function checkExperimentConfiguration() {
         //fetch list of selected and manually added annotators
