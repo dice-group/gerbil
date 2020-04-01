@@ -99,15 +99,16 @@
                 <hr />
             </div>
         </div>
+        <!--Upload output file from system -->
         <div class="form-group">
-            <label class="col-md-4 control-label" for="annotator">System</label>
+            <label class="col-md-4 control-label">System</label>
             <div class="col-md-4">
-                <select id="annotator" multiple="multiple" style="display: none;">
-                </select>
-                <hr />
                 <div>
                     <span> Upload  a file with MT output:</span>
                     <div>
+                        <label for="nameOutputFile">Name:</label> <input
+                            class="form-control" type="text" id="nameOutputFile" name="name"
+                            placeholder="Type something" /> <br>
                         <%--  <label for="nameAnnotator">Name:</label> <input
                               class="form-control" type="text" id="nameAnnotator" name="name"
                               placeholder="Type something" />--%>
@@ -117,12 +118,38 @@
                         <span    class="btn btn-success fileinput-button"> <i
                                 class="glyphicon glyphicon-plus"></i> <span>Select
 									output file...</span> <!-- The file input field used as target for the source file upload widget -->
-                          <input id="outputfileupload" type="file" name="files[]">
+                          <input  type="file" name="files[]">
                           </span>
                     </div>
                     <div>
                     </div>
                 </div>
+                <%-- <div>
+                     <!-- list to be filled by button press and javascript function addAnnotator -->
+                     <ul id="annotatorList"
+                         style="margin-top: 15px; list-style-type: none;">
+                     </ul>
+                 </div>
+                 <div id="warningEmptyAnnotator" class="alert alert-warning"
+                      role="alert">
+                     <button type="button" class="close" data-dismiss="alert"></button>
+                     <strong>Warning!</strong> Enter a name and an URI.
+                 </div>
+                 <div id="infoAnnotatorTest" class="alert alert-info" role="alert">
+                     <button type="button" class="close" data-dismiss="alert"></button>
+                     <strong>Please wait</strong> while the communication with your
+                     annotator is tested...
+                 </div>
+                 <div id="dangerAnnotatorTestError" class="alert alert-danger"
+                      role="alert">in
+                     <button type="button" class="close" data-dismiss="alert"></button>
+                     <strong>Warning!</strong> There was an error while testing the
+                     annotator.<br> <span id="annotatorTestErrorMsg"></span>
+                 </div>
+                 <input type="button" id="addAnnotator"
+                        class="btn btn-primary pull-right" value="Add another annotator"
+                        style="margin-top: 15px" />
+             </div>--%>
             </div>
         </div>
         <div class="row">
@@ -149,13 +176,8 @@
                             class="btn btn-success fileinput-button"> <i
                             class="glyphicon glyphicon-plus"></i> <span>Select
 									source file...</span> <!-- The file input field used as target for the source file upload widget -->
-								<input id="srcfileupload" type="file" name="files[]">
+								<input id="fileupload" type="file" name="files[]">
 							</span>
-                        <span class="btn btn-success fileinput-button"> <i
-                                class="glyphicon glyphicon-plus"></i> <span>Select
-									target file...</span> <!-- The file input field used as target for the target file upload widget -->
-                        <input id="reffileupload" type="file" name="files[]">
-                        </span>
                         <br> <br>
                         <!-- The global progress bar -->
                         <div id="progress" class="progress">
@@ -359,6 +381,9 @@
                     return acc;
                 }, {});
             }
+            document.write(JSON.stringify(obj));
+
+
             $('#menu').multiselect('dataprovider', mainGroup);
             $('#menu').multiselect('rebuild');
             $('#submenu').multiselect('dataprovider', dropdown);
