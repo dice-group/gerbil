@@ -16,6 +16,9 @@
  */
 package org.aksw.gerbil.semantic.sameas;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,6 +26,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.semantic.sameas.impl.DomainBasedSameAsRetrieverManager;
+import org.aksw.gerbil.semantic.sameas.impl.SimpleDomainExtractor;
+import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
 import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.junit.Assert;
@@ -39,7 +45,7 @@ import org.junit.runners.Parameterized.Parameters;
  *
  */
 @RunWith(Parameterized.class)
-public class SameAsRetrievalTest {
+public class SameAsRetrievalTest { 
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -89,6 +95,16 @@ public class SameAsRetrievalTest {
     @Test
     public void test() {
         SameAsRetriever retriever = SameAsRetrieverSingleton4Tests.getInstance();
+        HTTPBasedSameAsRetriever checker = mock(HTTPBasedSameAsRetriever.class);
+        String domain = SimpleDomainExtractor.extractDomain(uri);
+        when(checker.retrieveSameURIs(domain, uri)).thenReturn(expectedURIs);
+
+        //register a SameAsRetriever mock for the domain of the current uri
+        SameAsRetriever decorator = ((SameAsRetrieverDecorator) retriever).getDecorated();
+        decorator = ((SameAsRetrieverDecorator) decorator).getDecorated();
+        decorator = ((SameAsRetrieverDecorator) decorator).getDecorated();
+        ((DomainBasedSameAsRetrieverManager) decorator).addDomainSpecificRetriever(domain, checker);
+
         Set<String> uris = retriever.retrieveSameURIs(uri);
         if (expectedURIs == null) {
             Assert.assertNull(uris);

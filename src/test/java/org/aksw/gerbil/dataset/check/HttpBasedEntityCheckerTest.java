@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.aksw.gerbil.dataset.check.impl.HttpBasedEntityChecker;
+import org.aksw.gerbil.test.HTTPServerMock;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,32 +30,25 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class HttpBasedEntityCheckerTest {
+public class HttpBasedEntityCheckerTest extends HTTPServerMock {
 
     @Parameters
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         // DBpedia examples
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Berlin", true });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Joe_DeAngelo", false });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Carol_Tome", false });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Joe_DeAngelo", false });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Home_Depot_Supply", false });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Claudio_X._Gonzales", false });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Milledge_A._Hart_III", false });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Jerry_Shields", false });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/James_Senn", false });
-
-        // It does not seem to make sense to test using the German DBpedia,
-        // since its server does not seem to be as reliable as expected.
-        // testConfigs.add(new Object[] {
-        // "http://de.dbpedia.org/resource/Berlin", true });
-        // testConfigs.add(new Object[] {
-        // "http://de.dbpedia.org/resource/Joe_DeAngelo", false });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/resource/Berlin", true });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/resource/Joe_DeAngelo", false });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/resource/Carol_Tome", false });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/resource/Joe_DeAngelo", false });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/resource/Home_Depot_Supply", false });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/resource/Claudio_X._Gonzales", false });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/resource/Milledge_A._Hart_III", false });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/resource/Jerry_Shields", false });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/resource/James_Senn", false });
 
         // Wikipedia examples
-        testConfigs.add(new Object[] { "http://wikipedia.org/wiki/Berlin", true });
-        testConfigs.add(new Object[] { "http://wikipedia.org/wiki/Joe_DeAngelo", false });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/wiki/Berlin", true });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/wiki/Joe_DeAngelo", false });
         return testConfigs;
     }
 
@@ -62,6 +56,7 @@ public class HttpBasedEntityCheckerTest {
     private boolean expectedDecision;
 
     public HttpBasedEntityCheckerTest(String uri, boolean expectedDecision) {
+        super(new HttpBasedEntityCheckerContainer(expectedDecision));
         this.uri = uri;
         this.expectedDecision = expectedDecision;
     }
@@ -71,5 +66,11 @@ public class HttpBasedEntityCheckerTest {
         HttpBasedEntityChecker checker = new HttpBasedEntityChecker();
         Assert.assertEquals(expectedDecision, checker.entityExists(uri));
         IOUtils.closeQuietly(checker);
+
+        Throwable serverError = ((HttpBasedEntityCheckerContainer) container).getThrowable();
+        //check if the server threw anything
+        if(serverError != null) {
+            throw new AssertionError("The server encountered an error:" + serverError);
+        }
     }
 }

@@ -16,14 +16,25 @@
  */
 package org.aksw.gerbil.execute;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 
 import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.impl.nif.NIFFileDatasetConfig;
@@ -35,6 +46,8 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.cache.FileBasedCachingSameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
@@ -71,6 +84,8 @@ public class D2KBTest extends AbstractExperimentTaskTest {
     private static final UriKBClassifier URI_KB_CLASSIFIER = new SimpleWhiteListBasedUriKBClassifier(
             "http://dbpedia.org/resource/");
     private static final EvaluatorFactory EVALUATOR_FACTORY = new EvaluatorFactory(URI_KB_CLASSIFIER);
+    private static final String SAME_AS_CACHE_FILE_KEY = "org.aksw.gerbil.semantic.sameas.CachingSameAsRetriever.cacheFile";
+
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -121,6 +136,7 @@ public class D2KBTest extends AbstractExperimentTaskTest {
                                                 "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Senator_1"),
                                         (Marking) new NamedEntity(49, 19,
                                                 "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/Columbia_University"))) },
+                ImmutableMap.builder().build(),
                 // found 1xnull but missed 1xDBpedia
                 // (TP=1,FP=1,FN=1,P=0.5,R=0.5,F1=0.5)
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
@@ -154,6 +170,7 @@ public class D2KBTest extends AbstractExperimentTaskTest {
                                 "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-3",
                                 Arrays.asList((Marking) new NamedEntity(49, 19,
                                         "http://dbpedia.org/resource/Columbia_University"))) },
+                ImmutableMap.builder().build(),
                 // found 1xDBpedia but missed 1xnull
                 // (TP=1,FP=0,FN=1,P=1,R=0.5,F1=2/3)
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH,
@@ -186,6 +203,7 @@ public class D2KBTest extends AbstractExperimentTaskTest {
                                 Arrays.asList((Marking) new NamedEntity(4, 7, new HashSet<String>()),
                                         (Marking) new NamedEntity(49, 19,
                                                 "http://dbpedia.org/resource/Columbia_University"))) },
+                ImmutableMap.builder().build(),
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
         // The extractor found everything and marked all entities using dbpedia
         // URIs (if they were available) or own URIs
@@ -213,6 +231,7 @@ public class D2KBTest extends AbstractExperimentTaskTest {
                                 Arrays.asList((Marking) new NamedEntity(4, 7, "http://aksw.org/notInWiki/Senator_1"),
                                         (Marking) new NamedEntity(49, 19,
                                                 "http://dbpedia.org/resource/Columbia_University"))) },
+                ImmutableMap.builder().build(),
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
         // The extractor found everything and marked all entities using other
         // KBs than the main dbpedia (if they were available) or own URIs
@@ -248,6 +267,14 @@ public class D2KBTest extends AbstractExperimentTaskTest {
                                 Arrays.asList((Marking) new NamedEntity(4, 7, "http://aksw.org/notInWiki/Senator_1"),
                                         (Marking) new NamedEntity(49, 19,
                                                 "http://dbpedia.org/resource/Columbia_University"))) },
+                ImmutableMap.<String, Set<String>>builder()
+                        .put("http://yago-knowledge.org/resource/Florence_May_Harding", Sets.newHashSet("http://dbpedia.org/resource/Florence_May_Harding")) 
+                        .put("http://de.dbpedia.org/resource/Sydney", Sets.newHashSet("http://dbpedia.org/resource/Sydney")) 
+                        .put("http://yago-knowledge.org/resource/James_Carville", Sets.newHashSet("http://dbpedia.org/resource/James_Carville"))
+                        .put("http://yago-knowledge.org/resource/Political_consulting", Sets.newHashSet("http://dbpedia.org/resource/Political_consulting"))
+                        .put("http://nl.dbpedia.org/resource/Bill_Clinton", Sets.newHashSet("http://dbpedia.org/resource/Bill_Clinton"))
+                        .put("http://fr.dbpedia.org/resource/Donna_Brazile", Sets.newHashSet("http://dbpedia.org/resource/Donna_Brazile"))
+                        .build(),
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
         // The extractor found everything and marked all entities using other
         // KBs than the main dbpedia (if they were available) or own URIs, but
@@ -277,19 +304,29 @@ public class D2KBTest extends AbstractExperimentTaskTest {
                         Arrays.asList((Marking) new NamedEntity(4, 7, "http://aksw.org/notInWiki/Senator_1"),
                                 (Marking) new NamedEntity(49, 19, "http://dbpedia.org/resource/Columbia_University"),
                                 (Marking) new NamedEntity(23, 16, "http://dbpedia.org/resource/Bachelor_of_Laws"))) },
-
+                ImmutableMap.<String, Set<String>>builder()
+                        .put("http://yago-knowledge.org/resource/Florence_May_Harding", Sets.newHashSet("http://dbpedia.org/resource/Florence_May_Harding")) 
+                        .put("http://de.dbpedia.org/resource/Sydney", Sets.newHashSet("http://dbpedia.org/resource/Sydney")) 
+                        .put("http://yago-knowledge.org/resource/James_Carville", Sets.newHashSet("http://dbpedia.org/resource/James_Carville"))
+                        .put("http://yago-knowledge.org/resource/Political_consulting", Sets.newHashSet("http://dbpedia.org/resource/Political_consulting"))
+                        .put("http://nl.dbpedia.org/resource/Bill_Clinton", Sets.newHashSet("http://dbpedia.org/resource/Bill_Clinton"))
+                        .put("http://fr.dbpedia.org/resource/Donna_Brazile", Sets.newHashSet("http://dbpedia.org/resource/Donna_Brazile"))
+                        .build(),
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
         return testConfigs;
     }
 
     private Document annotatorResults[];
+    //set sameAs URIs if necessary
+    private Map<String, Set<String>> expectedSameAs;
     private DatasetConfiguration dataset;
     private double expectedResults[];
     private Matching matching;
 
-    public D2KBTest(Document[] annotatorResults, DatasetConfiguration dataset, Matching matching,
-            double[] expectedResults) {
+    public D2KBTest(Document[] annotatorResults, Map<String, Set<String>> expectedSameAs,
+                DatasetConfiguration dataset, Matching matching, double[] expectedResults) {
         this.annotatorResults = annotatorResults;
+        this.expectedSameAs = expectedSameAs;
         this.dataset = dataset;
         this.expectedResults = expectedResults;
         this.matching = matching;
@@ -302,7 +339,14 @@ public class D2KBTest extends AbstractExperimentTaskTest {
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
                 new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.D2KB), dataset,
                 ExperimentType.D2KB, matching);
-        runTest(experimentTaskId, experimentDAO, EVALUATOR_FACTORY, configuration,
+                
+        SameAsRetriever sameAsRetrieverMock = mock(SameAsRetriever.class);
+        when(sameAsRetrieverMock.retrieveSameURIs(anyString())).thenAnswer(
+                arguments -> expectedSameAs.get(arguments.getArgument(0)));
+        SameAsRetriever sameAsRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetrieverMock, false,
+                new File(GerbilConfiguration.getInstance().getString(SAME_AS_CACHE_FILE_KEY)));
+
+        runTest(experimentTaskId, experimentDAO, sameAsRetriever, EVALUATOR_FACTORY, configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }
 }

@@ -16,6 +16,10 @@
  */
 package org.aksw.gerbil.dataset.check;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,31 +42,39 @@ public class EntityCheckerManagerImplTest {
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         testConfigs.add(new Object[] { new String[] { "http://dbpedia.org/resource/Berlin" },
+                new Boolean[] {true},
                 new String[] { "http://dbpedia.org/resource/Berlin" } });
         testConfigs.add(new Object[] {
                 new String[] { "http://example.org/resource/Berlin", "http://dbpedia.org/resource/Berlin" },
+                new Boolean[] {false, true},
                 new String[] { "http://example.org/resource/Berlin", "http://dbpedia.org/resource/Berlin" } });
-        testConfigs
-                .add(new Object[] {
-                        new String[] { "http://example.org/resource/Joe_DeAngelo",
-                                "http://dbpedia.org/resource/Joe_DeAngelo" },
-                        new String[] { "http://example.org/resource/Joe_DeAngelo",
-                                "http://aksw.org/unknown_entity/http___dbpedia_org_resource_Joe_DeAngelo" } });
+        testConfigs.add(new Object[] {
+                new String[] { "http://example.org/resource/Joe_DeAngelo", "http://dbpedia.org/resource/Joe_DeAngelo" },
+                new Boolean[] {false, false},        
+                new String[] { "http://example.org/resource/Joe_DeAngelo",
+                        "http://aksw.org/unknown_entity/http___dbpedia_org_resource_Joe_DeAngelo" } });
         return testConfigs;
     }
 
     private String uris[];
+    private Boolean urisExist[];
     private String expectedUris[];
 
-    public EntityCheckerManagerImplTest(String uris[], String expectedUris[]) {
+    public EntityCheckerManagerImplTest(String uris[], Boolean urisExist[], String expectedUris[]) {
         this.uris = uris;
+        this.urisExist = urisExist;
         this.expectedUris = expectedUris;
     }
 
     @Test
     public void test() {
         EntityCheckerManager manager = new EntityCheckerManagerImpl();
-        manager.registerEntityChecker("http://dbpedia.org/resource/", new HttpBasedEntityChecker());
+        List<String> uriList = Arrays.asList(uris);
+        List<Boolean> answerList = Arrays.asList(urisExist);
+
+        HttpBasedEntityChecker checker = mock(HttpBasedEntityChecker.class);
+        when(checker.entityExists(anyString())).thenAnswer(arguments -> answerList.get(uriList.indexOf(arguments.getArgument(0))));
+        manager.registerEntityChecker("http://dbpedia.org/resource/", checker);
 
         Annotation annotation = new Annotation(new HashSet<String>(Arrays.asList(uris)));
         manager.checkMeanings(Arrays.asList(annotation));

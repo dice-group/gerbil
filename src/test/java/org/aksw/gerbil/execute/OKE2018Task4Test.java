@@ -16,13 +16,24 @@
  */
 package org.aksw.gerbil.execute;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 
 import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
 import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
 import org.aksw.gerbil.dataset.InstanceListBasedDataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
@@ -33,7 +44,8 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
-import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.semantic.sameas.impl.cache.FileBasedCachingSameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
@@ -66,7 +78,8 @@ public class OKE2018Task4Test extends AbstractExperimentTaskTest {
 							new NamedEntity(35, 48, "http://aksw.org/notInWiki/John_Kavanagh")),
 					new NamedEntity(35, 48, "http://aksw.org/notInWiki/John_Kavanagh"))) };
     private static final UriKBClassifier URI_KB_CLASSIFIER = new SimpleWhiteListBasedUriKBClassifier(
-            "http://dbpedia.org/resource/");
+			"http://dbpedia.org/resource/");
+	private static final String SAME_AS_CACHE_FILE_KEY = "org.aksw.gerbil.semantic.sameas.CachingSameAsRetriever.cacheFile";
     
 	@Parameters
 	public static Collection<Object[]> data() {
@@ -80,6 +93,7 @@ public class OKE2018Task4Test extends AbstractExperimentTaskTest {
 								new RelationImpl(new NamedEntity(0, 22, "http://dbpedia.org/resource/Conor_McGregor"),
 										new Annotation("http://dbpedia.org/ontology/trainer"),
 										new NamedEntity(35, 48, "http://aksw.org/notInWiki/John_Kavanagh")))) },
+				ImmutableMap.builder().build(),
 				GOLD_STD, Matching.STRONG_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
 		testConfigs.add(new Object[] {
 				new Document[] { new DocumentImpl(TEXTS[0], "doc-0",
@@ -87,6 +101,7 @@ public class OKE2018Task4Test extends AbstractExperimentTaskTest {
 								new NamedEntity(35, 48, "http://dbpedia.org/resource/John_Kavanagh"),
 								new Annotation("http://dbpedia.org/ontology/trainer"),
 								new NamedEntity(0, 22, "http://aksw.org/notInWiki/Conor_McGregor")))) },
+				ImmutableMap.builder().build(),
 				GOLD_STD, Matching.STRONG_ANNOTATION_MATCH, new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0 } });
 		testConfigs.add(new Object[] {
 				new Document[] { new DocumentImpl(TEXTS[0], "doc-0",
@@ -97,18 +112,24 @@ public class OKE2018Task4Test extends AbstractExperimentTaskTest {
 								new RelationImpl(new NamedEntity(0, 22, "http://www.wikidata.org/entity/Q5162259"),
 										new Annotation("http://dbpedia.org/ontology/trainer"),
 										new NamedEntity(35, 48, "http://aksw.org/notInWiki/John_Kavanagh")))) },
+				ImmutableMap.<String, Set<String>>builder()
+                        .put("http://www.wikidata.org/entity/Q5162259", Sets.newHashSet("http://dbpedia.org/resource/Conor_McGregor"))
+                        .build(),
 				GOLD_STD, Matching.STRONG_ANNOTATION_MATCH, new double[] { 0.75, 0.75, 1/1.5,  0.75, 0.75, 1/1.5, 0 } });
 		return testConfigs;
 	}
 
 	private Document annotatorResults[];
+	//set sameAs URIs if necessary
+	private Map<String, Set<String>> expectedSameAs;
 	private Document goldStandards[];
 	private double expectedResults[];
 	private Matching matching;
 
-	public OKE2018Task4Test(Document[] annotatorResults, Document[] goldStandards, Matching matching,
+	public OKE2018Task4Test(Document[] annotatorResults, Map<String, Set<String>> expectedSameAs, Document[] goldStandards, Matching matching,
 			double[] expectedResults) {
 		this.annotatorResults = annotatorResults;
+		this.expectedSameAs = expectedSameAs;
 		this.goldStandards = goldStandards;
 		this.expectedResults = expectedResults;
 		this.matching = matching;
@@ -121,7 +142,15 @@ public class OKE2018Task4Test extends AbstractExperimentTaskTest {
 		ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
 				new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.OKE2018Task4),
 				new InstanceListBasedDataset(Arrays.asList(goldStandards), ExperimentType.OKE2018Task4), ExperimentType.OKE2018Task4, matching);
-		runTest(experimentTaskId, experimentDAO, new HTTPBasedSameAsRetriever(), new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
+				
+		SameAsRetriever sameAsRetrieverMock = mock(SameAsRetriever.class);
+		when(sameAsRetrieverMock.retrieveSameURIs(anyString())).thenAnswer(
+				arguments -> expectedSameAs.get(arguments.getArgument(0)));
+		SameAsRetriever sameAsRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetrieverMock, false,
+				new File(GerbilConfiguration.getInstance().getString(SAME_AS_CACHE_FILE_KEY)));
+
+
+		runTest(experimentTaskId, experimentDAO, sameAsRetriever, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
 				new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
 	}
 

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
+import org.aksw.gerbil.test.HTTPServerMock;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,21 +33,22 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class HTTPBasedSameAsRetrieverTest {
+public class HTTPBasedSameAsRetrieverTest extends HTTPServerMock {
 
     @Parameters
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         testConfigs.add(new Object[] { null, null });
-        testConfigs.add(new Object[] { "http://aksw.org/notInWiki/Peter_Pan", null });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Kaufland",
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/notInWiki/Peter_Pan", null });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/resource/Kaufland",
                 Arrays.asList("http://fr.dbpedia.org/resource/Kaufland", "http://de.dbpedia.org/resource/Kaufland") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Malaysia",
-                Arrays.asList("http://de.dbpedia.org/resource/Malaysia") });
-        testConfigs.add(new Object[] {"http://dbpedia.org/resource/People's_Republic_of_China",
-                Arrays.asList( "http://dbpedia.org/resource/China") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Home_Depot",
+        testConfigs.add(new Object[] {HTTP_SERVER_ADDRESS + "/resource/People's_Republic_of_China",
+                Arrays.asList("http://dbpedia.org/resource/China") });
+        testConfigs.add(new Object[] {HTTP_SERVER_ADDRESS + "/resource/Malaysia",
+        Arrays.asList("http://de.dbpedia.org/resource/Malaysia") });
+        testConfigs.add(new Object[] {HTTP_SERVER_ADDRESS + "/resource/Home_Depot",
                 Arrays.asList("http://dbpedia.org/resource/The_Home_Depot") });
+ 
         return testConfigs;
     }
 
@@ -54,12 +56,13 @@ public class HTTPBasedSameAsRetrieverTest {
     private Set<String> expectedURIs;
 
     public HTTPBasedSameAsRetrieverTest(String uri, Collection<String> expectedURIs) {
+        super(new HTTPBasedSameAsRetrieverContainer(uri, expectedURIs));
         this.uri = uri;
         if (expectedURIs != null) {
             this.expectedURIs = new HashSet<String>();
             this.expectedURIs.addAll(expectedURIs);
         }
-    }
+    } 
 
     @Test
     public void test() {
@@ -73,5 +76,11 @@ public class HTTPBasedSameAsRetrieverTest {
                     uris.containsAll(expectedURIs));
         }
         IOUtils.closeQuietly(retriever);
+
+        Throwable serverError = ((HTTPBasedSameAsRetrieverContainer) container).getThrowable();
+        //check if the server threw anything
+        if(serverError != null) {
+            throw new AssertionError("The server encountered an error:" + serverError);
+        }
     }
 }

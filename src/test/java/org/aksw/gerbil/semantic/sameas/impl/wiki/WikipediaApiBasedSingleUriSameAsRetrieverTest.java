@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.aksw.gerbil.test.HTTPServerMock;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,18 +30,18 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class WikipediaApiBasedSingleUriSameAsRetrieverTest {
+public class WikipediaApiBasedSingleUriSameAsRetrieverTest extends HTTPServerMock {
 
     @Parameters
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         testConfigs.add(new Object[] { null, null });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/China", null });
-        testConfigs.add(new Object[] { "http://en.wikipedia.org/wiki/China", null });
-        testConfigs.add(new Object[] { "http://en.wikipedia.org/wiki/People's_Republic_of_China",
-                "http://en.wikipedia.org/wiki/China" });
-        testConfigs.add(
-                new Object[] { "http://en.wikipedia.org/wiki/\"B\"_Movie", "http://en.wikipedia.org/wiki/B_movie" });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/resource/China", null });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/wiki/China", null });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/wiki/People's_Republic_of_China", 
+                HTTP_SERVER_ADDRESS + "/wiki/China" });
+        testConfigs.add(new Object[] { HTTP_SERVER_ADDRESS + "/wiki/\"B\"_Movie", 
+                HTTP_SERVER_ADDRESS + "/wiki/B_movie" }); 
         return testConfigs;
     }
 
@@ -48,6 +49,7 @@ public class WikipediaApiBasedSingleUriSameAsRetrieverTest {
     private String expectedUri;
 
     public WikipediaApiBasedSingleUriSameAsRetrieverTest(String uri, String expectedUri) {
+        super(new WikipediaApiBasedSameAsRetrieverContainer(uri, expectedUri));
         this.uri = uri;
         this.expectedUri = expectedUri;
     }
@@ -55,7 +57,7 @@ public class WikipediaApiBasedSingleUriSameAsRetrieverTest {
     @Test
     public void run() {
         WikipediaApiBasedSingleUriSameAsRetriever retriever = new WikipediaApiBasedSingleUriSameAsRetriever();
-        Set<String> uris = retriever.retrieveSameURIs(uri);
+        Set<String> uris = retriever.retrieveSameURIs("localhost:" + SERVER_PORT, uri);
         if (expectedUri == null) {
             Assert.assertNull(expectedUri);
         } else {
@@ -64,5 +66,11 @@ public class WikipediaApiBasedSingleUriSameAsRetrieverTest {
                     uris.contains(expectedUri));
         }
         IOUtils.closeQuietly(retriever);
+
+        Throwable serverError = ((WikipediaApiBasedSameAsRetrieverContainer) container).getThrowable();
+        //check if the server threw anything
+        if(serverError != null) {
+            throw new AssertionError("The server encountered an error:" + serverError);
+        }
     }
 }
