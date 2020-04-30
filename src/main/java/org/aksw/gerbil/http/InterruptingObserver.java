@@ -55,29 +55,33 @@ public class InterruptingObserver implements Runnable {
             observedMappingMutex.acquire();
         } catch (InterruptedException e) {
             LOGGER.error("Interrupted while waiting for mutex. Aborting.");
+            return;
         }
 
-        long waitingTime;
-        long currentTime = System.currentTimeMillis();
-        ObservedHttpRequest observedRequest;
-        for (int i = 0; i < observedRequests.allocated.length; ++i) {
-            if (observedRequests.allocated[i]) {
-                waitingTime = currentTime - observedRequests.values[i];
-                if (waitingTime > maxWaitingTime) {
-                    observedRequest = ((ObservedHttpRequest) ((Object[]) observedRequests.keys)[i]);
-                    LOGGER.info("The HTTP request emitter \"{}\" already runs for {} ms. Trying to interrupt it.",
-                            observedRequest.emitter.getName(), waitingTime);
-                    try {
-                        observedRequest.emitter.interrupt(observedRequest.request);
-                    } catch (UnsupportedOperationException e) {
-                        LOGGER.error("Couldn't interrupt request of HTTP request emitter \""
-                                + observedRequest.emitter.getName() + "\" that is already running for " + waitingTime
-                                + " ms.");
+        try {
+            long waitingTime;
+            long currentTime = System.currentTimeMillis();
+            ObservedHttpRequest observedRequest;
+            for (int i = 0; i < observedRequests.allocated.length; ++i) {
+                if (observedRequests.allocated[i]) {
+                    waitingTime = currentTime - observedRequests.values[i];
+                    if (waitingTime > maxWaitingTime) {
+                        observedRequest = ((ObservedHttpRequest) ((Object[]) observedRequests.keys)[i]);
+                        LOGGER.info("The HTTP request emitter \"{}\" already runs for {} ms. Trying to interrupt it.",
+                                observedRequest.emitter.getName(), waitingTime);
+                        try {
+                            observedRequest.emitter.interrupt(observedRequest.request);
+                        } catch (UnsupportedOperationException e) {
+                            LOGGER.error("Couldn't interrupt request of HTTP request emitter \""
+                                    + observedRequest.emitter.getName() + "\" that is already running for " + waitingTime
+                                    + " ms.");
+                        }
                     }
                 }
             }
+        } finally {
+            observedMappingMutex.release();
         }
-        observedMappingMutex.release();
     }
 
     public void reportStart(HttpRequestEmitter emitter, HttpUriRequest request) {
@@ -86,13 +90,17 @@ public class InterruptingObserver implements Runnable {
             observedMappingMutex.acquire();
         } catch (InterruptedException e) {
             LOGGER.error("Interrupted while waiting for mutex. Aborting.");
+            return;
         }
-        if (observedRequests.containsKey(observedRequest)) {
-            LOGGER.error("There already is an observed request equal to this new one (" + observedRequest.toString()
-                    + "). Note that this is a fatal error and the old request will be overwritten.");
+        try {
+            if (observedRequests.containsKey(observedRequest)) {
+                LOGGER.error("There already is an observed request equal to this new one (" + observedRequest.toString()
+                        + "). Note that this is a fatal error and the old request will be overwritten.");
+            }
+            observedRequests.put(observedRequest, System.currentTimeMillis());
+        } finally {
+            observedMappingMutex.release();
         }
-        observedRequests.put(observedRequest, System.currentTimeMillis());
-        observedMappingMutex.release();
     }
 
     public void reportEnd(HttpRequestEmitter emitter, HttpUriRequest request) {
@@ -101,14 +109,18 @@ public class InterruptingObserver implements Runnable {
             observedMappingMutex.acquire();
         } catch (InterruptedException e) {
             LOGGER.error("Interrupted while waiting for mutex. Aborting.");
+            return;
         }
-        if (observedRequests.containsKey(observedRequest)) {
-            observedRequests.remove(observedRequest);
-        } else {
-            LOGGER.error("Tried to remove an observed request that is not existing (" + observedRequest.toString()
-                    + "). This is a fatal error.");
+        try {
+            if (observedRequests.containsKey(observedRequest)) {
+                observedRequests.remove(observedRequest);
+            } else {
+                LOGGER.error("Tried to remove an observed request that is not existing (" + observedRequest.toString()
+                        + "). This is a fatal error.");
+            }
+        } finally {
+            observedMappingMutex.release();
         }
-        observedMappingMutex.release();
     }
 
     public long getMaxWaitingTime() {

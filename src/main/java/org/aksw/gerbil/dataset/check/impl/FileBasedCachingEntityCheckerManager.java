@@ -125,52 +125,69 @@ public class FileBasedCachingEntityCheckerManager extends EntityCheckerManagerIm
 
     @Override
     public boolean checkUri(String uri) {
+        boolean uriIsCached = false;
+        long timestamp, resultBit = ENTITY_EXISTS_BIT;
         try {
             cacheReadMutex.acquire();
         } catch (InterruptedException e) {
             LOGGER.error("Exception while waiting for read mutex. Returning true.", e);
             return true;
         }
-        boolean uriIsCached = cache.containsKey(uri);
-        long timestamp, resultBit = ENTITY_EXISTS_BIT;
-        if (uriIsCached) {
-            timestamp = cache.get(uri);
-            if ((System.currentTimeMillis() - timestamp) < cacheEntryLifetime) {
-                resultBit = timestamp & EXISTS_FLAG_MASK;
-            } else {
-                uriIsCached = false;
+        try {
+            uriIsCached = cache.containsKey(uri);
+            if (uriIsCached) {
+                timestamp = cache.get(uri);
+                if ((System.currentTimeMillis() - timestamp) < cacheEntryLifetime) {
+                    resultBit = timestamp & EXISTS_FLAG_MASK;
+                } else {
+                    uriIsCached = false;
+                }
             }
+        } finally {
+            cacheReadMutex.release();
         }
+
         // If the URI is not in the cache, or it has been cached but the result
         // is null and the request should be retried
         if (!uriIsCached) {
-            cacheReadMutex.release();
             resultBit = super.checkUri(uri) ? ENTITY_EXISTS_BIT : ENTITY_DOES_NOT_EXIST_BIT;
             // Set the new timestamp inside the cache
             try {
                 cacheWriteMutex.acquire();
-                // now we need all others
-                cacheReadMutex.acquire(MAX_CONCURRENT_READERS);
             } catch (InterruptedException e) {
-                LOGGER.error("Exception while waiting for read mutex. Returning.", e);
+                LOGGER.error("Exception while waiting for write mutex. Returning.", e);
                 return resultBit != ENTITY_DOES_NOT_EXIST_BIT;
             }
-            timestamp = (System.currentTimeMillis() & ERASE_EXISTS_FLAG_MASK) | resultBit;
-            cache.put(uri, timestamp);
-            ++cacheChanges;
-            if ((forceStorageAfterChanges > 0) && (cacheChanges >= forceStorageAfterChanges)) {
-                LOGGER.info("Storing the cache has been forced...");
+
+            // Make sure that the write mutex is released
+            try {
                 try {
-                    performCacheStorage();
-                } catch (IOException e) {
-                    LOGGER.error("Exception while writing cache to file. Aborting.", e);
+                    // now we need all other read mutexes
+                    cacheReadMutex.acquire(MAX_CONCURRENT_READERS);
+                } catch (InterruptedException e) {
+                    LOGGER.error("Exception while waiting for read mutex. Returning.", e);
+                    return resultBit != ENTITY_DOES_NOT_EXIST_BIT;
                 }
+                // Make sure that the read mutex is released
+                try {
+                    timestamp = (System.currentTimeMillis() & ERASE_EXISTS_FLAG_MASK) | resultBit;
+                    cache.put(uri, timestamp);
+                    ++cacheChanges;
+                    if ((forceStorageAfterChanges > 0) && (cacheChanges >= forceStorageAfterChanges)) {
+                        LOGGER.info("Storing the cache has been forced...");
+                        try {
+                            performCacheStorage();
+                        } catch (IOException e) {
+                            LOGGER.error("Exception while writing cache to file. Aborting.", e);
+                        }
+                    }
+                } finally {
+                    cacheReadMutex.release(MAX_CONCURRENT_READERS);
+                }
+            } finally {
+                cacheWriteMutex.release();
             }
-            // The last one will be released at the end
-            cacheReadMutex.release(MAX_CONCURRENT_READERS - 1);
-            cacheWriteMutex.release();
         }
-        cacheReadMutex.release();
         return resultBit != ENTITY_DOES_NOT_EXIST_BIT;
     }
 
@@ -189,8 +206,9 @@ public class FileBasedCachingEntityCheckerManager extends EntityCheckerManagerIm
             performCacheStorage();
         } catch (IOException e) {
             LOGGER.error("Exception while writing cache to file. Aborting.", e);
+        } finally {
+            cacheWriteMutex.release();
         }
-        cacheWriteMutex.release();
     }
 
     /**

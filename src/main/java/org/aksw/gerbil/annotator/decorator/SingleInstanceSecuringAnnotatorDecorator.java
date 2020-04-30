@@ -477,20 +477,25 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 			LOGGER.error("Exception while waiting for registry mutex. Returning null.", e);
 			return null;
 		}
-		Annotator annotator = decoratedAnnotator;
-		while (annotator instanceof AnnotatorDecorator) {
-			annotator = ((AnnotatorDecorator) annotator).getDecoratedAnnotator();
+
+		Semaphore semaphore = null;
+		try {
+			Annotator annotator = decoratedAnnotator;
+			while (annotator instanceof AnnotatorDecorator) {
+				annotator = ((AnnotatorDecorator) annotator).getDecoratedAnnotator();
+			}
+			RegistryValue value;
+			if (annotatorRegistry.containsKey(annotator)) {
+				value = annotatorRegistry.get(annotator);
+			} else {
+				value = new RegistryValue();
+				annotatorRegistry.put(annotator, value);
+			}
+			++value.usageCounter;
+			semaphore = value.semaphore;
+		} finally {
+			registryMutex.release();
 		}
-		RegistryValue value;
-		if (annotatorRegistry.containsKey(annotator)) {
-			value = annotatorRegistry.get(annotator);
-		} else {
-			value = new RegistryValue();
-			annotatorRegistry.put(annotator, value);
-		}
-		++value.usageCounter;
-		Semaphore semaphore = value.semaphore;
-		registryMutex.release();
 		return semaphore;
 	}
 
@@ -506,21 +511,24 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 			LOGGER.error("Exception while waiting for registry mutex. Aborting.");
 			return;
 		}
-		Annotator annotator = decoratedAnnotator;
-		while (annotator instanceof AnnotatorDecorator) {
-			annotator = ((AnnotatorDecorator) annotator).getDecoratedAnnotator();
-		}
-		if (annotatorRegistry.containsKey(annotator)) {
-			RegistryValue value = annotatorRegistry.get(annotator);
-			--value.usageCounter;
-			if (value.usageCounter == 0) {
-				annotatorRegistry.remove(annotator);
+		try {
+			Annotator annotator = decoratedAnnotator;
+			while (annotator instanceof AnnotatorDecorator) {
+				annotator = ((AnnotatorDecorator) annotator).getDecoratedAnnotator();
 			}
-		} else {
-			LOGGER.warn("Expected to find the annotator {} inside the registry but it wasn't there. Ignoring it.",
-					annotator.toString());
+			if (annotatorRegistry.containsKey(annotator)) {
+				RegistryValue value = annotatorRegistry.get(annotator);
+				--value.usageCounter;
+				if (value.usageCounter == 0) {
+					annotatorRegistry.remove(annotator);
+				}
+			} else {
+				LOGGER.warn("Expected to find the annotator {} inside the registry but it wasn't there. Ignoring it.",
+						annotator.toString());
+			}
+		} finally {
+			registryMutex.release();
 		}
-		registryMutex.release();
 	}
 
 	protected static final Map<Annotator, RegistryValue> annotatorRegistry = new HashMap<Annotator, RegistryValue>();
