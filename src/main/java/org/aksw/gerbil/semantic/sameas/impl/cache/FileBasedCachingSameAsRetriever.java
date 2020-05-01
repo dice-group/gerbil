@@ -212,8 +212,9 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
             performCacheStorage();
         } catch (IOException e) {
             LOGGER.error("Exception while writing cache to file. Aborting.", e);
+        } finally {
+            cacheWriteMutex.release();
         }
-        cacheWriteMutex.release();
     }
 
     private void performCacheStorage() throws IOException {
