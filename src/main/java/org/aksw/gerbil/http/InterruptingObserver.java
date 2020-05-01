@@ -67,14 +67,21 @@ public class InterruptingObserver implements Runnable {
                     waitingTime = currentTime - observedRequests.values[i];
                     if (waitingTime > maxWaitingTime) {
                         observedRequest = ((ObservedHttpRequest) ((Object[]) observedRequests.keys)[i]);
-                        LOGGER.info("The HTTP request emitter \"{}\" already runs for {} ms. Trying to interrupt it.",
-                                observedRequest.emitter.getName(), waitingTime);
-                        try {
-                            observedRequest.emitter.interrupt(observedRequest.request);
-                        } catch (UnsupportedOperationException e) {
-                            LOGGER.error("Couldn't interrupt request of HTTP request emitter \""
-                                    + observedRequest.emitter.getName() + "\" that is already running for " + waitingTime
-                                    + " ms.");
+                        if (observedRequest.request.isAborted()) {
+                            LOGGER.warn(
+                                    "Observing an HTTP request that is already aborted. This could be mean that the HTTP management does not have been informed about the termination of a request.");
+                            observedRequests.remove(observedRequest);
+                        } else {
+                            LOGGER.info(
+                                    "The HTTP request emitter \"{}\" already runs for {} ms. Trying to interrupt it.",
+                                    observedRequest.emitter.getName(), waitingTime);
+                            try {
+                                observedRequest.emitter.interrupt(observedRequest.request);
+                            } catch (UnsupportedOperationException e) {
+                                LOGGER.error("Couldn't interrupt request of HTTP request emitter \""
+                                        + observedRequest.emitter.getName() + "\" that is already running for "
+                                        + waitingTime + " ms.");
+                            }
                         }
                     }
                 }
