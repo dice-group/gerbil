@@ -26,3 +26,8 @@ install:
   - mvn clean compile -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 script:
   - mvn package -Dmaven.javadoc.skip=true -B
+after_success:
+  - LATEST_VERSION="$(curl -Ls https://api.bintray.com/packages/codacy/Binaries/codacy-coverage-reporter/versions/_latest | jq -r .name)"
+  - curl -Ls -o codacy-coverage-reporter "https://dl.bintray.com/codacy/Binaries/${LATEST_VERSION}/codacy-coverage-reporter-linux"
+  - chmod +x codacy-coverage-reporter
+  - ./codacy-coverage-reporter report -l Java -r squirrel.reports/target/site/jacoco-aggregate/jacoco.xml
