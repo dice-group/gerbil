@@ -69,8 +69,6 @@ public class InterruptingObserver implements Runnable {
                     }
                 }
             }
-        } finally {
-            observedMappingMutex.release();
         }
     }
 
