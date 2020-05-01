@@ -126,7 +126,8 @@ public class FileBasedCachingEntityCheckerManager extends EntityCheckerManagerIm
     @Override
     public boolean checkUri(String uri) {
         boolean uriIsCached = false;
-        long timestamp, resultBit = ENTITY_EXISTS_BIT;
+        long timestamp;
+        long resultBit = ENTITY_EXISTS_BIT;
         try {
             cacheReadMutex.acquire();
         } catch (InterruptedException e) {
