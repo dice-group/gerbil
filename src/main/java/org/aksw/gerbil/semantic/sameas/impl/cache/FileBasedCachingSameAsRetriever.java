@@ -132,7 +132,7 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
         // If the URI is not in the cache, or it has been cached but the result
         // is null and the request should be retried
         if (!uriIsCached || (uriIsCached && (result == null) && requestEntitiesNotFound)) {
-            requestUri(uri);
+            result = requestUri(uri);
         }
         return result;
     }
