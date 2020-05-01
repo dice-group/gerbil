@@ -61,7 +61,28 @@ public class HttpManagement {
     private static final String USER_AGENT_STRING = "GERBIL/" + GerbilConfiguration.getGerbilVersion()
             + " (http://aksw.org/Projects/GERBIL.html)";
 
+    /**
+     * Singleton instance.
+     */
     private static HttpManagement instance;
+
+    /**
+     * The interrupting observer used to interrupt requests that take too long.
+     */
+    protected InterruptingObserver interruptingObserver;
+    /**
+     * The HTTP client used for all HTTP communication.
+     */
+    protected CloseableHttpClient client;
+    /**
+     * The usage agent string of this program.
+     */
+    protected String userAgent;
+    /**
+     * The map of domains that could block this client and the last time at which
+     * they have been accessed.
+     */
+    protected Map<String, Long> blockingDomainTimestampMapping = new HashMap<>();
 
     public synchronized static HttpManagement getInstance() {
         if (instance == null) {
@@ -93,14 +114,9 @@ public class HttpManagement {
         return instance;
     }
 
-    protected InterruptingObserver interruptingObserver;
-    protected CloseableHttpClient client;
-    protected String userAgent;
-    protected Map<String, Long> blockingDomainTimestampMapping = new HashMap<>();
-
     protected HttpManagement(InterruptingObserver interruptingObserver, String userAgent) {
         this.interruptingObserver = interruptingObserver;
-        this.client = generateHttpClientBuilder().build();
+        this.client = generateHttpClientBuilder().setUserAgent(userAgent).build();
     }
 
     public void reportStart(HttpRequestEmitter emitter, HttpUriRequest request) {
