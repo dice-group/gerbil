@@ -33,7 +33,6 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
-import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
@@ -54,7 +53,6 @@ public class OKE2018Task4Test extends AbstractExperimentTaskTest {
 		MatchingsCounterImpl.setPrintDebugMsg(true);
 		ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
 		ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
-
 	}
 
 	private static final String TEXTS[] = new String[] {
@@ -121,7 +119,7 @@ public class OKE2018Task4Test extends AbstractExperimentTaskTest {
 		ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
 				new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.OKE2018Task4),
 				new InstanceListBasedDataset(Arrays.asList(goldStandards), ExperimentType.OKE2018Task4), ExperimentType.OKE2018Task4, matching);
-		runTest(experimentTaskId, experimentDAO, new HTTPBasedSameAsRetriever(), new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
+		runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
 				new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
 	}
 
