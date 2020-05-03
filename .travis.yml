@@ -30,4 +30,4 @@ after_success:
   - LATEST_VERSION="$(curl -Ls https://api.bintray.com/packages/codacy/Binaries/codacy-coverage-reporter/versions/_latest | jq -r .name)"
   - curl -Ls -o codacy-coverage-reporter "https://dl.bintray.com/codacy/Binaries/${LATEST_VERSION}/codacy-coverage-reporter-linux"
   - chmod +x codacy-coverage-reporter
-  - ./codacy-coverage-reporter report -l Java -r target/site/jacoco-aggregate/jacoco.xml
+  - ./codacy-coverage-reporter report -l Java -r target/site/jacoco/jacoco.xml
