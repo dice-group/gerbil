@@ -4,6 +4,8 @@
 <head>
     <link rel="stylesheet"
           href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="webResources/css/dropdown.css">
     <link rel="stylesheet"
           href="/gerbil/webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
     <link rel="icon" type="image/png"
@@ -104,52 +106,23 @@
             <label class="col-md-4 control-label">System</label>
             <div class="col-md-4">
                 <div>
-                    <span> Upload  a file with MT output:</span>
+                    <span> Upload  a file with translation hypothesis:</span>
                     <div>
-                        <label for="nameOutputFile">Name:</label> <input
-                            class="form-control" type="text" id="nameOutputFile" name="name"
+                        <label for="nameHypothesis">Name:</label> <input
+                            class="form-control" type="text" id="nameHypothesis" name="name"
                             placeholder="Type something" /> <br>
-                        <%--  <label for="nameAnnotator">Name:</label> <input
-                              class="form-control" type="text" id="nameAnnotator" name="name"
-                              placeholder="Type something" />--%>
-                        <%--  <label for="URIAnnotator">Output file:</label>
-                        <input class="form-control" type="text" id="URIAnnotator"
-                               name="URI" placeholder="Type something" />--%>
+
                         <span    class="btn btn-success fileinput-button"> <i
                                 class="glyphicon glyphicon-plus"></i> <span>Select
 									output file...</span> <!-- The file input field used as target for the source file upload widget -->
                           <input  type="file" name="files[]">
                           </span>
+                        <br> <br>
                     </div>
                     <div>
                     </div>
                 </div>
-                <%-- <div>
-                     <!-- list to be filled by button press and javascript function addAnnotator -->
-                     <ul id="annotatorList"
-                         style="margin-top: 15px; list-style-type: none;">
-                     </ul>
-                 </div>
-                 <div id="warningEmptyAnnotator" class="alert alert-warning"
-                      role="alert">
-                     <button type="button" class="close" data-dismiss="alert"></button>
-                     <strong>Warning!</strong> Enter a name and an URI.
-                 </div>
-                 <div id="infoAnnotatorTest" class="alert alert-info" role="alert">
-                     <button type="button" class="close" data-dismiss="alert"></button>
-                     <strong>Please wait</strong> while the communication with your
-                     annotator is tested...
-                 </div>
-                 <div id="dangerAnnotatorTestError" class="alert alert-danger"
-                      role="alert">in
-                     <button type="button" class="close" data-dismiss="alert"></button>
-                     <strong>Warning!</strong> There was an error while testing the
-                     annotator.<br> <span id="annotatorTestErrorMsg"></span>
-                 </div>
-                 <input type="button" id="addAnnotator"
-                        class="btn btn-primary pull-right" value="Add another annotator"
-                        style="margin-top: 15px" />
-             </div>--%>
+
             </div>
         </div>
         <div class="row">
@@ -161,21 +134,25 @@
         <div class="form-group">
             <label class="col-md-4 control-label" for="datasets">Dataset</label>
             <div class="col-md-4">
-                <select id="setdata" style="display: none;">
-                    <option id="menu" class="optionGroup"></option>
-                    <option id="submenu" class="optionChild"></option>
-                </select>
+                <div class="dropdownDiv">
 
+                    <span id="chosenDelomrade" style="font-weight:bold" ></span>
+                    <div class="dropdown datasetDropdown">
+                        <a href="#" class="btn dropdown-toggle" data-toggle="dropdown">None selected<span class="caret"></span></a>
+                        <ul id="dropdownmenu" class="dropdown-menu"></ul>
+                    </div>
+                </div>
                 <hr/>
                 <div>
-                    <span> Or upload another dataset:</span>
+                    <span> Or upload dataset:</span>
                     <div>
                         <label for="nameDataset">Name:</label> <input
                             class="form-control" type="text" id="nameDataset" name="name"
                             placeholder="Type something" /> <br> <span
                             class="btn btn-success fileinput-button"> <i
                             class="glyphicon glyphicon-plus"></i> <span>Select
-									source file...</span> <!-- The file input field used as target for the source file upload widget -->
+									source file...</span>
+                        <!-- The file input field used as target for the source file upload widget -->
 								<input id="fileupload" type="file" name="files[]">
 							</span>
                         <br> <br>
@@ -339,71 +316,66 @@
         });
     }
 
+
     function loadDatasets() {
-        $('#menu').html('');
-        $('#submenu').html('');
-        $.getJSON('${datasets}', {
-            experimentType : $('#type').val(),
-            ajax : 'false'
-        }, function(data) {
+
+        $(document).on('click', '.dropdown-submenu', function (e) {
+            $(this).find('ul').toggle();
+        });
+
+
+        $('.datasetDropdown').on('click', function(e) {
             var formattedData = [];
-            var mainGroup = [];
-            var dropdown = [];
-            var datasets;
-            for (var i = 0; i < data.length; i++) {
-                var dat = {};
-                dat.label = data[i];
-                dat.value = data[i];
-                formattedData.push(dat);
-                var name = formattedData[i].value;
-                var group = {};
-                var subgroup = {};
-                var n = name.split("/",2);
+            var n;
+            $.getJSON('${datasets}', {
+                experimentType : $('#type').val(),
+                ajax : 'false'
+            }, function(data) {
 
-                datasets = { key: n[0], value: n[1] };
-                for (var value of Object.values(datasets)) {
-                    alert(value);
+                for (var i = 0; i < data.length; i++) {
+                    n = data[i].split("/",2);
+                    var dat = {};
+                    dat.label = n[0];
+                    dat.value = n[1];
+                    formattedData.push(dat);
                 }
-                group.label = n[0];
-                group.value = n[0];
-                subgroup.label = n[1];
-                subgroup.value = n[1];
-                //  window.alert("Group: "+n[0]+" Dataset: "+n[1]);
-                mainGroup.push(group);
-                dropdown.push(subgroup);
-            }
+                const groupBy= key => array =>
+                    array.reduce(
+                        (objectsByKeyValue, obj) => ({
+                            ...objectsByKeyValue,
+                            [obj[key]]: (objectsByKeyValue[obj[key]] || []).concat(obj)
+                        }),
+                        {}
+                    );
+                const groupByLabel = groupBy('label');
+                var arr =(groupByLabel(formattedData));
+                var kes = Object.keys(arr);
+                var val = Object.values(arr);
+                showDropdownMenu(kes, val);
 
-            const keys = Object.keys(datasets)
-            for (const key of keys) {
-                const obj = datasets.reduce(function (acc, x) {
-                    if (!acc[x.key]) acc[x.key] = [];
-                    acc[x.key].push(x.value);
-                    return acc;
-                }, {});
-            }
-            document.write(JSON.stringify(obj));
-
-
-            $('#menu').multiselect('dataprovider', mainGroup);
-            $('#menu').multiselect('rebuild');
-            $('#submenu').multiselect('dataprovider', dropdown);
-            $('#submenu').multiselect('rebuild');
-
-        });
-    }
-
-    function getGrouped(array, groups) {
-        var grouped = groups.map(function (a) {
-            return { name: a, data: [] };
-        });
-
-        array.personas.forEach(function (a) {
-            groups.forEach(function (k, i) {
-                grouped[i].data.push(a[k]);
+                console.log(kes + val);
             });
         });
-        return grouped;
+
+        function showDropdownMenu(datasets, language) {
+
+            $('#dropdownmenu li').remove();
+            for (var i in datasets) {
+                $('#dropdownmenu').append('<li class="dropdown-submenu"><a href="#">' + datasets[i] + '</a> ' +
+                    '<ul class="dropdown-menu"><li> <a href="#">' + language +'<br>'+ '</a> </li></ul></li>');
+            }
+        }
     }
+
+
+    function singles(array) {
+        for (var index = 0, single = []; index < array.length; index++) {
+            if (array.indexOf(array[index], array.indexOf(array[index]) + 1) == -1)
+                single.push(array[index]);
+        };
+        return single;
+    };
+
     function checkExperimentConfiguration() {
         //fetch list of selected and manually added annotators
         var annotatorMultiselect = $('#annotator option:selected');
@@ -426,7 +398,7 @@
 
         //check whether there is at least one dataset and at least one annotator
         //and the disclaimer checkbox should be clicked
-        if (dataset.length > 0 && annotator.length > 0
+        if (dataset.length > 0
             && $('#disclaimerCheckbox:checked').length == 1) {
             $('#submit').attr("disabled", false);
         } else {
@@ -672,6 +644,13 @@
                         var progress = parseInt(data.loaded
                             / data.total * 100, 10);
                         $('#progress .progress-bar').css('width',
+                            progress + '%');
+                    },
+                    progressallbars : function(e, data) {
+                        var progress = parseInt(data.loaded
+                            / data.total * 100, 10);
+
+                        $('#hypoprogress .progress-bar').css('width',
                             progress + '%');
                     },
                     processfail : function(e, data) {
