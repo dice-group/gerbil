@@ -116,7 +116,8 @@ public class HttpManagement {
 
     protected HttpManagement(InterruptingObserver interruptingObserver, String userAgent) {
         this.interruptingObserver = interruptingObserver;
-        this.client = generateHttpClientBuilder().setUserAgent(userAgent).build();
+        this.userAgent = userAgent;
+        this.client = generateHttpClientBuilder().build();
     }
 
     public void reportStart(HttpRequestEmitter emitter, HttpUriRequest request) {

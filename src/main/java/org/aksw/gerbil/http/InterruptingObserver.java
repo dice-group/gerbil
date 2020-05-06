@@ -17,6 +17,7 @@
 package org.aksw.gerbil.http;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -54,14 +55,16 @@ public class InterruptingObserver implements Runnable {
             long waitingTime;
             long currentTime = System.currentTimeMillis();
             ObservedHttpRequest observedRequest;
-            for (Entry<ObservedHttpRequest, Long> e : observedRequests.entrySet()) {
-                waitingTime = currentTime - e.getValue();
+            Iterator<Entry<ObservedHttpRequest, Long>> iterator = observedRequests.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Entry<ObservedHttpRequest, Long> entry = iterator.next();
+                waitingTime = currentTime - entry.getValue();
                 if (waitingTime > maxWaitingTime) {
-                    observedRequest = e.getKey();
+                    observedRequest = entry.getKey();
                     if (observedRequest.request.isAborted()) {
                         LOGGER.warn(
                                 "Observing an HTTP request that is already aborted. This could be mean that the HTTP management does not have been informed about the termination of a request.");
-                        observedRequests.remove(observedRequest);
+                        iterator.remove();
                     } else {
                         LOGGER.info("The HTTP request emitter \"{}\" already runs for {} ms. Trying to interrupt it.",
                                 observedRequest.emitter.getName(), waitingTime);
