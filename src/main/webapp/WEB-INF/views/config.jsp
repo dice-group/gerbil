@@ -101,25 +101,40 @@
                 <hr />
             </div>
         </div>
+
         <!--Upload output file from system -->
         <div class="form-group">
             <label class="col-md-4 control-label">System</label>
             <div class="col-md-4">
-                <div>
-                    <span> Upload  a file with translation hypothesis:</span>
+                <div id="uploadHypothesis">
+                    <span> Upload hypothesis:</span>
                     <div>
-                        <label for="nameHypothesis">Name:</label> <input
-                            class="form-control" type="text" id="nameHypothesis" name="name"
-                            placeholder="Type something" /> <br>
+                        <label for="nameHypothesisFile">Name:</label> <input
+                            class="form-control" type="text" id="nameHypothesisFile" name="name"
+                            placeholder="Type something" />
+                        <br> <br> <span
+                            class="btn btn-success fileinput-button"> <i
+                            class="glyphicon glyphicon-plus"></i> <span>Select
+									file...</span> <!-- The file input field used as target for the file upload widget -->
+								<input id="hypothesisFileUpload" type="file" name="files[]">
+							</span> <br> <br>
+                        <!-- The global progress bar -->
+                        <div id="hypothesisFileProgress" class="progress">
+                            <div class="progress-bar progress-bar-success"></div>
+                        </div>
+                        <div>
+                            <!-- list to be filled by button press-->
+                            <ul class="unstyled" id="hypothesisFileList"
+                                style="margin-top: 15px; list-style-type: none;">
+                            </ul>
 
-                        <span    class="btn btn-success fileinput-button"> <i
-                                class="glyphicon glyphicon-plus"></i> <span>Select
-									output file...</span> <!-- The file input field used as target for the source file upload widget -->
-                          <input  type="file" name="files[]">
-                          </span>
-                        <br> <br>
-                    </div>
-                    <div>
+                        </div>
+                        <div id="warningEmptyHypothesisFileName" class="alert alert-warning"
+                             role="alert">
+                            <button type="button" class="close" data-dismiss="alert"></button>
+                            <strong>Warning!</strong> Enter a name.
+                        </div>
+
                     </div>
                 </div>
 
@@ -150,8 +165,7 @@
                             class="form-control" type="text" id="nameDataset" name="name"
                             placeholder="Type something" /> <br> <span
                             class="btn btn-success fileinput-button"> <i
-                            class="glyphicon glyphicon-plus"></i> <span>Select
-									source file...</span>
+                            class="glyphicon glyphicon-plus"></i> <span>Select file...</span>
                         <!-- The file input field used as target for the source file upload widget -->
 								<input id="fileupload" type="file" name="files[]">
 							</span>
@@ -318,7 +332,6 @@
 
 
     function loadDatasets() {
-
         $(document).on('click', '.dropdown-submenu', function (e) {
             $(this).find('ul').toggle();
         });
@@ -396,6 +409,11 @@
             dataset.push($(this).text());
         });
 
+        var hypothesis = [];
+        $("#hypothesisFileList li span.li_content").each(function() {
+            hypothesis.push($(this).text());
+        });
+
         //check whether there is at least one dataset and at least one annotator
         //and the disclaimer checkbox should be clicked
         if (dataset.length > 0
@@ -405,6 +423,7 @@
             $('#submit').attr("disabled", true);
         }
     }
+
     function defineNIFAnnotator() {
         // hide all message that might be outdated
         $('#warningEmptyAnnotator').hide();
@@ -504,6 +523,18 @@
                         $('#warningEmptyDataset').hide();
                     }
                 });
+                //if hypothesis file add button is clicked check whether there is a name and a file
+                $('#warningEmptyHypothesisFileName').hide();
+                $('#hypothesisFileUpload').click(function() {
+                    var name = $('#nameHypothesisFile').val();
+                    if (name == '') {
+                        $('#hypothesisFileUpload').fileupload('disable');
+                        $('#warningEmptyHypothesisFileName').show();
+                    } else {
+                        $('#hypothesisFileUpload').fileupload('enable');
+                        $('#warningEmptyHypothesisFileName').hide();
+                    }
+                });
 
                 //submit button clicked will collect and sent experiment data to backend
                 $('#submit')
@@ -534,6 +565,7 @@
                             //fetch list of selected and manually added datasets
                             var datasetMultiselect = $('#setdata option:selected');
                             var dataset = [];
+
                             $(datasetMultiselect)
                                 .each(
                                     function(index,
@@ -553,6 +585,19 @@
                                                     this)
                                                     .text());
                                     });
+                            var hypothesis = [];
+                            $(
+                                "#hypothesisFileList li span.li_content")
+                                .each(
+                                    function() {
+                                        hypothesis
+                                            .push("NIFDS_"
+                                                + $(
+                                                    this)
+                                                    .text());
+                                    });
+
+
                             var type = $('#type').val() ? $(
                                 '#type').val()
                                 : "D2KB";
@@ -601,9 +646,10 @@
                                         alert("Error, insufficient parameters.");
                                     });
                         });
+                //submit button clicked will collect and sent experiment data to backend
             });
 
-    // define file upload
+    // define dataset file upload
     $(function() {
         'use strict';
         // Change this to the location of your server-side upload handler:
@@ -646,11 +692,56 @@
                         $('#progress .progress-bar').css('width',
                             progress + '%');
                     },
-                    progressallbars : function(e, data) {
-                        var progress = parseInt(data.loaded
-                            / data.total * 100, 10);
+                    processfail : function(e, data) {
+                        alert(data.files[data.index].name + "\n"
+                            + data.files[data.index].error);
+                    }
+                }).prop('disabled', !$.support.fileInput).parent()
+            .addClass($.support.fileInput ? undefined : 'disabled');
+    });
 
-                        $('#hypoprogress .progress-bar').css('width',
+
+    // define hypothesis file upload
+    $(function() {
+        'use strict';
+        // Change this to the location of your server-side upload handler:
+        var url = '${upload}';
+        $('#hypothesisFileUpload')
+            .fileupload(
+                {
+                    url : url,
+                    dataType : 'json',
+                    done : function(e, data) {
+                        var name = $('#nameHypothesisFile').val();
+                        $
+                            .each(
+                                data.result.files,
+                                function(index, file) {
+                                    $('#hypothesisFileList')
+                                        .append(
+                                            "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
+                                            + name
+                                            + "("
+                                            + file.name
+                                            + ")</span></li>");
+                                    var listItems = $('#hypothesisFileList > li > span');
+                                    for (var i = 0; i < listItems.length; i++) {
+                                        listItems[i].onclick = function() {
+                                            this.parentNode.parentNode
+                                                .removeChild(this.parentNode);
+                                            checkExperimentConfiguration();
+                                        };
+                                    }
+                                    $('#nameHypothesisFile').val(
+                                        '');
+                                    $('#URIHypothesis')
+                                        .val('');
+                                });
+                    },
+                    progressall : function(e, data) {
+                        var progress = parseInt(data.loaded / data.total
+                            * 100, 10);
+                        $('#hypothesisFileProgress .progress-bar').css('width',
                             progress + '%');
                     },
                     processfail : function(e, data) {
