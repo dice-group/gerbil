@@ -38,6 +38,8 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     public static final String MICRO_F1_SCORE_NAME = "Micro F1 score";
     public static final String MICRO_PRECISION_NAME = "Micro Precision";
     public static final String MICRO_RECALL_NAME = "Micro Recall";
+    public static final String BLEU_METRIC = "BLEU";
+    public static final String METEOR_METRIC = "METEOR";
 
     protected MatchingsCounter<T> matchingsCounter;
 
@@ -66,11 +68,11 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     }
 
     protected EvaluationResult[] calculateMicroFMeasure(EvaluationCounts counts[]) {
-        return calculateMicroFMeasure(counts, MICRO_PRECISION_NAME, MICRO_RECALL_NAME, MICRO_F1_SCORE_NAME);
+        return calculateMicroFMeasure(counts, MICRO_PRECISION_NAME, MICRO_RECALL_NAME, MICRO_F1_SCORE_NAME, BLEU_METRIC, METEOR_METRIC);
     }
 
     protected EvaluationResult[] calculateMicroFMeasure(EvaluationCounts counts[], String precisionName,
-            String recallName, String f1ScoreName) {
+            String recallName, String f1ScoreName, String bleu, String meteor) {
         EvaluationCounts sums = new EvaluationCounts();
         for (int i = 0; i < counts.length; ++i) {
             sums.add(counts[i]);
@@ -82,11 +84,11 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     }
 
     protected EvaluationResult[] calculateMacroFMeasure(EvaluationCounts counts[]) {
-        return calculateMacroFMeasure(counts, MACRO_PRECISION_NAME, MACRO_RECALL_NAME, MACRO_F1_SCORE_NAME);
+        return calculateMacroFMeasure(counts, MACRO_PRECISION_NAME, MACRO_RECALL_NAME, MACRO_F1_SCORE_NAME, BLEU_METRIC, METEOR_METRIC);
     }
 
     protected EvaluationResult[] calculateMacroFMeasure(EvaluationCounts counts[], String precisionName,
-            String recallName, String f1ScoreName) {
+            String recallName, String f1ScoreName, String bleu, String meteor) {
         double avgs[] = new double[3];
         double measures[];
         for (int i = 0; i < counts.length; ++i) {

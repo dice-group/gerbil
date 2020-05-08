@@ -328,7 +328,7 @@
 				<artifactId>externalsortinginjava</artifactId>
 				<version>0.1.10</version>
 			</dependency>
-	</dependencies>
+			</dependencies>
 
 	<build>
 		<plugins>
