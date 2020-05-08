@@ -23,6 +23,12 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 
+/**
+ * 
+ * This class loads the ERD2014 dataset. Since the annotations only consist if freebase IDs,
+ * it currently queries DBpedia for the corresponding DBpedia URIs.
+ * 
+ */
 public class ERDDataset2 extends AbstractDataset implements
 		InitializableDataset {
 

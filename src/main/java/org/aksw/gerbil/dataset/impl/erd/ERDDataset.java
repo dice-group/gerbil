@@ -42,6 +42,12 @@ import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 
 import org.apache.commons.io.IOUtils;
 
+/**
+ * 
+ * @deprecated The original class to load the ERD2014 dataset. Relies on freebase IDs instead 
+ * of DBpedia URIs. Please use {@link ERDDataset2} instead.
+ * 
+ */
 @Deprecated
 public class ERDDataset extends AbstractDataset implements InitializableDataset {
 
