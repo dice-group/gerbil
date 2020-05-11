@@ -1,3 +1,42 @@
+__author__='thiagocastroferreira'
+
+"""
+Author: Organizers of the 2nd WebNLG Challenge
+Date: 23/04/2020
+Description:
+    This script aims to evaluate the output of data-to-text NLG models by 
+    computing popular automatic metrics such as BLEU (two implementations), 
+    METEOR, chrF++, TER and BERT-Score.
+    
+    ARGS:
+        usage: eval.py [-h] -R REFERENCE -H HYPOTHESIS [-lng LANGUAGE] [-nr NUM_REFS]
+               [-m METRICS] [-nc NCORDER] [-nw NWORDER] [-b BETA]
+
+        optional arguments:
+          -h, --help            show this help message and exit
+          -R REFERENCE, --reference REFERENCE
+                                reference translation
+          -H HYPOTHESIS, --hypothesis HYPOTHESIS
+                                hypothesis translation
+          -lng LANGUAGE, --language LANGUAGE
+                                evaluated language
+          -nr NUM_REFS, --num_refs NUM_REFS
+                                number of references
+          -m METRICS, --metrics METRICS
+                                evaluation metrics to be computed
+          -nc NCORDER, --ncorder NCORDER
+                                chrF metric: character n-gram order (default=6)
+          -nw NWORDER, --nworder NWORDER
+                                chrF metric: word n-gram order (default=2)
+          -b BETA, --beta BETA  chrF metric: beta parameter (default=2)
+
+    EXAMPLE:
+        ENGLISH: 
+            python3 eval.py -R data/en/references/reference -H data/en/hypothesis -nr 4 -m bleu,meteor,chrf++,ter,bert
+        RUSSIAN:
+            python3 eval.py -R data/ru/reference -H data/ru/hypothesis -lng ru -nr 1 -m bleu,meteor,chrf++,ter,bert
+"""
+
 import argparse
 import codecs
 import copy
@@ -7,8 +46,8 @@ import logging
 import nltk
 import subprocess
 import re
-import bert_score
 
+from bert_score import score
 from metrics.chrF import computeChrF
 from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
 from razdel import tokenize
