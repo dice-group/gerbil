@@ -76,7 +76,7 @@ public class EntityCheckerManagerImplTest {
         when(checker.entityExists(anyString())).thenAnswer(arguments -> answerList.get(uriList.indexOf(arguments.getArgument(0))));
         manager.registerEntityChecker("http://dbpedia.org/resource/", checker);
 
-        Annotation annotation = new Annotation(new HashSet<String>(Arrays.asList(uris)));
+        Annotation annotation = new Annotation(new HashSet<String>(uriList));
         manager.checkMeanings(Arrays.asList(annotation));
         String annotationUris[] = annotation.getUris().toArray(new String[annotation.getUris().size()]);
         Arrays.sort(expectedUris);

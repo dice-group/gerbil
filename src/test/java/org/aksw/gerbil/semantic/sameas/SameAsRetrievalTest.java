@@ -95,15 +95,12 @@ public class SameAsRetrievalTest {
     @Test
     public void test() {
         SameAsRetriever retriever = SameAsRetrieverSingleton4Tests.getInstance();
-        HTTPBasedSameAsRetriever checker = mock(HTTPBasedSameAsRetriever.class);
+        HTTPBasedSameAsRetriever sameAsRetrieverMock = mock(HTTPBasedSameAsRetriever.class);
         String domain = SimpleDomainExtractor.extractDomain(uri);
-        when(checker.retrieveSameURIs(domain, uri)).thenReturn(expectedURIs);
+        when(sameAsRetrieverMock.retrieveSameURIs(domain, uri)).thenReturn(expectedURIs);
 
         //register a SameAsRetriever mock for the domain of the current uri
-        SameAsRetriever decorator = ((SameAsRetrieverDecorator) retriever).getDecorated();
-        decorator = ((SameAsRetrieverDecorator) decorator).getDecorated();
-        decorator = ((SameAsRetrieverDecorator) decorator).getDecorated();
-        ((DomainBasedSameAsRetrieverManager) decorator).addDomainSpecificRetriever(domain, checker);
+        setMock(retriever, sameAsRetrieverMock, domain);
 
         Set<String> uris = retriever.retrieveSameURIs(uri);
         if (expectedURIs == null) {
@@ -115,4 +112,12 @@ public class SameAsRetrievalTest {
         }
     }
 
+    private void setMock(SameAsRetriever retriever, HTTPBasedSameAsRetriever mock, String domain) {
+        if (retriever instanceof SameAsRetrieverDecorator) {
+            setMock(((SameAsRetrieverDecorator) retriever).getDecorated(), mock, domain);
+        }
+        if (retriever instanceof DomainBasedSameAsRetrieverManager) {
+            ((DomainBasedSameAsRetrieverManager) retriever).addDomainSpecificRetriever(domain, mock);
+        }
+    }
 }

@@ -69,14 +69,13 @@ public class WikipediaApiBasedSameAsRetrieverContainer implements Container {
         String uriTitle = WikipediaHelper.getWikipediaTitle(uri);
         if(expectedUri == null) {
             response.append("<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><pages><page _idx=\"0\""
-                + "pageid=\"0\" ns=\"0\" title=\"" + uriTitle + "\" /></pages></query></api>");
+                + " pageid=\"0\" ns=\"0\" title=\"" + uriTitle + "\" /></pages></query></api>");
         } else {
             String expectedUriTitle = WikipediaHelper.getWikipediaTitle(expectedUri);
-            response.append("?xml version=\"1.0\"?><api batchcomplete=\"\"><query><redirects><r from=\"" + uriTitle + "\"" 
-                + "to=\"" + expectedUriTitle + "\" /></redirects><pages><page _idx=\"0\" pageid=\"0\" ns=\"0\""
+            response.append("<?xml version=\"1.0\"?><api batchcomplete=\"\"><query><redirects><r from=\"" + uriTitle + "\"" 
+                + " to=\"" + expectedUriTitle + "\" /></redirects><pages><page _idx=\"0\" pageid=\"0\" ns=\"0\""
                 + "title=\"" + expectedUriTitle + "\" /></pages></query></api>");
         }
-        System.out.println(response.toString());
         return response.toString();
     }
 }
