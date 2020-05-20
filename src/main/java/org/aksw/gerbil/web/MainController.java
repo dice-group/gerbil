@@ -168,7 +168,13 @@ public class MainController {
         for (int i = 0; i < jsonDataset.size(); i++) {
             datasets[i] = (String) jsonDataset.get(i);
         }
-        ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[annotators.length * datasets.length];
+        JSONArray jsonHypothesis = (JSONArray) configuration.get("hypothesis");
+        String[] hypothesis = new String[jsonHypothesis.size()];
+        for (int i = 0; i < jsonHypothesis.size(); i++) {
+            hypothesis[i] = (String) jsonHypothesis.get(i);
+        }
+
+        ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[datasets.length+hypothesis.length];
         int count = 0;
         for (String annotator : annotators) {
             for (String dataset : datasets) {
@@ -178,6 +184,14 @@ public class MainController {
                 ++count;
             }
         }
+
+       for (String hypothesisFile : hypothesis) {
+            configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(hypothesisFile, type),
+                    adapterManager.getDatasetConfig(hypothesisFile, type), type, getMatching(matching));
+            LOGGER.debug("Created config: {}", configs[count]);
+            ++count;
+        }
+
         String experimentId = IDCreator.getInstance().createID();
         Experimenter exp = new Experimenter(overseer, dao, globalRetriever, evFactory, configs, experimentId);
         exp.setAnnotatorOutputWriter(annotatorOutputWriter);

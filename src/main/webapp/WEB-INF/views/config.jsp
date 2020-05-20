@@ -259,8 +259,6 @@
 
                     $('[data-toggle="tooltip"]').tooltip();
 
-                    loadMatching();
-                    loadAnnotator();
                     loadDatasets();
                 });
     }
@@ -311,25 +309,6 @@
 
                 });
     }
-    function loadAnnotator() {
-        $('#annotator').html('');
-        $.getJSON('${annotators}', {
-            experimentType : $('#type').val(),
-            ajax : 'false'
-        }, function(data) {
-            var formattedData = [];
-            for (var i = 0; i < data.length; i++) {
-                var dat = {};
-                dat.label = data[i];
-                dat.value = data[i];
-                formattedData.push(dat);
-            }
-            $('#annotator').multiselect('dataprovider', formattedData);
-            <c:url value="/file/upload" var="upload"/>
-            $('#annotator').multiselect('rebuild');
-        });
-    }
-
 
     function loadDatasets() {
         $(document).on('click', '.dropdown-submenu', function (e) {
@@ -390,15 +369,6 @@
     };
 
     function checkExperimentConfiguration() {
-        //fetch list of selected and manually added annotators
-        var annotatorMultiselect = $('#annotator option:selected');
-        var annotator = [];
-        $(annotatorMultiselect).each(function(index, annotatorMultiselect) {
-            annotator.push([ $(this).val() ]);
-        });
-        $("#annotatorList li span.li_content").each(function() {
-            annotator.push($(this).text());
-        });
         //fetch list of selected and manually added datasets
         var datasetMultiselect = $('#setdata option:selected');
         var dataset = [];
@@ -480,17 +450,10 @@
             function() {
                 // load dropdowns when document loaded
                 $('#type').multiselect();
-                $('#matching').multiselect();
-                $('#annotator').multiselect();
                 $('#setdata').multiselect();
-
                 // listeners for dropdowns
-                $('#type').change(loadMatching);
-                $('#type').change(loadAnnotator);
                 $('#type').change(loadDatasets);
-
                 loadExperimentTypes();
-
                 //supervise configuration of experiment and let it only run
                 //if everything is ok
                 //initially it is turned off
@@ -540,28 +503,6 @@
                 $('#submit')
                     .click(
                         function() {
-                            //fetch list of selected and manually added annotators
-                            var annotatorMultiselect = $('#annotator option:selected');
-                            var annotator = [];
-                            $(annotatorMultiselect)
-                                .each(
-                                    function(index,
-                                             annotatorMultiselect) {
-                                        annotator
-                                            .push($(
-                                                this)
-                                                .val());
-                                    });
-                            $(
-                                "#annotatorList li span.li_content")
-                                .each(
-                                    function() {
-                                        annotator
-                                            .push("NIFWS_"
-                                                + $(
-                                                    this)
-                                                    .text());
-                                    });
                             //fetch list of selected and manually added datasets
                             var datasetMultiselect = $('#setdata option:selected');
                             var dataset = [];
@@ -596,8 +537,6 @@
                                                     this)
                                                     .text());
                                     });
-
-
                             var type = $('#type').val() ? $(
                                 '#type').val()
                                 : "D2KB";
@@ -607,9 +546,8 @@
                                 : "Ma - strong annotation match";
                             var data = {};
                             data.type = type;
-                            data.matching = matching;
-                            data.annotator = annotator;
                             data.dataset = dataset;
+                            data.hypothesis = hypothesis;
                             $
                                 .ajax(
                                     '${execute}',

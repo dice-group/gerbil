@@ -80,7 +80,9 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         double measures[] = calculateMeasures(sums);
         return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, measures[0]),
                 new DoubleEvaluationResult(recallName, measures[1]),
-                new DoubleEvaluationResult(f1ScoreName, measures[2]) };
+                new DoubleEvaluationResult(f1ScoreName, measures[2]),
+                new DoubleEvaluationResult(bleu, measures[3]),
+                new DoubleEvaluationResult(meteor, measures[4])};
     }
 
     protected EvaluationResult[] calculateMacroFMeasure(EvaluationCounts counts[]) {
@@ -96,12 +98,18 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
             avgs[0] += measures[0];
             avgs[1] += measures[1];
             avgs[2] += measures[2];
+            avgs[3] += measures[3];
+            avgs[4] += measures[4];
+
         }
         avgs[0] /= counts.length;
         avgs[1] /= counts.length;
         avgs[2] /= counts.length;
+        avgs[3] /= counts.length;
+        avgs[4] /= counts.length;
         return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, avgs[0]),
-                new DoubleEvaluationResult(recallName, avgs[1]), new DoubleEvaluationResult(f1ScoreName, avgs[2]) };
+                new DoubleEvaluationResult(recallName, avgs[1]), new DoubleEvaluationResult(f1ScoreName, avgs[2]) , new DoubleEvaluationResult(bleu, avgs[3]),
+                new DoubleEvaluationResult(meteor, avgs[4])};
     }
 
     private double[] calculateMeasures(EvaluationCounts counts) {
