@@ -32,10 +32,6 @@ import org.junit.Test;
 
 public class Tweet4NeedDatasetTest {
 
-	/*
-	 * The test file contains two special cases. One marking with the URI "*null*"
-	 * and two markings that are overlapping.
-	 */
 	private static final String TEST_TEXT_DIR = "src/test/resources/datasets/twitterneed/";
 	private static final String DATASET_NAME = "t4nTestDataset";
 
@@ -113,10 +109,5 @@ public class Tweet4NeedDatasetTest {
 					expectedNEs.contains(marking));
 		}
 		Assert.assertEquals(expectedNEs.size(), doc1.getMarkings().size());
-	}
-
-	public static void main(String[] args) throws GerbilException {
-		Tweet4NeedDatasetTest test = new Tweet4NeedDatasetTest();
-		test.test();
 	}
 }
