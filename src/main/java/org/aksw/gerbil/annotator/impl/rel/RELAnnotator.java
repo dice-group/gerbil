@@ -66,7 +66,9 @@ public class RELAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnno
         this.serviceUrl = serviceUrl;
     }
 
-    protected Document requestAnnotations(String documentUri, String text) throws GerbilException {
+    protected Document requestAnnotations(Document doc, boolean isD2KB) throws GerbilException {
+        String text = doc.getText();
+        String documentUri = doc.getDocumentURI();
         LOGGER.info("Started request for {}", documentUri);
         HttpPost request = null;
         try {
@@ -74,21 +76,30 @@ public class RELAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnno
         } catch (Exception e) {
             throw new GerbilException("Couldn't create HTTP request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
         }
-        JsonObject parameters = new JsonObject();
-        parameters.addProperty(TEXT_REQUEST_PARAMETER_KEY, text);
-        parameters.add(SPANS_REQUEST_PARAMETER_KEY, new JsonArray());
 
+        JsonObject parameters = new JsonObject();
+        JsonArray spans = new JsonArray();
+        parameters.addProperty(TEXT_REQUEST_PARAMETER_KEY, text);
+        parameters.add(SPANS_REQUEST_PARAMETER_KEY, spans);
+        if(isD2KB) {
+            for(Span s: doc.getMarkings(Span.class)){
+                JsonObject span = new JsonObject();
+                span.addProperty("start", s.getStartPosition());
+                span.addProperty("length", s.getLength());
+                spans.add(span);
+            }
+        }
+        
         request.setEntity(new StringEntity(parameters.toString(), CHARSET));
         request.addHeader(HttpHeaders.CONTENT_TYPE, REQUEST_CONTENT_TYPE.toString());
-        request.addHeader(HttpHeaders.ACCEPT, "application/json");
+        request.addHeader(HttpHeaders.ACCEPT, REQUEST_CONTENT_TYPE.toString());
         
         HttpEntity entity = null;
         CloseableHttpResponse response = null;
-        Document document;
+        Document document = null;
         try {
             response = sendRequest(request);
             entity = response.getEntity();
-            // read and parse response
             try {
                 document = new DocumentImpl(text, documentUri);
                 JsonArray outArray = new JsonParser().parse(IOUtils.toString(entity.getContent())).getAsJsonArray();
@@ -110,37 +121,36 @@ public class RELAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnno
             IOUtils.closeQuietly(response);
         }
         LOGGER.info("Finished request for {}", documentUri);
-        System.out.println(document);
         return document; 
     }
 
     private void parseMarkings(JsonArray outArray, Document document){
         for(JsonElement element: outArray) {
-            JsonArray ent = element.getAsJsonArray();
-            int start = ent.get(0).getAsInt();
-            int length = ent.get(1).getAsInt();
-            String uri = "http://dbpedia.org/resource/" + ent.get(3).getAsString();
+            JsonArray entity = element.getAsJsonArray();
+            int start = entity.get(0).getAsInt();
+            int length = entity.get(1).getAsInt();
+            String uri = "http://dbpedia.org/resource/" + entity.get(3).getAsString();
             document.addMarking(new NamedEntity(start, length, new HashSet<String>(Arrays.asList(uri))));
         } 
     }
 
     @Override
     public List<Meaning> performC2KB(Document document) throws GerbilException {
-        return requestAnnotations(document.getDocumentURI(), document.getText()).getMarkings(Meaning.class);
+        return requestAnnotations(document, false).getMarkings(Meaning.class);
     }
 
     @Override
     public List<MeaningSpan> performA2KBTask(Document document) throws GerbilException {
-        return requestAnnotations(document.getDocumentURI(), document.getText()).getMarkings(MeaningSpan.class);
+        return requestAnnotations(document, false).getMarkings(MeaningSpan.class);
     }
 
     @Override
     public List<MeaningSpan> performD2KBTask(Document document) throws GerbilException {
-        return null;
+        return requestAnnotations(document, true).getMarkings(MeaningSpan.class);
     }
 
     @Override
     public List<Span> performRecognition(Document document) throws GerbilException {
-        return requestAnnotations(document.getDocumentURI(), document.getText()).getMarkings(Span.class);
+        return requestAnnotations(document, false).getMarkings(Span.class);
     }
 }
