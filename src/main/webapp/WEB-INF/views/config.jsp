@@ -260,6 +260,8 @@
                     $('[data-toggle="tooltip"]').tooltip();
 
                     loadDatasets();
+                    loadMatching();
+                    loadAnnotator();
                 });
     }
     function loadMatching() {
@@ -308,6 +310,24 @@
                     $('[data-toggle="tooltip"]').tooltip();
 
                 });
+    }
+    function loadAnnotator() {
+        $('#annotator').html('');
+        $.getJSON('${annotators}', {
+            experimentType : $('#type').val(),
+            ajax : 'false'
+        }, function(data) {
+            var formattedData = [];
+            for (var i = 0; i < data.length; i++) {
+                var dat = {};
+                dat.label = data[i];
+                dat.value = data[i];
+                formattedData.push(dat);
+            }
+            $('#annotator').multiselect('dataprovider', formattedData);
+            <c:url value="/file/upload" var="upload"/>
+            $('#annotator').multiselect('rebuild');
+        });
     }
 
     function loadDatasets() {
@@ -369,6 +389,15 @@
     };
 
     function checkExperimentConfiguration() {
+        //fetch list of selected and manually added annotators
+        var annotatorMultiselect = $('#annotator option:selected');
+        var annotator = [];
+        $(annotatorMultiselect).each(function(index, annotatorMultiselect) {
+            annotator.push([ $(this).val() ]);
+        });
+        $("#annotatorList li span.li_content").each(function() {
+            annotator.push($(this).text());
+        });
         //fetch list of selected and manually added datasets
         var datasetMultiselect = $('#setdata option:selected');
         var dataset = [];
@@ -449,9 +478,13 @@
         .ready(
             function() {
                 // load dropdowns when document loaded
+                $('#matching').multiselect();
+                $('#annotator').multiselect();
                 $('#type').multiselect();
                 $('#setdata').multiselect();
                 // listeners for dropdowns
+                $('#type').change(loadMatching);
+                $('#type').change(loadAnnotator);
                 $('#type').change(loadDatasets);
                 loadExperimentTypes();
                 //supervise configuration of experiment and let it only run
@@ -503,6 +536,28 @@
                 $('#submit')
                     .click(
                         function() {
+                            //fetch list of selected and manually added annotators
+                            var annotatorMultiselect = $('#annotator option:selected');
+                            var annotator = [];
+                            $(annotatorMultiselect)
+                                .each(
+                                    function(index,
+                                             annotatorMultiselect) {
+                                        annotator
+                                            .push($(
+                                                this)
+                                                .val());
+                                    });
+                            $(
+                                "#annotatorList li span.li_content")
+                                .each(
+                                    function() {
+                                        annotator
+                                            .push("NIFWS_"
+                                                + $(
+                                                    this)
+                                                    .text());
+                                    });
                             //fetch list of selected and manually added datasets
                             var datasetMultiselect = $('#setdata option:selected');
                             var dataset = [];
@@ -539,13 +594,15 @@
                                     });
                             var type = $('#type').val() ? $(
                                 '#type').val()
-                                : "D2KB";
+                                : "MT";
                             var matching = $('#matching')
                                 .val() ? $('#matching')
                                     .val()
-                                : "Ma - strong annotation match";
+                                : "No Matching";
                             var data = {};
                             data.type = type;
+                            data.matching = matching;
+                            data.annotator = annotator;
                             data.dataset = dataset;
                             data.hypothesis = hypothesis;
                             $

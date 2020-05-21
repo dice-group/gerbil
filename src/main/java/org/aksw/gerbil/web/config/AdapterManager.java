@@ -16,9 +16,6 @@
  */
 package org.aksw.gerbil.web.config;
 
-import java.util.List;
-import java.util.Set;
-
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
@@ -34,6 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Set;
+
 @Component
 public class AdapterManager {
 
@@ -44,6 +44,9 @@ public class AdapterManager {
     private static final String UPLOADED_FILES_PATH_PROPERTY_KEY = "org.aksw.gerbil.UploadPath";
     private static final String UPLOADED_DATASET_SUFFIX = " (uploaded)";
     private static final String UPLOADED_DATASET_PREFIX = "NIFDS_";
+    private static final String HYPOTHESIS_PREFIX = "HF_";
+    private static final String UPLOADED_HYPOTHESIS_SUFFIX = " (uploaded)";
+
 
     @Autowired
     @Qualifier("annotators")
@@ -101,6 +104,46 @@ public class AdapterManager {
                 }
                 // return new NIFWebserviceAnnotatorConfiguration(uri, name,
                 // false, type);
+            }
+            if (name.startsWith(HYPOTHESIS_PREFIX)) {
+                String uploadedFilesPath = GerbilConfiguration.getInstance()
+                        .getString(UPLOADED_FILES_PATH_PROPERTY_KEY);
+                if (uploadedFilesPath == null) {
+                    LOGGER.error(
+                            "Couldn't process uploaded file request, because the upload path is not set (\"{}\"). Returning null.",
+                            UPLOADED_FILES_PATH_PROPERTY_KEY);
+                    return null;
+                }
+                // This describes a hypothesis file
+                // "name(file)(type)(dataset)"
+                int brackets[] = getLastBracketsContent(name, name.length() - 1);
+                if (brackets == null) {
+                    LOGGER.error(
+                            "Couldn't parse the definition of this hypothesis file \"" + name + "\". Returning null.");
+                    return null;
+                }
+                String datasetName = name.substring(brackets[0] + 1, brackets[1]);
+                brackets = getLastBracketsContent(name, brackets[0]);
+                if (brackets == null) {
+                    LOGGER.error(
+                            "Couldn't parse the definition of this hypothesis file \"" + name + "\". Returning null.");
+                    return null;
+                }
+                // search for the file name
+                brackets = getLastBracketsContent(name, brackets[0]);
+
+                String fileName = name.substring(brackets[0] + 1, brackets[1]);
+                name = name.substring(HYPOTHESIS_PREFIX.length(), brackets[0]) + UPLOADED_HYPOTHESIS_SUFFIX;
+                /*try {
+                    return new DatasetConfigurationImpl(datasetName, false,
+                                    NewstestDataset.class.getConstructor(String.class, String.class),
+                                    new Object[] { datasetName, uploadedFilesPath + fileName},
+                                    ExperimentType.MT, null, null);
+                } catch (Exception e) {
+                    LOGGER.error(
+                    return null;
+                }
+                 */
             }
             LOGGER.error("Got an unknown annotator name \"" + name + "\". Returning null.");
         }
@@ -168,6 +211,23 @@ public class AdapterManager {
         this.entityCheckerManager = entityCheckerManager;
     }
 
+    /**
+     * Returns the positions of the last bracket pair searching backwards from
+     * the given position or null if no pair could be found
+     *
+     * @return
+     */
+    protected static int[] getLastBracketsContent(String input, int pos) {
+        int endPos = input.lastIndexOf(')', pos);
+        if (endPos < 0) {
+            return null;
+        }
+        int startPos = input.lastIndexOf('(', endPos);
+        if (startPos < 0) {
+            return null;
+        }
+        return new int[] { startPos, endPos };
+    }
     public SameAsRetriever getGlobalRetriever() {
         return globalRetriever;
     }

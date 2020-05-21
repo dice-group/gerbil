@@ -173,8 +173,7 @@ public class MainController {
         for (int i = 0; i < jsonHypothesis.size(); i++) {
             hypothesis[i] = (String) jsonHypothesis.get(i);
         }
-
-        ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[datasets.length+hypothesis.length];
+        ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[annotators.length * datasets.length];
         int count = 0;
         for (String annotator : annotators) {
             for (String dataset : datasets) {
@@ -183,13 +182,6 @@ public class MainController {
                 LOGGER.debug("Created config: {}", configs[count]);
                 ++count;
             }
-        }
-
-       for (String hypothesisFile : hypothesis) {
-            configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(hypothesisFile, type),
-                    adapterManager.getDatasetConfig(hypothesisFile, type), type, getMatching(matching));
-            LOGGER.debug("Created config: {}", configs[count]);
-            ++count;
         }
 
         String experimentId = IDCreator.getInstance().createID();
@@ -276,7 +268,7 @@ public class MainController {
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ANNOTATION_MATCH));
         case Rc2KB:
         case Sc2KB:
-        	
+
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
         case OKE_Task1:
         case OKE_Task2:
