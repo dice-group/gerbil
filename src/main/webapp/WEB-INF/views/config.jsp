@@ -261,7 +261,6 @@
 
                     loadDatasets();
                     loadMatching();
-                    loadAnnotator();
                 });
     }
     function loadMatching() {
@@ -311,25 +310,6 @@
 
                 });
     }
-    function loadAnnotator() {
-        $('#annotator').html('');
-        $.getJSON('${annotators}', {
-            experimentType : $('#type').val(),
-            ajax : 'false'
-        }, function(data) {
-            var formattedData = [];
-            for (var i = 0; i < data.length; i++) {
-                var dat = {};
-                dat.label = data[i];
-                dat.value = data[i];
-                formattedData.push(dat);
-            }
-            $('#annotator').multiselect('dataprovider', formattedData);
-            <c:url value="/file/upload" var="upload"/>
-            $('#annotator').multiselect('rebuild');
-        });
-    }
-
     function loadDatasets() {
         $(document).on('click', '.dropdown-submenu', function (e) {
             $(this).find('ul').toggle();
@@ -389,15 +369,6 @@
     };
 
     function checkExperimentConfiguration() {
-        //fetch list of selected and manually added annotators
-        var annotatorMultiselect = $('#annotator option:selected');
-        var annotator = [];
-        $(annotatorMultiselect).each(function(index, annotatorMultiselect) {
-            annotator.push([ $(this).val() ]);
-        });
-        $("#annotatorList li span.li_content").each(function() {
-            annotator.push($(this).text());
-        });
         //fetch list of selected and manually added datasets
         var datasetMultiselect = $('#setdata option:selected');
         var dataset = [];
@@ -423,68 +394,13 @@
         }
     }
 
-    function defineNIFAnnotator() {
-        // hide all message that might be outdated
-        $('#warningEmptyAnnotator').hide();
-        $('#infoAnnotatorTest').hide();
-        $('#dangerAnnotatorTestError').hide();
-
-        var name = $('#nameAnnotator').val();
-        var uri = $('#URIAnnotator').val();
-        // check that URL and name are set
-        if (name === '' || uri === '') {
-            $('#warningEmptyAnnotator').show();
-        } else {
-            $('#infoAnnotatorTest').show();
-            $
-                .getJSON(
-                    '${testNifWs}',
-                    {
-                        experimentType : $('#type').val(),
-                        url : uri
-                    },
-                    function(data) {
-                        $('#infoAnnotatorTest').hide();
-                        if (data.testOk === true) {
-                            $('#annotatorList')
-                                .append(
-                                    "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
-                                    + name
-                                    + "("
-                                    + uri
-                                    + ")</span></li>");
-                            var listItems = $('#annotatorList > li > span');
-                            for (var i = 0; i < listItems.length; i++) {
-                                listItems[i].onclick = function() {
-                                    this.parentNode.parentNode
-                                        .removeChild(this.parentNode);
-                                    checkExperimentConfiguration();
-                                };
-                            }
-                            $('#nameAnnotator').val('');
-                            $('#URIAnnotator').val('');
-                        } else {
-                            $('span#annotatorTestErrorMsg').text(
-                                data.errorMsg);
-                            $('#dangerAnnotatorTestError').show();
-                        }
-                    });
-        }
-        //check showing run button if something is changed in dropdown menu
-        checkExperimentConfiguration();
-    }
-
     $(document)
         .ready(
             function() {
                 // load dropdowns when document loaded
-                $('#matching').multiselect();
-                $('#annotator').multiselect();
                 $('#type').multiselect();
                 $('#setdata').multiselect();
                 // listeners for dropdowns
-                $('#type').change(loadMatching);
-                $('#type').change(loadAnnotator);
                 $('#type').change(loadDatasets);
                 loadExperimentTypes();
                 //supervise configuration of experiment and let it only run
@@ -501,12 +417,6 @@
                 $('#disclaimerCheckbox').change(function() {
                     checkExperimentConfiguration();
                 });
-
-                //if add button is clicked check whether there is a name and a uri
-                $('#warningEmptyAnnotator').hide();
-                $('#infoAnnotatorTest').hide();
-                $('#dangerAnnotatorTestError').hide();
-                $('#addAnnotator').click(defineNIFAnnotator);
                 //if add button is clicked check whether there is a name and a uri
                 $('#warningEmptyDataset').hide();
                 $('#fileupload').click(function() {
