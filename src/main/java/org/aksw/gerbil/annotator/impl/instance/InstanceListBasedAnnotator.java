@@ -1,6 +1,7 @@
 package org.aksw.gerbil.annotator.impl.instance;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,6 +123,9 @@ public class InstanceListBasedAnnotator extends AbstractAnnotator implements A2K
 	@Override
 	public List<Marking> performOKE2018Task4(Document document) throws GerbilException {
         return getDocumentMarkings(document.getDocumentURI(), document.getText().length(), Marking.class);
-
+	}
+	
+	public Collection<Document> getInstances() {
+	    return uriInstanceMapping.values();
 	}
 }

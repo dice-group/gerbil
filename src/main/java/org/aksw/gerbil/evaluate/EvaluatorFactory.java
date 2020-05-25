@@ -16,59 +16,22 @@
  */
 package org.aksw.gerbil.evaluate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.datatypes.marking.ClassifiedMeaning;
-import org.aksw.gerbil.datatypes.marking.ClassifiedSpanMeaning;
-import org.aksw.gerbil.datatypes.marking.MarkingClasses;
-import org.aksw.gerbil.evaluate.impl.ClassConsideringFMeasureCalculator;
-import org.aksw.gerbil.evaluate.impl.ClassifyingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
-import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
-import org.aksw.gerbil.evaluate.impl.DoubleResultComparator;
-import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
-import org.aksw.gerbil.evaluate.impl.GSInKBClassifyingEvaluatorDecorator;
-import org.aksw.gerbil.evaluate.impl.HierarchicalFMeasureCalculator;
-import org.aksw.gerbil.evaluate.impl.SpanMergingEvaluatorDecorator;
-import org.aksw.gerbil.evaluate.impl.SubTaskAverageCalculator;
-import org.aksw.gerbil.evaluate.impl.filter.MarkingFilteringEvaluatorDecorator;
-import org.aksw.gerbil.evaluate.impl.filter.SearcherBasedNotMatchingMarkingFilter;
-import org.aksw.gerbil.matching.Matching;
-import org.aksw.gerbil.matching.MatchingsSearcher;
-import org.aksw.gerbil.matching.MatchingsSearcherFactory;
-import org.aksw.gerbil.matching.impl.ClassifiedMeaningMatchingsSearcher;
-import org.aksw.gerbil.matching.impl.CompoundMatchingsSearcher;
+import org.aksw.gerbil.evaluate.impl.mt.MachineTranslationEvaluator;
 import org.aksw.gerbil.matching.impl.EqualsBasedMatchingsSearcher;
-import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
-import org.aksw.gerbil.matching.impl.StrongSpanMatchingsSearcher;
-import org.aksw.gerbil.matching.impl.clas.EmergingEntityMeaningClassifier;
-import org.aksw.gerbil.matching.impl.clas.UriBasedMeaningClassifier;
-import org.aksw.gerbil.semantic.kb.ExactWhiteListBasedUriKBClassifier;
-import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
-import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.Meaning;
-import org.aksw.gerbil.transfer.nif.MeaningSpan;
 import org.aksw.gerbil.transfer.nif.Relation;
-import org.aksw.gerbil.transfer.nif.Span;
-import org.aksw.gerbil.transfer.nif.TypedSpan;
-import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
-import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.vocabulary.OWL;
-import org.apache.jena.vocabulary.RDFS;
 
-
-@SuppressWarnings("deprecation")
 public class EvaluatorFactory {
 
     // private static final Logger LOGGER =
@@ -107,38 +70,34 @@ public class EvaluatorFactory {
         return createEvaluator(type, configuration, dataset, globalClassifier, inferencer);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "rawtypes" })
     public Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
             UriKBClassifier classifier, SubClassInferencer inferencer) {
         switch (type) {
         case MT:
-        	return new ConfidenceBasedFMeasureCalculator<Relation>(new MatchingsCounterImpl<Relation>(
-        			 new EqualsBasedMatchingsSearcher<Relation>()));
+            return new ConfidenceBasedFMeasureCalculator<Relation>(
+                    new MatchingsCounterImpl<Relation>(new EqualsBasedMatchingsSearcher<Relation>()));
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
         }
         }
     }
 
-    @SuppressWarnings({ "unchecked" })
     protected void addSubTaskEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration,
             Dataset dataset) {
-        ExperimentTaskConfiguration subTaskConfig;
+//        ExperimentTaskConfiguration subTaskConfig;
         switch (configuration.type) {
-
-       
-            // Since the OKE challenge tasks are using the results of their
-            // subtasks, the definition of subtasks is part of their evaluation
-            // creation
         case MT:
-
+            evaluators.add(new MachineTranslationEvaluator());
+            return;
         default: {
             throw new RuntimeException();
         }
         }
     }
 
-    public void addEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration, Dataset dataset) {
+    public void addEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration,
+            Dataset dataset) {
         evaluators.add(createEvaluator(configuration.type, configuration, dataset));
         addSubTaskEvaluators(evaluators, configuration, dataset);
     }

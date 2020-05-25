@@ -16,23 +16,26 @@
  */
 package org.aksw.gerbil.web.config;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
+import org.aksw.gerbil.annotator.impl.instance.InstanceListBasedAnnotator;
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
+import org.aksw.gerbil.dataset.InstanceListBasedDataset;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
-import org.aksw.gerbil.dataset.impl.nif.NIFFileDatasetConfig;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Set;
 
 @Component
 public class AdapterManager {
@@ -46,7 +49,6 @@ public class AdapterManager {
     private static final String UPLOADED_DATASET_PREFIX = "NIFDS_";
     private static final String HYPOTHESIS_PREFIX = "HF_";
     private static final String UPLOADED_HYPOTHESIS_SUFFIX = " (uploaded)";
-
 
     @Autowired
     @Qualifier("annotators")
@@ -122,7 +124,7 @@ public class AdapterManager {
                             "Couldn't parse the definition of this hypothesis file \"" + name + "\". Returning null.");
                     return null;
                 }
-                String datasetName = name.substring(brackets[0] + 1, brackets[1]);
+//                String datasetName = name.substring(brackets[0] + 1, brackets[1]);
                 brackets = getLastBracketsContent(name, brackets[0]);
                 if (brackets == null) {
                     LOGGER.error(
@@ -134,16 +136,14 @@ public class AdapterManager {
 
                 String fileName = name.substring(brackets[0] + 1, brackets[1]);
                 name = name.substring(HYPOTHESIS_PREFIX.length(), brackets[0]) + UPLOADED_HYPOTHESIS_SUFFIX;
-                /*try {
-                    return new DatasetConfigurationImpl(datasetName, false,
-                                    NewstestDataset.class.getConstructor(String.class, String.class),
-                                    new Object[] { datasetName, uploadedFilesPath + fileName},
-                                    ExperimentType.MT, null, null);
+                try {
+                    return new AnnotatorConfigurationImpl(name, false,
+                            InstanceListBasedAnnotator.class.getConstructor(String.class, List.class),
+                            new Object[] { name, Arrays.asList(new DocumentImpl(fileName)) }, type);
                 } catch (Exception e) {
-                    LOGGER.error(
+                    LOGGER.error("Error while trying to create annotator configuration \"" + name + "\". Returning null.", e);
                     return null;
                 }
-                 */
             }
             LOGGER.error("Got an unknown annotator name \"" + name + "\". Returning null.");
         }
@@ -179,7 +179,9 @@ public class AdapterManager {
                 String uri = uploadedFilesPath + name.substring(pos + 1, name.length() - 1);
                 // remove dataset prefix from the name
                 name = name.substring(UPLOADED_DATASET_PREFIX.length(), pos) + UPLOADED_DATASET_SUFFIX;
-                return new NIFFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
+                // return new NIFFileDatasetConfig(name, uri, false, type, entityCheckerManager,
+                // globalRetriever);
+                return new InstanceListBasedDataset(name, Arrays.asList(new DocumentImpl(uri)), type);
             }
             LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
             return null;
@@ -212,8 +214,8 @@ public class AdapterManager {
     }
 
     /**
-     * Returns the positions of the last bracket pair searching backwards from
-     * the given position or null if no pair could be found
+     * Returns the positions of the last bracket pair searching backwards from the
+     * given position or null if no pair could be found
      *
      * @return
      */
@@ -228,6 +230,7 @@ public class AdapterManager {
         }
         return new int[] { startPos, endPos };
     }
+
     public SameAsRetriever getGlobalRetriever() {
         return globalRetriever;
     }

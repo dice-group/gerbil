@@ -16,27 +16,38 @@
  */
 package org.aksw.gerbil.execute;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.aksw.gerbil.annotator.Annotator;
-import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
-import org.aksw.gerbil.annotator.decorator.SingleInstanceSecuringAnnotatorDecorator;
-import org.aksw.gerbil.annotator.decorator.TimeMeasuringAnnotatorDecorator;
+import org.aksw.gerbil.annotator.impl.instance.InstanceListBasedAnnotator;
+import org.aksw.gerbil.data.SimpleFileRef;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
-import org.aksw.gerbil.datatypes.*;
-import org.aksw.gerbil.evaluate.*;
+import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
+import org.aksw.gerbil.datatypes.ExperimentTaskState;
+import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
+import org.aksw.gerbil.datatypes.TaskResult;
+import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
+import org.aksw.gerbil.evaluate.EvaluationResult;
+import org.aksw.gerbil.evaluate.EvaluationResultContainer;
+import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.evaluate.IntEvaluationResult;
+import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.SameAsRetrieverUtils;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is a single experiment designed as {@link Task} to be able to run
@@ -93,19 +104,19 @@ public class ExperimentTask implements Task {
 			}
 			Annotator decoratedAnnotator = annotator;
 			// Add decroatoring evaluators
-			TimeMeasuringAnnotatorDecorator timeMeasurer = TimeMeasuringAnnotatorDecorator
-					.createDecorator(configuration.type, decoratedAnnotator);
-			decoratedAnnotator = timeMeasurer;
-			ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator
-					.createDecorator(configuration.type, decoratedAnnotator, dataset.size());
-			decoratedAnnotator = errorCounter;
-			decoratedAnnotator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type,
-					decoratedAnnotator);
+//			TimeMeasuringAnnotatorDecorator timeMeasurer = TimeMeasuringAnnotatorDecorator
+//					.createDecorator(configuration.type, decoratedAnnotator);
+//			decoratedAnnotator = timeMeasurer;
+//			ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator
+//					.createDecorator(configuration.type, decoratedAnnotator, dataset.size());
+//			decoratedAnnotator = errorCounter;
+//			decoratedAnnotator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type,
+//					decoratedAnnotator);
 
 			List<Evaluator<?>> evaluators = new ArrayList<Evaluator<?>>();
 			evFactory.addEvaluators(evaluators, configuration, dataset);
-			evaluators.add(timeMeasurer);
-			evaluators.add(errorCounter);
+//			evaluators.add(timeMeasurer);
+//			evaluators.add(errorCounter);
 
 			// Prepare dataset for the experiment
 			// prepareDataset(dataset);
@@ -159,12 +170,10 @@ public class ExperimentTask implements Task {
 	 * @param results
 	 * @param annotatorSameAsRetriever
 	 */
-	@SuppressWarnings("deprecation")
 	protected void prepareAnnotatorResults(List<? extends List<? extends Meaning>> results,
 			SameAsRetriever annotatorSameAsRetriever) {
 		switch (configuration.type) {
 		// relations need to be handled extra
-
 			case MT:
 		default:
 			// nothing to do
@@ -208,15 +217,27 @@ public class ExperimentTask implements Task {
 		}
 	}
 
-	@SuppressWarnings({ "deprecation" })
 	protected EvaluationResult runExperiment(Dataset dataset, Annotator annotator,
 			List<Evaluator<? extends Marking>> evaluators, ExperimentTaskState state) throws GerbilException {
 		EvaluationResult evalResult = null;
 		switch (configuration.type) {
-
 			case MT:{
-				break;
+                List<List<SimpleFileRef>> results = new ArrayList<List<SimpleFileRef>>(dataset.size());
+                List<List<SimpleFileRef>> goldStandard = new ArrayList<List<SimpleFileRef>>(dataset.size());
+                
+                // We assume that both lists only have one instance!
+                Document tempDocument;
+                tempDocument = dataset.getInstances().get(0);
+                goldStandard.add(tempDocument.getMarkings(SimpleFileRef.class));
+                
+                Collection<Document> documents = ((InstanceListBasedAnnotator) annotator).getInstances();
+                tempDocument = documents.iterator().next();
+                results.add(tempDocument.getMarkings(SimpleFileRef.class));
 
+                taskState.increaseExperimentStepCount();
+                
+                evalResult = evaluate(evaluators, results, goldStandard);
+				break;
 			}
 		default:
 			throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",

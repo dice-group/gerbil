@@ -158,7 +158,7 @@ public class MainController {
             return null;
         }
         String matching = (String) configuration.get("matching");
-        JSONArray jsonAnnotators = (JSONArray) configuration.get("annotator");
+        JSONArray jsonAnnotators = (JSONArray) configuration.get("hypothesis");
         String[] annotators = new String[jsonAnnotators.size()];
         for (int i = 0; i < jsonAnnotators.size(); i++) {
             annotators[i] = (String) jsonAnnotators.get(i);
@@ -168,11 +168,11 @@ public class MainController {
         for (int i = 0; i < jsonDataset.size(); i++) {
             datasets[i] = (String) jsonDataset.get(i);
         }
-        JSONArray jsonHypothesis = (JSONArray) configuration.get("hypothesis");
-        String[] hypothesis = new String[jsonHypothesis.size()];
-        for (int i = 0; i < jsonHypothesis.size(); i++) {
-            hypothesis[i] = (String) jsonHypothesis.get(i);
-        }
+//        JSONArray jsonHypothesis = (JSONArray) configuration.get("hypothesis");
+//        String[] hypothesis = new String[jsonHypothesis.size()];
+//        for (int i = 0; i < jsonHypothesis.size(); i++) {
+//            hypothesis[i] = (String) jsonHypothesis.get(i);
+//        }
         ExperimentTaskConfiguration[] configs = new ExperimentTaskConfiguration[annotators.length * datasets.length];
         int count = 0;
         for (String annotator : annotators) {
