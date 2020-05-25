@@ -30,42 +30,8 @@ public class UriExport {
     private static final EntityCheckerManager ENTITY_CHECKER_MANAGER = new EntityCheckerManagerImpl();
 
     public static void main(String[] args) {
-        PrintStream pout = null;
-        try {
-            pout = new PrintStream(new BufferedOutputStream(new FileOutputStream("exportedURIs.txt")));
 
-            AdapterList<DatasetConfiguration> adapterList = DatasetsConfig.datasets(ENTITY_CHECKER_MANAGER,
-                    SAME_AS_RETRIEVER);
-            List<DatasetConfiguration> datasetConfigs = null;
-            datasetConfigs = adapterList.getAdaptersForExperiment(ExperimentType.D2KB);
-            for (DatasetConfiguration datasetConfig : datasetConfigs) {
-                try {
-                    Dataset dataset = datasetConfig.getDataset(ExperimentType.D2KB);
-                    printDatasetUris(dataset, pout);
-                    LOGGER.info("Finished {}", dataset.getName());
-                } catch (GerbilException e) {
-                    LOGGER.error("Couldn't load dataset. It will be ignored.", e);
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.error("Error while writing file. Aborting.", e);
-        } finally {
-            IOUtils.closeQuietly(pout);
-        }
     }
 
-    private static void printDatasetUris(Dataset dataset, PrintStream pout) {
-        for (Document document : dataset.getInstances()) {
-            String text = document.getText();
-            for (MeaningSpan meaning : document.getMarkings(MeaningSpan.class)) {
-                for (String uri : meaning.getUris()) {
-                    pout.print(uri);
-                    pout.print('\t');
-                    pout.print(text.substring(meaning.getStartPosition(),
-                            meaning.getStartPosition() + meaning.getLength()));
-                    pout.println();
-                }
-            }
-        }
-    }
+
 }

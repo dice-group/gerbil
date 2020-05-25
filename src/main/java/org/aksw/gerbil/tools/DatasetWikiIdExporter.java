@@ -78,33 +78,13 @@ public class DatasetWikiIdExporter {
     }
 
     private IntOpenHashSet analyzeAsC2W(DatasetConfiguration config) throws GerbilException {
-        D2WDataset dataset = (D2WDataset) config.getDataset(ExperimentType.D2KB);
-        if (dataset == null) {
-            return null;
-        }
-        List<HashSet<Annotation>> goldStandard = dataset.getD2WGoldStandardList();
-        IntOpenHashSet ids = new IntOpenHashSet();
-        for (HashSet<Annotation> annotations : goldStandard) {
-            for (Annotation annotation : annotations) {
-                ids.add(annotation.getConcept());
-            }
-        }
-        return ids;
+
+        return null;
     }
 
     private IntOpenHashSet analyzeAsD2W(DatasetConfiguration config) throws GerbilException {
-        C2WDataset dataset = (C2WDataset) config.getDataset(ExperimentType.C2KB);
-        if (dataset == null) {
-            return null;
-        }
-        List<HashSet<Tag>> goldStandard = dataset.getC2WGoldStandardList();
-        IntOpenHashSet ids = new IntOpenHashSet();
-        for (HashSet<Tag> tags : goldStandard) {
-            for (Tag tag : tags) {
-                ids.add(tag.getConcept());
-            }
-        }
-        return ids;
+
+        return null;
     }
 
     private void printIds(IntOpenHashSet ids, PrintStream output) {

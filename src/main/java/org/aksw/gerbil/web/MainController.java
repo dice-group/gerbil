@@ -246,55 +246,6 @@ public class MainController {
     public @ResponseBody ModelMap expTypes() {
         return new ModelMap("ExperimentType", availableExperimentTypes);
     }
-
-    @SuppressWarnings("deprecation")
-    @RequestMapping("/matchings")
-    public @ResponseBody ModelMap matchingsForExpType(@RequestParam(value = "experimentType") String experimentType) {
-        ExperimentType type = null;
-        try {
-            type = ExperimentType.valueOf(experimentType);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", experimentType);
-            return null;
-        }
-        switch (type) {
-        case C2KB:
-        case RE:
-            return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
-        case D2KB:
-        case ETyping:
-            // Mw will not be shown since the positions are always exact and
-            // thus it works like Ma
-            return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ANNOTATION_MATCH));
-        case Rc2KB:
-        case Sc2KB:
-
-            return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
-        case OKE_Task1:
-        case OKE_Task2:
-        case A2KB:
-        case ERec:
-        case OKE2018Task4:
-        case RT2KB:
-        case Sa2KB:
-            return new ModelMap("Matching",
-                    Lists.newArrayList(Matching.WEAK_ANNOTATION_MATCH, Matching.STRONG_ANNOTATION_MATCH));
-            case MT:
-        default:
-            return new ModelMap("Matching", Lists.newArrayList("none"));
-        }
-    }
-
-    @RequestMapping("/annotators")
-    public @ResponseBody List<String> annotatorsForExpType(
-            @RequestParam(value = "experimentType") String experimentType) {
-        Set<String> annotatorsForExperimentType = adapterManager
-                .getAnnotatorNamesForExperiment(ExperimentType.valueOf(experimentType));
-        List<String> list = Lists.newArrayList(annotatorsForExperimentType);
-        Collections.sort(list);
-        return list;
-    }
-
     @RequestMapping("/datasets")
     public @ResponseBody List<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
         ExperimentType type = null;

@@ -64,31 +64,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 	@SuppressWarnings("deprecation")
 	public static SingleInstanceSecuringAnnotatorDecorator createDecorator(ExperimentType type, Annotator annotator) {
 		switch (type) {
-		case C2KB:
-			return new SingleInstanceSecuringC2KBAnnotator((C2KBAnnotator) annotator);
-		case A2KB:
-			return new SingleInstanceSecuringA2KBAnnotator((A2KBAnnotator) annotator);
-		case D2KB:
-			return new SingleInstanceSecuringD2KBAnnotator((D2KBAnnotator) annotator);
-		case ERec:
-			return new SingleInstanceSecuringEntityRecognizer((EntityRecognizer) annotator);
-		case ETyping:
-			return new SingleInstanceSecuringEntityTyper((EntityTyper) annotator);
-		case OKE_Task1:
-			return new SingleInstanceSecuringOKETask1Annotator((OKETask1Annotator) annotator);
-		case OKE_Task2:
-			return new SingleInstanceSecuringOKETask2Annotator((OKETask2Annotator) annotator);
-		case RT2KB:
-			return new SingleInstanceSecuringRT2KBAnnotator((RT2KBAnnotator) annotator);
-		case RE:
-			return new SingleInstanceSecuringREAnnotator((REAnnotator) annotator);
-		case OKE2018Task4:
-			return new SingleInstanceSecuringOKE2018Task4Annotator((OKE2018Task4Annotator) annotator);
-		case Rc2KB:
-			break;
-		case Sa2KB:
-			break;
-		case Sc2KB:
+
+		case MT:
 			break;
 		default:
 			break;

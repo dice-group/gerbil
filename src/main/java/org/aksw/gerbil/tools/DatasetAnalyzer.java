@@ -87,19 +87,7 @@ public class DatasetAnalyzer {
     }
 
     public void analyzeDataset(DatasetConfiguration config) throws GerbilException {
-        if (config.isApplicableForExperiment(ExperimentType.D2KB)) {
-            analyze(config, ExperimentType.D2KB);
-        } else if (config.isApplicableForExperiment(ExperimentType.RE)) {
-            analyze(config, ExperimentType.RE);
-        } else if (config.isApplicableForExperiment(ExperimentType.ETyping)) {
-            analyze(config, ExperimentType.ETyping);
-        } else if (config.isApplicableForExperiment(ExperimentType.OKE_Task2)) {
-            analyze(config, ExperimentType.OKE_Task2);
-        } else if (config.isApplicableForExperiment(ExperimentType.C2KB)) {
-            analyze(config, ExperimentType.C2KB);
-        } else if (config.isApplicableForExperiment(ExperimentType.ERec)) {
-            analyze(config, ExperimentType.ERec);
-        }else if (config.isApplicableForExperiment(ExperimentType.MT)) {
+        if (config.isApplicableForExperiment(ExperimentType.MT)) {
             analyze(config, ExperimentType.MT);
         }
         else {

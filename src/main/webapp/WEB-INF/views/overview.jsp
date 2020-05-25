@@ -68,7 +68,6 @@ table {
 	<div class="container">
 		<!-- mappings to URLs in back-end controller -->
 		<c:url var="experimentoverview" value="/experimentoverview" />
-		<c:url var="matchings" value="/matchings" />
 		<c:url var="exptypes" value="/exptypes" />
 
 		<%@include file="navbar.jsp"%>
@@ -81,12 +80,6 @@ table {
 				</div>
 			</div>
 
-			<div class="col-md-12">
-				<div class="control-group">
-					<label class="col-md-4 control-label">Matching</label>
-					<div id="matching" class="col-md-8"></div>
-				</div>
-			</div>
 			<div class="col-md-12">
 				<div class="control-group">
 					<label class="col-md-4 control-label"></label>
@@ -139,50 +132,6 @@ table {
 	</div>
 
 	<script type="text/javascript">
-		function loadMatchings() {
-			$
-					.getJSON(
-							'${matchings}',
-							{
-								experimentType : $('#expTypes input:checked')
-										.val(),
-								ajax : 'false'
-							},
-							function(data) {
-								var htmlMatchings = "";
-								for (var i = 0; i < data.Matching.length; i++) {
-									htmlMatchings += "<label class=\"btn btn-primary\" >";
-									htmlMatchings += " <input class=\"toggle\" type=\"radio\" name=\"matchingType\" id=\"" + data.Matching[i].name + "\" value=\"" + data.Matching[i].name + "\" >"
-											+ data.Matching[i].label;
-									htmlMatchings += "</label>";
-								}
-								$('#matching').html(htmlMatchings);
-								$('#matching input')[0].checked = true;
-								$('#matching label')
-										.each(
-												function(index) {
-													for (var i = 0; i < data.Matching.length; i++) {
-														if (data.Matching[i].name == $(
-																this).find(
-																'input').val()) {
-															$(this)
-																	.attr(
-																			'data-toggle',
-																			'tooltip')
-																	.attr(
-																			'data-placement',
-																			'top')
-																	.attr(
-																			'title',
-																			data.Matching[i].description);
-														}
-													}
-												});
-
-								$('[data-toggle="tooltip"]').tooltip();
-							});
-		};
-
 		function loadExperimentTypes() {
 			$
 					.getJSON(

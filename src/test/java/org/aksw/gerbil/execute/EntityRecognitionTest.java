@@ -113,15 +113,5 @@ public class EntityRecognitionTest extends AbstractExperimentTaskTest {
         this.matching = matching;
     }
 
-    @Test
-    public void test() {
-        int experimentTaskId = 1;
-        SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
-        ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.ERec),
-                new InstanceListBasedDataset(Arrays.asList(goldStandards), ExperimentType.ERec), ExperimentType.ERec, matching);
-        runTest(experimentTaskId, experimentDAO, null, new EvaluatorFactory(), configuration,
-                new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
-    }
 
 }

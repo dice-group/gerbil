@@ -59,49 +59,7 @@ public class NIFWSTestingController {
         document.setText(NIF_WS_TEST_TEXT);
         try {
             switch (ExperimentType.valueOf(experimentType)) {
-            case Rc2KB: // falls through
-            case Sc2KB:
-            case C2KB: {
-                annotator.performC2KB(document);
-                break;
-            }
-            case D2KB: {
-                annotator.performD2KBTask(document);
-                break;
-            }
-            case A2KB:
-            case Sa2KB: {
-                annotator.performA2KBTask(document);
-                break;
-            }
-            case ERec: {
-                annotator.performRecognition(document);
-                break;
-            }
-            case OKE_Task1: {
-                annotator.performTask1(document);
-                break;
-            }
-            case OKE_Task2: {
-                annotator.performTask2(document);
-                break;
-            }
-            case ETyping: {
-                annotator.performTyping(document);
-                break;
-            }
-            case RT2KB: {
-                annotator.performRT2KBTask(document);
-                break;
-            }
-            case RE: {
-            	annotator.performRETask(document);
-            	break;
-            }
-            case OKE2018Task4: {
-            	annotator.performOKE2018Task4(document);
-            	break;
-            }
+
                 case MT: {
                     annotator.performOKE2018Task4(document);
                     break;

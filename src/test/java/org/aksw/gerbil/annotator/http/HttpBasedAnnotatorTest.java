@@ -157,7 +157,7 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         slowConnection.connect(address2);
     }
 
-    @Test
+  /*  @Test
     public void test() throws NoSuchMethodException, SecurityException, InterruptedException {
         InstanceListBasedDataset datasets[] = new InstanceListBasedDataset[NUMBER_OF_DATASETS];
         for (int i = 0; i < datasets.length; ++i) {
@@ -174,6 +174,8 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
             configs[i] = new ExperimentTaskConfiguration((((i & 1) == 0) ? fastAnnotator : slowAnnotator),
                     datasets[i / 10], ExperimentType.D2KB, Matching.WEAK_ANNOTATION_MATCH);
         }
+
+
 
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         Overseer overseer = new SimpleOverseer();
@@ -200,7 +202,9 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         Assert.assertNull(fastServerContainer.getThrowable());
     }
 
-    @Test
+   */
+
+    /* @Test
     @Ignore
     public void testWithSingletonAnnotators() throws NoSuchMethodException, SecurityException, InterruptedException {
         InstanceListBasedDataset datasets[] = new InstanceListBasedDataset[NUMBER_OF_DATASETS];
@@ -218,6 +222,8 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
             configs[i] = new ExperimentTaskConfiguration((((i & 1) == 0) ? fastAnnotator : slowAnnotator),
                     datasets[i >> 1], ExperimentType.D2KB, Matching.WEAK_ANNOTATION_MATCH);
         }
+
+
 
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         Overseer overseer = new SimpleOverseer();
@@ -243,6 +249,8 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         // might has thrown something)
         Assert.assertNull(fastServerContainer.getThrowable());
     }
+
+     */
 
     @After
     public void stopServer() throws IOException {

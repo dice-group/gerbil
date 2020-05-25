@@ -72,34 +72,6 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
             int numberOfExpectedCalls) {
         int maxErrors = (int) Math.ceil(AMOUNT_OF_TOLERATED_ERRORS * numberOfExpectedCalls);
         switch (type) {
-        case C2KB:
-            return new ErrorCountingC2KBAnnotator((C2KBAnnotator) annotator, maxErrors);
-        case A2KB:
-            return new ErrorCountingA2KBAnnotator((A2KBAnnotator) annotator, maxErrors);
-        case D2KB:
-            return new ErrorCountingD2KBAnnotator((D2KBAnnotator) annotator, maxErrors);
-        case ERec:
-            return new ErrorCountingEntityRecognizer((EntityRecognizer) annotator, maxErrors);
-        case ETyping:
-            return new ErrorCountingEntityTyper((EntityTyper) annotator, maxErrors);
-        case OKE_Task1:
-            return new ErrorCountingOKETask1Annotator((OKETask1Annotator) annotator, maxErrors);
-        case OKE_Task2:
-            return new ErrorCountingOKETask2Annotator((OKETask2Annotator) annotator, maxErrors);
-        case RT2KB:
-            return new ErrorCountingRT2KBAnnotator((RT2KBAnnotator) annotator, maxErrors);
-        case RE:
-        	return new ErrorCountingREAnnotator((REAnnotator) annotator, maxErrors);
-        case OKE2018Task4:
-        	return new ErrorCountingOKE2018Task4Annotator((OKE2018Task4Annotator) annotator, maxErrors);
-        case Rc2KB:
-            break;
-        case Sa2KB:
-            break;
-        case Sc2KB:
-            break;
-        default:
-            break;
 
         }
         // if (annotator instanceof Sc2WSystem) {

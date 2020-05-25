@@ -37,7 +37,7 @@ import org.junit.Test;
  */
 public class EmptyDatasetTest extends AbstractExperimentTaskTest {
 
-    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.A2KB;
+    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.MT;
     private static final Matching MATCHING = Matching.WEAK_ANNOTATION_MATCH;
 
     @SuppressWarnings("unchecked")

@@ -23,9 +23,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 /**
  * The matching defines how the results of an annotator are compared with the
  * annotations of the dataset.
- * 
+ *
  * @author m.roeder
- * 
+ *
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Matching implements Describable {

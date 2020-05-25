@@ -60,8 +60,6 @@
 <c:url value="/file/upload" var="upload" />
 <body class="container">
 <!-- mappings to URLs in back-end controller -->
-<c:url var="annotators" value="/annotators" />
-<c:url var="matchings" value="/matchings" />
 <c:url var="exptypes" value="/exptypes" />
 <c:url var="datasets" value="/datasets" />
 <c:url var="execute" value="/execute" />
