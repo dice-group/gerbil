@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.web.config;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -25,11 +26,13 @@ import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.annotator.impl.instance.InstanceListBasedAnnotator;
 import org.aksw.gerbil.annotator.impl.nif.NIFBasedAnnotatorWebservice;
 import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.data.SimpleFileRef;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.InstanceListBasedDataset;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,23 +128,21 @@ public class AdapterManager {
                     return null;
                 }
 //                String datasetName = name.substring(brackets[0] + 1, brackets[1]);
-                brackets = getLastBracketsContent(name, brackets[0]);
-                if (brackets == null) {
-                    LOGGER.error(
-                            "Couldn't parse the definition of this hypothesis file \"" + name + "\". Returning null.");
-                    return null;
-                }
-                // search for the file name
-                brackets = getLastBracketsContent(name, brackets[0]);
 
                 String fileName = name.substring(brackets[0] + 1, brackets[1]);
+                File file = new File(fileName);
                 name = name.substring(HYPOTHESIS_PREFIX.length(), brackets[0]) + UPLOADED_HYPOTHESIS_SUFFIX;
                 try {
                     return new AnnotatorConfigurationImpl(name, false,
                             InstanceListBasedAnnotator.class.getConstructor(String.class, List.class),
-                            new Object[] { name, Arrays.asList(new DocumentImpl(fileName)) }, type);
+                            new Object[] { name,
+                                    Arrays.asList(new DocumentImpl(fileName, file.getAbsoluteFile().toURI().toString(),
+                                            Arrays.asList((Marking) new SimpleFileRef(file)))) },
+                            type);
                 } catch (Exception e) {
-                    LOGGER.error("Error while trying to create annotator configuration \"" + name + "\". Returning null.", e);
+                    LOGGER.error(
+                            "Error while trying to create annotator configuration \"" + name + "\". Returning null.",
+                            e);
                     return null;
                 }
             }
@@ -176,12 +177,15 @@ public class AdapterManager {
                             + "\". Returning null.");
                     return null;
                 }
-                String uri = uploadedFilesPath + name.substring(pos + 1, name.length() - 1);
+                String fileName = uploadedFilesPath + name.substring(pos + 1, name.length() - 1);
+                File file = new File(fileName);
                 // remove dataset prefix from the name
                 name = name.substring(UPLOADED_DATASET_PREFIX.length(), pos) + UPLOADED_DATASET_SUFFIX;
                 // return new NIFFileDatasetConfig(name, uri, false, type, entityCheckerManager,
                 // globalRetriever);
-                return new InstanceListBasedDataset(name, Arrays.asList(new DocumentImpl(uri)), type);
+                return new InstanceListBasedDataset(name, Arrays.asList(new DocumentImpl(fileName,
+                        file.getAbsoluteFile().toURI().toString(), Arrays.asList((Marking) new SimpleFileRef(file)))),
+                        type);
             }
             LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
             return null;

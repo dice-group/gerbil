@@ -21,14 +21,10 @@ import java.util.List;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.mt.MachineTranslationEvaluator;
-import org.aksw.gerbil.matching.impl.EqualsBasedMatchingsSearcher;
-import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
-import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.apache.jena.rdf.model.ModelFactory;
 
@@ -75,8 +71,7 @@ public class EvaluatorFactory {
             UriKBClassifier classifier, SubClassInferencer inferencer) {
         switch (type) {
         case MT:
-            return new ConfidenceBasedFMeasureCalculator<Relation>(
-                    new MatchingsCounterImpl<Relation>(new EqualsBasedMatchingsSearcher<Relation>()));
+            return new MachineTranslationEvaluator();
         default: {
             throw new IllegalArgumentException("Got an unknown Experiment Type.");
         }
@@ -88,7 +83,6 @@ public class EvaluatorFactory {
 //        ExperimentTaskConfiguration subTaskConfig;
         switch (configuration.type) {
         case MT:
-            evaluators.add(new MachineTranslationEvaluator());
             return;
         default: {
             throw new RuntimeException();

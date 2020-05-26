@@ -36,13 +36,12 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     }
 
     @Override
-    public int createTask(String annotatorName, String datasetName, String experimentType, String matching,
+    public int createTask(String annotatorName, String datasetName, String experimentType,
             String experimentId) {
         int taskId = nextTaskId;
         ++nextTaskId;
         LOGGER.info("creating task " + taskId + "annotatorName=\"" + annotatorName + "\", datasetName=\"" + datasetName
-                + "\", experimentType=\"" + experimentType.toString() + "\", String matching=\"" + matching
-                + "\", experimentId)");
+                + "\", experimentType=\"" + experimentType.toString() + "\", experimentId)");
         return taskId;
     }
 
@@ -66,8 +65,7 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     }
 
     @Override
-    protected int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType,
-            String matching) {
+    protected int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType) {
         return AbstractExperimentDAO.EXPERIMENT_TASK_NOT_CACHED;
     }
 

@@ -54,8 +54,8 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    private static final String ANNOTATOR_NAME = "FOX";
-    private static final String DATASET_NAME = "Twitter NEED";
+    private static final String ANNOTATOR_NAME = "HF_hypo(hypothesis)";
+    private static final String DATASET_NAME = "NIFDS_dataset(hypothesis)";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.MT;
     private static final Matching MATCHING = Matching.STRONG_ANNOTATION_MATCH;
 
