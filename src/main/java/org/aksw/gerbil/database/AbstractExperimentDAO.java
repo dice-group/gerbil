@@ -16,11 +16,11 @@
  */
 package org.aksw.gerbil.database;
 
-import java.util.List;
-
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * Abstract class implementing the general behavior of an {@link ExperimentDAO}.
@@ -144,10 +144,10 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      * 
      * @param experimentType
      *            the name of the experiment type
-     * @param matching
-     *            the name of the matching used
+
      * @return a list of annotator dataset combinations
      */
     @Deprecated
-    protected abstract List<String[]> getAnnotatorDatasetCombinations(String experimentType, String matching);
+    protected abstract List<String[]> getAnnotatorDatasetCombinations(String experimentType);
+
 }

@@ -21,11 +21,10 @@ import java.sql.SQLException;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.matching.Matching;
 import org.springframework.jdbc.core.RowMapper;
 
 /**
- * Creates {@link ExperimentTaskResult} instances from a given {@link ResultSet}. Note that the following mapping is
+ * Creates  instances from a given {@link ResultSet}. Note that the following mapping is
  * expected (column index - value):
  * 
  * <ul>
@@ -53,8 +52,8 @@ public class ExperimentTaskRowMapper implements RowMapper<ExperimentTaskStatus> 
 	            // nothing to do
 	        }
 	        return new ExperimentTaskStatus(resultSet.getString(1), resultSet.getString(2),
-	                ExperimentType.valueOf(resultSet.getString(3)), Matching.valueOf(resultSet.getString(4)),
-	                resultSet.getInt(5), resultSet.getString(6), resultSet.getTimestamp(7).getTime(), idInDatabase);
+	                ExperimentType.valueOf(resultSet.getString(3)),
+	                resultSet.getInt(4), resultSet.getString(5), resultSet.getTimestamp(6).getTime(), idInDatabase);
 	    }
 
 }

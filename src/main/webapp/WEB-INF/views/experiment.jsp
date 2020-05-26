@@ -79,7 +79,6 @@
 		<br>
 	Type: <c:out value="${tasks[0].type.label}" />
 		<br>
-	Matching: <c:out value="${tasks[0].matching.label}" />
 		<table id="resultTable"
 			class="table  table-hover table-condensed tableScroll">
 			<!--<table id="resultTable"

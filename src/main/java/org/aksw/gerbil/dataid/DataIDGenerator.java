@@ -107,10 +107,6 @@ public class DataIDGenerator {
                 if (r != null) {
                     experiment.addProperty(GERBIL.experimentType, r);
                 }
-                r = GERBIL.getMatchingResource(result.matching);
-                if (r != null) {
-                    experiment.addProperty(GERBIL.matching, r);
-                }
                 first = false;
             }
             // create experiment task

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.aksw.gerbil.database.ExperimentDAO;
-import org.aksw.gerbil.matching.Matching;
 
 public class ExperimentTaskStatus {
 
@@ -34,7 +33,6 @@ public class ExperimentTaskStatus {
 	public String annotator;
 	public String dataset;
 	public ExperimentType type;
-	public Matching matching;
 	public int idInDb;
 	public String gerbilVersion;
 	public Map<String, TaskResult> resultsMap;
@@ -47,17 +45,16 @@ public class ExperimentTaskStatus {
 	 */
 	public String stateMsg = null;
 
-	public ExperimentTaskStatus(String annotator, String dataset, ExperimentType type, Matching matching, int state,
+	public ExperimentTaskStatus(String annotator, String dataset, ExperimentType type,  int state,
 			String version, long timestamp, int idInDb) {
-		this(annotator, dataset, type, matching, state, version, timestamp, idInDb, null);
+		this(annotator, dataset, type, state, version, timestamp, idInDb, null);
 	}
 
-	public ExperimentTaskStatus(String annotator, String dataset, ExperimentType type, Matching matching, int state,
+	public ExperimentTaskStatus(String annotator, String dataset, ExperimentType type, int state,
 			String version, long timestamp, int idInDb, String gerbilVersion) {
 		this.annotator = annotator;
 		this.dataset = dataset;
 		this.type = type;
-		this.matching = matching;
 		this.state = state;
 		this.version = version;
 		this.timestamp = timestamp;
@@ -68,11 +65,11 @@ public class ExperimentTaskStatus {
 	public ExperimentTaskStatus(ExperimentTaskConfiguration configuration, int state,
             int errorCount) {
         this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.type,
-                configuration.matching, state, null, (new java.util.Date()).getTime(), -1);
+                 state, null, (new java.util.Date()).getTime(), -1);
     }
 	
-	public ExperimentTaskStatus(String annotator, String dataset, ExperimentType type, Matching matching, int state) {
-        this(annotator, dataset, type, matching, state, null, (new java.util.Date()).getTime(), -1,
+	public ExperimentTaskStatus(String annotator, String dataset, ExperimentType type,  int state) {
+        this(annotator, dataset, type, state, null, (new java.util.Date()).getTime(), -1,
                 null);
     }
 
@@ -128,14 +125,6 @@ public class ExperimentTaskStatus {
 
 	public void setType(ExperimentType type) {
 		this.type = type;
-	}
-
-	public Matching getMatching() {
-		return matching;
-	}
-
-	public void setMatching(Matching matching) {
-		this.matching = matching;
 	}
 
 	public String getStateMsg() {
@@ -215,7 +204,6 @@ public class ExperimentTaskStatus {
 	        int result = 1;
 	        result = prime * result + ((annotator == null) ? 0 : annotator.hashCode());
 	        result = prime * result + ((dataset == null) ? 0 : dataset.hashCode());
-	        result = prime * result + ((matching == null) ? 0 : matching.hashCode());
 	        result = prime * result + state;
 	        result = prime * result + (int) (timestamp ^ (timestamp >>> 32));
 	        result = prime * result + ((type == null) ? 0 : type.hashCode());
@@ -240,8 +228,6 @@ public class ExperimentTaskStatus {
 	            if (other.dataset != null)
 	                return false;
 	        } else if (!dataset.equals(other.dataset))
-	            return false;
-	        if (matching != other.matching)
 	            return false;
 	        if (state != other.state)
 	            return false;
