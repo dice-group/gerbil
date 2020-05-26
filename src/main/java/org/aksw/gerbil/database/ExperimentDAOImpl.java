@@ -99,9 +99,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
     
     @Override
-    public int createTask(String annotatorName, String datasetName, String experimentType, String matching,
+    public int createTask(String annotatorName, String datasetName, String experimentType,
             String experimentId) {
-        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType, matching);
+        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType);
         params.addValue("state", ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET);
         java.util.Date today = new java.util.Date();
         params.addValue("lastChanged", new java.sql.Timestamp(today.getTime()));
@@ -122,13 +122,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         this.template.update(CONNECT_TASK_EXPERIMENT, parameters);
     }
 
-    private MapSqlParameterSource createTaskParameters(String annotatorName, String datasetName, String experimentType,
-            String matching) {
+    private MapSqlParameterSource createTaskParameters(String annotatorName, String datasetName, String experimentType) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("annotatorName", annotatorName);
         parameters.addValue("datasetName", datasetName);
         parameters.addValue("experimentType", experimentType);
-        parameters.addValue("matching", matching);
         return parameters;
     }
 
@@ -204,9 +202,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
     
     @Override
-    protected int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType,
-            String matching) {
-        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType, matching);
+    protected int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType) {
+        MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType);
         java.util.Date today = new java.util.Date();
         params.addValue("lastChanged", new java.sql.Timestamp(today.getTime() - this.resultDurability));
         params.addValue("errorState", ErrorTypes.HIGHEST_ERROR_CODE);
@@ -306,7 +303,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
     
     protected void insertSubTask(ExperimentTaskStatus subTask, int experimentTaskId) {
-        subTask.idInDb = createTask(subTask.annotator, subTask.dataset, subTask.type.name(), subTask.matching.name(),
+        subTask.idInDb = createTask(subTask.annotator, subTask.dataset, subTask.type.name(),
                 null);
         setExperimentTaskResult(subTask.idInDb, subTask);
         addSubTaskRelation(experimentTaskId, subTask.idInDb);

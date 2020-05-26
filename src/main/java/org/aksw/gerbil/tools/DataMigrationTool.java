@@ -93,7 +93,7 @@ public class DataMigrationTool {
         int taskId;
         for (int i = 0; i < migratingTasks.length; ++i) {
             taskId = target.createTask(migratingTasks[i].annotator, migratingTasks[i].dataset,
-                    migratingTasks[i].type.name(), migratingTasks[i].matching.name(), TARGET_EXPERIMENT_ID);
+                    migratingTasks[i].type.name(),  TARGET_EXPERIMENT_ID);
             target.setExperimentTaskResult(taskId, migratingTasks[i]);
             LOGGER.info("Inserted [{}, {}, {}] successfully.", TARGET_EXPERIMENT_ID, migratingTasks[i].annotator,
                     migratingTasks[i].dataset);

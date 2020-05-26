@@ -120,7 +120,7 @@ public class OKE2018Task4Test extends AbstractExperimentTaskTest {
 		SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
 		ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
 				new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.OKE2018Task4),
-				new InstanceListBasedDataset(Arrays.asList(goldStandards), ExperimentType.OKE2018Task4), ExperimentType.OKE2018Task4, matching);
+				new InstanceListBasedDataset(Arrays.asList(goldStandards), ExperimentType.OKE2018Task4), ExperimentType.OKE2018Task4);
 		runTest(experimentTaskId, experimentDAO, new HTTPBasedSameAsRetriever(), new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
 				new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
 	}

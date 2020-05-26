@@ -121,7 +121,7 @@ public class RETest extends AbstractExperimentTaskTest {
 		SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
 		ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
 				new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.RE),
-				new InstanceListBasedDataset(Arrays.asList(goldStandards), ExperimentType.RE), ExperimentType.RE, matching);
+				new InstanceListBasedDataset(Arrays.asList(goldStandards), ExperimentType.RE), ExperimentType.RE);
 		runTest(experimentTaskId, experimentDAO, null, new EvaluatorFactory(), configuration,
 				new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
 	}

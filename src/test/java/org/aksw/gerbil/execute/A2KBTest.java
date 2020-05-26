@@ -217,7 +217,7 @@ public class A2KBTest extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
                 new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.A2KB), dataset,
-                ExperimentType.A2KB, matching);
+                ExperimentType.A2KB);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }

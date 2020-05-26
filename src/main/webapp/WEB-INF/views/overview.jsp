@@ -151,7 +151,7 @@ table {
 								$('#expTypes').html(htmlExperimentTypes);
 								$('#expTypes input')[0].checked = true;
 								// Add the listener for loading the matchings
-								$("#expTypes input").change(loadMatchings);
+							<!--	$("#expTypes input").change(loadMatchings); -->
 								loadMatchings();
 
 								$('#expTypes label')

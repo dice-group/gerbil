@@ -28,12 +28,12 @@ public class ExperimentTaskConfiguration {
     public Matching matching;
 
     public ExperimentTaskConfiguration(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
-            ExperimentType type, Matching matching) {
+                                       ExperimentType type) {
         super();
         this.annotatorConfig = annotatorConfig;
         this.datasetConfig = datasetConfig;
         this.type = type;
-        this.matching = matching;
+      //  this.matching = matching;
     }
 
     public AnnotatorConfiguration getAnnotatorConfig() {
@@ -70,7 +70,6 @@ public class ExperimentTaskConfiguration {
 
     @Override
     public String toString() {
-        return "eTConfig(\"" + annotatorConfig.getName() + "\",\"" + datasetConfig.getName() + "\",\"" + type.name()
-                + "\",\"" + matching.name() + "\")";
+        return "eTConfig(\"" + annotatorConfig.getName() + "\",\"" + datasetConfig.getName() + "\",\"" + type.name() + "\")";
     }
 }

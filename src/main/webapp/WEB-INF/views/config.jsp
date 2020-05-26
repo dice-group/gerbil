@@ -444,28 +444,6 @@
                 $('#submit')
                     .click(
                         function() {
-                            //fetch list of selected and manually added annotators
-                            var annotatorMultiselect = $('#annotator option:selected');
-                            var annotator = [];
-                            $(annotatorMultiselect)
-                                .each(
-                                    function(index,
-                                             annotatorMultiselect) {
-                                        annotator
-                                            .push($(
-                                                this)
-                                                .val());
-                                    });
-                            $(
-                                "#annotatorList li span.li_content")
-                                .each(
-                                    function() {
-                                        annotator
-                                            .push("NIFWS_"
-                                                + $(
-                                                    this)
-                                                    .text());
-                                    });
                             //fetch list of selected and manually added datasets
                             var datasetMultiselect = $('#setdata option:selected');
                             var dataset = [];
@@ -495,7 +473,7 @@
                                 .each(
                                     function() {
                                         hypothesis
-                                            .push("NIFDS_"
+                                            .push("HF_"
                                                 + $(
                                                     this)
                                                     .text());
@@ -503,16 +481,11 @@
                             var type = $('#type').val() ? $(
                                 '#type').val()
                                 : "MT";
-                            var matching = $('#matching')
-                                .val() ? $('#matching')
-                                    .val()
-                                : "No Matching";
                             var data = {};
                             data.type = type;
-                            data.matching = matching;
-                            data.annotator = annotator;
                             data.dataset = dataset;
                             data.hypothesis = hypothesis;
+
                             $
                                 .ajax(
                                     '${execute}',

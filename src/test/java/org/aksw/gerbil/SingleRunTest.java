@@ -104,7 +104,7 @@ public class SingleRunTest implements TaskObserver {
         overseer.addObserver(this);
 
         ExperimentTaskConfiguration taskConfigs[] = new ExperimentTaskConfiguration[] {
-                new ExperimentTaskConfiguration(annotatorConfig, datasetConfig, EXPERIMENT_TYPE, MATCHING) };
+                new ExperimentTaskConfiguration(annotatorConfig, datasetConfig, EXPERIMENT_TYPE) };
 
         Experimenter experimenter = new Experimenter(overseer, new SimpleLoggingDAO4Debugging(), SAME_AS_RETRIEVER,
                 new EvaluatorFactory(), taskConfigs, "SingleRunTest");

@@ -143,7 +143,7 @@ public class OKEChallengeTask1RT2KBTest extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
                 new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.RT2KB), dataset,
-                ExperimentType.RT2KB, matching);
+                ExperimentType.RT2KB);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }

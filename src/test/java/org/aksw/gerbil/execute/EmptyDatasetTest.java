@@ -48,7 +48,7 @@ public class EmptyDatasetTest extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
                 new TestAnnotatorConfiguration(Collections.EMPTY_LIST, EXPERIMENT_TYPE),
-                new InstanceListBasedDataset(Collections.EMPTY_LIST, EXPERIMENT_TYPE), EXPERIMENT_TYPE, MATCHING);
+                new InstanceListBasedDataset(Collections.EMPTY_LIST, EXPERIMENT_TYPE), EXPERIMENT_TYPE);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(), configuration,
                 new StatusCheckingTestTaskObserver(this, experimentTaskId, experimentDAO,
                         ErrorTypes.DATASET_EMPTY_ERROR.getErrorCode()));

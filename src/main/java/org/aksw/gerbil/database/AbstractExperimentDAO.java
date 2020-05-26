@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * Note that it is strongly recommended to extend this class instead of
  * implementing the {@link ExperimentDAO} class directly since this class
  * already takes care of the synchronization problem of the
- * {@link ExperimentDAO#connectCachedResultOrCreateTask(String, String, String, String, String)} method.
+ * {@link ExperimentDAO#connectCachedResultOrCreateTask(String, String, String, String)} method.
  * 
  * @author m.roeder
  * 
@@ -89,15 +89,15 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
     
     @Override
     public synchronized int connectCachedResultOrCreateTask(String annotatorName, String datasetName,
-            String experimentType, String matching, String experimentId) {
+            String experimentType, String experimentId) {
         int experimentTaskId = EXPERIMENT_TASK_NOT_CACHED;
         if (resultDurability > 0) {
-            experimentTaskId = getCachedExperimentTaskId(annotatorName, datasetName, experimentType, matching);
+            experimentTaskId = getCachedExperimentTaskId(annotatorName, datasetName, experimentType);
         } else {
             LOGGER.warn("The durability of results is <= 0. I won't be able to cache results.");
         }
         if (experimentTaskId == EXPERIMENT_TASK_NOT_CACHED) {
-            return createTask(annotatorName, datasetName, experimentType, matching, experimentId);
+            return createTask(annotatorName, datasetName, experimentType, experimentId);
         } else {
             LOGGER.debug("Could reuse cached task (id={}).", experimentTaskId);
             connectExistingTaskWithExperiment(experimentTaskId, experimentId);
@@ -121,13 +121,10 @@ public abstract class AbstractExperimentDAO implements ExperimentDAO {
      *            the name of the dataset
      * @param experimentType
      *            the name of the experiment type
-     * @param matching
-     *            the name of the matching used
      * @return The id of the experiment task or {@value #EXPERIMENT_TASK_NOT_CACHED} if such an experiment task
      *         couldn't be found.
      */
-    protected abstract int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType,
-            String matching);
+    protected abstract int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType);
 
     /**
      * This method connects an already existing experiment task with an

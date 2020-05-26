@@ -178,7 +178,7 @@ public class MainController {
         for (String annotator : annotators) {
             for (String dataset : datasets) {
                 configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, type),
-                        adapterManager.getDatasetConfig(dataset, type), type, getMatching(matching));
+                        adapterManager.getDatasetConfig(dataset, type), type);
                 LOGGER.debug("Created config: {}", configs[count]);
                 ++count;
             }

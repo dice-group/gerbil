@@ -114,7 +114,7 @@ public class FileBasedA2KBTest extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
 
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                loadAnnotatorFile(annotatorFileName, false), dataset, EXPERIMENT_TYPE, matching);
+                loadAnnotatorFile(annotatorFileName, false), dataset, EXPERIMENT_TYPE);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }
@@ -125,7 +125,7 @@ public class FileBasedA2KBTest extends AbstractExperimentTaskTest {
         SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
 
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                loadAnnotatorFile(annotatorFileName, true), dataset, EXPERIMENT_TYPE, matching);
+                loadAnnotatorFile(annotatorFileName, true), dataset, EXPERIMENT_TYPE);
         runTest(experimentTaskId, experimentDAO, new EvaluatorFactory(URI_KB_CLASSIFIER), configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResultWithoutConfidence));
     }

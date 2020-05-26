@@ -97,7 +97,7 @@ public class RT2KBTest extends AbstractExperimentTaskTest {
 		SimpleLoggingResultStoringDAO4Debugging experimentDAO = new SimpleLoggingResultStoringDAO4Debugging();
 		ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
 				new TestAnnotatorConfiguration(this.annotatorResults, ExperimentType.RT2KB), dataset,
-				ExperimentType.RT2KB, matching);
+				ExperimentType.RT2KB);
 		runTest(experimentTaskId, experimentDAO, EVALUATOR_FACTORY, configuration,
 				new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
 	}

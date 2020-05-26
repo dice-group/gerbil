@@ -121,8 +121,8 @@ public class GoldStdEvalTest extends AbstractExperimentTaskTest {
         Assert.assertNotNull(dataset);
 
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
-                new TestAnnotatorConfiguration(dataset.getInstances(), experimentType), datasetConfig, experimentType,
-                MATCHING);
+                new TestAnnotatorConfiguration(dataset.getInstances(), experimentType), datasetConfig, experimentType
+        );
         runTest(experimentTaskId, experimentDAO, SAME_AS_RETRIEVER, EVALUATOR_FACTORY, configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO,
                         new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0 }));
