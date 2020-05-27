@@ -46,6 +46,7 @@ import logging
 import nltk
 import subprocess
 import re
+import json
 
 from bert_score import score
 from metrics.chrF import computeChrF
@@ -53,8 +54,8 @@ from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
 from razdel import tokenize
 from tabulate import tabulate
 
-BLEU_PATH = 'metrics/multi-bleu-detok.perl'
-METEOR_PATH = 'metrics/meteor-1.5/meteor-1.5.jar'
+BLEU_PATH = 'src/main/java/org/aksw/gerbil/dataset/impl/mt/python/metrics/multi-bleu-detok.perl'
+METEOR_PATH = 'src/main/java/org/aksw/gerbil/dataset/impl/mt/python/metrics/meteor-1.5/meteor-1.5.jar'
 
 
 def parse(refs_path, hyps_path, num_refs, lng='en'):
@@ -313,4 +314,6 @@ if __name__ == '__main__':
 
     logging.info('PRINTING RESULTS...')
     print('PRINTING RESULTS...')
-    print(tabulate([values], headers=headers))
+    mapping = dict(zip(headers, values))
+    with open('result.json', 'w') as json_file:
+        json.dump(mapping, json_file)
