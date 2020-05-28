@@ -9,6 +9,7 @@ import org.aksw.gerbil.data.SimpleFileRef;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -17,7 +18,7 @@ public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
 
     @Override
     public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
-                         EvaluationResultContainer results){
+            EvaluationResultContainer results) {
         // We assume that both lists have only one element!!!
         // We assume that each sub list has exactly one element!!!
 
@@ -30,19 +31,37 @@ public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
 
         // start python script and gather results
         try {
-            Process p = Runtime.getRuntime().exec("python3 src/main/java/org/aksw/gerbil/dataset/impl/mt/python/eval.py -R " +
-                    ref+ " -H " + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
-            System.out.println("python3 src/main/java/org/aksw/gerbil/dataset/impl/mt/python/eval.py -R " +
-                    ref+ " -H " + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
-            BufferedReader breader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String data = "";
-            String r = null;
-            while ((data = breader.readLine()) != null) {
-               r = data;
+            ReaderThread reader = new ReaderThread();
+            Thread readerThread = new Thread(reader);
+            
+            Process p = Runtime.getRuntime()
+                    .exec("python3 src/main/java/org/aksw/gerbil/dataset/impl/mt/python/eval.py -R " + ref + " -H "
+                            + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
+            System.out.println("python3 src/main/java/org/aksw/gerbil/dataset/impl/mt/python/eval.py -R " + ref + " -H "
+                    + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
+
+            reader.setInput(p.getInputStream());
+            readerThread.start();
+            
+            // Wait for the python process to terminate
+            int exitValue = p.waitFor();
+            // stop the reader thread
+            reader.setTerminate(true);
+            // Wait for the reader thread to terminate
+            readerThread.join();
+            
+            // The script encountered an issue
+            if (exitValue != 0) {
+                // Try to get the error message of the script
+                IOUtils.copy(p.getErrorStream(), System.err);
+                throw new IllegalStateException("Python script aborted with an error.");
             }
+            
+            String scriptResult = reader.getBuffer().toString();
+            System.out.println("Data:" + scriptResult + "\n");
+            
             double bleu, nltk, meteor, chrF, ter;
-            System.out.println("Data:"+ r + "\n");
-            JsonObject jsonObject = new JsonParser().parse(r).getAsJsonObject();
+            JsonObject jsonObject = new JsonParser().parse(scriptResult).getAsJsonObject();
             bleu = jsonObject.get("BLEU").getAsDouble();
             results.addResult(new DoubleEvaluationResult("BLEU", bleu));
 
@@ -61,6 +80,48 @@ public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+    }
+
+    public static final class ReaderThread implements Runnable {
+
+        private StringBuilder buffer = new StringBuilder();
+        private Reader input;
+        private boolean terminate = false;
+
+        @Override
+        public void run() {
+            try {
+                char cBuffer[] = new char[256];
+                int length;
+                while (!terminate) {
+                    while ((input != null) && (input.ready())) {
+                        length = input.read(cBuffer);
+                        buffer.append(cBuffer, 0, length);
+                    }
+                    // sleep for a short moment before checking the stream again
+                    Thread.sleep(50);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void setInput(InputStream input) {
+            this.input = new BufferedReader(new InputStreamReader(input));
+        }
+
+        public void setTerminate(boolean terminate) {
+            this.terminate = terminate;
+        }
+
+        public StringBuilder getBuffer() {
+            return buffer;
+        }
+
     }
 }

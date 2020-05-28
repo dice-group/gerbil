@@ -130,7 +130,7 @@ public class AdapterManager {
 //                String datasetName = name.substring(brackets[0] + 1, brackets[1]);
 
                 String fileName = name.substring(brackets[0] + 1, brackets[1]);
-                File file = new File(fileName);
+                File file = new File(uploadedFilesPath + fileName);
                 name = name.substring(HYPOTHESIS_PREFIX.length(), brackets[0]) + UPLOADED_HYPOTHESIS_SUFFIX;
                 try {
                     return new AnnotatorConfigurationImpl(name, false,
