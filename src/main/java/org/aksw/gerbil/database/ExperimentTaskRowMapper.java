@@ -47,7 +47,7 @@ public class ExperimentTaskRowMapper implements RowMapper<ExperimentTaskStatus> 
 	    public ExperimentTaskStatus mapRow(ResultSet resultSet, int rowId) throws SQLException {
 	        int idInDatabase = -1;
 	        try {
-	            idInDatabase = resultSet.getInt(8);
+	            idInDatabase = resultSet.getInt(7);
 	        } catch (Exception e) {
 	            // nothing to do
 	        }

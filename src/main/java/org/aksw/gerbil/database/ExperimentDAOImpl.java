@@ -45,7 +45,6 @@ import org.springframework.jdbc.support.KeyHolder;
  */
 public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
-
     private final static String INSERT_TASK = "INSERT INTO ExperimentTasks (systemName, datasetName, experimentType, state, lastChanged, version) VALUES (:annotatorName, :datasetName, :experimentType, :state, :lastChanged, :version)";
     private final static String SET_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE id=:id";
     private final static String SET_EXPERIMENT_TASK_RESULT = "UPDATE ExperimentTasks SET lastChanged=:lastChanged WHERE id=:id";
@@ -67,13 +66,15 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String INSERT_INT_RESULT = "INSERT INTO ExperimentTasks_IntResults(taskId, resultId, resvalue) select :taskId, id, :value from ResultNames where name = :resName";
     private final static String GET_SUB_TASK_RESULTS = "SELECT systemName, datasetName, experimentType, state, version, lastChanged, subTaskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
     private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
-    
+
     private final static String GET_RUNNING_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks where state = :unfinishedState AND id < :lastTaskId";
-    
-    public static final String[] RES_NAME_ARR = {"BLEU score", "BLEU NLTK", "METEOR score", "chrf++ score"
-    		, "TER score"};
+
+    public static final String[] RES_NAME_ARR = { /*
+                                                   * "BLEU score", "BLEU NLTK", "METEOR score", "chrf++ score" ,
+                                                   * "TER score"
+                                                   */ };
     public static final String ERROR_COUNT_NAME = "Error Count";
-    
+
     private final NamedParameterJdbcTemplate template;
 
     public ExperimentDAOImpl(DataSource dataSource) {
@@ -84,7 +85,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         super(resultDurability);
         this.template = new NamedParameterJdbcTemplate(dataSource);
     }
-    
+
     @Override
     public List<ExperimentTaskStatus> getResultsOfExperiment(String experimentId) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -92,15 +93,14 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         List<ExperimentTaskStatus> result = this.template.query(GET_EXPERIMENT_RESULTS, parameters,
                 new ExperimentTaskRowMapper());
         for (ExperimentTaskStatus e : result) {
-        	addAllResults(e);
-        	addSubTasks(e);
+            addAllResults(e);
+            addSubTasks(e);
         }
         return result;
     }
-    
+
     @Override
-    public int createTask(String annotatorName, String datasetName, String experimentType,
-            String experimentId) {
+    public int createTask(String annotatorName, String datasetName, String experimentType, String experimentId) {
         MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType);
         params.addValue("state", ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET);
         java.util.Date today = new java.util.Date();
@@ -122,7 +122,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         this.template.update(CONNECT_TASK_EXPERIMENT, parameters);
     }
 
-    private MapSqlParameterSource createTaskParameters(String annotatorName, String datasetName, String experimentType) {
+    private MapSqlParameterSource createTaskParameters(String annotatorName, String datasetName,
+            String experimentType) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("annotatorName", annotatorName);
         parameters.addValue("datasetName", datasetName);
@@ -143,18 +144,18 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
         this.template.update(SET_EXPERIMENT_TASK_RESULT, parameters);
         Map<String, TaskResult> resMap = result.getResultsMap();
-        if (resMap.size()>0) {
-        	TaskResult tempResult;
-        	String tempType;
-           for(String resName : resMap.keySet()) {
-        	   tempResult = resMap.get(resName);
-        	   tempType = tempResult.getResType();
-        	   if(tempType.equalsIgnoreCase("DOUBLE")) {
-        		   addDoubleResult(experimentTaskId, resName, Double.parseDouble(tempResult.getResValue().toString()));
-        	   } else if(tempType.equalsIgnoreCase("INT")) {
-        		   addIntResult(experimentTaskId, resName, Integer.parseInt(tempResult.getResValue().toString()));
-        	   }
-           }
+        if (resMap.size() > 0) {
+            TaskResult tempResult;
+            String tempType;
+            for (String resName : resMap.keySet()) {
+                tempResult = resMap.get(resName);
+                tempType = tempResult.getResType();
+                if (tempType.equalsIgnoreCase("DOUBLE")) {
+                    addDoubleResult(experimentTaskId, resName, Double.parseDouble(tempResult.getResValue().toString()));
+                } else if (tempType.equalsIgnoreCase("INT")) {
+                    addIntResult(experimentTaskId, resName, Integer.parseInt(tempResult.getResValue().toString()));
+                }
+            }
         }
         if (result.hasSubTasks()) {
             for (ExperimentTaskStatus subTask : result.getSubTasks()) {
@@ -162,15 +163,17 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
             }
         }
     }
-    
+
     protected void addDoubleResult(int taskId, String resName, double value) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("taskId", taskId);
         parameters.addValue("resName", resName);
         parameters.addValue("value", value);
-        this.template.update(INSERT_DOUBLE_RESULT, parameters);
+        if (this.template.update(INSERT_DOUBLE_RESULT, parameters) == 0) {
+            System.err.println("Issue inserting (" + taskId + "," + resName + "," + value + ").");
+        }
     }
-    
+
     protected void addIntResult(int taskId, String resName, int value) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("taskId", taskId);
@@ -200,7 +203,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
             return TASK_NOT_FOUND;
         }
     }
-    
+
     @Override
     protected int getCachedExperimentTaskId(String annotatorName, String datasetName, String experimentType) {
         MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, experimentType);
@@ -245,7 +248,6 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         this.template.update(SET_UNFINISHED_TASK_STATE, parameters);
     }
 
-    
     @Override
     public List<ExperimentTaskStatus> getAllRunningExperimentTasks() {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -254,8 +256,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
 
     @Override
-    public List<ExperimentTaskStatus> getLatestResultsOfExperiments(String experimentType,
-            String annotatorNames[], String datasetNames[]) {
+    public List<ExperimentTaskStatus> getLatestResultsOfExperiments(String experimentType, String annotatorNames[],
+            String datasetNames[]) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("experimentType", experimentType);
         parameters.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
@@ -265,7 +267,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                 new ExperimentTaskRowMapper());
 
         for (ExperimentTaskStatus result : results) {
-        	addAllResults(result);
+            addAllResults(result);
         }
         return results;
     }
@@ -273,34 +275,34 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     protected void addAllResults(ExperimentTaskStatus result) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("taskId", result.idInDb);
-        //Result is being set inside the mapper
+        // Result is being set inside the mapper
         TaskResultsRowMapper resultMapper = new TaskResultsRowMapper(result);
         this.template.query(GET_TASK_RESULTS_DOUBLE, parameters, resultMapper);
         this.template.query(GET_TASK_RESULTS_INTEGER, parameters, resultMapper);
         setDefaultResultMap(result);
+        System.out.println("result: " + result.toString());
         // this.template.query(GET_TASK_RESULTS_BLOB, parameters, resultMapper);
     }
-    
+
     public void setDefaultResultMap(ExperimentTaskStatus result) {
-    	Map<String, TaskResult> resMap = result.getResultsMap();
-    	TaskResult tempRes;
-    	for(String dResName: RES_NAME_ARR) {
-    		//Add a default double entry
-    		if(resMap.get(dResName)==null) {
-    			tempRes = new TaskResult(0d, "DOUBLE");
-    			resMap.put(dResName, tempRes);
-    		}
-    	}
-    	
-    	if(resMap.get(ERROR_COUNT_NAME)==null) {
-    		tempRes = new TaskResult(0, "INT");
-        	resMap.put(ERROR_COUNT_NAME, tempRes);
-    	}
+        Map<String, TaskResult> resMap = result.getResultsMap();
+        TaskResult tempRes;
+        for (String dResName : RES_NAME_ARR) {
+            // Add a default double entry
+            if (resMap.get(dResName) == null) {
+                tempRes = new TaskResult(0d, "DOUBLE");
+                resMap.put(dResName, tempRes);
+            }
+        }
+
+        if (resMap.get(ERROR_COUNT_NAME) == null) {
+            tempRes = new TaskResult(0, "INT");
+            resMap.put(ERROR_COUNT_NAME, tempRes);
+        }
     }
-    
+
     protected void insertSubTask(ExperimentTaskStatus subTask, int experimentTaskId) {
-        subTask.idInDb = createTask(subTask.annotator, subTask.dataset, subTask.type.name(),
-                null);
+        subTask.idInDb = createTask(subTask.annotator, subTask.dataset, subTask.type.name(), null);
         setExperimentTaskResult(subTask.idInDb, subTask);
         addSubTaskRelation(experimentTaskId, subTask.idInDb);
     }
@@ -311,7 +313,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("subTaskId", subTaskId);
         this.template.update(INSERT_SUB_TASK_RELATION, parameters);
     }
-    
+
     protected void addSubTasks(ExperimentTaskStatus expTask) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("taskId", expTask.idInDb);
@@ -350,12 +352,13 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
             }
         });
     }
+
     @Override
     public Integer countPrecedingRunningTasks(int lastTaskId) {
-    	MapSqlParameterSource parameters = new MapSqlParameterSource();
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("lastTaskId", lastTaskId);
         parameters.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
-    	List<Integer> result = this.template.query(GET_RUNNING_EXP_COUNT, parameters, new IntegerRowMapper());
+        List<Integer> result = this.template.query(GET_RUNNING_EXP_COUNT, parameters, new IntegerRowMapper());
         return result.get(0);
     }
 }

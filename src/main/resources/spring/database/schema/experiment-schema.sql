@@ -62,6 +62,14 @@ subTaskId int NOT NULL FOREIGN KEY REFERENCES ExperimentTasks(id),
 PRIMARY KEY (taskId, subTaskId)
 );
 
+-- Insert records into ResultNames
+--insert into ResultNames values (0, 'BLEU');
+--insert into ResultNames values (1, 'BLEU NLTK');
+--insert into ResultNames values (2, 'METEOR');
+--insert into ResultNames values (3, 'chrF++');
+--insert into ResultNames values (4, 'TER');
+--insert into ResultNames values (5, 'Error Count');
+
 -- Rename Derczynski dataset
 UPDATE ExperimentTasks
 SET datasetName = 'Derczynski IPM NEL'

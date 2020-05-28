@@ -60,13 +60,19 @@ public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
             String scriptResult = reader.getBuffer().toString();
             System.out.println("Data:" + scriptResult + "\n");
             
+            int jsonStart = scriptResult.indexOf('{');
+            if(jsonStart < 0) {
+                throw new IllegalStateException("The script result does not seem to contain a JSON object!");
+            }
+            scriptResult = scriptResult.substring(jsonStart);
+            
             double bleu, nltk, meteor, chrF, ter;
             JsonObject jsonObject = new JsonParser().parse(scriptResult).getAsJsonObject();
             bleu = jsonObject.get("BLEU").getAsDouble();
             results.addResult(new DoubleEvaluationResult("BLEU", bleu));
 
             nltk = jsonObject.get("BLEU NLTK").getAsDouble();
-            results.addResult(new DoubleEvaluationResult("BLEU_NLTK", nltk));
+            results.addResult(new DoubleEvaluationResult("BLEU NLTK", nltk));
 
             meteor = jsonObject.get("METEOR").getAsDouble();
             results.addResult(new DoubleEvaluationResult("METEOR", meteor));
