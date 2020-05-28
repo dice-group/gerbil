@@ -70,8 +70,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     
     private final static String GET_RUNNING_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks where state = :unfinishedState AND id < :lastTaskId";
     
-    public static final String[] RES_NAME_ARR = {"Micro F1 score", "Micro Precision", "Micro Recall", "Macro F1 score"
-    		, "Macro Precision", "Macro Recall"};
+    public static final String[] RES_NAME_ARR = {"BLEU score", "BLEU NLTK", "METEOR score", "chrf++ score"
+    		, "TER score"};
     public static final String ERROR_COUNT_NAME = "Error Count";
     
     private final NamedParameterJdbcTemplate template;
