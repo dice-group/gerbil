@@ -315,5 +315,4 @@ if __name__ == '__main__':
     logging.info('PRINTING RESULTS...')
     print('PRINTING RESULTS...')
     mapping = dict(zip(headers, values))
-    with open('result.json', 'w') as json_file:
-        json.dump(mapping, json_file)
+    print(mapping)

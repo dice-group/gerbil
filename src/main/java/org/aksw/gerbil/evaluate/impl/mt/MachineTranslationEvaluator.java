@@ -3,6 +3,8 @@ package org.aksw.gerbil.evaluate.impl.mt;
 import java.io.*;
 import java.util.List;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.aksw.gerbil.data.SimpleFileRef;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
@@ -15,7 +17,7 @@ public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
 
     @Override
     public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
-            EvaluationResultContainer results){
+                         EvaluationResultContainer results){
         // We assume that both lists have only one element!!!
         // We assume that each sub list has exactly one element!!!
 
@@ -28,37 +30,36 @@ public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
 
         // start python script and gather results
         try {
-            Process p = Runtime.getRuntime().exec("python3 src/main/java/org/aksw/gerbil/dataset/impl/mt/python/eval.py -R" +
-                    ref+ "-H " + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
-        BufferedReader breader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String line = "";
-        while ((line = breader.readLine()) != null) {
-            System.out.println(line + "\n");
-        }
-        JSONParser jsonParser = new JSONParser();
-        double bleu, nltk, meteor, chrF, ter;
-            Object obj = jsonParser.parse(new FileReader("result.json"));
-            JSONObject jsonObject = (JSONObject) obj;
-            bleu = (Double) jsonObject.get("BLEU");
-            // Add results to the results container
+            Process p = Runtime.getRuntime().exec("python3 src/main/java/org/aksw/gerbil/dataset/impl/mt/python/eval.py -R " +
+                    ref+ " -H " + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
+            System.out.println("python3 src/main/java/org/aksw/gerbil/dataset/impl/mt/python/eval.py -R " +
+                    ref+ " -H " + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
+            BufferedReader breader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String data = "";
+            String r = null;
+            while ((data = breader.readLine()) != null) {
+               r = data;
+            }
+            double bleu, nltk, meteor, chrF, ter;
+            System.out.println("Data:"+ r + "\n");
+            JsonObject jsonObject = new JsonParser().parse(r).getAsJsonObject();
+            bleu = jsonObject.get("BLEU").getAsDouble();
             results.addResult(new DoubleEvaluationResult("BLEU", bleu));
 
-            nltk = (Double) jsonObject.get("BLEU NLTK");
+            nltk = jsonObject.get("BLEU NLTK").getAsDouble();
             results.addResult(new DoubleEvaluationResult("BLEU_NLTK", nltk));
 
-            meteor = (Double) jsonObject.get("METEOR");
+            meteor = jsonObject.get("METEOR").getAsDouble();
             results.addResult(new DoubleEvaluationResult("METEOR", meteor));
 
-            chrF = (Double) jsonObject.get("chrF++");
+            chrF = jsonObject.get("chrF++").getAsDouble();
             results.addResult(new DoubleEvaluationResult("chrF++", chrF));
 
-            ter = (Double) jsonObject.get("TER");
+            ter = jsonObject.get("TER").getAsDouble();
             results.addResult(new DoubleEvaluationResult("TER", ter));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
             e.printStackTrace();
         }
     }
