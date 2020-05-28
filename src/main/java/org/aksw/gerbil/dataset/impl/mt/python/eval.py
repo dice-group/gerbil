@@ -60,7 +60,6 @@ METEOR_PATH = 'src/main/java/org/aksw/gerbil/dataset/impl/mt/python/metrics/mete
 
 def parse(refs_path, hyps_path, num_refs, lng='en'):
     logging.info('STARTING TO PARSE INPUTS...')
-    print('STARTING TO PARSE INPUTS...')
     # references
     references = []
     for i in range(num_refs):
@@ -94,12 +93,10 @@ def parse(refs_path, hyps_path, num_refs, lng='en'):
 
 
     logging.info('FINISHING TO PARSE INPUTS...')
-    print('FINISHING TO PARSE INPUTS...')
     return references, references_tok, hypothesis, hypothesis_tok
 
 def bleu_score(refs_path, hyps_path, num_refs):
     logging.info('STARTING TO COMPUTE BLEU...')
-    print('STARTING TO COMPUTE BLEU...')
     ref_files = []
     for i in range(num_refs):
         if num_refs == 1:
@@ -113,10 +110,8 @@ def bleu_score(refs_path, hyps_path, num_refs):
         bleu = float(re.findall('BLEU = (.+?),', str(result))[0])
     except:
         logging.error('ERROR ON COMPUTING METEOR. MAKE SURE YOU HAVE PERL INSTALLED GLOBALLY ON YOUR MACHINE.')
-        print('ERROR ON COMPUTING METEOR. MAKE SURE YOU HAVE PERL INSTALLED GLOBALLY ON YOUR MACHINE.')
         bleu = -1
     logging.info('FINISHING TO COMPUTE BLEU...')
-    print('FINISHING TO COMPUTE BLEU...')
     return bleu
 
 
@@ -135,7 +130,6 @@ def bleu_nltk(references, hypothesis):
 
 def meteor_score(references, hypothesis, num_refs, lng='en'):
     logging.info('STARTING TO COMPUTE METEOR...')
-    print('STARTING TO COMPUTE METEOR...')
     hyps_tmp, refs_tmp = 'hypothesis_meteor', 'reference_meteor'
 
     with codecs.open(hyps_tmp, 'w', 'utf-8') as f:
@@ -156,7 +150,6 @@ def meteor_score(references, hypothesis, num_refs, lng='en'):
         meteor = result.split(b'\n')[-2].split()[-1]
     except:
         logging.error('ERROR ON COMPUTING METEOR. MAKE SURE YOU HAVE JAVA INSTALLED GLOBALLY ON YOUR MACHINE.')
-        print('ERROR ON COMPUTING METEOR. MAKE SURE YOU HAVE JAVA INSTALLED GLOBALLY ON YOUR MACHINE.')
         meteor = -1
 
     try:
@@ -165,13 +158,11 @@ def meteor_score(references, hypothesis, num_refs, lng='en'):
     except:
         pass
     logging.info('FINISHING TO COMPUTE METEOR...')
-    print('FINISHING TO COMPUTE METEOR...')
     return float(meteor)
 
 
 def chrF_score(references, hypothesis, num_refs, nworder, ncorder, beta):
     logging.info('STARTING TO COMPUTE CHRF++...')
-    print('STARTING TO COMPUTE CHRF++...')
     hyps_tmp, refs_tmp = 'hypothesis_chrF', 'reference_chrF'
 
     # check for empty lists
@@ -199,7 +190,6 @@ def chrF_score(references, hypothesis, num_refs, nworder, ncorder, beta):
         totalF, averageTotalF, totalPrec, totalRec = computeChrF(rtxt, htxt, nworder, ncorder, beta, None)
     except:
         logging.error('ERROR ON COMPUTING CHRF++.')
-        print('ERROR ON COMPUTING CHRF++.')
         totalF, averageTotalF, totalPrec, totalRec = -1, -1, -1, -1
     try:
         os.remove(hyps_tmp)
@@ -207,13 +197,11 @@ def chrF_score(references, hypothesis, num_refs, nworder, ncorder, beta):
     except:
         pass
     logging.info('FINISHING TO COMPUTE CHRF++...')
-    print('FINISHING TO COMPUTE CHRF++...')
     return totalF, averageTotalF, totalPrec, totalRec
 
 
 def ter_score(references, hypothesis, num_refs):
     logging.info('STARTING TO COMPUTE TER...')
-    print('STARTING TO COMPUTE TER...')
     ter_scores = []
     for hyp, refs in zip(hypothesis, references):
         candidates = []
@@ -230,13 +218,11 @@ def ter_score(references, hypothesis, num_refs):
         ter_scores.append(min(candidates))
 
     logging.info('FINISHING TO COMPUTE TER...')
-    print('FINISHING TO COMPUTE TER...')
     return sum(ter_scores) / len(ter_scores)
 
 
 def bert_score_(references, hypothesis, lng='en'):
     logging.info('STARTING TO COMPUTE BERT SCORE...')
-    print('STARTING TO COMPUTE BERT SCORE...')
     for i, refs in enumerate(references):
         references[i] = [ref for ref in refs if ref.strip() != '']
 
@@ -245,7 +231,6 @@ def bert_score_(references, hypothesis, lng='en'):
         P, R, F1 = score([hyp], [refs], lang=lng)
         scores.append(F1)
     logging.info('FINISHING TO COMPUTE BERT SCORE...')
-    print('FINISHING TO COMPUTE BERT SCORE...')
     bert = float(sum(scores) / len(scores))
     return bert
 
@@ -267,7 +252,6 @@ if __name__ == '__main__':
     args = argParser.parse_args()
 
     logging.info('READING INPUTS...')
-    print('READING INPUTS...')
     refs_path = args.reference
     hyps_path = args.hypothesis
     lng = args.language
@@ -278,12 +262,10 @@ if __name__ == '__main__':
     ncorder = args.ncorder
     beta = args.beta
     logging.info('FINISHING TO READ INPUTS...')
-    print('FINISHING TO READ INPUTS...')
 
     references, references_tok, hypothesis, hypothesis_tok = parse(refs_path, hyps_path, num_refs, lng)
 
     logging.info('STARTING EVALUATION...')
-    print('STARTING EVALUATION...')
     headers, values = [], []
     if 'bleu' in metrics:
         headers.append('BLEU')
@@ -310,9 +292,7 @@ if __name__ == '__main__':
         bert = bert_score_(references, hypothesis, lng=lng)
         values.append(round(bert, 2))
     logging.info('FINISHING EVALUATION...')
-    print('FINISHING EVALUATION...')
 
     logging.info('PRINTING RESULTS...')
-    print('PRINTING RESULTS...')
     mapping = dict(zip(headers, values))
     print(mapping)
