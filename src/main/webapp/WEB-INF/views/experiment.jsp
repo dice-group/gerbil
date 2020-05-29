@@ -85,8 +85,8 @@
 			class="table  table-hover table-condensed tablesorter tableScroll">-->
 			<thead>
 				<tr>
-					<th>Annotator</th>
-					<th>Dataset</th>
+					<th>Hypothesis</th>
+					<th>Reference</th>
 					<c:if test="${hasSubTasks}">
 						<th></th>
 					</c:if>

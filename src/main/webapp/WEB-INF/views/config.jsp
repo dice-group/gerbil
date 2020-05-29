@@ -102,7 +102,7 @@
 
         <!--Upload output file from system -->
         <div class="form-group">
-            <label class="col-md-4 control-label">System</label>
+            <label class="col-md-4 control-label">Hypothesis</label>
             <div class="col-md-4">
                 <div id="uploadHypothesis">
                     <span> Upload hypothesis:</span>
@@ -157,7 +157,7 @@
                 </div>
                 <hr/>
                 <div>
-                    <span> Or upload dataset:</span>
+                    <span> Or upload reference:</span>
                     <div>
                         <label for="nameDataset">Name:</label> <input
                             class="form-control" type="text" id="nameDataset" name="name"

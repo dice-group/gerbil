@@ -1,8 +1,5 @@
 package org.aksw.gerbil.evaluate.impl.mt;
 
-import java.io.*;
-import java.util.List;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.aksw.gerbil.data.SimpleFileRef;
@@ -10,15 +7,15 @@ import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+
+import java.io.*;
+import java.util.List;
 
 public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
 
     @Override
     public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
-            EvaluationResultContainer results) {
+                         EvaluationResultContainer results) {
         // We assume that both lists have only one element!!!
         // We assume that each sub list has exactly one element!!!
 
@@ -33,7 +30,7 @@ public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
         try {
             ReaderThread reader = new ReaderThread();
             Thread readerThread = new Thread(reader);
-            
+
             Process p = Runtime.getRuntime()
                     .exec("python3 src/main/java/org/aksw/gerbil/dataset/impl/mt/python/eval.py -R " + ref + " -H "
                             + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
@@ -42,30 +39,30 @@ public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
 
             reader.setInput(p.getInputStream());
             readerThread.start();
-            
+
             // Wait for the python process to terminate
             int exitValue = p.waitFor();
             // stop the reader thread
             reader.setTerminate(true);
             // Wait for the reader thread to terminate
             readerThread.join();
-            
+
             // The script encountered an issue
             if (exitValue != 0) {
                 // Try to get the error message of the script
                 IOUtils.copy(p.getErrorStream(), System.err);
                 throw new IllegalStateException("Python script aborted with an error.");
             }
-            
+
             String scriptResult = reader.getBuffer().toString();
             System.out.println("Data:" + scriptResult + "\n");
-            
+
             int jsonStart = scriptResult.indexOf('{');
             if(jsonStart < 0) {
                 throw new IllegalStateException("The script result does not seem to contain a JSON object!");
             }
             scriptResult = scriptResult.substring(jsonStart);
-            
+
             double bleu, nltk, meteor, chrF, ter;
             JsonObject jsonObject = new JsonParser().parse(scriptResult).getAsJsonObject();
             bleu = jsonObject.get("BLEU").getAsDouble();
