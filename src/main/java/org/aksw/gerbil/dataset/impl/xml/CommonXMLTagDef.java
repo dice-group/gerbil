@@ -50,39 +50,18 @@ public class CommonXMLTagDef {
 
 	private Map<String, Integer> codeMap;
 
-	public CommonXMLTagDef(String doc_label, String text_label, String id_label, String mark_col_label,
-			String mark_label, String strt_label, String len_label, String entity_name_label, String entity_uri_label) {
-
+	public CommonXMLTagDef(String docLabel, String textLabel, String idLabel, String markColLabel,
+			String markLabel, String strtLabel, String lenLabel, String entityNameLabel, String entityUriLabel) {
 		this.codeMap = new HashMap<>();
-
-		this.docLabel = doc_label;
-		if (this.docLabel != null)
-			this.codeMap.put(this.docLabel, DOC_LABEL_CODE);
-		this.textLabel = text_label;
-		if (this.textLabel != null)
-			this.codeMap.put(this.textLabel, TEXT_LABEL_CODE);
-		this.idLabel = id_label;
-		if (this.idLabel != null)
-			this.codeMap.put(this.idLabel, ID_LABEL_CODE);
-		this.markColLabel = mark_col_label;
-		if (this.markColLabel != null)
-			this.codeMap.put(this.markColLabel, MARK_COL_LABEL_CODE);
-		this.markLabel = mark_label;
-		if (this.markLabel != null)
-			this.codeMap.put(this.markLabel, MARK_LABEL_CODE);
-		this.strtLabel = strt_label;
-		if (this.strtLabel != null)
-			this.codeMap.put(this.strtLabel, STRT_LABEL_CODE);
-		this.lenLabel = len_label;
-		if (this.lenLabel != null)
-			this.codeMap.put(this.lenLabel, LEN_LABEL_CODE);
-		this.entityNameLabel = entity_name_label;
-		if (this.entityNameLabel != null)
-			this.codeMap.put(this.entityNameLabel, ENT_NM_LABEL_CODE);
-		this.entityUriLabel = entity_uri_label;
-		if (this.entityUriLabel != null)
-			this.codeMap.put(this.entityUriLabel, ENT_URI_LABEL_CODE);
-
+		this.setDocLabel(docLabel);
+		this.setTextLabel(textLabel);
+		this.setIdLabel(idLabel);
+		this.setMarkColLabel(markColLabel);
+		this.setMarkLabel(markLabel);
+		this.setStrtLabel(strtLabel);
+		this.setLenLabel(lenLabel);
+		this.setEntityNameLabel(entityNameLabel);
+		this.setEntityUriLabel(entityUriLabel);
 	}
 
 	public String getDocLabel() {
@@ -91,6 +70,8 @@ public class CommonXMLTagDef {
 
 	public void setDocLabel(String docLabel) {
 		this.docLabel = docLabel;
+		if (this.docLabel != null)
+			this.codeMap.put(this.docLabel, DOC_LABEL_CODE);
 	}
 
 	public String getTextLabel() {
@@ -99,6 +80,8 @@ public class CommonXMLTagDef {
 
 	public void setTextLabel(String textLabel) {
 		this.textLabel = textLabel;
+		if (this.textLabel != null)
+			this.codeMap.put(this.textLabel, TEXT_LABEL_CODE);
 	}
 
 	public String getIdLabel() {
@@ -107,6 +90,8 @@ public class CommonXMLTagDef {
 
 	public void setIdLabel(String idLabel) {
 		this.idLabel = idLabel;
+		if (this.idLabel != null)
+			this.codeMap.put(this.idLabel, ID_LABEL_CODE);
 	}
 
 	public String getMarkColLabel() {
@@ -115,6 +100,8 @@ public class CommonXMLTagDef {
 
 	public void setMarkColLabel(String markColLabel) {
 		this.markColLabel = markColLabel;
+		if (this.markColLabel != null)
+			this.codeMap.put(this.markColLabel, MARK_COL_LABEL_CODE);
 	}
 
 	public String getMarkLabel() {
@@ -123,6 +110,8 @@ public class CommonXMLTagDef {
 
 	public void setMarkLabel(String markLabel) {
 		this.markLabel = markLabel;
+		if (this.markLabel != null)
+			this.codeMap.put(this.markLabel, MARK_LABEL_CODE);
 	}
 
 	public String getStrtLabel() {
@@ -131,6 +120,8 @@ public class CommonXMLTagDef {
 
 	public void setStrtLabel(String strtLabel) {
 		this.strtLabel = strtLabel;
+		if (this.strtLabel != null)
+			this.codeMap.put(this.strtLabel, STRT_LABEL_CODE);
 	}
 
 	public String getLenLabel() {
@@ -139,6 +130,8 @@ public class CommonXMLTagDef {
 
 	public void setLenLabel(String lenLabel) {
 		this.lenLabel = lenLabel;
+		if (this.lenLabel != null)
+			this.codeMap.put(this.lenLabel, LEN_LABEL_CODE);
 	}
 
 	public String getEntityNameLabel() {
@@ -147,6 +140,8 @@ public class CommonXMLTagDef {
 
 	public void setEntityNameLabel(String entityNameLabel) {
 		this.entityNameLabel = entityNameLabel;
+		if (this.entityNameLabel != null)
+			this.codeMap.put(this.entityNameLabel, ENT_NM_LABEL_CODE);
 	}
 
 	public String getEntityUriLabel() {
@@ -155,6 +150,8 @@ public class CommonXMLTagDef {
 
 	public void setEntityUriLabel(String entityUriLabel) {
 		this.entityUriLabel = entityUriLabel;
+		if (this.entityUriLabel != null)
+			this.codeMap.put(this.entityUriLabel, ENT_URI_LABEL_CODE);
 	}
 
 	public Map<String, Integer> getCodeMap() {
@@ -168,5 +165,4 @@ public class CommonXMLTagDef {
 	public Integer getMatchCode(String qName) {
 		return codeMap.get(qName);
 	}
-
 }

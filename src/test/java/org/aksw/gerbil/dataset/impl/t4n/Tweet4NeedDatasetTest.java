@@ -38,18 +38,21 @@ public class Tweet4NeedDatasetTest {
 	private static final String EXPCTD_DOC1_ID = "100000000001";
 	private static final String EXPCTD_DOC1_TEXT = "John Oliver is the best anchor ever. #lwn";
 	private static final String EXPCTD_DOC1_ENTITY1_URI = "http://dbpedia.org/resource/John_Oliver";
+	private static final String EXPCTD_DOC1_ENTITY1_SURFACE = "John Oliver";
 	private static final Integer EXPCTD_DOC1_ENTITY1_STARTPOS = 0;
 	private static final Integer EXPCTD_DOC1_ENTITY1_LEN = 11;
 
 	private static final String EXPCTD_DOC2_ID = "100000000002";
 	private static final String EXPCTD_DOC2_TEXT = "Gerbil is the best tool ever. #qabenchmarking";
 	private static final String EXPCTD_DOC2_ENTITY1_URI = "http://dbpedia.org/resource/Gerbil";
+	private static final String EXPCTD_DOC2_ENTITY1_SURFACE = "Gerbil";
 	private static final Integer EXPCTD_DOC2_ENTITY1_STARTPOS = 0;
 	private static final Integer EXPCTD_DOC2_ENTITY1_LEN = 6;
 
 	private static final String EXPCTD_DOC3_ID = "100000000003";
 	private static final String EXPCTD_DOC3_TEXT = "I believe in Cristiano Ronaldo #CR7Forever";
 	private static final String EXPCTD_DOC3_ENTITY1_URI = "http://dbpedia.org/resource/Cristiano_Ronaldo";
+	private static final String EXPCTD_DOC3_ENTITY1_SURFACE = "Cristiano Ronaldo";
 	private static final Integer EXPCTD_DOC3_ENTITY1_STARTPOS = 13;
 	private static final Integer EXPCTD_DOC3_ENTITY1_LEN = 17;
 
@@ -58,22 +61,23 @@ public class Tweet4NeedDatasetTest {
 		// Generate Documents
 		// Doc1
 		Document doc = createTestDocument(DATASET_NAME, EXPCTD_DOC1_ID, EXPCTD_DOC1_TEXT, EXPCTD_DOC1_ENTITY1_URI,
-				EXPCTD_DOC1_ENTITY1_STARTPOS, EXPCTD_DOC1_ENTITY1_LEN);
+				EXPCTD_DOC1_ENTITY1_SURFACE, EXPCTD_DOC1_ENTITY1_STARTPOS, EXPCTD_DOC1_ENTITY1_LEN);
 		DOC_MAP.put(doc.getDocumentURI(), doc);
 		// Doc2
 		doc = createTestDocument(DATASET_NAME, EXPCTD_DOC2_ID, EXPCTD_DOC2_TEXT, EXPCTD_DOC2_ENTITY1_URI,
-				EXPCTD_DOC2_ENTITY1_STARTPOS, EXPCTD_DOC2_ENTITY1_LEN);
+				EXPCTD_DOC2_ENTITY1_SURFACE, EXPCTD_DOC2_ENTITY1_STARTPOS, EXPCTD_DOC2_ENTITY1_LEN);
 		DOC_MAP.put(doc.getDocumentURI(), doc);
 		// Doc3
 		doc = createTestDocument(DATASET_NAME, EXPCTD_DOC3_ID, EXPCTD_DOC3_TEXT, EXPCTD_DOC3_ENTITY1_URI,
-				EXPCTD_DOC3_ENTITY1_STARTPOS, EXPCTD_DOC3_ENTITY1_LEN);
+				EXPCTD_DOC3_ENTITY1_SURFACE, EXPCTD_DOC3_ENTITY1_STARTPOS, EXPCTD_DOC3_ENTITY1_LEN);
 		DOC_MAP.put(doc.getDocumentURI(), doc);
 	}
 
 	public static Document createTestDocument(String dsName, String docId, String docText, String entityUri,
-			Integer startPos, Integer length) {
+			String entitySurface, Integer startPos, Integer length) {
 		XMLNamedEntity entity = new XMLNamedEntity();
 		entity.addUri(entityUri);
+		entity.setSurfaceForm(entitySurface);
 		entity.setStartPosition(startPos);
 		entity.setLength(length);
 		List<XMLNamedEntity> entityList = new ArrayList<>();

@@ -58,10 +58,12 @@ public class XMLDataUtil {
 		List<Marking> markings = new ArrayList<Marking>(nes.size());
 		String retrievedSurfaceForm;
 		for (XMLNamedEntity ne : nes) {
-			retrievedSurfaceForm = text.substring(ne.getStartPosition(), ne.getStartPosition() + ne.getLength());
-			if (!retrievedSurfaceForm.equals(ne.getSurfaceForm())) {
-				LOGGER.warn("In document " + documentUri + ", the expected surface form of the named entity " + ne
+			if(text != null){
+				retrievedSurfaceForm = text.substring(ne.getStartPosition(), ne.getStartPosition() + ne.getLength());
+				if (!retrievedSurfaceForm.equals(ne.getSurfaceForm())) {
+					LOGGER.warn("In document " + documentUri + ", the expected surface form of the named entity " + ne
 						+ " does not fit the surface form derived from the text \"" + retrievedSurfaceForm + "\".");
+				}
 			}
 			addDBpediaUris(ne.getUris());
 			markings.add(ne.toNamedEntity());

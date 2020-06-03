@@ -61,15 +61,16 @@ public class CommonXMLHandler extends DefaultHandler implements GenericResult {
 	@Override
 	public void startDocument() throws SAXException {
 		currentNE = null;
+		nes = new ArrayList<XMLNamedEntity>();
 		super.startDocument();
 	}
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		readSw = false;
-		if (tagDef.getMarkColLabel().equals(qName)) {
+		if (qName.equals(tagDef.getMarkColLabel())) {
 			nes = new ArrayList<XMLNamedEntity>();
-		} else if (tagDef.getMarkLabel().equals(qName)) {
+		} else if (qName.equals(tagDef.getMarkLabel())) {
 			currentNE = new XMLNamedEntity();
 		} else if (tagDef.getMatchCode(qName) != null) {
 			buffer.setLength(0);
