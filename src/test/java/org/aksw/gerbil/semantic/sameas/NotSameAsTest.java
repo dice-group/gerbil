@@ -16,6 +16,9 @@
  */
 package org.aksw.gerbil.semantic.sameas;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +27,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.semantic.sameas.impl.CrawlingSameAsRetrieverDecorator;
+import org.aksw.gerbil.semantic.sameas.impl.DomainBasedSameAsRetrieverManager;
+import org.aksw.gerbil.semantic.sameas.impl.SimpleDomainExtractor;
+import org.aksw.gerbil.semantic.sameas.impl.http.HTTPBasedSameAsRetriever;
 import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.junit.Assert;
@@ -45,44 +51,48 @@ public class NotSameAsTest {
     @Parameters
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
-        /*
-         * If the first test case is run, the second test case might fail
-         * because http://dbpedia.org/resource/Japan points to
-         * http://data.nytimes.com/66220885916538669281 = Armenia (is only a
-         * problem in this order and if the file based cache is used which
-         * merges the result set from the first test case with the result set of
-         * the second test case because of the same nytimes URI
-         */
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Japan",
+
+        testConfigs.add(new Object[] { "http://localhost/resource/Japan",
+                Arrays.asList("http://de.localhost/resource/Japan"),
                 Arrays.asList("http://dbpedia.org/resource/Armenia") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Armenia",
+        testConfigs.add(new Object[] { "http://localhost/resource/Armenia",
+                Arrays.asList("http://de.localhost/resource//Armenia"),
                 Arrays.asList("http://dbpedia.org/resource/Japan") });
-        /*
-         * the same problem as above but with a different example. Here, Sweden
-         * has a link to a wrong nytimes URI
-         */
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Sweden",
+        testConfigs.add(new Object[] { "http://localhost/resource/Sweden",
+                Arrays.asList("http://de.localhost/resource/Sweden"),
                 Arrays.asList("http://dbpedia.org/resource/Malta") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Malta",
+        testConfigs.add(new Object[] { "http://localhost/resource/Malta",
+                Arrays.asList("http://de.localhost/resource/Sweden"),
                 Arrays.asList("http://dbpedia.org/resource/Sweden") });
         return testConfigs;
     }
 
     private String uri;
     private Set<String> unexpectedUris;
+    private Set<String> expectedUris;
 
-    public NotSameAsTest(String uri, Collection<String> unexpectedUris) {
+    public NotSameAsTest(String uri, Collection<String> expectedUris, Collection<String> unexpectedUris) {
         this.uri = uri;
         if (unexpectedUris != null) {
             this.unexpectedUris = new HashSet<String>();
             this.unexpectedUris.addAll(unexpectedUris);
+        }
+        if (expectedUris != null) {
+            this.expectedUris = new HashSet<String>();
+            this.expectedUris.addAll(expectedUris);
         }
     }
 
     @Test
     public void test() {
         SameAsRetriever retriever = SameAsRetrieverSingleton4Tests.getInstance();
+        HTTPBasedSameAsRetriever sameAsRetrieverMock = mock(HTTPBasedSameAsRetriever.class);
+        String domain = SimpleDomainExtractor.extractDomain(uri);
+        when(sameAsRetrieverMock.retrieveSameURIs(domain, uri)).thenReturn(expectedUris);
+        //register a SameAsRetriever mock for the domain of the current uri
+        setMock(retriever, sameAsRetrieverMock, domain);
         setDebugging(retriever, true);
+        
         Set<String> uris = retriever.retrieveSameURIs(uri);
         if (unexpectedUris != null) {
             for (String unexpectedUri : unexpectedUris) {
@@ -99,6 +109,15 @@ public class NotSameAsTest {
         }
         if (retriever instanceof CrawlingSameAsRetrieverDecorator) {
             ((CrawlingSameAsRetrieverDecorator) retriever).setDebugCrawling(debug);
+        }
+    }
+
+    protected void setMock(SameAsRetriever retriever, HTTPBasedSameAsRetriever mock, String domain) {
+        if (retriever instanceof SameAsRetrieverDecorator) {
+            setMock(((SameAsRetrieverDecorator) retriever).getDecorated(), mock, domain);
+        }
+        if (retriever instanceof DomainBasedSameAsRetrieverManager) {
+            ((DomainBasedSameAsRetrieverManager) retriever).addDomainSpecificRetriever(domain, mock);
         }
     }
 

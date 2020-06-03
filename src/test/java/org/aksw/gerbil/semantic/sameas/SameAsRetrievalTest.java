@@ -51,33 +51,31 @@ public class SameAsRetrievalTest {
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         testConfigs.add(new Object[] { null, null });
-        testConfigs.add(new Object[] { "http://aksw.org/notInWiki/Peter_Pan", null });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Kaufland",
-                Arrays.asList("http://fr.dbpedia.org/resource/Kaufland", "http://de.dbpedia.org/resource/Kaufland") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Malaysia",
-                Arrays.asList("http://de.dbpedia.org/resource/Malaysia") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/People's_Republic_of_China",
-                Arrays.asList("http://dbpedia.org/resource/China") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Home_Depot",
-                Arrays.asList("http://dbpedia.org/resource/The_Home_Depot") });
-        testConfigs.add(new Object[] { "http://en.wikipedia.org/wiki/People's_Republic_of_China",
-                Arrays.asList("http://en.wikipedia.org/wiki/China") });
-        testConfigs.add(new Object[] { "http://en.wikipedia.org/wiki/\"B\"_Movie",
-                Arrays.asList("http://en.wikipedia.org/wiki/B_movie") });
-        testConfigs.add(new Object[] { "http://en.dbpedia.org/resource/Berlin",
-                Arrays.asList("http://dbpedia.org/resource/Berlin") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Gainesville,_Florida",
-                Arrays.asList("http://dbpedia.org/resource/Gainesville%2C_Florida") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Gainesville%2C_Florida",
-                Arrays.asList("http://dbpedia.org/resource/Gainesville,_Florida") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Richard_Taylor_(British_politician)",
-                Arrays.asList("http://dbpedia.org/resource/Richard_Taylor_%28British_politician%29") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Richard_Taylor_%28British_politician%29",
-                Arrays.asList("http://dbpedia.org/resource/Richard_Taylor_(British_politician)") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/National_Public_Radio",
-                Arrays.asList("http://dbpedia.org/resource/NPR") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/NPR",
-                Arrays.asList("http://dbpedia.org/resource/National_Public_Radio") });
+        testConfigs.add(new Object[] { "http://localhost/notInWiki/Peter_Pan", null });
+        testConfigs.add(new Object[] { "http://localhost/resource/Kaufland",
+                Arrays.asList("http://fr.localhost/resource/Kaufland", "http://de.localhost/resource/Kaufland") });
+        testConfigs.add(new Object[] { "http://localhost/resource/Malaysia",
+                Arrays.asList("http://de.localhost/resource/Malaysia") });
+        testConfigs.add(new Object[] { "http://localhost/resource/People's_Republic_of_China",
+                Arrays.asList("http://localhost/resource/China") });
+        testConfigs.add(new Object[] { "http://localhost/resource/Home_Depot",
+                Arrays.asList("http://localhost/resource/The_Home_Depot") });
+        testConfigs.add(new Object[] { "http://localhost/wiki/\"B\"_Movie",
+                Arrays.asList("http://localhost/wiki/B_movie") });
+        testConfigs.add(new Object[] { "http://en.localhost/resource/Berlin",
+                Arrays.asList("http://localhost/resource/Berlin") });
+        testConfigs.add(new Object[] { "http://localhost/resource/Gainesville,_Florida",
+                Arrays.asList("http://localhost/resource/Gainesville%2C_Florida") });
+        testConfigs.add(new Object[] { "http://localhost/resource/Gainesville%2C_Florida",
+                Arrays.asList("http://localhost/resource/Gainesville,_Florida") });
+        testConfigs.add(new Object[] { "http://localhost/resource/Richard_Taylor_(British_politician)",
+                Arrays.asList("http://localhost/resource/Richard_Taylor_%28British_politician%29") });
+        testConfigs.add(new Object[] { "http://localhost/resource/Richard_Taylor_%28British_politician%29",
+                Arrays.asList("http://localhost/resource/Richard_Taylor_(British_politician)") });
+        testConfigs.add(new Object[] { "http://localhost/resource/National_Public_Radio",
+                Arrays.asList("http://localhost/resource/NPR") });
+        testConfigs.add(new Object[] { "http://localhost/resource/NPR",
+                Arrays.asList("http://localhost/resource/National_Public_Radio") });
         return testConfigs;
     }
 
@@ -98,10 +96,9 @@ public class SameAsRetrievalTest {
         HTTPBasedSameAsRetriever sameAsRetrieverMock = mock(HTTPBasedSameAsRetriever.class);
         String domain = SimpleDomainExtractor.extractDomain(uri);
         when(sameAsRetrieverMock.retrieveSameURIs(domain, uri)).thenReturn(expectedURIs);
-
         //register a SameAsRetriever mock for the domain of the current uri
         setMock(retriever, sameAsRetrieverMock, domain);
-
+        
         Set<String> uris = retriever.retrieveSameURIs(uri);
         if (expectedURIs == null) {
             Assert.assertNull(uris);
@@ -112,7 +109,7 @@ public class SameAsRetrievalTest {
         }
     }
 
-    private void setMock(SameAsRetriever retriever, HTTPBasedSameAsRetriever mock, String domain) {
+    protected void setMock(SameAsRetriever retriever, HTTPBasedSameAsRetriever mock, String domain) {
         if (retriever instanceof SameAsRetrieverDecorator) {
             setMock(((SameAsRetrieverDecorator) retriever).getDecorated(), mock, domain);
         }
