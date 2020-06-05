@@ -46,9 +46,7 @@ import logging
 import nltk
 import subprocess
 import re
-import json
 
-from bert_score import score
 from metrics.chrF import computeChrF
 from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
 from razdel import tokenize
@@ -220,21 +218,6 @@ def ter_score(references, hypothesis, num_refs):
     logging.info('FINISHING TO COMPUTE TER...')
     return sum(ter_scores) / len(ter_scores)
 
-
-def bert_score_(references, hypothesis, lng='en'):
-    logging.info('STARTING TO COMPUTE BERT SCORE...')
-    for i, refs in enumerate(references):
-        references[i] = [ref for ref in refs if ref.strip() != '']
-
-    scores = []
-    for hyp, refs in zip(hypothesis, references):
-        P, R, F1 = score([hyp], [refs], lang=lng)
-        scores.append(F1)
-    logging.info('FINISHING TO COMPUTE BERT SCORE...')
-    bert = float(sum(scores) / len(scores))
-    return bert
-
-
 if __name__ == '__main__':
     FORMAT = '%(levelname)s: %(asctime)-15s - %(message)s'
     logging.basicConfig(filename='eval.log', level=logging.INFO, format=FORMAT)
@@ -244,8 +227,8 @@ if __name__ == '__main__':
     argParser.add_argument("-H", "--hypothesis", help="hypothesis translation", required=True)
     argParser.add_argument("-lng", "--language", help="evaluated language", default='en')
     argParser.add_argument("-nr", "--num_refs", help="number of references", type=int, default=4)
-    argParser.add_argument("-m", "--metrics", help="evaluation metrics to be computed", default='bleu,meteor,ter,chrf++,bert')
-    argParser.add_argument("-nc", "--ncorder", help="chrF metric: character n-gram order (default=6)", type=int, default=6)
+    argParser.add_argument("-m", "--metrics", help="evaluation metrics to be computed", default='bleu,meteor,ter,chrf++')
+    argParser.add_argument("-nc", "--ncorder", help="chrF metric: character n-gram order (default=6)", type=int, default=5)
     argParser.add_argument("-nw", "--nworder", help="chrF metric: word n-gram order (default=2)", type=int, default=2)
     argParser.add_argument("-b", "--beta", help="chrF metric: beta parameter (default=2)", type=float, default=2.0)
 
@@ -287,11 +270,6 @@ if __name__ == '__main__':
         headers.append('TER')
         ter = ter_score(references_tok, hypothesis_tok, num_refs)
         values.append(round(ter, 2))
-    if 'bert' in metrics:
-        headers.append('BERT-SCORE')
-        bert = bert_score_(references, hypothesis, lng=lng)
-        values.append(round(bert, 2))
-    logging.info('FINISHING EVALUATION...')
 
     logging.info('PRINTING RESULTS...')
     mapping = dict(zip(headers, values))
