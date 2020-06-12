@@ -372,6 +372,7 @@
                      $('#setdata').select2({closeOnSelect: false});
                      //awful, but works for now
                      $('#datasetMenu div.btn-group').hide();
+                     $('#setdata').disable();
           }
 
         function showDropdownMenu(datasets, language) {
