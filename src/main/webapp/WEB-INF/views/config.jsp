@@ -10,6 +10,8 @@
           href="/gerbil/webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
     <link rel="icon" type="image/png"
           href="/gerbil/webResources/gerbilicon_transparent.png">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
     <style type="text/css">
         /* making the buttons wide enough and right-aligned */
         .btn-group>.btn {
@@ -68,6 +70,7 @@
 <script src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
 <script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script src="/gerbil/webjars/bootstrap-multiselect/0.9.8/js/bootstrap-multiselect.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 <c:url var="jquerywidget"
        value="/webResources/js/vendor/jquery.ui.widget.js" />
 <script src="${jquerywidget}"></script>
@@ -147,13 +150,13 @@
         <div class="form-group">
             <label class="col-md-4 control-label" for="datasets">Dataset</label>
             <div class="col-md-4">
-                <div class="dropdownDiv">
+                <div class="">
 
                     <span id="chosenDelomrade" style="font-weight:bold" ></span>
-                    <div class="dropdown datasetDropdown">
-                        <a href="#" class="btn dropdown-toggle" data-toggle="dropdown">None selected<span class="caret"></span></a>
-                        <ul id="dropdownmenu" class="dropdown-menu"></ul>
+                    <div id="datasetMenu" class="dropdown datasetDropdown">
+                        <select id="setdata" class="js-example-basic-multiple" name="datasets[]" style="width:100%"  multiple="multiple"></select>
                     </div>
+
                 </div>
                 <hr/>
                 <div>
@@ -315,45 +318,76 @@
 
 
         $('.datasetDropdown').on('click', function(e) {
-            var formattedData = [];
-            var n;
-            $.getJSON('${datasets}', {
-                experimentType : $('#type').val(),
-                ajax : 'false'
-            }, function(data) {
 
-                for (var i = 0; i < data.length; i++) {
-                    n = data[i].split("/",2);
-                    var dat = {};
-                    dat.label = n[0];
-                    dat.value = n[1];
-                    formattedData.push(dat);
-                }
-                const groupBy= key => array =>
-                    array.reduce(
-                        (objectsByKeyValue, obj) => ({
-                            ...objectsByKeyValue,
-                            [obj[key]]: (objectsByKeyValue[obj[key]] || []).concat(obj)
-                        }),
-                        {}
-                    );
-                const groupByLabel = groupBy('label');
-                var arr =(groupByLabel(formattedData));
-                var kes = Object.keys(arr);
-                var val = Object.values(arr);
-                showDropdownMenu(kes, val);
-
-                console.log(kes + val);
             });
-        });
+
+        function loadDatasetsMenu(){
+            var formattedData = [];
+                    var n;
+                    $.getJSON('${datasets}', {
+                        experimentType : $('#type').val(),
+                        ajax : 'false'
+                    }, function(data) {
+
+                        for (var i = 0; i < data.length; i++) {
+                            n = data[i].split("/",2);
+                            var dat = {};
+                            dat.label = n[0];
+                            dat.value = n[1];
+                            formattedData.push(dat);
+                        }
+                        const groupBy= key => array =>
+                            array.reduce(
+                                (objectsByKeyValue, obj) => ({
+                                    ...objectsByKeyValue,
+                                    [obj[key]]: (objectsByKeyValue[obj[key]] || []).concat(obj)
+                                }),
+                                {}
+                            );
+                        const groupByLabel = groupBy('label');
+                        var arr =(groupByLabel(formattedData));
+                        var kes = Object.keys(arr);
+                        var val = Object.values(arr);
+                        showDropdownMenuHack(kes, arr);
+                        //console.log(arr)
+                        //console.log(kes + val);
+                   });
+                };
+
+                loadDatasetsMenu();
+
+        function showDropdownMenuHack(datasets, language){
+
+          $('#setdata li').remove();
+                    var dropDownMenuStr = ''
+                    for (var i in datasets) {
+                            dropDownMenuStr += '<optgroup label="'+datasets[i]+'">';
+                            for( var x in language[datasets[i]]){
+                                dropDownMenuStr += '<option value="'+datasets[i]+'/'+language[datasets[i]][x]["value"]+'">'+language[datasets[i]][x]["value"]+'</option>';
+                            }
+                            dropDownMenuStr+='</optgroup>';
+                    }
+                    dropDownMenuStr+='';
+                     $('#setdata').append(dropDownMenuStr);
+                     $('#setdata').select2({closeOnSelect: false});
+                     //awful, but works for now
+                     $('#datasetMenu div.btn-group').hide();
+          }
 
         function showDropdownMenu(datasets, language) {
 
-            $('#dropdownmenu li').remove();
+            $('#setdata li').remove();
+            var dropDownMenuStr = ""
             for (var i in datasets) {
-                $('#dropdownmenu').append('<li class="dropdown-submenu"><a href="#">' + datasets[i] + '</a> ' +
-                    '<ul class="dropdown-menu"><li> <a href="#">' + language +'<br>'+ '</a> </li></ul></li>');
+
+
+                    dropDownMenuStr += '<li class="dropdown-submenu"><a href="#">' + datasets[i] + '</a><ul class="dropdown-menu"> ';
+                    for( var x in language[datasets[i]]){
+                        dropDownMenuStr += '<li> '+language[datasets[i]][x]["value"] +'<br>'+ '</a> </li>';
+                    }
+                    dropDownMenuStr+='</ul></li>';
             }
+             $('#setdata').append(dropDownMenuStr);
         }
     }
 

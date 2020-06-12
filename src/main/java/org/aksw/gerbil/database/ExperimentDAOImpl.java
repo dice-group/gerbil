@@ -19,16 +19,14 @@ package org.aksw.gerbil.database;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.util.*;
 
 import javax.sql.DataSource;
 
+import org.aksw.gerbil.annotator.File2SystemEntry;
 import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.datatypes.ErrorTypes;
-import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
-import org.aksw.gerbil.datatypes.TaskResult;
+import org.aksw.gerbil.datatypes.*;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -62,7 +60,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     private final static String GET_TASK_RESULTS_DOUBLE = "SELECT rn.name, 'DOUBLE' AS Type, dr.resvalue FROM ExperimentTasks_DoubleResults dr, ResultNames rn WHERE dr.resultId = rn.id and dr.taskId = :taskId";
     private final static String GET_TASK_RESULTS_INTEGER = "SELECT rn.name, 'INT' AS Type, ir.resvalue FROM ExperimentTasks_IntResults ir, ResultNames rn WHERE ir.resultId = rn.id and ir.taskId = :taskId";
-    private final static String INSERT_DOUBLE_RESULT = "INSERT INTO ExperimentTasks_DoubleResults(taskId, resultId, resvalue) select :taskId, id, :value from ResultNames where name = :resName";
+    private final static String INSERT_DOUBLE_RESULT = "INSERT INTO ExperimentTasks_DoubleResults(resultId, taskId, resvalue) select id, :taskId, :value from ResultNames where name = :resName";
     private final static String INSERT_INT_RESULT = "INSERT INTO ExperimentTasks_IntResults(taskId, resultId, resvalue) select :taskId, id, :value from ResultNames where name = :resName";
     private final static String GET_SUB_TASK_RESULTS = "SELECT systemName, datasetName, experimentType, state, version, lastChanged, subTaskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
     private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
@@ -75,6 +73,25 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                                                    */ };
     public static final String ERROR_COUNT_NAME = "Error Count";
 
+    private static final String GET_BEST_EXPERIMENT_TASK_RESULTS = "select inExp.systemName, outExp.datasetName, outExp.experimentType, outExp.matching, outExp.state, outExp.version, outExp.lastChanged, outExp.id, inExp.result from ExperimentTasks outExp, (SELECT exp.systemName, max(addi.resvalue) AS result FROM ExperimentTasks exp join ExperimentTasks_DoubleResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND (addi.resultId=0 OR addi.resultId=3) and addi.resvalue <> sqrt(-1) and exp.experimentType = :experimentType and exp.datasetName = :dataset GROUP by exp.systemName) as inExp, ExperimentTasks_DoubleResults outAddi WHERE outExp.publish='true' AND (outAddi.resultId=0 OR outAddi.resultId=3) and outExp.Id=outAddi.taskId and outExp.systemName = inExp.systemName and inExp.result = outAddi.resvalue and outExp.state = 0 and outExp.datasetName = :dataset ORDER BY inExp.result DESC;";
+
+    private static final String GET_ALL_ANNOTATORS = "SELECT DISTINCT systemName FROM ExperimentTasks";
+
+    private static final String GET_BEST_EXPERIMENT_DATE_TASK_RESULTS = "select inExp.systemName, outExp.datasetName, outExp.experimentType, outExp.matching, outExp.state, outExp.version, outExp.lastChanged, outExp.id, inExp.result from ExperimentTasks outExp, (SELECT exp.systemName, max(addi.resvalue) AS result FROM ExperimentTasks exp join ExperimentTasks_DoubleResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND (addi.resultId=0 OR addi.resultId=3) and addi.resvalue <> sqrt(-1) and exp.experimentType = :experimentType and exp.datasetName = :dataset and exp.lastChanged <= :before and exp.lastChanged >= :after GROUP by exp.systemName) as inExp, ExperimentTasks_DoubleResults outAddi WHERE outExp.publish='true' AND (outAddi.resultId=0 OR outAddi.resultId=3) and outExp.Id=outAddi.taskId and outExp.systemName = inExp.systemName and inExp.result = outAddi.resvalue and outExp.state = 0 and outExp.datasetName = :dataset ORDER BY inExp.result DESC;";
+
+
+    private static final String SET_FILE2SYSTEM_MAPPING = "INSERT INTO File2System (id, file, system, email) VALUES(:id, :file, :system, :email)";
+    private static final String GET_FILE2SYSTEM_MAPPING = "SELECT id, file, system, email FROM File2System WHERE id=:id";
+
+    private static final String GET_CHALLENGE_DESCRIPTIONS = "SELECT startDate, endDate, name FROM ChallengeDescriptions";
+    private final static String INSERT_CHALLENGE_DESCRIPTIONS = "INSERT INTO ChallengeDescriptions(startDate, endDate, name) VALUES (:startDate, :endDate, :name)";
+    private static final String GET_CHALLENGE_DESCRIPTION = "SELECT startDate, endDate, name FROM ChallengeDescriptions WHERE startDate=:startDate and endDate=:endDate and name=:name";
+    private final static String GET_EXPERIMENT_TASKID = "SELECT id FROM Experiments WHERE taskId=:taskId";
+    private static final String GET_ALL_METRICS_FOR_EXPERIMENT_TYPE = "SELECT distinct rn.name FROM ResultNames rn" ;
+
+    private static final String INSERT_RESULT_NAMES = "INSERT INTO ResultNames(name) VALUES (:name)";
+
+
     private final NamedParameterJdbcTemplate template;
 
     public ExperimentDAOImpl(DataSource dataSource) {
@@ -84,6 +101,15 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     public ExperimentDAOImpl(DataSource dataSource, long resultDurability) {
         super(resultDurability);
         this.template = new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @Override
+    public void insertResultNames(String[] names){
+        for(String name : names){
+            MapSqlParameterSource parameters = new MapSqlParameterSource();
+            parameters.addValue("name", name);
+            this.template.update(INSERT_RESULT_NAMES, parameters);
+        }
     }
 
     @Override
@@ -361,4 +387,124 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         List<Integer> result = this.template.query(GET_RUNNING_EXP_COUNT, parameters, new IntegerRowMapper());
         return result.get(0);
     }
+
+
+    @Override
+    public Set<String> getAnnotators() {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        return new HashSet<String>(this.template.queryForList(GET_ALL_ANNOTATORS, params, String.class));
+    }
+
+    @Override
+    public String getTaskId(int id) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("taskId", id);
+        return this.template.query(GET_EXPERIMENT_TASKID, params, new StringRowMapper()).get(0);
+    }
+
+    @Override
+    public List<String> getAllMetricsForExperimentType(ExperimentType experimentType) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        //TODO
+        //parameters.addValue("type", experimentType.toString());
+        List<String> metrics = this.template.query(GET_ALL_METRICS_FOR_EXPERIMENT_TYPE, parameters,
+                new StringRowMapper());
+        return metrics;
+    }
+
+
+    @Override
+    public List<ExperimentTaskStatus> getBestResults(String experimentType, String dataset) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("experimentType", experimentType);
+        parameters.addValue("dataset", dataset);
+
+        List<ExperimentTaskStatus> result = this.template.query(GET_BEST_EXPERIMENT_TASK_RESULTS, parameters,
+                new ExperimentTaskRowMapper());
+        for (ExperimentTaskStatus res : result) {
+            addAllResults(res);
+        }
+        if (result.isEmpty())
+            return null;
+        return result;
+    }
+
+    @Override
+    public List<ExperimentTaskStatus> getBestResults(String experimentType, String dataset,
+                                                     Timestamp start, Timestamp end) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("experimentType", experimentType);
+        parameters.addValue("dataset", dataset);
+        parameters.addValue("after", start);
+        parameters.addValue("before", end);
+
+        List<ExperimentTaskStatus> result = this.template.query(GET_BEST_EXPERIMENT_DATE_TASK_RESULTS, parameters,
+                new ExperimentTaskRowMapper());
+        for (ExperimentTaskStatus res : result) {
+            addAllResults(res);
+        }
+        if (result.isEmpty())
+            return null;
+        return result;
+    }
+
+
+    public boolean isChallengeInDB(ChallengeDescr challenge){
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("startDate", challenge.getStartDate());
+        parameters.addValue("endDate", challenge.getEndDate());
+        parameters.addValue("name", challenge.getName());
+        List<ChallengeDescr> result = this.template.query(GET_CHALLENGE_DESCRIPTION, parameters,
+                new ChallengeDescrRowMapper());
+        return !result.isEmpty();
+    }
+
+
+    public List<ChallengeDescr> getAllChallenges(){
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        List<ChallengeDescr> result = this.template.query(GET_CHALLENGE_DESCRIPTIONS, parameters,
+                new ChallengeDescrRowMapper());
+        return result;
+    }
+
+    public void addChallenge(ChallengeDescr challenge) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("startDate", challenge.getStartDate());
+        parameters.addValue("endDate", challenge.getEndDate());
+        parameters.addValue("name", challenge.getName());
+        this.template.update(INSERT_CHALLENGE_DESCRIPTIONS, parameters);
+    }
+
+    @Override
+    public void setFile2SystemMapping(int experimentTaskId, String fileName, String systemName, String email) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("id", experimentTaskId);
+        parameters.addValue("file", fileName);
+        parameters.addValue("system", systemName);
+        parameters.addValue("email", email);
+
+        this.template.update(SET_FILE2SYSTEM_MAPPING, parameters);
+    }
+
+    @Override
+    public void setFile2SystemMapping(int experimentTaskId, File2SystemEntry entry) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("id", experimentTaskId);
+        parameters.addValue("file", entry.getFileName());
+        parameters.addValue("system", entry.getSystemName());
+        parameters.addValue("email", entry.getEmail());
+
+        this.template.update(SET_FILE2SYSTEM_MAPPING, parameters);
+    }
+
+    @Override
+    public List<File2SystemEntry> getFile2SystemByID(int experimentTaskId) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("id", experimentTaskId);
+        List<File2SystemEntry> entry = this.template.query(GET_FILE2SYSTEM_MAPPING, parameters,
+                new File2SystemEntryRowMapper());
+        return entry;
+    }
+
 }

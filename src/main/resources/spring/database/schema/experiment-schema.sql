@@ -7,7 +7,8 @@ systemName VARCHAR(100),
 datasetName VARCHAR(100),
 state int,
 lastChanged TIMESTAMP,
-version VARCHAR(20)
+version VARCHAR(20),
+publish BOOLEAN DEFAULT TRUE
 );
 
 
@@ -74,3 +75,20 @@ PRIMARY KEY (taskId, subTaskId)
 UPDATE ExperimentTasks
 SET datasetName = 'Derczynski IPM NEL'
 WHERE datasetName = 'Derczynski';
+
+
+CREATE TABLE IF NOT EXISTS File2System (
+id int NOT NULL FOREIGN KEY REFERENCES ExperimentTasks(id),
+file VARCHAR(150) NOT NULL,
+system VARCHAR(50) NOT NULL,
+email VARCHAR(100) NOT NULL,
+PRIMARY KEY (id, system, file)
+);
+
+-- Challenge Descriptions
+CREATE TABLE IF NOT EXISTS ChallengeDescriptions (
+startDate TIMESTAMP NOT NULL,
+endDate TIMESTAMP NOT NULL,
+name VARCHAR(300) NOT NULL,
+PRIMARY KEY (startDate, endDate, name)
+);

@@ -85,6 +85,12 @@ public class MainController {
     @PostConstruct
     public void init() {
         initialize(dao);
+        addResultNamesFromConfig();
+    }
+
+    public void addResultNamesFromConfig(){
+        String[] resultNames = GerbilConfiguration.getInstance().getStringArray(RESNAME_PROP);
+        dao.insertResultNames(resultNames);
     }
 
     @Autowired
@@ -222,8 +228,8 @@ public class MainController {
         	precedingTaskCount = dao.countPrecedingRunningTasks(lastTaskId);
         }
         // Fetch Result Name sequence from property file
-        String[] resNamesDlmtd = GerbilConfiguration.getInstance()
-        .getStringArray(RESNAME_PROP);
+        //List<String> resNamesDLmtd = dao.getAllMetricsForExperimentType(ExperimentType.MT);
+        String[] resNamesDlmtd = GerbilConfiguration.getInstance().getStringArray(RESNAME_PROP);
         List<String> fnlRsltNms = new ArrayList<>();
         boolean isRemoved = false;
         for(String seqEntry : resNamesDlmtd) {

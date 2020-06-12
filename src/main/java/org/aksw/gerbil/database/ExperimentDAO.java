@@ -17,10 +17,15 @@
 package org.aksw.gerbil.database;
 
 import java.io.Closeable;
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
+import org.aksw.gerbil.annotator.File2SystemEntry;
+import org.aksw.gerbil.datatypes.ChallengeDescr;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
+import org.aksw.gerbil.datatypes.ExperimentType;
 
 /**
  * This interface defines the methods a class has to implement for making the
@@ -49,9 +54,12 @@ public interface ExperimentDAO extends Closeable {
      */
     public static final int TASK_STARTED_BUT_NOT_FINISHED_YET = -1;
 
-    /**
-     * Sentinel value returned if the task with the given id couldn't be found.
-     */
+    public void insertResultNames(String[] names);
+
+
+        /**
+         * Sentinel value returned if the task with the given id couldn't be found.
+         */
     public static final int TASK_NOT_FOUND = -2;
 
     /**
@@ -222,4 +230,24 @@ public interface ExperimentDAO extends Closeable {
      */
 	Integer countPrecedingRunningTasks(int lastTaskId);
 
+    public List<ExperimentTaskStatus> getBestResults(String name, String dataset);
+
+    public List<ExperimentTaskStatus> getBestResults(String name, String dataset, Timestamp start, Timestamp end);
+
+    public List<ChallengeDescr> getAllChallenges();
+
+    public void addChallenge(ChallengeDescr challenge);
+    public boolean isChallengeInDB(ChallengeDescr challenge);
+
+    public Set<String> getAnnotators();
+
+    public void setFile2SystemMapping(int experimentTaskId, String fileName, String systemName, String email);
+    public void setFile2SystemMapping(int experimentTaskId, File2SystemEntry entry);
+
+
+    public List<File2SystemEntry> getFile2SystemByID(int experimentTaskId);
+
+    public String getTaskId(int id);
+
+    public List<String> getAllMetricsForExperimentType(ExperimentType experimentType);
 }

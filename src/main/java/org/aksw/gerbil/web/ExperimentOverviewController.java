@@ -18,14 +18,18 @@ package org.aksw.gerbil.web;
 
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
+import org.aksw.gerbil.datatypes.ChallengeDescr;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.utils.DatasetMetaData;
 import org.aksw.gerbil.utils.DatasetMetaDataMapping;
 import org.aksw.gerbil.utils.PearsonsSampleCorrelationCoefficient;
 import org.aksw.gerbil.web.config.AdapterList;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.math3.analysis.function.Exp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -44,12 +51,17 @@ public class ExperimentOverviewController {
 
 	private static final double NOT_AVAILABLE_SENTINAL = -2;
 	private static final int MIN_NUMBER_OF_VALUES_FOR_CORR_CALC = 5;
-	private static final String CORRELATION_TABLE_COLUMN_HEADINGS[] = { "number of documents", "avg. document length",
+	private static final String CORRELATION_TABLE_COLUMN_HEADINGS[] = {"number of documents", "avg. document length",
 			"number of entities", "entities per document", "entities per token", "number of persons",
 			"number of organizations", "number of locations", "number of others"/*
 																				 * ,
 																				 * "corr. based on # datasets"
 																				 */};
+
+	private static final String GERBIL_PROPERTIES_CHALLENGE_END_KEY = "org.aksw.gerbil.challenge.enddate";
+	private static final String GERBIL_PROPERTIES_CHALLENGE_START_KEY = "org.aksw.gerbil.challenge.startdate";
+	private static final String GERBIL_PROPERTIES_CHALLENGE_NAME_KEY = "org.aksw.gerbil.challenge.name";
+	public static final String DATE_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss XXX";
 
 	@Autowired
 	@Qualifier("experimentDAO")
@@ -63,53 +75,188 @@ public class ExperimentOverviewController {
 	@Qualifier("datasets")
 	private AdapterList<DatasetConfiguration> datasets;
 
+	private ChallengeDescr challenge;
+
 	@RequestMapping("/experimentoverview")
-	public @ResponseBody String experimentoverview(@RequestParam(value = "experimentType") String experimentType) {
+	public @ResponseBody
+	String experimentoverview(@RequestParam(value = "experimentType") String experimentType) {
 		LOGGER.debug("Got request on /experimentoverview(experimentType={}", experimentType);
 		ExperimentType eType = ExperimentType.valueOf(experimentType);
 
 		String annotatorNames[] = loadAnnotators(eType);
 		String datasetNames[] = loadDatasets(eType);
+		challenge = null;
+		if (GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_END_KEY) &&
+				GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_START_KEY) &&
+				GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_NAME_KEY)) {
 
-		double results[][] = loadLatestResults(eType, annotatorNames, datasetNames);
-		double correlations[][] = calculateCorrelations(results, datasetNames);
-		return generateJson(results, correlations, annotatorNames, datasetNames);
+			String startDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_START_KEY);
+			String endDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_END_KEY);
+			String name = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_NAME_KEY);
+
+			Timestamp challengeEndDate = Timestamp.valueOf(endDate);
+			Timestamp challengeStartDate = Timestamp.valueOf(startDate);
+
+			DateFormat df = new SimpleDateFormat(ExperimentOverviewController.DATE_FORMAT_STRING);
+			//challengeDate.setTime(df.parse(endDate));
+			challenge = new ChallengeDescr(challengeStartDate, challengeEndDate, name);
+
+			//check if challenge not already ended.
+			if (this.challenge.getEndDate().before(Calendar.getInstance().getTime())) {
+				challenge = null;
+			}
+		}
+		return loadLatestResults(eType, annotatorNames, datasetNames, challenge);
 
 	}
 
-	private double[][] loadLatestResults(ExperimentType experimentType, String[] annotatorNames,
-			String[] datasetNames) {
-		Map<String, Integer> annotator2Index = new HashMap<String, Integer>();
-		for (int i = 0; i < annotatorNames.length; ++i) {
-			annotator2Index.put(annotatorNames[i], i);
-		}
-		Map<String, Integer> dataset2Index = new HashMap<String, Integer>();
-		for (int i = 0; i < datasetNames.length; ++i) {
-			dataset2Index.put(datasetNames[i], i);
+
+	/**
+	 * { archive : [
+	 * {
+	 * challenge: {name, start, end},
+	 * results: [
+	 * {
+	 * type: "exp Type",
+	 * results: {..see latest results}
+	 * },
+	 * ...
+	 * ]
+	 * },
+	 * ...
+	 * ]}
+	 *
+	 * @return
+	 */
+	@RequestMapping("/experimentarchive")
+	public @ResponseBody
+	String experimentarchive() {
+		LOGGER.debug("Got request on /experimentarchive()");
+		StringBuilder response = new StringBuilder("{ \"archive\": [");
+		List<ExperimentType> types = new ArrayList<ExperimentType>();
+		types.add(ExperimentType.MT);
+
+		List<ChallengeDescr> challenges = dao.getAllChallenges();
+		//remove current challenge if challenged not ended yet
+		if (this.challenge != null && !this.challenge.getEndDate().before(Calendar.getInstance().getTime())) {
+			challenges.remove(this.challenge);
 		}
 
-		List<ExperimentTaskStatus> expResults = dao.getLatestResultsOfExperiments(experimentType.name(), annotatorNames, datasetNames);
-		double results[][] = new double[annotatorNames.length][datasetNames.length];
-		for (int i = 0; i < results.length; ++i) {
-			Arrays.fill(results[i], NOT_AVAILABLE_SENTINAL);
-		}
-		int row, col;
-		for (ExperimentTaskStatus result : expResults) {
-			if (annotator2Index.containsKey(result.annotator) && dataset2Index.containsKey(result.dataset)) {
-				row = annotator2Index.get(result.annotator);
-				col = dataset2Index.get(result.dataset);
-				if (result.state == ExperimentDAO.TASK_FINISHED) {
-					results[row][col] = (Double) result.getResultsMap().get("Micro F1 score").getResValue();
-				} else {
-					results[row][col] = result.state;
-				}
+		for (int i = 0; i < challenges.size(); i++) {
+			ChallengeDescr challenge = challenges.get(i);
+			response.append("{ \"challenge\":{");
+			response.append("\"name\": \"").append(challenge.getName()).append("\", ");
+			response.append("\"startDate\": \"").append(challenge.getStartDate().toString()).append("\", ");
+			response.append("\"endDate\": \"").append(challenge.getEndDate().toString()).append("\"}, ");
+			response.append(loadArchive(types, challenge));
+			response.append("}");
+			if (i < challenges.size() - 1) {
+				response.append(", ");
 			}
 		}
-		return results;
+		response.append("]}");
+		return response.toString();
+
+	}
+
+	private String loadArchive(List<ExperimentType> types, ChallengeDescr challenge) {
+		StringBuilder archive = new StringBuilder("\"results\": [");
+		for (int i = 0; i < types.size(); i++) {
+			ExperimentType eType = types.get(i);
+			archive.append("{ \"type\": \"").append(eType.getName()).append("\" , \"results\": ");
+
+			String annotatorNames[] = loadAnnotators(eType);
+			String datasetNames[] = loadDatasets(eType);
+			archive.append(loadLatestResults(eType, annotatorNames, datasetNames, challenge));
+			archive.append("}");
+			if (i < types.size() - 1) {
+				archive.append(", ");
+			}
+		}
+		archive.append("]");
+		return archive.toString();
+	}
+
+	private String loadLatestResults(ExperimentType experimentType, String[] annotatorNames,
+									 String[] datasetNames, ChallengeDescr challenge) {
+
+		StringBuilder listsAsJson = new StringBuilder("{ \"datasets\": [ ");
+
+		List<String> metrics = dao.getAllMetricsForExperimentType(experimentType);
+
+		int count = 0;
+		for (String dataset : datasetNames) {
+			List<ExperimentTaskStatus> leaderList = new ArrayList<ExperimentTaskStatus>();
+			StringBuilder rocs = new StringBuilder("");
+			int count2 = 0;
+			List<ExperimentTaskStatus> results;
+			if (challenge == null) {
+				results = dao.getBestResults(experimentType.name(), dataset);
+			} else {
+
+				results = dao.getBestResults(experimentType.name(), dataset, challenge.getStartDate(), challenge.getEndDate());
+			}
+			if (results != null) {
+				leaderList.addAll(results);
+
+			}
+			if (results == null || leaderList.isEmpty()) {
+				if (count >= datasetNames.length - 1) {
+					listsAsJson.setLength(listsAsJson.length() - 1);
+					listsAsJson.trimToSize();
+				}
+				count++;
+				continue;
+			}
+			listsAsJson.append("{\"datasetName\" : \"").append(dataset).append("\", ");
+
+			listsAsJson.append(" \"leader\" : [ ");
+
+			for (ExperimentTaskStatus expResults : leaderList) {
+				String annotator = expResults.annotator.substring(0, expResults.annotator.lastIndexOf("(")).replace("\"", "\\\"");
+				listsAsJson.append("{ \"annotatorName\" : \"").append(annotator).append("\", \"value\": ");
+
+				if (!expResults.resultsMap.isEmpty()) {
+					StringBuilder vals = new StringBuilder("[");
+					for (int k = 0; k < metrics.size() - 1; k++) {
+						if (expResults.getResultsMap().containsKey(metrics.get(k))) {
+							vals.append("\"").append(expResults.getResultsMap().get(metrics.get(k))).append("\", ");
+						} else {
+							vals.append("\"undefined\",");
+						}
+					}
+					if (expResults.getResultsMap().containsKey(metrics.get(metrics.size() - 1))) {
+						vals.append("\"").append(expResults.getResultsMap().get(metrics.get(metrics.size() - 1)));
+					} else {
+						vals.append("\"undefined\",");
+					}
+					vals.append("\"]");
+					listsAsJson.append(vals.toString() + ", \"id\": \"").append(dao.getTaskId(expResults.idInDb)).append("\"}");
+				} else {
+					listsAsJson.append("undefined").append("\", \"id\": \"").append(dao.getTaskId(expResults.idInDb)).append("\"}");
+				}
+
+
+				if (count2 < leaderList.size() - 1) {
+					listsAsJson.append(", ");
+				}
+
+
+				count2++;
+			}
+			if (count < datasetNames.length - 1)
+				listsAsJson.append(",");
+			count++;
+		}
+		//listsAsJson.setCharAt(datasetNames.length-1, ' ');
+		listsAsJson.append("]}");
+
+		return listsAsJson.toString();
 	}
 
 	private String[] loadAnnotators(ExperimentType eType) {
-		Set<String> annotatorNames = annotators.getAdapterNamesForExperiment(eType);
+
+		Set<String> annotatorNames = dao.getAnnotators();
 		String annotatorNameArray[] = annotatorNames.toArray(new String[annotatorNames.size()]);
 		Arrays.sort(annotatorNameArray);
 		return annotatorNameArray;
@@ -120,128 +267,5 @@ public class ExperimentOverviewController {
 		String datasetNameArray[] = datasetNames.toArray(new String[datasetNames.size()]);
 		Arrays.sort(datasetNameArray);
 		return datasetNameArray;
-	}
-
-	private double[][] calculateCorrelations(double[][] results, String datasetNames[]) {
-		DatasetMetaDataMapping mapping = DatasetMetaDataMapping.getInstance();
-		DatasetMetaData metadata[] = new DatasetMetaData[datasetNames.length];
-		for (int i = 0; i < datasetNames.length; ++i) {
-			metadata[i] = mapping.getMetaData(datasetNames[i]);
-		}
-		double correlations[][] = new double[results.length][CORRELATION_TABLE_COLUMN_HEADINGS.length];
-		DoubleArrayList annotatorResults = new DoubleArrayList(datasetNames.length);
-		DoubleArrayList numberOfDocuments = new DoubleArrayList(datasetNames.length);
-		DoubleArrayList avgDocumentLength = new DoubleArrayList(datasetNames.length);
-		DoubleArrayList numberOfEntities = new DoubleArrayList(datasetNames.length);
-		DoubleArrayList entitiesPerDoc = new DoubleArrayList(datasetNames.length);
-		DoubleArrayList entitiesPerToken = new DoubleArrayList(datasetNames.length);
-		DoubleArrayList amountOfPersons = new DoubleArrayList(datasetNames.length);
-		DoubleArrayList amountOfOrganizations = new DoubleArrayList(datasetNames.length);
-		DoubleArrayList amountOfLocations = new DoubleArrayList(datasetNames.length);
-		DoubleArrayList amountOfOthers = new DoubleArrayList(datasetNames.length);
-		double annotatorResultsAsArray[];
-		int elementCount;
-		for (int i = 0; i < correlations.length; ++i) {
-			Arrays.fill(correlations[i], NOT_AVAILABLE_SENTINAL);
-			// load the values for this annotator
-			annotatorResults.clear();
-			numberOfDocuments.clear();
-			avgDocumentLength.clear();
-			numberOfEntities.clear();
-			entitiesPerDoc.clear();
-			entitiesPerToken.clear();
-			amountOfPersons.clear();
-			amountOfOrganizations.clear();
-			amountOfLocations.clear();
-			amountOfOthers.clear();
-			for (int j = 0; j < results[i].length; ++j) {
-				if ((metadata[j] != null) && (results[i][j] >= 0)) {
-					annotatorResults.add(results[i][j]);
-					numberOfDocuments.add(metadata[j].numberOfDocuments);
-					avgDocumentLength.add(metadata[j].avgDocumentLength);
-					numberOfEntities.add(metadata[j].numberOfEntities);
-					entitiesPerDoc.add(metadata[j].entitiesPerDoc);
-					entitiesPerToken.add(metadata[j].entitiesPerToken);
-					amountOfPersons.add(metadata[j].amountOfPersons);
-					amountOfOrganizations.add(metadata[j].amountOfOrganizations);
-					amountOfLocations.add(metadata[j].amountOfLocations);
-					amountOfOthers.add(metadata[j].amountOfOthers);
-				}
-			}
-			// If we have enough datasets with metadata and results of the
-			// current annotator for these datasets
-			elementCount = annotatorResults.size();
-			if (elementCount > MIN_NUMBER_OF_VALUES_FOR_CORR_CALC) {
-				annotatorResultsAsArray = annotatorResults.toArray(new double[elementCount]);
-				correlations[i][0] = PearsonsSampleCorrelationCoefficient.calculateRankCorrelation(
-						annotatorResultsAsArray, numberOfDocuments.toArray(new double[elementCount]));
-				correlations[i][1] = PearsonsSampleCorrelationCoefficient.calculateRankCorrelation(
-						annotatorResultsAsArray, avgDocumentLength.toArray(new double[elementCount]));
-				correlations[i][2] = PearsonsSampleCorrelationCoefficient.calculateRankCorrelation(
-						annotatorResultsAsArray, numberOfEntities.toArray(new double[elementCount]));
-				correlations[i][3] = PearsonsSampleCorrelationCoefficient.calculateRankCorrelation(
-						annotatorResultsAsArray, entitiesPerDoc.toArray(new double[elementCount]));
-				correlations[i][4] = PearsonsSampleCorrelationCoefficient.calculateRankCorrelation(
-						annotatorResultsAsArray, entitiesPerToken.toArray(new double[elementCount]));
-				correlations[i][5] = PearsonsSampleCorrelationCoefficient.calculateRankCorrelation(
-						annotatorResultsAsArray, amountOfPersons.toArray(new double[elementCount]));
-				correlations[i][6] = PearsonsSampleCorrelationCoefficient.calculateRankCorrelation(
-						annotatorResultsAsArray, amountOfOrganizations.toArray(new double[elementCount]));
-				correlations[i][7] = PearsonsSampleCorrelationCoefficient.calculateRankCorrelation(
-						annotatorResultsAsArray, amountOfLocations.toArray(new double[elementCount]));
-				correlations[i][8] = PearsonsSampleCorrelationCoefficient.calculateRankCorrelation(
-						annotatorResultsAsArray, amountOfOthers.toArray(new double[elementCount]));
-				// correlations[i][9] = annotatorResultsAsArray.length;
-			}
-		}
-
-		return correlations;
-	}
-
-	private String generateJson(double[][] results, double[][] correlations, String annotatorNames[],
-			String datasetNames[]) {
-		StringBuilder jsonBuilder = new StringBuilder();
-		// jsonBuilder.append("results=");
-		jsonBuilder.append('[');
-		jsonBuilder.append(generateJSonTableString(results, datasetNames, annotatorNames, "Micro F1-measure"));
-		jsonBuilder.append(',');
-		jsonBuilder.append(generateJSonTableString(correlations, CORRELATION_TABLE_COLUMN_HEADINGS, annotatorNames,
-				"Correlations"));
-		jsonBuilder.append(']');
-		return jsonBuilder.toString();
-	}
-
-	private String generateJSonTableString(double values[][], String columnHeadings[], String lineHeadings[],
-			String tableName) {
-		StringBuilder dataBuilder = new StringBuilder();
-		dataBuilder.append("[[\"");
-		dataBuilder.append(tableName);
-		for (int i = 0; i < columnHeadings.length; ++i) {
-			dataBuilder.append("\",\"");
-			dataBuilder.append(columnHeadings[i]);
-		}
-		for (int i = 0; i < lineHeadings.length; ++i) {
-			dataBuilder.append("\"],\n[\"");
-			dataBuilder.append(lineHeadings[i]);
-			for (int j = 0; j < columnHeadings.length; ++j) {
-				dataBuilder.append("\",\"");
-				// if this is a real result
-				if (values[i][j] > NOT_AVAILABLE_SENTINAL) {
-					dataBuilder.append(String.format(Locale.US, "%.3f", values[i][j]));
-				} else {
-					// if this value is simply missing
-					if (values[i][j] == NOT_AVAILABLE_SENTINAL) {
-						dataBuilder.append("n.a.");
-					} else {
-						// this is an error value
-						dataBuilder.append("error (");
-						dataBuilder.append((int) values[i][j]);
-						dataBuilder.append(')');
-					}
-				}
-			}
-		}
-		dataBuilder.append("\"]]");
-		return dataBuilder.toString();
 	}
 }

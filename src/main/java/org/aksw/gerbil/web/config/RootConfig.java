@@ -72,6 +72,8 @@ import org.springframework.core.io.Resource;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
+import javax.annotation.PostConstruct;
+
 /**
  * This is the root {@link Configuration} class that is processed by the Spring
  * framework and performs the following configurations:
@@ -273,6 +275,9 @@ public class RootConfig {
             return null;
         }
     }
+
+
+
 
     @SuppressWarnings("unchecked")
     public static @Bean EntityCheckerManager getEntityCheckerManager() {

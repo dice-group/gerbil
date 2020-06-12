@@ -34,7 +34,9 @@ public class NewstestDataset extends AbstractDataset implements InitializableDat
     protected List<Document> loadDocuments(File src, File ref)throws GerbilException {
         String srcText;
         String refText;
-        if ((!src.exists()) || (!src.isDirectory())) {
+        boolean test1 = src.exists();
+        boolean test2 = ref.exists();
+        if ((!src.exists()) && (!src.isDirectory())) {
             throw new GerbilException(
                     "The given text directory (" + src.getAbsolutePath() + ") is not existing or not a directory.",
                     ErrorTypes.DATASET_LOADING_ERROR);
@@ -43,7 +45,7 @@ public class NewstestDataset extends AbstractDataset implements InitializableDat
         if (!textDirPath.endsWith(File.separator)) {
             textDirPath = textDirPath + File.separator;
         }
-        if ((!ref.exists()) || (!ref.isDirectory())) {
+        if ((!ref.exists()) && (!ref.isDirectory())) {
             throw new GerbilException("The given text directory (" + ref.getAbsolutePath()
                     + ") is not existing or not a directory.", ErrorTypes.DATASET_LOADING_ERROR);
         }
