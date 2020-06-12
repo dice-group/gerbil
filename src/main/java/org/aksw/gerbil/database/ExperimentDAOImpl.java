@@ -89,6 +89,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String GET_EXPERIMENT_TASKID = "SELECT id FROM Experiments WHERE taskId=:taskId";
     private static final String GET_ALL_METRICS_FOR_EXPERIMENT_TYPE = "SELECT distinct rn.name FROM ResultNames rn" ;
 
+    private static final String GET_RESULT_NAMES = "SELECT name FROM ResultNames";
     private static final String INSERT_RESULT_NAMES = "INSERT INTO ResultNames(name) VALUES (:name)";
 
 
@@ -104,11 +105,22 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
 
     @Override
+    public List<String> getResultNames(){
+        List<String> ret = this.template.query(GET_RESULT_NAMES, new StringRowMapper());
+        return ret;
+    }
+
+    @Override
     public void insertResultNames(String[] names){
+        List<String> inDBNames = getResultNames();
         for(String name : names){
+            if(inDBNames.contains(name)){
+                continue;
+            }
             MapSqlParameterSource parameters = new MapSqlParameterSource();
             parameters.addValue("name", name);
             this.template.update(INSERT_RESULT_NAMES, parameters);
+
         }
     }
 
