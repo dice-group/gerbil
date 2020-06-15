@@ -14,17 +14,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>gerbil</artifactId>
-	<version>1.2.7</version>
+	<version>1.2.8-SNAPSHOT</version>
 	<name>General Entity Annotator Benchmark</name>
-	<description>This project is a benchmark for entity annotation and disambiguation tools.</description>
+	<description>This project is a benchmarking framework for entity annotation and disambiguation tools.</description>
 	<inceptionYear>2014</inceptionYear>
 
 	<properties>
 		<java.version>1.8</java.version>
 		<slf4j.version>1.7.6</slf4j.version>
-		<junit.version>4.11</junit.version>
+		<junit.version>4.12</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>3.2.17.RELEASE</spring.version>
+		<spring.version>5.2.1.RELEASE</spring.version>
 		<jena.version>3.1.0</jena.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
 	</properties>
@@ -38,12 +38,12 @@
 		<repository>
 			<id>maven.aksw.internal</id>
 			<name>University Leipzig, AKSW Maven2 Repository</name>
-			<url>http://maven.aksw.org/repository/internal</url>
+			<url>https://maven.aksw.org/repository/internal</url>
 		</repository>
 		<repository>
 			<id>maven.aksw.snapshots</id>
 			<name>University Leipzig, AKSW Maven2 Repository</name>
-			<url>http://maven.aksw.org/repository/snapshots</url>
+			<url>https://maven.aksw.org/repository/snapshots</url>
 		</repository>
 		<repository>
 			<id>Apache Repo</id>
@@ -64,8 +64,16 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
 			<version>${jena.version}</version>
+			<exclusions>
+			    <exclusion>
+			    </exclusion>
+			</exclusions>
 		</dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.0</version>
+        </dependency>
 
 		<!-- Google Guava -->
 		<dependency>
@@ -112,6 +120,13 @@
 			<groupId>com.carrotsearch</groupId>
 			<artifactId>hppc</artifactId>
 			<version>0.5.3</version>
+		</dependency>
+
+		<!-- Javax annotations necessary for annotations -->
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
 		</dependency>
 
 		<!-- ~~~~~~~~~~~~~~~~~~~ Testing ~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -201,7 +216,7 @@
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			<version>1.2</version>
+			<version>1.4</version>
 		</dependency>
 		<!-- Servlet -->
 		<dependency>
@@ -321,7 +336,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
-			<version>1.15</version>
+			<version>1.19</version>
 		</dependency>
 			<dependency>
 				<groupId>com.google.code.externalsortinginjava</groupId>
@@ -411,6 +426,38 @@
 					</execution>
 				</executions>
 			</plugin>
+            <!-- Surefire plugin for JUnit tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <!-- connect with JaCoCo -->
+                    <systemPropertyVariables>
+                        <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <!-- JaCoCo plugin for test coverage reports -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.5</version>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 
 		<resources>

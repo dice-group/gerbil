@@ -17,6 +17,7 @@
 package org.aksw.gerbil.dataset.impl.gerdaq;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +26,6 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class GERDAQDatasetTest {
         FileUtils.write(file,
                 "<?xml version='1.0' encoding='UTF-8'?>" + String.format("%n")
                         + "<dataset><instance>loris <annotation rank_0_id=\"44017\" rank_0_score=\"0.925555555556\" rank_0_title=\"Candle\">candle</annotation> sampler</instance><instance><annotation rank_0_id=\"230699\" rank_0_score=\"0.666666666667\" rank_0_title=\"Conveyancing\">buying land</annotation> and <annotation rank_0_id=\"21883824\" rank_0_score=\"1.0\" rank_0_title=\"Arizona\">arizona</annotation></instance><instance>hip gry pl</instance></dataset>",
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8.toString());
         String docUriStart = GERDAQDataset.generateDocumentUri(DATASET_NAME, file.getName());
 
         List<Document> expectedDocuments = Arrays.asList(

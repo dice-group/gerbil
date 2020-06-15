@@ -17,7 +17,6 @@
 package org.aksw.gerbil.semantic.sameas.impl.wiki;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,16 +46,8 @@ public class WikipediaApiBasedSingleUriSameAsRetriever extends AbstractHttpReque
     private static final String CHARSET_NAME = "UTF-8";
     private static final Escaper TITLE_ESCAPER = UrlEscapers.urlFormParameterEscaper();
 
-    private Charset charset;
+    private String charset = CHARSET_NAME;
     private WikipediaXMLParser parser = new WikipediaXMLParser();
-
-    public WikipediaApiBasedSingleUriSameAsRetriever() {
-        try {
-            charset = Charset.forName(CHARSET_NAME);
-        } catch (Exception e) {
-            charset = Charset.defaultCharset();
-        }
-    }
 
     @Override
     public Set<String> retrieveSameURIs(String uri) {
@@ -86,8 +77,9 @@ public class WikipediaApiBasedSingleUriSameAsRetriever extends AbstractHttpReque
         }
     }
 
-
-
+    public void setCharset(String charset) {
+        this.charset = charset;
+    }
     
     public String queryRedirect(String domain, String title) {
         StringBuilder urlBuilder = new StringBuilder(150);

@@ -16,7 +16,8 @@
  */
 package org.aksw.gerbil.http;
 
-import java.util.concurrent.Semaphore;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.apache.http.HttpHost;
@@ -26,8 +27,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.carrotsearch.hppc.ObjectLongOpenHashMap;
 
 public class HttpManagement {
 
@@ -53,8 +52,8 @@ public class HttpManagement {
     public static final long DEFAULT_CHECK_INTERVAL = 10000;
     public static final int DEFAULT_PROXY_PORT = 8080;
     /**
-     * The time the system should wait before sending a new request to a domain
-     * that could block the system.
+     * The time the system should wait before sending a new request to a domain that
+     * could block the system.
      */
     private static final long BLOCKING_DOMAIN_WAITING_TIME = 500;
 
@@ -62,7 +61,28 @@ public class HttpManagement {
     private static final String USER_AGENT_STRING = "GERBIL/" + GerbilConfiguration.getGerbilVersion()
             + " (http://aksw.org/Projects/GERBIL.html)";
 
+    /**
+     * Singleton instance.
+     */
     private static HttpManagement instance;
+
+    /**
+     * The interrupting observer used to interrupt requests that take too long.
+     */
+    protected InterruptingObserver interruptingObserver;
+    /**
+     * The HTTP client used for all HTTP communication.
+     */
+    protected CloseableHttpClient client;
+    /**
+     * The usage agent string of this program.
+     */
+    protected String userAgent;
+    /**
+     * The map of domains that could block this client and the last time at which
+     * they have been accessed.
+     */
+    protected Map<String, Long> blockingDomainTimestampMapping = new HashMap<>();
 
     public synchronized static HttpManagement getInstance() {
         if (instance == null) {
@@ -94,14 +114,9 @@ public class HttpManagement {
         return instance;
     }
 
-    protected InterruptingObserver interruptingObserver;
-    protected CloseableHttpClient client;
-    protected String userAgent;
-    protected Semaphore blockingDomainMappingMutex = new Semaphore(1);
-    protected ObjectLongOpenHashMap<String> blockingDomainTimestampMapping = new ObjectLongOpenHashMap<String>();
-
     protected HttpManagement(InterruptingObserver interruptingObserver, String userAgent) {
         this.interruptingObserver = interruptingObserver;
+        this.userAgent = userAgent;
         this.client = generateHttpClientBuilder().build();
     }
 
@@ -112,30 +127,20 @@ public class HttpManagement {
     }
 
     protected void getStartPermission(HttpUriRequest request) {
-        try {
-            blockingDomainMappingMutex.acquire();
-        } catch (InterruptedException e) {
-            LOGGER.error("Interrupted while waiting for mutex to access the list of blocking domains. Aborting.");
-            return;
-        }
         long timeToSleep = 0;
-        try {
+        synchronized (blockingDomainTimestampMapping) {
             String host = request.getURI().getHost();
             if ((host == null) || (!blockingDomainTimestampMapping.containsKey(host))) {
                 return;
             }
-            // we are allowed to use lget and lset since the mutex is securing
-            // the hashmap
-            long lastRequestTimeStamp = blockingDomainTimestampMapping.lget();
+            long lastRequestTimeStamp = blockingDomainTimestampMapping.get(host);
             long currentTime = System.currentTimeMillis();
             timeToSleep = BLOCKING_DOMAIN_WAITING_TIME - (currentTime - lastRequestTimeStamp);
             if (timeToSleep > 0) {
-                blockingDomainTimestampMapping.lset(currentTime + timeToSleep);
+                blockingDomainTimestampMapping.put(host, currentTime + timeToSleep);
             } else {
-                blockingDomainTimestampMapping.lset(currentTime);
+                blockingDomainTimestampMapping.put(host, currentTime);
             }
-        } finally {
-            blockingDomainMappingMutex.release();
         }
 
         if (timeToSleep > 0) {
@@ -176,16 +181,8 @@ public class HttpManagement {
      * requests.
      */
     public void addBlockingDomain(String domain) {
-        try {
-            blockingDomainMappingMutex.acquire();
-        } catch (InterruptedException e) {
-            LOGGER.error("Interrupted while waiting for mutex to access the list of blocking domains. Aborting.");
-            return;
-        }
-        try {
-            blockingDomainTimestampMapping.put(domain, 0);
-        } finally {
-            blockingDomainMappingMutex.release();
+        synchronized (blockingDomainTimestampMapping) {
+            blockingDomainTimestampMapping.put(domain, 0L);
         }
     }
 
@@ -206,6 +203,9 @@ public class HttpManagement {
             DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
             builder.setRoutePlanner(routePlanner);
         }
+        // Use a redirect strategy that allows the "direct redirect" of POST requests
+        // without creating a completely new request
+        builder.setRedirectStrategy(new SimpleRedirectStrategy()).build();
 
         return builder;
     }
