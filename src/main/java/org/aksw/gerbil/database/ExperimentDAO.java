@@ -69,6 +69,8 @@ public interface ExperimentDAO extends Closeable {
      */
     public void initialize();
 
+    public List<String> getResultNames();
+
     /**
      * Sets the durability of a experiment task result.
      * 

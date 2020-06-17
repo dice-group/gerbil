@@ -69,8 +69,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     private final static String GET_TASK_RESULTS_DOUBLE = "SELECT rn.name, 'DOUBLE' AS Type, dr.resvalue FROM ExperimentTasks_DoubleResults dr, ResultNames rn WHERE dr.resultId = rn.id and dr.taskId = :taskId";
     private final static String GET_TASK_RESULTS_INTEGER = "SELECT rn.name, 'INT' AS Type, ir.resvalue FROM ExperimentTasks_IntResults ir, ResultNames rn WHERE ir.resultId = rn.id and ir.taskId = :taskId";
-    private final static String INSERT_DOUBLE_RESULT = "INSERT INTO ExperimentTasks_DoubleResults(taskId, resultId, resvalue) select :taskId, id, :value from ResultNames where name = :resName";
-    private final static String INSERT_INT_RESULT = "INSERT INTO ExperimentTasks_IntResults(taskId, resultId, resvalue) select :taskId, id, :value from ResultNames where name = :resName";
+    private final static String INSERT_DOUBLE_RESULT = "INSERT INTO ExperimentTasks_DoubleResults(resultId, taskId, resvalue) select  id, :taskId, :value from ResultNames where name = :resName";
+    private final static String INSERT_INT_RESULT = "INSERT INTO ExperimentTasks_IntResults(resultId, taskId, resvalue) select  id, :taskId, :value from ResultNames where name = :resName";
     private final static String GET_SUB_TASK_RESULTS = "SELECT systemName, datasetName, experimentType, matching, state, version, lastChanged, subTaskId FROM ExperimentTasks t, ExperimentTasks_SubTasks s WHERE s.taskId=:taskId AND s.subTaskId=t.id";
     private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
 
@@ -79,6 +79,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     public static final String[] RES_NAME_ARR = { "Micro F1 score", "Micro Precision", "Micro Recall", "Macro F1 score",
             "Macro Precision", "Macro Recall" };
     public static final String ERROR_COUNT_NAME = "Error Count";
+
+    static final String GET_RESULT_NAMES = "SELECT name FROM ResultNames";
+    private static final String INSERT_RESULT_NAMES = "INSERT INTO ResultNames(name) VALUES (:name)";
 
     private final NamedParameterJdbcTemplate template;
 
@@ -100,17 +103,27 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         insertResultNames(names);
         LOGGER.info("ExperimentDAO initialized.");
     }
-    
-    private void insertResultNames(List<String> names) {
-        for(String name : names) {
+
+    @Override
+    public List<String> getResultNames(){
+        List<String> ret = this.template.query(GET_RESULT_NAMES, new StringRowMapper());
+        return ret;
+    }
+
+
+    public void insertResultNames(List<String> names){
+        List<String> inDBNames = getResultNames();
+        for(String name : names){
+            if(inDBNames.contains(name)){
+                continue;
+            }
             MapSqlParameterSource parameters = new MapSqlParameterSource();
             parameters.addValue("name", name);
-            int rows = this.template.update(INSERT_RESULT_NAME, parameters);
-            if(rows == 0) {
-                LOGGER.info("Insertion of {} did not change anything.", name);
-            }
+            this.template.update(INSERT_RESULT_NAMES, parameters);
+
         }
     }
+
 
     @Override
     public List<ExperimentTaskStatus> getResultsOfExperiment(String experimentId) {
