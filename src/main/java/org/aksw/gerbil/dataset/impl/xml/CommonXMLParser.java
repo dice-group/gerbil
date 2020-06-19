@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with General Entity Annotator Benchmark.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.aksw.gerbil.dataset.impl.msnbc;
+package org.aksw.gerbil.dataset.impl.xml;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -32,34 +32,42 @@ import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class MSNBC_XMLParser {
+/**
+ * Class to help with parsing of XML document into NIF document
+ * 
+ * @author Nikit
+ *
+ */
+public class CommonXMLParser {
 
-    private SAXParser parser;
+	private SAXParser parser;
 
-    public MSNBC_XMLParser() throws GerbilException {
-        SAXParserFactory factory = SAXParserFactoryImpl.newInstance();
-        try {
-            parser = factory.newSAXParser();
-        } catch (Exception e) {
-            throw new GerbilException("Couldn't create SAX parser.", e, ErrorTypes.DATASET_LOADING_ERROR);
-        }
-    }
+	public CommonXMLParser() throws GerbilException {
+		SAXParserFactory factory = SAXParserFactoryImpl.newInstance();
+		try {
+			parser = factory.newSAXParser();
+		} catch (Exception e) {
+			throw new GerbilException("Couldn't create SAX parser.", e, ErrorTypes.DATASET_LOADING_ERROR);
+		}
+	}
 
-    public MSNBC_Result parseAnnotationsFile(File file) throws IOException, SAXException {
-        InputStream is = null;
-        try {
-            is = new BufferedInputStream(new FileInputStream(file));
-            return parseAnnotationsStream(is);
-        } finally {
-            IOUtils.closeQuietly(is);
-        }
-    }
+	public GenericResult parseDSFile(File file, String dsName, CommonXMLTagDef tagDef)
+			throws IOException, SAXException {
+		InputStream is = null;
+		try {
+			is = new BufferedInputStream(new FileInputStream(file));
+			return parseDSFileStream(is, dsName, tagDef);
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
+	}
 
-    public MSNBC_Result parseAnnotationsStream(InputStream is) throws IOException, SAXException {
-        MSNBC_XMLHandler handler = new MSNBC_XMLHandler();
-        InputSource is2 = new InputSource(is);
-        is2.setEncoding("UTF-8");
-        parser.parse(is2, handler);
-        return handler;
-    }
+	public GenericResult parseDSFileStream(InputStream is, String dsName, CommonXMLTagDef tagDef)
+			throws IOException, SAXException {
+		CommonXMLHandler handler = new CommonXMLHandler(dsName, tagDef);
+		InputSource is2 = new InputSource(is);
+		is2.setEncoding("UTF-8");
+		parser.parse(is2, handler);
+		return handler;
+	}
 }
