@@ -90,6 +90,15 @@ public class DatasetAnalyzer {
         if (config.isApplicableForExperiment(ExperimentType.MT)) {
             analyze(config, ExperimentType.MT);
         }
+        if (config.isApplicableForExperiment(ExperimentType.MT)) {
+            analyze(config, ExperimentType.MT);
+        }
+        if (config.isApplicableForExperiment(ExperimentType.WebNLG_RDF2Text)) {
+            analyze(config, ExperimentType.WebNLG_RDF2Text);
+        }
+        if (config.isApplicableForExperiment(ExperimentType.WebNLG_Text2RDF)) {
+            analyze(config, ExperimentType.WebNLG_Text2RDF);
+        }
         else {
             LOGGER.error("Can not analyze the dataset with the following config: " + config.toString());
         }

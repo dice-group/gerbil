@@ -157,6 +157,8 @@ public class ExperimentTask implements Task {
 	protected void prepareDataset(Dataset dataset) {
 		switch (configuration.type) {
 			case MT:
+			case WebNLG_RDF2Text:
+			case WebNLG_Text2RDF:
 		default:
 			// nothing to do
 			return;
@@ -175,6 +177,9 @@ public class ExperimentTask implements Task {
 		switch (configuration.type) {
 		// relations need to be handled extra
 			case MT:
+			case WebNLG_RDF2Text:
+			case WebNLG_Text2RDF:
+
 		default:
 			// nothing to do
 			return;
@@ -239,6 +244,8 @@ public class ExperimentTask implements Task {
                 evalResult = evaluate(evaluators, results, goldStandard);
 				break;
 			}
+			case WebNLG_RDF2Text:
+			case WebNLG_Text2RDF:
 		default:
 			throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
 					ErrorTypes.UNEXPECTED_EXCEPTION);

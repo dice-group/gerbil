@@ -135,6 +135,8 @@ public class ExperimentOverviewController {
 		StringBuilder response = new StringBuilder("{ \"archive\": [");
 		List<ExperimentType> types = new ArrayList<ExperimentType>();
 		types.add(ExperimentType.MT);
+		types.add(ExperimentType.WebNLG_RDF2Text);
+		types.add(ExperimentType.WebNLG_Text2RDF);
 
 		List<ChallengeDescr> challenges = dao.getAllChallenges();
 		//remove current challenge if challenged not ended yet

@@ -27,7 +27,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ExperimentType implements Describable {
 
-    MT("MT", "Machine Translation.");
+    MT("MT", "Machine Translation."),
+    WebNLG_RDF2Text("WebNLG RDF2Text", "WebNLG RDF2Text"),
+    WebNLG_Text2RDF("WebNLG Text2RDF", "WebNLG Text2RDF");
 
     private String label;
     private String description;
@@ -57,6 +59,20 @@ public enum ExperimentType implements Describable {
                 switch (type) {
                     case MT: {
                         return type == MT;
+                    }
+                }
+            }
+            case WebNLG_RDF2Text: {
+                switch (type) {
+                    case WebNLG_RDF2Text: {
+                        return type == WebNLG_RDF2Text;
+                    }
+                }
+            }
+            case WebNLG_Text2RDF: {
+                switch (type) {
+                    case WebNLG_Text2RDF: {
+                        return type == WebNLG_Text2RDF;
                     }
                 }
             }
