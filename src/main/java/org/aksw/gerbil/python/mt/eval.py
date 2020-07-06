@@ -52,8 +52,8 @@ from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
 from razdel import tokenize
 from tabulate import tabulate
 
-BLEU_PATH = 'src/main/java/org/aksw/gerbil/dataset/impl/mt/python/metrics/multi-bleu-detok.perl'
-METEOR_PATH = 'src/main/java/org/aksw/gerbil/dataset/impl/mt/python/metrics/meteor-1.5/meteor-1.5.jar'
+BLEU_PATH = 'src/main/java/org/aksw/gerbil/python/mt/metrics/multi-bleu-detok.perl'
+METEOR_PATH = 'src/main/java/org/aksw/gerbil/python/mt/metrics/meteor-1.5/meteor-1.5.jar'
 
 
 def parse(refs_path, hyps_path, num_refs, lng='en'):

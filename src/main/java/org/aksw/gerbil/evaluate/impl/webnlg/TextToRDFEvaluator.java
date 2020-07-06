@@ -1,43 +1,21 @@
-package org.aksw.gerbil.evaluate.impl.mt;
+package org.aksw.gerbil.evaluate.impl.webnlg;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.aksw.gerbil.data.SimpleFileRef;
-import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
-import org.aksw.gerbil.evaluate.EvaluationResultContainer;
-import org.aksw.gerbil.evaluate.Evaluator;
 import org.apache.commons.io.IOUtils;
-
 import java.io.*;
-import java.util.List;
 
-public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
+public class TextToRDFEvaluator{
 
-    @Override
-    public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
-                         EvaluationResultContainer results) {
-        // We assume that both lists have only one element!!!
-        // We assume that each sub list has exactly one element!!!
 
-        SimpleFileRef expected = goldStandard.get(0).get(0);
-        SimpleFileRef hypothesis = annotatorResults.get(0).get(0);
-
-        File ref = expected.getFileRef(); // gives path to file with the expected translation
-
-        File hypo = hypothesis.getFileRef(); // gives path to file with the uploaded translation
-
+    public static void main(String[] args) {
         // start python script and gather results
         try {
-            ReaderThread reader = new ReaderThread();
+            org.aksw.gerbil.evaluate.impl.mt.MachineTranslationEvaluator.ReaderThread reader = new org.aksw.gerbil.evaluate.impl.mt.MachineTranslationEvaluator.ReaderThread();
             Thread readerThread = new Thread(reader);
 
             Process p = Runtime.getRuntime()
-                    .exec("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R " + ref + " -H "
-                            + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
-            System.out.println("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R " + ref + " -H "
-                    + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
-
-            reader.setInput(p.getInputStream());
+                    .exec("python3 src/main/java/org/aksw/gerbil/python/webnlg/Evaluation_script_json.py gerbil_data/datasets/webnlgData/Refs.xml " +
+                            "gerbil_data/datasets/webnlgData/Cands2.xml result.json");
+                      reader.setInput(p.getInputStream());
             readerThread.start();
 
             // Wait for the python process to terminate
@@ -55,30 +33,28 @@ public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
             }
 
             String scriptResult = reader.getBuffer().toString();
-            System.out.println("Data:" + scriptResult + "\n");
-
+            System.out.println(scriptResult + "\n");
             int jsonStart = scriptResult.indexOf('{');
             if(jsonStart < 0) {
                 throw new IllegalStateException("The script result does not seem to contain a JSON object!");
             }
             scriptResult = scriptResult.substring(jsonStart);
-
-            double bleu, nltk, meteor, chrF, ter;
+/*
+            double entType,partial,strict,exact,scorePerTag;
             JsonObject jsonObject = new JsonParser().parse(scriptResult).getAsJsonObject();
-            bleu = jsonObject.get("BLEU").getAsDouble();
-            results.addResult(new DoubleEvaluationResult("BLEU", bleu));
+            entType = jsonObject.get("Ent_type").getAsDouble();
+            System.out.println("Ent_type:" + entType + "\n");
 
-            nltk = jsonObject.get("BLEU NLTK").getAsDouble();
-            results.addResult(new DoubleEvaluationResult("BLEU NLTK", nltk));
+            partial = jsonObject.get("Partial").getAsDouble();
+            System.out.println("Partial:" + partial + "\n");
 
-            meteor = jsonObject.get("METEOR").getAsDouble();
-            results.addResult(new DoubleEvaluationResult("METEOR", meteor));
+            strict = jsonObject.get("Strict").getAsDouble();
+            System.out.println("Data:" + strict + "\n");
 
-            chrF = jsonObject.get("chrF++").getAsDouble();
-            results.addResult(new DoubleEvaluationResult("chrF++", chrF));
+            exact = jsonObject.get("Exact").getAsDouble();
+            System.out.println("Exact:" + exact + "\n");
 
-            ter = jsonObject.get("TER").getAsDouble();
-            results.addResult(new DoubleEvaluationResult("TER", ter));
+ */
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -128,3 +104,4 @@ public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
 
     }
 }
+
