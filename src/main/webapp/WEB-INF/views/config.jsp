@@ -369,7 +369,7 @@
                     }
                     dropDownMenuStr+='';
                      $('#setdata').append(dropDownMenuStr);
-                     $('#setdata').select2({closeOnSelect: false});
+                     $('#setdata').select2({closeOnSelect: false, disabled: true});
                      //awful, but works for now
                      $('#datasetMenu div.btn-group').hide();
           }

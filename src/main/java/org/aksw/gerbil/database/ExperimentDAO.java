@@ -55,8 +55,7 @@ public interface ExperimentDAO extends Closeable {
     public static final int TASK_STARTED_BUT_NOT_FINISHED_YET = -1;
 
     public void insertResultNames(String[] names);
-
-
+    public List<String> getResultNames();
         /**
          * Sentinel value returned if the task with the given id couldn't be found.
          */
