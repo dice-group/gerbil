@@ -103,7 +103,7 @@
             </div>
         </div>
 
-        <!--Upload output file from system -->
+        <!--Upload hypothesis file from system -->
         <div class="form-group">
             <label class="col-md-4 control-label">Hypothesis</label>
             <div class="col-md-4">
@@ -146,6 +146,51 @@
                 <hr />
             </div>
         </div>
+
+        <!--Upload candidate triple file from system -->
+          <div class="form-group">
+                      <label class="col-md-4 control-label">Candidate</label>
+                      <div class="col-md-4">
+                          <div id="uploadCandidate">
+                              <span> Upload hypothesis:</span>
+                              <div>
+                                  <label for="nameCandidateFile">Name:</label> <input
+                                      class="form-control" type="text" id="nameCandidateFile" name="name"
+                                      placeholder="Type something" />
+                                  <br> <br> <span
+                                      class="btn btn-success fileinput-button"> <i
+                                      class="glyphicon glyphicon-plus"></i> <span>Select
+          									file...</span> <!-- The file input field used as target for the file upload widget -->
+          								<input id="candidateFileUpload" type="file" name="files[]">
+          							</span> <br> <br>
+                                  <!-- The global progress bar -->
+                                  <div id="candidateFileProgress" class="progress">
+                                      <div class="progress-bar progress-bar-success"></div>
+                                  </div>
+                                  <div>
+                                      <!-- list to be filled by button press-->
+                                      <ul class="unstyled" id="candidateFileList"
+                                          style="margin-top: 15px; list-style-type: none;">
+                                      </ul>
+
+                                  </div>
+                                  <div id="warningEmptyCandidateFileName" class="alert alert-warning"
+                                       role="alert">
+                                      <button type="button" class="close" data-dismiss="alert"></button>
+                                      <strong>Warning!</strong> Enter a name.
+                                  </div>
+
+                              </div>
+                          </div>
+
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-8 col-md-offset-2">
+                          <hr />
+                      </div>
+                  </div>
+
         <!--Dataset dropdown filled by loadDatasets() function -->
         <div class="form-group">
             <label class="col-md-4 control-label" for="datasets">Dataset</label>
@@ -416,6 +461,11 @@
             hypothesis.push($(this).text());
         });
 
+         var candidate = [];
+         $("#candidateFileList li span.li_content").each(function() {
+             candidate.push($(this).text());
+          });
+
         //check whether there is at least one dataset and at least one annotator
         //and the disclaimer checkbox should be clicked
         if (dataset.length > 0
@@ -474,6 +524,19 @@
                     }
                 });
 
+                //if candidate file add button is clicked check whether there is a name and a file
+                                $('#warningEmptyCandidateFileName').hide();
+                                $('#candidateFileUpload').click(function() {
+                                    var name = $('#nameCandidateFile').val();
+                                    if (name == '') {
+                                        $('#candidateFileUpload').fileupload('disable');
+                                        $('#warningEmptycandidateFileName').show();
+                                    } else {
+                                        $('#candidateFileUpload').fileupload('enable');
+                                        $('#warningEmptycandidateFileName').hide();
+                                    }
+                                });
+
                 //submit button clicked will collect and sent experiment data to backend
                 $('#submit')
                     .click(
@@ -512,6 +575,17 @@
                                                     this)
                                                     .text());
                                     });
+                             var candidate = [];
+                             $(
+                                 "#candidateFileList li span.li_content")
+                                  .each(
+                                     function() {
+                                        candidate
+                                             .push("HF_"
+                                                 + $(
+                                                     this)
+                                                     .text());
+                                     });
                             var type = $('#type').val() ? $(
                                 '#type').val()
                                 : "MT";
@@ -519,6 +593,7 @@
                             data.type = type;
                             data.dataset = dataset;
                             data.hypothesis = hypothesis;
+                            data.candidate = candidate;
 
                             $
                                 .ajax(
@@ -661,5 +736,56 @@
                 }).prop('disabled', !$.support.fileInput).parent()
             .addClass($.support.fileInput ? undefined : 'disabled');
     });
+
+    // define candidate file upload
+        $(function() {
+            'use strict';
+            // Change this to the location of your server-side upload handler:
+            var url = '${upload}';
+            $('#candidateFileUpload')
+                .fileupload(
+                    {
+                        url : url,
+                        dataType : 'json',
+                        done : function(e, data) {
+                            var name = $('#nameCandidateFile').val();
+                            $
+                                .each(
+                                    data.result.files,
+                                    function(index, file) {
+                                        $('#candidateFileList')
+                                            .append(
+                                                "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
+                                                + name
+                                                + "("
+                                                + file.name
+                                                + ")</span></li>");
+                                        var listItems = $('#candidateFileList > li > span');
+                                        for (var i = 0; i < listItems.length; i++) {
+                                            listItems[i].onclick = function() {
+                                                this.parentNode.parentNode
+                                                    .removeChild(this.parentNode);
+                                                checkExperimentConfiguration();
+                                            };
+                                        }
+                                        $('#nameCandidateFile').val(
+                                            '');
+                                        $('#URICandidate')
+                                            .val('');
+                                    });
+                        },
+                        progressall : function(e, data) {
+                            var progress = parseInt(data.loaded / data.total
+                                * 100, 10);
+                            $('#candidateFileProgress .progress-bar').css('width',
+                                progress + '%');
+                        },
+                        processfail : function(e, data) {
+                            alert(data.files[data.index].name + "\n"
+                                + data.files[data.index].error);
+                        }
+                    }).prop('disabled', !$.support.fileInput).parent()
+                .addClass($.support.fileInput ? undefined : 'disabled');
+        });
 </script>
 </body>
