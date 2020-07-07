@@ -245,7 +245,24 @@ public class ExperimentTask implements Task {
 				break;
 			}
 			case WebNLG_RDF2Text:
-			case WebNLG_Text2RDF:
+			case WebNLG_Text2RDF:{
+				List<List<SimpleFileRef>> results = new ArrayList<List<SimpleFileRef>>(dataset.size());
+				List<List<SimpleFileRef>> goldStandard = new ArrayList<List<SimpleFileRef>>(dataset.size());
+
+				// We assume that both lists only have one instance!
+				Document tempDocument;
+				tempDocument = dataset.getInstances().get(0);
+				goldStandard.add(tempDocument.getMarkings(SimpleFileRef.class));
+
+				Collection<Document> documents = ((InstanceListBasedAnnotator) annotator).getInstances();
+				tempDocument = documents.iterator().next();
+				results.add(tempDocument.getMarkings(SimpleFileRef.class));
+
+				taskState.increaseExperimentStepCount();
+
+				evalResult = evaluate(evaluators, results, goldStandard);
+				break;
+			}
 		default:
 			throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
 					ErrorTypes.UNEXPECTED_EXCEPTION);

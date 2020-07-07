@@ -152,7 +152,7 @@
                       <label class="col-md-4 control-label">Candidate</label>
                       <div class="col-md-4">
                           <div id="uploadCandidate">
-                              <span> Upload hypothesis:</span>
+                              <span> Upload candidate triples:</span>
                               <div>
                                   <label for="nameCandidateFile">Name:</label> <input
                                       class="form-control" type="text" id="nameCandidateFile" name="name"

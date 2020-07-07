@@ -52,6 +52,8 @@ public class AdapterManager {
     private static final String UPLOADED_DATASET_PREFIX = "NIFDS_";
     private static final String HYPOTHESIS_PREFIX = "HF_";
     private static final String UPLOADED_HYPOTHESIS_SUFFIX = " (uploaded)";
+    private static final String CANDIDATE_PREFIX = "CF_";
+    private static final String UPLOADED_CANDIDATE_SUFFIX = " (uploaded)";
 
     @Autowired
     @Qualifier("annotators")
@@ -132,6 +134,42 @@ public class AdapterManager {
                 String fileName = name.substring(brackets[0] + 1, brackets[1]);
                 File file = new File(uploadedFilesPath + fileName);
                 name = name.substring(HYPOTHESIS_PREFIX.length(), brackets[0]) + UPLOADED_HYPOTHESIS_SUFFIX;
+                try {
+                    return new AnnotatorConfigurationImpl(name, false,
+                            InstanceListBasedAnnotator.class.getConstructor(String.class, List.class),
+                            new Object[] { name,
+                                    Arrays.asList(new DocumentImpl(fileName, file.getAbsoluteFile().toURI().toString(),
+                                            Arrays.asList((Marking) new SimpleFileRef(file)))) },
+                            type);
+                } catch (Exception e) {
+                    LOGGER.error(
+                            "Error while trying to create annotator configuration \"" + name + "\". Returning null.",
+                            e);
+                    return null;
+                }
+            }
+            if (name.startsWith(CANDIDATE_PREFIX)) {
+                String uploadedFilesPath = GerbilConfiguration.getInstance()
+                        .getString(UPLOADED_FILES_PATH_PROPERTY_KEY);
+                if (uploadedFilesPath == null) {
+                    LOGGER.error(
+                            "Couldn't process uploaded file request, because the upload path is not set (\"{}\"). Returning null.",
+                            UPLOADED_FILES_PATH_PROPERTY_KEY);
+                    return null;
+                }
+                // This describes a hypothesis file
+                // "name(file)(type)(dataset)"
+                int brackets[] = getLastBracketsContent(name, name.length() - 1);
+                if (brackets == null) {
+                    LOGGER.error(
+                            "Couldn't parse the definition of this candidate file \"" + name + "\". Returning null.");
+                    return null;
+                }
+//                String datasetName = name.substring(brackets[0] + 1, brackets[1]);
+
+                String fileName = name.substring(brackets[0] + 1, brackets[1]);
+                File file = new File(uploadedFilesPath + fileName);
+                name = name.substring(CANDIDATE_PREFIX.length(), brackets[0]) + UPLOADED_CANDIDATE_SUFFIX;
                 try {
                     return new AnnotatorConfigurationImpl(name, false,
                             InstanceListBasedAnnotator.class.getConstructor(String.class, List.class),
