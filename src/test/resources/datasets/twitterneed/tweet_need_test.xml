@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TweetsCollection>
+<CollectionName>Nikit's Collection</CollectionName>
+<Tweets>
+<Tweet>
+<TweetId>100000000001</TweetId>
+<TweetText>John Oliver is the best anchor ever. #lwn</TweetText>
+<TweetGroup>0</TweetGroup>
+<Mentions>
+<Mention>
+<Text>John Oliver</Text>
+<StartIndx>0</StartIndx>
+<Entity>http://dbpedia.org/resource/John_Oliver</Entity>
+</Mention>
+</Mentions>
+</Tweet>
+<Tweet>
+<TweetId>100000000002</TweetId>
+<TweetText>Gerbil is the best tool ever. #qabenchmarking</TweetText>
+<TweetGroup>0</TweetGroup>
+<Mentions>
+<Mention>
+<Text>Gerbil</Text>
+<StartIndx>0</StartIndx>
+<Entity>http://dbpedia.org/resource/Gerbil</Entity>
+</Mention>
+</Mentions>
+</Tweet>
+<Tweet>
+<TweetId>100000000003</TweetId>
+<TweetText>I believe in Cristiano Ronaldo #CR7Forever</TweetText>
+<TweetGroup>0</TweetGroup>
+<Mentions>
+<Mention>
+<Text>Cristiano Ronaldo</Text>
+<StartIndx>13</StartIndx>
+<Entity>http://dbpedia.org/resource/Cristiano_Ronaldo</Entity>
+</Mention>
+</Mentions>
+</Tweet>
+</Tweets>
+</TweetsCollection>
