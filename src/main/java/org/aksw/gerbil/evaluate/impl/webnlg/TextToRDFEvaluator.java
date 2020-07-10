@@ -34,7 +34,7 @@ public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
                     .exec("python3 src/main/java/org/aksw/gerbil/python/webnlg/Evaluation_script_json.py "+ ref +" "+
                             candidateTriple + " result.json");
                       reader.setInput(p.getInputStream());
-                      System.out.println("python3 src/main/java/org/aksw/gerbil/python/webnlg/Evaluation_script_json.py "+ ref +
+                      System.out.println("python3 src/main/java/org/aksw/gerbil/python/webnlg/Evaluation_script_json.py "+ ref +" "+
                               candidateTriple + " result.json");
             readerThread.start();
 
@@ -65,7 +65,7 @@ public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
             object = jsonParser.parse(new FileReader("result.json"));
             JSONObject jsonObject = (JSONObject) object;
             JSONObject total_scores = (JSONObject) jsonObject.get("Total_scores");
-            System.out.println("Total scores: " + total_scores);
+           // System.out.println("Total scores: " + total_scores);
 
             //Ent_type
             JSONObject type = (JSONObject) total_scores.get("Ent_type");
