@@ -17,6 +17,8 @@
 package org.aksw.gerbil.annotator.impl.wat;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.A2KBAnnotator;
@@ -36,7 +38,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -51,12 +55,16 @@ public class WATAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnno
     private static final String WAT_CONFIG_FILE_PROPERTY_ENDPOINT = "org.aksw.gerbil.annotators.wat.disambiguateUrl";
     private static final String WAT_CONFIG_FILE_PROPERTY_PARAMETERS = "org.aksw.gerbil.annotators.wat.annotateUrl";
 
-    private static final String SPANS_REQUEST_PARAMETER_KEY = "spans";
+    private static final String SPANS_REQUEST_PARAMETER_KEY = "suggested_spans";
     private static final String TEXT_REQUEST_PARAMETER_KEY = "text";
     private static final String ENTITY_TITLE_KEY = "title";
     private static final String ENTITY_CONFIDENCE_KEY = "rho";
     private static final String ENTITY_START_KEY = "start";
     private static final String ENTITY_END_KEY = "end";
+    private static final String TAGME_KEY_PARAMETER_KEY = "org.aksw.gerbil.annotators.TagMe.key";
+
+    private String key;
+
 
     private final String annotateUrl;
     private final String disambiguateUrl;
@@ -72,11 +80,27 @@ public class WATAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnno
             throw new GerbilException("Couldn't load endpoint (\"" + WAT_CONFIG_FILE_PROPERTY_ENDPOINT + "\".",
                     ErrorTypes.ANNOTATOR_LOADING_ERROR);
         }
+        key = GerbilConfiguration.getInstance().getString(TAGME_KEY_PARAMETER_KEY);
+        if (key == null) {
+            throw new GerbilException("Couldn't load key from configuration (\"" + TAGME_KEY_PARAMETER_KEY + "\").",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
     }
 
-    public WATAnnotator(String annotateUrl, String disambiguateUrl) {
+    public WATAnnotator(String annotateUrl, String disambiguateUrl) throws GerbilException {
         this.disambiguateUrl = disambiguateUrl;
         this.annotateUrl = annotateUrl;
+        key = GerbilConfiguration.getInstance().getString(TAGME_KEY_PARAMETER_KEY);
+        if (key == null) {
+            throw new GerbilException("Couldn't load key from configuration (\"" + TAGME_KEY_PARAMETER_KEY + "\").",
+                    ErrorTypes.ANNOTATOR_LOADING_ERROR);
+        }
+    }
+
+    public WATAnnotator(String annotateUrl, String disambiguateUrl, String key) {
+        this.disambiguateUrl = disambiguateUrl;
+        this.annotateUrl = annotateUrl;
+        this.key  = key;
     }
 
     @Override
@@ -114,13 +138,26 @@ public class WATAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnno
         }
         parameters.put(TEXT_REQUEST_PARAMETER_KEY, document.getText());
 
-        HttpPost request = null;
+        HttpRequestBase request = null;
+        StringBuilder url= null;
         try {
-            request = createPostRequest(disambiguate ? disambiguateUrl : annotateUrl);
-        } catch (IllegalArgumentException e) {
+            if(disambiguate){
+                url=new StringBuilder(disambiguateUrl);
+                url.append("?gcube-token=").append(key);
+                url.append("&document=").append(URLEncoder.encode(parameters.toString(), "UTF-8"));
+            }
+            else{
+                url = new StringBuilder(annotateUrl);
+                url.append("?gcube-token=").append(key);
+                url.append("&text=").append(URLEncoder.encode(document.getText(), "UTF-8"));
+            }
+                request = createGetRequest(url.toString());
+
+
+        } catch (IllegalArgumentException | UnsupportedEncodingException e) {
             throw new GerbilException("Couldn't create HTTP request.", e, ErrorTypes.UNEXPECTED_EXCEPTION);
         }
-        request.setEntity(new StringEntity(parameters.toString(), "UTF8"));
+
         request.addHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
         request.addHeader(HttpHeaders.ACCEPT, "application/json");
         request.addHeader(HttpHeaders.ACCEPT_CHARSET, "UTF-8");
@@ -171,4 +208,6 @@ public class WATAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnno
         }
         return resultDoc;
     }
+
+
 }
