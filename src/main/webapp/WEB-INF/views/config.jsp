@@ -105,10 +105,10 @@
 
         <!--Upload hypothesis file from system -->
         <div class="form-group">
-            <label class="col-md-4 control-label">Hypothesis</label>
+            <label class="col-md-4 control-label">System</label>
             <div class="col-md-4">
                 <div id="uploadHypothesis">
-                    <span> Upload hypothesis:</span>
+                    <span> Upload file:</span>
                     <div>
                         <label for="nameHypothesisFile">Name:</label> <input
                             class="form-control" type="text" id="nameHypothesisFile" name="name"
@@ -146,50 +146,6 @@
                 <hr />
             </div>
         </div>
-
-        <!--Upload candidate triple file from system -->
-          <div class="form-group">
-                      <label class="col-md-4 control-label">Candidate</label>
-                      <div class="col-md-4">
-                          <div id="uploadCandidate">
-                              <span> Upload candidate triples:</span>
-                              <div>
-                                  <label for="nameCandidateFile">Name:</label> <input
-                                      class="form-control" type="text" id="nameCandidateFile" name="name"
-                                      placeholder="Type something" />
-                                  <br> <br> <span
-                                      class="btn btn-success fileinput-button"> <i
-                                      class="glyphicon glyphicon-plus"></i> <span>Select
-          									file...</span> <!-- The file input field used as target for the file upload widget -->
-          								<input id="candidateFileUpload" type="file" name="files[]">
-          							</span> <br> <br>
-                                  <!-- The global progress bar -->
-                                  <div id="candidateFileProgress" class="progress">
-                                      <div class="progress-bar progress-bar-success"></div>
-                                  </div>
-                                  <div>
-                                      <!-- list to be filled by button press-->
-                                      <ul class="unstyled" id="candidateFileList"
-                                          style="margin-top: 15px; list-style-type: none;">
-                                      </ul>
-
-                                  </div>
-                                  <div id="warningEmptyCandidateFileName" class="alert alert-warning"
-                                       role="alert">
-                                      <button type="button" class="close" data-dismiss="alert"></button>
-                                      <strong>Warning!</strong> Enter a name.
-                                  </div>
-
-                              </div>
-                          </div>
-
-                      </div>
-                  </div>
-                  <div class="row">
-                      <div class="col-md-8 col-md-offset-2">
-                          <hr />
-                      </div>
-                  </div>
 
         <!--Dataset dropdown filled by loadDatasets() function -->
         <div class="form-group">

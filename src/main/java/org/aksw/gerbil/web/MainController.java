@@ -164,8 +164,7 @@ public class MainController {
             return null;
         }
         String matching = (String) configuration.get("matching");
-        //JSONArray jsonAnnotators = (JSONArray) configuration.get("hypothesis");
-        JSONArray jsonAnnotators = (JSONArray) configuration.get("candidate");
+        JSONArray jsonAnnotators = (JSONArray) configuration.get("hypothesis");
         String[] annotators = new String[jsonAnnotators.size()];
         for (int i = 0; i < jsonAnnotators.size(); i++) {
             annotators[i] = (String) jsonAnnotators.get(i);
