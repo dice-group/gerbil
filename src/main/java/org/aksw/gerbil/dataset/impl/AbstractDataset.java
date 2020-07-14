@@ -24,6 +24,7 @@ import org.aksw.gerbil.utils.ClosePermitionGranter;
 public abstract class AbstractDataset implements Dataset {
 
     protected String name;
+    protected String questionLabel;
     protected ClosePermitionGranter granter;
     protected String qLang;
     
@@ -33,6 +34,23 @@ public abstract class AbstractDataset implements Dataset {
 
     public AbstractDataset(String name) {
         this.name = name;
+        this.questionLabel=name;
+    }
+
+
+    public AbstractDataset(String name, String questionLabel) {
+        this.name = name;
+        this.questionLabel=questionLabel;
+    }
+
+    @Override
+    public String getQuestionLabel() {
+        return questionLabel;
+    }
+
+    @Override
+    public void setQuestionLabel(String questionLabel) {
+        this.questionLabel = questionLabel;
     }
 
     @Override

@@ -190,6 +190,7 @@ public class MainController {
         for (String answerFile : answerFiles) {
             configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(answerFile, type, qLang),
                     adapterManager.getDatasetConfig(answerFile, type, qLang), type, getMatching(matching), qLang);
+
             LOGGER.debug("Created config: {}", configs[count]);
             ++count;
         }

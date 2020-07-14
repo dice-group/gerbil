@@ -34,9 +34,16 @@ public class QALDFileDatasetConfig extends AbstractDatasetConfiguration {
         this.file = file;
     }
 
+
+    public QALDFileDatasetConfig(String name, String questionLabel, String file, boolean couldBeCached, ExperimentType applicableForExperiment,
+                                 EntityCheckerManager entityCheckerManager, SameAsRetriever globalRetriever) {
+        super(name, questionLabel, couldBeCached, applicableForExperiment, entityCheckerManager, globalRetriever);
+        this.file = file;
+    }
+
     @Override
     protected Dataset loadDataset() throws Exception {
-        FileBasedQALDDataset dataset = new FileBasedQALDDataset(getName(), file);
+        FileBasedQALDDataset dataset = new FileBasedQALDDataset(getName(), getQuestionLabel(), file, questionLang);
         dataset.setQuestionLanguage(questionLang);
         dataset.init();
         return dataset;

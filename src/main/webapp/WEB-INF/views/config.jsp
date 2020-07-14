@@ -124,97 +124,7 @@
 					</select>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-8 col-md-offset-2">
-					<hr />
-				</div>
-			</div>
-			<!--System dropdown filled by loadAnnotator() function -->
-			<div class="form-group">
-				<div class="col-md-2"></div>
-					<div class="col-md-2 text-right">
-						<label class="control-label" for="annotator">System</label>
-					<a title="You can 
-1) select any of the system from the drop-down menu or 
-2) add a system via its URI (needs to understand the query parameter and return valid QALD JSON or XML) or 
-3) upload a QALD-formatted XML or JSON file which has the answers to one of the datasets. NOTE: First, type in the name of your system if you use option 2 or 3 and then type in the URI.">
-						<span class="glyphicon glyphicon-question-sign"></span>
-					</a>
-				</div>
-				<div class="col-md-4">
-					<select id="annotator" multiple="multiple" style="display: none;">
-					</select>
-					<hr />
-					<div>
-						<span> Or add another webservice via URI:</span>
-						<div>
-							<label for="nameAnnotator">Name:</label> <input
-								class="form-control" type="text" id="nameAnnotator" name="name"
-								placeholder="Type something" /> <label for="URIAnnotator">URI:</label>
-							<input class="form-control" type="text" id="URIAnnotator"
-								name="URI" placeholder="Type something" />
-						</div>
-						<div>
-							<!-- list to be filled by button press and javascript function addAnnotator -->
-							<ul id="annotatorList"
-								style="margin-top: 15px; list-style-type: none;">
-							</ul>
-						</div>
-						<div id="warningEmptyAnnotator" class="alert alert-warning"
-							role="alert">
-							<button type="button" class="close" data-dismiss="alert"></button>
-							<strong>Warning!</strong> Enter a name and an URI.
-						</div>
-						<div id="infoAnnotatorTest" class="alert alert-info" role="alert">
-							<button type="button" class="close" data-dismiss="alert"></button>
-							<strong>Please wait</strong> while the communication with your
-							annotator is tested...
-						</div>
-						<div id="dangerAnnotatorTestError" class="alert alert-danger"
-							role="alert">
-							<button type="button" class="close" data-dismiss="alert"></button>
-							<strong>Warning!</strong> There was an error while testing the
-							annotator.<br> <span id="annotatorTestErrorMsg"></span>
-						</div>
-						<input type="button" id="addAnnotator"
-							class="btn btn-primary pull-right" value="Add system"
-							style="margin-top: 15px" /><br> <br>
-					</div>
-					<hr id="uploadAnswersSeparator" />
-					<div id="uploadAnswers">
-						<span> Or upload a file with answers:</span>
-						<div>
-							<label for="nameAnswerFile">Name:</label> <input
-								class="form-control" type="text" id="nameAnswerFile" name="name"
-								placeholder="Type something" /> 
 
-							 <br> <select id="answerFileDataset"
-								class="form-control">
-							</select> <br> <br> <span
-								class="btn btn-success fileinput-button"> <i
-								class="glyphicon glyphicon-plus"></i> <span>Select
-									file...</span> <!-- The file input field used as target for the file upload widget -->
-								<input id="answerFileUpload" type="file" name="files[]">
-							</span> <br> <br>
-							<!-- The global progress bar -->
-							<div id="answerFileProgress" class="progress">
-								<div class="progress-bar progress-bar-success"></div>
-							</div>
-							<div>
-								<!-- list to be filled by button press and javascript function addDataset -->
-								<ul class="unstyled" id="answerFileList"
-									style="margin-top: 15px; list-style-type: none;">
-								</ul>
-							</div>
-							<div id="warningEmptyAnswerFileName" class="alert alert-warning"
-								role="alert">
-								<button type="button" class="close" data-dismiss="alert"></button>
-								<strong>Warning!</strong> Enter a name.
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2">
 					<hr />
@@ -239,14 +149,14 @@
 					<hr />
 					<div>
 						<span> Or upload another dataset:</span>
-						<div>
+						<dv>
 							<label for="nameDataset">Name:</label> <input
 								class="form-control" type="text" id="nameDataset" name="name"
 								placeholder="Type something" /> <br> <span
 								class="btn btn-success fileinput-button"> <i
 								class="glyphicon glyphicon-plus"></i> <span>Select
 									file...</span> <!-- The file input field used as target for the file upload widget -->
-								<input id="fileupload" type="file" name="files[]">
+								<input id="fileupload" type="file" name="files[]" onchange="addDatasetFile(this)">
 							</span> <br> <br>
 							<!-- The global progress bar -->
 							<div id="progress" class="progress">
@@ -267,12 +177,103 @@
 					</div>	
 				</div>
 			</div>
-			
+			<div class="row">
+            				<div class="col-md-8 col-md-offset-2">
+            					<hr />
+            				</div>
+            			</div>
+            			<!--System dropdown filled by loadAnnotator() function -->
+            			<div class="form-group">
+            				<div class="col-md-2"></div>
+            					<div class="col-md-2 text-right">
+            						<label class="control-label" for="annotator">System</label>
+            					<a title="You can
+            1) select any of the system from the drop-down menu or
+            2) add a system via its URI (needs to understand the query parameter and return valid QALD JSON or XML) or
+            3) upload a QALD-formatted XML or JSON file which has the answers to one of the datasets. NOTE: First, type in the name of your system if you use option 2 or 3 and then type in the URI.">
+            						<span class="glyphicon glyphicon-question-sign"></span>
+            					</a>
+            				</div>
+            				<div class="col-md-4">
+            					<select id="annotator" multiple="multiple" style="display: none;">
+            					</select>
+            					<hr />
+            					<div>
+            						<span> Or add another webservice via URI:</span>
+            						<div>
+            							<label for="nameAnnotator">Name:</label> <input
+            								class="form-control" type="text" id="nameAnnotator" name="name"
+            								placeholder="Type something" /> <label for="URIAnnotator">URI:</label>
+            							<input class="form-control" type="text" id="URIAnnotator"
+            								name="URI" placeholder="Type something" />
+            						</div>
+            						<div>
+            							<!-- list to be filled by button press and javascript function addAnnotator -->
+            							<ul id="annotatorList"
+            								style="margin-top: 15px; list-style-type: none;">
+            							</ul>
+            						</div>
+            						<div id="warningEmptyAnnotator" class="alert alert-warning"
+            							role="alert">
+            							<button type="button" class="close" data-dismiss="alert"></button>
+            							<strong>Warning!</strong> Enter a name and an URI.
+            						</div>
+            						<div id="infoAnnotatorTest" class="alert alert-info" role="alert">
+            							<button type="button" class="close" data-dismiss="alert"></button>
+            							<strong>Please wait</strong> while the communication with your
+            							annotator is tested...
+            						</div>
+            						<div id="dangerAnnotatorTestError" class="alert alert-danger"
+            							role="alert">
+            							<button type="button" class="close" data-dismiss="alert"></button>
+            							<strong>Warning!</strong> There was an error while testing the
+            							annotator.<br> <span id="annotatorTestErrorMsg"></span>
+            						</div>
+            						<input type="button" id="addAnnotator"
+            							class="btn btn-primary pull-right" value="Add system"
+            							style="margin-top: 15px" /><br> <br>
+            					</div>
+            					<hr id="uploadAnswersSeparator" />
+            					<div id="uploadAnswers">
+            						<span> Or upload a file with answers:</span>
+            						<div>
+            							<label for="nameAnswerFile">Name:</label> <input
+            								class="form-control" type="text" id="nameAnswerFile" name="name"
+            								placeholder="Type something" />
+
+            							 <br> <select id="answerFileDataset"
+            								class="form-control">
+            							</select> <br> <br> <span
+            								class="btn btn-success fileinput-button"> <i
+            								class="glyphicon glyphicon-plus"></i> <span>Select
+            									file...</span> <!-- The file input field used as target for the file upload widget -->
+            								<input id="answerFileUpload" type="file" name="files[]">
+            							</span> <br> <br>
+            							<!-- The global progress bar -->
+            							<div id="answerFileProgress" class="progress">
+            								<div class="progress-bar progress-bar-success"></div>
+            							</div>
+            							<div>
+            								<!-- list to be filled by button press and javascript function addDataset -->
+            								<ul class="unstyled" id="answerFileList"
+            									style="margin-top: 15px; list-style-type: none;">
+            								</ul>
+            							</div>
+            							<div id="warningEmptyAnswerFileName" class="alert alert-warning"
+            								role="alert">
+            								<button type="button" class="close" data-dismiss="alert"></button>
+            								<strong>Warning!</strong> Enter a name.
+            							</div>
+            						</div>
+            					</div>
+            				</div>
+            			</div>
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2">
 					<hr />
 				</div>
 			</div>
+
 			<div class="form-group">
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
@@ -332,6 +333,15 @@ F.e. if you want to use French, type in: fr">
 			}
 			$(elementId).multiselect('dataprovider', formattedData);
 			$(elementId).multiselect('rebuild');
+		}
+
+		function addDatasetFile(val){
+		    var label = $("#nameDataset").val();
+		    var name = val.files[0].name;
+		    console.log(val)
+		    $("#answerFileDataset").append("<option value=\"AFDS_" + name + "\">" + label + "</option>");
+		    $("#answerFileDataset").multiselect('rebuild');
+
 		}
 
 		// Adds the given data (with tooltips) to the given (multi) select element. It is assumed that data is an array of objects each having a label, a name and a description.

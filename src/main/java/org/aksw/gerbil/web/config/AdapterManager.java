@@ -48,7 +48,8 @@ public class AdapterManager {
     private static final String NIF_WS_PREFIX = "NIFWS_";
     private static final String NIF_WS_SUFFIX = " (WS)";
     private static final String AF_PREFIX = "AF_";
-    private static final String UPLOADED_AF_SUFFIX = " (uploaded)";
+    private static final String AFDS_PREFIX = "AFDS_";
+    public static final String UPLOADED_AF_SUFFIX = " (uploaded)";
     private static final String UPLOADED_FILES_PATH_PROPERTY_KEY = "org.aksw.gerbil.UploadPath";
     private static final String UPLOADED_DATASET_SUFFIX = " (uploaded)";
     private static final String UPLOADED_DATASET_PREFIX = "NIFDS_";
@@ -164,8 +165,8 @@ public class AdapterManager {
                 try {
                     return new InstanceListBasedConfigurationImpl(name, false,
                             new DatasetConfigurationImpl(datasetName, false,
-                                    FileBasedQALDDataset.class.getConstructor(String.class, String.class, String.class),
-                                    new Object[] { datasetName, uploadedFilesPath + fileName, questionLanguage},
+                                    FileBasedQALDDataset.class.getConstructor(String.class, String.class, String.class, String.class),
+                                    new Object[] { datasetName, datasetName.replace(AFDS_PREFIX, ""), uploadedFilesPath + fileName, questionLanguage},
                                     ExperimentType.QA, null, null),
                             type, questionLanguage);
                 } catch (Exception e) {
@@ -207,8 +208,9 @@ public class AdapterManager {
                 }
                 String uri = uploadedFilesPath + name.substring(brackets[0] + 1, brackets[1]);
                 // remove dataset prefix from the name
-                name = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]) + UPLOADED_DATASET_SUFFIX;
-return new QALDFileDatasetConfig(name, uri, false, type, entityCheckerManager, globalRetriever);
+                String questionLabel = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]);
+                name = questionLabel + UPLOADED_DATASET_SUFFIX;
+return new QALDFileDatasetConfig(name, questionLabel, uri, false, type, entityCheckerManager, globalRetriever);
             }
             if (name.startsWith(AF_PREFIX)) {
                 // This describes a QA answer file
@@ -222,6 +224,11 @@ return new QALDFileDatasetConfig(name, uri, false, type, entityCheckerManager, g
                 }
                 String datasetName = name.substring(brackets[0] + 1, brackets[1]);
                 return getDatasetConfig(datasetName, type, questionLanguage);
+            }
+            if(name.startsWith(AFDS_PREFIX)){
+                String formatted= name.replace(AFDS_PREFIX, "");
+                return getDatasetConfig("NIFDS_"+formatted+"("+formatted+")", type, questionLanguage);
+
             }
         }
         LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");

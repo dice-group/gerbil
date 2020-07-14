@@ -33,17 +33,36 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
     protected EntityCheckerManager entityCheckerManager;
     protected SameAsRetriever globalRetriever;
     protected String questionLang;
+    protected String questionLabel;
     
-    public AbstractDatasetConfiguration(String datasetName, boolean couldBeCached,
+    public AbstractDatasetConfiguration(String datasetName,boolean couldBeCached,
             ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
             SameAsRetriever globalRetriever) {
         super(datasetName, couldBeCached, applicableForExperiment);
+        this.questionLabel=datasetName;
         this.entityCheckerManager = entityCheckerManager;
         this.globalRetriever = globalRetriever;
     }
-    
+
+    public AbstractDatasetConfiguration(String datasetName, String questionLabel, boolean couldBeCached,
+                                        ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
+                                        SameAsRetriever globalRetriever) {
+        super(datasetName, couldBeCached, applicableForExperiment);
+        this.questionLabel=questionLabel;
+        this.entityCheckerManager = entityCheckerManager;
+        this.globalRetriever = globalRetriever;
+    }
+
     public void setQuestionLang(String questionLang){
     	this.questionLang = questionLang;
+    }
+
+    public String getQuestionLabel() {
+        return questionLabel;
+    }
+
+    public void setQuestionLabel(String questionLabel) {
+        this.questionLabel = questionLabel;
     }
 
     @Override

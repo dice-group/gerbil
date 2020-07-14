@@ -17,6 +17,7 @@ import org.aksw.gerbil.qa.QALDStreamType;
 import org.aksw.gerbil.qa.QALDStreamUtils;
 import org.aksw.gerbil.qa.QAUtils;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.web.config.AdapterManager;
 import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.commons.load.LoaderController;
 import org.aksw.qa.commons.load.json.EJQuestionFactory;
@@ -40,8 +41,8 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
     	this.file=file;
     	initLanguage();
     }
-    public FileBasedQALDDataset(String name, String file){
-    	super(name);
+    public FileBasedQALDDataset(String name, String questionLabel, String file){
+    	super(name, questionLabel);
     	this.file=file;
     	initLanguage();
     }
@@ -52,14 +53,14 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
         initLanguage();
     }
 
-    public FileBasedQALDDataset(String name, String file, QALDStreamType fileType) {
-        super(name);
+    public FileBasedQALDDataset(String name, String questionLabel, String file, QALDStreamType fileType) {
+        super(name, questionLabel);
         this.file = file;
         this.fileType = fileType;
         initLanguage();
     }
-    public FileBasedQALDDataset(String name, String file, String questionLanguage) {
-        super(name);
+    public FileBasedQALDDataset(String name, String questionLabel, String file, String questionLanguage) {
+        super(name, questionLabel);
         this.file = file;
         this.fileType = fileType;
         this.qLang=questionLanguage;
@@ -86,7 +87,7 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
         try {
             fin = new FileInputStream(file);
             if(fileType!=null){
-            	instances = QALDStreamUtils.parseDocument(fin, fileType, getName());
+            	instances = QALDStreamUtils.parseDocument(fin, fileType, getQuestionLabel());
             }
             else{
         		List<IQuestion> questions;
@@ -96,7 +97,7 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
         			//XML
         			questions = LoaderController.loadXML(fin, null, qLang);
         		}
-        		instances = generateInstancesFromQuestions(getName(), questions, qLang);
+        		instances = generateInstancesFromQuestions(getQuestionLabel(), questions, qLang);
             }
         } catch (Exception e) {
         	IOUtils.closeQuietly(fin);

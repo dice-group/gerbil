@@ -65,6 +65,7 @@ public class InstanceListBasedConfigurationImpl extends AbstractAdapterConfigura
     }
 
     protected Annotator loadAnnotator(ExperimentType experimentType) throws Exception {
+        datasetConfig.setQuestionLanguage(this.questionLang);
         Dataset dataset = datasetConfig.getDataset(experimentType);
         if (dataset == null) {
             return null;

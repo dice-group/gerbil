@@ -248,7 +248,7 @@ public class ExperimentTask implements Task {
 		case Sc2KB:
 		case OKE_Task1: // falls through
 		case OKE_Task2:
-		case QA:
+
 		case ETyping: {
 			if (annotatorSameAsRetriever != null) {
 				for (List<? extends Meaning> result : results) {
@@ -257,6 +257,7 @@ public class ExperimentTask implements Task {
 			}
 			return;
 		}
+		case QA:
 		case ERec:// falls through
 		default:
 			// nothing to do

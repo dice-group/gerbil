@@ -37,4 +37,8 @@ public interface Dataset extends Closeable {
     public void setQuestionLanguage(String qLang);
     
     public String getQuestionLanguage();
+
+    public String getQuestionLabel();
+
+    public void setQuestionLabel(String questionLabel);
 }
