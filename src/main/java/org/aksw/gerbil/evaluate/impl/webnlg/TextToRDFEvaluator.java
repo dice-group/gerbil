@@ -1,21 +1,21 @@
 package org.aksw.gerbil.evaluate.impl.webnlg;
 
-
 import org.aksw.gerbil.data.SimpleFileRef;
+import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import java.io.*;
 import java.util.List;
 
 public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
 
     @Override
-    public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard, EvaluationResultContainer results) {
+    public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
+                         EvaluationResultContainer results) {
             // We assume that both lists have only one element!!!
             // We assume that each sub list has exactly one element!!!
 
@@ -71,29 +71,41 @@ public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
             JSONObject type = (JSONObject) total_scores.get("Ent_type");
             System.out.println("Ent_Type: " + type);
             precision = (double) type.get("Precision");
+            results.addResult(new DoubleEvaluationResult("ETPrecision", precision));
             recall = (double) type.get("Recall");
+            results.addResult(new DoubleEvaluationResult("ETRecall", recall));
             f1 = (double) type.get("F1");
+            results.addResult(new DoubleEvaluationResult("ETF1", f1));
 
             //Partial
             JSONObject partial = (JSONObject) total_scores.get("Partial");
             System.out.println("Partial: " + partial);
             precision = (double) partial.get("Precision");
+            results.addResult(new DoubleEvaluationResult("PartialPrecision", precision));
             recall = (double) partial.get("Recall");
+            results.addResult(new DoubleEvaluationResult("PartialRecall", recall));
             f1 = (double) partial.get("F1");
+            results.addResult(new DoubleEvaluationResult("PartialF1", f1));
 
             //Strict
             JSONObject strict = (JSONObject) total_scores.get("Strict");
             System.out.println("Strict: " + strict);
             precision = (double) strict.get("Precision");
+            results.addResult(new DoubleEvaluationResult("StrictPrecision", precision));
             recall = (double) strict.get("Recall");
+            results.addResult(new DoubleEvaluationResult("StrictRecall", recall));
             f1 = (double) strict.get("F1");
+            results.addResult(new DoubleEvaluationResult("StrictF1", f1));
 
             //Exact
             JSONObject exact = (JSONObject) total_scores.get("Exact");
             System.out.println("Exact: " + exact);
             precision = (double) exact.get("Precision");
+            results.addResult(new DoubleEvaluationResult("ExactPrecision", precision));
             recall = (double) exact.get("Recall");
+            results.addResult(new DoubleEvaluationResult("ExactRecall", recall));
             f1 = (double) exact.get("F1");
+            results.addResult(new DoubleEvaluationResult("ExactF1", f1));
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
