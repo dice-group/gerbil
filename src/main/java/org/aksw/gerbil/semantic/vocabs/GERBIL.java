@@ -50,6 +50,9 @@ public class GERBIL {
 
     public static final Resource Experiment = resource("Experiment");
     public static final Resource MT = resource("MT");
+    public static final Resource WebNLG_RDF2Text = resource("NLG");
+    public static final Resource WebNLG_Text2RDF = resource("WebNLG_Text2RDF");
+
 
     public static final Resource StrongAnnoMatch = resource("StrongAnnoMatch");
     public static final Resource WeakAnnoMatch = resource("WeakAnnoMatch");
@@ -86,6 +89,10 @@ public class GERBIL {
         switch (type) {
             case MT:
                 return MT;
+            case WebNLG_RDF2Text:
+                return WebNLG_RDF2Text;
+            case WebNLG_Text2RDF:
+                return WebNLG_Text2RDF;
         }
         LOGGER.error("Got an unknown experiment type: " + type.name());
         return null;

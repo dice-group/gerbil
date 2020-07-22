@@ -11,7 +11,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.*;
 import java.util.List;
 
-public class MachineTranslationEvaluator implements Evaluator<SimpleFileRef> {
+public class NLGEvaluator implements Evaluator<SimpleFileRef> {
 
     @Override
     public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,

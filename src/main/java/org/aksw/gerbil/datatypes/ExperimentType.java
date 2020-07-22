@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public enum ExperimentType implements Describable {
 
     MT("MT", "Machine Translation."),
-    WebNLG_RDF2Text("WebNLG RDF2Text", "WebNLG RDF2Text"),
+    WebNLG_RDF2Text("NLG", "RDF2Text"),
     WebNLG_Text2RDF("WebNLG Text2RDF", "WebNLG Text2RDF"),
     Ent_Type("Ent_Type", "Ent_Type"),
     Partial("Partial", "Partial"),

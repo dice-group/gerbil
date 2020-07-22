@@ -23,12 +23,11 @@ import java.util.List;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.evaluate.impl.mt.MachineTranslationEvaluator;
+import org.aksw.gerbil.evaluate.impl.mt.NLGEvaluator;
 import org.aksw.gerbil.evaluate.impl.webnlg.TextToRDFEvaluator;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
-import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.apache.jena.rdf.model.ModelFactory;
 
@@ -75,8 +74,8 @@ public class EvaluatorFactory {
             UriKBClassifier classifier, SubClassInferencer inferencer) {
         switch (type) {
         case MT:
-            return new MachineTranslationEvaluator();
-
+        case WebNLG_RDF2Text:
+                return new NLGEvaluator();
         case WebNLG_Text2RDF:
             return new TextToRDFEvaluator(configuration);
         default: {
@@ -90,12 +89,14 @@ public class EvaluatorFactory {
 //        ExperimentTaskConfiguration subTaskConfig;
         switch (configuration.type) {
         case MT:
-        case WebNLG_RDF2Text:
         case WebNLG_Text2RDF:
+
             case Ent_Type:
             case Partial:
             case Strict:
             case Exact:
+
+        case WebNLG_RDF2Text:
             return;
         default: {
             throw new RuntimeException();
