@@ -1,9 +1,12 @@
 package org.aksw.gerbil.evaluate.impl.webnlg;
 
 import org.aksw.gerbil.data.SimpleFileRef;
+import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
+import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -12,7 +15,12 @@ import java.io.*;
 import java.util.List;
 
 public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
+    // Configuration of the experiment
+    private ExperimentTaskConfiguration configuration;
 
+    public TextToRDFEvaluator(ExperimentTaskConfiguration configuration) {
+        this.configuration = configuration;
+    }
     @Override
     public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
                          EvaluationResultContainer results) {
@@ -51,61 +59,61 @@ public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
                 throw new IllegalStateException("Python script aborted with an error.");
             }
 
-            /*String scriptResult = reader.getBuffer().toString();
-            System.out.println(scriptResult + "\n");
-            int jsonStart = scriptResult.indexOf('{');
-            if(jsonStart < 0) {
-                throw new IllegalStateException("The script result does not seem to contain a JSON object!");
-            }
-            scriptResult = scriptResult.substring(jsonStart);
-             */
             double precision,recall,f1;
             JSONParser jsonParser = new JSONParser();
             Object object;
             object = jsonParser.parse(new FileReader("result.json"));
             JSONObject jsonObject = (JSONObject) object;
             JSONObject total_scores = (JSONObject) jsonObject.get("Total_scores");
-           // System.out.println("Total scores: " + total_scores);
-
-            //Ent_type
-            JSONObject type = (JSONObject) total_scores.get("Ent_type");
-            System.out.println("Ent_Type: " + type);
-            precision = (double) type.get("Precision");
-            results.addResult(new DoubleEvaluationResult("ETPrecision", precision));
-            recall = (double) type.get("Recall");
-            results.addResult(new DoubleEvaluationResult("ETRecall", recall));
-            f1 = (double) type.get("F1");
-            results.addResult(new DoubleEvaluationResult("ETF1", f1));
-
-            //Partial
-            JSONObject partial = (JSONObject) total_scores.get("Partial");
-            System.out.println("Partial: " + partial);
-            precision = (double) partial.get("Precision");
-            results.addResult(new DoubleEvaluationResult("PartialPrecision", precision));
-            recall = (double) partial.get("Recall");
-            results.addResult(new DoubleEvaluationResult("PartialRecall", recall));
-            f1 = (double) partial.get("F1");
-            results.addResult(new DoubleEvaluationResult("PartialF1", f1));
-
-            //Strict
-            JSONObject strict = (JSONObject) total_scores.get("Strict");
-            System.out.println("Strict: " + strict);
-            precision = (double) strict.get("Precision");
-            results.addResult(new DoubleEvaluationResult("StrictPrecision", precision));
-            recall = (double) strict.get("Recall");
-            results.addResult(new DoubleEvaluationResult("StrictRecall", recall));
-            f1 = (double) strict.get("F1");
-            results.addResult(new DoubleEvaluationResult("StrictF1", f1));
 
             //Exact
             JSONObject exact = (JSONObject) total_scores.get("Exact");
-            System.out.println("Exact: " + exact);
             precision = (double) exact.get("Precision");
-            results.addResult(new DoubleEvaluationResult("ExactPrecision", precision));
+            results.addResult(new DoubleEvaluationResult("Precision", precision));
             recall = (double) exact.get("Recall");
-            results.addResult(new DoubleEvaluationResult("ExactRecall", recall));
+            results.addResult(new DoubleEvaluationResult("Recall", recall));
             f1 = (double) exact.get("F1");
-            results.addResult(new DoubleEvaluationResult("ExactF1", f1));
+            results.addResult(new DoubleEvaluationResult("F1", f1));
+
+            //Ent_type
+            EvaluationResultContainer subTaskResultsEntType = new SubTaskResult(
+                    new ExperimentTaskConfiguration(configuration.getAnnotatorConfig(), configuration.getDatasetConfig(),
+                            ExperimentType.Ent_Type));
+            JSONObject type = (JSONObject) total_scores.get("Ent_type");
+            precision = (double) type.get("Precision");
+            subTaskResultsEntType.addResult(new DoubleEvaluationResult("Precision", precision));
+            recall = (double) type.get("Recall");
+            subTaskResultsEntType.addResult(new DoubleEvaluationResult("Recall", recall));
+            f1 = (double) type.get("F1");
+            subTaskResultsEntType.addResult(new DoubleEvaluationResult("F1", f1));
+            results.addResult(subTaskResultsEntType);
+
+            //Partial
+            EvaluationResultContainer subTaskResultsPartial = new SubTaskResult(
+                    new ExperimentTaskConfiguration(configuration.getAnnotatorConfig(), configuration.getDatasetConfig(),
+                            ExperimentType.Partial));
+            JSONObject partial = (JSONObject) total_scores.get("Partial");
+            precision = (double) partial.get("Precision");
+            subTaskResultsPartial.addResult(new DoubleEvaluationResult("Precision", precision));
+            recall = (double) partial.get("Recall");
+            subTaskResultsPartial.addResult(new DoubleEvaluationResult("Recall", recall));
+            f1 = (double) partial.get("F1");
+            subTaskResultsPartial.addResult(new DoubleEvaluationResult("F1", f1));
+            results.addResult(subTaskResultsPartial);
+
+            //Strict
+            EvaluationResultContainer subTaskResultsStrict = new SubTaskResult(
+                    new ExperimentTaskConfiguration(configuration.getAnnotatorConfig(), configuration.getDatasetConfig(),
+                            ExperimentType.Strict));
+            JSONObject strict = (JSONObject) total_scores.get("Strict");
+            System.out.println("Strict: " + strict);
+            precision = (double) strict.get("Precision");
+            subTaskResultsStrict.addResult(new DoubleEvaluationResult("Precision", precision));
+            recall = (double) strict.get("Recall");
+            subTaskResultsStrict.addResult(new DoubleEvaluationResult("Recall", recall));
+            f1 = (double) strict.get("F1");
+            subTaskResultsStrict.addResult(new DoubleEvaluationResult("F1", f1));
+            results.addResult(subTaskResultsStrict);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

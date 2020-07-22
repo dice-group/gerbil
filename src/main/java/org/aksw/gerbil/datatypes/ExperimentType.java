@@ -29,7 +29,11 @@ public enum ExperimentType implements Describable {
 
     MT("MT", "Machine Translation."),
     WebNLG_RDF2Text("WebNLG RDF2Text", "WebNLG RDF2Text"),
-    WebNLG_Text2RDF("WebNLG Text2RDF", "WebNLG Text2RDF");
+    WebNLG_Text2RDF("WebNLG Text2RDF", "WebNLG Text2RDF"),
+    Ent_Type("Ent_Type", "Ent_Type"),
+    Partial("Partial", "Partial"),
+    Strict("Strict", "Strict"),
+    Exact("Exact", "Exact");
 
     private String label;
     private String description;
@@ -69,11 +73,27 @@ public enum ExperimentType implements Describable {
                     }
                 }
             }
+            case Ent_Type:{
+                return type == Ent_Type;
+            }
+            case Partial:{
+                return type == Partial;
+            }
+            case Strict:{
+                return type == Strict;
+            }
+            case Exact:{
+                return type == Exact;
+            }
             case WebNLG_Text2RDF: {
                 switch (type) {
                     case WebNLG_Text2RDF: {
                         return type == WebNLG_Text2RDF;
                     }
+                    case Ent_Type:
+                    case Partial:
+                    case Strict:
+                    case Exact:
                 }
             }
         }
