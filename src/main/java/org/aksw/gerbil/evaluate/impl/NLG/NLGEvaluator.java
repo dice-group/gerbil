@@ -1,35 +1,35 @@
 package org.aksw.gerbil.evaluate.impl.NLG;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.List;
+
 import org.aksw.gerbil.data.SimpleFileRef;
-import org.aksw.gerbil.dataset.InitializableDataset;
-import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
-import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.gerbil.utils.ClosePermitionGranter;
 import org.apache.commons.io.IOUtils;
-import org.apache.jena.base.Sys;
 
-import java.io.*;
-import java.util.List;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class NLGEvaluator implements Evaluator<SimpleFileRef> {
 
     @Override
     public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
-                         EvaluationResultContainer results) {
+            EvaluationResultContainer results) {
 
         // We assume that both lists have only one element!!!
         // We assume that each sub list has exactly one element!!!
-       // File[] directory = new File[0];
-      //  f(directory);
         SimpleFileRef expected = goldStandard.get(0).get(0);
         SimpleFileRef hypothesis = annotatorResults.get(0).get(0);
         File ref = expected.getFileRef(); // gives path to file with the expected translation
+        int numberOfReferences = ref.list((dir, name) -> name.matches("reference[0-9]+")).length;
         File hypo = hypothesis.getFileRef(); // gives path to file with the uploaded translation
 
         // start python script and gather results
@@ -37,11 +37,12 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
             ReaderThread reader = new ReaderThread();
             Thread readerThread = new Thread(reader);
 
-            Process p = Runtime.getRuntime()
-                    .exec("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R " + ref + " -H "
-                            + hypo + " -nr 8 -m bleu,meteor,chrf++,ter");
-            System.out.println("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R " + ref + " -H "
-                    + hypo + " -nr 8 -m bleu,meteor,chrf++,ter");
+            String command = new StringBuilder().append("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R ")
+                    .append(ref.getAbsolutePath()).append(" -H ").append(hypo.getAbsolutePath()).append(" -nr ")
+                    .append(numberOfReferences).append(" -m bleu,meteor,chrf++,ter").toString();
+
+            Process p = Runtime.getRuntime().exec(command);
+            System.out.println(command);
 
             reader.setInput(p.getInputStream());
             readerThread.start();
@@ -64,7 +65,7 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
             System.out.println("Data:" + scriptResult + "\n");
 
             int jsonStart = scriptResult.indexOf('{');
-            if(jsonStart < 0) {
+            if (jsonStart < 0) {
                 throw new IllegalStateException("The script result does not seem to contain a JSON object!");
             }
             scriptResult = scriptResult.substring(jsonStart);
@@ -93,11 +94,10 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
             e.printStackTrace();
         }
     }
-/*public File[] f(File[] d){
-        File[] list = d;
-        return list;
-}
- */
+
+    /*
+     * public File[] f(File[] d){ File[] list = d; return list; }
+     */
     public static final class ReaderThread implements Runnable {
 
         private StringBuilder buffer = new StringBuilder();
@@ -135,7 +135,6 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
         public StringBuilder getBuffer() {
             return buffer;
         }
-
 
     }
 }

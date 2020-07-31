@@ -1,24 +1,24 @@
 package org.aksw.gerbil.evaluate.impl.NLG;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
+import org.aksw.gerbil.data.SimpleFileRef;
 import org.aksw.gerbil.dataset.InitializableDataset;
 import org.aksw.gerbil.dataset.impl.AbstractDataset;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
-
-import java.io.File;
-import java.util.List;
+import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 
 public class NLGDataset extends AbstractDataset implements InitializableDataset {
     protected List<Document> documents;
     protected String refDirectory;
-    NLGEvaluator nlgEvaluator = new NLGEvaluator();
 
-    public NLGDataset(String textsDirectory){
+    public NLGDataset(String textsDirectory) {
         this.refDirectory = textsDirectory;
-
     }
-
 
     @Override
     public int size() {
@@ -35,30 +35,12 @@ public class NLGDataset extends AbstractDataset implements InitializableDataset 
         this.documents = loadDocuments(new File(refDirectory));
     }
 
-
-        protected List<Document> loadDocuments(File textDir) throws GerbilException {
-
-            if ((!textDir.exists()) || (!textDir.isDirectory()))
-            {
-                throw new GerbilException(
-                        "The given text directory (" + textDir.getAbsolutePath() + ") is not existing or not a directory.",
-                        ErrorTypes.DATASET_LOADING_ERROR);
-            }
-            textDir.list((dir, name) -> name.matches("reference[0-7]+"));
-            return documents;
+    protected List<Document> loadDocuments(File textDir) throws GerbilException {
+        if ((!textDir.exists()) || (!textDir.isDirectory())) {
+            throw new GerbilException("The given text directory (" + textDir.getAbsolutePath()
+                    + ") does not exist or is not a directory.", ErrorTypes.DATASET_LOADING_ERROR);
         }
-
-   /* public  File folderSize(File dir) {
-        File direc = null;
-        for (File f : dir.listFiles()) {
-            if (f.isFile())
-            direc=f;
-            nlgEvaluator.f(dir.listFiles());
-
-        }
-        System.out.println("direc: "+dir);
-        return direc;
+        return Arrays.asList((Document) new DocumentImpl("", Arrays.asList(new SimpleFileRef(textDir))));
     }
 
-    */
 }
