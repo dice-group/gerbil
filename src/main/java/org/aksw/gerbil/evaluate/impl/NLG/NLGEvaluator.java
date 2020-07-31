@@ -1,12 +1,18 @@
-package org.aksw.gerbil.evaluate.impl.mt;
+package org.aksw.gerbil.evaluate.impl.NLG;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.aksw.gerbil.data.SimpleFileRef;
+import org.aksw.gerbil.dataset.InitializableDataset;
+import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.utils.ClosePermitionGranter;
 import org.apache.commons.io.IOUtils;
+import org.apache.jena.base.Sys;
 
 import java.io.*;
 import java.util.List;
@@ -16,14 +22,14 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
     @Override
     public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
                          EvaluationResultContainer results) {
+
         // We assume that both lists have only one element!!!
         // We assume that each sub list has exactly one element!!!
-
+       // File[] directory = new File[0];
+      //  f(directory);
         SimpleFileRef expected = goldStandard.get(0).get(0);
         SimpleFileRef hypothesis = annotatorResults.get(0).get(0);
-
         File ref = expected.getFileRef(); // gives path to file with the expected translation
-
         File hypo = hypothesis.getFileRef(); // gives path to file with the uploaded translation
 
         // start python script and gather results
@@ -33,9 +39,9 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
 
             Process p = Runtime.getRuntime()
                     .exec("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R " + ref + " -H "
-                            + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
+                            + hypo + " -nr 8 -m bleu,meteor,chrf++,ter");
             System.out.println("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R " + ref + " -H "
-                    + hypo + " -nr 1 -m bleu,meteor,chrf++,ter");
+                    + hypo + " -nr 8 -m bleu,meteor,chrf++,ter");
 
             reader.setInput(p.getInputStream());
             readerThread.start();
@@ -87,7 +93,11 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
             e.printStackTrace();
         }
     }
-
+/*public File[] f(File[] d){
+        File[] list = d;
+        return list;
+}
+ */
     public static final class ReaderThread implements Runnable {
 
         private StringBuilder buffer = new StringBuilder();
@@ -125,6 +135,7 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
         public StringBuilder getBuffer() {
             return buffer;
         }
+
 
     }
 }

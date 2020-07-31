@@ -16,14 +16,12 @@
  */
 package org.aksw.gerbil.evaluate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.evaluate.impl.mt.NLGEvaluator;
+import org.aksw.gerbil.evaluate.impl.NLG.NLGEvaluator;
 import org.aksw.gerbil.evaluate.impl.webnlg.TextToRDFEvaluator;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
@@ -75,7 +73,7 @@ public class EvaluatorFactory {
         switch (type) {
         case MT:
         case WebNLG_RDF2Text:
-                return new NLGEvaluator();
+            return new NLGEvaluator();
         case WebNLG_Text2RDF:
             return new TextToRDFEvaluator(configuration);
         default: {
