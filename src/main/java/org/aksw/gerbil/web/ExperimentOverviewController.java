@@ -106,6 +106,8 @@ public class ExperimentOverviewController {
 				challenge = null;
 			}
 		}
+		System.out.println("Exp: "+eType+" annotator: "+ annotatorNames.length+ " dataset: "+datasetNames.length
+				+ " challenge: "+ challenge.getStartDate());
 		return loadLatestResults(eType, annotatorNames, datasetNames, challenge);
 
 	}
@@ -157,6 +159,7 @@ public class ExperimentOverviewController {
 			}
 		}
 		response.append("]}");
+		System.out.println("Response: "+response);
 		return response.toString();
 
 	}
@@ -211,7 +214,6 @@ public class ExperimentOverviewController {
 				continue;
 			}
 			listsAsJson.append("{\"datasetName\" : \"").append(dataset).append("\", ");
-
 			listsAsJson.append(" \"leader\" : [ ");
 
 			for (ExperimentTaskStatus expResults : leaderList) {
@@ -252,7 +254,6 @@ public class ExperimentOverviewController {
 		}
 		//listsAsJson.setCharAt(datasetNames.length-1, ' ');
 		listsAsJson.append("]}");
-
 		return listsAsJson.toString();
 	}
 
@@ -261,6 +262,8 @@ public class ExperimentOverviewController {
 		Set<String> annotatorNames = dao.getAnnotators();
 		String annotatorNameArray[] = annotatorNames.toArray(new String[annotatorNames.size()]);
 		Arrays.sort(annotatorNameArray);
+		//System.out.println("anno name: "+annotatorNames);
+		System.out.println("anno array: "+annotatorNameArray.toString());
 		return annotatorNameArray;
 	}
 
@@ -268,6 +271,8 @@ public class ExperimentOverviewController {
 		Set<String> datasetNames = datasets.getAdapterNamesForExperiment(eType);
 		String datasetNameArray[] = datasetNames.toArray(new String[datasetNames.size()]);
 		Arrays.sort(datasetNameArray);
+		//System.out.println("dataset name: "+datasetNames);
+		System.out.println("dataset array: "+datasetNameArray.toString());
 		return datasetNameArray;
 	}
 }

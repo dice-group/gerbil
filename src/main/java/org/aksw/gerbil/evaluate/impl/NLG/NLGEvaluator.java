@@ -38,7 +38,7 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
             Thread readerThread = new Thread(reader);
 
             String command = new StringBuilder().append("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R ")
-                    .append(ref.getAbsolutePath()).append(" -H ").append(hypo.getAbsolutePath()).append(" -nr ")
+                    .append(ref.getPath()).append("/reference -H ").append(hypo.getPath()).append(" -nr ")
                     .append(numberOfReferences).append(" -m bleu,meteor,chrf++,ter").toString();
 
             Process p = Runtime.getRuntime().exec(command);
