@@ -18,11 +18,10 @@ package org.aksw.gerbil.web;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +30,7 @@ import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataid.DataIDGenerator;
+import org.aksw.gerbil.datatypes.ChallengeDescr;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -65,10 +65,13 @@ public class MainController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
     private static final String GOOGLE_ANALYTICS_FILE_NAME = "google1d91bc68c8a56517.html";
-
     private static boolean isInitialized = false;
-    
     private static final String RESNAME_PROP = "org.aksw.gerbil.database.ResultNameSequence";
+    private static ChallengeDescr challenge;
+
+    private static final String GERBIL_PROPERTIES_CHALLENGE_END_KEY = "org.aksw.gerbil.challenge.enddate";
+    private static final String GERBIL_PROPERTIES_CHALLENGE_START_KEY = "org.aksw.gerbil.challenge.startdate";
+    private static final String GERBIL_PROPERTIES_CHALLENGE_NAME_KEY = "org.aksw.gerbil.challenge.name";
 
     private static synchronized void initialize(ExperimentDAO dao) {
         if (!isInitialized) {
@@ -80,6 +83,24 @@ public class MainController {
         }
         // Simply call the dataset mapping so that it has to be instantiated
         // DatasetMapping.getDatasetsForExperimentType(ExperimentType.EExt);
+        if(GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_END_KEY) &&
+                GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_START_KEY) &&
+                GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_NAME_KEY)) {
+
+            String startDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_START_KEY);
+            String endDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_END_KEY);
+            String name = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_NAME_KEY);
+
+            Timestamp challengeEndDate = Timestamp.valueOf(endDate);
+            Timestamp challengeStartDate = Timestamp.valueOf(startDate);
+
+            DateFormat df = new SimpleDateFormat(ExperimentOverviewController.DATE_FORMAT_STRING);
+            //challengeDate.setTime(df.parse(endDate));
+            challenge = new ChallengeDescr(challengeStartDate, challengeEndDate, name);
+            if(!dao.isChallengeInDB(challenge)) {
+                dao.addChallenge(challenge);
+            }
+        }
     }
 
     @PostConstruct
@@ -120,6 +141,13 @@ public class MainController {
     public ModelAndView config() {
         ModelAndView model = new ModelAndView();
         model.setViewName("config");
+        model.addObject("challengeStart", challenge.getStartDate().toString());
+        model.addObject("challengeName", challenge.getName());
+        model.addObject("challengeEnd", challenge.getEndDate().toString());
+        //DateFormat df = new SimpleDateFormat(ExperimentOverviewController.DATE_FORMAT_STRING);
+        model.addObject("challengeTooLate", challenge.getEndDate().before(Calendar.getInstance().getTime()));
+        model.addObject("challengeTooEarly", challenge.getStartDate().after(Calendar.getInstance().getTime()));
+
         return model;
     }
 
