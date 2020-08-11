@@ -231,7 +231,7 @@ public interface ExperimentDAO extends Closeable {
 
     public List<ExperimentTaskStatus> getBestResults(String name, String dataset);
 
-    public List<ExperimentTaskStatus> getBestResults(String name, String dataset, Timestamp start, Timestamp end);
+    public List<ExperimentTaskStatus> getBestResults(String name, String dataset, String resultName, Timestamp start, Timestamp end);
 
     public List<ChallengeDescr> getAllChallenges();
 

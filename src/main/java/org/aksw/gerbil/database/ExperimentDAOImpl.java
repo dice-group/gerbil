@@ -73,11 +73,17 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                                                    */ };
     public static final String ERROR_COUNT_NAME = "Error Count";
 
-    private static final String GET_BEST_EXPERIMENT_TASK_RESULTS = "select inExp.systemName, outExp.datasetName, outExp.experimentType, outExp.matching, outExp.state, outExp.version, outExp.lastChanged, outExp.id, inExp.result from ExperimentTasks outExp, (SELECT exp.systemName, max(addi.resvalue) AS result FROM ExperimentTasks exp join ExperimentTasks_DoubleResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND (addi.resultId=0 OR addi.resultId=3) and addi.resvalue <> sqrt(-1) and exp.experimentType = :experimentType and exp.datasetName = :dataset GROUP by exp.systemName) as inExp, ExperimentTasks_DoubleResults outAddi WHERE outExp.publish='true' AND (outAddi.resultId=0 OR outAddi.resultId=3) and outExp.Id=outAddi.taskId and outExp.systemName = inExp.systemName and inExp.result = outAddi.resvalue and outExp.state = 0 and outExp.datasetName = :dataset ORDER BY inExp.result DESC;";
+    private static final String GET_BEST_EXPERIMENT_TASK_RESULTS = "select inExp.systemName, outExp.datasetName, outExp.experimentType, outExp.state, outExp.version, outExp.lastChanged, outExp.id, inExp.result from ExperimentTasks outExp, (SELECT exp.systemName, max(addi.resvalue) AS result FROM ExperimentTasks exp join ExperimentTasks_DoubleResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND (addi.resultId=0 OR addi.resultId=3) and addi.resvalue <> sqrt(-1) and exp.experimentType = :experimentType and exp.datasetName = :dataset GROUP by exp.systemName) as inExp, ExperimentTasks_DoubleResults outAddi WHERE outExp.publish='true' AND (outAddi.resultId=0 OR outAddi.resultId=3) and outExp.Id=outAddi.taskId and outExp.systemName = inExp.systemName and inExp.result = outAddi.resvalue and outExp.state = 0 and outExp.datasetName = :dataset ORDER BY inExp.result DESC;";
 
     private static final String GET_ALL_ANNOTATORS = "SELECT DISTINCT systemName FROM ExperimentTasks";
 
-    private static final String GET_BEST_EXPERIMENT_DATE_TASK_RESULTS = "select inExp.systemName, outExp.datasetName, outExp.experimentType, outExp.matching, outExp.state, outExp.version, outExp.lastChanged, outExp.id, inExp.result from ExperimentTasks outExp, (SELECT exp.systemName, max(addi.resvalue) AS result FROM ExperimentTasks exp join ExperimentTasks_DoubleResults addi ON exp.Id=addi.taskId WHERE exp.publish='true' AND (addi.resultId=0 OR addi.resultId=3) and addi.resvalue <> sqrt(-1) and exp.experimentType = :experimentType and exp.datasetName = :dataset and exp.lastChanged <= :before and exp.lastChanged >= :after GROUP by exp.systemName) as inExp, ExperimentTasks_DoubleResults outAddi WHERE outExp.publish='true' AND (outAddi.resultId=0 OR outAddi.resultId=3) and outExp.Id=outAddi.taskId and outExp.systemName = inExp.systemName and inExp.result = outAddi.resvalue and outExp.state = 0 and outExp.datasetName = :dataset ORDER BY inExp.result DESC;";
+    private static final String GET_BEST_EXPERIMENT_DATE_TASK_RESULTS = "SELECT inExp.systemName, outExp.datasetName, outExp.experimentType, outExp.state, outExp.version, outExp.lastChanged, outExp.id, inExp.result "
+            + " FROM ExperimentTasks outExp, ExperimentTasks_DoubleResults outAddi,"
+            + "  (SELECT exp.systemName, addi.resultId, max(addi.resvalue) AS result"
+            + "   FROM ExperimentTasks exp, ExperimentTasks_DoubleResults addi, ResultNames rn"
+            + "   WHERE rn.name=:resultName AND addi.resultId = rn.id AND exp.Id=addi.taskId AND exp.publish='true' AND addi.resvalue <> sqrt(-1) and exp.experimentType = :experimentType and exp.datasetName = :dataset and exp.lastChanged <= :before and exp.lastChanged >= :after "
+            + "   GROUP by exp.systemName, addi.resultId) as inExp "
+            + " WHERE outExp.publish='true' and outAddi.resultId=inExp.resultId AND outExp.Id=outAddi.taskId and outExp.systemName = inExp.systemName and inExp.result = outAddi.resvalue and outExp.state = 0 and outExp.datasetName = :dataset ORDER BY inExp.result DESC;";
 
 
     private static final String SET_FILE2SYSTEM_MAPPING = "INSERT INTO File2System (id, file, system, email) VALUES(:id, :file, :system, :email)";
@@ -430,6 +436,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("experimentType", experimentType);
         parameters.addValue("dataset", dataset);
+        // TODO The result name should be a parameter of the query!
 
         List<ExperimentTaskStatus> result = this.template.query(GET_BEST_EXPERIMENT_TASK_RESULTS, parameters,
                 new ExperimentTaskRowMapper());
@@ -442,11 +449,12 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
 
     @Override
-    public List<ExperimentTaskStatus> getBestResults(String experimentType, String dataset,
+    public List<ExperimentTaskStatus> getBestResults(String experimentType, String dataset, String resultName,
                                                      Timestamp start, Timestamp end) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("experimentType", experimentType);
         parameters.addValue("dataset", dataset);
+        parameters.addValue("resultName", resultName);
         parameters.addValue("after", start);
         parameters.addValue("before", end);
 

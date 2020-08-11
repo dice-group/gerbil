@@ -16,7 +16,15 @@
  */
 package org.aksw.gerbil.web;
 
-import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Set;
+
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
@@ -24,12 +32,7 @@ import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ChallengeDescr;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.utils.DatasetMetaData;
-import org.aksw.gerbil.utils.DatasetMetaDataMapping;
-import org.aksw.gerbil.utils.PearsonsSampleCorrelationCoefficient;
 import org.aksw.gerbil.web.config.AdapterList;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.math3.analysis.function.Exp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +41,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 @Controller
 public class ExperimentOverviewController {
@@ -61,6 +59,7 @@ public class ExperimentOverviewController {
 	private static final String GERBIL_PROPERTIES_CHALLENGE_END_KEY = "org.aksw.gerbil.challenge.enddate";
 	private static final String GERBIL_PROPERTIES_CHALLENGE_START_KEY = "org.aksw.gerbil.challenge.startdate";
 	private static final String GERBIL_PROPERTIES_CHALLENGE_NAME_KEY = "org.aksw.gerbil.challenge.name";
+    private static final String GERBIL_PROPERTIES_METRIC_NAME_KEY = "org.aksw.gerbil.challenge.metric";
 	public static final String DATE_FORMAT_STRING = "yyyy-MM-dd HH:mm:ss XXX";
 
 	@Autowired
@@ -75,7 +74,7 @@ public class ExperimentOverviewController {
 	@Qualifier("datasets")
 	private AdapterList<DatasetConfiguration> datasets;
 
-	private ChallengeDescr challenge;
+	//private ChallengeDescr challenge;
 
 	@RequestMapping("/experimentoverview")
 	public @ResponseBody
@@ -85,35 +84,15 @@ public class ExperimentOverviewController {
 
 		String annotatorNames[] = loadAnnotators(eType);
 		String datasetNames[] = loadDatasets(eType);
-		challenge = null;
-		if (GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_END_KEY) &&
-				GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_START_KEY) &&
-				GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_NAME_KEY)) {
-
-			String startDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_START_KEY);
-			String endDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_END_KEY);
-			String name = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_NAME_KEY);
-
-			Timestamp challengeEndDate = Timestamp.valueOf(endDate);
-			Timestamp challengeStartDate = Timestamp.valueOf(startDate);
-
-			DateFormat df = new SimpleDateFormat(ExperimentOverviewController.DATE_FORMAT_STRING);
-			//challengeDate.setTime(df.parse(endDate));
-			challenge = new ChallengeDescr(challengeStartDate, challengeEndDate, name);
-
-			//check if challenge not already ended.
-			if (this.challenge.getEndDate().before(Calendar.getInstance().getTime())) {
-				challenge = null;
-			}
-		}
+		ChallengeDescr challenge = loadOngoingChallenge();
+		String metric = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_METRIC_NAME_KEY);
 		System.out.println("Exp: "+eType+" annotator: "+ annotatorNames.length+ " dataset: "+datasetNames.length
-				+ " challenge: "+ challenge.getStartDate());
-		return loadLatestResults(eType, annotatorNames, datasetNames, challenge);
-
+				+ " metric:" + metric + " challenge: "+ challenge.getStartDate());
+		return loadLatestResults(eType, annotatorNames, datasetNames, metric, challenge);
 	}
 
 
-	/**
+    /**
 	 * { archive : [
 	 * {
 	 * challenge: {name, start, end},
@@ -142,9 +121,11 @@ public class ExperimentOverviewController {
 
 		List<ChallengeDescr> challenges = dao.getAllChallenges();
 		//remove current challenge if challenged not ended yet
-		if (this.challenge != null && !this.challenge.getEndDate().before(Calendar.getInstance().getTime())) {
-			challenges.remove(this.challenge);
+		ChallengeDescr currentChallenge = loadOngoingChallenge();
+		if (currentChallenge != null && !currentChallenge.getEndDate().before(Calendar.getInstance().getTime())) {
+			challenges.remove(currentChallenge);
 		}
+        String metric = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_METRIC_NAME_KEY);
 
 		for (int i = 0; i < challenges.size(); i++) {
 			ChallengeDescr challenge = challenges.get(i);
@@ -152,7 +133,7 @@ public class ExperimentOverviewController {
 			response.append("\"name\": \"").append(challenge.getName()).append("\", ");
 			response.append("\"startDate\": \"").append(challenge.getStartDate().toString()).append("\", ");
 			response.append("\"endDate\": \"").append(challenge.getEndDate().toString()).append("\"}, ");
-			response.append(loadArchive(types, challenge));
+			response.append(loadArchive(types, challenge, metric));
 			response.append("}");
 			if (i < challenges.size() - 1) {
 				response.append(", ");
@@ -161,10 +142,9 @@ public class ExperimentOverviewController {
 		response.append("]}");
 		System.out.println("Response: "+response);
 		return response.toString();
-
 	}
 
-	private String loadArchive(List<ExperimentType> types, ChallengeDescr challenge) {
+	private String loadArchive(List<ExperimentType> types, ChallengeDescr challenge, String metric) {
 		StringBuilder archive = new StringBuilder("\"results\": [");
 		for (int i = 0; i < types.size(); i++) {
 			ExperimentType eType = types.get(i);
@@ -172,7 +152,7 @@ public class ExperimentOverviewController {
 
 			String annotatorNames[] = loadAnnotators(eType);
 			String datasetNames[] = loadDatasets(eType);
-			archive.append(loadLatestResults(eType, annotatorNames, datasetNames, challenge));
+			archive.append(loadLatestResults(eType, annotatorNames, datasetNames, metric, challenge));
 			archive.append("}");
 			if (i < types.size() - 1) {
 				archive.append(", ");
@@ -182,8 +162,33 @@ public class ExperimentOverviewController {
 		return archive.toString();
 	}
 
+    private ChallengeDescr loadOngoingChallenge() {
+        ChallengeDescr challenge = null;
+        if (GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_END_KEY) &&
+                GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_START_KEY) &&
+                GerbilConfiguration.getInstance().containsKey(GERBIL_PROPERTIES_CHALLENGE_NAME_KEY)) {
+
+            String startDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_START_KEY);
+            String endDate = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_END_KEY);
+            String name = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_CHALLENGE_NAME_KEY);
+
+            Timestamp challengeEndDate = Timestamp.valueOf(endDate);
+            Timestamp challengeStartDate = Timestamp.valueOf(startDate);
+
+            DateFormat df = new SimpleDateFormat(ExperimentOverviewController.DATE_FORMAT_STRING);
+            //challengeDate.setTime(df.parse(endDate));
+            challenge = new ChallengeDescr(challengeStartDate, challengeEndDate, name);
+
+            //check if challenge not already ended.
+            if (challenge.getEndDate().before(Calendar.getInstance().getTime())) {
+                challenge = null;
+            }
+        }
+        return challenge;
+    }
+
 	private String loadLatestResults(ExperimentType experimentType, String[] annotatorNames,
-									 String[] datasetNames, ChallengeDescr challenge) {
+									 String[] datasetNames, String metric, ChallengeDescr challenge) {
 
 		StringBuilder listsAsJson = new StringBuilder("{ \"datasets\": [ ");
 
@@ -199,7 +204,7 @@ public class ExperimentOverviewController {
 				results = dao.getBestResults(experimentType.name(), dataset);
 			} else {
 
-				results = dao.getBestResults(experimentType.name(), dataset, challenge.getStartDate(), challenge.getEndDate());
+				results = dao.getBestResults(experimentType.name(), dataset, metric, challenge.getStartDate(), challenge.getEndDate());
 			}
 			if (results != null) {
 				leaderList.addAll(results);
