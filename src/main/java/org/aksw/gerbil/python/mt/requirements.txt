@@ -2,3 +2,8 @@ nltk==3.5
 pyter3==0.3
 razdel==0.5.0
 tabulate==0.8.7
+beautifulsoup4==4.8.0
+regex==2019.6.8
+nervaluate==0.1.7
+scikit-learn==0.22.2.post1
+lxml==4.5.0
