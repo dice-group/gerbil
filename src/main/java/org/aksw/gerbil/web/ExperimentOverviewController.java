@@ -258,7 +258,7 @@ public class ExperimentOverviewController {
 			count++;
 		}
 		//listsAsJson.setCharAt(datasetNames.length-1, ' ');
-		listsAsJson.append("]}");
+		listsAsJson.append("]}]}");
 		return listsAsJson.toString();
 	}
 
