@@ -395,7 +395,10 @@
 
 		var tbl_body = "";
 
-		var measures = tableData.measures;
+		var measures = [];
+		if(tableData.hasOwnProperty('measures')){
+			measures = tableData.measures;
+		}
 		var tbl_hd = "<tr><th>AnnotatorName</th>"
 		for (var i = 0; i < measures.length; i++) {
 			tbl_hd += "<th>"+measures[i]+ "</th>"
