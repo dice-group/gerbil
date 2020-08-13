@@ -203,12 +203,10 @@ public class ExperimentOverviewController {
 			if (challenge == null) {
 				results = dao.getBestResults(experimentType.name(), dataset);
 			} else {
-
 				results = dao.getBestResults(experimentType.name(), dataset, metric, challenge.getStartDate(), challenge.getEndDate());
 			}
 			if (results != null) {
 				leaderList.addAll(results);
-
 			}
 			if (results == null || leaderList.isEmpty()) {
 				if (count >= datasetNames.length - 1) {
@@ -226,31 +224,29 @@ public class ExperimentOverviewController {
 				listsAsJson.append("{ \"annotatorName\" : \"").append(annotator).append("\", \"value\": ");
 
 				if (!expResults.resultsMap.isEmpty()) {
-					StringBuilder vals = new StringBuilder("[");
-					for (int k = 0; k < metrics.size() - 1; k++) {
+					StringBuilder vals = new StringBuilder("{");
+					String prefix = "";
+					for (int k = 0; k < metrics.size(); k++) {
 						if (expResults.getResultsMap().containsKey(metrics.get(k))) {
-							vals.append("\"").append(expResults.getResultsMap().get(metrics.get(k))).append("\", ");
-						} else {
-							vals.append("\"undefined\",");
+							vals.append(prefix);
+							prefix = ",";
+							//		vals.append("\"" + metrics.get(k) + "\":");
+							vals.append("\"" + metrics.get(k) + "\":").append(expResults.getResultsMap().get(metrics.get(k)));
 						}
 					}
-					if (expResults.getResultsMap().containsKey(metrics.get(metrics.size() - 1))) {
+					/*if (expResults.getResultsMap().containsKey(metrics.get(metrics.size() - 1))) {
 						vals.append("\"").append(expResults.getResultsMap().get(metrics.get(metrics.size() - 1)));
 					} else {
 						vals.append("\"undefined\",");
-					}
-					vals.append("\"]");
+					} */
+					vals.append("}");
 					listsAsJson.append(vals.toString() + ", \"id\": \"").append(dao.getTaskId(expResults.idInDb)).append("\"}");
-				} else {
+				} /*else {
 					listsAsJson.append("undefined").append("\", \"id\": \"").append(dao.getTaskId(expResults.idInDb)).append("\"}");
-				}
-
-
+				}*/
 				if (count2 < leaderList.size() - 1) {
 					listsAsJson.append(", ");
 				}
-
-
 				count2++;
 			}
 			if (count < datasetNames.length - 1)

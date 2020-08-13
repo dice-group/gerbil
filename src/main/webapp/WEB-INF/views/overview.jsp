@@ -399,9 +399,9 @@
 		if(tableData.hasOwnProperty('measures')){
 			measures = tableData.measures;
 		}
-		var tbl_hd = "<tr><th>System</th>"
+		var tbl_hd = "<tr><th>AnnotatorName</th>"
 		for (var i = 0; i < tableData.leader.length; i++) {
-			measure = tableData.measures;//change here
+			measure = tableData.leader[i].annotatorName;//change here
 			tbl_hd += "<th>"+measure+"</th>"
 		}
 		tbl_hd += "</tr>";
