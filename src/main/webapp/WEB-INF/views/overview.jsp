@@ -400,8 +400,9 @@
 			measures = tableData.measures;
 		}
 		var tbl_hd = "<tr><th>AnnotatorName</th>"
-		for (var i = 0; i < measures.length; i++) {
-			tbl_hd += "<th>"+measures[i]+ "</th>"
+		for (var i = 0; i < tableData.leader.length; i++) {
+			measure = tableData.leader[i].annotatorName;//change here
+			tbl_hd += "<th>"+measure+"</th>"
 		}
 		tbl_hd += "</tr>";
 
@@ -424,8 +425,11 @@
 
 			tbl_row += "<td> <a title=\""+url+leader[i].id+"\" href=\""+url+leader[i].id+"\"> <span class=\"glyphicon glyphicon-search\"></span></a> "
 					+ leader[i].annotatorName + " </td>";
-			for (var j = 0; j < measures.length; j++) {
-				tbl_hd += "<th>"+leader[i].value[measures[i]]+ "</th>"
+			// for (var j = 0; j < measures.length; j++) {
+			console.log(leader[i].value.length);
+			for (var j = 0; j < leader[i].value.length; j++) {
+				console.log(leader[i].value[j]);
+				tbl_row += "<td>"+leader[i].value[j]+ "</td>"
 			}
 			tbl_row += "</tr>";
 			tbl_body += tbl_row;
@@ -433,7 +437,7 @@
 		;
 		tbl += tbl_body;
 		tbl += "</table>";
-		$("#" + newID).prepend("<div class=\"col-md-8\">" + tbl + "</div>");
+		$("#" + newID).prepend("<div class=\"col-md-20\">" + tbl + "</div>");
 	}
 
 
