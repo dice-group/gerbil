@@ -156,7 +156,7 @@ public class ExperimentTask implements Task {
 	@Deprecated
 	protected void prepareDataset(Dataset dataset) {
 		switch (configuration.type) {
-			case MT:
+			//case MT:
 			case WebNLG_RDF2Text:
 			case WebNLG_Text2RDF:
 		default:
@@ -176,7 +176,7 @@ public class ExperimentTask implements Task {
 			SameAsRetriever annotatorSameAsRetriever) {
 		switch (configuration.type) {
 		// relations need to be handled extra
-			case MT:
+			//case MT:
 			case WebNLG_RDF2Text:
 			case WebNLG_Text2RDF:
 
@@ -226,7 +226,7 @@ public class ExperimentTask implements Task {
 			List<Evaluator<? extends Marking>> evaluators, ExperimentTaskState state) throws GerbilException {
 		EvaluationResult evalResult = null;
 		switch (configuration.type) {
-			case MT:
+		//	case MT:
 			case WebNLG_RDF2Text:{
 				List<List<SimpleFileRef>> results = new ArrayList<List<SimpleFileRef>>(dataset.size());
 				List<List<SimpleFileRef>> goldStandard = new ArrayList<List<SimpleFileRef>>(dataset.size());

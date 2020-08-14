@@ -44,7 +44,7 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
 
     public DatahubNIFConfig(String datasetName, String datasetUrl, boolean couldBeCached, EntityCheckerManager entityCheckerManager,
             SameAsRetriever globalRetriever) {
-        super(datasetName, couldBeCached, ExperimentType.MT, entityCheckerManager, globalRetriever);
+        super(datasetName, couldBeCached, ExperimentType.WebNLG_RDF2Text, entityCheckerManager, globalRetriever);
         this.datasetUrl = datasetUrl;
         rt = new RestTemplate();
     }

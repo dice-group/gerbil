@@ -66,11 +66,11 @@ public class DatasetAnalyzer {
                     "name,entitiesPerDoc, entitiesPerToken, avgDocumentLength,numberOfDocuments,numberOfEntities, numberOfEEs, numberOfRelations, amountOfPersons, amountOfOrganizations, amountOfLocations, amountOfOthers");
             DatasetAnalyzer analyzer = new DatasetAnalyzer(output);
             for (DatasetConfiguration config : datasetConfigs) {
-                try {
-                    analyzer.analyzeDataset(config);
-                } catch (GerbilException e) {
-                    e.printStackTrace();
-                }
+               // try {
+               //     analyzer.analyzeDataset(config);
+              //  } catch (GerbilException e) {
+              //      e.printStackTrace();
+              //  }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +86,7 @@ public class DatasetAnalyzer {
         this.output = output;
     }
 
-    public void analyzeDataset(DatasetConfiguration config) throws GerbilException {
+   /* public void analyzeDataset(DatasetConfiguration config) throws GerbilException {
         if (config.isApplicableForExperiment(ExperimentType.MT)) {
             analyze(config, ExperimentType.MT);
         }
@@ -103,6 +103,8 @@ public class DatasetAnalyzer {
             LOGGER.error("Can not analyze the dataset with the following config: " + config.toString());
         }
     }
+
+    */
 
     private int countTokensInText(String text) {
         WhitespaceTokenizer tokenizer = new WhitespaceTokenizer();

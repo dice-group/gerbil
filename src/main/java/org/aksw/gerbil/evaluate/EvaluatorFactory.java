@@ -71,7 +71,7 @@ public class EvaluatorFactory {
     public Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
             UriKBClassifier classifier, SubClassInferencer inferencer) {
         switch (type) {
-        case MT:
+       // case MT:
         case WebNLG_RDF2Text:
             return new NLGEvaluator();
         case WebNLG_Text2RDF:
@@ -86,7 +86,7 @@ public class EvaluatorFactory {
             Dataset dataset) {
 //        ExperimentTaskConfiguration subTaskConfig;
         switch (configuration.type) {
-        case MT:
+       // case MT:
         case WebNLG_Text2RDF:
 
             case Ent_Type:

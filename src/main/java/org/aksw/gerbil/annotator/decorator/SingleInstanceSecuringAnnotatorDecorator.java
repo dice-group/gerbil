@@ -65,8 +65,8 @@ public abstract class SingleInstanceSecuringAnnotatorDecorator extends AbstractA
 	public static SingleInstanceSecuringAnnotatorDecorator createDecorator(ExperimentType type, Annotator annotator) {
 		switch (type) {
 
-		case MT:
-			break;
+		//case MT:
+		//	break;
 		default:
 			break;
 

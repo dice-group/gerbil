@@ -87,8 +87,8 @@ public class GERBIL {
     @SuppressWarnings("deprecation")
     public static Resource getExperimentTypeResource(ExperimentType type) {
         switch (type) {
-            case MT:
-                return MT;
+        //    case MT:
+         //       return MT;
             case WebNLG_RDF2Text:
                 return WebNLG_RDF2Text;
             case WebNLG_Text2RDF:

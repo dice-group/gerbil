@@ -60,16 +60,18 @@ public class NIFWSTestingController {
         try {
             switch (ExperimentType.valueOf(experimentType)) {
 
-                case MT: {
+               /* case MT: {
                     annotator.performOKE2018Task4(document);
                     break;
                 }
+
+                */
             
             default: {
                 throw new IllegalArgumentException("Got an unknown experiment type \"" + experimentType + "\".");
             }
             }
-            result.put(RETURN_STATUS_NAME, true);
+          //  result.put(RETURN_STATUS_NAME, true);
         } catch (Exception e) {
             LOGGER.error("Got an exception while testing {}. e = {}", url, e);
             result.put(RETURN_STATUS_NAME, false);

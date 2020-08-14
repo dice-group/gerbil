@@ -60,8 +60,8 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
 	@SuppressWarnings("deprecation")
 	public static TimeMeasuringAnnotatorDecorator createDecorator(ExperimentType type, Annotator annotator) {
 		switch (type) {
-		case MT:
-			break;
+		//case MT:
+		//	break;
 		default:
 			break;
 		}

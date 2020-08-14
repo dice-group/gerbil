@@ -115,7 +115,7 @@ public class ExperimentOverviewController {
 		LOGGER.debug("Got request on /experimentarchive()");
 		StringBuilder response = new StringBuilder("{ \"archive\": [");
 		List<ExperimentType> types = new ArrayList<ExperimentType>();
-		types.add(ExperimentType.MT);
+		//types.add(ExperimentType.MT);
 		types.add(ExperimentType.WebNLG_RDF2Text);
 		types.add(ExperimentType.WebNLG_Text2RDF);
 
