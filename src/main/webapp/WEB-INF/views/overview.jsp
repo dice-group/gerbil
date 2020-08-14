@@ -396,9 +396,9 @@
 		var tbl_body = "";
 
 		var measures = [];
-		var tbl_hd = "<tr><th>AnnotatorName</th>"
+		var tbl_hd = "<tr><th>System</th>"
 		for (var i = 0; i < Object.keys(tableData.leader[0].value).length; i++) {
-			measures = Object.keys(tableData.leader[i].value)
+			measures = Object.keys(tableData.leader[0].value)
 			tbl_hd += "<th>"+measures[i]+"</th>"
 		}
 		tbl_hd += "</tr>";
