@@ -396,13 +396,10 @@
 		var tbl_body = "";
 
 		var measures = [];
-		if(tableData.hasOwnProperty('measures')){
-			measures = tableData.measures;
-		}
 		var tbl_hd = "<tr><th>AnnotatorName</th>"
-		for (var i = 0; i < tableData.leader.length; i++) {
-			measure = tableData.leader[i].annotatorName;//change here
-			tbl_hd += "<th>"+measure+"</th>"
+		for (var i = 0; i < Object.keys(tableData.leader[0].value).length; i++) {
+			measures = Object.keys(tableData.leader[i].value)
+			tbl_hd += "<th>"+measures[i]+"</th>"
 		}
 		tbl_hd += "</tr>";
 
@@ -425,12 +422,10 @@
 
 			tbl_row += "<td> <a title=\""+url+leader[i].id+"\" href=\""+url+leader[i].id+"\"> <span class=\"glyphicon glyphicon-search\"></span></a> "
 					+ leader[i].annotatorName + " </td>";
-			// for (var j = 0; j < measures.length; j++) {
-			console.log(leader[i].value.length);
-			for (var j = 0; j < leader[i].value.length; j++) {
-				console.log(leader[i].value[j]);
-				tbl_row += "<td>"+leader[i].value[j]+ "</td>"
-			}
+			values = Object.values(tableData.leader[i].value)
+			values.forEach((val) => {
+				tbl_row += "<td>"+val+ "</td>"
+			});
 			tbl_row += "</tr>";
 			tbl_body += tbl_row;
 		}
