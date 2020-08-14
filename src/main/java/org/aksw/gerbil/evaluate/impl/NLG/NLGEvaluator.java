@@ -22,28 +22,33 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
 
     @Override
     public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
-            EvaluationResultContainer results) {
+                         EvaluationResultContainer results) {
 
         // We assume that both lists have only one element!!!
         // We assume that each sub list has exactly one element!!!
         SimpleFileRef expected = goldStandard.get(0).get(0);
         SimpleFileRef hypothesis = annotatorResults.get(0).get(0);
         File ref = expected.getFileRef(); // gives path to file with the expected translation
+        String datasetName = ref.getName();
         int numberOfReferences = ref.list((dir, name) -> name.matches("reference[0-9]+")).length;
         File hypo = hypothesis.getFileRef(); // gives path to file with the uploaded translation
-
         // start python script and gather results
         try {
             ReaderThread reader = new ReaderThread();
             Thread readerThread = new Thread(reader);
-
-            String command = new StringBuilder().append("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R ")
-                    .append(ref.getPath()).append("/reference -H ").append(hypo.getPath()).append(" -nr ")
-                    .append(numberOfReferences).append(" -m bleu,meteor,chrf++,ter").toString();
-
+            String command;
+            if (datasetName == "English") {
+                command = new StringBuilder().append("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R ")
+                        .append(ref.getPath()).append("/reference -H ").append(hypo.getPath()).append(" -nr ")
+                        .append(numberOfReferences).append(" -m bleu,meteor,chrf++,ter").toString();
+                System.out.println(command);
+            }else {
+                command = new StringBuilder().append("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R ")
+                        .append(ref.getPath()).append("/reference -H ").append(hypo.getPath()).append(" -lng ru -nr ")
+                        .append(numberOfReferences).append(" -m bleu,meteor,chrf++,ter").toString();
+            }
             Process p = Runtime.getRuntime().exec(command);
             System.out.println(command);
-
             reader.setInput(p.getInputStream());
             readerThread.start();
 
