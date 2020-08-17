@@ -427,6 +427,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         //parameters.addValue("type", experimentType.toString());
         List<String> metrics = this.template.query(GET_ALL_METRICS_FOR_EXPERIMENT_TYPE, parameters,
                 new StringRowMapper());
+        String x = metrics.remove(2);
+        metrics.add(x);
         return metrics;
     }
 

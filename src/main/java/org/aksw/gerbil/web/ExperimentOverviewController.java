@@ -32,6 +32,7 @@ import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ChallengeDescr;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.impl.NLG.NLGEvaluator;
 import org.aksw.gerbil.web.config.AdapterList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,33 +191,37 @@ public class ExperimentOverviewController {
 	private String loadLatestResults(ExperimentType experimentType, String[] annotatorNames,
 									 String[] datasetNames, String metric, ChallengeDescr challenge) {
 
-		StringBuilder listsAsJson = new StringBuilder("{ \"datasets\": [ ");
-
+		StringBuilder listsAsJson = new StringBuilder("{ \"datasets\": [ ")  ;
 		List<String> metrics = dao.getAllMetricsForExperimentType(experimentType);
 
-		int count = 0;
-		for (String dataset : datasetNames) {
+		int count=0;
+		for(String dataset : datasetNames){
 			List<ExperimentTaskStatus> leaderList = new ArrayList<ExperimentTaskStatus>();
-			StringBuilder rocs = new StringBuilder("");
-			int count2 = 0;
+			StringBuilder sb = new StringBuilder("");
+
+			int count2=0;
 			List<ExperimentTaskStatus> results;
-			if (challenge == null) {
+			if(challenge==null) {
 				results = dao.getBestResults(experimentType.name(), dataset);
-			} else {
-				results = dao.getBestResults(experimentType.name(), dataset, metric, challenge.getStartDate(), challenge.getEndDate());
 			}
-			if (results != null) {
+			else {
+
+				results = dao.getBestResults(experimentType.name(), dataset, metric,challenge.getStartDate(), challenge.getEndDate());
+			}
+			if(results!=null) {
 				leaderList.addAll(results);
+
 			}
-			if (results == null || leaderList.isEmpty()) {
-				if (count >= datasetNames.length - 1) {
-					listsAsJson.setLength(listsAsJson.length() - 1);
+			if(results == null || leaderList.isEmpty()) {
+				if(count>=datasetNames.length-1) {
+					listsAsJson.setLength(listsAsJson.length()-1);
 					listsAsJson.trimToSize();
 				}
 				count++;
 				continue;
 			}
 			listsAsJson.append("{\"datasetName\" : \"").append(dataset).append("\", ");
+
 			listsAsJson.append(" \"leader\" : [ ");
 
 			for (ExperimentTaskStatus expResults : leaderList) {
@@ -230,7 +235,6 @@ public class ExperimentOverviewController {
 						if (expResults.getResultsMap().containsKey(metrics.get(k))) {
 							vals.append(prefix);
 							prefix = ",";
-							//		vals.append("\"" + metrics.get(k) + "\":");
 							vals.append("\"" + metrics.get(k) + "\":").append(expResults.getResultsMap().get(metrics.get(k)));
 						}
 					}
@@ -249,12 +253,19 @@ public class ExperimentOverviewController {
 				}
 				count2++;
 			}
-			if (count < datasetNames.length - 1)
+			/*if(experimentType.equals(ExperimentType.WebNLG_RDF2Text)) {
+				rocs.append("]");
+			}
+
+			 */
+			listsAsJson.append("]").append(sb).append("}");
+			if(count<datasetNames.length-1)
 				listsAsJson.append(",");
 			count++;
 		}
 		//listsAsJson.setCharAt(datasetNames.length-1, ' ');
-		listsAsJson.append("]}]}");
+		listsAsJson.append("]}");
+        System.out.println(listsAsJson);
 		return listsAsJson.toString();
 	}
 
@@ -263,8 +274,6 @@ public class ExperimentOverviewController {
 		Set<String> annotatorNames = dao.getAnnotators();
 		String annotatorNameArray[] = annotatorNames.toArray(new String[annotatorNames.size()]);
 		Arrays.sort(annotatorNameArray);
-		//System.out.println("anno name: "+annotatorNames);
-		System.out.println("anno array: "+annotatorNameArray.toString());
 		return annotatorNameArray;
 	}
 
@@ -272,8 +281,6 @@ public class ExperimentOverviewController {
 		Set<String> datasetNames = datasets.getAdapterNamesForExperiment(eType);
 		String datasetNameArray[] = datasetNames.toArray(new String[datasetNames.size()]);
 		Arrays.sort(datasetNameArray);
-		//System.out.println("dataset name: "+datasetNames);
-		System.out.println("dataset array: "+datasetNameArray.toString());
 		return datasetNameArray;
 	}
 }
