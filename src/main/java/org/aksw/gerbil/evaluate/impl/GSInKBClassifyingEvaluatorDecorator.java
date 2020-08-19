@@ -50,9 +50,9 @@ public class GSInKBClassifyingEvaluatorDecorator<T extends ClassifiedSpanMeaning
 
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+            EvaluationResultContainer results, String language) {
         classify(annotatorResults, goldStandard);
-        evaluator.evaluate(annotatorResults, goldStandard, results);
+        evaluator.evaluate(annotatorResults, goldStandard, results, language);
     }
 
     protected void classify(List<List<T>> annotatorResults, List<List<T>> goldStandard) {

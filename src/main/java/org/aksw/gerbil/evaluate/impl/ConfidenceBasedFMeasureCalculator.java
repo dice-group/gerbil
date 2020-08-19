@@ -49,7 +49,7 @@ public class ConfidenceBasedFMeasureCalculator<T extends Marking> implements Eva
 
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+            EvaluationResultContainer results,String language) {
         ScoredEvaluationCountsArray counts = generateMatchingCounts(annotatorResults, goldStandard);
         if ((counts.truePositiveSums.length > 0) && (counts.falseNegativeSums.length > 0)
                 && (counts.falsePositiveSums.length > 0)) {

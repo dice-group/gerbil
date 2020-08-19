@@ -23,7 +23,7 @@ public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
     }
     @Override
     public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
-                         EvaluationResultContainer results) {
+                         EvaluationResultContainer results, String language) {
             // We assume that both lists have only one element!!!
             // We assume that each sub list has exactly one element!!!
 
@@ -78,7 +78,7 @@ public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
             //Ent_type
             EvaluationResultContainer subTaskResultsEntType = new SubTaskResult(
                     new ExperimentTaskConfiguration(configuration.getAnnotatorConfig(), configuration.getDatasetConfig(),
-                            ExperimentType.Ent_Type));
+                            ExperimentType.Ent_Type, language));
             JSONObject type = (JSONObject) total_scores.get("Ent_type");
             precision = (double) type.get("Precision");
             subTaskResultsEntType.addResult(new DoubleEvaluationResult("Precision", precision));
@@ -91,7 +91,7 @@ public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
             //Partial
             EvaluationResultContainer subTaskResultsPartial = new SubTaskResult(
                     new ExperimentTaskConfiguration(configuration.getAnnotatorConfig(), configuration.getDatasetConfig(),
-                            ExperimentType.Partial));
+                            ExperimentType.Partial, language));
             JSONObject partial = (JSONObject) total_scores.get("Partial");
             precision = (double) partial.get("Precision");
             subTaskResultsPartial.addResult(new DoubleEvaluationResult("Precision", precision));
@@ -104,7 +104,7 @@ public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
             //Strict
             EvaluationResultContainer subTaskResultsStrict = new SubTaskResult(
                     new ExperimentTaskConfiguration(configuration.getAnnotatorConfig(), configuration.getDatasetConfig(),
-                            ExperimentType.Strict));
+                            ExperimentType.Strict, language));
             JSONObject strict = (JSONObject) total_scores.get("Strict");
             System.out.println("Strict: " + strict);
             precision = (double) strict.get("Precision");

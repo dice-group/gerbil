@@ -89,6 +89,7 @@ public class GERBIL {
         switch (type) {
         //    case MT:
          //       return MT;
+            case NLG:
             case WebNLG_RDF2Text:
                 return WebNLG_RDF2Text;
             case WebNLG_Text2RDF:

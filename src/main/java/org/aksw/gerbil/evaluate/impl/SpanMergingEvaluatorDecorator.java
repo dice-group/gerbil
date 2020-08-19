@@ -52,8 +52,8 @@ public class SpanMergingEvaluatorDecorator<T extends Span> extends AbstractEvalu
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
-        evaluator.evaluate(mergeListOfLists(annotatorResults), mergeListOfLists(goldStandard), results);
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results,String language) {
+        evaluator.evaluate(mergeListOfLists(annotatorResults), mergeListOfLists(goldStandard), results, language);
     }
 
     protected List<List<T>> mergeListOfLists(List<List<T>> spans) {

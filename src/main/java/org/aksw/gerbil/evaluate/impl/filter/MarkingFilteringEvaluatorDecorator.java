@@ -34,8 +34,8 @@ public class MarkingFilteringEvaluatorDecorator<T extends Marking> extends Abstr
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
-        evaluator.evaluate(filter.filterListOfLists(annotatorResults), filter.filterListOfLists(goldStandard), results);
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results,String language) {
+        evaluator.evaluate(filter.filterListOfLists(annotatorResults), filter.filterListOfLists(goldStandard), results, language);
     }
 
 }

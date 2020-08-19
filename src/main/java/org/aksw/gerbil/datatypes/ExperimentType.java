@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public enum ExperimentType implements Describable {
 
    // MT("MT", "Machine Translation."),
+    NLG("NLG", "NLG"),
     WebNLG_RDF2Text("WebNLG RDF2Text", "WebNLG RDF2Text"),
     WebNLG_Text2RDF("WebNLG Text2RDF", "WebNLG Text2RDF"),
     Ent_Type("Ent_Type", "Ent_Type"),
@@ -68,6 +69,13 @@ public enum ExperimentType implements Describable {
             }
 
           */
+            case NLG: {
+                switch (type) {
+                    case NLG: {
+                        return type == NLG;
+                    }
+                }
+            }
             case WebNLG_RDF2Text: {
                 switch (type) {
                     case WebNLG_RDF2Text: {

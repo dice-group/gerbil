@@ -77,7 +77,7 @@ public class AdapterManager {
         return datasets.getAdapterNamesForExperiment(type);
     }
 
-    public AnnotatorConfiguration getAnnotatorConfig(String name, ExperimentType type) {
+    public AnnotatorConfiguration getAnnotatorConfig(String name, ExperimentType type, String language) {
         List<AnnotatorConfiguration> configs = annotators.getAdaptersForName(name);
         if (configs != null) {
             for (AnnotatorConfiguration config : configs) {
@@ -189,7 +189,7 @@ public class AdapterManager {
         return null;
     }
 
-    public DatasetConfiguration getDatasetConfig(String name, ExperimentType type) {
+    public DatasetConfiguration getDatasetConfig(String name, ExperimentType type, String language) {
         List<DatasetConfiguration> configs = datasets.getAdaptersForName(name);
         if (configs != null) {
             for (DatasetConfiguration config : configs) {
@@ -223,7 +223,7 @@ public class AdapterManager {
                 // globalRetriever);
                 return new InstanceListBasedDataset(name, Arrays.asList(new DocumentImpl(fileName,
                         file.getAbsoluteFile().toURI().toString(), Arrays.asList((Marking) new SimpleFileRef(file)))),
-                        type);
+                        type, language);
             }
             LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
             return null;

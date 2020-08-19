@@ -22,6 +22,7 @@ import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.impl.NLG.NLGEvaluator;
+import org.aksw.gerbil.evaluate.impl.NLG.RDFToTextEvaluator;
 import org.aksw.gerbil.evaluate.impl.webnlg.TextToRDFEvaluator;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
@@ -72,8 +73,10 @@ public class EvaluatorFactory {
             UriKBClassifier classifier, SubClassInferencer inferencer) {
         switch (type) {
        // case MT:
+            case NLG:
+                return new NLGEvaluator();
         case WebNLG_RDF2Text:
-            return new NLGEvaluator();
+            return new RDFToTextEvaluator();
         case WebNLG_Text2RDF:
             return new TextToRDFEvaluator(configuration);
         default: {
@@ -95,6 +98,7 @@ public class EvaluatorFactory {
             case Exact:
 
         case WebNLG_RDF2Text:
+            case NLG:
             return;
         default: {
             throw new RuntimeException();

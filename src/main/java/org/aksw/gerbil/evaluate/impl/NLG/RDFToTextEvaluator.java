@@ -1,50 +1,84 @@
 package org.aksw.gerbil.evaluate.impl.NLG;
 
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.List;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.aksw.gerbil.data.SimpleFileRef;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.apache.commons.io.IOUtils;
 
-public class NLGEvaluator implements Evaluator<SimpleFileRef> {
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+public class RDFToTextEvaluator implements Evaluator<SimpleFileRef> {
 
     @Override
     public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
                          EvaluationResultContainer results, String language) {
+
         // We assume that both lists have only one element!!!
         // We assume that each sub list has exactly one element!!!
-
         SimpleFileRef expected = goldStandard.get(0).get(0);
         SimpleFileRef hypothesis = annotatorResults.get(0).get(0);
+        File ref = expected.getFileRef();// gives path to file with the expected translation
+        String[] pathnames = ref.list();
+        String reference = "";
+        for (String pathname : pathnames) {
+            reference = pathname;
+        }
 
-        File ref = expected.getFileRef(); // gives path to file with the expected translation
+        String datasetName = ref.getName();
+        System.out.println(datasetName);
+        int numberOfReferences = ref.list((dir, name) -> name.matches("reference[0-9]+")).length;
         File hypo = hypothesis.getFileRef(); // gives path to file with the uploaded translation
-        System.out.println("Language: "+ language);
         // start python script and gather results
-
-            String command = "";
+        try {
+            String command;
             ReaderThread reader = new ReaderThread();
             Thread readerThread = new Thread(reader);
-            if (language.equals("ru")){
+            if (datasetName.equals("English") && numberOfReferences > 1) {
                 command = new StringBuilder().append("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R ")
-                       .append(ref).append(" -H ").append(hypo).append(" -lng ru -nr 1")
-                       .append(" -m bleu,meteor,chrf++,ter").toString();
-               System.out.println("command: "+ command);
-
-            }else{
+                        .append(ref.getPath()).append("/reference -H ").append(hypo.getPath()).append(" -nr ")
+                        .append(numberOfReferences).append(" -m bleu,meteor,chrf++,ter").toString();
+                System.out.println(numberOfReferences);
+                System.out.println(command);
+            }
+            else if(datasetName.equals("English") && numberOfReferences == 1){
                 command = new StringBuilder().append("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R ")
-                        .append(ref).append(" -H ").append(hypo).append(" -nr 1")
+                        .append(ref.getPath()).append("/"+reference).append(" -H ").append(hypo.getPath()).append(" -nr 1 ")
                         .append(" -m bleu,meteor,chrf++,ter").toString();
-                System.out.println("command: "+ command);
-           }
-        try {
+                System.out.println(numberOfReferences);
+                System.out.println(reference);
+                System.out.println(command);
+            }
+            else if (datasetName.equals("Russian") && numberOfReferences == 1){
+                command = new StringBuilder().append("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R ")
+                        .append(ref.getPath()).append("/"+reference).append(" -H ").append(hypo.getPath()).append(" -lng ru -nr 1 ")
+                        .append(" -m bleu,meteor,chrf++,ter").toString();
+                System.out.println(numberOfReferences);
+                System.out.println(reference);
+                System.out.println(command);
+
+            }
+            else {
+                command = new StringBuilder().append("python3 src/main/java/org/aksw/gerbil/python/mt/eval.py -R ")
+                        .append(ref.getPath()).append("/reference -H ").append(hypo.getPath()).append(" -lng ru -nr ")
+                        .append(numberOfReferences).append(" -m bleu,meteor,chrf++,ter").toString();
+                System.out.println(numberOfReferences);
+                System.out.println(command);
+
+            }
+
             Process p = Runtime.getRuntime().exec(command);
+
             reader.setInput(p.getInputStream());
             readerThread.start();
 
@@ -64,6 +98,12 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
 
             String scriptResult = reader.getBuffer().toString();
             System.out.println("Data:" + scriptResult + "\n");
+
+            int jsonStart = scriptResult.indexOf('{');
+            if (jsonStart < 0) {
+                throw new IllegalStateException("The script result does not seem to contain a JSON object!");
+            }
+            scriptResult = scriptResult.substring(jsonStart);
 
             double bleu, nltk, meteor, chrF, ter;
             JsonObject jsonObject = new JsonParser().parse(scriptResult).getAsJsonObject();
@@ -90,6 +130,9 @@ public class NLGEvaluator implements Evaluator<SimpleFileRef> {
         }
     }
 
+    /*
+     * public File[] f(File[] d){ File[] list = d; return list; }
+     */
     public static final class ReaderThread implements Runnable {
 
         private StringBuilder buffer = new StringBuilder();

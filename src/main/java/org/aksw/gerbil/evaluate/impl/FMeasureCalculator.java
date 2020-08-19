@@ -50,7 +50,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
 
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+            EvaluationResultContainer results, String language) {
         EvaluationCounts counts[] = generateMatchingCounts(annotatorResults, goldStandard);
         results.addResults(calculateMicroFMeasure(counts));
         results.addResults(calculateMacroFMeasure(counts));

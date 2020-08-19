@@ -366,7 +366,7 @@ public abstract class TimeMeasuringAnnotatorDecorator extends AbstractAnnotatorD
 
 	@Override
 	public void evaluate(List<List<Marking>> annotatorResults, List<List<Marking>> goldStandard,
-			EvaluationResultContainer results) {
+			EvaluationResultContainer results,String language) {
 		if (callCount > 0) {
 			results.addResult(new DoubleEvaluationResult(AVG_TIME_RESULT_NAME, getAverageRuntime()));
 		}

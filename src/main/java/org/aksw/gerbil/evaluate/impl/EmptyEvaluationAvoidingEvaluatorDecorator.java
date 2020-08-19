@@ -29,7 +29,7 @@ public class EmptyEvaluationAvoidingEvaluatorDecorator<T extends Marking> extend
 
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+            EvaluationResultContainer results,String language) {
         int count = 0;
         Iterator<List<T>> iterator = goldStandard.iterator();
         List<T> singleResultList;
@@ -47,7 +47,7 @@ public class EmptyEvaluationAvoidingEvaluatorDecorator<T extends Marking> extend
             }
         }
         if (count > 0) {
-            evaluator.evaluate(annotatorResults, goldStandard, results);
+            evaluator.evaluate(annotatorResults, goldStandard, results, language);
         } else {
             LOGGER.debug("There are no results that can be used for this evaluation. Returning.");
         }

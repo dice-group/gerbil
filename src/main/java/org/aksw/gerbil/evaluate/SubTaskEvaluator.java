@@ -40,10 +40,10 @@ public class SubTaskEvaluator<T extends Marking> implements Evaluator<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results,String language) {
         SubTaskResult subTaskResults = new SubTaskResult(configuration);
         for (Evaluator<? extends Marking> e : evaluators) {
-            ((Evaluator<T>) e).evaluate(annotatorResults, goldStandard, subTaskResults);
+            ((Evaluator<T>) e).evaluate(annotatorResults, goldStandard, subTaskResults, language);
             if (subTaskResults.getResults().size() > 0) {
                 results.addResult(subTaskResults);
             }

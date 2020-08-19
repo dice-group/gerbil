@@ -34,8 +34,8 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
     protected SameAsRetriever globalRetriever;
 
     public AbstractDatasetConfiguration(String datasetName, boolean couldBeCached,
-            ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
-            SameAsRetriever globalRetriever) {
+                                        ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
+                                        SameAsRetriever globalRetriever) {
         super(datasetName, couldBeCached, applicableForExperiment);
         this.entityCheckerManager = entityCheckerManager;
         this.globalRetriever = globalRetriever;

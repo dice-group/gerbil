@@ -37,8 +37,8 @@ public class ClassSubTaskEvaluator<T extends Marking> extends SubTaskEvaluator<T
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
-        super.evaluate(cleanList(annotatorResults), cleanList(goldStandard), results);
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results, String language) {
+        super.evaluate(cleanList(annotatorResults), cleanList(goldStandard), results, language);
     }
     
     private List<List<T>> cleanList(List<List<T>> results){

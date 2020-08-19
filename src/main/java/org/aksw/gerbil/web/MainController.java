@@ -202,6 +202,10 @@ public class MainController {
         for (int i = 0; i < jsonDataset.size(); i++) {
             datasets[i] = (String) jsonDataset.get(i);
         }
+        String qLang = configuration.get("language").toString();
+        if(qLang.isEmpty()){
+            qLang="en";
+        }
 //        JSONArray jsonHypothesis = (JSONArray) configuration.get("hypothesis");
 //        String[] hypothesis = new String[jsonHypothesis.size()];
 //        for (int i = 0; i < jsonHypothesis.size(); i++) {
@@ -211,8 +215,8 @@ public class MainController {
         int count = 0;
         for (String annotator : annotators) {
             for (String dataset : datasets) {
-                configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, type),
-                        adapterManager.getDatasetConfig(dataset, type), type);
+                configs[count] = new ExperimentTaskConfiguration(adapterManager.getAnnotatorConfig(annotator, type, qLang),
+                        adapterManager.getDatasetConfig(dataset, type,qLang), type,qLang);
                 LOGGER.debug("Created config: {}", configs[count]);
                 ++count;
             }

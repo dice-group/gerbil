@@ -37,8 +37,8 @@ public abstract class AbstractTypeTransformingEvaluatorDecorator<U extends Marki
 
     @Override
     public void evaluate(List<List<U>> annotatorResults, List<List<U>> goldStandard,
-            EvaluationResultContainer results) {
-        evaluator.evaluate(changeListType(annotatorResults), changeListType(goldStandard), results);
+            EvaluationResultContainer results,String language) {
+        evaluator.evaluate(changeListType(annotatorResults), changeListType(goldStandard), results, language);
     }
 
     protected List<List<V>> changeListType(List<List<U>> markings) {

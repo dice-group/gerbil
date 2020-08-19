@@ -57,7 +57,7 @@ public class ClassConsideringFMeasureCalculator<T extends ClassifiedMeaning> ext
 
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+            EvaluationResultContainer results, String language) {
         // the super class performs the matching counter calls
         ScoredEvaluationCountsArray counts = generateMatchingCounts(annotatorResults, goldStandard);
         double threshold = calculateMicroFMeasure(counts, results);

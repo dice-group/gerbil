@@ -51,18 +51,18 @@ public class ConfidenceScoreEvaluatorDecorator<T extends Marking> extends Abstra
 
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+            EvaluationResultContainer results,String language) {
         // create a list of confidence scores
         double scores[] = getConfidenceScores(annotatorResults);
         Arrays.sort(scores);
 
-        EvaluationResultContainer bestResult = evaluate(annotatorResults, goldStandard, results, 0);
+        EvaluationResultContainer bestResult = evaluate(annotatorResults, goldStandard, results, 0, language);
         EvaluationResultContainer currentResult;
         int bestScoreId = -1;
         // go through the confidence scores
         for (int i = 0; i < scores.length; ++i) {
             // evaluate the result using the current confidence
-            currentResult = evaluate(annotatorResults, goldStandard, results, scores[i]);
+            currentResult = evaluate(annotatorResults, goldStandard, results, scores[i], language);
             bestResult = getBetterResult(currentResult, bestResult);
             if (bestResult == currentResult) {
                 bestScoreId = i;
@@ -117,10 +117,10 @@ public class ConfidenceScoreEvaluatorDecorator<T extends Marking> extends Abstra
     }
 
     protected EvaluationResultContainer evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results, double threshold) {
+            EvaluationResultContainer results, double threshold,String language){
         EvaluationResultContainer currentResults = new EvaluationResultContainer(results);
         MarkingFilter<T> filter = new ConfidenceScoreBasedMarkingFilter<T>(threshold);
-        this.evaluator.evaluate(filter.filterListOfLists(annotatorResults), goldStandard, currentResults);
+        this.evaluator.evaluate(filter.filterListOfLists(annotatorResults), goldStandard, currentResults,language);
         return currentResults;
     }
 

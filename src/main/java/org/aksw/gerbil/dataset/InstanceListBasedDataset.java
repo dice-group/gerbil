@@ -28,21 +28,25 @@ import org.aksw.gerbil.utils.ClosePermitionGranter;
 public class InstanceListBasedDataset extends AbstractDatasetConfiguration implements Dataset {
 
     private List<Document> instances;
+    protected String questionLang;
 
-    public InstanceListBasedDataset(List<Document> instances, ExperimentType applicableForExperiment) {
-        this("TestDataset", instances, applicableForExperiment);
+    public InstanceListBasedDataset(List<Document> instances, ExperimentType applicableForExperiment, String questionLang) {
+        this("TestDataset", instances, applicableForExperiment,questionLang);
     }
 
-    public InstanceListBasedDataset(String name, List<Document> instances, ExperimentType applicableForExperiment) {
+    public InstanceListBasedDataset(String name, List<Document> instances, ExperimentType applicableForExperiment, String questionLang) {
         super(name, false, applicableForExperiment, null, null);
         this.instances = instances;
+        this.questionLang = questionLang;
     }
 
     public InstanceListBasedDataset(String name, List<Document> instances, ExperimentType applicableForExperiment,
             EntityCheckerManager entityCheckerManager, SameAsRetriever globalRetriever) {
         super(name, false, applicableForExperiment, entityCheckerManager, globalRetriever);
         this.instances = instances;
+
     }
+
 
     @Override
     public int size() {

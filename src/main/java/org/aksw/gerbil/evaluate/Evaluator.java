@@ -22,5 +22,5 @@ import org.aksw.gerbil.transfer.nif.Marking;
 
 public interface Evaluator<T extends Marking> {
 
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results);
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results, String language);
 }

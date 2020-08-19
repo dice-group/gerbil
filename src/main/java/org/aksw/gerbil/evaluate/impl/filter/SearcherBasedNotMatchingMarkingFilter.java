@@ -96,8 +96,8 @@ public class SearcherBasedNotMatchingMarkingFilter<T extends Marking> extends Ab
 
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
-        evaluator.evaluate(filterListOfMarkings(annotatorResults, goldStandard), goldStandard, results);
+            EvaluationResultContainer results,String language) {
+        evaluator.evaluate(filterListOfMarkings(annotatorResults, goldStandard), goldStandard, results, language);
     }
 
 }

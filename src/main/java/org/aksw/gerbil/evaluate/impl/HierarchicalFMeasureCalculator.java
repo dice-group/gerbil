@@ -40,7 +40,7 @@ public class HierarchicalFMeasureCalculator<T extends TypedMarking> implements E
 
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+            EvaluationResultContainer results,String language) {
         List<List<EvaluationCounts>> matchingCounts = new ArrayList<List<EvaluationCounts>>(annotatorResults.size());
         for (int i = 0; i < annotatorResults.size(); ++i) {
             matchingCounts.add(matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i)));

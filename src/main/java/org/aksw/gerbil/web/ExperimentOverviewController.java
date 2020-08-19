@@ -32,7 +32,6 @@ import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ChallengeDescr;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.evaluate.impl.NLG.NLGEvaluator;
 import org.aksw.gerbil.web.config.AdapterList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

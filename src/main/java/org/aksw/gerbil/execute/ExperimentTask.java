@@ -84,6 +84,12 @@ public class ExperimentTask implements Task {
 		Dataset dataset = null;
 		try {
 			// Create dataset
+			String qLang = this.configuration.language;
+			if (qLang == null || qLang.isEmpty()) {
+				this.configuration.language = "en";
+				qLang = "en";
+			}
+			// Create dataset
 			dataset = configuration.datasetConfig.getDataset(configuration.type);
 			if (dataset == null) {
 				throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
@@ -159,6 +165,7 @@ public class ExperimentTask implements Task {
 			//case MT:
 			case WebNLG_RDF2Text:
 			case WebNLG_Text2RDF:
+			case NLG:
 		default:
 			// nothing to do
 			return;
@@ -179,6 +186,7 @@ public class ExperimentTask implements Task {
 			//case MT:
 			case WebNLG_RDF2Text:
 			case WebNLG_Text2RDF:
+			case NLG:
 
 		default:
 			// nothing to do
@@ -227,6 +235,24 @@ public class ExperimentTask implements Task {
 		EvaluationResult evalResult = null;
 		switch (configuration.type) {
 		//	case MT:
+			case NLG:{
+				List<List<SimpleFileRef>> results = new ArrayList<List<SimpleFileRef>>(dataset.size());
+				List<List<SimpleFileRef>> goldStandard = new ArrayList<List<SimpleFileRef>>(dataset.size());
+
+				// We assume that both lists only have one instance!
+				Document tempDocument;
+				tempDocument = dataset.getInstances().get(0);
+				goldStandard.add(tempDocument.getMarkings(SimpleFileRef.class));
+
+				Collection<Document> documents = ((InstanceListBasedAnnotator) annotator).getInstances();
+				tempDocument = documents.iterator().next();
+				results.add(tempDocument.getMarkings(SimpleFileRef.class));
+
+				taskState.increaseExperimentStepCount();
+
+				evalResult = evaluate(evaluators, results, goldStandard, configuration.language);
+				break;
+			}
 			case WebNLG_RDF2Text:{
 				List<List<SimpleFileRef>> results = new ArrayList<List<SimpleFileRef>>(dataset.size());
 				List<List<SimpleFileRef>> goldStandard = new ArrayList<List<SimpleFileRef>>(dataset.size());
@@ -242,7 +268,7 @@ public class ExperimentTask implements Task {
 
 				taskState.increaseExperimentStepCount();
 
-				evalResult = evaluate(evaluators, results, goldStandard);
+				evalResult = evaluate(evaluators, results, goldStandard, configuration.language);
 				break;
 			}
 			case WebNLG_Text2RDF:{
@@ -260,7 +286,7 @@ public class ExperimentTask implements Task {
 
 				taskState.increaseExperimentStepCount();
 
-				evalResult = evaluate(evaluators, results, goldStandard);
+				evalResult = evaluate(evaluators, results, goldStandard, configuration.language);
 				break;
 			}
 		default:
@@ -273,10 +299,10 @@ public class ExperimentTask implements Task {
 
 	@SuppressWarnings("unchecked")
 	protected <T extends Marking> EvaluationResult evaluate(List<Evaluator<? extends Marking>> evaluators,
-			List<List<T>> annotatorResults, List<List<T>> goldStandard) {
+			List<List<T>> annotatorResults, List<List<T>> goldStandard, String language) {
 		EvaluationResultContainer evalResults = new EvaluationResultContainer();
 		for (Evaluator<? extends Marking> e : evaluators) {
-			((Evaluator<T>) e).evaluate(annotatorResults, goldStandard, evalResults);
+			((Evaluator<T>) e).evaluate(annotatorResults, goldStandard, evalResults,language);
 		}
 		return evalResults;
 	}

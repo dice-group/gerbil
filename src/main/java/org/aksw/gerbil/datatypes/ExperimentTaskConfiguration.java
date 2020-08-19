@@ -26,13 +26,15 @@ public class ExperimentTaskConfiguration {
     public DatasetConfiguration datasetConfig;
     public ExperimentType type;
     public Matching matching;
+    public String language;
 
     public ExperimentTaskConfiguration(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
-                                       ExperimentType type) {
+                                       ExperimentType type, String language) {
         super();
         this.annotatorConfig = annotatorConfig;
         this.datasetConfig = datasetConfig;
         this.type = type;
+        this.language = language;
       //  this.matching = matching;
     }
 

@@ -93,6 +93,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         public List<Meaning> performC2KB(Document document) throws GerbilException {
             return ErrorCountingAnnotatorDecorator.performC2KB(this, document);
         }
+
     }
 
     private static class ErrorCountingD2KBAnnotator extends ErrorCountingAnnotatorDecorator implements D2KBAnnotator {
@@ -223,6 +224,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         public List<TypedSpan> performRT2KBTask(Document document) throws GerbilException {
             return ErrorCountingAnnotatorDecorator.performRT2KBTask(this, document);
         }
+
     }
 
     private static class ErrorCountingOKETask1Annotator extends ErrorCountingA2KBAnnotator implements OKETask1Annotator {
@@ -258,6 +260,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
         public List<TypedNamedEntity> performTask2(Document document) throws GerbilException {
             return ErrorCountingAnnotatorDecorator.performOKETask2(this, document);
         }
+
     }
 
     protected static void logResult(List<? extends Marking> result, String annotatorName, String markingName) {
@@ -537,7 +540,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
 
     @Override
     public void evaluate(List<List<Marking>> annotatorResults, List<List<Marking>> goldStandard,
-            EvaluationResultContainer results) {
+            EvaluationResultContainer results,String language) {
         results.addResult(new IntEvaluationResult(ERROR_COUNT_RESULT_NAME, errorCount));
     }
 

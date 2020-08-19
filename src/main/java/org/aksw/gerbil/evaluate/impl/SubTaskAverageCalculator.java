@@ -38,10 +38,10 @@ public class SubTaskAverageCalculator<T extends Marking> implements Evaluator<T>
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results,String language) {
         EvaluationResultContainer subTaskResults = new EvaluationResultContainer();
         for (SubTaskEvaluator<T> evaluator : evaluators) {
-            evaluator.evaluate(annotatorResults, goldStandard, subTaskResults);
+            evaluator.evaluate(annotatorResults, goldStandard, subTaskResults, language);
         }
         addSubTaskResults(subTaskResults, results);
         addAverages(subTaskResults, results);

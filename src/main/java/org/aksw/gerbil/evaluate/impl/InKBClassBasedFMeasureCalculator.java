@@ -63,7 +63,7 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends Confide
 
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+            EvaluationResultContainer results, String language) {
         // the super class performs the matching counter calls
         // EvaluationCounts counts[] = generateMatchingCounts(annotatorResults,
         // goldStandard);

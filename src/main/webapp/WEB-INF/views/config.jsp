@@ -197,6 +197,32 @@
             </div>
         </div>
         <div class="form-group">
+            <div class="col-md-2"></div>
+            <div class="col-md-2 text-right">
+                <label class="control-label" >Language</label>
+                <a title="(Beta) You can change the language which should be tested (default: en)
+
+                 e.g. if you want to use Russian, type in: ru">
+                    <span class="glyphicon glyphicon-question-sign"></span>
+                </a>
+            </div>
+            <div class="col-md-4">
+
+                <div>
+                    <input
+                            class="form-control" type="text" id="qLang" name="qlang"
+                            placeholder="Type language: e.g. en" /> <br>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <hr />
+            </div>
+        </div>
+        <div class="form-group">
             <label class="col-md-4 control-label" for="datasets">Disclaimer</label>
             <div class="checkbox">
                 <label> <input id="disclaimerCheckbox" type="checkbox">
@@ -320,60 +346,60 @@
 
         $('.datasetDropdown').on('click', function(e) {
 
-            });
+        });
 
         function loadDatasetsMenu(){
             var formattedData = [];
-                    var n;
-                    $.getJSON('${datasets}', {
-                        experimentType : $('#type').val(),
-                        ajax : 'false'
-                    }, function(data) {
+            var n;
+            $.getJSON('${datasets}', {
+                experimentType : $('#type').val(),
+                ajax : 'false'
+            }, function(data) {
 
-                        for (var i = 0; i < data.length; i++) {
-                            n = data[i].split("/",2);
-                            var dat = {};
-                            dat.label = n[0];
-                            dat.value = n[1];
-                            formattedData.push(dat);
-                        }
-                        const groupBy= key => array =>
-                            array.reduce(
-                                (objectsByKeyValue, obj) => ({
-                                    ...objectsByKeyValue,
-                                    [obj[key]]: (objectsByKeyValue[obj[key]] || []).concat(obj)
-                                }),
-                                {}
-                            );
-                        const groupByLabel = groupBy('label');
-                        var arr =(groupByLabel(formattedData));
-                        var kes = Object.keys(arr);
-                        var val = Object.values(arr);
-                        showDropdownMenuHack(kes, arr);
-                        //console.log(arr)
-                        //console.log(kes + val);
-                   });
-                };
+                for (var i = 0; i < data.length; i++) {
+                    n = data[i].split("/",2);
+                    var dat = {};
+                    dat.label = n[0];
+                    dat.value = n[1];
+                    formattedData.push(dat);
+                }
+                const groupBy= key => array =>
+                    array.reduce(
+                        (objectsByKeyValue, obj) => ({
+                            ...objectsByKeyValue,
+                            [obj[key]]: (objectsByKeyValue[obj[key]] || []).concat(obj)
+                        }),
+                        {}
+                    );
+                const groupByLabel = groupBy('label');
+                var arr =(groupByLabel(formattedData));
+                var kes = Object.keys(arr);
+                var val = Object.values(arr);
+                showDropdownMenuHack(kes, arr);
+                //console.log(arr)
+                //console.log(kes + val);
+            });
+        };
 
-                loadDatasetsMenu();
+        loadDatasetsMenu();
 
         function showDropdownMenuHack(datasets, language){
 
-          $('#setdata li').remove();
-                    var dropDownMenuStr = ''
-                    for (var i in datasets) {
-                            dropDownMenuStr += '<optgroup label="'+datasets[i]+'">';
-                            for( var x in language[datasets[i]]){
-                                dropDownMenuStr += '<option value="'+datasets[i]+'/'+language[datasets[i]][x]["value"]+'">'+language[datasets[i]][x]["value"]+'</option>';
-                            }
-                            dropDownMenuStr+='</optgroup>';
-                    }
-                    dropDownMenuStr+='';
-                     $('#setdata').append(dropDownMenuStr);
-                     $('#setdata').select2({closeOnSelect: false});
-                     //awful, but works for now
-                     $('#datasetMenu div.btn-group').hide();
-          }
+            $('#setdata li').remove();
+            var dropDownMenuStr = ''
+            for (var i in datasets) {
+                dropDownMenuStr += '<optgroup label="'+datasets[i]+'">';
+                for( var x in language[datasets[i]]){
+                    dropDownMenuStr += '<option value="'+datasets[i]+'/'+language[datasets[i]][x]["value"]+'">'+language[datasets[i]][x]["value"]+'</option>';
+                }
+                dropDownMenuStr+='</optgroup>';
+            }
+            dropDownMenuStr+='';
+            $('#setdata').append(dropDownMenuStr);
+            $('#setdata').select2({closeOnSelect: false});
+            //awful, but works for now
+            $('#datasetMenu div.btn-group').hide();
+        }
 
         function showDropdownMenu(datasets, language) {
 
@@ -382,13 +408,13 @@
             for (var i in datasets) {
 
 
-                    dropDownMenuStr += '<li class="dropdown-submenu"><a href="#">' + datasets[i] + '</a><ul class="dropdown-menu"> ';
-                    for( var x in language[datasets[i]]){
-                        dropDownMenuStr += '<li> '+language[datasets[i]][x]["value"] +'<br>'+ '</a> </li>';
-                    }
-                    dropDownMenuStr+='</ul></li>';
+                dropDownMenuStr += '<li class="dropdown-submenu"><a href="#">' + datasets[i] + '</a><ul class="dropdown-menu"> ';
+                for( var x in language[datasets[i]]){
+                    dropDownMenuStr += '<li> '+language[datasets[i]][x]["value"] +'<br>'+ '</a> </li>';
+                }
+                dropDownMenuStr+='</ul></li>';
             }
-             $('#setdata').append(dropDownMenuStr);
+            $('#setdata').append(dropDownMenuStr);
         }
     }
 
@@ -417,10 +443,10 @@
             hypothesis.push($(this).text());
         });
 
-         var candidate = [];
-         $("#candidateFileList li span.li_content").each(function() {
-             candidate.push($(this).text());
-          });
+        var candidate = [];
+        $("#candidateFileList li span.li_content").each(function() {
+            candidate.push($(this).text());
+        });
 
         //check whether there is at least one dataset and at least one annotator
         //and the disclaimer checkbox should be clicked
@@ -481,23 +507,24 @@
                 });
 
                 //if candidate file add button is clicked check whether there is a name and a file
-                                $('#warningEmptyCandidateFileName').hide();
-                                $('#candidateFileUpload').click(function() {
-                                    var name = $('#nameCandidateFile').val();
-                                    if (name == '') {
-                                        $('#candidateFileUpload').fileupload('disable');
-                                        $('#warningEmptycandidateFileName').show();
-                                    } else {
-                                        $('#candidateFileUpload').fileupload('enable');
-                                        $('#warningEmptycandidateFileName').hide();
-                                    }
-                                });
+                $('#warningEmptyCandidateFileName').hide();
+                $('#candidateFileUpload').click(function() {
+                    var name = $('#nameCandidateFile').val();
+                    if (name == '') {
+                        $('#candidateFileUpload').fileupload('disable');
+                        $('#warningEmptycandidateFileName').show();
+                    } else {
+                        $('#candidateFileUpload').fileupload('enable');
+                        $('#warningEmptycandidateFileName').hide();
+                    }
+                });
 
                 //submit button clicked will collect and sent experiment data to backend
                 $('#submit')
                     .click(
                         function() {
                             //fetch list of selected and manually added datasets
+                            var qLang = $("#qLang").val();
                             var datasetMultiselect = $('#setdata option:selected');
                             var dataset = [];
 
@@ -531,17 +558,17 @@
                                                     this)
                                                     .text());
                                     });
-                             var candidate = [];
-                             $(
-                                 "#candidateFileList li span.li_content")
-                                  .each(
-                                     function() {
+                            var candidate = [];
+                            $(
+                                "#candidateFileList li span.li_content")
+                                .each(
+                                    function() {
                                         candidate
-                                             .push("HF_"
-                                                 + $(
-                                                     this)
-                                                     .text());
-                                     });
+                                            .push("HF_"
+                                                + $(
+                                                    this)
+                                                    .text());
+                                    });
                             var type = $('#type').val() ? $(
                                 '#type').val()
                                 : "MT";
@@ -550,6 +577,7 @@
                             data.dataset = dataset;
                             data.hypothesis = hypothesis;
                             data.candidate = candidate;
+                            data.language = qLang;
 
                             $
                                 .ajax(
@@ -694,54 +722,54 @@
     });
 
     // define candidate file upload
-        $(function() {
-            'use strict';
-            // Change this to the location of your server-side upload handler:
-            var url = '${upload}';
-            $('#candidateFileUpload')
-                .fileupload(
-                    {
-                        url : url,
-                        dataType : 'json',
-                        done : function(e, data) {
-                            var name = $('#nameCandidateFile').val();
-                            $
-                                .each(
-                                    data.result.files,
-                                    function(index, file) {
-                                        $('#candidateFileList')
-                                            .append(
-                                                "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
-                                                + name
-                                                + "("
-                                                + file.name
-                                                + ")</span></li>");
-                                        var listItems = $('#candidateFileList > li > span');
-                                        for (var i = 0; i < listItems.length; i++) {
-                                            listItems[i].onclick = function() {
-                                                this.parentNode.parentNode
-                                                    .removeChild(this.parentNode);
-                                                checkExperimentConfiguration();
-                                            };
-                                        }
-                                        $('#nameCandidateFile').val(
-                                            '');
-                                        $('#URICandidate')
-                                            .val('');
-                                    });
-                        },
-                        progressall : function(e, data) {
-                            var progress = parseInt(data.loaded / data.total
-                                * 100, 10);
-                            $('#candidateFileProgress .progress-bar').css('width',
-                                progress + '%');
-                        },
-                        processfail : function(e, data) {
-                            alert(data.files[data.index].name + "\n"
-                                + data.files[data.index].error);
-                        }
-                    }).prop('disabled', !$.support.fileInput).parent()
-                .addClass($.support.fileInput ? undefined : 'disabled');
-        });
+    $(function() {
+        'use strict';
+        // Change this to the location of your server-side upload handler:
+        var url = '${upload}';
+        $('#candidateFileUpload')
+            .fileupload(
+                {
+                    url : url,
+                    dataType : 'json',
+                    done : function(e, data) {
+                        var name = $('#nameCandidateFile').val();
+                        $
+                            .each(
+                                data.result.files,
+                                function(index, file) {
+                                    $('#candidateFileList')
+                                        .append(
+                                            "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
+                                            + name
+                                            + "("
+                                            + file.name
+                                            + ")</span></li>");
+                                    var listItems = $('#candidateFileList > li > span');
+                                    for (var i = 0; i < listItems.length; i++) {
+                                        listItems[i].onclick = function() {
+                                            this.parentNode.parentNode
+                                                .removeChild(this.parentNode);
+                                            checkExperimentConfiguration();
+                                        };
+                                    }
+                                    $('#nameCandidateFile').val(
+                                        '');
+                                    $('#URICandidate')
+                                        .val('');
+                                });
+                    },
+                    progressall : function(e, data) {
+                        var progress = parseInt(data.loaded / data.total
+                            * 100, 10);
+                        $('#candidateFileProgress .progress-bar').css('width',
+                            progress + '%');
+                    },
+                    processfail : function(e, data) {
+                        alert(data.files[data.index].name + "\n"
+                            + data.files[data.index].error);
+                    }
+                }).prop('disabled', !$.support.fileInput).parent()
+            .addClass($.support.fileInput ? undefined : 'disabled');
+    });
 </script>
 </body>
