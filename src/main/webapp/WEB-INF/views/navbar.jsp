@@ -8,6 +8,7 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="/gerbil/">Home</a></li>
+				<li><a href="/gerbil/webnlg2020">WebNLG 2020</a></li>
 				<li><a href="/gerbil/config">Configure Experiment</a></li>
 				<li><a href="/gerbil/overview">Experiment Overview</a></li>
 				<li><a href="/gerbil/about">About Us</a></li>
