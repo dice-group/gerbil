@@ -211,7 +211,7 @@
                 <div>
                     <input
                             class="form-control" type="text" id="qLang" name="qlang"
-                            placeholder="Type language: e.g. en" /> <br>
+                            placeholder="Type language: e.g. en or ru" /> <br>
                 </div>
 
 
