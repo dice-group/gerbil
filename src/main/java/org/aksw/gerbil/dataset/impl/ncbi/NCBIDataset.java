@@ -50,7 +50,6 @@ public class NCBIDataset extends AbstractDataset implements InitializableDataset
 
     protected String file;
     protected List<Document> documents;
-	protected StringBuilder currentText;
 
     public NCBIDataset(String file) {
 		this.file = file;
