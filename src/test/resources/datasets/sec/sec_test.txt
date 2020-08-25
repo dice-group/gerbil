@@ -1,0 +1,43 @@
+-DOCSTART- -X- O O
+
+This DT - O
+LOAN NN - O
+AND CC - O
+SECURITY NNP - O
+AGREEMENT NNP - O
+dated VBD - O
+January NNP - O
+27 CD - O
+, , - O
+1999 CD - O
+, , - O
+between IN - O
+SILICON NNP - I-ORG
+VALLEY NNP - I-ORG
+BANK NNP - I-ORG
+(" NNP - O
+Bank NNP - I-ORG
+"), , - O
+a DT - O
+California NNP - I-LOC
+
+The DT - O
+SILICON NNP - I-ORG
+VALLEY NNP - I-ORG
+BANK NNP - I-ORG
+
+-DOCSTART- -X- O O
+
+Dated NNP - O
+March NNP - O
+31 CD - O
+, , - O
+2007 CD - O
+Thinkplus NNP - I-ORG
+Investments NNP - I-ORG
+Limited NNP - I-ORG
+( NNP - O
+as IN - O
+the DT - O
+Lender NNP - I-PER
+) NNP - O

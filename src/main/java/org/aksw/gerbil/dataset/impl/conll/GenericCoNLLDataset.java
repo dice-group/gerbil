@@ -42,8 +42,9 @@ import org.apache.commons.io.IOUtils;
  */
 public class GenericCoNLLDataset extends AbstractDataset implements InitializableDataset {
 
-	protected static final String MARKING_START = "B-";
-	protected static final String MARKING_INSIDE = "I-";
+	protected String markingStart = "B-";
+	protected String markingInside = "I-";
+	protected String documentStartLine = "\\s*";
 
     protected String file;
     protected List<Document> documents;
@@ -90,32 +91,30 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
 		if ((firstDocId > 0) && (lastDocId > 0)) {
 			this.documents = this.documents.subList(firstDocId - 1, lastDocId);
 		}
-    }
-
-    protected List<Document> loadDocuments(File file)
-			throws GerbilException {
+	}
+	
+    protected List<Document> loadDocuments(File file) throws GerbilException {
 		BufferedReader reader = null;
 		List<Document> documents = new ArrayList<Document>();
 		String documentUriPrefix = "http://" + getName() + "/";
 		try {
 			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8")));
-			String line = reader.readLine();
+			String line;
 			int index = 0;
 			List<Marking> markings = new ArrayList<Marking>();
-			StringBuilder currentDoc = new StringBuilder("");
-			while (line != null) {
-				if (line.trim().isEmpty()) {
+			StringBuilder currentDoc = new StringBuilder();
+			while ((line = reader.readLine()) != null) {
+				boolean documentStart = line.matches(documentStartLine);
+				if (documentStart && currentDoc.length() > 0) {
 					// Get Markings
 					markings = findMarkings(currentDoc.toString());
 					// Save the document
 					documents.add(new DocumentImpl(currentText.toString(), documentUriPrefix + index, markings));
 					// New Document
 					currentDoc.delete(0, currentDoc.length());
-					line = reader.readLine();
 					index++;
-				} else {
+				} else if (!documentStart && !line.trim().isEmpty()){
 					currentDoc.append(line + "\n");
-					line = reader.readLine();
 				}
 			}
 			//check if there is a document to be added
@@ -138,10 +137,19 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
 		List<Marking> markings = new ArrayList<Marking>();
 		String[] lines = currentDoc.split("\n");
 		currentText = new StringBuilder("");
+		boolean inMarking = false;
 		int i = 0;
 		for (String tokenFull : lines) {
-			String[] token = tokenFull.split("\t+");
-			if (token.length > annotationColumn && token[annotationColumn].startsWith(MARKING_START)) {
+			String[] token = tokenFull.split("\\s+");
+			//if no clear start marker, need to keep track if we are already in a marking 
+			if(markingStart.equals(markingInside)) {
+				if (!inMarking && token.length > annotationColumn && token[annotationColumn].startsWith(markingStart)) {
+					markings.add(getWholeMarking(lines, i));
+					inMarking = true;
+				} else if (!token[annotationColumn].startsWith(markingInside)) {
+					inMarking = false;
+				}
+			} else if (token.length > annotationColumn && token[annotationColumn].startsWith(markingStart)){
 				markings.add(getWholeMarking(lines, i));
 			}
 			currentText.append(token[0] + " ");
@@ -151,7 +159,7 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
     }
     
     protected TypedNamedEntity getWholeMarking(String line[], int pos) {
-        String[] tokens = line[pos].split("\t");
+        String[] tokens = line[pos].split("\\s");
 
         // get type of the marking
         String type = typeRetriever.getTypeURI(tokens[annotationColumn].substring(2));
@@ -165,8 +173,8 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
         // get surface form of the marking
         StringBuilder surfaceForm = new StringBuilder().append(tokens[0]);
 		for (int i = pos + 1; i < line.length; i++) {
-			tokens = line[i].split("\t");
-			if (tokens[annotationColumn].startsWith(MARKING_INSIDE)) {
+			tokens = line[i].split("\\s");
+			if (tokens[annotationColumn].startsWith(markingInside)) {
 				surfaceForm.append(" ").append(tokens[0]);
 			} else {
 				break;
@@ -174,5 +182,17 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
 		}
 		return new TypedNamedEntity(currentText.length(), surfaceForm.length(), uri, 
 				new HashSet<String>(Arrays.asList(type)));
+	}
+
+	public void setMarkingStart(String markingStart) {
+		this.markingStart = markingStart;
+	}
+
+	public void setMarkingInside(String markingInside) {
+		this.markingInside = markingInside;
+	}
+
+	public void setDocumentStartLine(String documentStartLine) {
+		this.documentStartLine = documentStartLine;
 	}
 }
