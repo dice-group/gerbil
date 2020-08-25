@@ -385,7 +385,8 @@
 
         function showDropdownMenuHack(datasets, language){
 
-            $('#setdata li').remove();
+            $('#setdata').html("");
+
             var dropDownMenuStr = ''
             for (var i in datasets) {
                 dropDownMenuStr += '<optgroup label="'+datasets[i]+'">';
@@ -403,7 +404,7 @@
 
         function showDropdownMenu(datasets, language) {
 
-            $('#setdata li').remove();
+            $('#setdata').html("");
             var dropDownMenuStr = ""
             for (var i in datasets) {
 
