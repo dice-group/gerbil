@@ -635,8 +635,9 @@ F.e. if you want to use French, type in: fr">
 						url : url,
 						dataType : 'json',
 						done : function(e, data) {
-							var name = $('#nameDataset').val();
+							var name = $('#nameDataset').val().replace("(", "%28").replace(")", "%29");
 							$.each(data.result.files, function(index, file) {
+							    file.name = file.name.replace("(", "%28").replace(")", "%29");
 								addItemToList($('#datasetList'), name + "("
 										+ file.name + ")");
 								$('#nameDataset').val('');
@@ -667,9 +668,11 @@ F.e. if you want to use French, type in: fr">
 						dataType : 'json',
 						done : function(e, data) {
 							var name = $('#nameAnswerFile').val();
-							var dataset = $('#answerFileDataset').val();
-							var type = $('#answerFileType').val();
+							var dataset = $('#answerFileDataset').val().replace("(", "%28").replace(")", "%29");
+							console.log(dataset);console.log(dataset);
+						    var type = $('#answerFileType').val();
 							$.each(data.result.files, function(index, file) {
+							    file.name = file.name.replace("(", "%28").replace(")", "%29");
 								addItemToList($('#answerFileList'), name + "("
 										+ file.name + ")(" + type + ")("
 										+ dataset + ")");

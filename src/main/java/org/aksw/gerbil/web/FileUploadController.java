@@ -77,7 +77,7 @@ public class FileUploadController {
             logger.debug("{} uploaded", mpf.getOriginalFilename());
 
             FileMeta fileContainer = new FileMeta();
-            fileContainer.setName(mpf.getOriginalFilename());
+            fileContainer.setName(mpf.getOriginalFilename().replace("(", "%28").replace(")", "%29"));
             fileContainer.setSize(mpf.getSize() / 1024 + "Kb");
             fileContainer.setFileType(mpf.getContentType());
 
@@ -85,7 +85,7 @@ public class FileUploadController {
                 fileContainer.setBytes(mpf.getBytes());
                 createFolderIfNotExists();
                 FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(path
-                        + mpf.getOriginalFilename()));
+                        + mpf.getOriginalFilename().replace("(", "%28").replace(")", "%29")));
 
             } catch (IOException e) {
                 logger.error("Error during file upload", e);

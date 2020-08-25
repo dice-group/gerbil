@@ -98,7 +98,15 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
 				
 			} else {
 				// otherwise to strings
-				goldStdStrings.add(answerGS.toString());
+				String answer = "";
+				if(answerGS!=null){
+					answer = answerGS.toString();
+				}else{
+					//if there is no value in an answer, it is invalid format, however we will assume that the answer is just empty as default.
+					//FIXME maybe we should throw a detailed error here, so the user knows what's wrong.
+					answer="";
+				}
+				goldStdStrings.add(answer);
 			}
 		}
 		Iterator<?> it = resultsSet.iterator();
