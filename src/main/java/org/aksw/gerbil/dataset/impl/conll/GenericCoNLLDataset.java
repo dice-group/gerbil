@@ -111,7 +111,7 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
 					// Save the document
 					documents.add(new DocumentImpl(currentText.toString(), documentUriPrefix + index, markings));
 					// New Document
-					currentDoc.delete(0, currentDoc.length());
+					currentDoc.setLength(0);
 					index++;
 				} else if (!documentStart && !line.trim().isEmpty()){
 					currentDoc.append(line + "\n");
