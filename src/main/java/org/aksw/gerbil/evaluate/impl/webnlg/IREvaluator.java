@@ -1,5 +1,4 @@
 package org.aksw.gerbil.evaluate.impl.webnlg;
-
 import org.aksw.gerbil.data.SimpleFileRef;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -14,49 +13,39 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.util.List;
 
-public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
+public class IREvaluator implements Evaluator<SimpleFileRef> {
     // Configuration of the experiment
     private ExperimentTaskConfiguration configuration;
 
-    public TextToRDFEvaluator(ExperimentTaskConfiguration configuration) {
+    public IREvaluator(ExperimentTaskConfiguration configuration) {
         this.configuration = configuration;
     }
     @Override
     public void evaluate(List<List<SimpleFileRef>> annotatorResults, List<List<SimpleFileRef>> goldStandard,
                          EvaluationResultContainer results, String language) {
-            // We assume that both lists have only one element!!!
-            // We assume that each sub list has exactly one element!!!
-
         // We assume that both lists have only one element!!!
         // We assume that each sub list has exactly one element!!!
-        SimpleFileRef expected = goldStandard.get(0).get(0);
-        SimpleFileRef hypothesis = annotatorResults.get(0).get(0);
-        File ref = expected.getFileRef();// gives path to file with the expected translation
-        String[] pathnames = ref.list();
-        String reference = "";
-        for (String pathname : pathnames) {
-            reference = pathname;
-            System.out.println("ref: "+reference);
-        }
 
-        String datasetName = ref.getName();
-        System.out.println("dataset: "+ datasetName);
-        int numberOfReferences = ref.list((dir, name) -> name.endsWith(".xml")).length;
-        File candidateTriple = hypothesis.getFileRef(); // gives path to file with the uploaded translation
+        SimpleFileRef expected = goldStandard.get(0).get(0);
+        SimpleFileRef candidate = annotatorResults.get(0).get(0);
+
+        File ref = expected.getFileRef(); // gives path to file with the expected translation
+
+        File candidateTriple = candidate.getFileRef(); // gives path to file with the uploaded translation
+
         // start python script and gather results
-            // start python script and gather results
         try {
             ReaderThread reader = new ReaderThread();
             Thread readerThread = new Thread(reader);
             Process p = Runtime.getRuntime()
-                    .exec("python3 src/main/java/org/aksw/gerbil/python/webnlg/Evaluation_script_json.py "+ ref.getPath() + "/"+ reference +" "+
-                            candidateTriple + " results.json");
+                    .exec("python3 src/main/java/org/aksw/gerbil/python/webnlg/Evaluation_script_json.py "+ ref +" "+
+                            candidateTriple + " result.json");
             reader.setInput(p.getInputStream());
-            System.out.println("python3 src/main/java/org/aksw/gerbil/python/webnlg/Evaluation_script_json.py "+ ref.getPath() + "/"+ reference +" "+
-                    candidateTriple + " results.json");
+            System.out.println("python3 src/main/java/org/aksw/gerbil/python/webnlg/Evaluation_script_json.py "+ ref +" "+
+                    candidateTriple + " result.json");
             readerThread.start();
 
-            // Wait for the python process to terminate
+// Wait for the python process to terminate
             int exitValue = p.waitFor();
             // stop the reader thread
             reader.setTerminate(true);
@@ -72,7 +61,7 @@ public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
             double precision,recall,f1;
             JSONParser jsonParser = new JSONParser();
             Object object;
-            object = jsonParser.parse(new FileReader("results.json"));
+            object = jsonParser.parse(new FileReader("result.json"));
             JSONObject jsonObject = (JSONObject) object;
             JSONObject total_scores = (JSONObject) jsonObject.get("Total_scores");
 
@@ -136,7 +125,7 @@ public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
         }
     }
 
-   public static final class ReaderThread implements Runnable {
+    public static final class ReaderThread implements Runnable {
         private StringBuilder buffer = new StringBuilder();
         private Reader input;
         private boolean terminate = false;
@@ -175,4 +164,3 @@ public class TextToRDFEvaluator implements Evaluator<SimpleFileRef> {
 
     }
 }
-

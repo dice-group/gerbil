@@ -90,6 +90,7 @@ public class GERBIL {
         //    case MT:
          //       return MT;
             case NLG:
+            case IR:
             case WebNLG_RDF2Text:
                 return WebNLG_RDF2Text;
             case WebNLG_Text2RDF:

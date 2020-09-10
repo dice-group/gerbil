@@ -31,6 +31,7 @@ public enum ExperimentType implements Describable {
     NLG("NLG", "NLG"),
     WebNLG_RDF2Text("WebNLG RDF2Text", "WebNLG RDF2Text"),
     WebNLG_Text2RDF("WebNLG Text2RDF", "WebNLG Text2RDF"),
+    IR("IR", "IR"),
     Ent_Type("Ent_Type", "Ent_Type"),
     Partial("Partial", "Partial"),
     Strict("Strict", "Strict"),
@@ -73,6 +74,13 @@ public enum ExperimentType implements Describable {
                 switch (type) {
                     case NLG: {
                         return type == NLG;
+                    }
+                }
+            }
+            case IR: {
+                switch (type) {
+                    case IR: {
+                        return type == IR;
                     }
                 }
             }
