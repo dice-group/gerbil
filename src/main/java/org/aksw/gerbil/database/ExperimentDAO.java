@@ -249,4 +249,6 @@ public interface ExperimentDAO extends Closeable {
     public String getTaskId(int id);
 
     public List<String> getAllMetricsForExperimentType(ExperimentType experimentType);
+
+    public int insertSubmission(String teamName, String email, String task, String zipFileName);
 }

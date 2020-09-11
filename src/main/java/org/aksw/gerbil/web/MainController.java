@@ -150,6 +150,9 @@ public class MainController {
 
         return model;
     }
+
+
+
     @RequestMapping("/webnlg2020")
     public ModelAndView webnlg2020() {
         ModelAndView model = new ModelAndView();

@@ -97,6 +97,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     private static final String GET_RESULT_NAMES = "SELECT name FROM ResultNames";
     private static final String INSERT_RESULT_NAMES = "INSERT INTO ResultNames(name) VALUES (:name)";
+    private static final String INSERT_SUBMISSION_DATA = "INSERT INTO Submissions(teamName, email, task, file, timestp) VALUES (:teamName, :email, :task, :file, CURRENT_TIMESTAMP)";
 
 
     private final NamedParameterJdbcTemplate template;
@@ -528,5 +529,18 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                 new File2SystemEntryRowMapper());
         return entry;
     }
+
+    @Override
+    public int insertSubmission(String teamName, String email, String task, String zipFileName){
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("teamName", teamName);
+        parameters.addValue("email", email);
+        parameters.addValue("task", task);
+        parameters.addValue("file", zipFileName);
+        return this.template.update(INSERT_SUBMISSION_DATA, parameters);
+
+    }
+
+
 
 }
