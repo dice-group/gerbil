@@ -23,6 +23,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.impl.NLG.NLGEvaluator;
 import org.aksw.gerbil.evaluate.impl.NLG.RDFToTextEvaluator;
+import org.aksw.gerbil.evaluate.impl.webnlg.IREvaluator;
 import org.aksw.gerbil.evaluate.impl.webnlg.TextToRDFEvaluator;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
@@ -75,6 +76,8 @@ public class EvaluatorFactory {
        // case MT:
             case NLG:
                 return new NLGEvaluator();
+            case IR:
+                return new IREvaluator(configuration);
         case WebNLG_RDF2Text:
             return new RDFToTextEvaluator();
         case WebNLG_Text2RDF:
@@ -99,6 +102,7 @@ public class EvaluatorFactory {
 
         case WebNLG_RDF2Text:
             case NLG:
+            case IR:
             return;
         default: {
             throw new RuntimeException();

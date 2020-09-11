@@ -561,7 +561,7 @@ def calculateSystemScore(totalsemevallist, totalsemevallistpertag, newreflist, n
     partialf1 = statistics.mean([x['partial']['f1'] for x in selectedsemevallist])
 
     partialdict = {'Partial': {'Precision': partialprecision,
-                                'Recall': partialrecall, 'F1': partialf1}}
+                               'Recall': partialrecall, 'F1': partialf1}}
     alldict['Total_scores'].update(partialdict)
 
     strictcorrect = sum([x['strict']['correct'] for x in selectedsemevallist])
@@ -576,7 +576,7 @@ def calculateSystemScore(totalsemevallist, totalsemevallistpertag, newreflist, n
     strictf1 = statistics.mean([x['strict']['f1'] for x in selectedsemevallist])
 
     strictdict = {'Strict': {'Precision': strictprecision,
-                                'Recall': strictrecall, 'F1': strictf1}}
+                             'Recall': strictrecall, 'F1': strictf1}}
     alldict['Total_scores'].update(strictdict)
 
     exactcorrect = sum([x['exact']['correct'] for x in selectedsemevallist])
@@ -591,7 +591,7 @@ def calculateSystemScore(totalsemevallist, totalsemevallistpertag, newreflist, n
     exactf1 = statistics.mean([x['exact']['f1'] for x in selectedsemevallist])
 
     exactdict = {'Exact': {'Precision': exactprecision,
-                                'Recall': exactrecall, 'F1': exactf1}}
+                           'Recall': exactrecall, 'F1': exactf1}}
     alldict['Total_scores'].update(exactdict)
 
     alldict.update({'Scores_per_tag': {}})
@@ -610,7 +610,7 @@ def calculateSystemScore(totalsemevallist, totalsemevallistpertag, newreflist, n
     subenttypef1 = statistics.mean([x['SUB']['ent_type']['f1'] for x in selectedsemevallistpertag])
 
     subenttypedict = {'Ent_type': {'Precision': subenttypeprecision,
-                           'Recall': subenttyperecall, 'F1': subenttypef1}}
+                                   'Recall': subenttyperecall, 'F1': subenttypef1}}
     alldict['Scores_per_tag']['Subjects'].update(subenttypedict)
 
     subpartialcorrect = sum([x['SUB']['partial']['correct'] for x in selectedsemevallistpertag])
@@ -625,7 +625,7 @@ def calculateSystemScore(totalsemevallist, totalsemevallistpertag, newreflist, n
     subpartialf1 = statistics.mean([x['SUB']['partial']['f1'] for x in selectedsemevallistpertag])
 
     subpartialdict = {'Partial': {'Precision': subpartialprecision,
-                           'Recall': subpartialrecall, 'F1': subpartialf1}}
+                                  'Recall': subpartialrecall, 'F1': subpartialf1}}
     alldict['Scores_per_tag']['Subjects'].update(subpartialdict)
 
     substrictcorrect = sum([x['SUB']['strict']['correct'] for x in selectedsemevallistpertag])
@@ -640,7 +640,7 @@ def calculateSystemScore(totalsemevallist, totalsemevallistpertag, newreflist, n
     substrictf1 = statistics.mean([x['SUB']['strict']['f1'] for x in selectedsemevallistpertag])
 
     substrictdict = {'Strict': {'Precision': substrictprecision,
-                           'Recall': substrictrecall, 'F1': substrictf1}}
+                                'Recall': substrictrecall, 'F1': substrictf1}}
     alldict['Scores_per_tag']['Subjects'].update(substrictdict)
 
     subexactcorrect = sum([x['SUB']['exact']['correct'] for x in selectedsemevallistpertag])
@@ -655,7 +655,7 @@ def calculateSystemScore(totalsemevallist, totalsemevallistpertag, newreflist, n
     subexactf1 = statistics.mean([x['SUB']['exact']['f1'] for x in selectedsemevallistpertag])
 
     subexactdict = {'Exact': {'Precision': subexactprecision,
-                                'Recall': subexactrecall, 'F1': subexactf1}}
+                              'Recall': subexactrecall, 'F1': subexactf1}}
     alldict['Scores_per_tag']['Subjects'].update(subexactdict)
 
     alldict['Scores_per_tag'].update({'Predicates': {}})
@@ -704,7 +704,7 @@ def calculateSystemScore(totalsemevallist, totalsemevallistpertag, newreflist, n
     predstrictf1 = statistics.mean([x['PRED']['strict']['f1'] for x in selectedsemevallistpertag])
 
     predstrictdict = {'Strict': {'Precision': predstrictprecision,
-                                'Recall': predstrictrecall, 'F1': predstrictf1}}
+                                 'Recall': predstrictrecall, 'F1': predstrictf1}}
     alldict['Scores_per_tag']['Predicates'].update(predstrictdict)
 
     predexactcorrect = sum([x['PRED']['exact']['correct'] for x in selectedsemevallistpertag])
@@ -719,7 +719,7 @@ def calculateSystemScore(totalsemevallist, totalsemevallistpertag, newreflist, n
     predexactf1 = statistics.mean([x['PRED']['exact']['f1'] for x in selectedsemevallistpertag])
 
     predexactdict = {'Exact': {'Precision': predexactprecision,
-                              'Recall': predexactrecall, 'F1': predexactf1}}
+                               'Recall': predexactrecall, 'F1': predexactf1}}
     alldict['Scores_per_tag']['Predicates'].update(predexactdict)
 
     alldict['Scores_per_tag'].update({'Objects': {}})
@@ -784,7 +784,7 @@ def calculateSystemScore(totalsemevallist, totalsemevallistpertag, newreflist, n
     objexactf1 = statistics.mean([x['OBJ']['exact']['f1'] for x in selectedsemevallistpertag])
 
     objexactdict = {'Exact': {'Precision': objexactprecision,
-                               'Recall': objexactrecall, 'F1': objexactf1}}
+                              'Recall': objexactrecall, 'F1': objexactf1}}
     alldict['Scores_per_tag']['Objects'].update(objexactdict)
 
     return alldict
