@@ -122,7 +122,7 @@
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span>Select file...</span>
                                 <!-- The file input field used as target for the source file upload widget -->
-        								<input id="fileupload" accept=".zip" type="file" name="file">
+        								<input id="fileupload" accept=".zip,.bz2,.tar,.tar.gz,.gz,7z" type="file" name="file">
         						</span>
                                 <br> <br>
                                 <!-- The global progress bar -->
