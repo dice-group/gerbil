@@ -42,17 +42,17 @@ import org.apache.commons.io.IOUtils;
  */
 public class GenericCoNLLDataset extends AbstractDataset implements InitializableDataset {
 
-	protected String markingStart = "B-";
-	protected String markingInside = "I-";
-	protected String documentStartLine = "\\s*";
+	private static final String MARKING_START = "B-";
+	private static final String MARKING_INSIDE = "I-";
 
+	protected String documentStartLine = "\\s*";
     protected String file;
     protected List<Document> documents;
 	protected StringBuilder currentText;
+	protected CoNLLTypeRetriever typeRetriever;
+
 	protected int firstDocId;
 	protected int lastDocId;
-
-    protected CoNLLTypeRetriever typeRetriever;
     protected int annotationColumn;
     protected int uriColumn;
 
@@ -137,20 +137,20 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
 		List<Marking> markings = new ArrayList<Marking>();
 		String[] lines = currentDoc.split("\n");
 		currentText = new StringBuilder("");
-		boolean inMarking = false;
 		int i = 0;
+		String lastType = "";
 		for (String tokenFull : lines) {
-			String[] token = tokenFull.split("\\s+");
-			//if no clear start marker, need to keep track if we are already in a marking 
-			if(markingStart.equals(markingInside)) {
-				if (!inMarking && token.length > annotationColumn && token[annotationColumn].startsWith(markingStart)) {
-					markings.add(getWholeMarking(lines, i));
-					inMarking = true;
-				} else if (!token[annotationColumn].startsWith(markingInside)) {
-					inMarking = false;
-				}
-			} else if (token.length > annotationColumn && token[annotationColumn].startsWith(markingStart)){
-				markings.add(getWholeMarking(lines, i));
+			String[] token = tokenFull.split("\\s");
+			if(token.length > annotationColumn) {
+				String currentMarking = token[annotationColumn];
+				String currentType = currentMarking.length() > 1 ? currentMarking.substring(2) : "";
+				// B- always starts a new marking, in case of IOB the B- tag is only used when two consecutive
+				// entities have the same type so we also have to check if the type changes
+				if (currentMarking.startsWith(MARKING_START) || 
+						(currentMarking.startsWith(MARKING_INSIDE) && !currentType.equals(lastType))) {
+					markings.add(getWholeMarking(lines, i, currentType));
+				} 				
+				lastType = currentType;
 			}
 			currentText.append(token[0] + " ");
 			i++;
@@ -158,11 +158,11 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
 		return markings;
     }
     
-    protected TypedNamedEntity getWholeMarking(String line[], int pos) {
-        String[] tokens = line[pos].split("\\s");
+    protected TypedNamedEntity getWholeMarking(String line[], int pos, String currentType) {
+		String[] tokens = line[pos].split("\\s");
 
-        // get type of the marking
-        String type = typeRetriever.getTypeURI(tokens[annotationColumn].substring(2));
+		// get type of the marking
+        String type = typeRetriever.getTypeURI(currentType);
 
 		//get uri of the marking if given in the dataset
 		String uri = "";
@@ -171,10 +171,11 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
 		} 
 
         // get surface form of the marking
-        StringBuilder surfaceForm = new StringBuilder().append(tokens[0]);
+		StringBuilder surfaceForm = new StringBuilder().append(tokens[0]);
+		String marking = MARKING_INSIDE + currentType;
 		for (int i = pos + 1; i < line.length; i++) {
 			tokens = line[i].split("\\s");
-			if (tokens[annotationColumn].startsWith(markingInside)) {
+			if (tokens[annotationColumn].equals(marking)) {
 				surfaceForm.append(" ").append(tokens[0]);
 			} else {
 				break;
@@ -182,14 +183,6 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
 		}
 		return new TypedNamedEntity(currentText.length(), surfaceForm.length(), uri, 
 				new HashSet<String>(Arrays.asList(type)));
-	}
-
-	public void setMarkingStart(String markingStart) {
-		this.markingStart = markingStart;
-	}
-
-	public void setMarkingInside(String markingInside) {
-		this.markingInside = markingInside;
 	}
 
 	public void setDocumentStartLine(String documentStartLine) {

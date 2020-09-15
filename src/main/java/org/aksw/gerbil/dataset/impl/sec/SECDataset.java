@@ -23,14 +23,12 @@ public class SECDataset extends GenericCoNLLDataset {
 
     private static final int ANNOTATION_COLUMN = 3;
     private static final int URI_COLUMN = -1;
-    private static final String MARKING_START = "I-";
     private static final String DOCUMENT_START_LINE = "\\-DOCSTART\\-.*";
     private static final CoNLLTypeRetriever TYPE_TAGS = new CoNLLTypeRetriever("LOC", null, null, null, "MISC", "PER",
             null, null, null, "ORG");
 
     public SECDataset(String file) {
         super(file, ANNOTATION_COLUMN, URI_COLUMN, TYPE_TAGS);
-        this.setMarkingStart(MARKING_START);
         this.setDocumentStartLine(DOCUMENT_START_LINE);
     }
 }
