@@ -20,11 +20,13 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<slf4j.version>1.7.6</slf4j.version>
+		<slf4j.version>2.13.30</slf4j.version>
+		<log4j.version>2.12.0</log4j.version>
 		<junit.version>4.11</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.17.RELEASE</spring.version>
 		<jena.version>3.1.0</jena.version>
+		<cargo.version>1.8.0</cargo.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
 		<war.warName>gerbil</war.warName>
 		<maven.tomcat.path>/gerbil</maven.tomcat.path>
@@ -51,6 +53,11 @@
 			<name>Apache Repository</name>
 			<url>https://repository.apache.org/content/repositories/releases/</url>
 		</repository>
+		<repository>
+			<id>alfresco</id>
+			<name>Alfresco Repository</name>
+			<url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -68,9 +75,15 @@
 					<groupId>org.apache.jena</groupId>
 					<artifactId>jena-arq</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<!-- Jena for using JSON-LD -->
+
+
 
 		<!-- Google Guava -->
 		<dependency>
@@ -99,17 +112,27 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
-		<!-- slf4j: Logging API -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+
 		<!-- slf4j: Logging Binding - is already contained in aida -->
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-1.2-api</artifactId>
+			<version>${log4j.version}</version>
 		</dependency>
 
 		<!-- HPPC Maps -->
@@ -261,6 +284,12 @@
 			<groupId>org.aksw.simba</groupId>
 			<artifactId>topicmodeling.concurrent</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- FOX -->
@@ -294,6 +323,18 @@
 					<groupId>org.aksw.qa</groupId>
 					<artifactId>datasets</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -301,6 +342,14 @@
 			<artifactId>commons</artifactId>
 			<version>0.4.22</version>
 			<exclusions>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-core</artifactId>
+				</exclusion>
 				<exclusion>
 					<groupId>mysql</groupId>
 					<artifactId>mysql-connector-java</artifactId>
@@ -354,13 +403,17 @@
 			<version>0.5.17</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.github.jsonld-java/jsonld-java -->
-
 		<dependency>
-			<groupId>org.aksw.simba</groupId>
-			<artifactId>qaldbench</artifactId>
-			<version>1.0.0</version>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+			<version>2.9.8</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.8</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.jena</groupId>
@@ -387,6 +440,27 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.cargo</groupId>
+				<artifactId>cargo-maven2-plugin</artifactId>
+				<version>${cargo.version}</version>
+				<configuration>
+					<container>
+						<containerId>tomcat9x</containerId>
+						<type>embedded</type>
+						<zipUrlInstaller>
+							<url>https://repo1.maven.org/maven2/org/apache/tomcat/tomcat/9.0.8/tomcat-9.0.8.zip</url>
+						</zipUrlInstaller>
+					</container>
+					<configuration>
+						<properties>
+							<cargo.logging>high</cargo.logging>
+						</properties>
+					</configuration>
+				</configuration>
+			</plugin>
+
+
 			<!-- License management plugin -->
 			<plugin>
 				<groupId>com.mycila</groupId>

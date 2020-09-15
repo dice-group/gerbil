@@ -20,14 +20,19 @@ import java.io.IOException;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.execchain.RequestAbortedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +51,8 @@ public class AbstractHttpRequestEmitter implements HttpRequestEmitter {
     public AbstractHttpRequestEmitter() {
         // this(null, HttpClientBuilder.create().build());
         // closeClient = true;
-        this(null, HttpManagement.getInstance().getDefaultClient());
+        this(null, HttpClientBuilder.create().setDefaultRequestConfig(RequestConfig.custom()
+                .setCookieSpec(CookieSpecs.STANDARD).build()).build());
     }
 
     public AbstractHttpRequestEmitter(CloseableHttpClient client) {

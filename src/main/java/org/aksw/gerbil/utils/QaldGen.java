@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-import org.aksw.simba.qaldbench.cli.Benchmarks;
+//import org.aksw.simba.qaldbench.cli.Benchmarks;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.repository.RepositoryException;
@@ -16,7 +16,7 @@ public class QaldGen {
 		String output = getParamVal(args, "-o");
 		String tmpFileName = UUID.randomUUID().toString();
 		replaceParamVal(args, "-o", tmpFileName);
-		Benchmarks.main(args);
+		//Benchmarks.main(args);
 		RDF2JSON.main(new String[] {"qald", tmpFileName, output});
 		File remove = new File(tmpFileName);
 		remove.delete();

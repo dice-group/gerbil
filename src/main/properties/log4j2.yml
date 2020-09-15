@@ -1,0 +1,107 @@
+Configuration:
+  status: warn
+  name: gerbil
+  properties:
+    property:
+      name: filename
+      value: gerbil.log
+  thresholdFilter:
+    level: debug
+  appenders:
+    Console:
+      name: STDOUT
+      target: SYSTEM_OUT
+      PatternLayout:
+        Pattern: "%highlight{%d [%t] %p [%c] - <%m>%n}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green, DEBUG=green bold, TRACE=blue}"
+        disableAnsi: false
+    File:
+      name: File
+      fileName: ${filename}
+      PatternLayout:
+        Pattern: "%d [%t] %p [%c] - <%m>%n"
+      Filters:
+        ThresholdFilter:
+          level: warn
+
+  Loggers:
+    logger:
+      - name: org.aksw.gerbil.bat.annotator.nif.NIFBasedAnnotatorWebservice
+        level: info
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+      - name: org.aksw.gerbil.utils.ConsoleLogger
+        level: info
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+
+      - name: org.aksw.gerbil.execute.ExperimentTaskExecuter
+        level: info
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+
+      - name: org.aksw.gerbil.execute.SimpleThreadObserver
+        level: info
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+
+      - name: org.aksw.gerbil.qa.QuestionAnsweringPipeline
+        level: debug
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+      - name: org.aksw.gerbil.tools.NIFDatasetLoadingTest
+        level: info
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+      - name: org.aksw.gerbil.tools
+        level: info
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+      - name: org.aksw.gerbil.web.config
+        level: error
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+      - name: org.aksw.gerbil.semantic.sameas
+        level: error
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+      - name: org.apache.http.client.protocol
+        level: error
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+      - name: org.apache.http.impl
+        level: error
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+      - name: org.apache.jena.riot
+        level: error
+        additivity: true
+        AppenderRef:
+          - ref: STDOUT
+          - ref: File
+    Root:
+      level: warn
+      AppenderRef:
+        - ref: STDOUT
+        - ref: File

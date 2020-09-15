@@ -17,7 +17,9 @@
 package org.aksw.gerbil.semantic.sameas.impl.wiki;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 

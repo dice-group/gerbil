@@ -188,8 +188,9 @@ public class QAUtils {
         try {
             sparqlQuery = QueryFactory.create(sparqlQueryString);
         } catch (Exception e) {
-            LOGGER.error("Couldn't parse the given SPARQL Query \"" + sparqlQueryString
-                    + "\". Throwing catched exception.", e);
+            //If we do not handle it like an erorr, we should just use warn instead of error
+            LOGGER.warn("Couldn't parse the given SPARQL Query \"" + sparqlQueryString
+                    + "\".");
             throw e;
         }
         final Set<String> projectionVariables = new HashSet<String>(sparqlQuery.getResultVars());
