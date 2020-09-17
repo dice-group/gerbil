@@ -85,7 +85,7 @@ public class ExperimentOverviewController {
 		String annotatorNames[] = loadAnnotators(eType);
 		String datasetNames[] = loadDatasets(eType);
 		ChallengeDescr challenge = loadOngoingChallenge();
-		String metric = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_METRIC_NAME_KEY);
+		String metric = GerbilConfiguration.getInstance().getString(GERBIL_PROPERTIES_METRIC_NAME_KEY + '.' + experimentType);
 		System.out.println("Exp: "+eType+" annotator: "+ annotatorNames.length+ " dataset: "+datasetNames.length
 				+ " metric:" + metric + " challenge: "+ challenge.getStartDate());
 		return loadLatestResults(eType, annotatorNames, datasetNames, metric, challenge);
