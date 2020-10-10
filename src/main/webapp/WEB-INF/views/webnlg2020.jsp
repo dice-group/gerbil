@@ -7,6 +7,7 @@
 <link rel="stylesheet"
 	href="/gerbil/webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
 <link rel="icon" type="image/png" href="/gerbil/webResources/gerbilicon_transparent.png">
+
 </head>
 <body class="container">
 	<%@include file="navbar.jsp"%>

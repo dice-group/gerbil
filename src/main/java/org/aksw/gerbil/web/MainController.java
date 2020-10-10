@@ -160,6 +160,13 @@ public class MainController {
         return model;
     }
 
+    @RequestMapping("/webnlg2020results")
+    public ModelAndView webnlg2020results(){
+        ModelAndView model = new ModelAndView();
+        model.setViewName("webnlg2020results");
+        return model;
+    }
+
     @RequestMapping("/overview")
     public ModelAndView overview() {
         ModelAndView model = new ModelAndView();
