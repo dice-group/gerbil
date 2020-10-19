@@ -46,7 +46,7 @@ public class NCBIDataset extends AbstractDataset implements InitializableDataset
 	private static final int ENTITY_END_COLUMN = 2; 
 	private static final int ENTITY_URI_COLUMN = 5; 
 	private static final String MESH_PREFIX = "http://id.nlm.nih.gov/mesh/";
-	private static final String OMIM_PREFIX = "https://omim.org/entry/";
+	private static final String OMIM_PREFIX = "http://omim.org/entry/";
 
     protected String file;
     protected List<Document> documents;

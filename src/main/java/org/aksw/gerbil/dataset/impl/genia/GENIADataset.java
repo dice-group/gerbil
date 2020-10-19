@@ -99,16 +99,6 @@ public class GENIADataset extends AbstractDataset implements InitializableDatase
         }
     }
 
-    public static void main(String[] args) throws IOException, GerbilException {
-        GENIADataset d = new GENIADataset("gerbil_data/datasets/genia/GENIAcorpus3.02.merged_test.xml");
-        d.init();
-        for (Document a : d.getInstances()) {
-            System.out.println(a);
-        }
-        System.out.println(d.getInstances().size());
-        d.close();
-    }
-
     private List<Document> loadDocuments(File filePath) throws GerbilException {
         List<Document> docs = new ArrayList<>();
         String documentUriPrefix = "http://" + getName() + "/";

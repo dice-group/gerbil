@@ -39,7 +39,7 @@ public class NCBIDatasetTest {
 			"http://" + DATASET_NAME + "/1999552",
 			Arrays.asList(
 				(Marking) new NamedEntity(11, 16,
-					new HashSet<String>(Arrays.asList("https://omim.org/entry/609536"))),
+					new HashSet<String>(Arrays.asList("http://omim.org/entry/609536"))),
 				(Marking) new NamedEntity(48, 27,
 					new HashSet<String>(Arrays.asList("http://id.nlm.nih.gov/mesh/D008179"))),
 				(Marking) new NamedEntity(102, 27,
@@ -47,11 +47,11 @@ public class NCBIDatasetTest {
 				(Marking) new NamedEntity(184, 18,
 					new HashSet<String>(Arrays.asList("http://id.nlm.nih.gov/mesh/D007153"))),
 				(Marking) new NamedEntity(224, 16,
-					new HashSet<String>(Arrays.asList("https://omim.org/entry/609536"))),
+					new HashSet<String>(Arrays.asList("http://omim.org/entry/609536"))),
 				(Marking) new NamedEntity(359, 27,
 					new HashSet<String>(Arrays.asList("http://id.nlm.nih.gov/mesh/D008179"))),
 				(Marking) new NamedEntity(391, 13, 
-					new HashSet<String>(Arrays.asList("https://omim.org/entry/609536")))));
+					new HashSet<String>(Arrays.asList("http://omim.org/entry/609536")))));
 
 	@Test
 	public void test() throws GerbilException {
@@ -61,8 +61,6 @@ public class NCBIDatasetTest {
 			dataset.init();
 			List<Document> documents = dataset.getInstances();
 			Assert.assertEquals(1, documents.size());
-			Assert.assertEquals(EXPECTED_DOCUMENT.getText(), documents.get(0).getText());
-			Assert.assertEquals(EXPECTED_DOCUMENT.getDocumentURI(), documents.get(0).getDocumentURI());
 			Assert.assertEquals(EXPECTED_DOCUMENT, documents.get(0));
 		} finally {
 			IOUtils.closeQuietly(dataset);
