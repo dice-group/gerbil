@@ -163,7 +163,7 @@ public class NIFBasedAnnotatorWebservice extends AbstractHttpBasedAnnotator impl
                 document.getText().length() > 20 ? (document.getText().substring(0, 20) + "...") : document.getText());
         // create NIF document
         String nifDocument = nifCreator.getDocumentAsNIFString(document);
-        System.out.println(nifDocument);
+        LOGGER.trace("NIF Request:\n{}",nifDocument);
         HttpEntity entity = new StringEntity(nifDocument, "UTF-8");
         // send NIF document
         HttpPost request = null;
