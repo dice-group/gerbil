@@ -175,8 +175,8 @@
 									+ "/gerbil/experiment"
 									+ experimentId + "</a>";
 							// If this is the AKSW instance of GERBIL
-							if (origin == "http://gerbil.aksw.org") {
-								content += " and <a href=\"http://w3id.org/gerbil/experiment"
+							if (origin == "https://gerbil-nlg.dice-research.org") {
+								content += " and <a href=\"http://w3id.org/gerbil/nlg/experiment"
 					+ experimentId
 					+ "\">http://w3id.org/gerbil/experiment"
 										+ experimentId + "</a>";
