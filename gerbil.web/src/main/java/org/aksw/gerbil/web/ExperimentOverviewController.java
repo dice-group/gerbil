@@ -172,7 +172,7 @@ public class ExperimentOverviewController {
 	private String loadLatestResults(ExperimentType experimentType,  String[] annotatorNames,
 			String[] datasetNames, ChallengeDescr challenge) {
 
-		StringBuilder listsAsJson = new StringBuilder("{ \"datasets\": [")  ;
+		StringBuilder listsAsJson = new StringBuilder("{ \"datasets\": [ ")  ;
 	
 		
 		int count=0;
@@ -182,8 +182,7 @@ public class ExperimentOverviewController {
 			if(experimentType.equals(ExperimentType.SWC2) || experimentType.equals(ExperimentType.SWC_2019)) {
 				rocs.append(", \"rocs\" : [");
 			}
-			listsAsJson.append("{\"datasetName\" : \"").append(dataset).append("\", ");
-			
+			int count2=0;
 			List<ExperimentTaskStatus> results;
 			if(challenge==null) {
 				results = dao.getBestResults(experimentType.name(), dataset);
@@ -196,8 +195,18 @@ public class ExperimentOverviewController {
 				leaderList.addAll(results);
 				
 			}
-			listsAsJson.append(" \"leader\" : [");
-			int count2=0;
+			if(results == null || leaderList.isEmpty()) {
+				if(count>=datasetNames.length-1) {
+					listsAsJson.setLength(listsAsJson.length()-1);
+					listsAsJson.trimToSize();
+				}	
+				count++;
+				continue;
+			}
+			listsAsJson.append("{\"datasetName\" : \"").append(dataset).append("\", ");
+
+			listsAsJson.append(" \"leader\" : [ ");
+			
 			boolean firstRoc=true;
 			for(ExperimentTaskStatus expResults : leaderList){
 				String annotator = expResults.annotator.substring(0, expResults.annotator.lastIndexOf("(")).replace("\"", "\\\"");
@@ -237,10 +246,10 @@ public class ExperimentOverviewController {
 			}
 			listsAsJson.append("]").append(rocs).append("}");
 			if(count<datasetNames.length-1)
-				listsAsJson.append(", ");
+				listsAsJson.append(",");
 			count++;
 		}
-
+		//listsAsJson.setCharAt(datasetNames.length-1, ' ');
 		listsAsJson.append("]}");
 		
 		return listsAsJson.toString();
