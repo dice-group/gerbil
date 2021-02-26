@@ -27,7 +27,7 @@ import org.apache.jena.rdf.model.Property;
 
 public class ROCEvaluator<T extends Model> extends AUCEvaluator<Model>{
     
-    private static final String NAME = "ROC Curve";
+    public static final String NAME = "ROC Curve";
 
     public ROCEvaluator() {
         super();

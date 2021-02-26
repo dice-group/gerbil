@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Curve {
 
-	private List<Point> points = new ArrayList<Point>();
+	protected List<Point> points = new ArrayList<Point>();
 	protected Point first;
 	protected Point last;
 

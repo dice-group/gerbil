@@ -27,7 +27,6 @@ public abstract class AUCEvaluator<T extends Model> implements Evaluator<T> {
 	public static String DEFAULT_TRUTH_VALUE_URI = "http://swc2017.aksw.org/hasTruthValue";
 
 	protected String truthValueURI = "http://swc2017.aksw.org//hasTruthValue";
-
 	public AUCEvaluator() {
 		super();
 	}

@@ -18,7 +18,7 @@ import org.apache.jena.rdf.model.Model;
  */
 public class PREvaluator<T extends Model> extends AUCEvaluator<Model> {
 
-	private static final String NAME = "PR Curve";
+	public static final String NAME = "PR Curve";
 
 	public PREvaluator() {
 		super();

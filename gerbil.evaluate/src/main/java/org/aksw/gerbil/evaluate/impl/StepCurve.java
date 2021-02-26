@@ -1,8 +1,5 @@
 package org.aksw.gerbil.evaluate.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.concurrent.NotThreadSafe;
 
 /**
@@ -11,9 +8,6 @@ import javax.annotation.concurrent.NotThreadSafe;
  */
 @NotThreadSafe
 public class StepCurve extends Curve{
-
-    public List<Point> points = new ArrayList<Point>();
-
     private DIRECTION lastDir = null;
     private int trueStmts;
     private int falseStmts;

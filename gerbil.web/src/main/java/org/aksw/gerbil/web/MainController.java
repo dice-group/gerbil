@@ -43,6 +43,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.datatypes.TaskResult;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.evaluate.impl.PREvaluator;
 import org.aksw.gerbil.evaluate.impl.ROCEvaluator;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.matching.Matching;
@@ -259,12 +260,28 @@ public class MainController {
         	result.setAnnotator(annotator);
         	Map<String, TaskResult> resMap = result.getResultsMap();
         	
-        	if(resMap.get(ROCEvaluator.ROC_NAME) != null) {
-        		TaskResult taskRes = resMap.get(ROCEvaluator.ROC_NAME);
+        	System.out.println("IM HEREEEEE");
+        	resMap.forEach((k,v)->{
+        		System.out.println(k);
+        		System.out.println(v.getResValue());
+        	});
+
+        	if(resMap.get(ROCEvaluator.NAME) != null) {
+        		TaskResult taskRes = resMap.get(ROCEvaluator.NAME);
         		String rocVal = (String) taskRes.getResValue();
         		rocVal = rocVal.replace("roc", "data");
         		taskRes.setResValue(rocVal);
         		hasRoc = true;
+        		System.out.println("IM HEREEEEE IN ROC");
+        	}
+        	
+        	if(resMap.get(PREvaluator.NAME) != null) {
+        		TaskResult taskRes = resMap.get(PREvaluator.NAME);
+        		String rocVal = (String) taskRes.getResValue();
+        		rocVal = rocVal.replace("roc", "data");
+        		taskRes.setResValue(rocVal);
+        		hasRoc = true;
+        		System.out.println("IM HEREEEEE IN PR");
         	}
         }
         ExperimentTaskStateHelper.setStatusLines(results);
