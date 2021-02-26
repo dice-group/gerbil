@@ -16,8 +16,8 @@
  */
 package org.aksw.gerbil.evaluate;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.aksw.agdistis.util.TripleIndex;
 import org.aksw.gerbil.config.GerbilConfiguration;
@@ -27,10 +27,11 @@ import org.aksw.gerbil.dataset.converter.Literal2ResourceManager;
 import org.aksw.gerbil.dataset.converter.impl.SPARQLBasedLiteral2Resource;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.impl.ConfidenceBasedEvaluator;
 import org.aksw.gerbil.evaluate.impl.ConfidenceBasedModelComparator;
-import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.DoubleResultComparator;
 import org.aksw.gerbil.evaluate.impl.ModelComparator;
+import org.aksw.gerbil.evaluate.impl.PREvaluator;
 import org.aksw.gerbil.evaluate.impl.ROCEvaluator;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
@@ -138,10 +139,14 @@ public class EvaluatorFactory {
 		return createEvaluator(type, configuration, dataset, globalClassifier, inferencer);
 	}
 
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
 			UriKBClassifier classifier, SubClassInferencer inferencer) {
 		String[] additional = dataset.getAdditionalProperties();
+		String truthValueURI = GerbilConfiguration.getInstance().getString(TRUTH_VALUE_URI_GERBIL_KEY);
+		if (additional != null) {
+			truthValueURI = additional[0];
+		}
 
 		switch (type) {
 		// case Task1/Task2
@@ -152,13 +157,14 @@ public class EvaluatorFactory {
 			}
 			return new ModelComparator(additional, false);
         case SWC_2019:
+        	
 		case SWC2:
-			String truthValueURI = GerbilConfiguration.getInstance().getString(TRUTH_VALUE_URI_GERBIL_KEY);
-			if (additional != null) {
-				truthValueURI = additional[0];
-			}
 			return new ROCEvaluator(truthValueURI);
-
+		case SWC2_F:
+			return new ConfidenceBasedEvaluator<Model>();
+		case SWC2_PR:
+			return new PREvaluator(truthValueURI);
+			
 		case SWC2018T1:
 			if (additional == null) {
 				additional = GerbilConfiguration.getInstance().getStringArray(SWC2018_TASK1_PROPERTIES_KEY);
@@ -243,7 +249,12 @@ public class EvaluatorFactory {
 	public void addEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration,
 			Dataset dataset) {
 		converterManager.setQuestionLanguage(configuration.getQuestionLanguage());
-		evaluators.add(createEvaluator(configuration.type, configuration, dataset));
+		List<Evaluator<?>> mEvaluators = new ArrayList<Evaluator<?>>();
+		List<ExperimentType> types = ExperimentType.getRelatedTypes(configuration.type);
+		for (ExperimentType type: types) {
+			mEvaluators.add(createEvaluator(type, configuration, dataset));
+		}
+		evaluators.addAll(mEvaluators);
 		addSubTaskEvaluators(evaluators, configuration, dataset);
 	}
 
