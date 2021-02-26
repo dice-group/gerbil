@@ -99,7 +99,7 @@ public class SingleRunTest implements TaskObserver {
             @Override
             public Annotator getAnnotator(ExperimentType type) throws GerbilException {
                 FileBasedRDFDataset rdfFile = new FileBasedRDFDataset(
-                        "/home/micha/Documents/svn/datascience/teaching/201718_ws/NLP/exercise/MiniProjectEval/snlp-2017-test-random.nt");
+                        "gerbil_data/datasets/SNLP-2017/snlp-2017-test.nt");
                 rdfFile.init();
                 try {
                     return new InstanceListBasedAnnotator(getName(), rdfFile.getInstances());

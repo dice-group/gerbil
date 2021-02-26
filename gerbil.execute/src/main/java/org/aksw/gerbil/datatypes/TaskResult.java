@@ -21,5 +21,8 @@ public class TaskResult {
 	public void setResType(String resType) {
 		this.resType = resType;
 	}
-
+	@Override
+	public String toString() {
+	    return resType + ":" + resValue;
+	}
 }
