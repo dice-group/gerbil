@@ -25,6 +25,7 @@ import org.aksw.gerbil.annotator.Annotator;
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.annotator.impl.instance.InstanceListBasedAnnotator;
+import org.aksw.gerbil.database.ExperimentDAOImpl;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
