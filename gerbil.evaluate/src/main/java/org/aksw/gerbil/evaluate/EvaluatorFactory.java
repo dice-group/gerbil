@@ -17,6 +17,7 @@
 package org.aksw.gerbil.evaluate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.aksw.agdistis.util.TripleIndex;
@@ -133,44 +134,36 @@ public class EvaluatorFactory {
 		// }
 	}
 
-	@SuppressWarnings("rawtypes")
-	protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration,
+	protected List<Evaluator<?>> createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration,
 			Dataset dataset) {
 		return createEvaluator(type, configuration, dataset, globalClassifier, inferencer);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected Evaluator createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
+	protected List<Evaluator<?>> createEvaluator(ExperimentType type, ExperimentTaskConfiguration configuration, Dataset dataset,
 			UriKBClassifier classifier, SubClassInferencer inferencer) {
 		String[] additional = dataset.getAdditionalProperties();
 		String truthValueURI = GerbilConfiguration.getInstance().getString(TRUTH_VALUE_URI_GERBIL_KEY);
 		if (additional != null) {
 			truthValueURI = additional[0];
 		}
-
 		switch (type) {
 		// case Task1/Task2
-
 		case SWC1:
 			if (additional == null) {
 				additional = GerbilConfiguration.getInstance().getStringArray(SWC2017_TASK1_PROPERTIES_KEY);
 			}
-			return new ModelComparator(additional, false);
+			return Arrays.asList((Evaluator) new ModelComparator(additional, false));
         case SWC_2019:
-        	
 		case SWC2:
-			return new ROCEvaluator(truthValueURI);
-		case SWC2_F:
-			return new ConfidenceBasedEvaluator<Model>();
-		case SWC2_PR:
-			return new PREvaluator(truthValueURI);
+			return Arrays.asList((Evaluator) new ROCEvaluator(truthValueURI), (Evaluator) new ConfidenceBasedEvaluator<Model>(), (Evaluator) new PREvaluator(truthValueURI));
 			
 		case SWC2018T1:
 			if (additional == null) {
 				additional = GerbilConfiguration.getInstance().getStringArray(SWC2018_TASK1_PROPERTIES_KEY);
 			}
-			return new ConfidenceBasedModelComparator(additional, ModelComparator.F1_SCORE_NAME, true,
-					new DoubleResultComparator(), GerbilConfiguration.getInstance().getString(SWC2018_TASK1_CONFIDENCE_KEY));
+			return Arrays.asList((Evaluator) new ConfidenceBasedModelComparator(additional, ModelComparator.F1_SCORE_NAME, true,
+					new DoubleResultComparator(), GerbilConfiguration.getInstance().getString(SWC2018_TASK1_CONFIDENCE_KEY)));
 //			return new ConfidenceScoreEvaluatorDecorator<Model>(new ModelComparator<Model>(additional, true),
 //					ModelComparator.F1_SCORE_NAME, new DoubleResultComparator(),
 //					GerbilConfiguration.getInstance().getString(SWC2018_TASK1_CONFIDENCE_KEY));
@@ -180,10 +173,9 @@ public class EvaluatorFactory {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	protected void addSubTaskEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration,
 			Dataset dataset) {
-		ExperimentTaskConfiguration subTaskConfig;
+//		ExperimentTaskConfiguration subTaskConfig;
 		switch (configuration.type) {
 		case AIT2KB: // falls through
 		case AType:
@@ -205,41 +197,8 @@ public class EvaluatorFactory {
 			return;
 		}
 		case Sa2KB: // falls through
-		case A2KB: {
-			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-					ExperimentType.ERec, configuration.matching);
-			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
-					createEvaluator(ExperimentType.ERec, subTaskConfig, dataset)));
-			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-					ExperimentType.D2KB, Matching.STRONG_ENTITY_MATCH);
-			// evaluators.add(createEvaluator(ExperimentType.ELink,
-			// configuration, dataset));
-			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
-					createEvaluator(ExperimentType.D2KB, subTaskConfig, dataset)));
-			return;
-		}
-		case QA: {
-			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-					configuration.questionLanguage, ExperimentType.AIT2KB, configuration.matching);
-			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
-					createEvaluator(ExperimentType.AIT2KB, subTaskConfig, dataset)));
-
-			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-					configuration.questionLanguage, ExperimentType.AType, Matching.STRONG_ENTITY_MATCH);
-			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
-					createEvaluator(ExperimentType.AType, subTaskConfig, dataset)));
-
-			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-					configuration.questionLanguage, ExperimentType.P2KB, Matching.STRONG_ENTITY_MATCH);
-			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
-					createEvaluator(ExperimentType.P2KB, subTaskConfig, dataset)));
-
-			subTaskConfig = new ExperimentTaskConfiguration(configuration.annotatorConfig, configuration.datasetConfig,
-					configuration.questionLanguage, ExperimentType.RE2KB, Matching.STRONG_ENTITY_MATCH);
-			evaluators.add(new SubTaskEvaluator<>(subTaskConfig,
-					createEvaluator(ExperimentType.RE2KB, subTaskConfig, dataset)));
-			return;
-		}
+		case A2KB:
+		case QA: // They had sub experiments but not in this version of GERBIL
 		default: {
 			throw new RuntimeException();
 		}
@@ -249,12 +208,7 @@ public class EvaluatorFactory {
 	public void addEvaluators(List<Evaluator<?>> evaluators, ExperimentTaskConfiguration configuration,
 			Dataset dataset) {
 		converterManager.setQuestionLanguage(configuration.getQuestionLanguage());
-		List<Evaluator<?>> mEvaluators = new ArrayList<Evaluator<?>>();
-		List<ExperimentType> types = ExperimentType.getRelatedTypes(configuration.type);
-		for (ExperimentType type: types) {
-			mEvaluators.add(createEvaluator(type, configuration, dataset));
-		}
-		evaluators.addAll(mEvaluators);
+		evaluators.addAll(createEvaluator(configuration.type, configuration, dataset));
 		addSubTaskEvaluators(evaluators, configuration, dataset);
 	}
 

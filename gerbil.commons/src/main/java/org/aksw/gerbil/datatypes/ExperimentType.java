@@ -81,10 +81,6 @@ public enum ExperimentType implements Describable {
     
 	SWC2("Fact Checking", "Knowledge graph validation: given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement."),
     
-	SWC2_F("Fact Checking - P/R/F1", "Knowledge graph validation: given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement."),
-    
-	SWC2_PR("Fact Checking - PR Curve", "Knowledge graph validation: given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement."),
-    
 	/**
      * Scored - annotate to KB
      * <p>
@@ -202,36 +198,6 @@ public enum ExperimentType implements Describable {
     	return types;
     }
     
-    public static List<ExperimentType> getRelatedTypes(ExperimentType type){
-    	List<ExperimentType> types = new LinkedList<ExperimentType>();
-    	for(ExperimentType otherType: ExperimentType.values()) {
-    		if(type.isRelatedType(otherType)) {
-				types.add(otherType);
-			}
-    	}
-    	return types;
-    }
-    
-	private boolean isRelatedType(ExperimentType type) {
-		switch (this) {
-			case SWC2: {
-				switch (type) {
-					case SWC2: 
-						return true;
-					case SWC2_F:
-						return true;
-					case SWC2_PR:
-						return true;
-					default: {
-						return false;
-					}
-				}
-			}
-			default:
-				return false;
-		}
-	}
-
     public boolean equalsOrContainsType(ExperimentType type) {
         switch (this) {
         case Sa2KB: // falls through
