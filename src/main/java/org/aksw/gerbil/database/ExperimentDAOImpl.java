@@ -19,10 +19,11 @@ package org.aksw.gerbil.database;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -49,8 +50,9 @@ import org.springframework.jdbc.support.KeyHolder;
 public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentDAOImpl.class);
-    
+
     private final static String INSERT_RESULT_NAME = "INSERT INTO ResultNames (name) VALUES (:name)";
+    private final static String GET_RESULT_NAMES = "SELECT name FROM ResultNames";
 
     private final static String INSERT_TASK = "INSERT INTO ExperimentTasks (systemName, datasetName, experimentType, matching, state, lastChanged, version) VALUES (:annotatorName, :datasetName, :experimentType, :matching, :state, :lastChanged, :version)";
     private final static String SET_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE id=:id";
@@ -76,14 +78,24 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     private final static String GET_RUNNING_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks where state = :unfinishedState AND id < :lastTaskId";
 
+    /**
+     * Default result names that are expected to be in all experiments
+     * 
+     * TODO Micha: I am not sure whether this is really necessary.
+     */
     public static final String[] RES_NAME_ARR = { "Micro F1 score", "Micro Precision", "Micro Recall", "Macro F1 score",
             "Macro Precision", "Macro Recall" };
+    /**
+     * Result name for the general error count KPI.
+     */
     public static final String ERROR_COUNT_NAME = "Error Count";
 
-    static final String GET_RESULT_NAMES = "SELECT name FROM ResultNames";
-    private static final String INSERT_RESULT_NAMES = "INSERT INTO ResultNames(name) VALUES (:name)";
-
     private final NamedParameterJdbcTemplate template;
+    
+    /**
+     * The result names that are already in the database.
+     */
+    private Set<String> resultNames;
 
     public ExperimentDAOImpl(DataSource dataSource) {
         this.template = new NamedParameterJdbcTemplate(dataSource);
@@ -93,37 +105,42 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         super(resultDurability);
         this.template = new NamedParameterJdbcTemplate(dataSource);
     }
-    
+
     @Override
     public void initialize() {
         super.initialize();
-        // Add the result names
-        List<String> names = new ArrayList<String>(Arrays.asList(RES_NAME_ARR));
-        names.add(ERROR_COUNT_NAME);
-        insertResultNames(names);
+        // Get known result names
+        resultNames = new HashSet<String>(getResultNames());
+        // Add the default result names
+        // TODO Micha: I am not sure whether this is really necessary.
+        Arrays.stream(RES_NAME_ARR).forEach(name -> checkResultName(name));
+        checkResultName(ERROR_COUNT_NAME);
         LOGGER.info("ExperimentDAO initialized.");
     }
-
-    @Override
-    public List<String> getResultNames(){
-        List<String> ret = this.template.query(GET_RESULT_NAMES, new StringRowMapper());
-        return ret;
-    }
-
-
-    public void insertResultNames(List<String> names){
-        List<String> inDBNames = getResultNames();
-        for(String name : names){
-            if(inDBNames.contains(name)){
-                continue;
-            }
+    
+    /**
+     * Checks the given result name and inserts it in case it is not known.
+     * 
+     * @param name the result name that should be checked
+     */
+    private synchronized void checkResultName(String name) {
+        if (!resultNames.contains(name)) {
             MapSqlParameterSource parameters = new MapSqlParameterSource();
             parameters.addValue("name", name);
-            this.template.update(INSERT_RESULT_NAMES, parameters);
-
+            int rows = this.template.update(INSERT_RESULT_NAME, parameters);
+            if (rows == 0) {
+                LOGGER.warn("Insertion of {} did not change anything.", name);
+            } else {
+                resultNames.add(name);
+            }
         }
     }
 
+    @Override
+    public List<String> getResultNames() {
+        List<String> ret = this.template.query(GET_RESULT_NAMES, new StringRowMapper());
+        return ret;
+    }
 
     @Override
     public List<ExperimentTaskStatus> getResultsOfExperiment(String experimentId) {
@@ -189,6 +206,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
             TaskResult tempResult;
             String tempType;
             for (String resName : resMap.keySet()) {
+                checkResultName(resName);
                 tempResult = resMap.get(resName);
                 tempType = tempResult.getResType();
                 if (DOUBLE_RESULT_TYPE.equalsIgnoreCase(tempType)) {
@@ -215,7 +233,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("value", value);
         int rows = this.template.update(INSERT_DOUBLE_RESULT, parameters);
         if (rows == 0) {
-            LOGGER.info("Tried to insert a result [taskId={}, resName=\"{}\", value={}]. The update query had no effect.",
+            LOGGER.info(
+                    "Tried to insert a result [taskId={}, resName=\"{}\", value={}]. The update query had no effect.",
                     taskId, resName, value);
         }
     }
@@ -227,7 +246,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("value", value);
         int rows = this.template.update(INSERT_INT_RESULT, parameters);
         if (rows == 0) {
-            LOGGER.info("Tried to insert a result [taskId={}, resName=\"{}\", value={}]. The update query had no effect.",
+            LOGGER.info(
+                    "Tried to insert a result [taskId={}, resName=\"{}\", value={}]. The update query had no effect.",
                     taskId, resName, value);
         }
     }
@@ -343,6 +363,16 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         // this.template.query(GET_TASK_RESULTS_BLOB, parameters, resultMapper);
     }
 
+    /**
+     * Adds the default result measures to the given experiment result with a
+     * default value in case the experiment result has not set them.
+     * 
+     * TODO Micha: I am not sure whether this is really necessary.
+     * 
+     * @param result The experiment result that should be checked for the default
+     *               values for default measures
+     * 
+     */
     public void setDefaultResultMap(ExperimentTaskStatus result) {
         Map<String, TaskResult> resMap = result.getResultsMap();
         TaskResult tempRes;
