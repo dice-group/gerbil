@@ -54,21 +54,21 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    private static final String ANNOTATOR_NAME = "FOX";
+    private static final String ANNOTATOR_NAME = "DBpedia Spotlight";
     private static final boolean ANNOTATOR_IS_NIF_WS = false;
     private static final String ANNOTATOR_NIF_WS_URL = "";
 
-    private static final String DATASET_NAME = "Potato";
-    private static final boolean DATASET_IS_LOCAL_FILE = true;
+    private static final String DATASET_NAME = "DBpediaSpotlight";
+    private static final boolean DATASET_IS_LOCAL_FILE = false;
     // File name if the dataset is a local file (note that it has to be located in
     // gerbil_data/upload)
     private static final String DATASET_FILE = "example.ttl";
 
-    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.D2KB;
+    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.A2KB;
     private static final Matching MATCHING = Matching.STRONG_ANNOTATION_MATCH;
 
-    private static final boolean USE_SAME_AS_RETRIEVAL = true;
-    private static final boolean USE_ENTITY_CHECKING = true;
+    private static final boolean USE_SAME_AS_RETRIEVAL = false;
+    private static final boolean USE_ENTITY_CHECKING = false;
 
     private static final boolean SHORTEN_DATASET = false;
     private static final int SHORTENED_SET_START_ID = 0;
@@ -94,8 +94,6 @@ public class SingleRunTest implements TaskObserver {
     }
 
     public void run() throws Exception {
-        System.out.println("java.version=" + System.getProperty("java.version"));
-        System.out.println("java.home=" + System.getProperty("java.home"));
         // Generate annotator name
         String annotatorName = null;
         if (ANNOTATOR_IS_NIF_WS) {
