@@ -136,34 +136,37 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
                 LOGGER.error("Exception while waiting for read mutex. Returning null.", e);
                 return null;
             }
-            // Check again that nobody already added the uri
-            if (uriSetIdMapping.containsKey(uri)) {
-                // use the cached result
-                int setId = uriSetIdMapping.get(uri);
-                if (setId != ENTITY_NOT_FOUND) {
-                    result = sets.get(setId);
+            try {
+                // Check again that nobody already added the uri
+                if (uriSetIdMapping.containsKey(uri)) {
+                    // use the cached result
+                    int setId = uriSetIdMapping.get(uri);
+                    if (setId != ENTITY_NOT_FOUND) {
+                        result = sets.get(setId);
+                    } else {
+                        result = null;
+                    }
                 } else {
-                    result = null;
-                }
-            } else {
-                if (result != null) {
-                    mergeSetIntoCache(result);
-                } else {
-                    uriSetIdMapping.put(uri, ENTITY_NOT_FOUND);
-                }
-                ++cacheChanges;
-                if ((forceStorageAfterChanges > 0) && (cacheChanges >= forceStorageAfterChanges)) {
-                    LOGGER.info("Storing the cache has been forced...");
-                    try {
-                        performCacheStorage();
-                    } catch (IOException e) {
-                        LOGGER.error("Exception while writing cache to file. Aborting.", e);
+                    if (result != null) {
+                        mergeSetIntoCache(result);
+                    } else {
+                        uriSetIdMapping.put(uri, ENTITY_NOT_FOUND);
+                    }
+                    ++cacheChanges;
+                    if ((forceStorageAfterChanges > 0) && (cacheChanges >= forceStorageAfterChanges)) {
+                        LOGGER.info("Storing the cache has been forced...");
+                        try {
+                            performCacheStorage();
+                        } catch (IOException e) {
+                            LOGGER.error("Exception while writing cache to file. Aborting.", e);
+                        }
                     }
                 }
+            } finally {
+                // The last one will be released at the end
+                cacheReadMutex.release(MAX_CONCURRENT_READERS - 1);
+                cacheWriteMutex.release();
             }
-            // The last one will be released at the end
-            cacheReadMutex.release(MAX_CONCURRENT_READERS - 1);
-            cacheWriteMutex.release();
         }
         cacheReadMutex.release();
         return result;
@@ -211,8 +214,9 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
             performCacheStorage();
         } catch (IOException e) {
             LOGGER.error("Exception while writing cache to file. Aborting.", e);
+        } finally {
+            cacheWriteMutex.release();
         }
-        cacheWriteMutex.release();
     }
 
     private void performCacheStorage() throws IOException {

@@ -38,6 +38,10 @@ import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.IntOpenHashSet;
 import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
+/**
+ * @deprecated MR: marked it as deprecated as it is simply a copy of the FileBasedCachineSameAsRetriever. 
+ */
+@Deprecated
 public class IndexFileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDecorator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexFileBasedCachingSameAsRetriever.class);
