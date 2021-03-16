@@ -20,7 +20,7 @@ public abstract class AUCEvaluator<T extends Model> implements Evaluator<T> {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AUCEvaluator.class);
 	
-	public static final String AUC_NAME = "Area Under Curve";
+	public static final String AUC_NAME = "AUC";
 
 	public static final String TRUTH_VALUE_URI_GERBIL_KEY = "org.aksw.gerbil.evaluator.roc.truthProperty";
 

@@ -35,7 +35,6 @@ public class TaskResultsRowMapper implements RowMapper<TaskResult> {
 		String resultName = resultSet.getString(1);
 		String resultType = resultSet.getString(2);
 		Object resultValue = null;
-		System.out.println("IM HERE AT BLOB");
 		if(resultType.equalsIgnoreCase("BLOB") && (resultName.equalsIgnoreCase(ROCEvaluator.NAME) || resultName.equalsIgnoreCase(PREvaluator.NAME))) {
 			Blob rocBlob = resultSet.getBlob(3);
 			byte[] bdata = rocBlob.getBytes(1, (int) rocBlob.length());

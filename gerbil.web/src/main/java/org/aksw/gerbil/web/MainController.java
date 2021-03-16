@@ -252,7 +252,7 @@ public class MainController {
         LOGGER.debug("Got request on /experiment with id={}", id);
         Set<String> resNamesDb = new HashSet<>();
         List<ExperimentTaskStatus> results = dao.getResultsOfExperiment(id);
-        Boolean hasRoc = false;
+        //Boolean hasRoc = false;
         for(ExperimentTaskStatus result : results){
         	resNamesDb.addAll(result.getResultsMap().keySet());
         	String annotator = result.getAnnotator();
@@ -260,28 +260,19 @@ public class MainController {
         	result.setAnnotator(annotator);
         	Map<String, TaskResult> resMap = result.getResultsMap();
         	
-        	System.out.println("IM HEREEEEE");
-        	resMap.forEach((k,v)->{
-        		System.out.println(k);
-        		System.out.println(v.getResValue());
-        	});
-
         	if(resMap.get(ROCEvaluator.NAME) != null) {
         		TaskResult taskRes = resMap.get(ROCEvaluator.NAME);
         		String rocVal = (String) taskRes.getResValue();
-        		rocVal = rocVal.replace("roc", "data");
+        		// rocVal = rocVal.replace("roc", "data"); // it's already data
         		taskRes.setResValue(rocVal);
-        		hasRoc = true;
-        		System.out.println("IM HEREEEEE IN ROC");
+        		//hasRoc = true;
         	}
         	
         	if(resMap.get(PREvaluator.NAME) != null) {
         		TaskResult taskRes = resMap.get(PREvaluator.NAME);
-        		String rocVal = (String) taskRes.getResValue();
-        		rocVal = rocVal.replace("roc", "data");
-        		taskRes.setResValue(rocVal);
-        		hasRoc = true;
-        		System.out.println("IM HEREEEEE IN PR");
+        		String resVal = (String) taskRes.getResValue();
+        		taskRes.setResValue(resVal);
+        		//hasRoc = true;
         	}
         }
         ExperimentTaskStateHelper.setStatusLines(results);
@@ -300,7 +291,8 @@ public class MainController {
         }
         fnlRsltNms.addAll(resNamesDb);
         model.addObject("resultNames",fnlRsltNms);
-        model.addObject("hasRoc", hasRoc);
+        //model.addObject("hasRoc", hasRoc);
+        
         return model;
     }
 

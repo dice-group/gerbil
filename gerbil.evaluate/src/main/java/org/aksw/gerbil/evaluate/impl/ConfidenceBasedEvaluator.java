@@ -38,10 +38,10 @@ public class ConfidenceBasedEvaluator<T extends Model> implements Evaluator<T> {
 	protected static final int F1_SCORE = 2;
 	protected static final int THRESHOLD = 3;
 
-	protected static final String PRECISION_STR = "precision";
-	protected static final String RECALL_STR = "recall";
-	protected static final String F1_SCORE_STR = "f1-score";
-	protected static final String THRESHOLD_STR = "threshold";
+	protected static final String PRECISION_STR = "Precision";
+	protected static final String RECALL_STR = "Recall";
+	protected static final String F1_SCORE_STR = "F1-score";
+	protected static final String THRESHOLD_STR = "Opt. Threshold";
 	
 	/**
 	 * Maps the threshold to the corresponding precision/recall/f1-scores
