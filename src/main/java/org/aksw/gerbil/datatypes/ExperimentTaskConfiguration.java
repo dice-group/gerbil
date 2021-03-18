@@ -37,7 +37,6 @@ public class ExperimentTaskConfiguration {
         this.matching = matching;
     }
 
-    
     public ExperimentTaskConfiguration(AnnotatorConfiguration annotatorConfig, DatasetConfiguration datasetConfig,
             String questionLanguage, ExperimentType type, Matching matching) {
         super();
@@ -57,7 +56,7 @@ public class ExperimentTaskConfiguration {
         this.matching = matching;
         this.questionLanguage = questionLanguage;
     }
-    
+
     public AnnotatorConfiguration getAnnotatorConfig() {
         return annotatorConfig;
     }
@@ -89,18 +88,43 @@ public class ExperimentTaskConfiguration {
     public void setMatching(Matching matching) {
         this.matching = matching;
     }
-    
-    public String getQuestionLanguage(){
-    	return questionLanguage;
+
+    public String getQuestionLanguage() {
+        return questionLanguage;
     }
-    
-    public void setQuestionLanguage(String questionLanguage){
-    	this.questionLanguage = questionLanguage;
+
+    public void setQuestionLanguage(String questionLanguage) {
+        this.questionLanguage = questionLanguage;
     }
 
     @Override
     public String toString() {
-        return "eTConfig(\"" + annotatorConfig.getName() + "\",\"" + datasetConfig.getName() + "\",\"" + type.name()
-                + "\",\"" + matching.name() + "\")";
+        StringBuilder builder = new StringBuilder();
+        builder.append("eTConfig(\"");
+        if (annotatorConfig != null) {
+            builder.append(annotatorConfig.getName());
+        } else {
+            builder.append("null");
+        }
+        builder.append("\",\"");
+        if (datasetConfig != null) {
+            builder.append(datasetConfig.getName());
+        } else {
+            builder.append("null");
+        }
+        builder.append("\",\"");
+        if (type != null) {
+            builder.append(type.name());
+        } else {
+            builder.append("null");
+        }
+        builder.append("\",\"");
+        if (matching != null) {
+            builder.append(matching.name());
+        } else {
+            builder.append("null");
+        }
+        builder.append("\")");
+        return builder.toString();
     }
 }
