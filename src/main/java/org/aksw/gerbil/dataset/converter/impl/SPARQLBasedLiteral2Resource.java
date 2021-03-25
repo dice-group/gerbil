@@ -43,19 +43,19 @@ public class SPARQLBasedLiteral2Resource extends AbstractLiteral2Resource {
 		Query q;
 		try {
 			q = QueryFactory.create(queryString.toString());
+			QueryExecution exec = QueryExecutionFactory.sparqlService(endpoint, q);
+			ResultSet res = exec.execSelect();
+			while(res.hasNext()){
+				ret.add(res.next().getResource("res").getURI());
+			}
+			if(ret.isEmpty()){
+				ret.add(literal);
+			}
+			return ret;
 		}catch(Exception e) {
 			ret.add(literal);
 			return ret;
 		}
-		QueryExecution exec = QueryExecutionFactory.sparqlService(endpoint, q);
-		ResultSet res = exec.execSelect();
-		while(res.hasNext()){
-			ret.add(res.next().getResource("res").getURI());
-		}
-		if(ret.isEmpty()){
-			ret.add(literal);
-		}
-		return ret;
 	}
 
 }
