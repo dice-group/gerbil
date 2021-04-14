@@ -34,7 +34,7 @@ import org.apache.jena.riot.adapters.RDFReaderRIOT;
  */
 public class TurtleNIFParser extends AbstractNIFParser {
 
-    private static final String HTTP_CONTENT_TYPE = "application/x-turtle";
+    private static final String HTTP_CONTENT_TYPE = "text/turtle, application/x-turtle";
 
     public TurtleNIFParser() {
         super(HTTP_CONTENT_TYPE);
