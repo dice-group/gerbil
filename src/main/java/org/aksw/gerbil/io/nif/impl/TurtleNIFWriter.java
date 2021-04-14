@@ -28,7 +28,7 @@ import org.aksw.gerbil.io.nif.NIFWriter;
  */
 public class TurtleNIFWriter extends AbstractNIFWriter {
 
-    private static final String HTTP_CONTENT_TYPE = "application/x-turtle";
+    private static final String HTTP_CONTENT_TYPE = "text/turtle";
     private static final String LANGUAGE = "TTL";
 
     public TurtleNIFWriter() {
