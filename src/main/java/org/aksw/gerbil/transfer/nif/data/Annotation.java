@@ -18,6 +18,7 @@ package org.aksw.gerbil.transfer.nif.data;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.aksw.gerbil.transfer.nif.Meaning;
@@ -29,11 +30,11 @@ import org.aksw.gerbil.transfer.nif.MeaningEqualityChecker;
  * @author Michael Röder
  * 
  */
-public class Annotation implements Meaning {
+public class Annotation extends AbstractMarkingImpl implements Meaning {
 
     @Deprecated
     protected String uri;
-    protected Set<String> uris = new HashSet<String>();
+    protected Set<String> uris = new LinkedHashSet<String>();
 
     public Annotation(String uri) {
         this.uri = uri;

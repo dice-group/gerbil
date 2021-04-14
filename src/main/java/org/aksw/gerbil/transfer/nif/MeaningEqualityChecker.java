@@ -20,11 +20,17 @@ import java.util.Set;
 
 public class MeaningEqualityChecker {
 
-    public static final boolean overlaps(Meaning m1, Meaning m2) {
+    public static boolean overlaps(Meaning m1, Meaning m2) {
+        if((m1 == null) || (m2 == null)) {
+            return false;
+        }
         return overlaps(m1.getUris(), m2.getUris());
     }
 
-    public static final boolean overlaps(Set<String> uris1, Set<String> uris2) {
+    public static boolean overlaps(Set<String> uris1, Set<String> uris2) {
+        if((uris1 == null) || (uris2 == null)) {
+            return false;
+        }
         Set<String> smaller, larger;
         if (uris1.size() > uris2.size()) {
             smaller = uris2;

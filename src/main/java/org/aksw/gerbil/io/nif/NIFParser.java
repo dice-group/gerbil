@@ -21,8 +21,7 @@ import java.io.Reader;
 import java.util.List;
 
 import org.aksw.gerbil.transfer.nif.Document;
-
-import com.hp.hpl.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Model;
 
 /**
  * This interface defines a NIFParser - a class that should parse NIF data from

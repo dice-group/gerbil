@@ -20,14 +20,15 @@ import org.aksw.gerbil.io.nif.utils.NIFUriHelper;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Meaning;
+import org.aksw.gerbil.transfer.nif.ProvenanceInfo;
+import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.vocabulary.NIF;
-
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.vocabulary.RDF;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.RDF;
 
 public class DocumentWriter {
 
@@ -61,14 +62,19 @@ public class DocumentWriter {
         // http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#predLang
 
         // add annotations
-        int meaningId = 0;
+        // FIXME should use one single method for all marking types!
+        int meaningId = 0, relationId = 0;
         for (Marking marking : document.getMarkings()) {
             if (marking instanceof Span) {
                 annotationWriter.addSpan(nifModel, documentResource, text, document.getDocumentURI(), (Span) marking);
+            } else if (marking instanceof Relation) {
+                annotationWriter.addRelation(nifModel, documentResource, document.getDocumentURI(), (Relation) marking, relationId);
+                ++relationId;
             } else if (marking instanceof Meaning) {
-                annotationWriter.addAnnotation(nifModel, documentResource, document.getDocumentURI(),
-                        (Annotation) marking, meaningId);
+                annotationWriter.addAnnotation(nifModel, documentResource, document.getDocumentURI(), (Annotation) marking, meaningId);
                 ++meaningId;
+            } else if (marking instanceof ProvenanceInfo) {
+                annotationWriter.addProvenanceInfo(nifModel, documentResource, document.getDocumentURI(), (ProvenanceInfo) marking);
             }
         }
     }

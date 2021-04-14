@@ -1,0 +1,55 @@
+﻿@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix dbr: <http://dbpedia.org/resource/> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-2#char=0,205>
+        a               nif:RFC5147String , nif:String , nif:Context ;
+        nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex    "205"^^xsd:nonNegativeInteger ;
+        nif:isString    "Friedrich Leibniz (or Leibnütz; 1597–1652) was a Lutheran lawyer and a notary, registrar and professor of moral philosophy within Leipzig University. Friedrich Leibniz was the father of Gottfried Leibniz. "^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-2#relation0>     
+        a               rdf:Statement ;
+        rdf:subject     dbr:Friedrich_Leibniz ;
+        rdf:predicate   dbo:almaMater ;
+        rdf:object      dbr:Leipzig_University ;
+        nif:referenceContext    <http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-2#char=0,205> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-2#relation1>     
+        a               rdf:Statement ;
+        rdf:subject     dbr:Gottfried_Wilhelm_Leibniz ;
+        rdf:predicate   dbo:parent ;
+        rdf:object      dbr:Friedrich_Leibniz ;
+        nif:referenceContext    <http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-2#char=0,205> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-3#char=0,309>
+        a               nif:RFC5147String , nif:String , nif:Context ;
+        nif:beginIndex  "0"^^xsd:nonNegativeInteger ;
+        nif:endIndex    "309"^^xsd:nonNegativeInteger ;
+        nif:isString    "Gottfried Leibniz was born on July 1, 1646, toward the end of the Thirty Years' War, in Leipzig, Saxony, to Friedrich Leibniz and Catharina Schmuck. Friedrich noted in his family journal: On Sunday 21 June 1646, my son Gottfried Wilhelm is born into the world a quarter after six in the evening, in Aquarius. "^^xsd:string .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-3#relation0>     
+        a               rdf:Statement ;
+        rdf:subject     dbr:Gottfried_Wilhelm_Leibniz ;
+        rdf:predicate   dbo:birthPlace ;
+        rdf:object      dbr:Leipzig ;
+        nif:referenceContext    <http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-3#char=0,309> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-3#relation1>     
+        a               rdf:Statement ;
+        rdf:subject     dbr:Gottfried_Wilhelm_Leibniz ;
+        rdf:predicate   dbo:parent ;
+        rdf:object      dbr:Friedrich_Leibniz ;
+        nif:referenceContext    <http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-3#char=0,309> .
+
+<http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-3#relation2>     
+        a               rdf:Statement ;
+        rdf:subject     dbr:Gottfried_Wilhelm_Leibniz ;
+        rdf:predicate   dbo:parent ;
+        rdf:object      dbr:Catharina_Schmuck ;
+        nif:referenceContext    <http://www.ontologydesignpatterns.org/data/oke-challenge-2017/task-4/sentence-3#char=0,309> .
