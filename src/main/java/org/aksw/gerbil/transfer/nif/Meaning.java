@@ -42,4 +42,36 @@ public interface Meaning extends Marking {
     public void addUri(String uri);
 
     public boolean containsUri(String uri);
+
+    /**
+     * Returns {@code true} if the given {@link Meaning} instances have overlapping
+     * URI sets.
+     * 
+     * @param m1
+     *            an instance of {@link Meaning} that should be checked for its
+     *            equality with the second instance based on the semantics of the
+     *            {@link Meaning} interface.
+     * @param m2
+     *            an instance of {@link Meaning} that should be checked for its
+     *            equality with the first instance based on the semantics of the
+     *            {@link Meaning} interface.
+     * @return {@code true} if the given {@link Meaning} instances have overlapping
+     *         URI sets, else {@code false}.
+     */
+    public static boolean equals(Meaning m1, Meaning m2) {
+        Set<String> m1Uris = m1.getUris();
+        Set<String> m2Uris = m2.getUris();
+        boolean m1HasUris = m1Uris != null && (m1Uris.size() > 0);
+        boolean m2HasUris = m2Uris != null && (m2Uris.size() > 0);
+        if (m1HasUris && m2HasUris) {
+            for (String uri : m1Uris) {
+                if (m2Uris.contains(uri)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return m1HasUris == m2HasUris;
+        }
+    }
 }

@@ -292,8 +292,7 @@ public class AnnotationParser {
 			while (sourceIter.hasNext()) {
 				// Subject is blank node for one relation annotation
 				Resource relationStmtNode = sourceIter.next();
-				if (nifModel.contains(relationStmtNode, ResourceFactory.createProperty("http://www.w3.org/2005/Atom"),
-						RDF.Statement)) {
+				if (nifModel.contains(relationStmtNode, RDF.type, RDF.Statement)) {
 					//get statements
 					Node subject = nifModel.listObjectsOfProperty(relationStmtNode, RDF.subject).next().asNode();
 					Node predicate = nifModel.listObjectsOfProperty(relationStmtNode, RDF.predicate).next().asNode();
