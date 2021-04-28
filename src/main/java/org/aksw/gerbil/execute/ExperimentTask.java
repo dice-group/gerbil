@@ -155,8 +155,10 @@ public class ExperimentTask implements Task {
 			LOGGER.error("Got an error while running the task. Storing the error code in the db...", e);
 			// store error
 			experimentDAO.setExperimentState(experimentTaskId, e.getErrorType().getErrorCode());
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			LOGGER.error("Error while trying to execute experiment.", e);
+            // store error
+            experimentDAO.setExperimentState(experimentTaskId, ErrorTypes.UNEXPECTED_EXCEPTION.getErrorCode());
 		} finally {
 			IOUtils.closeQuietly(annotator);
 			IOUtils.closeQuietly(dataset);
