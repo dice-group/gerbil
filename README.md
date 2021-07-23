@@ -2,10 +2,10 @@ GERBIL
 ========
 <i>General Entity Annotator Benchmark</i>
 
-[![Build Status](https://travis-ci.org/dice-group/gerbil.svg?branch=master)](https://travis-ci.org/dice-group/gerbil)
+[![Java CI with Maven](https://github.com/dice-group/gerbil/actions/workflows/maven.yml/badge.svg)](https://github.com/dice-group/gerbil/actions/workflows/maven.yml)
 [![Project Stats](https://www.openhub.net/p/GERBIL-Benchmark/widgets/project_thin_badge.gif)](https://www.openhub.net/p/GERBIL-Benchmark)
 [![BCH compliance](https://bettercodehub.com/edge/badge/AKSW/gerbil)](https://bettercodehub.com/)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/962549badbc74930ad83bf2707c44762)](https://www.codacy.com/app/dice-group/gerbil?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dice-group/gerbil&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5634b1a7508f475886b027feac9da228)](https://www.codacy.com/gh/dice-group/gerbil/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dice-group/gerbil&amp;utm_campaign=Badge_Grade)
 
 <img style="height: auto; width: auto; max-width: 300px; max-height: 300px;" src="http://139.18.2.164/mroeder/gerbil/gerbil_logo.png">
 
