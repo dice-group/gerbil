@@ -1,0 +1,49 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    - name: Move log4j properties
+      run: cp src/main/properties/log4j.properties src/test/resources/log4j.properties
+    - name: Prepare gerbil_data dir
+      run: |
+        mkdir -p "gerbil_data"
+        curl --retry 4 -L -o "gerbil_data/gerbil_data.zip" "https://github.com/AKSW/gerbil/releases/download/v1.2.6/gerbil_data.zip"
+        unzip "gerbil_data/gerbil_data.zip"
+        mkdir -p "gerbil_data/cache"
+    - name: Create keys file
+      run: touch src/main/properties/gerbil_keys.properties
+    - name: Compile project
+      run: mvn clean compile -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+    - name: Run tests
+      run: mvn jacoco:prepare-agent package -Dmaven.javadoc.skip=true -B jacoco:report 
+    - name: Upload test results
+      run: |
+        LATEST_VERSION="$(curl -Ls https://api.bintray.com/packages/codacy/Binaries/codacy-coverage-reporter/versions/_latest | jq -r .name)"
+        curl -Ls -o codacy-coverage-reporter "https://dl.bintray.com/codacy/Binaries/${LATEST_VERSION}/codacy-coverage-reporter-linux"
+        chmod +x codacy-coverage-reporter
+        ./codacy-coverage-reporter report -l Java -r target/site/jacoco/jacoco.xml
