@@ -53,6 +53,9 @@ public interface ExperimentDAO extends Closeable {
      * Sentinel value returned if the task with the given id couldn't be found.
      */
     public static final int TASK_NOT_FOUND = -2;
+    
+    public static final String INT_RESULT_TYPE = "INT";
+    public static final String DOUBLE_RESULT_TYPE = "DOUBLE";
 
     /**
      * Initializes the database. Searches the database for experiment tasks that
@@ -65,6 +68,8 @@ public interface ExperimentDAO extends Closeable {
      * mechanism.
      */
     public void initialize();
+
+    public List<String> getResultNames();
 
     /**
      * Sets the durability of a experiment task result.

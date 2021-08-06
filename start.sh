@@ -117,6 +117,7 @@ url="https://github.com/dice-group/gerbil/releases/download/v1.2.6/gerbil_data.z
 
 if [ ! -d "gerbil_data" ]; then
     mkdir -p "gerbil_data" || error "Could not create gerbil_data directory"
+    mkdir -p "gerbil_data/cache" || error "Could not create gerbil_data/cache directory"
     if [ ! -f "$file" ]; then
         echo "Downloading dependencies ... ($url)"
         curl --retry 4 -L -o "$file" "$url"
@@ -140,8 +141,7 @@ if [ ! -f "$file" ]; then
 	echo "Creating empty $file file"
 	mkdir -p "$dir" || error "Could not create $dir directory"
 	echo "##############################################################################"  > $file
-	echo "# This is the properties file contains our keys for several annotator web    #"  >> $file
-	echo "# services.                                                                  #"  >> $file
+	echo "# This is the properties file for keys of several annotator web services.    #"  >> $file
 	echo "#                      IT SHOULD NOT BE DISTRIBUTED!!!                       #"  >> $file
 	echo "##############################################################################"  >> $file
 fi
@@ -149,12 +149,12 @@ fi
 #####################################################################
 # Check for dbpedia sameAs index
 echo "Checking dbpedia sameAs index..."
-if [ ! -d "indexes/dbpedia" ]; then
+if [ ! -d "gerbil_data/indexes/dbpedia" ]; then
 	echo "Couldn't find a dbpedia sameAs index"
 	if yesno "Should the index be downloaded (~1GB zipped, ~2GB extracted)? (yes/no): "; then
-		mkdir -p "indexes/dbpedia" || error "Could not create indexes/dbpedia directory"
-		file="indexes/dbpedia/dbpedia_index.zip"
-		url="http://139.18.2.164/mroeder/gerbil/dbpedia_index.zip"
+		mkdir -p "gerbil_data/indexes/dbpedia" || error "Could not create gerbil_data/indexes/dbpedia directory"
+		file="gerbil_data/indexes/dbpedia/dbpedia_index.zip"
+		url="https://hobbitdata.informatik.uni-leipzig.de/gerbil/dbpedia_index_2016.zip"
 		echo "Downloading index ... ($url)"
 		curl --retry 4 -L -o "$file" "$url"
 
@@ -162,7 +162,7 @@ if [ ! -d "indexes/dbpedia" ]; then
 			echo "Couldn't downloading index file: $file"
 		else
 			echo "Extracting index ... "
-			unzip "$file" -d "indexes/dbpedia"
+			unzip "$file" -d "gerbil_data/indexes/dbpedia"
 		fi
 	fi
 fi
@@ -170,12 +170,12 @@ fi
 #####################################################################
 # Check for dbpedia entity check index
 echo "Checking dbpedia entity check index..."
-if [ ! -d "indexes/dbpedia_check" ]; then
+if [ ! -d "gerbil_data/indexes/dbpedia_check" ]; then
 	echo "Couldn't find a dbpedia entity check index"
 	if yesno "Should the index be downloaded (~0.3GB zipped, ~0.7GB extracted)? (yes/no): "; then
-		mkdir -p "indexes/dbpedia_check" || error "Could not create indexes/dbpedia_check directory"
-		file="indexes/dbpedia_check/dbpedia_check_index.zip"
-		url="http://139.18.2.164/mroeder/gerbil/dbpedia_check_index.zip"
+		mkdir -p "gerbil_data/indexes/dbpedia_check" || error "Could not create gerbil_data/indexes/dbpedia_check directory"
+		file="gerbil_data/indexes/dbpedia_check/dbpedia_check_index.zip"
+		url="https://hobbitdata.informatik.uni-leipzig.de/gerbil/dbpedia_check_index_2017.zip"
 		echo "Downloading index ... ($url)"
 		curl --retry 4 -L -o "$file" "$url"
 
@@ -183,7 +183,7 @@ if [ ! -d "indexes/dbpedia_check" ]; then
 			echo "Couldn't downloading index file: $file"
 		else
 			echo "Extracting index ... "
-			unzip "$file" -d "indexes/dbpedia_check"
+			unzip "$file" -d "gerbil_data/indexes/dbpedia_check"
 		fi
 	fi
 fi

@@ -106,6 +106,11 @@ public class ExperimentTask implements Task {
 				throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
 						+ configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
 			}
+			// Check the dataset
+			if (dataset.size() == 0) {
+			    throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
+                        + configuration.type.name() + "\".", ErrorTypes.DATASET_EMPTY_ERROR);
+			}
 
 			// Create annotator
 			annotator = (Annotator) configuration.annotatorConfig.getAnnotator(configuration.type);
@@ -143,14 +148,17 @@ public class ExperimentTask implements Task {
 			transformResults(result, expResult);
 
 			// store result
+            LOGGER.info("Setting experiment results: " + expResult.toString());
 			experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
 			LOGGER.info("Task Finished " + configuration.toString());
 		} catch (GerbilException e) {
 			LOGGER.error("Got an error while running the task. Storing the error code in the db...", e);
 			// store error
 			experimentDAO.setExperimentState(experimentTaskId, e.getErrorType().getErrorCode());
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			LOGGER.error("Error while trying to execute experiment.", e);
+            // store error
+            experimentDAO.setExperimentState(experimentTaskId, ErrorTypes.UNEXPECTED_EXCEPTION.getErrorCode());
 		} finally {
 			IOUtils.closeQuietly(annotator);
 			IOUtils.closeQuietly(dataset);
@@ -268,10 +276,10 @@ public class ExperimentTask implements Task {
 				transformResults(tempResult, expResult);
 			}
 		} else if (result instanceof DoubleEvaluationResult) {
-			taskRes = new TaskResult(((DoubleEvaluationResult) result).getValueAsDouble(), "DOUBLE");
+			taskRes = new TaskResult(((DoubleEvaluationResult) result).getValueAsDouble(), ExperimentDAO.DOUBLE_RESULT_TYPE);
 			
 		} else if (result instanceof IntEvaluationResult) {
-			taskRes = new TaskResult(((IntEvaluationResult) result).getValueAsInt(), "INT");
+			taskRes = new TaskResult(((IntEvaluationResult) result).getValueAsInt(), ExperimentDAO.INT_RESULT_TYPE);
 		}
 		if(taskRes!=null && resName!=null) {
 			expResult.getResultsMap().put(resName, taskRes);

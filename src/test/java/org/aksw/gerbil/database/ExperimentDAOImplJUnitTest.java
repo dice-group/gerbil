@@ -19,6 +19,8 @@ package org.aksw.gerbil.database;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -103,42 +105,40 @@ public class ExperimentDAOImplJUnitTest {
         Set<ExperimentTaskStatus> results = new HashSet<ExperimentTaskStatus>();
         Random random = new Random();
         ExperimentTaskStatus tempExTask;
-        String[] resNameArr = {"Micro F1 score", "Micro Precision", "Micro Recall", "Macro F1 score"
-        		, "Macro Precision", "Macro Recall"};
+        String[] resNameArr = { "Micro F1 score", "Micro Precision", "Micro Recall", "Macro F1 score",
+                "Macro Precision", "Macro Recall" };
         String errorCountName = "Error Count";
         Map<String, TaskResult> resMap;
         TaskResult tempTaskRes;
         for (int i = 0; i < 10; ++i) {
             if (i < 8) {
-            	
-            	tempExTask = new ExperimentTaskStatus("annotator1", "dataset" + i, ExperimentType.D2KB,
-                        Matching.STRONG_ANNOTATION_MATCH,
-                        ExperimentDAO.TASK_FINISHED);
-            	resMap = tempExTask.getResultsMap();
-            	//add random double entries
-                for(String dResName : resNameArr) {
-                	tempTaskRes = new TaskResult(random.nextDouble(), "DOUBLE");
-                	resMap.put(dResName, tempTaskRes);
+
+                tempExTask = new ExperimentTaskStatus("annotator1", "dataset" + i, ExperimentType.D2KB,
+                        Matching.STRONG_ANNOTATION_MATCH, ExperimentDAO.TASK_FINISHED);
+                resMap = tempExTask.getResultsMap();
+                // add random double entries
+                for (String dResName : resNameArr) {
+                    tempTaskRes = new TaskResult(random.nextDouble(), ExperimentDAO.DOUBLE_RESULT_TYPE);
+                    resMap.put(dResName, tempTaskRes);
                 }
-            	//add random error count
-                tempTaskRes = new TaskResult(random.nextInt(), "INT");
+                // add random error count
+                tempTaskRes = new TaskResult(random.nextInt(), ExperimentDAO.INT_RESULT_TYPE);
                 resMap.put(errorCountName, tempTaskRes);
                 results.add(tempExTask);
             } else {
-            	//TODO: 0 double val and 0 error code
-            	tempExTask = new ExperimentTaskStatus("annotator1", "dataset" + i, ExperimentType.D2KB,
-                        Matching.STRONG_ANNOTATION_MATCH,
-                        i == 8 ? ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET
+                // TODO: 0 double val and 0 error code
+                tempExTask = new ExperimentTaskStatus("annotator1", "dataset" + i, ExperimentType.D2KB,
+                        Matching.STRONG_ANNOTATION_MATCH, i == 8 ? ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET
                                 : ErrorTypes.UNEXPECTED_EXCEPTION.getErrorCode());
-	            //add random double entries
-            	resMap = tempExTask.getResultsMap();
-            	for(String dResName : resNameArr) {
-            		tempTaskRes = new TaskResult(0d, "DOUBLE");
-            		resMap.put(dResName, tempTaskRes);
-            	}
-	           	//add random error count
-				tempTaskRes = new TaskResult(0, "INT");
-				resMap.put(errorCountName, tempTaskRes);
+                // add random double entries
+                resMap = tempExTask.getResultsMap();
+                for (String dResName : resNameArr) {
+                    tempTaskRes = new TaskResult(0d, ExperimentDAO.DOUBLE_RESULT_TYPE);
+                    resMap.put(dResName, tempTaskRes);
+                }
+                // add random error count
+                tempTaskRes = new TaskResult(0, ExperimentDAO.INT_RESULT_TYPE);
+                resMap.put(errorCountName, tempTaskRes);
                 results.add(tempExTask);
             }
         }
@@ -155,29 +155,46 @@ public class ExperimentDAOImplJUnitTest {
         }
 
         List<ExperimentTaskStatus> retrievedResults = dao.getResultsOfExperiment(EXPERIMENT_ID);
-        ExperimentTaskStatus originalResult;
+        ExperimentTaskStatus originalResult = null;
         for (ExperimentTaskStatus retrievedResult : retrievedResults) {
+            String retrievedResultString = retrievedResult.toString();
             if (retrievedResult.state == ExperimentDAO.TASK_FINISHED) {
-                Assert.assertTrue("Couldn't find " + retrievedResult.toString() + " inside of the expected results "
-                        + results.toString(), results.remove(retrievedResult));
+                Optional<ExperimentTaskStatus> matchResult = results.stream().filter(r -> r.equals(retrievedResult))
+                        .findAny();
+                Assert.assertTrue("Couldn't find " + retrievedResultString + " inside of the expected results "
+                        + results.toString(), matchResult.isPresent());
+                originalResult = matchResult.get();
             } else {
                 // We have to search them manually since the time stamps are
                 // different
                 originalResult = null;
                 for (ExperimentTaskStatus result : results) {
-                	int resErrCount = (Integer) result.getResultsMap().get(errorCountName).getResValue();
-                	int retResErrCount = (Integer) retrievedResult.getResultsMap().get(errorCountName).getResValue();
+                    int resErrCount = (Integer) result.getResultsMap().get(errorCountName).getResValue();
+                    int retResErrCount = (Integer) retrievedResult.getResultsMap().get(errorCountName).getResValue();
                     if ((result.state == retrievedResult.state) && (result.annotator.equals(retrievedResult.annotator))
-                    		&& (resErrCount == retResErrCount)
-                            && (result.dataset.equals(retrievedResult.dataset))
+                            && (resErrCount == retResErrCount) && (result.dataset.equals(retrievedResult.dataset))
                             && (result.matching == retrievedResult.matching) && (result.type == retrievedResult.type)) {
                         originalResult = result;
                         break;
                     }
                 }
-                Assert.assertNotNull("Couldn't find " + retrievedResult.toString() + " inside of the expected results "
+                Assert.assertNotNull("Couldn't find " + retrievedResultString + " inside of the expected results "
                         + results.toString(), originalResult);
-                results.remove(originalResult);
+            }
+            results.remove(originalResult);
+            // Compare the two results
+            Map<String, TaskResult> expectedResultMap = originalResult.getResultsMap();
+            Map<String, TaskResult> retrievedResultMap = retrievedResult.getResultsMap();
+
+            for (Entry<String, TaskResult> expected : expectedResultMap.entrySet()) {
+                Assert.assertTrue(
+                        "The retrieved result of task " + retrievedResultString
+                                + " does not contain a value for the expected result " + expected.getKey(),
+                        retrievedResultMap.containsKey(expected.getKey()));
+                TaskResult retrieved = retrievedResultMap.get(expected.getKey());
+                Assert.assertEquals("The retrieved result of task " + retrievedResultString
+                        + " does not match the expected result (" + expected.getKey() + " --> " + expected.getValue()
+                        + " != " + retrieved + ")", expected.getValue(), retrieved);
             }
         }
         Assert.assertEquals("Not all expected results have been retrieved. Missing results " + results, 0,
@@ -227,7 +244,7 @@ public class ExperimentDAOImplJUnitTest {
         Assert.assertEquals("dataset1", results.get(0).dataset);
         Assert.assertEquals(0, results.get(0).state);
     }
-    
+
     @Test
     public void testCountPrecedingRunningTasks() {
         int taskId1 = this.dao.createTask("annotator1", "dataset1", "type1", "matching1", "id-23456");

@@ -43,4 +43,33 @@ public class TaskResult {
 	public String toString() {
 	    return resValue.toString();
 	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((resType == null) ? 0 : resType.hashCode());
+        result = prime * result + ((resValue == null) ? 0 : resValue.hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TaskResult other = (TaskResult) obj;
+        if (resType == null) {
+            if (other.resType != null)
+                return false;
+        } else if (!resType.equals(other.resType))
+            return false;
+        if (resValue == null) {
+            if (other.resValue != null)
+                return false;
+        } else if (!resValue.equals(other.resValue))
+            return false;
+        return true;
+    }
 }

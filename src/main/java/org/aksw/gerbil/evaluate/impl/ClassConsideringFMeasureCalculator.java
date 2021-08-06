@@ -27,7 +27,8 @@ import org.aksw.gerbil.matching.scored.ScoredMatchingsCounterImpl;
 import org.aksw.gerbil.utils.filter.MarkingClassBasedMarkingFilter;
 import org.aksw.gerbil.utils.filter.MarkingFilter;
 
-public class ClassConsideringFMeasureCalculator<T extends ClassifiedMeaning> extends ConfidenceBasedFMeasureCalculator<T> {
+public class ClassConsideringFMeasureCalculator<T extends ClassifiedMeaning>
+        extends ConfidenceBasedFMeasureCalculator<T> {
 
     @Deprecated
     public static final String MACRO_ACCURACY_NAME = "Macro Accuracy";
@@ -60,24 +61,25 @@ public class ClassConsideringFMeasureCalculator<T extends ClassifiedMeaning> ext
             EvaluationResultContainer results) {
         // the super class performs the matching counter calls
         ScoredEvaluationCountsArray counts = generateMatchingCounts(annotatorResults, goldStandard);
-        double threshold = calculateMicroFMeasure(counts, results);
-        calculateMacroFMeasure(counts, results, threshold);
-
-        // calculate measures for the different classes
-        String classLabel;
-        for (int i = 0; i < markingClasses.length; ++i) {
-            counts = generateMatchingCounts(markingFilters[i].filterListOfLists(annotatorResults),
-                    markingFilters[i].filterListOfLists(goldStandard));
-            if ((counts.truePositiveSums[0] + counts.falseNegativeSums[0] + counts.falsePositiveSums[0]) > 0) {
-                classLabel = markingClasses[i].getLabel();
-                calculateMicroFMeasure(counts, classLabel + MICRO_PRECISION_NAME_APPENDIX,
-                        classLabel + MICRO_RECALL_NAME_APPENDIX, classLabel + MICRO_F1_SCORE_NAME_APPENDIX, threshold,
-                        results);
-                calculateMacroFMeasure(counts, classLabel + MACRO_PRECISION_NAME_APPENDIX,
-                        classLabel + MACRO_RECALL_NAME_APPENDIX, classLabel + MACRO_F1_SCORE_NAME_APPENDIX, threshold,
-                        results);
+        if ((counts.truePositiveSums.length > 0) && (counts.falseNegativeSums.length > 0)
+                && (counts.falsePositiveSums.length > 0)) {
+            double threshold = calculateMicroFMeasure(counts, results);
+            calculateMacroFMeasure(counts, results, threshold);
+            // calculate measures for the different classes
+            String classLabel;
+            for (int i = 0; i < markingClasses.length; ++i) {
+                counts = generateMatchingCounts(markingFilters[i].filterListOfLists(annotatorResults),
+                        markingFilters[i].filterListOfLists(goldStandard));
+                if ((counts.truePositiveSums[0] + counts.falseNegativeSums[0] + counts.falsePositiveSums[0]) > 0) {
+                    classLabel = markingClasses[i].getLabel();
+                    calculateMicroFMeasure(counts, classLabel + MICRO_PRECISION_NAME_APPENDIX,
+                            classLabel + MICRO_RECALL_NAME_APPENDIX, classLabel + MICRO_F1_SCORE_NAME_APPENDIX,
+                            threshold, results);
+                    calculateMacroFMeasure(counts, classLabel + MACRO_PRECISION_NAME_APPENDIX,
+                            classLabel + MACRO_RECALL_NAME_APPENDIX, classLabel + MACRO_F1_SCORE_NAME_APPENDIX,
+                            threshold, results);
+                }
             }
         }
-
     }
 }

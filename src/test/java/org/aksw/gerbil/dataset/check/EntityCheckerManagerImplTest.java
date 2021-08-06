@@ -44,10 +44,10 @@ public class EntityCheckerManagerImplTest {
                 new String[] { "http://example.org/resource/Berlin", "http://dbpedia.org/resource/Berlin" } });
         testConfigs
                 .add(new Object[] {
-                        new String[] { "http://example.org/resource/Joe_DeAngelo",
-                                "http://dbpedia.org/resource/Joe_DeAngelo" },
-                        new String[] { "http://example.org/resource/Joe_DeAngelo",
-                                "http://aksw.org/unknown_entity/http___dbpedia_org_resource_Joe_DeAngelo" } });
+                        new String[] { "http://example.org/resource/Some_Random_Entity",
+                                "http://dbpedia.org/resource/Some_Random_Entity" },
+                        new String[] { "http://example.org/resource/Some_Random_Entity",
+                                "http://aksw.org/unknown_entity/http___dbpedia_org_resource_Some_Random_Entity" } });
         return testConfigs;
     }
 

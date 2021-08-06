@@ -71,7 +71,7 @@ public class AnnotatorOutputWriter {
     }
 
     private boolean outputShouldBeStored(ExperimentTaskConfiguration configuration) {
-        return configuration.datasetConfig.couldBeCached() && (configuration.annotatorConfig.couldBeCached()
+        return (configuration.datasetConfig.couldBeCached() || configuration.datasetConfig.getName().contains(storableAnnotatorNamePart)) && (configuration.annotatorConfig.couldBeCached()
                 || configuration.annotatorConfig.getName().contains(storableAnnotatorNamePart));
     }
 

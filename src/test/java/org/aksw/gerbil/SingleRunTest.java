@@ -54,22 +54,32 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    private static final String ANNOTATOR_NAME = "FOX";
-    private static final String DATASET_NAME = "Twitter NEED";
+    private static final String ANNOTATOR_NAME = "DBpedia Spotlight";
+    private static final boolean ANNOTATOR_IS_NIF_WS = false;
+    private static final String ANNOTATOR_NIF_WS_URL = "";
+
+    private static final String DATASET_NAME = "DBpediaSpotlight";
+    private static final boolean DATASET_IS_LOCAL_FILE = false;
+    // File name if the dataset is a local file (note that it has to be located in
+    // gerbil_data/upload)
+    private static final String DATASET_FILE = "example.ttl";
+
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.A2KB;
     private static final Matching MATCHING = Matching.STRONG_ANNOTATION_MATCH;
 
     private static final boolean USE_SAME_AS_RETRIEVAL = false;
     private static final boolean USE_ENTITY_CHECKING = false;
-    
+
     private static final boolean SHORTEN_DATASET = false;
     private static final int SHORTENED_SET_START_ID = 0;
     private static final int SHORTENED_SET_END_ID = 3;
 
     private static final SameAsRetriever SAME_AS_RETRIEVER = USE_SAME_AS_RETRIEVAL
-            ? SameAsRetrieverSingleton4Tests.getInstance() : null;
+            ? SameAsRetrieverSingleton4Tests.getInstance()
+            : null;
     private static final EntityCheckerManager ENTITY_CHECKER_MANAGER = USE_ENTITY_CHECKING
-            ? EntityCheckerManagerSingleton4Tests.getInstance() : null;
+            ? EntityCheckerManagerSingleton4Tests.getInstance()
+            : null;
 
     public static void main(String[] args) throws Exception {
         SingleRunTest test = new SingleRunTest();
@@ -84,13 +94,40 @@ public class SingleRunTest implements TaskObserver {
     }
 
     public void run() throws Exception {
+        // Generate annotator name
+        String annotatorName = null;
+        if (ANNOTATOR_IS_NIF_WS) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(AdapterManager.NIF_WS_PREFIX);
+            builder.append(ANNOTATOR_NAME);
+            builder.append('(');
+            builder.append(ANNOTATOR_NIF_WS_URL);
+            builder.append(')');
+            annotatorName = builder.toString();
+        } else {
+            annotatorName = ANNOTATOR_NAME;
+        }
+        // Generate dataset name
+        String datasetName = null;
+        if (DATASET_IS_LOCAL_FILE) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(AdapterManager.UPLOADED_DATASET_PREFIX);
+            builder.append(DATASET_NAME);
+            builder.append('(');
+            builder.append(DATASET_FILE);
+            builder.append(')');
+            datasetName = builder.toString();
+        } else {
+            datasetName = DATASET_NAME;
+        }
+
         AdapterManager adapterManager = new AdapterManager();
         adapterManager.setAnnotators(AnnotatorsConfig.annotators());
         adapterManager.setDatasets(DatasetsConfig.datasets(ENTITY_CHECKER_MANAGER, SAME_AS_RETRIEVER));
 
-        AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE);
+        AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(annotatorName, EXPERIMENT_TYPE);
         Assert.assertNotNull(annotatorConfig);
-        DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE);
+        DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(datasetName, EXPERIMENT_TYPE);
         Assert.assertNotNull(datasetConfig);
 
         if (SHORTEN_DATASET) {

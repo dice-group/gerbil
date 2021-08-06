@@ -36,13 +36,10 @@ public class HttpBasedEntityCheckerTest {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         // DBpedia examples
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Berlin", true });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Joe_DeAngelo", false });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Carol_Tome", false });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Joe_DeAngelo", false });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Home_Depot_Supply", false });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Claudio_X._Gonzales", false });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Milledge_A._Hart_III", false });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Jerry_Shields", false });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/James_Senn", false });
 
         // It does not seem to make sense to test using the German DBpedia,
@@ -54,7 +51,7 @@ public class HttpBasedEntityCheckerTest {
 
         // Wikipedia examples
         testConfigs.add(new Object[] { "http://wikipedia.org/wiki/Berlin", true });
-        testConfigs.add(new Object[] { "http://wikipedia.org/wiki/Joe_DeAngelo", false });
+        testConfigs.add(new Object[] { "http://wikipedia.org/wiki/John_Doe_II", false });
         return testConfigs;
     }
 
