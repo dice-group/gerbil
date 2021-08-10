@@ -59,17 +59,16 @@ import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
 import org.aksw.simba.topicmodeling.concurrent.reporter.Reporter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConversionException;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 
 /**
  * This is the root {@link Configuration} class that is processed by the Spring
@@ -123,7 +122,8 @@ public class RootConfig {
 
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
-        Resource[] resourceLocations = new Resource[] { new ClassPathResource("gerbil.properties"), };
+        Resource[] resourceLocations = new Resource[] {
+                new FileSystemResource(GerbilConfiguration.derivePropertiesPath("gerbil.properties")), };
         p.setLocations(resourceLocations);
         return p;
     }
@@ -329,8 +329,7 @@ public class RootConfig {
                             namespaces.get(0));
                     // use HTTP based checker
                     for (String namespace : namespaces) {
-                        manager.registerEntityChecker(namespace,
-                                new HttpBasedEntityChecker(namespace));
+                        manager.registerEntityChecker(namespace, new HttpBasedEntityChecker(namespace));
                     }
                 }
             }

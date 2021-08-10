@@ -1,0 +1,17 @@
+version: "3.3" 
+services:
+  gerbil:
+    image: dicegroup/gerbil
+    ports:
+      - "1234:8080"
+    volumes:
+      # Properties files
+      - ./gerbil_properties:/usr/local/tomcat/gerbil_properties
+      # Database (Should be mounted to persist data!)
+      - ./gerbil_data/database:/usr/local/tomcat/gerbil_data/database
+      # Cache directory (Should be mounted to speed up new GERBIL instances)
+      - ./gerbil_data/cache:/usr/local/tomcat/gerbil_data/cache
+      # Datasets
+      - ./gerbil_data/datasets:/usr/local/tomcat/gerbil_data/datasets
+      # SameAs and Entity Indexes 
+      - ./indexes:/usr/local/tomcat/indexes

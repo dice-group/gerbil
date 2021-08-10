@@ -1,0 +1,16 @@
+.git
+#src except src/main/properties (gerbil_keys.properties may contain secrets)
+src/main/java
+src/main/resources
+src/main/properties/gerbil_keys.properties
+src/test
+# data directories
+gerbil_data
+indexes
+repository
+# block target, except war file and WEB-INF
+target/*
+!target/gerbil*
+# block the gerbil_keys file in case it is in the target directory
+target/gerbil-*/WEB-INF/classes/gerbil_keys.properties
+
