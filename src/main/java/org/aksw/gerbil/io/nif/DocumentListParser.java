@@ -35,8 +35,8 @@ public class DocumentListParser {
     private static final String CONTEXT_PARAM_NAME = "context";
     private static final String TEXT_PARAM_NAME = "text";
     private static final String DOCUMENT_QUERY_STRING = "SELECT DISTINCT ?" + CONTEXT_PARAM_NAME + " ?"
-            + TEXT_PARAM_NAME + " WHERE { ?context a <" + NIF.Context + "> . ?" + CONTEXT_PARAM_NAME + " <"
-            + NIF.isString + "> ?" + TEXT_PARAM_NAME + " . }";
+            + TEXT_PARAM_NAME + " WHERE { ?context a <" + NIF.Context.getURI() + "> . ?" + CONTEXT_PARAM_NAME + " <"
+            + NIF.isString.getURI() + "> ?" + TEXT_PARAM_NAME + " . }";
 
     private DocumentParser documentParser;
 
