@@ -48,7 +48,7 @@ function yesno()
             shift
             default=$1
             if [[ ! "$default" ]]; then error "Missing default value"; fi
-            t=$(tr '[:upper:]' '[:lower:]' <<<$default)
+            t=$(tr "[:upper:]" "[:lower:]" <<<$default)
 
             if [[ "$t" != 'y'  &&  "$t" != 'yes'  &&  "$t" != 'n'  &&  "$t" != 'no' ]]; then
                 error "Illegal default answer: $default"
@@ -84,7 +84,7 @@ function yesno()
     while [[ $ok -eq 0 ]]
     do
         if [[ $timeout -ne 0 ]]; then
-            if ! read -t $timeout -p "$*" ans; then
+            if ! read -t "$timeout" -p "$*" ans; then
                 ans=$default
             else
                 # Turn off timeout if answer entered.
@@ -96,7 +96,7 @@ function yesno()
             if [[ ! "$ans" ]]; then
                 ans=$default
             else
-                ans=$(tr '[:upper:]' '[:lower:]' <<<$ans)
+                ans=$(tr "[:upper:]" "[:lower:]" <<<$ans)
             fi 
         fi
 
