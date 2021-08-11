@@ -1,7 +1,5 @@
 package org.aksw.gerbil.transfer.nif.data;
 
-import java.util.Set;
-
 import org.aksw.gerbil.transfer.nif.Meaning;
 import org.aksw.gerbil.transfer.nif.Relation;
 import org.aksw.gerbil.transfer.nif.ScoredMarking;
