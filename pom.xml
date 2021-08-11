@@ -14,7 +14,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw</groupId>
 	<artifactId>gerbil</artifactId>
-	<version>1.2.8-SNAPSHOT</version>
+	<version>1.2.9-SNAPSHOT</version>
 	<name>General Entity Annotator Benchmark</name>
 	<description>This project is a benchmarking framework for entity annotation and disambiguation tools.</description>
 	<inceptionYear>2014</inceptionYear>
@@ -54,6 +54,11 @@
 
 	<dependencies>
 		<!-- NIF transfer lib -->
+        <dependency>
+            <groupId>org.aksw</groupId>
+            <artifactId>gerbil.nif.transfer</artifactId>
+            <version>1.2.8</version>
+        </dependency>
 		<!-- Jena for using JSON-LD -->
 		<dependency>
 			<groupId>org.apache.jena</groupId>
@@ -72,7 +77,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.0</version>
+            <version>2.12.4</version>
         </dependency>
 
 		<!-- Google Guava -->
@@ -322,11 +327,6 @@
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>
 			<version>6.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.aksw</groupId>
-			<artifactId>gerbil.nif.transfer</artifactId>
-			<version>1.2.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-validator</groupId>

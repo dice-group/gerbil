@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -37,7 +36,6 @@ public class DBpediaEntityCheckIndexTool {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DBpediaEntityCheckIndexTool.class);
 
-	private static final String INPUT_FOLDER = "C:/Daten/DBpedia";
 	private static final String OUTPUT_FOLDER = "indexes/dbpedia_check";
 
 	private static final String DBPEDIA_DUMP = "http://downloads.dbpedia.org/current/core-i18n/en/";
