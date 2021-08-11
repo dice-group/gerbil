@@ -48,7 +48,7 @@ function yesno()
             shift
             default=$1
             if [[ ! "$default" ]]; then error "Missing default value"; fi
-            t=$(tr "[:upper:]" "[:lower:]" <<<$default)
+            t=$(tr '[:upper:]' '[:lower:]' <<<"$default")
 
             if [[ "$t" != 'y'  &&  "$t" != 'yes'  &&  "$t" != 'n'  &&  "$t" != 'no' ]]; then
                 error "Illegal default answer: $default"
@@ -96,7 +96,7 @@ function yesno()
             if [[ ! "$ans" ]]; then
                 ans=$default
             else
-                ans=$(tr "[:upper:]" "[:lower:]" <<<$ans)
+                ans=$(tr '[:upper:]' '[:lower:]' <<<"$ans")
             fi 
         fi
 
