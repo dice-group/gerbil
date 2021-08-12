@@ -38,10 +38,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -55,7 +52,7 @@ public class WATAnnotator extends AbstractHttpBasedAnnotator implements A2KBAnno
     private static final String WAT_CONFIG_FILE_PROPERTY_ENDPOINT = "org.aksw.gerbil.annotators.wat.disambiguateUrl";
     private static final String WAT_CONFIG_FILE_PROPERTY_PARAMETERS = "org.aksw.gerbil.annotators.wat.annotateUrl";
 
-    private static final String SPANS_REQUEST_PARAMETER_KEY = "suggested_spans";
+    private static final String SPANS_REQUEST_PARAMETER_KEY = "spans";
     private static final String TEXT_REQUEST_PARAMETER_KEY = "text";
     private static final String ENTITY_TITLE_KEY = "title";
     private static final String ENTITY_CONFIDENCE_KEY = "rho";

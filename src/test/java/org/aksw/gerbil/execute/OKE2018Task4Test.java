@@ -92,7 +92,7 @@ public class OKE2018Task4Test extends AbstractExperimentTaskTest {
 								new RelationImpl(new NamedEntity(35, 48, "http://aksw.org/notInWiki/John_Kavanagh"),
 										new Annotation("http://dbpedia.org/ontology/trainer"),
 										new NamedEntity(0, 22, "http://aksw.org/notInWiki/Conor_McGregor")),
-								new RelationImpl(new NamedEntity(0, 22, "http://www.wikidata.org/entity/Q5162259"),
+								new RelationImpl(new NamedEntity(0, 22, "http://dbpedia.org/resource/Conor_McGregor"),
 										new Annotation("http://dbpedia.org/ontology/trainer"),
 										new NamedEntity(35, 48, "http://aksw.org/notInWiki/John_Kavanagh")))) },
 				GOLD_STD, Matching.STRONG_ANNOTATION_MATCH, new double[] { 0.75, 0.75, 1/1.5,  0.75, 0.75, 1/1.5, 0 } });
