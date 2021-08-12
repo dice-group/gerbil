@@ -36,7 +36,6 @@ public class HttpBasedEntityCheckerTest {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         // DBpedia examples
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Berlin", true });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Carol_Tome", false });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Home_Depot_Supply", false });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Claudio_X._Gonzales", false });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Milledge_A._Hart_III", false });
