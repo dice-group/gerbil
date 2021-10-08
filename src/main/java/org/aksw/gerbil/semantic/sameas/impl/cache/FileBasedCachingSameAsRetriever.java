@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.semantic.sameas.impl.cache;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -110,32 +111,56 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
         // if the cache contains the uri, return the set or a set
         // containing only the uri (use the read mutex!!!)
         Set<String> result = null;
+        boolean uriIsCached = false;
         try {
             cacheReadMutex.acquire();
         } catch (InterruptedException e) {
             LOGGER.error("Exception while waiting for read mutex. Returning null.", e);
             return null;
         }
-        boolean uriIsCached = uriSetIdMapping.containsKey(uri);
-        if (uriIsCached) {
-            int setId = uriSetIdMapping.get(uri);
-            if (setId != ENTITY_NOT_FOUND) {
-                result = sets.get(setId);
+        try {
+            uriIsCached = uriSetIdMapping.containsKey(uri);
+            if (uriIsCached) {
+                int setId = uriSetIdMapping.get(uri);
+                if (setId != ENTITY_NOT_FOUND) {
+                    result = sets.get(setId);
+                }
             }
+        } finally {
+            cacheReadMutex.release();
         }
         // If the URI is not in the cache, or it has been cached but the result
         // is null and the request should be retried
         if (!uriIsCached || (uriIsCached && (result == null) && requestEntitiesNotFound)) {
-            cacheReadMutex.release();
-            result = decoratedRetriever.retrieveSameURIs(uri);
+            result = requestUri(uri);
+        }
+        return result;
+    }
+
+    /**
+     * Requests the set for the given URI from the decorated retriever.
+     * 
+     * @param uri
+     * @return
+     */
+    protected Set<String> requestUri(String uri) {
+        Set<String> result = decoratedRetriever.retrieveSameURIs(uri);
+        try {
+            cacheWriteMutex.acquire();
+        } catch (InterruptedException e) {
+            LOGGER.error("Exception while waiting for read mutex. Returning null.", e);
+            return null;
+        }
+        // Make sure that the write mutex is released
+        try {
             try {
-                cacheWriteMutex.acquire();
-                // now we need all others
+                // now we need all other read mutexes
                 cacheReadMutex.acquire(MAX_CONCURRENT_READERS);
             } catch (InterruptedException e) {
                 LOGGER.error("Exception while waiting for read mutex. Returning null.", e);
                 return null;
             }
+            // Make sure that the read mutex is released
             try {
                 // Check again that nobody already added the uri
                 if (uriSetIdMapping.containsKey(uri)) {
@@ -163,12 +188,11 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
                     }
                 }
             } finally {
-                // The last one will be released at the end
-                cacheReadMutex.release(MAX_CONCURRENT_READERS - 1);
-                cacheWriteMutex.release();
+                cacheReadMutex.release(MAX_CONCURRENT_READERS);
             }
+        } finally {
+            cacheWriteMutex.release();
         }
-        cacheReadMutex.release();
         return result;
     }
 
@@ -224,9 +248,6 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
         FileOutputStream fout = null;
         ObjectOutputStream oout = null;
         try {
-        	if(!tempCacheFile.exists()) {
-        		tempCacheFile.createNewFile();
-        	}
             fout = new FileOutputStream(tempCacheFile);
             oout = new ObjectOutputStream(fout);
             // first, serialize the number of URIs
@@ -300,11 +321,9 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
         if (!cacheFile.exists() || cacheFile.isDirectory()) {
             return null;
         }
-        FileInputStream fin = null;
         ObjectInputStream oin = null;
         try {
-            fin = new FileInputStream(cacheFile);
-            oin = new ObjectInputStream(fin);
+            oin = new ObjectInputStream(new BufferedInputStream(new FileInputStream(cacheFile)));
             // first, read the number of URIs
             int count = oin.readInt();
             String uri;
@@ -330,7 +349,6 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
             LOGGER.error("Exception while reading cache file.", e);
         } finally {
             IOUtils.closeQuietly(oin);
-            IOUtils.closeQuietly(fin);
         }
         return null;
     }
