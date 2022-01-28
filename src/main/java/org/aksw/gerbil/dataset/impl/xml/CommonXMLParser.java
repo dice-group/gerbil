@@ -28,7 +28,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.apache.commons.io.IOUtils;
-import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -43,7 +42,7 @@ public class CommonXMLParser {
 	private SAXParser parser;
 
 	public CommonXMLParser() throws GerbilException {
-		SAXParserFactory factory = SAXParserFactoryImpl.newInstance();
+		SAXParserFactory factory = SAXParserFactory.newInstance();
 		try {
 			parser = factory.newSAXParser();
 		} catch (Exception e) {

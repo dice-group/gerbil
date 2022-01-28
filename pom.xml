@@ -25,7 +25,7 @@
 		<junit.version>4.13</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>5.3.9</spring.version>
-		<jena.version>3.1.0</jena.version>
+		<jena.version>3.17.0</jena.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
 	</properties>
 
@@ -473,5 +473,5 @@
 		</resources>
 	</build>
 
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 </project>
