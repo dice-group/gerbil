@@ -40,7 +40,7 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
             String experimentId) {
         int taskId = nextTaskId;
         ++nextTaskId;
-        LOGGER.info("creating task " + taskId + "annotatorName=\"" + annotatorName + "\", datasetName=\"" + datasetName
+        LOGGER.info("creating task " + taskId + " annotatorName=\"" + annotatorName + "\", datasetName=\"" + datasetName
                 + "\", experimentType=\"" + experimentType.toString() + "\", String matching=\"" + matching
                 + "\", experimentId)");
         return taskId;
