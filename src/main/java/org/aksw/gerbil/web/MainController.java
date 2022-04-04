@@ -113,6 +113,13 @@ public class MainController {
         return model;
     }
 
+    @RequestMapping("/config-qald")
+    public ModelAndView configQALD() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("config-qald");
+        return model;
+    }
+
     @RequestMapping("/overview")
     public ModelAndView overview() {
         ModelAndView model = new ModelAndView();
