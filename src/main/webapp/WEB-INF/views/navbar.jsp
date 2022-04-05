@@ -1,13 +1,16 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page import="java.util.ArrayList" %>
 <%@page import="java.util.List" %>
 <c:set var="uriPrefix" value="/gerbil" />
-<% pageContext.setAttribute("navItems", List.of(
-	new String[]{"/", "Home"},
-	new String[]{"/config", "Configure Experiment"},
-	new String[]{"/config-qald", "QALD10"},
-	new String[]{"/overview", "Experiment Overview"},
-	new String[]{"/about", "About Us"}
-)); %>
+<%
+	List<String[]> navItems = new ArrayList();
+	navItems.add(new String[]{"/", "Home"});
+	navItems.add(new String[]{"/config", "Configure Experiment"});
+	navItems.add(new String[]{"/config-qald", "QALD10"});
+	navItems.add(new String[]{"/overview", "Experiment Overview"});
+	navItems.add(new String[]{"/about", "About Us"});
+	pageContext.setAttribute("navItems", navItems);
+%>
 <nav class="navbar navbar-default" role="navigation">
 	<div class="container-fluid">
 		<!-- Brand and toggle get grouped for better mobile display -->
