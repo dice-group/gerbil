@@ -4,6 +4,7 @@
 <% pageContext.setAttribute("navItems", List.of(
 	new String[]{"/", "Home"},
 	new String[]{"/config", "Configure Experiment"},
+	new String[]{"/config-qald", "QALD10"},
 	new String[]{"/overview", "Experiment Overview"},
 	new String[]{"/about", "About Us"}
 )); %>
