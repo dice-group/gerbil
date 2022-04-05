@@ -125,7 +125,7 @@
 				</div>
 			</div>
 
-			<div class="row">
+			<div class="row" style="display: none;">
 				<div class="col-md-8 col-md-offset-2">
 					<hr />
 				</div>
@@ -139,7 +139,7 @@
 				<div class="col-md-4">
 					<select id="dataset" multiple="multiple" style="display: none;">
 					</select>
-					<hr />
+					<hr style="display: none;" />
 					<div style="display: none;">
 						<span> Or upload another dataset:</span>
 						<dv>
@@ -258,7 +258,7 @@
             					</div>
             				</div>
             			</div>
-			<div class="row">
+			<div class="row" style="display: none;">
 				<div class="col-md-8 col-md-offset-2">
 					<hr />
 				</div>
