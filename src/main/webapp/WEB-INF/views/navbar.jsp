@@ -1,3 +1,12 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page import="java.util.List" %>
+<c:set var="uriPrefix" value="/gerbil" />
+<% pageContext.setAttribute("navItems", List.of(
+	new String[]{"/", "Home"},
+	new String[]{"/config", "Configure Experiment"},
+	new String[]{"/overview", "Experiment Overview"},
+	new String[]{"/about", "About Us"}
+)); %>
 <nav class="navbar navbar-default" role="navigation">
 	<div class="container-fluid">
 		<!-- Brand and toggle get grouped for better mobile display -->
@@ -7,10 +16,9 @@
 		</div>
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li class="active"><a href="/gerbil/">Home</a></li>
-				<li><a href="/gerbil/config">Configure Experiment</a></li>
-				<li><a href="/gerbil/overview">Experiment Overview</a></li>
-				<li><a href="/gerbil/about">About Us</a></li>
+				<c:forEach var="item" items="${navItems}">
+					<li class="${requestScope['javax.servlet.forward.request_uri'].equals(uriPrefix.concat(item[0])) ? 'active' : ''}"><a href="${uriPrefix}${item[0]}">${item[1]}</a></li>
+				</c:forEach>
 			</ul>
 		</div>
 	</div>
