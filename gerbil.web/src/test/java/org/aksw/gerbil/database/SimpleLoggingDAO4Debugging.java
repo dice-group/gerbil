@@ -67,13 +67,21 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
         }
         Map<String, TaskResult> results = result.getResultsMap();
         for(Entry<String, TaskResult> e : results.entrySet()) {
-            LOGGER.info(e.getKey() + " = " + e.getValue());
+            LOGGER.info(e.getKey() + " = " + shrinkToMaxLength(e.getValue()));
         }
         if (result.hasSubTasks()) {
             for (ExperimentTaskStatus subTask : result.subTasks) {
                 setExperimentTaskResult(experimentTaskId, subTask, true);
             }
         }
+    }
+    
+    protected static String shrinkToMaxLength(TaskResult result) {
+        String resultString = result.toString();
+        if(resultString.length() > 100) {
+            resultString = resultString.substring(0, 100) + "...";
+        }
+        return resultString;
     }
 
     @Override

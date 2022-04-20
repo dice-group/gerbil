@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.aksw.agdistis.util.TripleIndex;
 import org.aksw.gerbil.config.GerbilConfiguration;
@@ -91,7 +90,7 @@ import org.springframework.core.io.Resource;
 @SuppressWarnings("deprecation")
 @org.springframework.context.annotation.Configuration
 @ComponentScan(basePackages = "org.aksw.gerbil.web.config")
-@PropertySource("gerbil.properties")
+//@PropertySource("classpath:gerbil.properties")
 public class RootConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RootConfig.class);
@@ -127,12 +126,12 @@ public class RootConfig {
     private static final String LABEL_INDEX_PATH_KEY = "org.aksw.agdistis.util.TripleIndex.path";
 
 
-    static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
+/*    static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
-        Resource[] resourceLocations = new Resource[] { new ClassPathResource("gerbil.properties"), };
+        Resource[] resourceLocations = new Resource[] { new ClassPathResource("gerbil.properties",RootConfig.class), };
         p.setLocations(resourceLocations);
         return p;
-    }
+    }*/
 
     public static @Bean DefeatableOverseer createOverseer() {
         int numberOfWorkers = DEFAULT_NUMBER_OF_WORKERS;
