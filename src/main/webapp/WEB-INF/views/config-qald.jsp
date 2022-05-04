@@ -395,7 +395,7 @@ F.e. if you want to use French, type in: fr">
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
-                                data = data.filter(dataset => dataset === 'QALD9 Test Multilingual');
+                                data = data.filter(dataset => dataset.match(/^QALD10 /));
 				addDataToSelect('#dataset', data);
 				addDataToSelect('#answerFileDataset', data);
                                 if (data.length === 1) {
