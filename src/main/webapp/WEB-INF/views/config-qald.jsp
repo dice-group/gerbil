@@ -264,7 +264,7 @@
 				</div>
 			</div>
 
-			<div class="form-group" style="display: none;">
+			<div class="form-group">
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
 						<label class="control-label" >Language</label>					
