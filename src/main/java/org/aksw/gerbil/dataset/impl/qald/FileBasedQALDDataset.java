@@ -41,6 +41,11 @@ public class FileBasedQALDDataset extends AbstractDataset implements Initializab
     	this.file=file;
     	initLanguage();
     }
+    public FileBasedQALDDataset(String name, String file){
+        super(name);
+        this.file=file;
+        initLanguage();
+    }
     public FileBasedQALDDataset(String name, String questionLabel, String file){
     	super(name, questionLabel);
     	this.file=file;
