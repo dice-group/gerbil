@@ -131,7 +131,7 @@
 				</div>
 			</div>
 			<!--Dataset dropdown filled by loadDatasets() function -->
-			<div class="form-group">
+			<div class="form-group" style="display: none;">
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
 						<label class="control-label" for="datasets">Dataset</label>					
@@ -170,7 +170,7 @@
 					</div>	
 				</div>
 			</div>
-			<div class="row">
+			<div class="row" style="display: none;">
             				<div class="col-md-8 col-md-offset-2">
             					<hr />
             				</div>
