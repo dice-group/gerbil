@@ -34,5 +34,4 @@ if [ ! -f "$file" ]; then
 fi
 
 echo "Building and starting GERBIL QA..."
-#mvn clean tomcat:run -Dmaven.tomcat.port=1234
-mvn clean package -Dmaven.test.skip=true cargo:run -Dcargo.servlet.port=5004
+MAVEN_OPTS="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED" mvn clean package -Dmaven.test.skip=true cargo:run -Dcargo.servlet.port=5004
