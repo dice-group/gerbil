@@ -2,7 +2,7 @@
 
 echo "Checking dependencies..."
 file="gerbil_data/gerbil_data.zip"
-url="https://github.com/AKSW/gerbil/releases/download/v1.2.4/gerbil_data.zip"
+url="https://github.com/dice-group/gerbil/releases/download/qa-v0.2.4/gerbil_data_QA.zip"
 
 if [ ! -d "gerbil_data" ]; then
     mkdir -p "gerbil_data" || exit 1
