@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
-import org.aksw.gerbil.semantic.sameas.impl.cache.FileBasedCachingSameAsRetriever;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -45,7 +44,7 @@ public class FileBasedCachingSameAsRetrieverTest extends FileBasedCachingSameAsR
 
     public FileBasedCachingSameAsRetrieverTest() throws IOException {
         super(new RandomNumberReturningSameAsRetriever(), new ObjectIntOpenHashMap<String>(),
-                new ArrayList<Set<String>>(), false, File.createTempFile("cache_test_", ".cache"),
+                new ArrayList<Set<String>>(), false, 1000, File.createTempFile("cache_test_", ".cache"),
                 File.createTempFile("cache_test_", ".cache_temp"));
     }
 
@@ -89,7 +88,7 @@ public class FileBasedCachingSameAsRetrieverTest extends FileBasedCachingSameAsR
         ///// test the read/write operation
         // read the cache with another cache object
         FileBasedCachingSameAsRetriever otherCache = FileBasedCachingSameAsRetriever.create(decoratedRetriever, false,
-                cacheFile);
+                1000, cacheFile);
 
         Assert.assertEquals(sets.size(), otherCache.sets.size());
         Assert.assertEquals(uriSetIdMapping.assigned, otherCache.uriSetIdMapping.assigned);

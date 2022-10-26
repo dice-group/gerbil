@@ -99,6 +99,7 @@ public class RootConfig {
     private static final String NUMBER_OF_WORKERS_KEY = "org.aksw.gerbil.web.config.overseerWorkers";
 
     private static final String SAME_AS_CACHE_FILE_KEY = "org.aksw.gerbil.semantic.sameas.CachingSameAsRetriever.cacheFile";
+    private static final String SAME_AS_CACHE_FORCE_STORAGE_KEY = "org.aksw.gerbil.semantic.sameas.CachingSameAsRetriever.forceStorageAfterChanges";
     private static final String SAME_AS_IN_MEMORY_CACHE_SIZE_KEY = "org.aksw.gerbil.semantic.sameas.InMemoryCachingSameAsRetriever.cacheSize";
 
     private static final String ANNOTATOR_OUTPUT_WRITER_USAGE_KEY = "org.aksw.gerbil.execute.AnnotatorOutputWriter.printAnnotatorResults";
@@ -117,12 +118,9 @@ public class RootConfig {
     private static final String INDEXED_BASED_SAME_AS_RETRIEVER_FOLDER_KEY = "org.aksw.gerbil.semantic.sameas.impl.index.IndexBasedSameAsRetriever.folder";
     private static final String INDEXED_BASED_SAME_AS_RETRIEVER_DOMAIN_KEY = "org.aksw.gerbil.semantic.sameas.impl.index.IndexBasedSameAsRetriever.domain";
 
-    
-    
     private static final String AVAILABLE_EXPERIMENT_TYPES_KEY = "org.aksw.gerbil.web.MainController.availableExperimentTypes";
 
     private static final String LABEL_INDEX_PATH_KEY = "org.aksw.agdistis.util.TripleIndex.path";
-
 
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
@@ -150,8 +148,8 @@ public class RootConfig {
 
     public static @Bean SubClassInferencer createSubClassInferencer() {
         Model classModel = ModelFactory.createDefaultModel();
-        String hierarchyFiles[] = GerbilConfiguration.getInstance().getStringArray(
-                "org.aksw.gerbil.semantic.subclass.SubClassInferencer.classHierarchyFiles");
+        String hierarchyFiles[] = GerbilConfiguration.getInstance()
+                .getStringArray("org.aksw.gerbil.semantic.subclass.SubClassInferencer.classHierarchyFiles");
         ClassHierarchyLoader loader = new ClassHierarchyLoader();
         for (int i = 0; i < hierarchyFiles.length; i += 3) {
             try {
@@ -199,13 +197,13 @@ public class RootConfig {
                     .getStringArray(INDEXED_BASED_SAME_AS_RETRIEVER_DOMAIN_KEY)) {
                 retrieverManager.addDomainSpecificRetriever(domain, retriever);
             }
-}
+        }
 
         // Wikipedia API based same as retrieval
         if (GerbilConfiguration.getInstance().containsKey(WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
             SingleUriSameAsRetriever singleRetriever = new WikipediaApiBasedSingleUriSameAsRetriever();
-            for (String domain : GerbilConfiguration.getInstance().getStringArray(
-                    WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
+            for (String domain : GerbilConfiguration.getInstance()
+                    .getStringArray(WIKIPEDIA_BASED_SAME_AS_RETRIEVAL_DOMAIN_KEY)) {
                 retrieverManager.addDomainSpecificRetriever(domain, singleRetriever);
             }
         }
@@ -218,8 +216,8 @@ public class RootConfig {
 
         // same as retrieval domain blacklist
         if (GerbilConfiguration.getInstance().containsKey(SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY)) {
-            sameAsRetriever = new UriFilteringSameAsRetrieverDecorator(sameAsRetriever, GerbilConfiguration
-                    .getInstance().getStringArray(SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY));
+            sameAsRetriever = new UriFilteringSameAsRetrieverDecorator(sameAsRetriever,
+                    GerbilConfiguration.getInstance().getStringArray(SAME_AS_RETRIEVAL_DOMAIN_BLACKLIST_KEY));
         }
 
         // same as crawling
@@ -227,8 +225,9 @@ public class RootConfig {
 
         SameAsRetriever decoratedRetriever = null;
         if (GerbilConfiguration.getInstance().containsKey(SAME_AS_CACHE_FILE_KEY)) {
-            decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, false, new File(
-                    GerbilConfiguration.getInstance().getString(SAME_AS_CACHE_FILE_KEY)));
+            int forceStorageAfterChanges = GerbilConfiguration.getInstance().getInt(SAME_AS_CACHE_FORCE_STORAGE_KEY, 0);
+            decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, false, forceStorageAfterChanges,
+                    new File(GerbilConfiguration.getInstance().getString(SAME_AS_CACHE_FILE_KEY)));
         }
         if (decoratedRetriever == null) {
             LOGGER.warn("Couldn't create file based cache for sameAs retrieving. Trying to create in Memory cache.");
@@ -237,8 +236,9 @@ public class RootConfig {
                     int cacheSize = GerbilConfiguration.getInstance().getInt(SAME_AS_IN_MEMORY_CACHE_SIZE_KEY);
                     decoratedRetriever = new InMemoryCachingSameAsRetriever(sameAsRetriever, cacheSize);
                 } catch (ConversionException e) {
-                    LOGGER.warn("Exception while trying to load parameter \"" + SAME_AS_IN_MEMORY_CACHE_SIZE_KEY
-                            + "\".", e);
+                    LOGGER.warn(
+                            "Exception while trying to load parameter \"" + SAME_AS_IN_MEMORY_CACHE_SIZE_KEY + "\".",
+                            e);
                 }
             }
             if (decoratedRetriever == null) {
@@ -276,8 +276,8 @@ public class RootConfig {
         if (GerbilConfiguration.getInstance().containsKey(ANNOTATOR_OUTPUT_WRITER_USAGE_KEY)
                 && GerbilConfiguration.getInstance().getBoolean(ANNOTATOR_OUTPUT_WRITER_USAGE_KEY)
                 && GerbilConfiguration.getInstance().containsKey(ANNOTATOR_OUTPUT_WRITER_DIRECTORY_KEY)) {
-            return new AnnotatorOutputWriter(GerbilConfiguration.getInstance().getString(
-                    ANNOTATOR_OUTPUT_WRITER_DIRECTORY_KEY));
+            return new AnnotatorOutputWriter(
+                    GerbilConfiguration.getInstance().getString(ANNOTATOR_OUTPUT_WRITER_DIRECTORY_KEY));
         } else {
             return null;
         }
