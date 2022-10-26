@@ -2,7 +2,7 @@
 
 echo "Checking dependencies..."
 file="gerbil_data/gerbil_data.zip"
-url="https://github.com/AKSW/gerbil/releases/download/v1.2.4/gerbil_data.zip"
+url="https://github.com/dice-group/gerbil/releases/download/qa-v0.2.4/gerbil_data_QA.zip"
 
 if [ ! -d "gerbil_data" ]; then
     mkdir -p "gerbil_data" || exit 1
@@ -34,5 +34,4 @@ if [ ! -f "$file" ]; then
 fi
 
 echo "Building and starting GERBIL QA..."
-#mvn clean tomcat:run -Dmaven.tomcat.port=1234
-mvn clean package -Dmaven.test.skip=true cargo:run -Dcargo.servlet.port=5004
+MAVEN_OPTS="--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED" mvn clean package -Dmaven.test.skip=true cargo:run -Dcargo.servlet.port=5004
