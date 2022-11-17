@@ -12,14 +12,8 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.qa.QAUtils;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.qa.commons.datastructure.IQuestion;
-import org.aksw.qa.commons.datastructure.Question;
-import org.aksw.qa.commons.load.json.EJAnswers;
-import org.aksw.qa.commons.load.json.EJQuestionEntry;
 import org.aksw.qa.commons.load.json.EJQuestionFactory;
-import org.aksw.qa.commons.load.json.ExtendedJson;
 import org.aksw.qa.commons.load.json.ExtendedQALDJSONLoader;
-import org.aksw.qa.commons.load.json.QaldJson;
-import org.openrdf.http.protocol.error.ErrorType;
 
 public class FileBasedQALDSystem extends InstanceListBasedAnnotator implements
 		QASystem {
