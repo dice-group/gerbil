@@ -43,6 +43,7 @@ public class AnnotatorsConfig {
     public static final String ANNOTATOR_CACHE_FLAG_SUFFIX = "cacheable";
     public static final String ANNOTATOR_CLASS_SUFFIX = "class";
     public static final String ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX = "constructorArgs";
+    public static final String ANNOTATOR_DELAY_SUFFIX = "delay";
     public static final String ANNOTATOR_EXPERIMENT_TYPE_SUFFIX = "experimentType";
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
     public static final String ANNOTATOR_SINGLETON_FLAG_SUFFIX = "singleton";
@@ -145,11 +146,19 @@ public class AnnotatorsConfig {
         }
         Constructor<? extends Annotator> constructor = annotatorClass.getConstructor(constructorArgClasses);
 
+        AnnotatorConfigurationImpl annoConfig = null;
         if (isSingleton) {
-            return new SingletonAnnotatorConfigImpl(name, cacheable, constructor, constructorArgs, type);
+            annoConfig = new SingletonAnnotatorConfigImpl(name, cacheable, constructor, constructorArgs, type);
         } else {
-            return new AnnotatorConfigurationImpl(name, cacheable, constructor, constructorArgs, type);
+            annoConfig = new AnnotatorConfigurationImpl(name, cacheable, constructor, constructorArgs, type);
         }
+
+        key = buildKey(keyBuilder, annotatorKey, ANNOTATOR_DELAY_SUFFIX);
+        if(config.containsKey(key)) {
+            annoConfig.setDelay(config.getLong(key, 0));
+        }
+
+        return annoConfig;
     }
 
     protected static String buildKey(StringBuilder keyBuilder, String annotatorKey, String suffix) {
