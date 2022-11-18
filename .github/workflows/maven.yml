@@ -27,8 +27,6 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-    - name: Move log4j properties
-      run: cp src/main/properties/log4j.properties src/test/resources/log4j.properties
     - name: Prepare gerbil_data dir
       run: |
         mkdir -p "gerbil_data"
