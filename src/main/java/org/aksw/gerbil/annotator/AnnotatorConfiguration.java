@@ -23,13 +23,22 @@ import org.aksw.gerbil.exceptions.GerbilException;
 public interface AnnotatorConfiguration extends AdapterConfiguration {
 
     /**
-     * Returns the annotator or null if the annotator can't be used for the
-     * given {@link ExperimentType}.
+     * Returns the annotator or null if the annotator can't be used for the given
+     * {@link ExperimentType}.
      * 
      * @param type
      * @return
-     * @throws GerbilException
-     *             if an error occurs while loading the annotator
+     * @throws GerbilException if an error occurs while loading the annotator
      */
     public Annotator getAnnotator(ExperimentType type) throws GerbilException;
+
+    /**
+     * Returns the delay that should be inserted between two consecutive calls to an
+     * annotator.
+     * 
+     * @return the delay that should be inserted between two consecutive calls
+     */
+    public default long getDelay() {
+        return 0;
+    }
 }

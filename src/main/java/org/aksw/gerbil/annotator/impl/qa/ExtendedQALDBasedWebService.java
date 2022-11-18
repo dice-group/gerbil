@@ -1,10 +1,8 @@
 package org.aksw.gerbil.annotator.impl.qa;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 
 import org.aksw.gerbil.annotator.QASystem;
@@ -23,7 +21,6 @@ import org.aksw.qa.commons.load.json.QaldJson;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
-import org.apache.http.ParseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -31,8 +28,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 public class ExtendedQALDBasedWebService extends AbstractHttpBasedAnnotator implements QASystem{
 
