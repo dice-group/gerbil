@@ -417,8 +417,13 @@ public abstract class DelayInsertingAnnotatorDecorator extends AbstractAnnotator
         try {
             String key = decoratedAnnotator.getName();
             if (annotatorUsageTimestamps.containsKey(key)) {
-                Thread.sleep(
-                        annotatorUsageTimestamps.get(key) + decoratedAnnotator.getDelay() - System.currentTimeMillis());
+                long delay = annotatorUsageTimestamps.get(key) + decoratedAnnotator.getDelay()
+                        - System.currentTimeMillis();
+                // It seems to be possible that a delay becomes negative. We should check that
+                // since we don't want the sleep method to throw exceptions
+                if (delay > 0) {
+                    Thread.sleep(delay);
+                }
             }
         } finally {
             registryMutex.release();
