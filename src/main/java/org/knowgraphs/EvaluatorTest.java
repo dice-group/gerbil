@@ -8,7 +8,6 @@ import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.annotator.impl.instance.InstanceListBasedAnnotator;
-import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
@@ -24,9 +23,6 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
-import org.aksw.gerbil.web.config.AdapterManager;
-import org.aksw.gerbil.web.config.AnnotatorsConfig;
-import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.DefeatableOverseer;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
@@ -94,9 +90,6 @@ public class EvaluatorTest extends EvaluatorFactory implements TaskObserver {
      */
     public void run() throws Exception {
         // Get the (config) classes for our system and dataset
-//        AdapterManager adapterManager = new AdapterManager();
-//        adapterManager.setAnnotators(AnnotatorsConfig.annotators());
-//        adapterManager.setDatasets(DatasetsConfig.datasets(ENTITY_CHECKER_MANAGER, SAME_AS_RETRIEVER));
         AnnotatorConfiguration annotatorConfig = getAnnotatorConfig();
         DatasetConfiguration datasetConfig = getDatasetConfig();
 

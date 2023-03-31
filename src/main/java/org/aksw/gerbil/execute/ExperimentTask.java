@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.aksw.gerbil.annotator.A2KBAnnotator;
 import org.aksw.gerbil.annotator.Annotator;
+import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.annotator.C2KBAnnotator;
 import org.aksw.gerbil.annotator.D2KBAnnotator;
 import org.aksw.gerbil.annotator.EntityRecognizer;
@@ -296,6 +297,14 @@ public class ExperimentTask implements Task {
 				List<List<MeaningSpan>> results = new ArrayList<List<MeaningSpan>>(dataset.size());
 				List<List<MeaningSpan>> goldStandard = new ArrayList<List<MeaningSpan>>(dataset.size());
 				D2KBAnnotator linker = ((D2KBAnnotator) annotator);
+                if (annotatorOutputWriter != null) {
+                    List<List<MeaningSpan>> tempGS = new ArrayList<List<MeaningSpan>>(dataset.size());
+                    for (Document document : dataset.getInstances()) {
+                        tempGS.add(document.getMarkings(MeaningSpan.class));
+                    }
+                    ExperimentTaskConfiguration tempConfig = new ExperimentTaskConfiguration(new AnnotatorConfigurationImpl("Dataset", true, null, null, null), configuration.datasetConfig, configuration.type, configuration.matching);
+                    annotatorOutputWriter.storeAnnotatorOutput(tempConfig, tempGS, dataset.getInstances());
+                }
 
 				for (Document document : dataset.getInstances()) {
 					// reduce the document to a text and a list of Spans
@@ -303,10 +312,13 @@ public class ExperimentTask implements Task {
 					goldStandard.add(document.getMarkings(MeaningSpan.class));
 					taskState.increaseExperimentStepCount();
 				}
-				if (annotatorOutputWriter != null) {
-					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-				}
+//				if (annotatorOutputWriter != null) {
+//					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+//				}
 				prepareAnnotatorResults(results, globalRetriever);
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
 				evalResult = evaluate(evaluators, results, goldStandard);
 			} catch (GerbilException e) {
 				throw e;

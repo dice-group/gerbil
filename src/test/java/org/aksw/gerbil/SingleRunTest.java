@@ -58,13 +58,13 @@ public class SingleRunTest implements TaskObserver {
     private static final boolean ANNOTATOR_IS_NIF_WS = false;
     private static final String ANNOTATOR_NIF_WS_URL = "";
 
-    private static final String DATASET_NAME = "DBpediaSpotlight";
+    private static final String DATASET_NAME = "MSNBC";
     private static final boolean DATASET_IS_LOCAL_FILE = false;
     // File name if the dataset is a local file (note that it has to be located in
     // gerbil_data/upload)
     private static final String DATASET_FILE = "example.ttl";
 
-    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.A2KB;
+    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.D2KB;
     private static final Matching MATCHING = Matching.STRONG_ANNOTATION_MATCH;
 
     private static final boolean USE_SAME_AS_RETRIEVAL = false;
