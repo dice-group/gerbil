@@ -25,7 +25,7 @@
 		<junit.version>4.13</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>5.3.9</spring.version>
-		<jena.version>3.1.0</jena.version>
+		<jena.version>3.17.0</jena.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
 	</properties>
 
@@ -69,10 +69,6 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
 			<version>${jena.version}</version>
-			<exclusions>
-			    <exclusion>
-			    </exclusion>
-			</exclusions>
 		</dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -458,6 +454,35 @@
                     </execution>
                 </executions>
             </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <!-- <configuration> <finalName>glisten-shaded-${version}</finalName> 
+                    <outputDirectory>./target</outputDirectory> </configuration> -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <transformers>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <X-Compile-Source-JDK>${maven.compile.source}</X-Compile-Source-JDK>
+                                        <X-Compile-Target-JDK>${maven.compile.target}</X-Compile-Target-JDK>
+                                    </manifestEntries>
+                                </transformer>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 
 		<resources>
@@ -473,5 +498,5 @@
 		</resources>
 	</build>
 
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 </project>

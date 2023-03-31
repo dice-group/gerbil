@@ -58,7 +58,7 @@ public class SingleRunTest implements TaskObserver {
     private static final boolean ANNOTATOR_IS_NIF_WS = false;
     private static final String ANNOTATOR_NIF_WS_URL = "";
 
-    private static final String DATASET_NAME = "MSNBC";
+    private static final String DATASET_NAME = "OKE 2015 Task 1 example set";
     private static final boolean DATASET_IS_LOCAL_FILE = false;
     // File name if the dataset is a local file (note that it has to be located in
     // gerbil_data/upload)
