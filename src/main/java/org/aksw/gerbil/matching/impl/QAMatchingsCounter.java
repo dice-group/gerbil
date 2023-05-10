@@ -1,24 +1,16 @@
 package org.aksw.gerbil.matching.impl;
 
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.aksw.agdistis.util.Triple;
 import org.aksw.agdistis.util.TripleIndex;
 import org.aksw.gerbil.dataset.converter.Literal2ResourceManager;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
-import org.aksw.gerbil.qa.datatypes.ResourceAnswerSet;
 import org.aksw.gerbil.semantic.kb.UriKBClassifier;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.transfer.nif.Meaning;
@@ -84,9 +76,10 @@ public class QAMatchingsCounter implements MatchingsCounter<AnswerSet> {
 		}
 
 		// get all Annotations from gs
-		List<Annotation> goldStdAnnotations = new LinkedList<Annotation>(),
-				annotatorAnnotations = new LinkedList<Annotation>();
-		Set<String> goldStdStrings = new HashSet<String>(), annotatorStrings = new HashSet<String>();
+		List<Annotation> goldStdAnnotations = new ArrayList<>();
+		List<Annotation> annotatorAnnotations = new ArrayList<>();
+		Set<String> goldStdStrings = new HashSet<String>();
+		Set<String> annotatorStrings = new HashSet<String>();
 
 		Set<?> resultsSet = annotatorAnswerSet.getAnswers();
 		

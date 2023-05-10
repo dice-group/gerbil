@@ -31,8 +31,7 @@ import com.carrotsearch.hppc.BitSet;
  * 
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * 
- * @param <T>
- *            is the {@link Meaning} class or one of its extensions.
+ * @param <T> is the {@link Meaning} class or one of its extensions.
  */
 public abstract class AbstractMeaningMatchingsSearcher<T extends Meaning> implements MatchingsSearcher<T> {
 
@@ -46,24 +45,25 @@ public abstract class AbstractMeaningMatchingsSearcher<T extends Meaning> implem
         // Check whether a link to a known KB is expected
         expectingKBUri = hasKbUri(expectedElement);
 
-        T annotatorResult;
-        for (int i = 0; i < annotatorResults.size(); ++i) {
-            if (!alreadyUsedResults.get(i)) {
-                annotatorResult = annotatorResults.get(i);
-                // extend the annotator result, if possible
-                annotatorUris = annotatorResult.getUris();
-                annotatorHasKBUri = hasKbUri(annotatorResult);
-                // if both can be mapped to a KB
-                if ((annotatorHasKBUri) && (expectingKBUri)) {
-                    // if the sets are intersecting
-                    if (MeaningEqualityChecker.overlaps(expectedUris, annotatorUris)) {
-                        matching.set(i);
-                    }
-                    // else if both are not mapped to a KB
-                } else if ((!annotatorHasKBUri) && (!expectingKBUri)) {
-                    matching.set(i);
+        // We shouldn't use a for loop with indexes since we do not know whether we get
+        // very long linked lists. Hence, keeping track of the ID in parallel to an
+        // iterator is the faster implementation.
+        int id = 0;
+        for (T annotatorResult : annotatorResults) {
+            // extend the annotator result, if possible
+            annotatorUris = annotatorResult.getUris();
+            annotatorHasKBUri = hasKbUri(annotatorResult);
+            // if both can be mapped to a KB
+            if ((annotatorHasKBUri) && (expectingKBUri)) {
+                // if the sets are intersecting
+                if (MeaningEqualityChecker.overlaps(expectedUris, annotatorUris)) {
+                    matching.set(id);
                 }
+                // else if both are not mapped to a KB
+            } else if ((!annotatorHasKBUri) && (!expectingKBUri)) {
+                matching.set(id);
             }
+            ++id;
         }
         return matching;
     }
