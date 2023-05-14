@@ -7,7 +7,7 @@ GERBIL
 [![BCH compliance](https://bettercodehub.com/edge/badge/AKSW/gerbil)](https://bettercodehub.com/)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/5634b1a7508f475886b027feac9da228)](https://www.codacy.com/gh/dice-group/gerbil/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=dice-group/gerbil&amp;utm_campaign=Badge_Grade)
 
-<img style="height: auto; width: auto; max-width: 300px; max-height: 300px;" src="http://139.18.2.164/mroeder/gerbil/gerbil_logo.png">
+<img style="height: auto; width: auto; max-width: 300px; max-height: 300px;" src="https://hobbitdata.informatik.uni-leipzig.de/gerbil/gerbil_logo.png">
 
 ### General Information
 

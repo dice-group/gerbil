@@ -22,7 +22,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<slf4j.version>1.7.6</slf4j.version>
-		<junit.version>4.13</junit.version>
+		<junit.version>4.13.2</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>5.3.9</spring.version>
 		<jena.version>3.1.0</jena.version>
@@ -70,8 +70,8 @@
 			<artifactId>jena-arq</artifactId>
 			<version>${jena.version}</version>
 			<exclusions>
-			    <exclusion>
-			    </exclusion>
+				<exclusion>
+				</exclusion>
 			</exclusions>
 		</dependency>
         <dependency>
@@ -338,11 +338,11 @@
 			<artifactId>commons-compress</artifactId>
 			<version>1.21</version>
 		</dependency>
-			<dependency>
-				<groupId>com.google.code.externalsortinginjava</groupId>
-				<artifactId>externalsortinginjava</artifactId>
-				<version>0.1.10</version>
-			</dependency>
+		<dependency>
+			<groupId>com.google.code.externalsortinginjava</groupId>
+			<artifactId>externalsortinginjava</artifactId>
+			<version>0.1.10</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -426,38 +426,43 @@
 					</execution>
 				</executions>
 			</plugin>
-            <!-- Surefire plugin for JUnit tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-                <configuration>
-                    <!-- connect with JaCoCo -->
-                    <systemPropertyVariables>
-                        <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-            <!-- JaCoCo plugin for test coverage reports -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
-                <executions>
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			<!-- Surefire plugin for JUnit tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.2</version>
+				<configuration>
+					<!-- connect with JaCoCo -->
+					<systemPropertyVariables>
+						<jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<!-- JaCoCo plugin for test coverage reports -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.5</version>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-report</id>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.3.1</version>
+			</plugin>
 		</plugins>
 
 		<resources>

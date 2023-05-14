@@ -16,6 +16,8 @@
  */
 package org.aksw.gerbil.config;
 
+import java.io.File;
+
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -37,6 +39,7 @@ public class GerbilConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(GerbilConfiguration.class);
 
     private static final String DEFAULT_GERBIL_PROPERTIES_FILE_NAME = "gerbil.properties";
+    public static final String GERBIL_PROP_DIR_KEY = "GERBIL_PROP_DIR";
     public static final String GERBIL_DATAPATH_PROPERTY_NAME = "org.aksw.gerbil.DataPath";
     public static final String GERBIL_VERSION_PROPERTY_NAME = "org.aksw.gerbil.Version";
 
@@ -52,10 +55,23 @@ public class GerbilConfiguration {
 
     public static synchronized void loadAdditionalProperties(String fileName) {
         try {
-            ((CompositeConfiguration) getInstance()).addConfiguration(new PropertiesConfiguration(fileName));
+            ((CompositeConfiguration) getInstance())
+                    .addConfiguration(new PropertiesConfiguration(derivePropertiesPath(fileName)));
         } catch (ConfigurationException e) {
             LOGGER.error("Couldnt load Properties from the properties file (\"" + fileName
                     + "\"). This GERBIL instance won't work as expected.", e);
+        }
+    }
+
+    public static String derivePropertiesPath(String fileName) {
+        if (System.getenv().containsKey(GERBIL_PROP_DIR_KEY)) {
+            String temp = System.getenv().get(GERBIL_PROP_DIR_KEY);
+            if (!temp.endsWith(File.separator)) {
+                temp += File.separator;
+            }
+            return temp + fileName;
+        } else {
+            return fileName;
         }
     }
 
