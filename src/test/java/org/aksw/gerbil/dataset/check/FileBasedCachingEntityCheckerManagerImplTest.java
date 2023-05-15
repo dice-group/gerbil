@@ -62,9 +62,9 @@ public class FileBasedCachingEntityCheckerManagerImplTest implements EntityCheck
         File cacheFile = File.createTempFile("temp_", ".cache");
         // Remove the file as the manager should create it by itself
         cacheFile.delete();
-        
+
         FileBasedCachingEntityCheckerManager manager = FileBasedCachingEntityCheckerManager.create(CACHE_DURATION,
-                cacheFile);
+                10000, cacheFile);
         manager.registerEntityChecker("http://aksw.org/", this);
 
         expectCall = true;
@@ -80,7 +80,7 @@ public class FileBasedCachingEntityCheckerManagerImplTest implements EntityCheck
         manager.storeCache();
 
         FileBasedCachingEntityCheckerManager manager2 = FileBasedCachingEntityCheckerManager.create(CACHE_DURATION,
-                cacheFile);
+                10000, cacheFile);
         expectCall = false;
         runSingleTest(manager2);
 
