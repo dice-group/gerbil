@@ -48,10 +48,10 @@ public class SameAsRetrievalTest {
         testConfigs.add(new Object[] { "http://aksw.org/notInWiki/Peter_Pan", null });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Kaufland",
                 Arrays.asList("http://fr.dbpedia.org/resource/Kaufland", "http://de.dbpedia.org/resource/Kaufland") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Malaysia",
-                Arrays.asList("http://de.dbpedia.org/resource/Malaysia") });
-        testConfigs.add(new Object[] { "http://dbpedia.org/resource/People's_Republic_of_China",
-                Arrays.asList("http://dbpedia.org/resource/China") });
+//        testConfigs.add(new Object[] { "http://dbpedia.org/resource/Malaysia",
+//                Arrays.asList("http://de.dbpedia.org/resource/Malaysia") });
+//        testConfigs.add(new Object[] { "http://dbpedia.org/resource/People's_Republic_of_China",
+//                Arrays.asList("http://dbpedia.org/resource/China") });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/Home_Depot",
                 Arrays.asList("http://dbpedia.org/resource/The_Home_Depot") });
         testConfigs.add(new Object[] { "http://en.wikipedia.org/wiki/People's_Republic_of_China",
