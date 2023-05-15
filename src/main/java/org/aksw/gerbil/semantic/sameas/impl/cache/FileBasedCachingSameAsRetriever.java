@@ -49,7 +49,7 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
 
     @SuppressWarnings("unchecked")
     public static FileBasedCachingSameAsRetriever create(SameAsRetriever decoratedRetriever,
-            boolean requestEntitiesNotFound, File cacheFile) {
+            boolean requestEntitiesNotFound, int forceStorageAfterChanges, File cacheFile) {
         File tempCacheFile = new File(cacheFile.getAbsolutePath() + "_temp");
 
         Object objects[] = null;
@@ -82,7 +82,7 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
             sets = (List<Set<String>>) objects[1];
         }
         return new FileBasedCachingSameAsRetriever(decoratedRetriever, uriSetIdMapping, sets, requestEntitiesNotFound,
-                cacheFile, tempCacheFile);
+                forceStorageAfterChanges, cacheFile, tempCacheFile);
     }
 
     protected ObjectIntOpenHashMap<String> uriSetIdMapping;
@@ -96,7 +96,7 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
     protected File tempCacheFile;
 
     protected FileBasedCachingSameAsRetriever(SameAsRetriever decoratedRetriever,
-            ObjectIntOpenHashMap<String> uriSetIdMapping, List<Set<String>> sets, boolean requestEntitiesNotFound,
+            ObjectIntOpenHashMap<String> uriSetIdMapping, List<Set<String>> sets, boolean requestEntitiesNotFound, int forceStorageAfterChanges,
             File cacheFile, File tempCacheFile) {
         super(decoratedRetriever);
         this.uriSetIdMapping = uriSetIdMapping;
@@ -104,6 +104,7 @@ public class FileBasedCachingSameAsRetriever extends AbstractSameAsRetrieverDeco
         this.requestEntitiesNotFound = requestEntitiesNotFound;
         this.cacheFile = cacheFile;
         this.tempCacheFile = tempCacheFile;
+        this.forceStorageAfterChanges = forceStorageAfterChanges;
     }
 
     @Override

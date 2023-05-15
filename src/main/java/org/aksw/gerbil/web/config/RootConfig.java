@@ -98,6 +98,7 @@ public class RootConfig {
     private static final String NUMBER_OF_WORKERS_KEY = "org.aksw.gerbil.web.config.overseerWorkers";
 
     private static final String SAME_AS_CACHE_FILE_KEY = "org.aksw.gerbil.semantic.sameas.CachingSameAsRetriever.cacheFile";
+    private static final String SAME_AS_CACHE_FORCE_STORAGE_KEY = "org.aksw.gerbil.semantic.sameas.CachingSameAsRetriever.forceStorageAfterChanges";
     private static final String SAME_AS_IN_MEMORY_CACHE_SIZE_KEY = "org.aksw.gerbil.semantic.sameas.InMemoryCachingSameAsRetriever.cacheSize";
 
     private static final String ANNOTATOR_OUTPUT_WRITER_USAGE_KEY = "org.aksw.gerbil.execute.AnnotatorOutputWriter.printAnnotatorResults";
@@ -107,6 +108,7 @@ public class RootConfig {
 
     private static final String ENTITY_CHECKING_MANAGER_USE_PERSISTENT_CACHE_KEY = "org.aksw.gerbil.dataset.check.EntityCheckerManagerImpl.usePersistentCache";
     private static final String ENTITY_CHECKING_MANAGER_PERSISTENT_CACHE_FILE_NAME_KEY = "org.aksw.gerbil.dataset.check.FileBasedCachingEntityCheckerManager.cacheFile";
+    private static final String ENTITY_CHECKING_MANAGER_PERSISTENT_CACHE_FORCE_STORAGE_KEY = "org.aksw.gerbil.dataset.check.FileBasedCachingEntityCheckerManager.forceStorageAfterChanges";
     private static final String ENTITY_CHECKING_MANAGER_PERSISTENT_CACHE_DURATION_KEY = "org.aksw.gerbil.dataset.check.FileBasedCachingEntityCheckerManager.cacheDuration";
     private static final String ENTITY_CHECKING_MANAGER_IN_MEM_CACHE_SIZE_KEY = "org.aksw.gerbil.dataset.check.InMemoryCachingEntityCheckerManager.cacheSize";
     private static final String ENTITY_CHECKING_MANAGER_IN_MEM_CACHE_DURATION_KEY = "org.aksw.gerbil.dataset.check.InMemoryCachingEntityCheckerManager.cacheDuration";
@@ -223,7 +225,9 @@ public class RootConfig {
 
         SameAsRetriever decoratedRetriever = null;
         if (GerbilConfiguration.getInstance().containsKey(SAME_AS_CACHE_FILE_KEY)) {
+            int forceStorageAfterChanges = GerbilConfiguration.getInstance().getInt(SAME_AS_CACHE_FORCE_STORAGE_KEY, 0);
             decoratedRetriever = FileBasedCachingSameAsRetriever.create(sameAsRetriever, false,
+                    forceStorageAfterChanges,
                     new File(GerbilConfiguration.getInstance().getString(SAME_AS_CACHE_FILE_KEY)));
         }
 
@@ -280,7 +284,10 @@ public class RootConfig {
             try {
                 long duration = config.getLong(ENTITY_CHECKING_MANAGER_PERSISTENT_CACHE_DURATION_KEY);
                 String cacheFile = config.getString(ENTITY_CHECKING_MANAGER_PERSISTENT_CACHE_FILE_NAME_KEY);
-                manager = FileBasedCachingEntityCheckerManager.create(duration, new File(cacheFile));
+                int forceStorageAfterChanges = GerbilConfiguration.getInstance()
+                        .getInt(ENTITY_CHECKING_MANAGER_PERSISTENT_CACHE_FORCE_STORAGE_KEY, 0);
+                manager = FileBasedCachingEntityCheckerManager.create(duration, forceStorageAfterChanges,
+                        new File(cacheFile));
             } catch (ConversionException e) {
                 LOGGER.error("Exception while parsing parameter.", e);
             }
@@ -329,8 +336,7 @@ public class RootConfig {
                             namespaces.get(0));
                     // use HTTP based checker
                     for (String namespace : namespaces) {
-                        manager.registerEntityChecker(namespace,
-                                new HttpBasedEntityChecker(namespace));
+                        manager.registerEntityChecker(namespace, new HttpBasedEntityChecker(namespace));
                     }
                 }
             }

@@ -57,7 +57,8 @@ public class FileBasedCachingEntityCheckerManager extends EntityCheckerManagerIm
     private static final int ENTITY_DOES_NOT_EXIST_BIT = 0x0;
     private static final int ERASE_EXISTS_FLAG_MASK = ~EXISTS_FLAG_MASK;
 
-    public static FileBasedCachingEntityCheckerManager create(long cacheEntryLifetime, File cacheFile) {
+    public static FileBasedCachingEntityCheckerManager create(long cacheEntryLifetime, int forceStorageAfterChanges,
+            File cacheFile) {
         File tempCacheFile = new File(cacheFile.getAbsolutePath() + "_temp");
 
         ObjectLongOpenHashMap<String> cache = null;
@@ -83,14 +84,14 @@ public class FileBasedCachingEntityCheckerManager extends EntityCheckerManagerIm
             LOGGER.warn("Couldn't read cache from files. Creating new empty cache.");
             cache = new ObjectLongOpenHashMap<String>();
         }
-        return new FileBasedCachingEntityCheckerManager(cache, cacheEntryLifetime, cacheFile, tempCacheFile);
+        return new FileBasedCachingEntityCheckerManager(cache, cacheEntryLifetime, forceStorageAfterChanges, cacheFile, tempCacheFile);
     }
 
     public static ObjectLongOpenHashMap<String> readCacheFile(File cacheFile) {
         if (!cacheFile.exists() || cacheFile.isDirectory()) {
             return null;
         }
-        try(ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(cacheFile)))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(cacheFile)))) {
             // first, read the number of URIs
             int count = ois.readInt();
             String uri;
@@ -116,11 +117,12 @@ public class FileBasedCachingEntityCheckerManager extends EntityCheckerManagerIm
     protected File tempCacheFile;
 
     protected FileBasedCachingEntityCheckerManager(ObjectLongOpenHashMap<String> cache, long cacheEntryLifetime,
-            File cacheFile, File tempCacheFile) {
+            int forceStorageAfterChanges, File cacheFile, File tempCacheFile) {
         this.cache = cache;
         this.cacheEntryLifetime = cacheEntryLifetime;
         this.cacheFile = cacheFile;
         this.tempCacheFile = tempCacheFile;
+        this.forceStorageAfterChanges = forceStorageAfterChanges;
     }
 
     @Override
