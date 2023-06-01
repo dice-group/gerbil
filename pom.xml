@@ -154,7 +154,7 @@
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
-			<version>6.2.0</version>
+			<version>6.6.6</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-configuration</groupId>
@@ -326,7 +326,7 @@
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>
-			<version>6.2.0</version>
+			<version>6.6.6</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-validator</groupId>
