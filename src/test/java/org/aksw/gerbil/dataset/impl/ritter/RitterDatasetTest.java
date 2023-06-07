@@ -16,14 +16,18 @@
  */
 package org.aksw.gerbil.dataset.impl.ritter;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,9 +64,17 @@ public class RitterDatasetTest {
     }
 
     @Test
-    public void test() throws IOException {
-        RitterDataset ritter = new RitterDataset("");
-        List<Marking> markings = ritter.findMarkings(text);
+    public void test() throws IOException, GerbilException {
+        // Create temporary file with given text
+        File file = File.createTempFile("umbc-test-", ".tsv");
+        FileUtils.write(file, text);
+        
+        RitterDataset ritter = new RitterDataset(file.getAbsolutePath());
+        ritter.init();
+        List<Document> documents = ritter.getInstances();
+        Assert.assertNotNull(documents);
+        Assert.assertTrue(documents.size() > 0);
+        List<Marking> markings = documents.get(0).getMarkings();
         Assert.assertNotNull(markings);
         Assert.assertTrue(markings.size() > 0);
         Assert.assertTrue(markings.get(0) instanceof NamedEntity);

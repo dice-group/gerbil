@@ -16,13 +16,17 @@
  */
 package org.aksw.gerbil.dataset.impl.umbc;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,9 +57,17 @@ public class UMBCDatasetTest {
     }
 
     @Test
-    public void test() throws IOException {
-        UMBCDataset umbc = new UMBCDataset("");
-        List<Marking> markings = umbc.findMarkings(text);
+    public void test() throws IOException, GerbilException {
+        // Create temporary file with given text
+        File file = File.createTempFile("umbc-test-", ".tsv");
+        FileUtils.write(file, text);
+        
+        UMBCDataset umbc = new UMBCDataset(file.getAbsolutePath());
+        umbc.init();
+        List<Document> documents = umbc.getInstances();
+        Assert.assertNotNull(documents);
+        Assert.assertTrue(documents.size() > 0);
+        List<Marking> markings = documents.get(0).getMarkings();
         Assert.assertNotNull(markings);
         Assert.assertTrue(markings.size() > 0);
         Assert.assertTrue(markings.get(0) instanceof NamedEntity);

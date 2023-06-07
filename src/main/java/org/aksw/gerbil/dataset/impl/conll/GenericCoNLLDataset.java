@@ -35,42 +35,72 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
-import org.apache.commons.io.IOUtils;
 
 /**
- * Dataset Adapter to load CoNLL datasets
+ * Dataset Adapter to load a dataset that follows the general structure of
+ * CoNLL.
  */
 public class GenericCoNLLDataset extends AbstractDataset implements InitializableDataset {
 
-	protected static final String MARKING_START = "B-";
-	protected static final String MARKING_INSIDE = "I-";
+    /**
+     * Prefix of a value in the marking column that expresses the start of a
+     * marking. TODO think about removing the '-' or make it configurable.
+     */
+    protected static final String MARKING_START = "B-";
 
+    /**
+     * Prefix of a value in the marking column that expresses the continuation of a
+     * marking.
+     */
+    protected static final String MARKING_INSIDE = "I-";
+
+    /**
+     * The file from which the data will be loaded.
+     */
     protected String file;
+    /**
+     * The list of documents loaded from the file.
+     */
     protected List<Document> documents;
-	protected StringBuilder currentText;
-	protected int firstDocId;
-	protected int lastDocId;
-
+    /**
+     * Id of the first document.
+     */
+    protected int firstDocId;
+    /**
+     * Id of the last document.
+     */
+    protected int lastDocId;
+    /**
+     * Class to map markings from the dataset to their type IRI.
+     */
     protected CoNLLTypeRetriever typeRetriever;
+    /**
+     * Id of the column that contains the annotations.
+     */
     protected int annotationColumn;
+    /**
+     * Id of the column that contains the entity's IRI. If there is no such column,
+     * it is set to -1.
+     */
     protected int uriColumn;
 
     public GenericCoNLLDataset(String file, int annotationColumn, int uriColumn, CoNLLTypeRetriever typeRetriever) {
-		this(file, annotationColumn, uriColumn, typeRetriever, -1, -1);
-	}
+        this(file, annotationColumn, uriColumn, typeRetriever, -1, -1);
+    }
 
-	public GenericCoNLLDataset(String file, int annotationColumn, int uriColumn, CoNLLTypeRetriever typeRetriever,
-				String firstDocId, String lastDocId) {
-		this(file, annotationColumn, uriColumn, typeRetriever, Integer.parseInt(firstDocId), Integer.parseInt(lastDocId));
-	}
-	
-	public GenericCoNLLDataset(String file, int annotationColumn, int uriColumn, CoNLLTypeRetriever typeRetriever,
-				int firstDocId, int lastDocId) {
+    public GenericCoNLLDataset(String file, int annotationColumn, int uriColumn, CoNLLTypeRetriever typeRetriever,
+            String firstDocId, String lastDocId) {
+        this(file, annotationColumn, uriColumn, typeRetriever, Integer.parseInt(firstDocId),
+                Integer.parseInt(lastDocId));
+    }
+
+    public GenericCoNLLDataset(String file, int annotationColumn, int uriColumn, CoNLLTypeRetriever typeRetriever,
+            int firstDocId, int lastDocId) {
         this.file = file;
         this.annotationColumn = annotationColumn;
         this.uriColumn = uriColumn;
         this.typeRetriever = typeRetriever;
-        this.firstDocId= firstDocId;
+        this.firstDocId = firstDocId;
         this.lastDocId = lastDocId;
     }
 
@@ -86,93 +116,124 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
 
     @Override
     public void init() throws GerbilException {
-		this.documents = loadDocuments(new File(file));
-		if ((firstDocId > 0) && (lastDocId > 0)) {
-			this.documents = this.documents.subList(firstDocId - 1, lastDocId);
-		}
+        this.documents = loadDocuments(new File(file));
+        if ((firstDocId > 0) && (lastDocId > 0)) {
+            this.documents = this.documents.subList(firstDocId - 1, lastDocId);
+        }
     }
 
-    protected List<Document> loadDocuments(File file)
-			throws GerbilException {
-		BufferedReader reader = null;
-		List<Document> documents = new ArrayList<Document>();
-		String documentUriPrefix = "http://" + getName() + "/";
-		try {
-			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8")));
-			String line = reader.readLine();
-			int index = 0;
-			List<Marking> markings = new ArrayList<Marking>();
-			StringBuilder currentDoc = new StringBuilder("");
-			while (line != null) {
-				if (line.trim().isEmpty()) {
-					// Get Markings
-					markings = findMarkings(currentDoc.toString());
-					// Save the document
-					documents.add(new DocumentImpl(currentText.toString(), documentUriPrefix + index, markings));
-					// New Document
-					currentDoc.delete(0, currentDoc.length());
-					line = reader.readLine();
-					index++;
-				} else {
-					currentDoc.append(line + "\n");
-					line = reader.readLine();
-				}
-			}
-			//check if there is a document to be added
-			if(currentDoc.length() > 0) {
-				// Get Markings
-				markings = findMarkings(currentDoc.toString());
-				// Save last document
-				documents.add(new DocumentImpl(currentText.toString(), documentUriPrefix + index, markings));
-			}
-		} catch (IOException e) {
-			throw new GerbilException("Exception while reading dataset.", e,
-					ErrorTypes.DATASET_LOADING_ERROR);
-		} finally {
-			IOUtils.closeQuietly(reader);
-		}
-		return documents;
+    /**
+     * This method loads the CoNLL dataset from the given file.
+     * 
+     * @param file file from which the dataset will be loaded
+     * @return list of {@link Document} instances that have been loaded.
+     * @throws GerbilException if there is an IO error while reading the file.
+     */
+    protected List<Document> loadDocuments(File file) throws GerbilException {
+        List<Document> documents = new ArrayList<Document>();
+        // Create namespace for the documents of this dataset
+        String documentUriPrefix = "http://" + getName() + "/";
+        StringBuilder textOfCurrentDocument = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8")));) {
+            String line = reader.readLine();
+            // Id of the next document in this file
+            int index = 0;
+            List<String> linesOfCurrentDoc = new ArrayList<>();
+            // Iterate through all lines until the complete file has been read.
+            while (line != null) {
+                // If there is an empty line, the previous document ended and will be added to
+                // the list of documents
+                if (line.trim().isEmpty()) {
+                    // If there is a document that can be added
+                    if (linesOfCurrentDoc.size() > 0) {
+                        // Get Markings
+                        List<Marking> markings = findMarkings(linesOfCurrentDoc, textOfCurrentDocument);
+                        // Save the document
+                        documents.add(new DocumentImpl(textOfCurrentDocument.toString(), documentUriPrefix + index,
+                                markings));
+                        // Reset local variables
+                        textOfCurrentDocument.delete(0, textOfCurrentDocument.length());
+                        linesOfCurrentDoc.clear();
+                        // Increase the document ID
+                        index++;
+                    }
+                } else {
+                    // Add the current line to the list of lines of the current document
+                    linesOfCurrentDoc.add(line);
+                }
+                // Read the next line
+                line = reader.readLine();
+            }
+            // check if there is a document left that should be added
+            if (linesOfCurrentDoc.size() > 0) {
+                // Get Markings
+                List<Marking> markings = findMarkings(linesOfCurrentDoc, textOfCurrentDocument);
+                // Save last document
+                documents.add(new DocumentImpl(textOfCurrentDocument.toString(), documentUriPrefix + index, markings));
+            }
+        } catch (IOException e) {
+            throw new GerbilException("Exception while reading dataset.", e, ErrorTypes.DATASET_LOADING_ERROR);
+        }
+        return documents;
     }
-    
-    public List<Marking> findMarkings(String currentDoc) {
-		List<Marking> markings = new ArrayList<Marking>();
-		String[] lines = currentDoc.split("\n");
-		currentText = new StringBuilder("");
-		int i = 0;
-		for (String tokenFull : lines) {
-			String[] token = tokenFull.split("\t+");
-			if (token.length > annotationColumn && token[annotationColumn].startsWith(MARKING_START)) {
-				markings.add(getWholeMarking(lines, i));
-			}
-			currentText.append(token[0] + " ");
-			i++;
-		}
-		return markings;
+
+    /**
+     * Find markings of document and add document text to the given StringBuilder.
+     * 
+     * @param linesOfCurrentDoc the lines of the current document
+     * @param currentText       StringBuilder to which the document text should be
+     *                          added
+     * @return The list of {@link Marking} instances found within the document
+     */
+    protected List<Marking> findMarkings(List<String> linesOfCurrentDoc, StringBuilder currentText) {
+        List<Marking> markings = new ArrayList<Marking>();
+        int i = 0;
+        // Iterate over the document lines
+        for (String tokenFull : linesOfCurrentDoc) {
+            // split the columns
+            String[] token = tokenFull.split("\t+");
+            // If we can parse this line
+            if (token.length > annotationColumn && token[annotationColumn].startsWith(MARKING_START)) {
+                // Get the marking from this line (and maybe the next lines)
+                markings.add(getWholeMarking(linesOfCurrentDoc, i, currentText));
+            }
+            // Add the token from this line to the document's text
+            // TODO 1. make the whitespace configurable to allow other word separators 2.
+            // Remove the previous word separator if we have a punctuation character.
+            // (quotation, apostrophe)
+            currentText.append(token[0] + " ");
+            // Increase the line ID
+            i++;
+        }
+        return markings;
     }
-    
-    protected TypedNamedEntity getWholeMarking(String line[], int pos) {
-        String[] tokens = line[pos].split("\t");
+
+    protected TypedNamedEntity getWholeMarking(List<String> linesOfCurrentDoc, int pos, StringBuilder currentText) {
+        String[] tokens = linesOfCurrentDoc.get(pos).split("\t");
 
         // get type of the marking
         String type = typeRetriever.getTypeURI(tokens[annotationColumn].substring(2));
 
-		//get uri of the marking if given in the dataset
-		String uri = "";
-		if (uriColumn != -1 && tokens[uriColumn].startsWith("http")) {
+        // get uri of the marking if given in the dataset
+        String uri = "";
+        if (uriColumn != -1 && tokens[uriColumn].startsWith("http")) {
             uri = tokens[uriColumn];
-		} 
+        }
 
         // get surface form of the marking
         StringBuilder surfaceForm = new StringBuilder().append(tokens[0]);
-		for (int i = pos + 1; i < line.length; i++) {
-			tokens = line[i].split("\t");
-			if (tokens[annotationColumn].startsWith(MARKING_INSIDE)) {
-				surfaceForm.append(" ").append(tokens[0]);
-			} else {
-				break;
-			}
-		}
-		return new TypedNamedEntity(currentText.length(), surfaceForm.length(), uri, 
-				new HashSet<String>(Arrays.asList(type)));
-	}
+        for (int i = pos + 1; i < linesOfCurrentDoc.size(); i++) {
+            tokens = linesOfCurrentDoc.get(i).split("\t");
+            if (tokens[annotationColumn].startsWith(MARKING_INSIDE)) {
+                // TODO 1. make the whitespace configurable to allow other word separators 2.
+                // Remove the previous word separator if we have a punctuation character.
+                surfaceForm.append(" ").append(tokens[0]);
+            } else {
+                break;
+            }
+        }
+        return new TypedNamedEntity(currentText.length(), surfaceForm.length(), uri,
+                new HashSet<String>(Arrays.asList(type)));
+    }
 }
