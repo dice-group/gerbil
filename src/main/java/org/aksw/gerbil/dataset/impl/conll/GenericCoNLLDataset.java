@@ -34,13 +34,20 @@ import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
+import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.aksw.gerbil.transfer.nif.data.TypedSpanImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dataset Adapter to load a dataset that follows the general structure of
  * CoNLL.
  */
 public class GenericCoNLLDataset extends AbstractDataset implements InitializableDataset {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenericCoNLLDataset.class);
 
     /**
      * Prefix of a value in the marking column that expresses the start of a
@@ -209,14 +216,15 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
         return markings;
     }
 
-    protected TypedNamedEntity getWholeMarking(List<String> linesOfCurrentDoc, int pos, StringBuilder currentText) {
+    protected Marking getWholeMarking(List<String> linesOfCurrentDoc, int pos, StringBuilder currentText) {
         String[] tokens = linesOfCurrentDoc.get(pos).split("\t");
 
-        // get type of the marking
+        // get type of the marking TODO if the B- and I- are configurable, the
+        // substring(2) has to be configurable as well.
         String type = typeRetriever.getTypeURI(tokens[annotationColumn].substring(2));
 
         // get uri of the marking if given in the dataset
-        String uri = "";
+        String uri = null;
         if (uriColumn != -1 && tokens[uriColumn].startsWith("http")) {
             uri = tokens[uriColumn];
         }
@@ -233,7 +241,23 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
                 break;
             }
         }
-        return new TypedNamedEntity(currentText.length(), surfaceForm.length(), uri,
-                new HashSet<String>(Arrays.asList(type)));
+        if (type != null) {
+            if (uri != null) {
+                return new TypedNamedEntity(currentText.length(), surfaceForm.length(), uri,
+                        new HashSet<String>(Arrays.asList(type)));
+            } else {
+                return new TypedSpanImpl(currentText.length(), surfaceForm.length(),
+                        new HashSet<String>(Arrays.asList(type)));
+            }
+        } else {
+            if (uri != null) {
+                return new NamedEntity(currentText.length(), surfaceForm.length(), uri);
+            } else {
+                LOGGER.warn(
+                        "Found a marked piece of text without any further information: \"{}\". This is either an error in the dataset or this adapter is not correctly configured.",
+                        surfaceForm);
+                return new SpanImpl(currentText.length(), surfaceForm.length());
+            }
+        }
     }
 }
