@@ -17,72 +17,49 @@
 package org.aksw.gerbil.dataset.impl.ritter;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
-import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.dataset.InitializableDataset;
+import org.aksw.gerbil.dataset.impl.conll.AbstractGenericCoNLLDatasetTest;
+import org.aksw.gerbil.dataset.impl.derczysnki.DerczynskiDataset;
 import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
-import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
-import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.aksw.gerbil.transfer.nif.data.TypedSpanImpl;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class RitterDatasetTest {
+public class RitterDatasetTest extends AbstractGenericCoNLLDatasetTest {
+
+    public RitterDatasetTest(String fileContent, String text, Marking expectedMarking, int documentId, int markingId) {
+        super(fileContent, text, expectedMarking, documentId, markingId);
+    }
+
+    @Override
+    public InitializableDataset createDataset(File file) {
+        return new RitterDataset(file.getAbsolutePath());
+    }
 
     @Parameters
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
-        testConfigs.add(new Object[] { "Texans	O\nurged	O\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-geo-loc\ncoast	I-geo-loc\n,	O\na	O\nURL	O", "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ", new String[]{"Texas coast", "http://dbpedia.org/ontology/Place"} });
-        testConfigs.add(new Object[] { "Texans	B-movie\nurged	O\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-geo-loc\ncoast	I-geo-loc\n,	O\na	O\nURL	O", "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ", new String[]{"Texans", "http://dbpedia.org/ontology/Film"} });
-        testConfigs.add(new Object[] { "Texans	B-company\nurged	B-PER\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-geo-loc\ncoast	I-geo-loc\n,	O\na	O\nURL	O", "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ", new String[]{"Texans", "http://dbpedia.org/ontology/Company"} });
-        testConfigs.add(new Object[] { "Texans	B-facility\nurged	B-PER\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-geo-loc\ncoast	I-geo-loc\n,	O\na	O\nURL	O", "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ", new String[]{"Texans", "http://dbpedia.org/ontology/Place"} });
-        testConfigs.add(new Object[] { "Texans	B-musicartist\nurged	B-PER\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-geo-loc\ncoast	I-geo-loc\n,	O\na	O\nURL	O", "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ", new String[]{"Texans", "http://dbpedia.org/ontology/MusicalArtist"} });
-        testConfigs.add(new Object[] { "Texans	B-other\nurged	B-PER\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-geo-loc\ncoast	I-geo-loc\n,	O\na	O\nURL	O", "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ", new String[]{"Texans", "http://dbpedia.org/ontology/Unknown"} });
-        testConfigs.add(new Object[] { "Texans	B-person\nurged	B-PER\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-geo-loc\ncoast	I-geo-loc\n,	O\na	O\nURL	O", "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ", new String[]{"Texans", "http://dbpedia.org/ontology/Person"} });
-        testConfigs.add(new Object[] { "Texans	B-product\nurged	B-PER\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-geo-loc\ncoast	I-geo-loc\n,	O\na	O\nURL	O", "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ", new String[]{"Texans", "http://dbpedia.org/ontology/product"} });
-        testConfigs.add(new Object[] { "Texans	B-sportsteam\nurged	B-PER\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-geo-loc\ncoast	I-geo-loc\n,	O\na	O\nURL	O", "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ", new String[]{"Texans", "http://dbpedia.org/ontology/SportsTeam"} });
-        testConfigs.add(new Object[] { "Texans	B-tvshow\nurged	B-PER\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-geo-loc\ncoast	I-geo-loc\n,	O\na	O\nURL	O", "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ", new String[]{"Texans", "http://dbpedia.org/ontology/TelevisionShow"} });
+        testConfigs.add(new Object[] {
+                "@paulwalk	O\nIt	O\n's	O\nthe	O\nview	O\nfrom	O\nwhere	O\nI	O\n'm	O\nliving	O\nfor	O\ntwo	O\nweeks	O\n.	O\nEmpire	B-facility\nState	I-facility\nBuilding	I-facility\n=	O\nESB	B-facility\n.	O\nPretty	O\nbad	O\nstorm	O\nhere	O\nlast	O\nevening	O\n.	O\n	\nFrom	O\nGreen	O\nNewsfeed	O\n:	O\nAHFA	B-other\nextends	O\ndeadline	O\nfor	O\nSage	B-other\nAward	I-other\nto	O\nNov	O\n.	O\n5	O\nhttp://tinyurl.com/24agj38	O",
+                "@paulwalk It 's the view from where I 'm living for two weeks . Empire State Building = ESB . Pretty bad storm here last evening . ",
+                new TypedSpanImpl(64, 21, new HashSet<>(Arrays.asList("http://dbpedia.org/ontology/Place"))), 0, 0 });
+        testConfigs.add(new Object[] {
+                "@paulwalk	O\nIt	O\n's	O\nthe	O\nview	O\nfrom	O\nwhere	O\nI	O\n'm	O\nliving	O\nfor	O\ntwo	O\nweeks	O\n.	O\nEmpire	B-facility\nState	I-facility\nBuilding	I-facility\n=	O\nESB	B-facility\n.	O\nPretty	O\nbad	O\nstorm	O\nhere	O\nlast	O\nevening	O\n.	O\n	\nFrom	O\nGreen	O\nNewsfeed	O\n:	O\nAHFA	B-other\nextends	O\ndeadline	O\nfor	O\nSage	B-other\nAward	I-other\nto	O\nNov	O\n.	O\n5	O\nhttp://tinyurl.com/24agj38	O",
+                "@paulwalk It 's the view from where I 'm living for two weeks . Empire State Building = ESB . Pretty bad storm here last evening . ",
+                new TypedSpanImpl(88, 3, new HashSet<>(Arrays.asList("http://dbpedia.org/ontology/Place"))), 0, 1 });
+        testConfigs.add(new Object[] {
+                "@paulwalk	O\nIt	O\n's	O\nthe	O\nview	O\nfrom	O\nwhere	O\nI	O\n'm	O\nliving	O\nfor	O\ntwo	O\nweeks	O\n.	O\nEmpire	B-facility\nState	I-facility\nBuilding	I-facility\n=	O\nESB	B-facility\n.	O\nPretty	O\nbad	O\nstorm	O\nhere	O\nlast	O\nevening	O\n.	O\n	\nFrom	O\nGreen	O\nNewsfeed	O\n:	O\nAHFA	B-other\nextends	O\ndeadline	O\nfor	O\nSage	B-other\nAward	I-other\nto	O\nNov	O\n.	O\n5	O\nhttp://tinyurl.com/24agj38	O",
+                "From Green Newsfeed : AHFA extends deadline for Sage Award to Nov . 5 http://tinyurl.com/24agj38 ",
+                new TypedSpanImpl(22, 4, new HashSet<>(Arrays.asList("http://dbpedia.org/ontology/Unknown"))), 1, 0 });
         return testConfigs;
-    }
-
-    private String text;
-    private String[] expectedToken;
-    private String tweet;
-
-    public RitterDatasetTest(String text, String tweet, String[] expectedToken) {
-        this.text = text;
-        this.tweet = tweet;
-        this.expectedToken = expectedToken;
-    }
-
-    @Test
-    public void test() throws IOException, GerbilException {
-        // Create temporary file with given text
-        File file = File.createTempFile("umbc-test-", ".tsv");
-        FileUtils.write(file, text);
-        
-        RitterDataset ritter = new RitterDataset(file.getAbsolutePath());
-        ritter.init();
-        List<Document> documents = ritter.getInstances();
-        Assert.assertNotNull(documents);
-        Assert.assertTrue(documents.size() > 0);
-        List<Marking> markings = documents.get(0).getMarkings();
-        Assert.assertNotNull(markings);
-        Assert.assertTrue(markings.size() > 0);
-        Assert.assertTrue(markings.get(0) instanceof NamedEntity);
-        TypedNamedEntity ne = (TypedNamedEntity) markings.get(0);
-        String mention = tweet.substring(ne.getStartPosition(), ne.getStartPosition() + ne.getLength());
-        Assert.assertEquals(expectedToken[0], mention);
-        Assert.assertEquals(expectedToken[1], ne.getTypes().iterator().next());
-        ritter.close();
     }
 
 }
