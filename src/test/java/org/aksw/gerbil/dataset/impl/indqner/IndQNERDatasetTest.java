@@ -1,4 +1,4 @@
-package org.aksw.gerbil.dataset.impl.indq;
+package org.aksw.gerbil.dataset.impl.indqner;
 
 import java.io.File;
 import java.util.ArrayList;

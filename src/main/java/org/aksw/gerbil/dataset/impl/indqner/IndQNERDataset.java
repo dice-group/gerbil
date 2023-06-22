@@ -1,4 +1,4 @@
-package org.aksw.gerbil.dataset.impl.indq;
+package org.aksw.gerbil.dataset.impl.indqner;
 
 import org.aksw.gerbil.dataset.impl.conll.CoNLLTypeRetriever;
 import org.aksw.gerbil.dataset.impl.conll.GenericCoNLLDataset;
