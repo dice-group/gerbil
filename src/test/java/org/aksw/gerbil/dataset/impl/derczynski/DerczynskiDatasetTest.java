@@ -17,66 +17,56 @@
 package org.aksw.gerbil.dataset.impl.derczynski;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
+import org.aksw.gerbil.dataset.InitializableDataset;
+import org.aksw.gerbil.dataset.impl.conll.AbstractGenericCoNLLDatasetTest;
 import org.aksw.gerbil.dataset.impl.derczysnki.DerczynskiDataset;
-import org.aksw.gerbil.dataset.impl.ritter.RitterDataset;
-import org.aksw.gerbil.exceptions.GerbilException;
-import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
-import org.aksw.gerbil.transfer.nif.data.NamedEntity;
-import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
+import org.aksw.gerbil.transfer.nif.data.TypedSpanImpl;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class DerczynskiDatasetTest {
+public class DerczynskiDatasetTest extends AbstractGenericCoNLLDatasetTest {
+
+    public DerczynskiDatasetTest(String fileContent, String text, Marking expectedMarking, int documentId,
+            int markingId) {
+        super(fileContent, text, expectedMarking, documentId, markingId);
+    }
+
+    @Override
+    public InitializableDataset createDataset(File file) {
+        return new DerczynskiDataset(file.getAbsolutePath());
+    }
 
     @Parameters
     public static Collection<Object[]> data() {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
-        testConfigs.add(new Object[] { "#Astros	http://dbpedia.org/resource/Houston_Astros	B-sportsteam	HT\nlineup		O	NN\nfor		O	IN\ntonight		O	NN\n.		O	0\nKeppinger	http://dbpedia.org/resource/Jeff_Keppinger	B-person	NNP\nsits		O	VBZ\n,		O	,\nDowns	http://dbpedia.org/resource/Brodie_Downs	B-person	NNP\nplays		O	VBZ\n2B		O	NN\n,		O	,\nCJ	NIL	B-person	NNP\nbats		O	VBZ\n5th		O	JJ\n.		O	0\n@alysonfooter		O	USR\nhttp://bit.ly/bHvgCS		O	URL", "#Astros lineup for tonight . Jeff Keppinger sits , Downs plays 2B , CJ bats 5th . @alysonfooter http://bit.ly/bHvgCS ", "#Astros" });
-        testConfigs.add(new Object[] { "#Astros	http://dbpedia.org/resource/Houston_Astros	B-sportsteam	HT\nlineup		O	NN\nfor		http://bla.com	B-Person IN\ntonight		O	NN\n.		O	0\nKeppinger	http://dbpedia.org/resource/Jeff_Keppinger	B-person	NNP\nsits		O	VBZ\n,		O	,\nDowns	http://dbpedia.org/resource/Brodie_Downs	B-person	NNP\nplays		O	VBZ\n2B		O	NN\n,		O	,\nCJ	NIL	B-person	NNP\nbats		O	VBZ\n5th		O	JJ\n.		O	0\n@alysonfooter		O	USR\nhttp://bit.ly/bHvgCS		O	URL", "#Astros lineup for tonight . Keppinger sits , Downs plays 2B , CJ bats 5th . @alysonfooter http://bit.ly/bHvgCS ", "#Astros" });
-        testConfigs.add(new Object[] { "#Astros	O	B-sportsteam	HT\nlineup	O	I-sportsteam	NN\nfor		O	IN\ntonight		O	NN\n.		O	0\nJeff	http://dbpedia.org/resource/Jeff_Keppinger	B-person	NNP\nKeppinger	http://dbpedia.org/resource/Jeff_Keppinger	I-person	NNP\nsits		O	VBZ\n,		O	,\nDowns	http://dbpedia.org/resource/Brodie_Downs	B-person	NNP\nplays		O	VBZ\n2B		O	NN\n,		O	,\nCJ	NIL	B-person	NNP\nbats		O	VBZ\n5th		O	JJ\n.		O	0\n@alysonfooter		O	USR\nhttp://bit.ly/bHvgCS		O	URL", "#Astros lineup for tonight . Jeff Keppinger sits , Downs plays 2B , CJ bats 5th . @alysonfooter http://bit.ly/bHvgCS ","#Astros lineup" });
-        testConfigs.add(new Object[] { "#Astros	O	O	HT\nlineup		O	NN\nfor		O	IN\ntonight		O	NN\n.		O	0\nJeff	http://dbpedia.org/resource/Jeff_Keppinger	B-person	NNP\nKeppinger	http://dbpedia.org/resource/Jeff_Keppinger	I-person	NNP\nsits		O	VBZ\n,		O	,\nDowns	http://dbpedia.org/resource/Brodie_Downs	B-person	NNP\nplays		O	VBZ\n2B		O	NN\n,		O	,\nCJ	NIL	B-person	NNP\nbats		O	VBZ\n5th		O	JJ\n.		O	0\n@alysonfooter		O	USR\nhttp://bit.ly/bHvgCS		O	URL", "#Astros lineup for tonight . Jeff Keppinger sits , Downs plays 2B , CJ bats 5th . @alysonfooter http://bit.ly/bHvgCS ","Jeff Keppinger" });
+        testConfigs.add(new Object[] {
+                "#Astros	http://dbpedia.org/resource/Houston_Astros	B-sportsteam	HT\nlineup		O	NN\nfor		O	IN\ntonight		O	NN\n.		O	0\nKeppinger	http://dbpedia.org/resource/Jeff_Keppinger	B-person	NNP\nsits		O	VBZ\n,		O	,\nDowns	http://dbpedia.org/resource/Brodie_Downs	B-person	NNP\nplays		O	VBZ\n2B		O	NN\n,		O	,\nCJ	NIL	B-person	NNP\nbats		O	VBZ\n5th		O	JJ\n.		O	0\n@alysonfooter		O	USR\nhttp://bit.ly/bHvgCS		O	URL",
+                "#Astros lineup for tonight . Keppinger sits , Downs plays 2B , CJ bats 5th . @alysonfooter http://bit.ly/bHvgCS ",
+                new TypedNamedEntity(0, 7, "http://dbpedia.org/resource/Houston_Astros",
+                        new HashSet<>(Arrays.asList("http://dbpedia.org/ontology/SportsTeam"))),
+                0, 0 });
+        testConfigs.add(new Object[] {
+                "#Astros	http://dbpedia.org/resource/Houston_Astros	B-sportsteam	HT\nlineup		O	NN\nfor		O	IN\ntonight		O	NN\n.		O	0\nKeppinger	http://dbpedia.org/resource/Jeff_Keppinger	B-person	NNP\nsits		O	VBZ\n,		O	,\nDowns	http://dbpedia.org/resource/Brodie_Downs	B-person	NNP\nplays		O	VBZ\n2B		O	NN\n,		O	,\nCJ	NIL	B-person	NNP\nbats		O	VBZ\n5th		O	JJ\n.		O	0\n@alysonfooter		O	USR\nhttp://bit.ly/bHvgCS		O	URL",
+                "#Astros lineup for tonight . Keppinger sits , Downs plays 2B , CJ bats 5th . @alysonfooter http://bit.ly/bHvgCS ",
+                new TypedNamedEntity(29, 9, "http://dbpedia.org/resource/Jeff_Keppinger",
+                        new HashSet<>(Arrays.asList("http://dbpedia.org/ontology/Person"))),
+                0, 1 });
+        testConfigs.add(new Object[] {
+                "#Astros	O	B-sportsteam	HT\nlineup	O	I-sportsteam	NN\nfor		O	IN\ntonight		O	NN\n.		O	0\nJeff	http://dbpedia.org/resource/Jeff_Keppinger	B-person	NNP\nKeppinger	http://dbpedia.org/resource/Jeff_Keppinger	I-person	NNP\nsits		O	VBZ\n,		O	,\nDowns	http://dbpedia.org/resource/Brodie_Downs	B-person	NNP\nplays		O	VBZ\n2B		O	NN\n,		O	,\nCJ	NIL	B-person	NNP\nbats		O	VBZ\n5th		O	JJ\n.		O	0\n@alysonfooter		O	USR\nhttp://bit.ly/bHvgCS		O	URL",
+                "#Astros lineup for tonight . Jeff Keppinger sits , Downs plays 2B , CJ bats 5th . @alysonfooter http://bit.ly/bHvgCS ",
+                new TypedSpanImpl(0, 14, new HashSet<>(Arrays.asList("http://dbpedia.org/ontology/SportsTeam"))),
+                0, 0 });
         return testConfigs;
-    }
-
-    private String text;
-    private String expectedToken;
-	private String tweet;
-
-    public DerczynskiDatasetTest(String text, String tweet, String expectedToken) {
-        this.text = text;
-        this.tweet = tweet;
-        this.expectedToken = expectedToken;
-    }
-
-    @Test
-    public void test() throws IOException, GerbilException {
-        // Create temporary file with given text
-        File file = File.createTempFile("umbc-test-", ".tsv");
-        FileUtils.write(file, text);
-        
-        DerczynskiDataset derczynski = new DerczynskiDataset(file.getAbsolutePath());
-        derczynski.init();
-        List<Document> documents = derczynski.getInstances();
-        Assert.assertNotNull(documents);
-        Assert.assertTrue(documents.size() > 0);
-        List<Marking> markings = documents.get(0).getMarkings();
-        Assert.assertNotNull(markings);
-        Assert.assertTrue(markings.size() > 0);
-        Assert.assertTrue(markings.get(0) instanceof NamedEntity);
-        NamedEntity ne = (NamedEntity) markings.get(0);
-        String mention = tweet.substring(ne.getStartPosition(), ne.getStartPosition() + ne.getLength());
-        Assert.assertEquals(expectedToken, mention);
-        derczynski.close();
     }
 
 }

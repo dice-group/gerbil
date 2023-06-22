@@ -20,26 +20,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class to retrieve entity types for the specified annotations 
- * from a CoNLL formatted dataset.
+ * Class to retrieve entity types for the specified annotations from a CoNLL
+ * formatted dataset.
  */
 public class CoNLLTypeRetriever {
 
     private static final String PLACE_URI = "http://dbpedia.org/ontology/Place";
-	private static final String COMPANY_URI = "http://dbpedia.org/ontology/company";
-	private static final String FILM_URI = "http://dbpedia.org/ontology/Film";
-	private static final String MUSICAL_ARTIST_URI = "http://dbpedia.org/ontology/MusicalArtist";
-	private static final String UNKNOWN_URI = "http://dbpedia.org/ontology/Unknown";
-	private static final String PERSON_URI = "http://dbpedia.org/ontology/Person";
-	private static final String PRODUCT_URI = "http://dbpedia.org/ontology/product";
-	private static final String SPORTS_TEAM_URI = "http://dbpedia.org/ontology/SportsTeam";
+    private static final String COMPANY_URI = "http://dbpedia.org/ontology/Company";
+    private static final String FILM_URI = "http://dbpedia.org/ontology/Film";
+    private static final String MUSICAL_ARTIST_URI = "http://dbpedia.org/ontology/MusicalArtist";
+    private static final String UNKNOWN_URI = "http://dbpedia.org/ontology/Unknown";
+    private static final String PERSON_URI = "http://dbpedia.org/ontology/Person";
+    private static final String PRODUCT_URI = "http://dbpedia.org/ontology/product"; // TODO this IRI is a property but
+                                                                                     // not a class.
+    private static final String SPORTS_TEAM_URI = "http://dbpedia.org/ontology/SportsTeam";
     private static final String TV_SHOW_URI = "http://dbpedia.org/ontology/TelevisionShow";
     private static final String ORGANISATION_URI = "http://dbpedia.org/ontology/Organisation";
 
     private Map<String, String> annotationToType;
 
-    public CoNLLTypeRetriever(String place, String company, String film, String musicalArtist, String unknown, String person, 
-                String product, String sportsTeam, String tvShow, String organisation) {
+    public CoNLLTypeRetriever(String place, String company, String film, String musicalArtist, String unknown,
+            String person, String product, String sportsTeam, String tvShow, String organisation) {
         annotationToType = new HashMap<>();
         annotationToType.put(place, PLACE_URI);
         annotationToType.put(company, COMPANY_URI);
@@ -53,10 +54,23 @@ public class CoNLLTypeRetriever {
         annotationToType.put(organisation, ORGANISATION_URI);
     }
 
+    /**
+     * Returns the IRI for the given key or {@code null} if there is no value for
+     * the given key.
+     * 
+     * @param key the type key found in the dataset
+     * @return the IRI of the type
+     */
     public String getTypeURI(String key) {
-        return annotationToType.get(key);
+        return annotationToType.getOrDefault(key, null);
     }
 
+    /**
+     * Adds the given type key IRI mapping.
+     * 
+     * @param key the type key that can be found in the dataset
+     * @param uri the IRI that should be returned for this keys
+     */
     public void addTypeURI(String key, String uri) {
         annotationToType.put(key, uri);
     }
