@@ -264,4 +264,11 @@ public interface ExperimentDAO extends Closeable {
 	Set<String> getAllLangauges();
 
 	Set<String> getAnnotators();
+
+    /**
+     * Counts the number of experiment tasks in the database.
+     * 
+     * @return the number of experiment tasks in the database
+     */
+    Integer countExperiments();
 }

@@ -83,6 +83,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
 	private static final String GET_ALL_LANGUAGES = "SELECT DISTINCT language FROM ExperimentTasks";
 	private static final String GET_ALL_ANNOTATORS = "SELECT DISTINCT annotatorName FROM ExperimentTasks";
+	
+	private final static String GET_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks";
 
 	private final NamedParameterJdbcTemplate template;
 
@@ -483,4 +485,10 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 		Set<String> results = new HashSet<String>(resultList);
 		return results;
 	}
+
+    @Override
+    public Integer countExperiments() {
+        List<Integer> result = this.template.query(GET_EXP_COUNT, new IntegerRowMapper());
+        return result.get(0);
+    }
 }
