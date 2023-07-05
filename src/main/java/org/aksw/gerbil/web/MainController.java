@@ -67,7 +67,7 @@ public class MainController {
     private static final String GOOGLE_ANALYTICS_FILE_NAME = "google1d91bc68c8a56517.html";
 
     private static boolean isInitialized = false;
-    
+
     private static final String RESNAME_PROP = "org.aksw.gerbil.database.ResultNameSequence";
 
     private static synchronized void initialize(ExperimentDAO dao) {
@@ -135,11 +135,10 @@ public class MainController {
     public ModelAndView index() {
         return new ModelAndView("index");
     }
-   
+
     /**
-     * expects a string like {"type":"A2KB","matching":
-     * "Mw - weak annotation match" ,"annotator":["A2KB one","A2KB two"
-     * ],"dataset":["datasets"]}
+     * expects a string like {"type":"A2KB","matching": "Mw - weak annotation match"
+     * ,"annotator":["A2KB one","A2KB two" ],"dataset":["datasets"]}
      * 
      * @param experimentData
      * @return
@@ -191,46 +190,46 @@ public class MainController {
         LOGGER.debug("Got request on /experiment with id={}", id);
         dataIdGenerator = new DataIDGenerator(getURLBase(request));
         List<ExperimentTaskStatus> results = dao.getResultsOfExperiment(id);
-        
+
         ExperimentTaskStateHelper.setStatusLines(results);
         ModelAndView model = new ModelAndView();
         model.setViewName("experiment");
         model.addObject("tasks", results);
-        int precedingTaskCount=0;
-        
+        int precedingTaskCount = 0;
+
         // Initializing set of resNames from DB
         Set<String> resNamesDb = new HashSet<>();
-        
-        //List<ExperimentTaskStatus> tasks = dao.getAllRunningExperimentTasks();
+
+        // List<ExperimentTaskStatus> tasks = dao.getAllRunningExperimentTasks();
         boolean isRunning = false;
-        for(ExperimentTaskStatus r : results){
-        	resNamesDb.addAll(r.resultsMap.keySet());
-        	if(!isRunning && r.state==ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET) {
-	        		isRunning = true;
-        	}
+        for (ExperimentTaskStatus r : results) {
+            resNamesDb.addAll(r.resultsMap.keySet());
+            if (!isRunning && r.state == ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET) {
+                isRunning = true;
+            }
         }
-        if(isRunning) {
-        	// Fetch the Id of the last record
-        	int lastTaskId = results.get(results.size()-1).idInDb;
-    		// Fetch the total number of running tasks before the last record of current experiment
-        	precedingTaskCount = dao.countPrecedingRunningTasks(lastTaskId);
+        if (isRunning) {
+            // Fetch the Id of the last record
+            int lastTaskId = results.get(results.size() - 1).idInDb;
+            // Fetch the total number of running tasks before the last record of current
+            // experiment
+            precedingTaskCount = dao.countPrecedingRunningTasks(lastTaskId);
         }
         // Fetch Result Name sequence from property file
-        String[] resNamesDlmtd = GerbilConfiguration.getInstance()
-        .getStringArray(RESNAME_PROP);
+        String[] resNamesDlmtd = GerbilConfiguration.getInstance().getStringArray(RESNAME_PROP);
         List<String> fnlRsltNms = new ArrayList<>();
         boolean isRemoved = false;
-        for(String seqEntry : resNamesDlmtd) {
-        	isRemoved = resNamesDb.remove(seqEntry);
-        	if(isRemoved) {
-        		fnlRsltNms.add(seqEntry);
-        	}
+        for (String seqEntry : resNamesDlmtd) {
+            isRemoved = resNamesDb.remove(seqEntry);
+            if (isRemoved) {
+                fnlRsltNms.add(seqEntry);
+            }
         }
         fnlRsltNms.addAll(resNamesDb);
-        model.addObject("resultNames",fnlRsltNms);
+        model.addObject("resultNames", fnlRsltNms);
         model.addObject("isRunning", isRunning);
         // Number of Preceding running experiment tasks
-        model.addObject("precedingTaskCount",precedingTaskCount);
+        model.addObject("precedingTaskCount", precedingTaskCount);
         model.addObject("workers", RootConfig.getNoOfWorkers());
         model.addObject("dataid", dataIdGenerator.createDataIDModel(results, id));
         return model;
@@ -262,7 +261,7 @@ public class MainController {
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ANNOTATION_MATCH));
         case Rc2KB:
         case Sc2KB:
-        	
+
             return new ModelMap("Matching", Lists.newArrayList(Matching.STRONG_ENTITY_MATCH));
         case OKE_Task1:
         case OKE_Task2:
@@ -304,11 +303,11 @@ public class MainController {
     }
 
     /**
-     * This mapping is needed to authenticate us against Google Analytics. It
-     * reads the google file and sends it as String.
+     * This mapping is needed to authenticate us against Google Analytics. It reads
+     * the google file and sends it as String.
      * 
-     * @return The google analytics file as String or an empty String if the
-     *         file couldn't be loaded.
+     * @return The google analytics file as String or an empty String if the file
+     *         couldn't be loaded.
      */
     @RequestMapping(value = "/google*")
     public @ResponseBody String googleAnalyticsFile() {
@@ -350,5 +349,10 @@ public class MainController {
         String matchingName = matching.substring(matching.indexOf('-') + 1).trim().toUpperCase().replace(' ', '_');
         Matching m = Matching.valueOf(matchingName);
         return m;
+    }
+
+    @RequestMapping("/count")
+    public @ResponseBody String count() {
+        return Integer.toString(dao.countExperiments());
     }
 }

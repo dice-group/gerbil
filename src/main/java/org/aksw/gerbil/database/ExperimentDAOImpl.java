@@ -77,6 +77,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String INSERT_SUB_TASK_RELATION = "INSERT INTO ExperimentTasks_SubTasks(taskId, subTaskId) VALUES (:taskId, :subTaskId)";
 
     private final static String GET_RUNNING_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks where state = :unfinishedState AND id < :lastTaskId";
+    private final static String GET_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks";
 
     /**
      * Default result names that are expected to be in all experiments
@@ -457,6 +458,12 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         parameters.addValue("lastTaskId", lastTaskId);
         parameters.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
         List<Integer> result = this.template.query(GET_RUNNING_EXP_COUNT, parameters, new IntegerRowMapper());
+        return result.get(0);
+    }
+
+    @Override
+    public Integer countExperiments() {
+        List<Integer> result = this.template.query(GET_EXP_COUNT, new IntegerRowMapper());
         return result.get(0);
     }
 }
