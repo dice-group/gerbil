@@ -101,4 +101,8 @@ public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4De
     	}
     }
 
+    @Override
+    public Integer countExperiments() {
+        return states.size();
+    }
 }

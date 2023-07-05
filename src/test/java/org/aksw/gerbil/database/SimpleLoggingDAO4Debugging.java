@@ -131,4 +131,9 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
         return null;
     }
 
+    @Override
+    public Integer countExperiments() {
+        return 0;
+    }
+
 }
