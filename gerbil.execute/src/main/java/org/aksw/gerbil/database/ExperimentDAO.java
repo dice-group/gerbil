@@ -262,4 +262,11 @@ public interface ExperimentDAO extends Closeable {
 	public List<File2SystemEntry> getFile2SystemByID(int experimentTaskId);
 
 	public String getTaskId(int id);
+
+    /**
+     * Counts the number of experiment tasks in the database.
+     * 
+     * @return the number of experiment tasks in the database
+     */
+    Integer countExperiments();
 }

@@ -411,4 +411,9 @@ public class MainController {
         Matching m = Matching.valueOf(matchingName);
         return m;
     }
+
+    @RequestMapping("/count")
+    public @ResponseBody String count() {
+        return Integer.toString(dao.countExperiments());
+    }
 }
