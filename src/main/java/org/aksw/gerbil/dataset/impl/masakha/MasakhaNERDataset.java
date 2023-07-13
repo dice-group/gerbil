@@ -28,10 +28,10 @@ public class MasakhaNERDataset extends GenericCoNLLDataset {
                 TYPE_TAGS.addTypeURI("amharic_type", "http://dbpedia.org/resource/Amharic_language");
                 break;
             case "hau":
-                TYPE_TAGS.addTypeURI("hausa_type", "http://dbpedia.org/resource/Igbo_language");
+                TYPE_TAGS.addTypeURI("hausa_type", "http://dbpedia.org/resource/Hausa_language");
                 break;
             case "ibo":
-                TYPE_TAGS.addTypeURI("igbo_type", "http://dbpedia.org/resource/Kinyarwanda_language");
+                TYPE_TAGS.addTypeURI("igbo_type", "http://dbpedia.org/resource/Igbo_language");
                 break;
             case "kin":
                 TYPE_TAGS.addTypeURI("kinyarwanda_type", "http://dbpedia.org/resource/Kinyarwanda_language");
