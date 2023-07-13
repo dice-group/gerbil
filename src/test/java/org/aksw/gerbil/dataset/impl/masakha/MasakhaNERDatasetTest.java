@@ -67,7 +67,52 @@ public class MasakhaNERDatasetTest extends AbstractGenericCoNLLDatasetTest {
         // Yoruba language
         testConfigs.add(new Object[] {
         		"Ní O ibi O ìfẹ̀hónúhàn O ní O Luanda B-LOC , O àmì O náà O sọ O pé O “ O 30 O . O 500 O Kwanzas O kì O í O ṣe O kékeré O O . O ",
-                new TypedSpanImpl(2, 2, "http://dbpedia.org/resource/Yoruba_language"), 9, 0 });        
+                new TypedSpanImpl(2, 2, "http://dbpedia.org/resource/Yoruba_language"), 9, 0 });
+        // Bambara language
+        testConfigs.add(new Object[] {
+        		"Nin O waati O in O na O , O a O ka O gɛlɛn O mɔgɔ O k'i O dantigɛ O a O fatuli O kun O jɔnjɔnw O kan O , O k'a O da O a O kan O a O sababuw O tolen O bɛ O dibi O bɛ O . O", 
+        		new TypedSpanImpl(0, 1, "http://dbpedia.org/resource/Bambara_language"), 12, 0 });
+        // Ghomala language
+        testConfigs.add(new Object[] {
+        		"Msaʼnyə̂ O gɔtí O cyətə O nə́ O bǎyá O cyə́ O nəjí O pôʼ O bǎhə́lə́ O",
+        		new TypedSpanImpl(1, 1, "http://dbpedia.org/resource/Ghomala_language"), 16, 0 });
+        // Ewe language
+        testConfigs.add(new Object[] {
+        		"Tsitretsitsi O ɖe O aʋawɔwɔ O ŋu O le O Burkina B-LOC Faso I-LOC : O dziɖuɖua O ɖe O gbeƒã O ame O aɖe O ƒe O lele O . O", 
+        		new TypedSpanImpl(1, 1, "http://dbpedia.org/resource/Ewe_language"), 13, 0 });
+        // Fon language
+        testConfigs.add(new Object[] {
+        		"È O ká O wɔn O dotóo O lɛ́ɛ O ɖesu O ǎ O . O",
+        		new TypedSpanImpl(0, 1, "http://dbpedia.org/resource/Fon_language"), 14, 0 });
+        // Mossi language
+        testConfigs.add(new Object[] {
+        		"Yao O sãan O wa O mikame O tɩ O lamd O n O dɩk O bugm O . O",
+        		new TypedSpanImpl(1, 2, "http://dbpedia.org/resource/Mossi_language"), 10, 0 });
+        // Chichewa language
+        testConfigs.add(new Object[] {
+        		"Ukwati O ndiye O adamanga O pa O 4 B-DATE October I-DATE 2015 I-DATE , O ku O Feed B-ORG the I-ORG Children I-ORG ku O Nyambadwe B-LOC mumzindawu O . O",
+        		new TypedSpanImpl(3, 1, "http://dbpedia.org/resource/Chichewa_language"), 17, 0 });
+        // Setswana language
+        testConfigs.add(new Object[] {
+        		"E O ne O e O le O motlotli O wa O dikgang O yo O gaisang O . O",
+        		new TypedSpanImpl(2, 1, "http://dbpedia.org/resource/Setswana_language"), 18, 0 });
+        // Twi (Akan/Twi) language
+        testConfigs.add(new Object[] {
+        		"Sɛ O yɛwɔ O tema O ma O obi O a O , O yebehu O sɛ O ɛnsono O yɛn O ɛnna O ɛsono O ɔno O . O",
+        		new TypedSpanImpl(4, 1, "http://dbpedia.org/resource/Akan_language"), 15, 0 });
+        // chiShona language
+        testConfigs.add(new Object[] {
+        		"Huwandu O uhu O hunotarisirwa O kukwira O . O",
+        		new TypedSpanImpl(3, 1, "http://dbpedia.org/resource/chiShona_language"), 19, 0 });
+        // isiXhosa language
+        testConfigs.add(new Object[] {
+        		"Konakala O izinto O emsebenzini O emva O kokoyisakala O bubuthonga O ngenxa O yobude O bendlela O . O", 
+        		new TypedSpanImpl(3, 1, "http://dbpedia.org/resource/isiXhosa_language"), 20, 0 });
+        // isiZulu language
+        testConfigs.add(new Object[] {
+        		"IMeya O yeTheku B-LOC ingenelela O enkingeni O yombhikisho O",
+        		new TypedSpanImpl(4, 1, "http://dbpedia.org/resource/isiZulu_language"), 21, 0 });
+        
         return testConfigs;
     }
 
