@@ -27,7 +27,7 @@ public class WNUTDataset extends GenericCoNLLDataset {
     private static final int ANNOTATION_COLUMN = 1;
     private static final int URI_COLUMN = -1;
     private static final CoNLLTypeRetriever TYPE_TAGS = new CoNLLTypeRetriever("location", "corporation", null, null,
-        null, "person", "product", null, null, null);
+        null, "person", "product", null, null, null, null);
 
     public WNUTDataset(String file) {
         super(file, ANNOTATION_COLUMN, URI_COLUMN, TYPE_TAGS);

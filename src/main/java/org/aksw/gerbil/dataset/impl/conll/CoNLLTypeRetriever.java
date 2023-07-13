@@ -36,11 +36,12 @@ public class CoNLLTypeRetriever {
     private static final String SPORTS_TEAM_URI = "http://dbpedia.org/ontology/SportsTeam";
     private static final String TV_SHOW_URI = "http://dbpedia.org/ontology/TelevisionShow";
     private static final String ORGANISATION_URI = "http://dbpedia.org/ontology/Organisation";
+    private static final String LANGUAGE = "https://dbpedia.org/ontology/language";
 
     private Map<String, String> annotationToType;
 
     public CoNLLTypeRetriever(String place, String company, String film, String musicalArtist, String unknown,
-            String person, String product, String sportsTeam, String tvShow, String organisation) {
+            String person, String product, String sportsTeam, String tvShow, String organisation, String language) {
         annotationToType = new HashMap<>();
         annotationToType.put(place, PLACE_URI);
         annotationToType.put(company, COMPANY_URI);
@@ -52,6 +53,7 @@ public class CoNLLTypeRetriever {
         annotationToType.put(sportsTeam, SPORTS_TEAM_URI);
         annotationToType.put(tvShow, TV_SHOW_URI);
         annotationToType.put(organisation, ORGANISATION_URI);
+        annotationToType.put(language, LANGUAGE);
     }
 
     /**

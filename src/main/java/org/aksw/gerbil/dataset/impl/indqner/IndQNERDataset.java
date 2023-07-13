@@ -16,7 +16,7 @@ public class IndQNERDataset extends GenericCoNLLDataset {
     private static final int ANNOTATION_COLUMN = 1;
     private static final int URI_COLUMN = -1;
     private static final CoNLLTypeRetriever TYPE_TAGS = new CoNLLTypeRetriever("GeographicalLocation", null, null, null,
-            null, "Person", null, null, null, null);
+            null, "Person", null, null, null, null, null);
 
     public IndQNERDataset(String file) {
         super(file, ANNOTATION_COLUMN, URI_COLUMN, TYPE_TAGS);

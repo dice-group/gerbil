@@ -90,6 +90,8 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
      * it is set to -1.
      */
     protected int uriColumn;
+    
+    
 
     public GenericCoNLLDataset(String file, int annotationColumn, int uriColumn, CoNLLTypeRetriever typeRetriever) {
         this(file, annotationColumn, uriColumn, typeRetriever, -1, -1);
@@ -141,6 +143,10 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
         // Create namespace for the documents of this dataset
         String documentUriPrefix = "http://" + getName() + "/";
         StringBuilder textOfCurrentDocument = new StringBuilder();
+        // Flag to track if a whitespace should be inserted in front of a line
+        boolean whiteSpaceInFront = true; 
+        // Flag to track if a whitespace should be inserted behind a line
+        boolean whiteSpaceBehind = true; 
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8")));) {
             String line = reader.readLine();
@@ -165,9 +171,60 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
                         // Increase the document ID
                         index++;
                     }
-                } else {
+                } else {          	
+                	 if ((textOfCurrentDocument.length() > 0) && (line.length() >= 1)) {
+                         if (line.length() == 1) { // Check if the line has only one character
+                             char ch = line.charAt(0); // Get the character
+                             switch (ch) {
+                                 case '?':
+                                 case '!':
+                                 case ',':
+                                 case ')':
+                                 case ']':
+                                 case '}':
+                                 case '.':
+                                 case '፠': // ፠ section mark
+                                 case '፡': // ፡ word separator
+                                 case '።': // ። full stop (period)
+                                 case '፣': // ፣ comma
+                                 case '፤': // ፤ semicolon
+                                 case '፥': // ፥ colon
+                                 case '፦': // ፦ preface colon
+                                 case '፧': // ፧ question mark
+                                 case '፨': // ፨ paragraph separator
+                                     // Set whiteSpaceInFront to false if the character is a punctuation mark
+                                     // that does not require a whitespace in front
+                                     whiteSpaceInFront = false; 
+                                     break;
+                                 case '"':
+                                     // Toggle whiteSpaceBehind if the character is a quote mark
+                                     whiteSpaceBehind = !whiteSpaceBehind;
+                                     break;
+                                 case '(':
+                                 case '[':
+                                 case '{':
+                                     // Set whiteSpaceBehind to false if the character is an opening parenthesis or bracket
+                                     whiteSpaceBehind = false;
+                                     break;
+                                 default:
+                                     break;
+                             }
+
+                         }
+                         else if (!Character.isLetterOrDigit(line.charAt(0))) { 
+                        	 // Check if the first character of the line is not a letter or digit
+                             whiteSpaceInFront = false; 
+                             // Set whiteSpaceInFront to false if the line starts with a non-letter or non-digit character
+                         }
+	                     if (whiteSpaceInFront) {
+	                         textOfCurrentDocument.append(' '); 
+	                         // Append a whitespace to separate the current line from the previous content
+	                     }
+                	 }
                     // Add the current line to the list of lines of the current document
                     linesOfCurrentDoc.add(line);
+                    // Append the current line to the text of the current document
+                    textOfCurrentDocument.append(line); 
                 }
                 // Read the next line
                 line = reader.readLine();

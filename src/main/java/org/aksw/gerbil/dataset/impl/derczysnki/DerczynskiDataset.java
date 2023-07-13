@@ -24,7 +24,7 @@ public class DerczynskiDataset extends GenericCoNLLDataset {
     private static final int ANNOTATION_COLUMN = 2;
     private static final int URI_COLUMN = 1;
     private static final CoNLLTypeRetriever TYPE_TAGS = new CoNLLTypeRetriever("geo-loc", "company", "movie", "musicartist",
-            "other", "person", "product", "sportsteam", "tv-show", null);
+            "other", "person", "product", "sportsteam", "tv-show", null, null);
 
     public DerczynskiDataset(String file) {
         super(file, ANNOTATION_COLUMN, URI_COLUMN, TYPE_TAGS);

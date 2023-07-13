@@ -24,7 +24,7 @@ public class UMBCDataset extends GenericCoNLLDataset {
     private static final int ANNOTATION_COLUMN = 1;
     private static final int URI_COLUMN = -1;
     private static final CoNLLTypeRetriever TYPE_TAGS = new CoNLLTypeRetriever("LOC", null, null, null,
-        null, "PER", null, null, null, "ORG");
+        null, "PER", null, null, null, "ORG", null);
 
     public UMBCDataset(String file) {
         super(file, ANNOTATION_COLUMN, URI_COLUMN, TYPE_TAGS);

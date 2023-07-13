@@ -24,7 +24,7 @@ public class RitterDataset extends GenericCoNLLDataset {
     private static final int ANNOTATION_COLUMN = 1;
     private static final int URI_COLUMN = -1;
     private static final CoNLLTypeRetriever TYPE_TAGS = new CoNLLTypeRetriever("geo-loc", null, "movie", "musicartist",
-        "other", "person", "product", "sportsteam", "tvshow", null);
+        "other", "person", "product", "sportsteam", "tvshow", null, null);
 
     public RitterDataset(String file) {
         super(file, ANNOTATION_COLUMN, URI_COLUMN, TYPE_TAGS);
