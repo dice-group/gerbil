@@ -54,6 +54,39 @@ public class MasakhaNERDataset extends GenericCoNLLDataset {
             case "yor":
                 TYPE_TAGS.addTypeURI("yoruba_type", "http://dbpedia.org/resource/Yoruba_language");
                 break;
+            case "bam":
+                TYPE_TAGS.addTypeURI("bambara_type", "http://dbpedia.org/resource/Bambara_language");
+                break;
+            case "ewe":
+                TYPE_TAGS.addTypeURI("ewe_type", "http://dbpedia.org/resource/Ewe_language");
+                break;
+            case "fon":
+                TYPE_TAGS.addTypeURI("fon_type", "http://dbpedia.org/resource/Fon_language");
+                break;
+            case "mos":
+                TYPE_TAGS.addTypeURI("mossi_type", "http://dbpedia.org/resource/Mossi_language");
+                break;
+            case "bbj":
+                TYPE_TAGS.addTypeURI("ghomala_type", "http://dbpedia.org/resource/Ghomala_language");
+                break;
+            case "nya":
+                TYPE_TAGS.addTypeURI("chichewa_type", "http://dbpedia.org/resource/Chichewa_language");
+                break;
+            case "tsn":
+                TYPE_TAGS.addTypeURI("setswana_type", "http://dbpedia.org/resource/Setswana_language");
+                break;
+            case "twi":
+                TYPE_TAGS.addTypeURI("twi_type", "http://dbpedia.org/resource/Twi_language");
+                break;
+            case "sna":
+                TYPE_TAGS.addTypeURI("chishona_type", "http://dbpedia.org/resource/Chishona_language");
+                break;
+            case "xho":
+                TYPE_TAGS.addTypeURI("isixhosa_type", "http://dbpedia.org/resource/IsiXhosa_language");
+                break;
+            case "zul":
+                TYPE_TAGS.addTypeURI("isizulu_type", "http://dbpedia.org/resource/IsiZulu_language");
+                break;  
         }
     }
 }
