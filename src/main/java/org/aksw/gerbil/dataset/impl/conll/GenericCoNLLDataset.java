@@ -183,6 +183,8 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
                                  case ']':
                                  case '}':
                                  case '.':
+                                	 whiteSpaceInFront = false;
+                                	 break;
                                  case '፠': // ፠ section mark
                                  case '፡': // ፡ word separator
                                  case '።': // ። full stop (period)
@@ -192,9 +194,8 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
                                  case '፦': // ፦ preface colon
                                  case '፧': // ፧ question mark
                                  case '፨': // ፨ paragraph separator
-                                     // Set whiteSpaceInFront to false if the character is a punctuation mark
-                                     // that does not require a whitespace in front
-                                     whiteSpaceInFront = false; 
+                                     whiteSpaceInFront = true;  
+                                     whiteSpaceBehind = true;
                                      break;
                                  case '"':
                                      // Toggle whiteSpaceBehind if the character is a quote mark
