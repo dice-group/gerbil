@@ -30,9 +30,9 @@ public class MasakhaNERDatasetTest extends AbstractGenericCoNLLDatasetTest {
         List<Object[]> testConfigs = new ArrayList<>();
         // Amharic language
         testConfigs.add(new Object[] { 
-        		"ቀዳሚው O የሶማሌ B-LOC ክልል I-LOC በአወዳይ I-LOC ከተማ I-LOC ለተገደሉ O የክልሉ O ተወላጆች O ያከናወነው O የቀብር O ስነ O ስርዓትን O የተመለከተ O ዘገባ O ነው O ፡፡ O",
-        		"ቀዳሚው የሶማሌ ክልል በአወዳይ ከተማ ለተገደሉ የክልሉ ተወላጆች ያከናወነው የቀብር ስነ ስርዓትን የተመለከተ ዘገባ ነው ፡፡ ",
-        		new TypedSpanImpl(5, 8, "http://dbpedia.org/ontology/Place"), 0, 0 });
+        		"የጀርመን B-LOC የምርጫ O ዘመቻን O አስመልክቶ O ከባልደረባችን O ማንተጋፍቶት B-PER ስለሺ I-PER ጋር O ቃለ O ምልልስ O አድርገናል O ፡፡ O",
+        		"የጀርመን የምርጫ ዘመቻን አስመልክቶ ከባልደረባችን ማንተጋፍቶት ስለሺ ጋር ቃለ ምልልስ አድርገናል ፡፡ ",
+        		new TypedSpanImpl(32, 11, "http://dbpedia.org/ontology/Person"), 0, 0 });
         // Hausa language
 		testConfigs.add(new Object[] {
 		        "A O\n saurari O\n cikakken O\n rahoton O\n wakilin O\n Muryar B-ORG\n Amurka I-ORG\n Ibrahim B-PER\n Abdul'aziz I-PER",
