@@ -91,6 +91,18 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
      * it is set to -1.
      */
     protected int uriColumn;
+    /**
+     * The character used to separate columns.
+     */
+    protected String columnSeparator = "\t";
+    /**
+     * String used to insert white spaces between tokens.
+     */
+    protected String whitespace = " ";
+    /**
+     * String inserted between tokens if no white space should be inserted.
+     */
+    protected String nonWhitespace = "";
 
     public GenericCoNLLDataset(String file, int annotationColumn, int uriColumn, CoNLLTypeRetriever typeRetriever) {
         this(file, annotationColumn, uriColumn, typeRetriever, -1, -1);
@@ -206,7 +218,7 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
         for (String tokenFull : linesOfCurrentDoc) {
             whiteSpaceBehindPreviousToken = whiteSpaceBehindCurrentToken;
             // split the columns
-            String[] token = tokenFull.split("\t+");
+            String[] token = tokenFull.split(columnSeparator);
             // Check if the line has only one character
             if (token[0].length() == 1) {
                 char ch = token[0].charAt(0); // Get the character
@@ -219,7 +231,16 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
                 case '}':
                 case ':':
                 case ';':
-                case '.': {
+                case '.':
+                case '፠': // ፠ section mark // falls through
+                case '።': // ። full stop (period)
+                case '፣': // ፣ comma
+                case '፤': // ፤ semicolon
+                case '፥': // ፥ colon
+                case '፦': // ፦ preface colon
+                case '፧': // ፧ question mark
+                case '፨': // ፨ paragraph separator
+                {
                     whiteSpaceInFront = false;
                     whiteSpaceBehindCurrentToken = true;
                     break;
@@ -261,15 +282,7 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
                     whiteSpaceBehindCurrentToken = false;
                     break;
                 }
-                case '፠': // ፠ section mark // falls through
                 case '፡': // ፡ word separator
-                case '።': // ። full stop (period)
-                case '፣': // ፣ comma
-                case '፤': // ፤ semicolon
-                case '፥': // ፥ colon
-                case '፦': // ፦ preface colon
-                case '፧': // ፧ question mark
-                case '፨': // ፨ paragraph separator
                 default: {
                     whiteSpaceInFront = true;
                     whiteSpaceBehindCurrentToken = true;
@@ -298,7 +311,9 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
 
             // Add the token from this line to the document's text
             if (whiteSpaceInFront && whiteSpaceBehindPreviousToken) {
-                currentText.append(" ");
+                currentText.append(whitespace);
+            } else {
+                currentText.append(nonWhitespace);
             }
             // If this line contains the start of a marking, we should keep track of it
             if (token.length > annotationColumn && token[annotationColumn].startsWith(MARKING_START)) {
@@ -347,5 +362,131 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
                 return new SpanImpl(startPos, 0);
             }
         }
+    }
+
+    /**
+     * @return the file
+     */
+    public String getFile() {
+        return file;
+    }
+
+    /**
+     * @param file the file to set
+     */
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    /**
+     * @return the firstDocId
+     */
+    public int getFirstDocId() {
+        return firstDocId;
+    }
+
+    /**
+     * @param firstDocId the firstDocId to set
+     */
+    public void setFirstDocId(int firstDocId) {
+        this.firstDocId = firstDocId;
+    }
+
+    /**
+     * @return the lastDocId
+     */
+    public int getLastDocId() {
+        return lastDocId;
+    }
+
+    /**
+     * @param lastDocId the lastDocId to set
+     */
+    public void setLastDocId(int lastDocId) {
+        this.lastDocId = lastDocId;
+    }
+
+    /**
+     * @return the typeRetriever
+     */
+    public CoNLLTypeRetriever getTypeRetriever() {
+        return typeRetriever;
+    }
+
+    /**
+     * @param typeRetriever the typeRetriever to set
+     */
+    public void setTypeRetriever(CoNLLTypeRetriever typeRetriever) {
+        this.typeRetriever = typeRetriever;
+    }
+
+    /**
+     * @return the annotationColumn
+     */
+    public int getAnnotationColumn() {
+        return annotationColumn;
+    }
+
+    /**
+     * @param annotationColumn the annotationColumn to set
+     */
+    public void setAnnotationColumn(int annotationColumn) {
+        this.annotationColumn = annotationColumn;
+    }
+
+    /**
+     * @return the uriColumn
+     */
+    public int getUriColumn() {
+        return uriColumn;
+    }
+
+    /**
+     * @param uriColumn the uriColumn to set
+     */
+    public void setUriColumn(int uriColumn) {
+        this.uriColumn = uriColumn;
+    }
+
+    /**
+     * @return the whitespace
+     */
+    public String getWhitespace() {
+        return whitespace;
+    }
+
+    /**
+     * @param whitespace the whitespace to set
+     */
+    public void setWhitespace(String whitespace) {
+        this.whitespace = whitespace;
+    }
+
+    /**
+     * @return the nonWhitespace
+     */
+    public String getNonWhitespace() {
+        return nonWhitespace;
+    }
+
+    /**
+     * @param nonWhitespace the nonWhitespace to set
+     */
+    public void setNonWhitespace(String nonWhitespace) {
+        this.nonWhitespace = nonWhitespace;
+    }
+
+    /**
+     * @return the columnSeparator
+     */
+    public String getColumnSeparator() {
+        return columnSeparator;
+    }
+
+    /**
+     * @param columnSeparator the columnSeparator to set
+     */
+    public void setColumnSeparator(String columnSeparator) {
+        this.columnSeparator = columnSeparator;
     }
 }
