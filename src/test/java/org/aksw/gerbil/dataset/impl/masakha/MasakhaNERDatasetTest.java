@@ -33,8 +33,8 @@ public class MasakhaNERDatasetTest extends AbstractGenericCoNLLDatasetTest {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         // Amharic language
         testConfigs.add(new Object[] {
-                "የጀርመን B-LOC\nየምርጫ O\nዘመቻን O\nአስመልክቶ O\nከባልደረባችን O\nማንተጋፍቶት B-PER\nስለሺ I-PERO\nጋር O\nቃለ O\nምልልስ O\nአድርገናል O\n፡፡ O",
-                "የጀርመን : የምርጫ : ዘመቻን : አስመልክቶ : ከባልደረባችን : ማንተጋፍቶት : ስለሺ : ጋር : ቃለ : ምልልስ : አድርገናል ፡፡ ",
+                "የጀርመን B-LOC\nየምርጫ O\nዘመቻን O\nአስመልክቶ O\nከባልደረባችን O\nማንተጋፍቶት B-PER\nስለሺ I-PERO\nጋር O\nቃለ O\nምልልስ O\nአድርገናል O\n፡፡",
+                "የጀርመን ፡ የምርጫ ፡ ዘመቻን ፡ አስመልክቶ ፡ ከባልደረባችን ፡ ማንተጋፍቶት ፡ ስለሺ ፡ ጋር ፡ ቃለ ፡ ምልልስ ፡ አድርገናል፡፡",
                 new TypedSpanImpl(36, 12, "http://dbpedia.org/ontology/Person"), 0, 0, true });
         // Hausa language
         testConfigs.add(new Object[] {
