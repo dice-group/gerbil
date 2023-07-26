@@ -33,9 +33,13 @@ public class MasakhaNERDatasetTest extends AbstractGenericCoNLLDatasetTest {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         // Amharic language
         testConfigs.add(new Object[] {
-                "የጀርመን B-LOC\nየምርጫ O\nዘመቻን O\nአስመልክቶ O\nከባልደረባችን O\nማንተጋፍቶት B-PER\nስለሺ I-PERO\nጋር O\nቃለ O\nምልልስ O\nአድርገናል O\n፡፡",
-                "የጀርመን ፡ የምርጫ ፡ ዘመቻን ፡ አስመልክቶ ፡ ከባልደረባችን ፡ ማንተጋፍቶት ፡ ስለሺ ፡ ጋር ፡ ቃለ ፡ ምልልስ ፡ አድርገናል፡፡",
-                new TypedSpanImpl(36, 12, "http://dbpedia.org/ontology/Person"), 0, 0, true });
+                "የጀርመን B-LOC\nየምርጫ O\nዘመቻን O\nአስመልክቶ O\nከባልደረባችን O\nማንተጋፍቶት B-PER\nስለሺ I-PERO\nጋር O\nቃለ O\nምልልስ O\nአድርገናል O\n።",
+                "የጀርመን ፡ የምርጫ ፡ ዘመቻን ፡ አስመልክቶ ፡ ከባልደረባችን ፡ ማንተጋፍቶት ፡ ስለሺ ፡ ጋር ፡ ቃለ ፡ ምልልስ ፡ አድርገናል።",
+                new TypedSpanImpl(0, 5, "http://dbpedia.org/ontology/Place"), 0, 0, true });
+        testConfigs.add(new Object[] {
+                "የጀርመን B-LOC\nየምርጫ O\nዘመቻን O\nአስመልክቶ O\nከባልደረባችን O\nማንተጋፍቶት B-PER\nስለሺ I-PERO\nጋር O\nቃለ O\nምልልስ O\nአድርገናል O\n።",
+                "የጀርመን ፡ የምርጫ ፡ ዘመቻን ፡ አስመልክቶ ፡ ከባልደረባችን ፡ ማንተጋፍቶት ፡ ስለሺ ፡ ጋር ፡ ቃለ ፡ ምልልስ ፡ አድርገናል።",
+                new TypedSpanImpl(42, 13, "http://dbpedia.org/ontology/Person"), 0, 1, true });
         // Hausa language
         testConfigs.add(new Object[] {
                 "A O\nsaurari O\ncikakken O\nrahoton O\nwakilin O\nMuryar B-ORG\nAmurka I-ORG\nIbrahim B-PER\nAbdul'aziz I-PER",
@@ -80,7 +84,7 @@ public class MasakhaNERDatasetTest extends AbstractGenericCoNLLDatasetTest {
         testConfigs.add(new Object[] {
                 "A O\nrán O\nWa B-PER\nLone I-PER\nàti O\nKyaw B-PER\nSoe I-PER\nOo I-PER\nsí O\nẹ̀wọ̀n O\nọdún O\nméje O\nfún O\nrírú O\nòfin O\nÌkọ̀kọ̀ O\nsáà O\n- O\nakónilẹ́rú O\n.",
                 "A rán Wa Lone àti Kyaw Soe Oo sí ẹ̀wọ̀n ọdún méje fún rírú òfin Ìkọ̀kọ̀ sáà- akónilẹ́rú.",
-                new TypedSpanImpl(6, 7, "http://dbpedia.org/ontology/Person"), 0, 0, false }); 
+                new TypedSpanImpl(6, 7, "http://dbpedia.org/ontology/Person"), 0, 0, false });
         // Bambara language
         testConfigs.add(new Object[] {
                 "Damakasisɛbɛn O\nladonna O\njumadon B-DATE\nmɛkalo I-DATE\ntile I-DATE\n28 I-DATE\n, O\nKati B-LOC\nkiritikɛso O\nla O\n.",
@@ -112,18 +116,16 @@ public class MasakhaNERDatasetTest extends AbstractGenericCoNLLDatasetTest {
                 "Ukwati ndiye adamanga pa 4 October 2015, ku Feed the Children ku Nyambadwe mumzindawu.",
                 new TypedSpanImpl(25, 14, "http://dbpedia.org/ontology/Unknown"), 0, 0, false });
         // Setswana language
-        testConfigs.add(new Object[] {
-                "Zuma B-PER\no O\nipolela O\na O\nse O\nmolato O\n. O", 
-                "Zuma o ipolela a se molato.",
-                new TypedSpanImpl(0, 4, "http://dbpedia.org/ontology/Person"), 0, 0, false });
+        testConfigs.add(
+                new Object[] { "Zuma B-PER\no O\nipolela O\na O\nse O\nmolato O\n. O", "Zuma o ipolela a se molato.",
+                        new TypedSpanImpl(0, 4, "http://dbpedia.org/ontology/Person"), 0, 0, false });
         // Twi (Akan/Twi) language
-        testConfigs.add(new Object[] { 
+        testConfigs.add(new Object[] {
                 "Paul B-PER\nresusu O\nsika O\ndodow O\na O\nohia O\nna O\nɔde O\nawie O\nfie O\nno O\n. O",
                 "Paul resusu sika dodow a ohia na ɔde awie fie no.",
                 new TypedSpanImpl(0, 4, "http://dbpedia.org/ontology/Person"), 0, 0, false });
         // chiShona language
-        testConfigs.add(new Object[] { 
-                "Messi B-PER\nndiye O\nakarova O\npenalty O\nyekutanga O\nakatadza O\n. O",
+        testConfigs.add(new Object[] { "Messi B-PER\nndiye O\nakarova O\npenalty O\nyekutanga O\nakatadza O\n. O",
                 "Messi ndiye akarova penalty yekutanga akatadza.",
                 new TypedSpanImpl(0, 5, "http://dbpedia.org/ontology/Person"), 0, 0, false });
         // isiXhosa language
@@ -132,8 +134,7 @@ public class MasakhaNERDatasetTest extends AbstractGenericCoNLLDatasetTest {
                 "Ngempazamo nje enye, iye yohlwaywa kabuhlungu nayo iRussia izolo.",
                 new TypedSpanImpl(51, 7, "http://dbpedia.org/ontology/Organisation"), 0, 0, false });
         // isiZulu language
-        testConfigs.add(new Object[] { 
-                "IMeya O\nyeTheku B-LOC\ningenelela O\nenkingeni O\nyombhikisho O",
+        testConfigs.add(new Object[] { "IMeya O\nyeTheku B-LOC\ningenelela O\nenkingeni O\nyombhikisho O",
                 "IMeya yeTheku ingenelela enkingeni yombhikisho",
                 new TypedSpanImpl(6, 7, "http://dbpedia.org/ontology/Place"), 0, 0, false });
 
