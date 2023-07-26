@@ -232,6 +232,8 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
                 case ':':
                 case ';':
                 case '.':
+                case '#':
+                case '-':
                 case '፠': // ፠ section mark // falls through
                 case '።': // ። full stop (period)
                 case '፣': // ፣ comma
