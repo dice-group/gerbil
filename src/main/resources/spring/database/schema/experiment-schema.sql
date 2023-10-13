@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS Experiments (
 -- ALTER TABLE ExperimentTasks ADD COLUMN language varchar(3);
 UPDATE ExperimentTasks  SET language='en' WHERE language IS NULL;
 DROP INDEX IF EXISTS ExperimentTaskConfig;
-CREATE INDEX ExperimentTaskConfig ON ExperimentTasks (matching,experimentType,annotatorName,datasetName,language);
+CREATE INDEX ExperimentTaskConfig ON ExperimentTasks (matching,experimentType,annotatorName,datasetName,language,macroF1,microF1);
 
 -- Changes from version 1.0.0 to 1.1.0
 CREATE TABLE IF NOT EXISTS ExperimentTasks_Version (
