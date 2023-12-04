@@ -70,10 +70,6 @@
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>
 			<version>${jena.version}</version>
-			<exclusions>
-			    <exclusion>
-			    </exclusion>
-			</exclusions>
 		</dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
