@@ -24,8 +24,8 @@
 		<slf4j.version>1.7.6</slf4j.version>
 		<junit.version>4.13</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<!--<spring.version>5.3.9</spring.version>-->
-        <spring.version>5.2.1.RELEASE</spring.version>
+		<spring.version>5.3.2</spring.version>
+<!--        <spring.version>5.2.1.RELEASE</spring.version>-->
 		<jena.version>3.1.0</jena.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
 	</properties>
@@ -157,6 +157,12 @@
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
 			<version>1.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
@@ -221,12 +227,12 @@
 			<version>1.4</version>
 		</dependency>
 		<!-- Servlet -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
