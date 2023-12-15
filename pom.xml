@@ -24,7 +24,7 @@
 		<slf4j.version>1.7.6</slf4j.version>
 		<junit.version>4.13</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>5.3.2</spring.version>
+		<spring.version>5.3.14</spring.version>
 <!--        <spring.version>5.2.1.RELEASE</spring.version>-->
 		<jena.version>3.1.0</jena.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
@@ -229,8 +229,8 @@
 		<!-- Servlet -->
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.4</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
 		<dependency>
@@ -351,11 +351,28 @@
 	<build>
 		<plugins>
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.8.3</version>
                 <configuration>
-                    <port>1234</port>
+                    <container>
+                        <containerId>tomcat9x</containerId>
+                        <type>embedded</type>
+                    </container>
+                    <configuration>
+                        <properties>
+                            <cargo.servlet.port>1234</cargo.servlet.port>
+                        </properties>
+                    </configuration>
+                    <deployables>
+                        <deployable>
+                            <type>war</type>
+                            <location>${project.build.directory}/${project.build.finalName}.war</location>
+                            <properties>
+                                <context>/gerbil</context>
+                            </properties>
+                        </deployable>
+                    </deployables>
                 </configuration>
             </plugin>
 			<plugin>
