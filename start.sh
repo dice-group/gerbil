@@ -120,7 +120,7 @@ if [ ! -d "gerbil_data" ]; then
     mkdir -p "gerbil_data/cache" || error "Could not create gerbil_data/cache directory"
     if [ ! -f "$file" ]; then
         echo "Downloading dependencies ... ($url)"
-        curl -o "$file" "$url"
+        curl --retry 4 -L -o "$file" "$url"
 
         if [ ! -f "$file" ]; then
             error "Couldn't downloading dependency data: $file"
