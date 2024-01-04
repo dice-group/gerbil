@@ -97,7 +97,7 @@ function yesno()
                 ans=$default
             else
                 ans=$(tr '[:upper:]' '[:lower:]' <<<$ans)
-            fi 
+            fi
         fi
 
         if [[ "$ans" == 'y'  ||  "$ans" == 'yes'  ||  "$ans" == 'n'  ||  "$ans" == 'no' ]]; then
@@ -113,7 +113,7 @@ function yesno()
 # Check for dependencies
 echo "Checking dependencies..."
 file="gerbil_data/gerbil_data.zip"
-url="https://hobbitdata.informatik.uni-leipzig.de/gerbil/gerbil_data-1.2.9-SNAPSHOT.zip"
+url="https://files.dice-research.org/projects/GERBIL/gerbil_data-1.2.9.zip"
 
 if [ ! -d "gerbil_data" ]; then
     mkdir -p "gerbil_data" || error "Could not create gerbil_data directory"
@@ -189,4 +189,4 @@ if [ ! -d "gerbil_data/indexes/dbpedia_check" ]; then
 fi
 
 echo "Building and starting GERBIL..."
-mvn clean org.apache.tomcat.maven:tomcat7-maven-plugin:2.2:run -Dmaven.tomcat.port=1234
+mvn clean package cargo:run
