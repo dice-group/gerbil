@@ -42,10 +42,10 @@ import org.springframework.jdbc.support.KeyHolder;
 
 /**
  * SQL database based implementation of the {@link AbstractExperimentDAO} class.
- * 
+ *
  * @author b.eickmann
  * @author m.roeder
- * 
+ *
  */
 public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
@@ -81,7 +81,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     /**
      * Default result names that are expected to be in all experiments
-     * 
+     *
      * TODO Micha: I am not sure whether this is really necessary.
      */
     public static final String[] RES_NAME_ARR = { "Micro F1 score", "Micro Precision", "Micro Recall", "Macro F1 score",
@@ -92,7 +92,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     public static final String ERROR_COUNT_NAME = "Error Count";
 
     private final NamedParameterJdbcTemplate template;
-    
+
     /**
      * The result names that are already in the database.
      */
@@ -118,10 +118,10 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         checkResultName(ERROR_COUNT_NAME);
         LOGGER.info("ExperimentDAO initialized.");
     }
-    
+
     /**
      * Checks the given result name and inserts it in case it is not known.
-     * 
+     *
      * @param name the result name that should be checked
      */
     private synchronized void checkResultName(String name) {
@@ -195,7 +195,6 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         // Note that we have to set the state first if we want to override the
         // automatic timestamp with the one from the
         // result object
-        setExperimentState(experimentTaskId, result.state);
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", experimentTaskId);
@@ -225,6 +224,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                 insertSubTask(subTask, experimentTaskId);
             }
         }
+        setExperimentState(experimentTaskId, result.state);
     }
 
     protected void addDoubleResult(int taskId, String resName, double value) throws DataAccessException {
@@ -367,12 +367,12 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     /**
      * Adds the default result measures to the given experiment result with a
      * default value in case the experiment result has not set them.
-     * 
+     *
      * TODO Micha: I am not sure whether this is really necessary.
-     * 
+     *
      * @param result The experiment result that should be checked for the default
      *               values for default measures
-     * 
+     *
      */
     public void setDefaultResultMap(ExperimentTaskStatus result) {
         Map<String, TaskResult> resMap = result.getResultsMap();
