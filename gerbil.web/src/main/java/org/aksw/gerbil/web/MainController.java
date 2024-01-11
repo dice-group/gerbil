@@ -43,6 +43,7 @@ import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.datatypes.TaskResult;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.evaluate.impl.PREvaluator;
 import org.aksw.gerbil.evaluate.impl.ROCEvaluator;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.matching.Matching;
@@ -251,7 +252,7 @@ public class MainController {
         LOGGER.debug("Got request on /experiment with id={}", id);
         Set<String> resNamesDb = new HashSet<>();
         List<ExperimentTaskStatus> results = dao.getResultsOfExperiment(id);
-        Boolean hasRoc = false;
+        //Boolean hasRoc = false;
         for(ExperimentTaskStatus result : results){
         	resNamesDb.addAll(result.getResultsMap().keySet());
         	String annotator = result.getAnnotator();
@@ -259,12 +260,19 @@ public class MainController {
         	result.setAnnotator(annotator);
         	Map<String, TaskResult> resMap = result.getResultsMap();
         	
-        	if(resMap.get(ROCEvaluator.ROC_NAME) != null) {
-        		TaskResult taskRes = resMap.get(ROCEvaluator.ROC_NAME);
+        	if(resMap.get(ROCEvaluator.NAME) != null) {
+        		TaskResult taskRes = resMap.get(ROCEvaluator.NAME);
         		String rocVal = (String) taskRes.getResValue();
-        		rocVal = rocVal.replace("roc", "data");
+        		// rocVal = rocVal.replace("roc", "data"); // it's already data
         		taskRes.setResValue(rocVal);
-        		hasRoc = true;
+        		//hasRoc = true;
+        	}
+        	
+        	if(resMap.get(PREvaluator.NAME) != null) {
+        		TaskResult taskRes = resMap.get(PREvaluator.NAME);
+        		String resVal = (String) taskRes.getResValue();
+        		taskRes.setResValue(resVal);
+        		//hasRoc = true;
         	}
         }
         ExperimentTaskStateHelper.setStatusLines(results);
@@ -283,7 +291,8 @@ public class MainController {
         }
         fnlRsltNms.addAll(resNamesDb);
         model.addObject("resultNames",fnlRsltNms);
-        model.addObject("hasRoc", hasRoc);
+        //model.addObject("hasRoc", hasRoc);
+        
         return model;
     }
 
@@ -401,5 +410,10 @@ public class MainController {
         String matchingName = matching.substring(matching.indexOf('-') + 1).trim().toUpperCase().replace(' ', '_');
         Matching m = Matching.valueOf(matchingName);
         return m;
+    }
+
+    @RequestMapping("/count")
+    public @ResponseBody String count() {
+        return Integer.toString(dao.countExperiments());
     }
 }

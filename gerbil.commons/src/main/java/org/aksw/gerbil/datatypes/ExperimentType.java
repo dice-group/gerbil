@@ -80,7 +80,8 @@ public enum ExperimentType implements Describable {
     SWC_2019("Fact Checking - SWC 2019", "Knowledge graph validation: given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement."),
     
 	SWC2("Fact Checking", "Knowledge graph validation: given a statement about an entity, e.g., the CEO of a company, participants are expected to provide an assessment about the correctness of the statement."),
-    /**
+    
+	/**
      * Scored - annotate to KB
      * <p>
      * Identify the relevant mentions in the input text and assign to each of
@@ -196,7 +197,7 @@ public enum ExperimentType implements Describable {
     	types.add(ExperimentType.SWC_2019);
     	return types;
     }
-
+    
     public boolean equalsOrContainsType(ExperimentType type) {
         switch (this) {
         case Sa2KB: // falls through

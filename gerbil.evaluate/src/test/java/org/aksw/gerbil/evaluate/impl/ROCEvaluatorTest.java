@@ -136,7 +136,8 @@ public class ROCEvaluatorTest {
 
 	@Test
 	public void curveTest() {
-		ROCCurve curve = new ROCCurve(2, 2);
+		StepCurve curve = new StepCurve(new Point(0,0), new Point(1,1));
+		curve.defineStep(2, 2);
 		curve.addUp();
 		curve.addUp();
 		curve.addRight();
@@ -153,7 +154,8 @@ public class ROCEvaluatorTest {
 		double auc = curve.calculateAUC();
 		Assert.assertEquals(1.0, auc, DELTA);
 
-		curve = new ROCCurve(2, 2);
+		curve = new StepCurve(new Point(0,0), new Point(1,1));
+		curve.defineStep(2, 2);
 		curve.addRight();
 		curve.addRight();
 		curve.addUp();
@@ -171,7 +173,8 @@ public class ROCEvaluatorTest {
 		auc = curve.calculateAUC();
 		Assert.assertEquals(0.0, auc, DELTA);
 
-		curve = new ROCCurve(2, 2);
+		curve = new StepCurve(new Point(0,0), new Point(1,1));
+		curve.defineStep(2, 2);
 		curve.addRight();
 		curve.addUp();
 		curve.addRight();
@@ -195,7 +198,8 @@ public class ROCEvaluatorTest {
 		auc = curve.calculateAUC();
 		Assert.assertEquals(0.25, auc, DELTA);
 
-		curve = new ROCCurve(2, 2);
+		curve = new StepCurve(new Point(0,0), new Point(1,1));
+		curve.defineStep(2, 2);
 		curve.addUp();
 		curve.addRight();
 		curve.addUp();
@@ -220,7 +224,8 @@ public class ROCEvaluatorTest {
 		Assert.assertEquals(0.75, auc, DELTA);
 
 		// Test curve with missing values
-		curve = new ROCCurve(2, 2);
+		curve = new StepCurve(new Point(0,0), new Point(1,1));
+		curve.defineStep(2, 2);
 		curve.addUp();
 		curve.addRight();
 		curve.finishCurve();

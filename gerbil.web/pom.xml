@@ -12,7 +12,6 @@
 		<slf4j.version>1.7.6</slf4j.version>
 		<junit.version>4.11</junit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>3.2.17.RELEASE</spring.version>
 		<jena.version>3.1.0</jena.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
 		<war.warName>gerbil</war.warName>
@@ -149,6 +148,23 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.3.2</version>
+			</plugin>
+			<plugin>
+  <groupId>org.codehaus.cargo</groupId>
+  <artifactId>cargo-maven3-plugin</artifactId>
+  <version>1.9.9</version>
+  <configuration>
+    <container>
+      <containerId>tomcat9x</containerId>
+      <!-- <containerUrl>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.0.45/tomcat-9.0.45.zip</containerUrl> -->
+      <type>embedded</type>
+    </container>
+  </configuration>
+</plugin>
 		</plugins>
 
 		<resources>

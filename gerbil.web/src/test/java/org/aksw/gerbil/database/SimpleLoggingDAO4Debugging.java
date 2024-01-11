@@ -20,10 +20,14 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.aksw.gerbil.annotator.File2SystemEntry;
+import org.aksw.gerbil.datatypes.ChallengeDescr;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
+import org.aksw.gerbil.datatypes.TaskResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,11 +65,23 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
         } else {
             LOGGER.info("Setting result of task " + experimentTaskId + " to " + result.toString());
         }
+        Map<String, TaskResult> results = result.getResultsMap();
+        for(Entry<String, TaskResult> e : results.entrySet()) {
+            LOGGER.info(e.getKey() + " = " + shrinkToMaxLength(e.getValue()));
+        }
         if (result.hasSubTasks()) {
             for (ExperimentTaskStatus subTask : result.subTasks) {
                 setExperimentTaskResult(experimentTaskId, subTask, true);
             }
         }
+    }
+    
+    protected static String shrinkToMaxLength(TaskResult result) {
+        String resultString = result.toString();
+        if(resultString.length() > 100) {
+            resultString = resultString.substring(0, 100) + "...";
+        }
+        return resultString;
     }
 
     @Override
@@ -137,12 +153,6 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     }
 
     @Override
-    public List<ExperimentTaskStatus> getBestResults(String name, String dataset, Timestamp challengeDate) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Set<String> getAnnotators() {
         // TODO Auto-generated method stub
         return null;
@@ -170,6 +180,35 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     public String getTaskId(int id) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public List<ExperimentTaskStatus> getBestResults(String name, String dataset, Timestamp start, Timestamp end) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<ChallengeDescr> getAllChallenges() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void addChallenge(ChallengeDescr challenge) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean isChallengeInDB(ChallengeDescr challenge) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Integer countExperiments() {
+        return 0;
     }
 
 }

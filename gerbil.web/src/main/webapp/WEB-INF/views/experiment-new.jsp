@@ -94,14 +94,14 @@
 							</c:if>
 							<c:forEach var="resName" items="${resultNames}">
 									<c:choose>
-										<c:when test="${task.resultsMap.get(resName).getResValue()!=null && !resName.equalsIgnoreCase(\"ROC Curve\")}">
+										<c:when test="${task.resultsMap.get(resName).getResValue()!=null && !resName.equalsIgnoreCase(\"ROC\") && !resName.equalsIgnoreCase(\"PR\")}">
 									       <td> <fmt:formatNumber type="number" maxFractionDigits="4"
 										value="${task.resultsMap.get(resName).getResValue()}" /></td>
 										</c:when>
-										<c:when test="${resName.equalsIgnoreCase(\"ROC Curve\")}">
-									       <td><canvas id="${task.hashCode()}" width="300" height="300"></canvas></td>		
+										<c:when test="${resName.equalsIgnoreCase(\"ROC\") or resName.equalsIgnoreCase(\"PR\")}"> 
+									       <td><canvas id="${resName.hashCode()+task.hashCode()}" width="300" height="300"></canvas></td>		
 			 								<script>
-			 								var ctx = document.getElementById("${task.hashCode()}").getContext('2d');
+			 								var ctx = document.getElementById("${resName.hashCode()+task.hashCode()}").getContext('2d');
 			 								var myLineChart = new Chart(ctx, {
 			    								type: 'scatter',
 			   		 							data : { datasets : [{showLine : true, label : "", lineTension : 0, fill : true, pointRadius : 0, borderColor : "#0084e5", ${task.resultsMap.get(resName).resValue}}]},
@@ -125,14 +125,14 @@
 								<c:forEach var="resName" items="${resultNames}">
 									<td> 
 										<c:choose>
-											<c:when test="${task.resultsMap.get(resName).getResValue()!=null && !resName.equalsIgnoreCase(\"ROC Curve\")}">
+											<c:when test="${task.resultsMap.get(resName).getResValue()!=null && !resName.equalsIgnoreCase(\"ROC\") && !resName.equalsIgnoreCase(\"PR\")}">
 										        <fmt:formatNumber type="number" maxFractionDigits="4"
 											value="${task.resultsMap.get(resName).getResValue()}" />
 											</c:when>
-											<c:when test="${resName.equalsIgnoreCase(\"ROC Curve\")}">
+											<c:when test="${resName.equalsIgnoreCase(\"ROC\") or resName.equalsIgnoreCase(\"PR\")}">
 										       <td><canvas id="${task.hashCode()}" width="300" height="300"></canvas></td>		
 				 								<script>
-				 								var ctx = document.getElementById("${task.hashCode()}").getContext('2d');
+				 								var ctx = document.getElementById("${resName.hashCode()+task.hashCode()}").getContext('2d');
 				 								var myLineChart = new Chart(ctx, {
 				    								type: 'scatter',
 				   		 							data : { datasets : [{showLine : true, label : "", lineTension : 0, fill : true, pointRadius : 0, borderColor : "#0084e5", ${task.resultsMap.get(resName).resValue}}]},

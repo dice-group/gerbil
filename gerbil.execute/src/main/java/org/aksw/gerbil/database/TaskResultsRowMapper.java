@@ -6,6 +6,8 @@ import java.sql.SQLException;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.TaskResult;
+import org.aksw.gerbil.evaluate.impl.AUCEvaluator;
+import org.aksw.gerbil.evaluate.impl.PREvaluator;
 import org.aksw.gerbil.evaluate.impl.ROCEvaluator;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -33,7 +35,7 @@ public class TaskResultsRowMapper implements RowMapper<TaskResult> {
 		String resultName = resultSet.getString(1);
 		String resultType = resultSet.getString(2);
 		Object resultValue = null;
-		if(resultType.equalsIgnoreCase("BLOB") && resultName.equalsIgnoreCase(ROCEvaluator.ROC_NAME)) {
+		if(resultType.equalsIgnoreCase("BLOB") && (resultName.equalsIgnoreCase(ROCEvaluator.NAME) || resultName.equalsIgnoreCase(PREvaluator.NAME))) {
 			Blob rocBlob = resultSet.getBlob(3);
 			byte[] bdata = rocBlob.getBytes(1, (int) rocBlob.length());
 			resultValue = new String(bdata);

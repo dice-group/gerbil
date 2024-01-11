@@ -17,7 +17,6 @@
 package org.aksw.gerbil;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
@@ -27,6 +26,7 @@ import org.aksw.gerbil.annotator.AnnotatorConfigurationImpl;
 import org.aksw.gerbil.annotator.impl.instance.InstanceListBasedAnnotator;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
+import org.aksw.gerbil.dataset.DatasetConfigurationImpl;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.dataset.impl.sw.FileBasedRDFDataset;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
@@ -98,8 +98,7 @@ public class SingleRunTest implements TaskObserver {
                 EXPERIMENT_TYPE) {
             @Override
             public Annotator getAnnotator(ExperimentType type) throws GerbilException {
-                FileBasedRDFDataset rdfFile = new FileBasedRDFDataset(
-                        "/home/micha/Documents/svn/datascience/teaching/201718_ws/NLP/exercise/MiniProjectEval/snlp-2017-test-random.nt");
+                FileBasedRDFDataset rdfFile = new FileBasedRDFDataset("/home/micha/Downloads/Person-result.nt");
                 rdfFile.init();
                 try {
                     return new InstanceListBasedAnnotator(getName(), rdfFile.getInstances());
@@ -111,8 +110,11 @@ public class SingleRunTest implements TaskObserver {
                 }
             }
         };
-        DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE);
-        Assert.assertNotNull(datasetConfig);
+//        DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE);
+//        Assert.assertNotNull(datasetConfig);
+        DatasetConfiguration datasetConfig = new DatasetConfigurationImpl("Test File", false,
+                FileBasedRDFDataset.class.getConstructor(String.class), new Object[] { "/home/micha/Downloads/Person-test.nt" },
+                EXPERIMENT_TYPE, null, null);
 
         DefeatableOverseer overseer = RootConfig.createOverseer();
         overseer.addObserver(this);

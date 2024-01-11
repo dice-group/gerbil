@@ -227,14 +227,14 @@ public class ExperimentOverviewController {
 				}
 				
 				if(experimentType.equals(ExperimentType.SWC2) || experimentType.equals(ExperimentType.SWC_2019)) {
-					if(firstRoc&&expResults.resultsMap.get(ROCEvaluator.ROC_NAME)!=null) {
+					if(firstRoc&&expResults.resultsMap.get(ROCEvaluator.NAME)!=null) {
 						rocs.append("{\"label\" : \"").append(annotator).append("\", ");
-						rocs.append(expResults.resultsMap.get(ROCEvaluator.ROC_NAME).getResValue()).append("}");
+						rocs.append(expResults.resultsMap.get(ROCEvaluator.NAME).getResValue()).append("}");
 						firstRoc=false;
 					}
-					else if(expResults.resultsMap.get(ROCEvaluator.ROC_NAME)!=null){
+					else if(expResults.resultsMap.get(ROCEvaluator.NAME)!=null){
 						rocs.append(", {\"label\" : \"").append(annotator).append("\", ");
-						rocs.append(expResults.resultsMap.get(ROCEvaluator.ROC_NAME).getResValue()).append("}");
+						rocs.append(expResults.resultsMap.get(ROCEvaluator.NAME).getResValue()).append("}");
 					}
 					
 				}

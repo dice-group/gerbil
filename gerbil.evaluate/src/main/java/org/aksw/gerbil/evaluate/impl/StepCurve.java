@@ -1,18 +1,16 @@
 package org.aksw.gerbil.evaluate.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.concurrent.NotThreadSafe;
 
+/**
+ * A step-wise implementation of a Curve
+ *
+ */
 @NotThreadSafe
-public class ROCCurve {
-
-    public List<Point> points = new ArrayList<Point>();
-
+public class StepCurve extends Curve{
     private DIRECTION lastDir = null;
-    private final int trueStmts;
-    private final int falseStmts;
+    private int trueStmts;
+    private int falseStmts;
     private double stepLengthUp;
     private double stepLengthRight;
     private double upStepsCount = 0;
@@ -21,9 +19,13 @@ public class ROCCurve {
     private enum DIRECTION {
         UP, RIGHT, DIAGONALLY
     };
+    
+    public StepCurve(Point start, Point last) {
+		super(start, last);
+	}
 
-    public ROCCurve(int trueStmts, int falseStmts) {
-        if (trueStmts == 0) {
+    public void defineStep(int trueStmts, int falseStmts) {
+    	if (trueStmts == 0) {
             // FIXME throw Exception ?
         } else {
             stepLengthUp = 1.0 / trueStmts;
@@ -37,15 +39,6 @@ public class ROCCurve {
         this.falseStmts = falseStmts;
     }
 
-    public void addPoint(double x, double y) {
-        Point p = new Point();
-        p.setLocation(x, y);
-        addPoint(p);
-    }
-
-    public void addPoint(Point p) {
-        points.add(p);
-    }
 
     /**
      * Adds a new point to the curve by going one step up.
@@ -135,11 +128,9 @@ public class ROCCurve {
      * step to the right to x=1.0 and a step up to y=1.0, i.e., the missing
      * elements that have not been counted won't increase the AUC of the curve.
      */
+    @Override
     public void finishCurve() {
-        Point last;
         if (points.isEmpty()) {
-            last = new Point();
-            last.setLocation(0.0, 0.0);
             points.add(last);
         } else {
             last = points.get(points.size() - 1);
@@ -150,54 +141,6 @@ public class ROCCurve {
         if (last.y < 1.0) {
             addUp(1.0);
         }
-    }
-
-    public double calculateAUC() {
-        double auc = 0.0;
-        double aup;
-        Point pointA;
-        Point pointB = points.get(0);
-        for (int i = 1; i < points.size(); i++) {
-            pointA = pointB;
-            pointB = points.get(i);
-            // calculate area under the points (rectangle)
-            if (pointB.x != pointA.x) {
-                // if the two points are a step to the right
-                if (pointB.y == pointA.y) {
-                    aup = pointA.y * (pointB.x - pointA.x);
-                } else {
-                    // this is a diagonal
-                    // rectangle "under B"
-                    aup = pointA.y * (pointB.x - pointA.x);
-                    // triangle from A to B
-                    aup += 0.5 * (pointB.y - pointA.y) * (pointB.x - pointA.x);
-                }
-                auc += aup;
-            }
-        }
-        return auc;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("\"data\" : [");
-        for (int i = 0; i < points.size() - 1; i++) {
-            Point p = points.get(i);
-            builder.append("{");
-            builder.append("\"x\" : ").append(p.x).append(",");
-            builder.append("\"y\" : ").append(p.y).append("");
-            builder.append("},");
-        }
-        if (points.size() > 0) {
-            Point p = points.get(points.size() - 1);
-            builder.append("{");
-            builder.append("\"x\" : ").append(p.x).append(",");
-            builder.append("\"y\" : ").append(p.y).append("");
-            builder.append("}");
-        }
-        builder.append("] ");
-        return builder.toString();
     }
 
     public void addDiagonally(int stepsUp, int stepsRight) {
