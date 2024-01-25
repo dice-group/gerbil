@@ -50,12 +50,12 @@ public class RitterDatasetTest extends AbstractGenericCoNLLDatasetTest {
         // solution (e.g. "I 'm")
         testConfigs.add(new Object[] {
                 "@paulwalk	O\nIt	O\n's	O\nthe	O\nview	O\nfrom	O\nwhere	O\nI	O\n'm	O\nliving	O\nfor	O\ntwo	O\nweeks	O\n.	O\nEmpire	B-facility\nState	I-facility\nBuilding	I-facility\n=	O\nESB	B-facility\n.	O\nPretty	O\nbad	O\nstorm	O\nhere	O\nlast	O\nevening	O\n.	O\n	\nFrom	O\nGreen	O\nNewsfeed	O\n:	O\nAHFA	B-other\nextends	O\ndeadline	O\nfor	O\nSage	B-other\nAward	I-other\nto	O\nNov	O\n.	O\n5	O\nhttp://tinyurl.com/24agj38	O",
-                "@paulwalk It 's the view from where I 'm living for two weeks. Empire State Building= ESB. Pretty bad storm here last evening.",
-                new TypedSpanImpl(63, 21, new HashSet<>(Arrays.asList("http://dbpedia.org/ontology/Place"))), 0, 0 });
+                "@paulwalk It's the view from where I'm living for two weeks. Empire State Building= ESB. Pretty bad storm here last evening.",
+                new TypedSpanImpl(61, 21, new HashSet<>(Arrays.asList("http://dbpedia.org/ontology/Place"))), 0, 0 });
         testConfigs.add(new Object[] {
                 "@paulwalk	O\nIt	O\n's	O\nthe	O\nview	O\nfrom	O\nwhere	O\nI	O\n'm	O\nliving	O\nfor	O\ntwo	O\nweeks	O\n.	O\nEmpire	B-facility\nState	I-facility\nBuilding	I-facility\n=	O\nESB	B-facility\n.	O\nPretty	O\nbad	O\nstorm	O\nhere	O\nlast	O\nevening	O\n.	O\n	\nFrom	O\nGreen	O\nNewsfeed	O\n:	O\nAHFA	B-other\nextends	O\ndeadline	O\nfor	O\nSage	B-other\nAward	I-other\nto	O\nNov	O\n.	O\n5	O\nhttp://tinyurl.com/24agj38	O",
-                "@paulwalk It 's the view from where I 'm living for two weeks. Empire State Building= ESB. Pretty bad storm here last evening.",
-                new TypedSpanImpl(86, 3, new HashSet<>(Arrays.asList("http://dbpedia.org/ontology/Place"))), 0, 1 });
+                "@paulwalk It's the view from where I'm living for two weeks. Empire State Building= ESB. Pretty bad storm here last evening.",
+                new TypedSpanImpl(84, 3, new HashSet<>(Arrays.asList("http://dbpedia.org/ontology/Place"))), 0, 1 });
         testConfigs.add(new Object[] {
                 "@paulwalk	O\nIt	O\n's	O\nthe	O\nview	O\nfrom	O\nwhere	O\nI	O\n'm	O\nliving	O\nfor	O\ntwo	O\nweeks	O\n.	O\nEmpire	B-facility\nState	I-facility\nBuilding	I-facility\n=	O\nESB	B-facility\n.	O\nPretty	O\nbad	O\nstorm	O\nhere	O\nlast	O\nevening	O\n.	O\n	\nFrom	O\nGreen	O\nNewsfeed	O\n:	O\nAHFA	B-other\nextends	O\ndeadline	O\nfor	O\nSage	B-other\nAward	I-other\nto	O\nNov	O\n.	O\n5	O\nhttp://tinyurl.com/24agj38	O",
                 "From Green Newsfeed: AHFA extends deadline for Sage Award to Nov. 5 http://tinyurl.com/24agj38",

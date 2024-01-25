@@ -219,115 +219,119 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
             whiteSpaceBehindPreviousToken = whiteSpaceBehindCurrentToken;
             // split the columns
             String[] token = tokenFull.split(columnSeparator);
-            // Check if the line has only one character
-            if (token[0].length() == 1) {
-                char ch = token[0].charAt(0); // Get the character
-                switch (ch) {
-                case '?': // falls through
-                case '!':
-                case ',':
-                case ')':
-                case ']':
-                case '}':
-                case ':':
-                case ';':
-                case '.':
-                case '#':
-                case '-':
-                case '=':
-                case '፠': // ፠ section mark // falls through
-                case '።': // ። full stop (period)
-                case '፣': // ፣ comma
-                case '፤': // ፤ semicolon
-                case '፥': // ፥ colon
-                case '፦': // ፦ preface colon
-                case '፧': // ፧ question mark
-                case '፨': // ፨ paragraph separator
-                {
-                    whiteSpaceInFront = false;
-                    whiteSpaceBehindCurrentToken = true;
-                    break;
-                }
-                // General quotation characters (can be start or end)
-                // According to https://www.overleaf.com/learn/latex/Typesetting_quotations
-                case '"': // falls through
-                case '»': // Start in Danish, end in French, Russian, etc.
-                case '«': // Start in French, Russian, etc.; end in Danish
-                case '“': // Start in English, end in German, Lithuanian, Polish
-                {
-                    // Toggle whiteSpaceBehind if the character is a quote mark
-                    whiteSpaceInFront = !sawQuoteBefore;
-                    whiteSpaceBehindCurrentToken = sawQuoteBefore;
-                    sawQuoteBefore = !sawQuoteBefore;
-                    break;
-                }
-                // English, UK ‘…’
-                // Start quotation characters
-                case '„': // Start in German, Lithuanian, Polish
-                case '‚': // Start in English
-                {
-                    whiteSpaceInFront = true;
-                    whiteSpaceBehindCurrentToken = false;
-                    sawQuoteBefore = true;
-                }
-                // End quotation characters
-                case '”': // End in a lot of languages
-                case '‘': // End in English
-                {
-                    whiteSpaceInFront = false;
-                    whiteSpaceBehindCurrentToken = true;
-                    sawQuoteBefore = false;
-                }
-                case '(': // falls through
-                case '[':
-                case '{': {
-                    whiteSpaceInFront = true;
-                    whiteSpaceBehindCurrentToken = false;
-                    break;
-                }
-                case '፡': // ፡ word separator
-                default: {
-                    whiteSpaceInFront = true;
-                    whiteSpaceBehindCurrentToken = true;
-                    break;
-                }
-                }
-//                } else if (!Character.isLetterOrDigit(token[0].charAt(0))) {
-//                    // Check if the first character of the line is not a letter or digit
-//                    whiteSpaceInFront = false;
-//                    // Set whiteSpaceInFront to false if the line starts with a non-letter or
-//                    // non-digit character
-            } else {
-                whiteSpaceInFront = true;
-                whiteSpaceBehindCurrentToken = true;
-            }
-            // Remove leading/trailing whitespaces and normalize spaces within the token
-            String normalizedToken = token[0].trim().replaceAll("\\s+", " ");
+            // Ensure that there are tokens in the line and that the first token is not
+            // empty
+            if ((token.length > 0) && (token[0].length() > 0)) {
+                // Remove leading/trailing whitespaces and normalize spaces within the token
+                String normalizedToken = token[0].trim().replaceAll("\\s+", " ");
+                // Check again that the token is not empty
+                if (!normalizedToken.isEmpty()) {
+                    // Check if the line has only one character
+                    if (normalizedToken.length() == 1) {
+                        char ch = normalizedToken.charAt(0); // Get the character
+                        switch (ch) {
+                        case '?': // falls through
+                        case '!':
+                        case ',':
+                        case ')':
+                        case ']':
+                        case '}':
+                        case ':':
+                        case ';':
+                        case '.':
+                        case '#':
+                        case '-':
+                        case '=':
+                        case '፠': // ፠ section mark
+                        case '።': // ። full stop (period)
+                        case '፣': // ፣ comma
+                        case '፤': // ፤ semicolon
+                        case '፥': // ፥ colon
+                        case '፦': // ፦ preface colon
+                        case '፧': // ፧ question mark
+                        case '፨': // ፨ paragraph separator
+                        {
+                            whiteSpaceInFront = false;
+                            whiteSpaceBehindCurrentToken = true;
+                            break;
+                        }
+                        // General quotation characters (can be start or end)
+                        // According to https://www.overleaf.com/learn/latex/Typesetting_quotations
+                        case '"': // falls through
+                        case '»': // Start in Danish, end in French, Russian, etc.
+                        case '«': // Start in French, Russian, etc.; end in Danish
+                        case '“': // Start in English, end in German, Lithuanian, Polish
+                        {
+                            // Toggle whiteSpaceBehind if the character is a quote mark
+                            whiteSpaceInFront = !sawQuoteBefore;
+                            whiteSpaceBehindCurrentToken = sawQuoteBefore;
+                            sawQuoteBefore = !sawQuoteBefore;
+                            break;
+                        }
+                        // English, UK ‘…’
+                        // Start quotation characters
+                        case '„': // Start in German, Lithuanian, Polish
+                        case '‚': // Start in English
+                        {
+                            whiteSpaceInFront = true;
+                            whiteSpaceBehindCurrentToken = false;
+                            sawQuoteBefore = true;
+                        }
+                        // End quotation characters
+                        case '”': // End in a lot of languages
+                        case '‘': // End in English
+                        {
+                            whiteSpaceInFront = false;
+                            whiteSpaceBehindCurrentToken = true;
+                            sawQuoteBefore = false;
+                        }
+                        case '(': // falls through
+                        case '[':
+                        case '{': {
+                            whiteSpaceInFront = true;
+                            whiteSpaceBehindCurrentToken = false;
+                            break;
+                        }
+                        case '፡': // ፡ word separator
+                        default: {
+                            whiteSpaceInFront = true;
+                            whiteSpaceBehindCurrentToken = true;
+                            break;
+                        }
+                        }
+                    } else {
+                        // Work around for situations with "I" followed by "'m" or "'ve": Only add a
+                        // white space, if the token does not start with a '
+                        whiteSpaceInFront = !normalizedToken.startsWith("'");
+                        whiteSpaceBehindCurrentToken = true;
+                    }
 
-            // If the current marking is not null AND there is no annotation column or there
-            // is no MARKING_INSIDE annotation --> The previous marking ended
-            if (currentMarking != null
-                    && (token.length <= annotationColumn || !token[annotationColumn].startsWith(MARKING_INSIDE))) {
-                currentMarking.setLength(currentText.length() - currentMarking.getStartPosition());
-                currentMarking = null;
-            }
+                    // If the current marking is not null AND there is no annotation column or there
+                    // is no MARKING_INSIDE annotation --> The previous marking ended
+                    if (currentMarking != null && (token.length <= annotationColumn
+                            || !token[annotationColumn].startsWith(MARKING_INSIDE))) {
+                        currentMarking.setLength(currentText.length() - currentMarking.getStartPosition());
+                        currentMarking = null;
+                    }
 
-            // Add the token from this line to the document's text
-            if (whiteSpaceInFront && whiteSpaceBehindPreviousToken) {
-                currentText.append(whitespace);
-            } else {
-                currentText.append(nonWhitespace);
+                    // Add the token from this line to the document's text
+                    if (whiteSpaceInFront && whiteSpaceBehindPreviousToken) {
+                        currentText.append(whitespace);
+                    } else {
+                        currentText.append(nonWhitespace);
+                    }
+                    // If this line contains the start of a marking, we should keep track of it
+                    if (token.length > annotationColumn && token[annotationColumn].startsWith(MARKING_START)) {
+                        // Create new marking
+                        currentMarking = createNewMarking(token, currentText.length());
+                        markings.add(currentMarking);
+                    }
+                    // TODO 1. make the whitespace configurable to allow other word separators 2.
+                    // Remove the previous word separator if we have a punctuation character.
+                    // (quotation, apostrophe)
+                    currentText.append(normalizedToken);
+                }
             }
-            // If this line contains the start of a marking, we should keep track of it
-            if (token.length > annotationColumn && token[annotationColumn].startsWith(MARKING_START)) {
-                // Create new marking
-                currentMarking = createNewMarking(token, currentText.length());
-                markings.add(currentMarking);
-            }
-            // TODO 1. make the whitespace configurable to allow other word separators 2.
-            // Remove the previous word separator if we have a punctuation character.
-            // (quotation, apostrophe)
-            currentText.append(normalizedToken);
         }
         // If there is an unfinished marking, finalize it
         if (currentMarking != null) {
