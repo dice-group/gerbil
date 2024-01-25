@@ -97,7 +97,7 @@ function yesno()
                 ans=$default
             else
                 ans=$(tr '[:upper:]' '[:lower:]' <<<$ans)
-            fi 
+            fi
         fi
 
         if [[ "$ans" == 'y'  ||  "$ans" == 'yes'  ||  "$ans" == 'n'  ||  "$ans" == 'no' ]]; then
@@ -189,4 +189,4 @@ if [ ! -d "gerbil_data/indexes/dbpedia_check" ]; then
 fi
 
 echo "Building and starting GERBIL..."
-mvn clean org.apache.tomcat.maven:tomcat7-maven-plugin:2.2:run -Dmaven.tomcat.port=1234
+mvn clean package cargo:run
