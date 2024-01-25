@@ -102,7 +102,7 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
     /**
      * String inserted between tokens if no white space should be inserted.
      */
-    protected String nonWhitespace = ""; 
+    protected String nonWhitespace = "";
 
     public GenericCoNLLDataset(String file, int annotationColumn, int uriColumn, CoNLLTypeRetriever typeRetriever) {
         this(file, annotationColumn, uriColumn, typeRetriever, -1, -1);
@@ -336,7 +336,19 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
         return markings;
     }
 
-    private Span createNewMarking(String[] line, int startPos) {
+    /**
+     * Generates a {@link Marking} that is at least an implementation of the
+     * {@link Span} interface or even more, depending on the data available in the
+     * given. Note that the {@link Span} instances created by this method have the
+     * length 0. Their final length is set outside of this method.
+     * 
+     * @param line     the current line of the CoNLL file
+     * @param startPos the start position of the {@link Span}, i.e., the position of
+     *                 this line within the text
+     * @return A {@link Span} instance which already contains nearly all information
+     *         about the {@link Marking}, except its length
+     */
+    protected Span createNewMarking(String[] line, int startPos) {
         // get type of the marking TODO if the B- and I- are configurable, the
         // substring(2) has to be configurable as well.
         String type = typeRetriever.getTypeURI(line[annotationColumn].substring(2));
