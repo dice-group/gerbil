@@ -47,22 +47,22 @@ public class UMBCDatasetTest extends AbstractGenericCoNLLDatasetTest {
         // Simple example with a single document and a single entity
         testConfigs.add(new Object[] {
                 "Texans	O\nurged	O\nto	O\nflee	O\nas	O\nIke	O\nmenaces	O\ncoast	O\n:	O\nAuthorities	O\nhave	O\nurged	O\nresidents	O\nto	O\nflee	O\nthe	O\nTexas	B-LOC\ncoast	I-LOC\n,	O\na	O\nURL	O",
-                "Texans urged to flee as Ike menaces coast : Authorities have urged residents to flee the Texas coast , a URL ",
-                new TypedSpanImpl(89, 11, "http://dbpedia.org/ontology/Place"), 0, 0 });
+                "Texans urged to flee as Ike menaces coast: Authorities have urged residents to flee the Texas coast, a URL",
+                new TypedSpanImpl(88, 11, "http://dbpedia.org/ontology/Place"), 0, 0 });
         // Example with 2 documents. We check the first entity in the first document.
         testConfigs.add(new Object[] {
                 "I'm	O\nbored	O\nhere	O\nin	O\nSydney	B-LOC\n.	O\nI	O\nwant	O\nto	O\ndo	O\nsomething	O\nanyone	O\nwant	O\nto	O\nwatch	O\nmovies	O\n?	O\n\nI	O\ncan	O\nfeel	O\nthe	O\nMobile	B-ORG\nWorld	I-ORG\nCongress	I-ORG\nvibe	O\non	O\nTwitter	B-ORG\nSee	O\nyou	O\nguys	O\nin	O\nBarcelona	B-LOC\nnext	O\nweek	O\n.	O",
-                "I'm bored here in Sydney . I want to do something anyone want to watch movies ? ",
+                "I'm bored here in Sydney. I want to do something anyone want to watch movies?",
                 new TypedSpanImpl(18, 6, "http://dbpedia.org/ontology/Place"), 0, 0 });
         // Example with 2 documents. We check the first entity in the second document.
         testConfigs.add(new Object[] {
                 "I'm	O\nbored	O\nhere	O\nin	O\nSydney	B-LOC\n.	O\nI	O\nwant	O\nto	O\ndo	O\nsomething	O\nanyone	O\nwant	O\nto	O\nwatch	O\nmovies	O\n?	O\n\nI	O\ncan	O\nfeel	O\nthe	O\nMobile	B-ORG\nWorld	I-ORG\nCongress	I-ORG\nvibe	O\non	O\nTwitter	B-ORG\nSee	O\nyou	O\nguys	O\nin	O\nBarcelona	B-LOC\nnext	O\nweek	O\n.	O",
-                "I can feel the Mobile World Congress vibe on Twitter See you guys in Barcelona next week . ",
+                "I can feel the Mobile World Congress vibe on Twitter See you guys in Barcelona next week.",
                 new TypedSpanImpl(15, 21, "http://dbpedia.org/ontology/Organisation"), 1, 0 });
         // Example with 2 documents. We check the third entity in the second document.
         testConfigs.add(new Object[] {
                 "I'm	O\nbored	O\nhere	O\nin	O\nSydney	B-LOC\n.	O\nI	O\nwant	O\nto	O\ndo	O\nsomething	O\nanyone	O\nwant	O\nto	O\nwatch	O\nmovies	O\n?	O\n\nI	O\ncan	O\nfeel	O\nthe	O\nMobile	B-ORG\nWorld	I-ORG\nCongress	I-ORG\nvibe	O\non	O\nTwitter	B-ORG\nSee	O\nyou	O\nguys	O\nin	O\nBarcelona	B-LOC\nnext	O\nweek	O\n.	O",
-                "I can feel the Mobile World Congress vibe on Twitter See you guys in Barcelona next week . ",
+                "I can feel the Mobile World Congress vibe on Twitter See you guys in Barcelona next week.",
                 new TypedSpanImpl(69, 9, "http://dbpedia.org/ontology/Place"), 1, 2 });
         return testConfigs;
     }
