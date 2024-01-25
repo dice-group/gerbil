@@ -189,4 +189,4 @@ if [ ! -d "gerbil_data/indexes/dbpedia_check" ]; then
 fi
 
 echo "Building and starting GERBIL..."
-mvn clean package cargo:run
+mvn clean package cargo:run -DskipTests -Dmaven.javadoc.skip=true
