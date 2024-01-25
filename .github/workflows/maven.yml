@@ -32,7 +32,7 @@ jobs:
     - name: Prepare gerbil_data dir
       run: |
         mkdir -p "gerbil_data"
-        curl --retry 4 -L -o "gerbil_data/gerbil_data.zip" "https://github.com/AKSW/gerbil/releases/download/v1.2.6/gerbil_data.zip"
+        curl --retry 4 -L -o "gerbil_data/gerbil_data.zip" "https://files.dice-research.org/projects/GERBIL/gerbil_data-1.2.9.zip"
         unzip "gerbil_data/gerbil_data.zip"
         mkdir -p "gerbil_data/cache"
     - name: Create keys file
