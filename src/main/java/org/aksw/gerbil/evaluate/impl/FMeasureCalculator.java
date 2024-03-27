@@ -19,10 +19,7 @@ package org.aksw.gerbil.evaluate.impl;
 import java.util.List;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
-import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
-import org.aksw.gerbil.evaluate.EvaluationResult;
-import org.aksw.gerbil.evaluate.EvaluationResultContainer;
-import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.evaluate.*;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.matching.impl.QAMatchingsCounter;
@@ -42,6 +39,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     public static final String MICRO_F1_SCORE_NAME = "Micro F1 score";
     public static final String MICRO_PRECISION_NAME = "Micro Precision";
     public static final String MICRO_RECALL_NAME = "Micro Recall";
+    public static final String CONTINGENCY_MATRIX_NAME = "Contingency Matrix";
     public static final String MACRO_F1_2_SCORE_NAME = "Macro F1 QALD";
 	private static final String PRINT_ANSWERS_TO_LOG_KEY = "org.aksw.gerbil.qa.matching.printAnswers";
 
@@ -70,6 +68,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         EvaluationCounts counts[] = generateMatchingCounts(annotatorResults, goldStandard);
         results.addResults(calculateMicroFMeasure(counts));
         results.addResults(calculateMacroFMeasure(counts));
+        results.addResults(getContingencyMatrix(counts));
     
         if(printAnswers){
         	try{
@@ -224,5 +223,9 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
             F1_score = (2 * precision * recall) / (precision + recall);
         }
         return new double[] { precision, recall, F1_score };
+    }
+
+    private EvaluationResult[] getContingencyMatrix(EvaluationCounts counts[]){
+        return new EvaluationResult[] { new ObjectEvaluationResult(CONTINGENCY_MATRIX_NAME, counts)};
     }
 }

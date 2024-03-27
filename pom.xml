@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>23.0</version>
+			<version>23.6-jre</version>
 		</dependency>
 
 		<!-- BAT-Framework and its dependencies -->
@@ -390,6 +390,10 @@
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-test</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.google.collections</groupId>
+					<artifactId>google-collections</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -518,7 +522,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.4</version>
+				<version>3.2.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
