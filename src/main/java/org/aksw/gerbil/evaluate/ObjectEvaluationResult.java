@@ -16,12 +16,12 @@ public class ObjectEvaluationResult implements EvaluationResult{
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
     public Object getValue() {
-        return null;
+        return value;
     }
 
 }

@@ -44,13 +44,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentTaskState;
-import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
-import org.aksw.gerbil.evaluate.EvaluationResult;
-import org.aksw.gerbil.evaluate.EvaluationResultContainer;
-import org.aksw.gerbil.evaluate.Evaluator;
-import org.aksw.gerbil.evaluate.EvaluatorFactory;
-import org.aksw.gerbil.evaluate.IntEvaluationResult;
-import org.aksw.gerbil.evaluate.SubTaskResult;
+import org.aksw.gerbil.evaluate.*;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
@@ -332,6 +326,12 @@ public class ExperimentTask implements Task {
                 LOGGER.error("Got an unknown additional result \"" + result.getName() + "\". Discarding it.");
             } else {
                 expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
+            }
+        }else if (result instanceof ObjectEvaluationResult){
+            if(result.getName()==FMeasureCalculator.CONTINGENCY_MATRIX_NAME){
+                expResult.setContingencyMatrix((ObjectEvaluationResult) result);
+            }else{
+                LOGGER.error("Got an unknown Object type result \"" + result.getName() + "\". Discarding it.");
             }
         }
     }

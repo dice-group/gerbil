@@ -50,3 +50,8 @@ subTaskId int NOT NULL,
 PRIMARY KEY (taskId, subTaskId)
 );
 
+CREATE TABLE IF NOT EXISTS ExperimentTasks_ContingencyMatrix (
+    taskId int NOT NULL,
+    matrix BLOB,
+    PRIMARY KEY (taskId)
+);

@@ -16,7 +16,9 @@
  */
 package org.aksw.gerbil.database;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -30,6 +32,7 @@ import javax.sql.DataSource;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -85,6 +88,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 	private static final String GET_ALL_ANNOTATORS = "SELECT DISTINCT annotatorName FROM ExperimentTasks";
 	
 	private final static String GET_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks";
+
+	private final static String INSERT_CONTINGENCY_MATRIX = "INSERT INTO ExperimentTasks_ContingencyMatrix (taskId, matrix) VALUES (:taskId, :matrix)";
 
 	private final NamedParameterJdbcTemplate template;
 
@@ -204,6 +209,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 		parameters.addValue("lastChanged", new java.sql.Timestamp(result.timestamp));
 
 		this.template.update(SET_EXPERIMENT_TASK_RESULT, parameters);
+		if(result.hasContingencyMatrix()){
+			insertContingencyMatrix(experimentTaskId, result.contingencyMatrix);
+		}
 		if (result.hasAdditionalResults()) {
 			for (int i = 0; i < result.additionalResults.allocated.length; ++i) {
 				if ((result.additionalResults.allocated[i]) && (result.additionalResults.keys[i] >= 6)) {
@@ -491,4 +499,24 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         List<Integer> result = this.template.query(GET_EXP_COUNT, new IntegerRowMapper());
         return result.get(0);
     }
+
+	public void insertContingencyMatrix(int taskId, ObjectEvaluationResult contingencymatrix){
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("taskId", taskId);
+		parameters.addValue("matrix", serializeMatrix(contingencymatrix.getValue()));
+		this.template.update(INSERT_CONTINGENCY_MATRIX, parameters);
+	}
+
+	private static byte[] serializeMatrix(Object matrix) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try {
+			ObjectOutputStream oos = null;
+			oos = new ObjectOutputStream(bos);
+			oos.writeObject(matrix);
+			oos.flush();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return bos.toByteArray();
+	}
 }
