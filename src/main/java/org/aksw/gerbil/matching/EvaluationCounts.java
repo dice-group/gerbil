@@ -16,7 +16,7 @@
  */
 package org.aksw.gerbil.matching;
 
-public class EvaluationCounts implements java.io.Serializable {
+public class EvaluationCounts {
 
     public int truePositives = 0;
     public int falsePositives = 0;

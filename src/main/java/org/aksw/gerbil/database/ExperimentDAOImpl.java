@@ -29,6 +29,7 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
+import com.google.gson.Gson;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -52,6 +53,8 @@ import org.springframework.jdbc.support.KeyHolder;
 public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentDAOImpl.class);
+
+	private static final Gson gson = new Gson();
 
 	private final static String INSERT_TASK = "INSERT INTO ExperimentTasks (annotatorName, datasetName, language, experimentType, matching, state, lastChanged) VALUES (:annotatorName, :datasetName, :language, :experimentType, :matching, :state, :lastChanged)";
 	private final static String SET_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE id=:id";
@@ -503,20 +506,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 	public void insertContingencyMatrix(int taskId, ObjectEvaluationResult contingencymatrix){
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("taskId", taskId);
-		parameters.addValue("matrix", serializeMatrix(contingencymatrix.getValue()));
+		parameters.addValue("matrix", gson.toJson(contingencymatrix).getBytes());
 		this.template.update(INSERT_CONTINGENCY_MATRIX, parameters);
-	}
-
-	private static byte[] serializeMatrix(Object matrix) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try {
-			ObjectOutputStream oos = null;
-			oos = new ObjectOutputStream(bos);
-			oos.writeObject(matrix);
-			oos.flush();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return bos.toByteArray();
 	}
 }
