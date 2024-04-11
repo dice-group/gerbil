@@ -338,13 +338,11 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.1</version>
 				<configuration>
-					<configuration>
-						<show>private</show>
-						<nohelp>true</nohelp>
-						<quiet>true</quiet>
-						<!-- added for generating javadoc with java 1.8 -->
-						<additionalparam>-Xdoclint:none</additionalparam>
-					</configuration>
+					<show>private</show>
+					<nohelp>true</nohelp>
+					<quiet>true</quiet>
+					<!-- added for generating javadoc with java 1.8 -->
+					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
 				<executions>
 					<execution>
@@ -359,7 +357,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.4</version>
+				<version>3.0.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
