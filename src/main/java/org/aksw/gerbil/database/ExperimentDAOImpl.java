@@ -198,7 +198,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 		// Note that we have to set the state first if we want to override the
 		// automatic timestamp with the one from the
 		// result object
-		setExperimentState(experimentTaskId, result.state);
+
 
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("id", experimentTaskId);
@@ -228,6 +228,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 				insertSubTask(subTask, experimentTaskId);
 			}
 		}
+		setExperimentState(experimentTaskId, result.state);
 	}
 
 	protected void addAdditionaResult(int taskId, int resultId, double value) {
