@@ -86,13 +86,11 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.1</version>
 				<configuration>
-					<configuration>
 						<show>private</show>
 						<nohelp>true</nohelp>
 						<quiet>true</quiet>
 						<!-- added for generating javadoc with java 1.8 -->
 						<additionalparam>-Xdoclint:none</additionalparam>
-					</configuration>
 				</configuration>
 				<executions>
 					<execution>

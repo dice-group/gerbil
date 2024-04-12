@@ -47,8 +47,8 @@
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -117,13 +117,11 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.1</version>
 				<configuration>
-					<configuration>
 						<show>private</show>
 						<nohelp>true</nohelp>
 						<quiet>true</quiet>
 						<!-- added for generating javadoc with java 1.8 -->
 						<additionalparam>-Xdoclint:none</additionalparam>
-					</configuration>
 				</configuration>
 				<executions>
 					<execution>
@@ -154,17 +152,30 @@
 				<version>3.3.2</version>
 			</plugin>
 			<plugin>
-  <groupId>org.codehaus.cargo</groupId>
-  <artifactId>cargo-maven3-plugin</artifactId>
-  <version>1.9.9</version>
-  <configuration>
-    <container>
-      <containerId>tomcat9x</containerId>
-      <!-- <containerUrl>https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.0.45/tomcat-9.0.45.zip</containerUrl> -->
-      <type>embedded</type>
-    </container>
-  </configuration>
-</plugin>
+				<groupId>org.codehaus.cargo</groupId>
+				<artifactId>cargo-maven2-plugin</artifactId>
+				<version>1.8.3</version>
+				<configuration>
+					<container>
+						<containerId>tomcat9x</containerId>
+						<type>embedded</type>
+					</container>
+					<configuration>
+						<properties>
+							<cargo.servlet.port>1234</cargo.servlet.port>
+						</properties>
+					</configuration>
+					<deployables>
+						<deployable>
+							<type>war</type>
+							<location>${project.build.directory}/${project.build.finalName}.war</location>
+							<properties>
+								<context>/gerbil</context>
+							</properties>
+						</deployable>
+					</deployables>
+				</configuration>
+			</plugin>
 		</plugins>
 
 		<resources>
