@@ -153,27 +153,31 @@
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.cargo</groupId>
-				<artifactId>cargo-maven2-plugin</artifactId>
-				<version>1.8.3</version>
+				<artifactId>cargo-maven3-plugin</artifactId>
+				<version>1.9.9</version>
+				<dependencies></dependencies>
 				<configuration>
 					<container>
+						<systemProperties>
+						</systemProperties>
 						<containerId>tomcat9x</containerId>
-						<type>embedded</type>
+						<zipUrlInstaller>
+							<url>
+								https://repo.maven.apache.org/maven2/org/apache/tomcat/tomcat/9.0.62/tomcat-9.0.62.zip
+							</url>
+						</zipUrlInstaller>
 					</container>
 					<configuration>
 						<properties>
+							<cargo.start.jvmargs>
+								-Xdebug
+								-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000
+								-Xnoagent
+								-Dmy.property=value
+							</cargo.start.jvmargs>
 							<cargo.servlet.port>1234</cargo.servlet.port>
 						</properties>
 					</configuration>
-					<deployables>
-						<deployable>
-							<type>war</type>
-							<location>${project.build.directory}/${project.build.finalName}.war</location>
-							<properties>
-								<context>/gerbil</context>
-							</properties>
-						</deployable>
-					</deployables>
 				</configuration>
 			</plugin>
 		</plugins>
