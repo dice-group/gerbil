@@ -33,6 +33,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
+import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.SpanImpl;
@@ -90,6 +91,18 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
      * it is set to -1.
      */
     protected int uriColumn;
+    /**
+     * The character used to separate columns.
+     */
+    protected String columnSeparator = "\t";
+    /**
+     * String used to insert white spaces between tokens.
+     */
+    protected String whitespace = " ";
+    /**
+     * String inserted between tokens if no white space should be inserted.
+     */
+    protected String nonWhitespace = "";
 
     public GenericCoNLLDataset(String file, int annotationColumn, int uriColumn, CoNLLTypeRetriever typeRetriever) {
         this(file, annotationColumn, uriColumn, typeRetriever, -1, -1);
@@ -140,7 +153,6 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
         List<Document> documents = new ArrayList<Document>();
         // Create namespace for the documents of this dataset
         String documentUriPrefix = "http://" + getName() + "/";
-        StringBuilder textOfCurrentDocument = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8")));) {
             String line = reader.readLine();
@@ -155,16 +167,15 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
                     // If there is a document that can be added
                     if (linesOfCurrentDoc.size() > 0) {
                         // Get Markings
-                        List<Marking> markings = findMarkings(linesOfCurrentDoc, textOfCurrentDocument);
+                        StringBuilder currentText = new StringBuilder();
+                        List<Marking> markings = processSingleDocument(linesOfCurrentDoc, currentText);
                         // Save the document
-                        documents.add(new DocumentImpl(textOfCurrentDocument.toString(), documentUriPrefix + index,
-                                markings));
-                        // Reset local variables
-                        textOfCurrentDocument.delete(0, textOfCurrentDocument.length());
-                        linesOfCurrentDoc.clear();
+                        documents.add(new DocumentImpl(currentText.toString(), documentUriPrefix + index, markings));
                         // Increase the document ID
                         index++;
                     }
+                    // Clear the lines for the next document
+                    linesOfCurrentDoc.clear();
                 } else {
                     // Add the current line to the list of lines of the current document
                     linesOfCurrentDoc.add(line);
@@ -175,9 +186,10 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
             // check if there is a document left that should be added
             if (linesOfCurrentDoc.size() > 0) {
                 // Get Markings
-                List<Marking> markings = findMarkings(linesOfCurrentDoc, textOfCurrentDocument);
+                StringBuilder currentText = new StringBuilder();
+                List<Marking> markings = processSingleDocument(linesOfCurrentDoc, currentText);
                 // Save last document
-                documents.add(new DocumentImpl(textOfCurrentDocument.toString(), documentUriPrefix + index, markings));
+                documents.add(new DocumentImpl(currentText.toString(), documentUriPrefix + index, markings));
             }
         } catch (IOException e) {
             throw new GerbilException("Exception while reading dataset.", e, ErrorTypes.DATASET_LOADING_ERROR);
@@ -193,71 +205,307 @@ public class GenericCoNLLDataset extends AbstractDataset implements Initializabl
      *                          added
      * @return The list of {@link Marking} instances found within the document
      */
-    protected List<Marking> findMarkings(List<String> linesOfCurrentDoc, StringBuilder currentText) {
+    protected List<Marking> processSingleDocument(List<String> linesOfCurrentDoc, StringBuilder currentText) {
         List<Marking> markings = new ArrayList<Marking>();
-        int i = 0;
+        Span currentMarking = null;
+        // Flags to track if a whitespace should be inserted in front of and behind a
+        // line
+        boolean whiteSpaceInFront = false;
+        boolean whiteSpaceBehindPreviousToken = false;
+        boolean whiteSpaceBehindCurrentToken = false;
+        boolean sawQuoteBefore = false;
         // Iterate over the document lines
         for (String tokenFull : linesOfCurrentDoc) {
+            whiteSpaceBehindPreviousToken = whiteSpaceBehindCurrentToken;
             // split the columns
-            String[] token = tokenFull.split("\t+");
-            // If we can parse this line
-            if (token.length > annotationColumn && token[annotationColumn].startsWith(MARKING_START)) {
-                // Get the marking from this line (and maybe the next lines)
-                markings.add(getWholeMarking(linesOfCurrentDoc, i, currentText));
+            String[] token = tokenFull.split(columnSeparator);
+            // Ensure that there are tokens in the line and that the first token is not
+            // empty
+            if ((token.length > 0) && (token[0].length() > 0)) {
+                // Remove leading/trailing whitespaces and normalize spaces within the token
+                String normalizedToken = token[0].trim().replaceAll("\\s+", " ");
+                // Check again that the token is not empty
+                if (!normalizedToken.isEmpty()) {
+                    // Check if the line has only one character
+                    if (normalizedToken.length() == 1) {
+                        char ch = normalizedToken.charAt(0); // Get the character
+                        switch (ch) {
+                        case '?': // falls through
+                        case '!':
+                        case ',':
+                        case ')':
+                        case ']':
+                        case '}':
+                        case ':':
+                        case ';':
+                        case '.':
+                        case '#':
+                        case '-':
+                        case '=':
+                        case '፠': // ፠ section mark
+                        case '።': // ። full stop (period)
+                        case '፣': // ፣ comma
+                        case '፤': // ፤ semicolon
+                        case '፥': // ፥ colon
+                        case '፦': // ፦ preface colon
+                        case '፧': // ፧ question mark
+                        case '፨': // ፨ paragraph separator
+                        {
+                            whiteSpaceInFront = false;
+                            whiteSpaceBehindCurrentToken = true;
+                            break;
+                        }
+                        // General quotation characters (can be start or end)
+                        // According to https://www.overleaf.com/learn/latex/Typesetting_quotations
+                        case '"': // falls through
+                        case '»': // Start in Danish, end in French, Russian, etc.
+                        case '«': // Start in French, Russian, etc.; end in Danish
+                        case '“': // Start in English, end in German, Lithuanian, Polish
+                        {
+                            // Toggle whiteSpaceBehind if the character is a quote mark
+                            whiteSpaceInFront = !sawQuoteBefore;
+                            whiteSpaceBehindCurrentToken = sawQuoteBefore;
+                            sawQuoteBefore = !sawQuoteBefore;
+                            break;
+                        }
+                        // English, UK ‘…’
+                        // Start quotation characters
+                        case '„': // Start in German, Lithuanian, Polish
+                        case '‚': // Start in English
+                        {
+                            whiteSpaceInFront = true;
+                            whiteSpaceBehindCurrentToken = false;
+                            sawQuoteBefore = true;
+                        }
+                        // End quotation characters
+                        case '”': // End in a lot of languages
+                        case '‘': // End in English
+                        {
+                            whiteSpaceInFront = false;
+                            whiteSpaceBehindCurrentToken = true;
+                            sawQuoteBefore = false;
+                        }
+                        case '(': // falls through
+                        case '[':
+                        case '{': {
+                            whiteSpaceInFront = true;
+                            whiteSpaceBehindCurrentToken = false;
+                            break;
+                        }
+                        case '፡': // ፡ word separator
+                        default: {
+                            whiteSpaceInFront = true;
+                            whiteSpaceBehindCurrentToken = true;
+                            break;
+                        }
+                        }
+                    } else {
+                        // Work around for situations with "I" followed by "'m" or "'ve": Only add a
+                        // white space, if the token does not start with a '
+                        whiteSpaceInFront = !normalizedToken.startsWith("'");
+                        whiteSpaceBehindCurrentToken = true;
+                    }
+
+                    // If the current marking is not null AND there is no annotation column or there
+                    // is no MARKING_INSIDE annotation --> The previous marking ended
+                    if (currentMarking != null && (token.length <= annotationColumn
+                            || !token[annotationColumn].startsWith(MARKING_INSIDE))) {
+                        currentMarking.setLength(currentText.length() - currentMarking.getStartPosition());
+                        currentMarking = null;
+                    }
+
+                    // Add the token from this line to the document's text
+                    if (whiteSpaceInFront && whiteSpaceBehindPreviousToken) {
+                        currentText.append(whitespace);
+                    } else {
+                        currentText.append(nonWhitespace);
+                    }
+                    // If this line contains the start of a marking, we should keep track of it
+                    if (token.length > annotationColumn && token[annotationColumn].startsWith(MARKING_START)) {
+                        // Create new marking
+                        currentMarking = createNewMarking(token, currentText.length());
+                        markings.add(currentMarking);
+                    }
+                    // TODO 1. make the whitespace configurable to allow other word separators 2.
+                    // Remove the previous word separator if we have a punctuation character.
+                    // (quotation, apostrophe)
+                    currentText.append(normalizedToken);
+                }
             }
-            // Add the token from this line to the document's text
-            // TODO 1. make the whitespace configurable to allow other word separators 2.
-            // Remove the previous word separator if we have a punctuation character.
-            // (quotation, apostrophe)
-            currentText.append(token[0] + " ");
-            // Increase the line ID
-            i++;
+        }
+        // If there is an unfinished marking, finalize it
+        if (currentMarking != null) {
+            currentMarking.setLength(currentText.length() - currentMarking.getStartPosition());
         }
         return markings;
     }
 
-    protected Marking getWholeMarking(List<String> linesOfCurrentDoc, int pos, StringBuilder currentText) {
-        String[] tokens = linesOfCurrentDoc.get(pos).split("\t");
-
+    /**
+     * Generates a {@link Marking} that is at least an implementation of the
+     * {@link Span} interface or even more, depending on the data available in the
+     * given. Note that the {@link Span} instances created by this method have the
+     * length 0. Their final length is set outside of this method.
+     * 
+     * @param line     the current line of the CoNLL file
+     * @param startPos the start position of the {@link Span}, i.e., the position of
+     *                 this line within the text
+     * @return A {@link Span} instance which already contains nearly all information
+     *         about the {@link Marking}, except its length
+     */
+    protected Span createNewMarking(String[] line, int startPos) {
         // get type of the marking TODO if the B- and I- are configurable, the
         // substring(2) has to be configurable as well.
-        String type = typeRetriever.getTypeURI(tokens[annotationColumn].substring(2));
+        String type = typeRetriever.getTypeURI(line[annotationColumn].substring(2));
 
         // get uri of the marking if given in the dataset
         String uri = null;
-        if (uriColumn != -1 && tokens[uriColumn].startsWith("http")) {
-            uri = tokens[uriColumn];
+        if (uriColumn != -1 && line[uriColumn].startsWith("http")) {
+            uri = line[uriColumn];
         }
-
-        // get surface form of the marking
-        StringBuilder surfaceForm = new StringBuilder().append(tokens[0]);
-        for (int i = pos + 1; i < linesOfCurrentDoc.size(); i++) {
-            tokens = linesOfCurrentDoc.get(i).split("\t");
-            if (tokens[annotationColumn].startsWith(MARKING_INSIDE)) {
-                // TODO 1. make the whitespace configurable to allow other word separators 2.
-                // Remove the previous word separator if we have a punctuation character.
-                surfaceForm.append(" ").append(tokens[0]);
-            } else {
-                break;
-            }
-        }
+        // We set the length of the newly created marking to 0, because we have to
+        // override it, anyway. If we ever see a 0 outside of this class, we know that
+        // something went wrong.
         if (type != null) {
             if (uri != null) {
-                return new TypedNamedEntity(currentText.length(), surfaceForm.length(), uri,
-                        new HashSet<String>(Arrays.asList(type)));
+                return new TypedNamedEntity(startPos, 0, uri, new HashSet<String>(Arrays.asList(type)));
             } else {
-                return new TypedSpanImpl(currentText.length(), surfaceForm.length(),
-                        new HashSet<String>(Arrays.asList(type)));
+                return new TypedSpanImpl(startPos, 0, new HashSet<String>(Arrays.asList(type)));
             }
         } else {
             if (uri != null) {
-                return new NamedEntity(currentText.length(), surfaceForm.length(), uri);
+                return new NamedEntity(startPos, 0, uri);
             } else {
                 LOGGER.warn(
                         "Found a marked piece of text without any further information: \"{}\". This is either an error in the dataset or this adapter is not correctly configured.",
-                        surfaceForm);
-                return new SpanImpl(currentText.length(), surfaceForm.length());
+                        Arrays.toString(line));
+                return new SpanImpl(startPos, 0);
             }
         }
+    }
+
+    /**
+     * @return the file
+     */
+    public String getFile() {
+        return file;
+    }
+
+    /**
+     * @param file the file to set
+     */
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    /**
+     * @return the firstDocId
+     */
+    public int getFirstDocId() {
+        return firstDocId;
+    }
+
+    /**
+     * @param firstDocId the firstDocId to set
+     */
+    public void setFirstDocId(int firstDocId) {
+        this.firstDocId = firstDocId;
+    }
+
+    /**
+     * @return the lastDocId
+     */
+    public int getLastDocId() {
+        return lastDocId;
+    }
+
+    /**
+     * @param lastDocId the lastDocId to set
+     */
+    public void setLastDocId(int lastDocId) {
+        this.lastDocId = lastDocId;
+    }
+
+    /**
+     * @return the typeRetriever
+     */
+    public CoNLLTypeRetriever getTypeRetriever() {
+        return typeRetriever;
+    }
+
+    /**
+     * @param typeRetriever the typeRetriever to set
+     */
+    public void setTypeRetriever(CoNLLTypeRetriever typeRetriever) {
+        this.typeRetriever = typeRetriever;
+    }
+
+    /**
+     * @return the annotationColumn
+     */
+    public int getAnnotationColumn() {
+        return annotationColumn;
+    }
+
+    /**
+     * @param annotationColumn the annotationColumn to set
+     */
+    public void setAnnotationColumn(int annotationColumn) {
+        this.annotationColumn = annotationColumn;
+    }
+
+    /**
+     * @return the uriColumn
+     */
+    public int getUriColumn() {
+        return uriColumn;
+    }
+
+    /**
+     * @param uriColumn the uriColumn to set
+     */
+    public void setUriColumn(int uriColumn) {
+        this.uriColumn = uriColumn;
+    }
+
+    /**
+     * @return the whitespace
+     */
+    public String getWhitespace() {
+        return whitespace;
+    }
+
+    /**
+     * @param whitespace the whitespace to set
+     */
+    public void setWhitespace(String whitespace) {
+        this.whitespace = whitespace;
+    }
+
+    /**
+     * @return the nonWhitespace
+     */
+    public String getNonWhitespace() {
+        return nonWhitespace;
+    }
+
+    /**
+     * @param nonWhitespace the nonWhitespace to set
+     */
+    public void setNonWhitespace(String nonWhitespace) {
+        this.nonWhitespace = nonWhitespace;
+    }
+
+    /**
+     * @return the columnSeparator
+     */
+    public String getColumnSeparator() {
+        return columnSeparator;
+    }
+
+    /**
+     * @param columnSeparator the columnSeparator to set
+     */
+    public void setColumnSeparator(String columnSeparator) {
+        this.columnSeparator = columnSeparator;
     }
 }
