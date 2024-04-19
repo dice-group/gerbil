@@ -17,7 +17,7 @@
 package org.aksw.gerbil.semantic.sameas.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,7 +31,7 @@ public class DomainBasedSameAsRetrieverManager implements SameAsRetriever {
 
     private List<SingleUriSameAsRetriever> staticRetrievers = new ArrayList<SingleUriSameAsRetriever>();
     private List<SingleUriSameAsRetriever> defaultRetrievers = new ArrayList<SingleUriSameAsRetriever>();
-    private Map<String, SingleUriSameAsRetriever[]> domainRetrieverMapping = new HashMap<String, SingleUriSameAsRetriever[]>();
+    private Map<String, List<SingleUriSameAsRetriever>> domainRetrieverMapping = new HashMap<>();
 
     public void addStaticRetriever(SingleUriSameAsRetriever retriever) {
         staticRetrievers.add(retriever);
@@ -42,15 +42,14 @@ public class DomainBasedSameAsRetrieverManager implements SameAsRetriever {
     }
 
     public void addDomainSpecificRetriever(String domain, SingleUriSameAsRetriever retriever) {
-        SingleUriSameAsRetriever retrievers[];
+        List<SingleUriSameAsRetriever> retrievers;
         if (domainRetrieverMapping.containsKey(domain)) {
             retrievers = domainRetrieverMapping.get(domain);
-            retrievers = Arrays.copyOf(retrievers, retrievers.length + 1);
-            retrievers[retrievers.length - 1] = retriever;
         } else {
-            retrievers = new SingleUriSameAsRetriever[] { retriever };
+            retrievers = new ArrayList<>();
+            domainRetrieverMapping.put(domain, retrievers);
         }
-        domainRetrieverMapping.put(domain, retrievers);
+        retrievers.add(retriever);
     }
 
     @Override
@@ -63,42 +62,33 @@ public class DomainBasedSameAsRetrieverManager implements SameAsRetriever {
         if (uri == null) {
             return null;
         }
-        Set<String> result = null, newResult = null;
+        Set<String> result = null;
         if ((domain != null) && (domainRetrieverMapping.containsKey(domain))) {
-            SingleUriSameAsRetriever retrievers[] = domainRetrieverMapping.get(domain);
-            for (int i = 0; i < retrievers.length; ++i) {
-                newResult = retrievers[i].retrieveSameURIs(domain, uri);
-                if (newResult != null) {
-                    if (result != null) {
-                        result.addAll(newResult);
-                    } else {
-                        result = newResult;
-                    }
-                }
-            }
+            result = retrieve(domain, uri, domainRetrieverMapping.get(domain), result);
         } else {
-            for (SingleUriSameAsRetriever retriever : defaultRetrievers) {
-                newResult = retriever.retrieveSameURIs(domain, uri);
-                if (newResult != null) {
-                    if (result != null) {
-                        result.addAll(newResult);
-                    } else {
-                        result = newResult;
-                    }
-                }
-            }
+            result = retrieve(domain, uri, defaultRetrievers, result);
         }
-        for (SingleUriSameAsRetriever retriever : staticRetrievers) {
-            newResult = retriever.retrieveSameURIs(domain, uri);
-            if (newResult != null) {
-                if (result != null) {
-                    result.addAll(newResult);
-                } else {
-                    result = newResult;
-                }
-            }
+        result = retrieve(domain, uri, staticRetrievers, result);
+        return result;
+    }
+
+    protected static Set<String> retrieve(String domain, String uri, Collection<SingleUriSameAsRetriever> retrievers,
+            Set<String> result) {
+        for (SingleUriSameAsRetriever retriever : retrievers) {
+            result = merge(result, retriever.retrieveSameURIs(domain, uri));
         }
         return result;
+    }
+
+    public static Set<String> merge(Set<String> oldResults, Set<String> newResults) {
+        if (newResults != null) {
+            if (oldResults != null) {
+                oldResults.addAll(newResults);
+            } else {
+                return newResults;
+            }
+        }
+        return oldResults;
     }
 
     @Override
