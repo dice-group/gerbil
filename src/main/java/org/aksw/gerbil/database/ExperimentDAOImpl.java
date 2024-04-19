@@ -92,7 +92,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 	
 	private final static String GET_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks";
 
-	private final static String INSERT_CONTINGENCY_MATRIX = "INSERT INTO ExperimentTasks_ContingencyMatrix (taskId, matrix) VALUES (:taskId, :matrix)";
+	private final static String INSERT_ADDITIONAL_BLOB_RESULTS = "INSERT INTO ExperimentTasks_AdditionalBlobResults (taskId, resultType,  matrix) VALUES (:taskId, :resultType, :matrix)";
 
 	private final NamedParameterJdbcTemplate template;
 
@@ -503,10 +503,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         return result.get(0);
     }
 
-	public void insertContingencyMatrix(int taskId, ObjectEvaluationResult contingencymatrix){
+	public void insertContingencyMatrix(int taskId, ObjectEvaluationResult contingencyMatrix){
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("taskId", taskId);
-		parameters.addValue("matrix", gson.toJson(contingencymatrix).getBytes());
-		this.template.update(INSERT_CONTINGENCY_MATRIX, parameters);
+		parameters.addValue("resultType",contingencyMatrix.getName());
+		parameters.addValue("matrix", gson.toJson(contingencyMatrix).getBytes());
+		this.template.update(INSERT_ADDITIONAL_BLOB_RESULTS, parameters);
 	}
 }
