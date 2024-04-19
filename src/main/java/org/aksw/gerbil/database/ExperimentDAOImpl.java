@@ -30,6 +30,7 @@ import javax.sql.DataSource;
 import com.google.gson.Gson;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.datatypes.ExerimentTaskBlobResultType;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
 import org.slf4j.Logger;
@@ -504,7 +505,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 	public void insertContingencyMatrix(int taskId, ObjectEvaluationResult contingencyMatrix){
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("taskId", taskId);
-		parameters.addValue("resultId", 1);
+		parameters.addValue("resultId", ExerimentTaskBlobResultType.getResultId(contingencyMatrix.getName()));
 		parameters.addValue("resultValue", gson.toJson(contingencyMatrix).getBytes());
 		this.template.update(INSERT_ADDITIONAL_BLOB_RESULTS, parameters);
 	}
