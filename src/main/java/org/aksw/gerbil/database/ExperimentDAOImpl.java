@@ -27,9 +27,12 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
+import com.google.gson.Gson;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
+import org.aksw.gerbil.datatypes.ExerimentTaskBlobResultType;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -49,6 +52,8 @@ import org.springframework.jdbc.support.KeyHolder;
 public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentDAOImpl.class);
+
+	private static final Gson gson = new Gson();
 
 	private final static String INSERT_TASK = "INSERT INTO ExperimentTasks (annotatorName, datasetName, language, experimentType, matching, state, lastChanged) VALUES (:annotatorName, :datasetName, :language, :experimentType, :matching, :state, :lastChanged)";
 	private final static String SET_TASK_STATE = "UPDATE ExperimentTasks SET state=:state, lastChanged=:lastChanged WHERE id=:id";
@@ -85,6 +90,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 	private static final String GET_ALL_ANNOTATORS = "SELECT DISTINCT annotatorName FROM ExperimentTasks";
 	
 	private final static String GET_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks";
+
+	private final static String INSERT_ADDITIONAL_BLOB_RESULTS = "INSERT INTO ExperimentTasks_AdditionalBlobResults (taskId, resultId,  resultValue) VALUES (:taskId, :resultId, :resultValue)";
 
 	private final NamedParameterJdbcTemplate template;
 
@@ -204,6 +211,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 		parameters.addValue("lastChanged", new java.sql.Timestamp(result.timestamp));
 
 		this.template.update(SET_EXPERIMENT_TASK_RESULT, parameters);
+		if(result.hasContingencyMatrix()){
+			insertContingencyMatrix(experimentTaskId, result.contingencyMatrix);
+		}
 		if (result.hasAdditionalResults()) {
 			for (int i = 0; i < result.additionalResults.allocated.length; ++i) {
 				if ((result.additionalResults.allocated[i]) && (result.additionalResults.keys[i] >= 6)) {
@@ -491,4 +501,12 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         List<Integer> result = this.template.query(GET_EXP_COUNT, new IntegerRowMapper());
         return result.get(0);
     }
+
+	public void insertContingencyMatrix(int taskId, ObjectEvaluationResult contingencyMatrix){
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("taskId", taskId);
+		parameters.addValue("resultId", ExerimentTaskBlobResultType.getResultId(contingencyMatrix.getName()));
+		parameters.addValue("resultValue", gson.toJson(contingencyMatrix).getBytes());
+		this.template.update(INSERT_ADDITIONAL_BLOB_RESULTS, parameters);
+	}
 }

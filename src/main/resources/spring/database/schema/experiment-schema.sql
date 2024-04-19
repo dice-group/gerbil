@@ -50,3 +50,9 @@ subTaskId int NOT NULL,
 PRIMARY KEY (taskId, subTaskId)
 );
 
+CREATE TABLE IF NOT EXISTS ExperimentTasks_AdditionalBlobResults (
+    taskId int NOT NULL,
+    resultId int NOT NULL,
+    resultValue BLOB,
+    PRIMARY KEY (taskId, resultId)
+);

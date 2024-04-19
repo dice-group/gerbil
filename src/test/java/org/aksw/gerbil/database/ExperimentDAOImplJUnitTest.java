@@ -24,6 +24,8 @@ import java.util.Set;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
+import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.Matching;
 import org.junit.Assert;
 import org.junit.Test;
@@ -102,11 +104,14 @@ public class ExperimentDAOImplJUnitTest {
         Random random = new Random();
         for (int i = 0; i < 10; ++i) {
             if (i < 8) {
-                results.add(new ExperimentTaskResult("annotator1", "dataset" + i, "en", ExperimentType.D2KB,
+                ExperimentTaskResult experimentTaskResult =
+                new ExperimentTaskResult("annotator1", "dataset" + i, "en", ExperimentType.D2KB,
                         Matching.STRONG_ANNOTATION_MATCH,
                         new double[] { random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(),
                                 random.nextFloat(), random.nextFloat() },
-                        ExperimentDAO.TASK_FINISHED, random.nextInt()));
+                        ExperimentDAO.TASK_FINISHED, random.nextInt());
+                experimentTaskResult.setContingencyMatrix(new ObjectEvaluationResult("Contingency Matrix",new EvaluationCounts[]{new EvaluationCounts(1,1,1)}));
+                results.add(experimentTaskResult);
             } else {
                 results.add(new ExperimentTaskResult("annotator1", "dataset" + i, "en", ExperimentType.D2KB,
                         Matching.STRONG_ANNOTATION_MATCH, new double[6],
