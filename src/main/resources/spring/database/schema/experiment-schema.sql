@@ -52,7 +52,7 @@ PRIMARY KEY (taskId, subTaskId)
 
 CREATE TABLE IF NOT EXISTS ExperimentTasks_AdditionalBlobResults (
     taskId int NOT NULL,
-    resultType VARCHAR(20),
-    matrix BLOB,
-    PRIMARY KEY (taskId)
+    resultId int NOT NULL,
+    resultValue BLOB,
+    PRIMARY KEY (taskId, resultId)
 );
