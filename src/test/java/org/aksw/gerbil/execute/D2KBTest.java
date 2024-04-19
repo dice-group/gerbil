@@ -216,6 +216,7 @@ public class D2KBTest extends AbstractExperimentTaskTest {
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
         // The extractor found everything and marked all entities using other
         // KBs than the main dbpedia (if they were available) or own URIs
+        /* EXCLUDED SINCE THIS RELIES ON EXTERNAL DATA (sameAs retrieval via HTTP)
         testConfigs.add(new Object[] {
                 new Document[] {
                         new DocumentImpl(TEXTS[0],
@@ -249,9 +250,11 @@ public class D2KBTest extends AbstractExperimentTaskTest {
                                         (Marking) new NamedEntity(49, 19,
                                                 "http://dbpedia.org/resource/Columbia_University"))) },
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+                */
         // The extractor found everything and marked all entities using other
         // KBs than the main dbpedia (if they were available) or own URIs, but
         // it added additional results.
+        /* EXCLUDED SINCE THIS RELIES ON EXTERNAL DATA (sameAs retrieval via HTTP)
         testConfigs.add(new Object[] { new Document[] {
                 new DocumentImpl(TEXTS[0], "http://www.ontologydesignpatterns.org/data/oke-challenge/task-1/sentence-1",
                         Arrays.asList((Marking) new NamedEntity(0, 8, "http://dbpedia.org/resource/Florence"),
@@ -277,8 +280,8 @@ public class D2KBTest extends AbstractExperimentTaskTest {
                         Arrays.asList((Marking) new NamedEntity(4, 7, "http://aksw.org/notInWiki/Senator_1"),
                                 (Marking) new NamedEntity(49, 19, "http://dbpedia.org/resource/Columbia_University"),
                                 (Marking) new NamedEntity(23, 16, "http://dbpedia.org/resource/Bachelor_of_Laws"))) },
-
                 GOLD_STD, Matching.WEAK_ANNOTATION_MATCH, new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0 } });
+                */
         return testConfigs;
     }
 
@@ -302,6 +305,7 @@ public class D2KBTest extends AbstractExperimentTaskTest {
         ExperimentTaskConfiguration configuration = new ExperimentTaskConfiguration(
                 new TestAnnotatorConfiguration(Arrays.asList(annotatorResults), ExperimentType.D2KB), dataset,
                 ExperimentType.D2KB, matching);
+        // Test without same as retrieval!!!
         runTest(experimentTaskId, experimentDAO, EVALUATOR_FACTORY, configuration,
                 new F1MeasureTestingObserver(this, experimentTaskId, experimentDAO, expectedResults));
     }
