@@ -357,7 +357,7 @@ public class ExperimentTask implements Task {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
                 prepareAnnotatorResults(results, globalRetriever);
-                evalResult = evaluate(evaluators, results, goldStandard);
+                evalResult = evaluate(dataset.getInstances(),evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
             } catch (Exception e) {
@@ -381,7 +381,7 @@ public class ExperimentTask implements Task {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
                 prepareAnnotatorResults(results, globalRetriever);
-                evalResult = evaluate(evaluators, results, goldStandard);
+                evalResult = evaluate(dataset.getInstances(), evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
             } catch (Exception e) {
@@ -405,7 +405,7 @@ public class ExperimentTask implements Task {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
                 prepareAnnotatorResults(results, globalRetriever);
-                evalResult = evaluate(evaluators, results, goldStandard);
+                evalResult = evaluate(dataset.getInstances(), evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
             } catch (Exception e) {
@@ -427,7 +427,7 @@ public class ExperimentTask implements Task {
                 if (annotatorOutputWriter != null) {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
-                evalResult = evaluate(evaluators, results, goldStandard);
+                evalResult = evaluate(dataset.getInstances(), evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
             } catch (Exception e) {
@@ -450,7 +450,7 @@ public class ExperimentTask implements Task {
                 if (annotatorOutputWriter != null) {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
-                evalResult = evaluate(evaluators, results, goldStandard);
+                evalResult = evaluate(dataset.getInstances(), evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
             } catch (Exception e) {
@@ -475,7 +475,7 @@ public class ExperimentTask implements Task {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
                 prepareAnnotatorResults(results, globalRetriever);
-                evalResult = evaluate(evaluators, results, goldStandard);
+                evalResult = evaluate(dataset.getInstances(), evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
             } catch (Exception e) {
@@ -500,7 +500,7 @@ public class ExperimentTask implements Task {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
                 prepareAnnotatorResults(results, globalRetriever);
-                evalResult = evaluate(evaluators, results, goldStandard);
+                evalResult = evaluate(dataset.getInstances(), evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
             } catch (Exception e) {
@@ -590,7 +590,7 @@ public class ExperimentTask implements Task {
 //                	
 //}
 
-                evalResult = evaluate(evaluators, results, goldStandard);
+                evalResult = evaluate(dataset.getInstances(), evaluators, results, goldStandard);
 
                 AnswersLoggerContainer.remove(evaluators);
             } catch (GerbilException e) {
@@ -611,11 +611,11 @@ public class ExperimentTask implements Task {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends Marking> EvaluationResult evaluate(List<Evaluator<? extends Marking>> evaluators,
+    protected <T extends Marking> EvaluationResult evaluate(List<Document> instances,List<Evaluator<? extends Marking>> evaluators,
             List<List<T>> annotatorResults, List<List<T>> goldStandard) {
         EvaluationResultContainer evalResults = new EvaluationResultContainer();
         for (Evaluator<? extends Marking> e : evaluators) {
-            ((Evaluator<T>) e).evaluate(annotatorResults, goldStandard, evalResults);
+            ((Evaluator<T>) e).evaluate(instances, annotatorResults, goldStandard, evalResults);
         }
         return evalResults;
     }
