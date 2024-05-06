@@ -506,7 +506,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("taskId", taskId);
 		parameters.addValue("resultId", ExerimentTaskBlobResultType.getResultId(contingencyMatrix.getName()));
-		parameters.addValue("resultValue", gson.toJson(contingencyMatrix).getBytes());
+		parameters.addValue("resultValue", gson.toJson(contingencyMatrix.getValue()).getBytes());
 		this.template.update(INSERT_ADDITIONAL_BLOB_RESULTS, parameters);
 	}
 }
