@@ -23,6 +23,7 @@ import org.aksw.gerbil.evaluate.*;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.matching.impl.QAMatchingsCounter;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.utils.AnswersLogger;
 import org.aksw.gerbil.utils.AnswersLoggerContainer;
@@ -63,8 +64,8 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
+                         EvaluationResultContainer results) {
         EvaluationCounts counts[] = generateMatchingCounts(annotatorResults, goldStandard);
         results.addResults(calculateMicroFMeasure(counts));
         results.addResults(calculateMacroFMeasure(counts));

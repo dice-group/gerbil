@@ -19,6 +19,7 @@ package org.aksw.gerbil.evaluate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 
 public abstract class AbstractTypeTransformingEvaluatorDecorator<U extends Marking, V extends Marking>
@@ -36,9 +37,9 @@ public abstract class AbstractTypeTransformingEvaluatorDecorator<U extends Marki
     }
 
     @Override
-    public void evaluate(List<List<U>> annotatorResults, List<List<U>> goldStandard,
-            EvaluationResultContainer results) {
-        evaluator.evaluate(changeListType(annotatorResults), changeListType(goldStandard), results);
+    public void evaluate(List<Document> instances, List<List<U>> annotatorResults, List<List<U>> goldStandard,
+                         EvaluationResultContainer results) {
+        evaluator.evaluate(instances, changeListType(annotatorResults), changeListType(goldStandard), results);
     }
 
     protected List<List<V>> changeListType(List<List<U>> markings) {

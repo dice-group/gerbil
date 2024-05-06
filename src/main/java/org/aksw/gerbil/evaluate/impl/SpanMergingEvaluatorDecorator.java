@@ -25,11 +25,7 @@ import java.util.List;
 import org.aksw.gerbil.evaluate.AbstractEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
-import org.aksw.gerbil.transfer.nif.Meaning;
-import org.aksw.gerbil.transfer.nif.MeaningSpan;
-import org.aksw.gerbil.transfer.nif.Span;
-import org.aksw.gerbil.transfer.nif.TypedMarking;
-import org.aksw.gerbil.transfer.nif.TypedSpan;
+import org.aksw.gerbil.transfer.nif.*;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.SpanImpl;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
@@ -52,8 +48,8 @@ public class SpanMergingEvaluatorDecorator<T extends Span> extends AbstractEvalu
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
-        evaluator.evaluate(mergeListOfLists(annotatorResults), mergeListOfLists(goldStandard), results);
+    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
+        evaluator.evaluate(instances, mergeListOfLists(annotatorResults), mergeListOfLists(goldStandard), results);
     }
 
     protected List<List<T>> mergeListOfLists(List<List<T>> spans) {

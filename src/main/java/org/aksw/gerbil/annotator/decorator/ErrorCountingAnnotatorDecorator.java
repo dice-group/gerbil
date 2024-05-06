@@ -444,7 +444,7 @@ public abstract class ErrorCountingAnnotatorDecorator extends AbstractAnnotatorD
     }
 
     @Override
-    public void evaluate(List<List<Marking>> annotatorResults, List<List<Marking>> goldStandard,
+    public void evaluate(List<Document> instances, List<List<Marking>> annotatorResults, List<List<Marking>> goldStandard,
             EvaluationResultContainer results) {
         results.addResult(new IntEvaluationResult(ERROR_COUNT_RESULT_NAME, errorCount));
     }

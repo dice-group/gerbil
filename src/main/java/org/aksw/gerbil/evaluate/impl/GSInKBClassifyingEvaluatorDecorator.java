@@ -27,6 +27,7 @@ import org.aksw.gerbil.evaluate.EvaluatorDecorator;
 import org.aksw.gerbil.matching.MatchingsSearcher;
 
 import com.carrotsearch.hppc.BitSet;
+import org.aksw.gerbil.transfer.nif.Document;
 
 /**
  * This {@link EvaluatorDecorator} classifies the given
@@ -49,10 +50,10 @@ public class GSInKBClassifyingEvaluatorDecorator<T extends ClassifiedSpanMeaning
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
+                         EvaluationResultContainer results) {
         classify(annotatorResults, goldStandard);
-        evaluator.evaluate(annotatorResults, goldStandard, results);
+        evaluator.evaluate(instances, annotatorResults, goldStandard, results);
     }
 
     protected void classify(List<List<T>> annotatorResults, List<List<T>> goldStandard) {
