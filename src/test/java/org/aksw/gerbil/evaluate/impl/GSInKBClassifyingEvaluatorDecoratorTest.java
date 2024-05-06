@@ -128,7 +128,7 @@ public class GSInKBClassifyingEvaluatorDecoratorTest
                         new StrongSpanMatchingsSearcher<ClassifiedSpanMeaning>()),
                 new UriBasedMeaningClassifier<ClassifiedSpanMeaning>(CLASSIFIER, MarkingClasses.IN_KB),
                 new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>());
-        evaluator.evaluate(Arrays.asList(Arrays.asList(annotatorResponse)), Arrays.asList(Arrays.asList(goldStandard)),
+        evaluator.evaluate(null, Arrays.asList(Arrays.asList(annotatorResponse)), Arrays.asList(Arrays.asList(goldStandard)),
                 null);
     }
 }
