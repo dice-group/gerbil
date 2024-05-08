@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.aksw.gerbil.database.ExperimentDAO;
+import org.aksw.gerbil.evaluate.ExtendedEvaluationResult;
 import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
 import org.aksw.gerbil.matching.Matching;
 
@@ -38,7 +39,7 @@ public class ExperimentTaskResult {
     public static final int MACRO_RECALL_INDEX = 5;
 
     public double results[];
-    public ObjectEvaluationResult contingencyMatrix;
+    public ExtendedEvaluationResult contingencyMatrix;
     public int state;
     public int errorCount;
     public long timestamp;
@@ -361,15 +362,15 @@ public class ExperimentTaskResult {
         }
     }
 
-    public ObjectEvaluationResult getContingencyMatrix() {
+    public ExtendedEvaluationResult getContingencyMatrix() {
         return contingencyMatrix;
     }
 
-    public void setContingencyMatrix(ObjectEvaluationResult contingencyMatrix) {
+    public void setContingencyMatrix(ExtendedEvaluationResult contingencyMatrix) {
         this.contingencyMatrix = contingencyMatrix;
     }
 
     public boolean hasContingencyMatrix() {
-        return contingencyMatrix != null;
+        return contingencyMatrix!=null && contingencyMatrix.getValue()!=null && !(contingencyMatrix.getValue().isEmpty());
     }
 }

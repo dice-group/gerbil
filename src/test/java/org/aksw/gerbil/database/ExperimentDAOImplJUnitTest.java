@@ -110,7 +110,7 @@ public class ExperimentDAOImplJUnitTest {
                         new double[] { random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(),
                                 random.nextFloat(), random.nextFloat() },
                         ExperimentDAO.TASK_FINISHED, random.nextInt());
-                experimentTaskResult.setContingencyMatrix(new ObjectEvaluationResult("Contingency Matrix",new EvaluationCounts[]{new EvaluationCounts(1,1,1)}));
+//                experimentTaskResult.setContingencyMatrix(new ObjectEvaluationResult("Contingency Matrix",new EvaluationCounts[]{new EvaluationCounts(1,1,1)}));
                 results.add(experimentTaskResult);
             } else {
                 results.add(new ExperimentTaskResult("annotator1", "dataset" + i, "en", ExperimentType.D2KB,

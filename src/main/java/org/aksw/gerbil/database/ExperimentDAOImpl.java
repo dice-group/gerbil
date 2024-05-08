@@ -32,6 +32,8 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExerimentTaskBlobResultType;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.evaluate.ExtendedEvaluationResult;
+import org.aksw.gerbil.evaluate.ExtendedMacros;
 import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -502,7 +504,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         return result.get(0);
     }
 
-	public void insertContingencyMatrix(int taskId, ObjectEvaluationResult contingencyMatrix){
+	public void insertContingencyMatrix(int taskId, ExtendedEvaluationResult contingencyMatrix){
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("taskId", taskId);
 		parameters.addValue("resultId", ExerimentTaskBlobResultType.getResultId(contingencyMatrix.getName()));
