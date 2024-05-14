@@ -329,7 +329,7 @@ public class ExperimentTask implements Task {
             }
         }else if (result instanceof ExtendedEvaluationResult){
             if(result.getName()==FMeasureCalculator.CONTINGENCY_MATRIX_NAME){
-                expResult.setContingencyMatrix((ExtendedEvaluationResult) result);
+                expResult.setExtendedEvaluationResult((ExtendedEvaluationResult) result);
             }else{
                 LOGGER.error("Got an unknown Object type result \"" + result.getName() + "\". Discarding it.");
             }

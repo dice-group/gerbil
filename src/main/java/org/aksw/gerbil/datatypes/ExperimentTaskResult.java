@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.evaluate.ExtendedEvaluationResult;
-import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
 import org.aksw.gerbil.matching.Matching;
 
 import com.carrotsearch.hppc.IntDoubleOpenHashMap;
@@ -39,7 +38,7 @@ public class ExperimentTaskResult {
     public static final int MACRO_RECALL_INDEX = 5;
 
     public double results[];
-    public ExtendedEvaluationResult contingencyMatrix;
+    public ExtendedEvaluationResult extendedEvaluationResult;
     public int state;
     public int errorCount;
     public long timestamp;
@@ -362,15 +361,15 @@ public class ExperimentTaskResult {
         }
     }
 
-    public ExtendedEvaluationResult getContingencyMatrix() {
-        return contingencyMatrix;
+    public ExtendedEvaluationResult getExtendedEvaluationResult() {
+        return extendedEvaluationResult;
     }
 
-    public void setContingencyMatrix(ExtendedEvaluationResult contingencyMatrix) {
-        this.contingencyMatrix = contingencyMatrix;
+    public void setExtendedEvaluationResult(ExtendedEvaluationResult extendedEvaluationResult) {
+        this.extendedEvaluationResult = extendedEvaluationResult;
     }
 
     public boolean hasContingencyMatrix() {
-        return contingencyMatrix!=null && contingencyMatrix.getValue()!=null && !(contingencyMatrix.getValue().isEmpty());
+        return extendedEvaluationResult !=null && extendedEvaluationResult.getValue()!=null && !(extendedEvaluationResult.getValue().isEmpty());
     }
 }
