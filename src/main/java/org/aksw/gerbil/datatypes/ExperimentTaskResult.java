@@ -369,7 +369,7 @@ public class ExperimentTaskResult {
         this.extendedEvaluationResult = extendedEvaluationResult;
     }
 
-    public boolean hasContingencyMatrix() {
+    public boolean hasExtendedEvaluationResult() {
         return extendedEvaluationResult !=null && extendedEvaluationResult.getValue()!=null && !(extendedEvaluationResult.getValue().isEmpty());
     }
 }

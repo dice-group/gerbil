@@ -211,8 +211,8 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 		parameters.addValue("lastChanged", new java.sql.Timestamp(result.timestamp));
 
 		this.template.update(SET_EXPERIMENT_TASK_RESULT, parameters);
-		if(result.hasContingencyMatrix()){
-			insertContingencyMatrix(experimentTaskId, result.extendedEvaluationResult);
+		if(result.hasExtendedEvaluationResult()){
+			insertExtendedEvaluationResult(experimentTaskId, result.extendedEvaluationResult);
 		}
 		if (result.hasAdditionalResults()) {
 			for (int i = 0; i < result.additionalResults.allocated.length; ++i) {
@@ -502,7 +502,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         return result.get(0);
     }
 
-	public void insertContingencyMatrix(int taskId, ExtendedEvaluationResult extendedEvaluationResult){
+	public void insertExtendedEvaluationResult(int taskId, ExtendedEvaluationResult extendedEvaluationResult){
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("taskId", taskId);
 		parameters.addValue("resultId", ExerimentTaskBlobResultType.getResultId(extendedEvaluationResult.getName()));
