@@ -61,10 +61,10 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
                          EvaluationResultContainer results) {
         EvaluationCounts counts[] = generateMatchingCounts(annotatorResults, goldStandard);
-        ExtendedMacros[] extendedMacros = new ExtendedMacros[counts.length];
+        ExtendedContingencyMetrics[] extendedMetrics = new ExtendedContingencyMetrics[counts.length];
         results.addResults(calculateMicroFMeasure(counts));
-        results.addResults(calculateMacroFMeasure(counts, instances, extendedMacros));
-        results.addResult(updateExtendedMacros(extendedMacros));
+        results.addResults(calculateMacroFMeasure(counts, instances, extendedMetrics));
+        results.addResult(updateContingencyMetricsReport(extendedMetrics));
 
         if(printAnswers){
         	this.closeAnswersLogger();
@@ -109,7 +109,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         };
     }
 
-    protected EvaluationResult[] calculateMacroFMeasure(EvaluationCounts counts[], List<Document> instances,ExtendedMacros[] extendedMacros) {
+    protected EvaluationResult[] calculateMacroFMeasure(EvaluationCounts counts[], List<Document> instances, ExtendedContingencyMetrics[] extendedMetrics) {
         double avgs[] = new double[3];
         double measures[];
         for (int i = 0; i < counts.length; ++i) {
@@ -117,7 +117,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
             avgs[0] += measures[0];
             avgs[1] += measures[1];
             avgs[2] += measures[2];
-            extendedMacros[i] = new ExtendedMacros(instances.get(i).getDocumentURI(), counts[i], measures[0], measures[1],measures[2]);
+            extendedMetrics[i] = new ExtendedContingencyMetrics(instances.get(i).getDocumentURI(), counts[i], measures[0], measures[1],measures[2]);
         }
         avgs[0] /= counts.length;
         avgs[1] /= counts.length;
@@ -209,8 +209,8 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         return new double[] { precision, recall, F1_score };
     }
 
-    private ExtendedEvaluationResult updateExtendedMacros(ExtendedMacros[] extendedMacros) {
-        return new ExtendedEvaluationResult(CONTINGENCY_MATRIX_NAME,extendedMacros);
+    private AggregateContingencyMetricsReport updateContingencyMetricsReport(ExtendedContingencyMetrics[] extendedMetrics) {
+        return new AggregateContingencyMetricsReport(CONTINGENCY_MATRIX_NAME,extendedMetrics);
     }
 
     private void closeAnswersLogger() {

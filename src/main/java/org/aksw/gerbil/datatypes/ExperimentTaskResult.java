@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.aksw.gerbil.database.ExperimentDAO;
-import org.aksw.gerbil.evaluate.ExtendedEvaluationResult;
+import org.aksw.gerbil.evaluate.AggregateContingencyMetricsReport;
 import org.aksw.gerbil.matching.Matching;
 
 import com.carrotsearch.hppc.IntDoubleOpenHashMap;
@@ -38,7 +38,7 @@ public class ExperimentTaskResult {
     public static final int MACRO_RECALL_INDEX = 5;
 
     public double results[];
-    public ExtendedEvaluationResult extendedEvaluationResult;
+    public AggregateContingencyMetricsReport aggregateContingencyMetricsReport;
     public int state;
     public int errorCount;
     public long timestamp;
@@ -361,15 +361,15 @@ public class ExperimentTaskResult {
         }
     }
 
-    public ExtendedEvaluationResult getExtendedEvaluationResult() {
-        return extendedEvaluationResult;
+    public AggregateContingencyMetricsReport getContingencyMetricsReport() {
+        return aggregateContingencyMetricsReport;
     }
 
-    public void setExtendedEvaluationResult(ExtendedEvaluationResult extendedEvaluationResult) {
-        this.extendedEvaluationResult = extendedEvaluationResult;
+    public void setContingencyMetricsReport(AggregateContingencyMetricsReport aggregateContingencyMetricsReport) {
+        this.aggregateContingencyMetricsReport = aggregateContingencyMetricsReport;
     }
 
-    public boolean hasExtendedEvaluationResult() {
-        return extendedEvaluationResult !=null && extendedEvaluationResult.getValue()!=null && !(extendedEvaluationResult.getValue().isEmpty());
+    public boolean hasContingencyMetricsReport() {
+        return aggregateContingencyMetricsReport !=null && aggregateContingencyMetricsReport.getValue()!=null && !(aggregateContingencyMetricsReport.getValue().isEmpty());
     }
 }
