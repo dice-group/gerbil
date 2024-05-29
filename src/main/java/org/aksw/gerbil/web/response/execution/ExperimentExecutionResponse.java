@@ -1,32 +1,33 @@
 package org.aksw.gerbil.web.response.execution;
 
-import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
-
-import java.util.List;
-
 public class ExperimentExecutionResponse {
 
     private String experimentId;
-    private List<ExperimentTaskConfiguration> faultyConfigs;
+    private final String errorMessage;
+    private String detailMessage;
 
-    public ExperimentExecutionResponse(String experimentId) {
+    public ExperimentExecutionResponse(String experimentId, String detailMessage) {
+        this.errorMessage = "Encountered a few exceptions while trying to start all needed tasks. " +
+            "Aborting the erroneous tasks and continuing the experiment.";
         this.experimentId = experimentId;
+        this.detailMessage = detailMessage;
     }
 
-    public ExperimentExecutionResponse(List<ExperimentTaskConfiguration> faultyConfigs) {
-        this.faultyConfigs = faultyConfigs;
-    }
-
-    public ExperimentExecutionResponse(String experimentId, List<ExperimentTaskConfiguration> faultyConfigs) {
-        this.experimentId = experimentId;
-        this.faultyConfigs = faultyConfigs;
+    public ExperimentExecutionResponse(String detailMessage) {
+        this.errorMessage = "Encountered multiple exceptions while trying to start all needed tasks. " +
+            "Aborting the experiment.";
+        this.detailMessage = detailMessage;
     }
 
     public String getExperimentId() {
         return experimentId;
     }
 
-    public List<ExperimentTaskConfiguration> getFaultyConfigs() {
-        return faultyConfigs;
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public String getDetailMessage() {
+        return detailMessage;
     }
 }

@@ -151,7 +151,7 @@ public class MainController {
      */
     @GetMapping(value = "/execute", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<ExperimentExecutionResponse> execute(@RequestParam(value = "experimentData") String experimentData) {
+    public ResponseEntity<?> execute(@RequestParam(value = "experimentData") String experimentData) {
         LOGGER.debug("Got request on /execute with experimentData={}", experimentData);
         Object obj = JSONValue.parse(experimentData);
         JSONObject configuration = (JSONObject) obj;
@@ -191,12 +191,12 @@ public class MainController {
             exp.run();
         }catch(FaultyConfigurationException e){
             if(e.getFaultyConfigs().size()==configs.length){
-                return new ResponseEntity<>(new ExperimentExecutionResponse(e.getFaultyConfigs()), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ExperimentExecutionResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
             }else{
-                return new ResponseEntity<>(new ExperimentExecutionResponse(experimentId,e.getFaultyConfigs()), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ExperimentExecutionResponse(experimentId,e.getMessage()), HttpStatus.BAD_REQUEST);
             }
         }
-        return new ResponseEntity<>(new ExperimentExecutionResponse(experimentId), HttpStatus.OK);
+        return new ResponseEntity<>(experimentId, HttpStatus.OK);
     }
 
     @RequestMapping("/experiment")
