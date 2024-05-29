@@ -560,11 +560,11 @@
 																			.remove();
 																	var origin = window.location.origin;
 																	var link = "<a href=\"/gerbil/experiment?id="
-																			+ data.experimentId
+																			+ data
 																			+ "\">"
 																			+ origin
 																			+ "/gerbil/experiment?id="
-																			+ data.experimentId
+																			+ data
 																			+ "</a>";
 																	var span = "<span>Find your experimental data here: </span>";
 																	$(
