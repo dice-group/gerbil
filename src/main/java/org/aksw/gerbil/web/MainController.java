@@ -35,12 +35,14 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.exceptions.FaultyConfigurationException;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.utils.IDCreator;
 import org.aksw.gerbil.web.config.AdapterManager;
 import org.aksw.gerbil.web.config.RootConfig;
+import org.aksw.gerbil.web.response.execution.ExperimentExecutionResponse;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
@@ -50,8 +52,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -139,12 +145,13 @@ public class MainController {
     /**
      * expects a string like {"type":"A2KB","matching": "Mw - weak annotation match"
      * ,"annotator":["A2KB one","A2KB two" ],"dataset":["datasets"]}
-     * 
+     *
      * @param experimentData
      * @return
      */
-    @RequestMapping("/execute")
-    public @ResponseBody String execute(@RequestParam(value = "experimentData") String experimentData) {
+    @GetMapping(value = "/execute", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<ExperimentExecutionResponse> execute(@RequestParam(value = "experimentData") String experimentData) {
         LOGGER.debug("Got request on /execute with experimentData={}", experimentData);
         Object obj = JSONValue.parse(experimentData);
         JSONObject configuration = (JSONObject) obj;
@@ -180,9 +187,16 @@ public class MainController {
         String experimentId = IDCreator.getInstance().createID();
         Experimenter exp = new Experimenter(overseer, dao, globalRetriever, evFactory, configs, experimentId);
         exp.setAnnotatorOutputWriter(annotatorOutputWriter);
-        exp.run();
-
-        return experimentId;
+        try{
+            exp.run();
+        }catch(FaultyConfigurationException e){
+            if(e.getFaultyConfigs().size()==configs.length){
+                return new ResponseEntity<>(new ExperimentExecutionResponse(e.getFaultyConfigs()), HttpStatus.BAD_REQUEST);
+            }else{
+                return new ResponseEntity<>(new ExperimentExecutionResponse(experimentId,e.getFaultyConfigs()), HttpStatus.BAD_REQUEST);
+            }
+        }
+        return new ResponseEntity<>(new ExperimentExecutionResponse(experimentId), HttpStatus.OK);
     }
 
     @RequestMapping("/experiment")
@@ -305,7 +319,7 @@ public class MainController {
     /**
      * This mapping is needed to authenticate us against Google Analytics. It reads
      * the google file and sends it as String.
-     * 
+     *
      * @return The google analytics file as String or an empty String if the file
      *         couldn't be loaded.
      */
