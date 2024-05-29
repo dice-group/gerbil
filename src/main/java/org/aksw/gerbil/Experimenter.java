@@ -16,11 +16,14 @@
  */
 package org.aksw.gerbil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.exceptions.FaultyConfigurationException;
 import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.execute.ExperimentTask;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
@@ -43,7 +46,7 @@ public class Experimenter implements Runnable {
 
     /**
      * Constructor
-     * 
+     *
      * @deprecated Please use the other constructor and provide an
      *             {@link EvaluatorFactory}.
      */
@@ -68,11 +71,12 @@ public class Experimenter implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void run() throws FaultyConfigurationException{
         Arrays.sort(configs, new ExpTaskConfigComparator());
-        try {
-            int taskId;
-            for (int i = 0; i < configs.length; ++i) {
+        List<ExperimentTaskConfiguration> faultyConfigs = new ArrayList<ExperimentTaskConfiguration>();
+        int taskId;
+        for (int i = 0; i < configs.length; ++i) {
+            try{
                 if (couldHaveCachedResult(configs[i])) {
                     taskId = experimentDAO.connectCachedResultOrCreateTask(configs[i].annotatorConfig.getName(),
                             configs[i].datasetConfig.getName(), configs[i].type.name(), configs[i].matching.name(),
@@ -88,12 +92,17 @@ public class Experimenter implements Runnable {
                     ExperimentTask task = new ExperimentTask(taskId, experimentDAO, globalRetriever, evFactory,
                             configs[i]);
                     task.setAnnotatorOutputWriter(annotatorOutputWriter);
-                    overseer.startTask(task);
+                        overseer.startTask(task);
                 }
+            }catch (Exception e){
+                faultyConfigs.add(configs[i]);
             }
+        }
+        if(faultyConfigs.isEmpty()){
             LOGGER.info("Experimenter finished the creation of tasks for experiment \"" + experimentId + "\"");
-        } catch (Exception e) {
-            LOGGER.error("Got an Exception while trying to start all needed tasks. Aborting the experiment.", e);
+        }else{
+            LOGGER.error("Got few Exception while trying to start some needed tasks.");
+            throw new FaultyConfigurationException(faultyConfigs);
         }
     }
 
