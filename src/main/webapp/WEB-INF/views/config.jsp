@@ -577,8 +577,28 @@
 																					link);
 																})
 														.fail(
-																function() {
-																	alert("Error, insufficient parameters.");
+																function(res) {
+                                                                    $('#submit').remove();
+                                                                    res = res.responseJSON;
+                                                                    var errorSpan = '';
+                                                                    if (res && res.experimentId) {
+                                                                        var origin = window.location.origin;
+                                                                        var link = "<a href=\"/gerbil/experiment?id="
+                                                                            + res.experimentId
+                                                                            + "\">"
+                                                                            + origin
+                                                                            + "/gerbil/experiment?id="
+                                                                            + res.experimentId
+                                                                            + "</a>";
+                                                                        var span = "<span>Find your experimental data here: </span>";
+                                                                        $('#submitField').append(span);
+                                                                        $('#submitField').append(link);
+                                                                        errorSpan = "<br><div class=\"warning\" style=\"padding-top: 10px;\">Warning: "+res.errorMessage+"</div>";
+                                                                    } else {
+                                                                        errorSpan = "<br><div class=\"error\">Error: "+res.errorMessage+"</div>";
+                                                                    }
+                                                                    $('#submitField').append(errorSpan);
+																	// alert("Error, insufficient parameters.");
 																});
 											});
 						});
