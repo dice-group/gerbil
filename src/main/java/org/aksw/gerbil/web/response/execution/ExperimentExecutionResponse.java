@@ -7,14 +7,14 @@ public class ExperimentExecutionResponse {
     private String detailMessage;
 
     public ExperimentExecutionResponse(String experimentId, String detailMessage) {
-        this.errorMessage = "Encountered a few exceptions while trying to start all needed tasks. " +
+        this.errorMessage = "Encountered errors while trying to start all needed tasks. " +
             "Aborting the erroneous tasks and continuing the experiment.";
         this.experimentId = experimentId;
         this.detailMessage = detailMessage;
     }
 
     public ExperimentExecutionResponse(String detailMessage) {
-        this.errorMessage = "Encountered multiple exceptions while trying to start all needed tasks. " +
+        this.errorMessage = "Encountered multiple errors while trying to start all needed tasks. " +
             "Aborting the experiment.";
         this.detailMessage = detailMessage;
     }
