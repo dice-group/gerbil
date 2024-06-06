@@ -27,6 +27,8 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
@@ -149,9 +151,8 @@ public class MainController {
      * @param experimentData
      * @return
      */
-    @GetMapping(value = "/execute", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<?> execute(@RequestParam(value = "experimentData") String experimentData) {
+    @GetMapping(value = "/execute")
+    public ResponseEntity<String> execute(@RequestParam(value = "experimentData") String experimentData) throws JsonProcessingException {
         LOGGER.debug("Got request on /execute with experimentData={}", experimentData);
         Object obj = JSONValue.parse(experimentData);
         JSONObject configuration = (JSONObject) obj;
@@ -190,13 +191,16 @@ public class MainController {
         try{
             exp.run();
         }catch(FaultyConfigurationException e){
+            ObjectMapper objectMapper = new ObjectMapper();
             if(e.getFaultyConfigs().size()==configs.length){
-                return new ResponseEntity<>(new ExperimentExecutionResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).
+                    body(objectMapper.writeValueAsString(new ExperimentExecutionResponse(e.getMessage())));
             }else{
-                return new ResponseEntity<>(new ExperimentExecutionResponse(experimentId,e.getMessage()), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).
+                    body(objectMapper.writeValueAsString(new ExperimentExecutionResponse(experimentId,e.getMessage())));
             }
         }
-        return new ResponseEntity<>(experimentId, HttpStatus.OK);
+        return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(experimentId);
     }
 
     @RequestMapping("/experiment")
