@@ -376,7 +376,7 @@
 				dataset.push($(this).text());
 			});
 
-			//check whether there is at least one dataset and at least one annotator 
+			//check whether there is at least one dataset and at least one annotator
 			//and the disclaimer checkbox should be clicked
 			if (dataset.length > 0 && annotator.length > 0
 					&& $('#disclaimerCheckbox:checked').length == 1) {
@@ -439,13 +439,13 @@
 		$(document)
 				.ready(
 						function() {
-							// load dropdowns when document loaded 
+							// load dropdowns when document loaded
 							$('#type').multiselect();
 							$('#matching').multiselect();
 							$('#annotator').multiselect();
 							$('#dataset').multiselect();
 
-							// listeners for dropdowns 
+							// listeners for dropdowns
 							$('#type').change(loadMatching);
 							$('#type').change(loadAnnotator);
 							$('#type').change(loadDatasets);
@@ -453,8 +453,8 @@
 							loadExperimentTypes();
 
 							//supervise configuration of experiment and let it only run
-							//if everything is ok 
-							//initially it is turned off 
+							//if everything is ok
+							//initially it is turned off
 							$('#submit').attr("disabled", true);
 							//check showing run button if something is changed in dropdown menu
 							$('#annotator').change(function() {
@@ -467,12 +467,12 @@
 								checkExperimentConfiguration();
 							});
 
-							//if add button is clicked check whether there is a name and a uri 
+							//if add button is clicked check whether there is a name and a uri
 							$('#warningEmptyAnnotator').hide();
 							$('#infoAnnotatorTest').hide();
 							$('#dangerAnnotatorTestError').hide();
 							$('#addAnnotator').click(defineNIFAnnotator);
-							//if add button is clicked check whether there is a name and a uri 
+							//if add button is clicked check whether there is a name and a uri
 							$('#warningEmptyDataset').hide();
 							$('#fileupload').click(function() {
 								var name = $('#nameDataset').val();
@@ -577,8 +577,28 @@
 																					link);
 																})
 														.fail(
-																function() {
-																	alert("Error, insufficient parameters.");
+																function(res) {
+                                                                    $('#submit').remove();
+                                                                    res = res.responseJSON;
+                                                                    var errorSpan = '';
+                                                                    if (res && res.experimentId) {
+                                                                        var origin = window.location.origin;
+                                                                        var link = "<a href=\"/gerbil/experiment?id="
+                                                                            + res.experimentId
+                                                                            + "\">"
+                                                                            + origin
+                                                                            + "/gerbil/experiment?id="
+                                                                            + res.experimentId
+                                                                            + "</a>";
+                                                                        var span = "<span>Find your experimental data here: </span>";
+                                                                        $('#submitField').append(span);
+                                                                        $('#submitField').append(link);
+                                                                        errorSpan = "<br><div class=\"warning\" style=\"padding-top: 10px;\">Warning: "+res.errorMessage+"</div>";
+                                                                    } else {
+                                                                        errorSpan = "<br><div class=\"error\">Error: "+res.errorMessage+"</div>";
+                                                                    }
+                                                                    $('#submitField').append(errorSpan);
+																	// alert("Error, insufficient parameters.");
 																});
 											});
 						});
