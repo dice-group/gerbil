@@ -200,7 +200,7 @@ public class MainController {
                     body(objectMapper.writeValueAsString(new ExperimentExecutionResponse(experimentId,e.getMessage())));
             }
         }
-        return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(experimentId);
+        return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(experimentId);
     }
 
     @RequestMapping("/experiment")
