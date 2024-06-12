@@ -24,7 +24,7 @@ import java.util.Set;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
-import org.aksw.gerbil.evaluate.AggregateContingencyMetricsReport;
+import org.aksw.gerbil.evaluate.AggregatedContingencyMetricsReport;
 import org.aksw.gerbil.evaluate.ExtendedContingencyMetrics;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.Matching;
@@ -111,7 +111,7 @@ public class ExperimentDAOImplJUnitTest {
                         new double[] { random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat(),
                                 random.nextFloat(), random.nextFloat() },
                         ExperimentDAO.TASK_FINISHED, random.nextInt());
-                experimentTaskResult.setContingencyMetricsReport(new AggregateContingencyMetricsReport("Contingency Matrix",new ExtendedContingencyMetrics[]{new ExtendedContingencyMetrics("DocumentURI",new EvaluationCounts(2,0,0),1,1,1)}));
+                experimentTaskResult.setContingencyMetricsReport(new AggregatedContingencyMetricsReport("Contingency Matrix",new ExtendedContingencyMetrics[]{new ExtendedContingencyMetrics("DocumentURI",new EvaluationCounts(2,0,0),1,1,1)}));
                 results.add(experimentTaskResult);
             } else {
                 results.add(new ExperimentTaskResult("annotator1", "dataset" + i, "en", ExperimentType.D2KB,

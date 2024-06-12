@@ -64,7 +64,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         ExtendedContingencyMetrics[] extendedMetrics = new ExtendedContingencyMetrics[counts.length];
         results.addResults(calculateMicroFMeasure(counts));
         results.addResults(calculateMacroFMeasure(counts, instances, extendedMetrics));
-        results.addResult(updateContingencyMetricsReport(extendedMetrics));
+        results.addResult(getAggregatedContingencyMetricsReport(extendedMetrics));
 
         if(printAnswers){
         	this.closeAnswersLogger();
@@ -209,8 +209,8 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         return new double[] { precision, recall, F1_score };
     }
 
-    private AggregateContingencyMetricsReport updateContingencyMetricsReport(ExtendedContingencyMetrics[] extendedMetrics) {
-        return new AggregateContingencyMetricsReport(CONTINGENCY_MATRIX_NAME,extendedMetrics);
+    private AggregatedContingencyMetricsReport getAggregatedContingencyMetricsReport(ExtendedContingencyMetrics[] extendedMetrics) {
+        return new AggregatedContingencyMetricsReport(CONTINGENCY_MATRIX_NAME,extendedMetrics);
     }
 
     private void closeAnswersLogger() {

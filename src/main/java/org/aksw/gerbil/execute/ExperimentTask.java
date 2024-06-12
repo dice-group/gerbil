@@ -327,9 +327,9 @@ public class ExperimentTask implements Task {
             } else {
                 expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
             }
-        }else if (result instanceof AggregateContingencyMetricsReport){
+        }else if (result instanceof AggregatedContingencyMetricsReport){
             if(result.getName()==FMeasureCalculator.CONTINGENCY_MATRIX_NAME){
-                expResult.setContingencyMetricsReport((AggregateContingencyMetricsReport) result);
+                expResult.setContingencyMetricsReport((AggregatedContingencyMetricsReport) result);
             }else{
                 LOGGER.error("Got an unknown Object type result \"" + result.getName() + "\". Discarding it.");
             }

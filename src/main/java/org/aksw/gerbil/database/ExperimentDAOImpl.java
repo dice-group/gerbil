@@ -32,7 +32,7 @@ import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExerimentTaskBlobResultType;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
-import org.aksw.gerbil.evaluate.AggregateContingencyMetricsReport;
+import org.aksw.gerbil.evaluate.AggregatedContingencyMetricsReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -212,7 +212,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
 		this.template.update(SET_EXPERIMENT_TASK_RESULT, parameters);
 		if(result.hasContingencyMetricsReport()){
-			insertContingencyMetricsReport(experimentTaskId, result.aggregateContingencyMetricsReport);
+			insertContingencyMetricsReport(experimentTaskId, result.aggregatedContingencyMetricsReport);
 		}
 		if (result.hasAdditionalResults()) {
 			for (int i = 0; i < result.additionalResults.allocated.length; ++i) {
@@ -502,11 +502,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         return result.get(0);
     }
 
-	public void insertContingencyMetricsReport(int taskId, AggregateContingencyMetricsReport aggregateContingencyMetricsReport){
+	public void insertContingencyMetricsReport(int taskId, AggregatedContingencyMetricsReport aggregatedContingencyMetricsReport){
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("taskId", taskId);
-		parameters.addValue("resultId", ExerimentTaskBlobResultType.getResultId(aggregateContingencyMetricsReport.getName()));
-		parameters.addValue("resultValue", gson.toJson(aggregateContingencyMetricsReport.getValue()).getBytes());
+		parameters.addValue("resultId", ExerimentTaskBlobResultType.getResultId(aggregatedContingencyMetricsReport.getName()));
+		parameters.addValue("resultValue", gson.toJson(aggregatedContingencyMetricsReport.getValue()).getBytes());
 		this.template.update(INSERT_ADDITIONAL_BLOB_RESULTS, parameters);
 	}
 }

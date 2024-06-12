@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Represents an aggregate report of evaluation results containing multiple extended contingency metrics.
  */
-public class AggregateContingencyMetricsReport implements EvaluationResult{
+public class AggregatedContingencyMetricsReport implements EvaluationResult{
 
     /** The name of the evaluation result. */
     private String name;
@@ -36,7 +36,7 @@ public class AggregateContingencyMetricsReport implements EvaluationResult{
      *
      * @param name The name of the evaluation result.
      */
-    public AggregateContingencyMetricsReport(String name) {
+    public AggregatedContingencyMetricsReport(String name) {
         this.name = name;
         this.value = new ArrayList<ExtendedContingencyMetrics>();
     }
@@ -47,7 +47,7 @@ public class AggregateContingencyMetricsReport implements EvaluationResult{
      * @param name The name of the evaluation result.
      * @param value An array of ExtendedContingencyMetrics representing the initial set of extended metrics.
      */
-    public AggregateContingencyMetricsReport(String name, ExtendedContingencyMetrics[] value) {
+    public AggregatedContingencyMetricsReport(String name, ExtendedContingencyMetrics[] value) {
         this(name);
         this.addMetrics(value);
     }
