@@ -32,7 +32,7 @@ public class AggregatedContingencyMetricsReport implements EvaluationResult{
     private List<ExtendedContingencyMetrics> value;
 
     /**
-     * Constructs an instance of AggregateContingencyMetricsReport with the given name.
+     * Constructs an instance of AggregatedContingencyMetricsReport with the given name.
      *
      * @param name The name of the evaluation result.
      */
@@ -42,7 +42,7 @@ public class AggregatedContingencyMetricsReport implements EvaluationResult{
     }
 
     /**
-     * Constructs an instance of AggregateContingencyMetricsReport with the given name and initial set of extended metrics.
+     * Constructs an instance of AggregatedContingencyMetricsReport with the given name and initial set of extended metrics.
      *
      * @param name The name of the evaluation result.
      * @param value An array of ExtendedContingencyMetrics representing the initial set of extended metrics.
