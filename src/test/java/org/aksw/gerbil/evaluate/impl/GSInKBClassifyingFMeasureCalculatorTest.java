@@ -138,7 +138,7 @@ public class GSInKBClassifyingFMeasureCalculatorTest {
                 new UriBasedMeaningClassifier<ClassifiedSpanMeaning>(CLASSIFIER, MarkingClasses.IN_KB),
                 new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>());
         EvaluationResultContainer results = new EvaluationResultContainer();
-        evaluator.evaluate(Arrays.asList(Arrays.asList(annotatorResponse)), Arrays.asList(Arrays.asList(goldStandard)),
+        evaluator.evaluate(null, Arrays.asList(Arrays.asList(annotatorResponse)), Arrays.asList(Arrays.asList(goldStandard)),
                 results);
         double expectedValue, resultValue;
         boolean containedGSInKB = false;

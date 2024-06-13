@@ -22,6 +22,7 @@ import org.aksw.gerbil.datatypes.marking.ClassifiedMarking;
 import org.aksw.gerbil.datatypes.marking.MarkingClasses;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.junit.Assert;
 
 public abstract class AbstractClassifyingEvaluatorDecoratorTest<T extends ClassifiedMarking> implements Evaluator<T> {
@@ -38,8 +39,8 @@ public abstract class AbstractClassifyingEvaluatorDecoratorTest<T extends Classi
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
+                         EvaluationResultContainer results) {
         checkClassification(annotatorResults.get(0), expectedAnnoClassification, clazz);
         checkClassification(goldStandard.get(0), expectedGSClassification, clazz);
     }

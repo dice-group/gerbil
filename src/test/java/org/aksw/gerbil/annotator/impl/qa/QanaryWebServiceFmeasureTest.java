@@ -97,7 +97,7 @@ public class QanaryWebServiceFmeasureTest {
     	
     	
         EvaluationResultContainer results = new EvaluationResultContainer();
-        calculator.evaluate(annotatorResponse, goldStandard,results);
+        calculator.evaluate(null, annotatorResponse, goldStandard,results);
         List<EvaluationResult> singleResults = results.getResults();
         Assert.assertEquals(expectedResults.length, singleResults.size());
         double calculatedResult[] = new double[6];

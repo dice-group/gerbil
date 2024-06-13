@@ -26,6 +26,7 @@ import org.aksw.gerbil.matching.scored.ScoredEvaluationCounts;
 import org.aksw.gerbil.matching.scored.ScoredEvaluationCountsArray;
 import org.aksw.gerbil.matching.scored.ScoredMatchingsCounter;
 import org.aksw.gerbil.matching.scored.ScoredMatchingsCounterImpl;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +49,8 @@ public class ConfidenceBasedFMeasureCalculator<T extends Marking> implements Eva
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
+                         EvaluationResultContainer results) {
         ScoredEvaluationCountsArray counts = generateMatchingCounts(annotatorResults, goldStandard);
         if ((counts.truePositiveSums.length > 0) && (counts.falseNegativeSums.length > 0)
                 && (counts.falsePositiveSums.length > 0)) {

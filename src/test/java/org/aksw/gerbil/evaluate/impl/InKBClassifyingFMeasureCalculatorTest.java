@@ -150,7 +150,7 @@ public class InKBClassifyingFMeasureCalculatorTest {
                 new UriBasedMeaningClassifier<ClassifiedMeaning>(CLASSIFIER, MarkingClasses.IN_KB),
                 new EmergingEntityMeaningClassifier<ClassifiedMeaning>());
         EvaluationResultContainer results = new EvaluationResultContainer();
-        evaluator.evaluate(Arrays.asList(Arrays.asList(annotatorResponse)), Arrays.asList(Arrays.asList(goldStandard)),
+        evaluator.evaluate(null, Arrays.asList(Arrays.asList(annotatorResponse)), Arrays.asList(Arrays.asList(goldStandard)),
                 results);
         double expectedValue, resultValue;
         boolean containedInKB = false;

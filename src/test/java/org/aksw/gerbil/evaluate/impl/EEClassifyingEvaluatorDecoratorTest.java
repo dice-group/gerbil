@@ -125,7 +125,7 @@ public class EEClassifyingEvaluatorDecoratorTest
         Evaluator<MeaningSpan> evaluator = new ClassifyingEvaluatorDecorator<MeaningSpan, ClassifiedSpanMeaning>(this,
                 new UriBasedMeaningClassifier<ClassifiedSpanMeaning>(CLASSIFIER, MarkingClasses.IN_KB),
                 new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>());
-        evaluator.evaluate(Arrays.asList(Arrays.asList(annotatorResponse)), Arrays.asList(Arrays.asList(goldStandard)),
+        evaluator.evaluate(null, Arrays.asList(Arrays.asList(annotatorResponse)), Arrays.asList(Arrays.asList(goldStandard)),
                 null);
     }
 }

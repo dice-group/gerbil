@@ -25,6 +25,7 @@ import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.SubTaskEvaluator;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 
 import com.carrotsearch.hppc.DoubleArrayList;
@@ -38,10 +39,10 @@ public class SubTaskAverageCalculator<T extends Marking> implements Evaluator<T>
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
+    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
         EvaluationResultContainer subTaskResults = new EvaluationResultContainer();
         for (SubTaskEvaluator<T> evaluator : evaluators) {
-            evaluator.evaluate(annotatorResults, goldStandard, subTaskResults);
+            evaluator.evaluate(instances, annotatorResults, goldStandard, subTaskResults);
         }
         addSubTaskResults(subTaskResults, results);
         addAverages(subTaskResults, results);

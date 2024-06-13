@@ -27,6 +27,7 @@ import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.ScoredMarking;
 import org.aksw.gerbil.utils.filter.ConfidenceScoreBasedMarkingFilter;
@@ -50,19 +51,19 @@ public class ConfidenceScoreEvaluatorDecorator<T extends Marking> extends Abstra
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
+    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
             EvaluationResultContainer results) {
         // create a list of confidence scores
         double scores[] = getConfidenceScores(annotatorResults);
         Arrays.sort(scores);
 
-        EvaluationResultContainer bestResult = evaluate(annotatorResults, goldStandard, results, 0);
+        EvaluationResultContainer bestResult = evaluate(instances,annotatorResults, goldStandard, results, 0);
         EvaluationResultContainer currentResult;
         int bestScoreId = -1;
         // go through the confidence scores
         for (int i = 0; i < scores.length; ++i) {
             // evaluate the result using the current confidence
-            currentResult = evaluate(annotatorResults, goldStandard, results, scores[i]);
+            currentResult = evaluate(instances, annotatorResults, goldStandard, results, scores[i]);
             bestResult = getBetterResult(currentResult, bestResult);
             if (bestResult == currentResult) {
                 bestScoreId = i;
@@ -116,11 +117,11 @@ public class ConfidenceScoreEvaluatorDecorator<T extends Marking> extends Abstra
         return scores.toArray();
     }
 
-    protected EvaluationResultContainer evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results, double threshold) {
+    protected EvaluationResultContainer evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
+                                                 EvaluationResultContainer results, double threshold) {
         EvaluationResultContainer currentResults = new EvaluationResultContainer(results);
         MarkingFilter<T> filter = new ConfidenceScoreBasedMarkingFilter<T>(threshold);
-        this.evaluator.evaluate(filter.filterListOfLists(annotatorResults), goldStandard, currentResults);
+        this.evaluator.evaluate(instances, filter.filterListOfLists(annotatorResults), goldStandard, currentResults);
         return currentResults;
     }
 

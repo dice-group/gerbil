@@ -26,6 +26,7 @@ import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
 import org.aksw.gerbil.transfer.nif.data.ScoredNamedEntity;
 import org.junit.Assert;
@@ -89,7 +90,7 @@ public class ConfidenceScoreEvaluatorDecoratorTest implements Evaluator<NamedEnt
         ConfidenceScoreEvaluatorDecorator<NamedEntity> decorator = new ConfidenceScoreEvaluatorDecorator<NamedEntity>(
                 this, EVALUTION_RESULT_NAME, this);
         EvaluationResultContainer results = new EvaluationResultContainer();
-        decorator.evaluate(annotatorResults, new ArrayList<List<NamedEntity>>(), results);
+        decorator.evaluate(null, annotatorResults, new ArrayList<List<NamedEntity>>(), results);
         boolean evalationResultFound = false;
         boolean scoreThresholdFound = false;
         for (EvaluationResult result : results.getResults()) {
@@ -109,8 +110,8 @@ public class ConfidenceScoreEvaluatorDecoratorTest implements Evaluator<NamedEnt
     }
 
     @Override
-    public void evaluate(List<List<NamedEntity>> annotatorResults, List<List<NamedEntity>> goldStandard,
-            EvaluationResultContainer results) {
+    public void evaluate(List<Document> instances, List<List<NamedEntity>> annotatorResults, List<List<NamedEntity>> goldStandard,
+                         EvaluationResultContainer results) {
         // all gold standards in this test are empty
         Assert.assertEquals(0, goldStandard.size());
         // simply count all correct named entities

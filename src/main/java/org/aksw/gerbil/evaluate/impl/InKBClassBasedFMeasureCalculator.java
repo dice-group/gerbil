@@ -19,6 +19,7 @@ package org.aksw.gerbil.evaluate.impl;
 import java.util.List;
 
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Meaning;
 
 @Deprecated
@@ -62,8 +63,8 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends Confide
      }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+    public void evaluate(List<Document> instances,List<List<T>> annotatorResults, List<List<T>> goldStandard,
+                         EvaluationResultContainer results) {
         // the super class performs the matching counter calls
         // EvaluationCounts counts[] = generateMatchingCounts(annotatorResults,
         // goldStandard);

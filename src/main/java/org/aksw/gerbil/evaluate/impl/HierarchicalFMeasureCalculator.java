@@ -25,6 +25,7 @@ import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.impl.HierarchicalMatchingsCounter;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.TypedMarking;
 
 public class HierarchicalFMeasureCalculator<T extends TypedMarking> implements Evaluator<T> {
@@ -39,8 +40,8 @@ public class HierarchicalFMeasureCalculator<T extends TypedMarking> implements E
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
+                         EvaluationResultContainer results) {
         List<List<EvaluationCounts>> matchingCounts = new ArrayList<List<EvaluationCounts>>(annotatorResults.size());
         for (int i = 0; i < annotatorResults.size(); ++i) {
             matchingCounts.add(matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i)));

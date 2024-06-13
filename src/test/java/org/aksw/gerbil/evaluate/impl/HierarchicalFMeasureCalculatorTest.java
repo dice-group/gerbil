@@ -151,7 +151,7 @@ public class HierarchicalFMeasureCalculatorTest {
             goldStandard.add(tempList);
         }
         EvaluationResultContainer results = new EvaluationResultContainer();
-        calculator.evaluate(annotatorResult, goldStandard, results);
+        calculator.evaluate(null, annotatorResult, goldStandard, results);
 
         List<EvaluationResult> singleResults = results.getResults();
         Assert.assertEquals(expectedResults.length, singleResults.size());

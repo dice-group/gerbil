@@ -144,7 +144,7 @@ public class InKBClassBasedFMeasureCalculatorTest {
         // InKBClassBasedFMeasureCalculator<Meaning>(SEARCHER,
         // CLASSIFIER);
         EvaluationResultContainer results = new EvaluationResultContainer();
-        calculator.evaluate(Arrays.asList(Arrays.asList(annotatorResponse)), Arrays.asList(Arrays.asList(goldStandard)),
+        calculator.evaluate(null, Arrays.asList(Arrays.asList(annotatorResponse)), Arrays.asList(Arrays.asList(goldStandard)),
                 results);
         double expectedValue, resultValue;
         for (EvaluationResult result : results.getResults()) {

@@ -24,6 +24,7 @@ import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.matching.scored.ScoredEvaluationCountsArray;
 import org.aksw.gerbil.matching.scored.ScoredMatchingsCounterImpl;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.utils.filter.MarkingClassBasedMarkingFilter;
 import org.aksw.gerbil.utils.filter.MarkingFilter;
 
@@ -57,8 +58,8 @@ public class ClassConsideringFMeasureCalculator<T extends ClassifiedMeaning>
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
+                         EvaluationResultContainer results) {
         // the super class performs the matching counter calls
         ScoredEvaluationCountsArray counts = generateMatchingCounts(annotatorResults, goldStandard);
         if ((counts.truePositiveSums.length > 0) && (counts.falseNegativeSums.length > 0)
