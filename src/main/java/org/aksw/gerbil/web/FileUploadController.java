@@ -101,9 +101,9 @@ public class FileUploadController {
                 FileBasedNIFDataset dataset = new FileBasedNIFDataset(path+file.getName(), file.getName(), Lang.TTL);
                 dataset.init();
                 file.setDescription("Found "+dataset.getInstances().size()+" Instances");
-            }catch(GerbilException e){
+            }catch(Exception e){
                 isErroneousFile =true;
-                file.setError(e.getErrorType().getDescription());
+                file.setError(e.getMessage());
             }
         }
         UploadFileContainer uploadFileContainer = new UploadFileContainer(files);
