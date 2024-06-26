@@ -25,8 +25,11 @@ import java.util.LinkedList;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
+import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.FileMeta;
 import org.aksw.gerbil.transfer.UploadFileContainer;
+import org.apache.jena.riot.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -92,9 +95,19 @@ public class FileUploadController {
             }
             files.add(fileContainer);
         }
-
+        boolean isErroneousFile = false;
+        for(FileMeta file:files){
+            try{
+                FileBasedNIFDataset dataset = new FileBasedNIFDataset(path+file.getName(), file.getName(), Lang.TTL);
+                dataset.init();
+                file.setDescription("Found "+dataset.getInstances().size()+" Instances");
+            }catch(GerbilException e){
+                isErroneousFile =true;
+                file.setDescription(e.getErrorType().getDescription());
+            }
+        }
         UploadFileContainer uploadFileContainer = new UploadFileContainer(files);
-        return new ResponseEntity<UploadFileContainer>(uploadFileContainer, HttpStatus.OK);
+        return new ResponseEntity<UploadFileContainer>(uploadFileContainer, isErroneousFile?HttpStatus.BAD_REQUEST:HttpStatus.OK);
     }
 
     private void createFolderIfNotExists() {
