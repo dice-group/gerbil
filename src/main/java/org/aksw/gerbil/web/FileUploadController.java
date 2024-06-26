@@ -103,7 +103,7 @@ public class FileUploadController {
                 file.setDescription("Found "+dataset.getInstances().size()+" Instances");
             }catch(GerbilException e){
                 isErroneousFile =true;
-                file.setDescription(e.getErrorType().getDescription());
+                file.setError(e.getErrorType().getDescription());
             }
         }
         UploadFileContainer uploadFileContainer = new UploadFileContainer(files);

@@ -662,7 +662,7 @@
                                                         + "("
                                                         + file.name
                                                         + ") :"
-                                                        + file.description
+                                                        + file.error
                                                         + "</span></li>");
                                                 $('#nameDataset').val(
                                                     '');
