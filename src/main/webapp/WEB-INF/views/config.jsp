@@ -625,7 +625,9 @@
 																				+ name
 																				+ "("
 																				+ file.name
-																				+ ")</span></li>");
+																				+ ") : "
+                                                                                + file.description
+                                                                                + "</span></li>");
 														var listItems = $('#datasetList > li > span');
 														for (var i = 0; i < listItems.length; i++) {
 															listItems[i].onclick = function() {
@@ -646,9 +648,27 @@
 									$('#progress .progress-bar').css('width',
 											progress + '%');
 								},
-								processfail : function(e, data) {
-									alert(data.files[data.index].name + "\n"
-											+ data.files[data.index].error);
+								fail : function(e, data) {
+                                    data = data.response().jqXHR.responseJSON;
+                                    var name = $('#nameDataset').val();
+                                    $
+                                        .each(
+                                            data.files,
+                                            function(index, file) {
+                                                $('#datasetList')
+                                                    .append(
+                                                        "<li><span class=\"glyphicon glyphicon-ban-circle\"></span>&nbsp<span class=\"li_content\">"
+                                                        + name
+                                                        + "("
+                                                        + file.name
+                                                        + ") :"
+                                                        + file.error
+                                                        + "</span></li>");
+                                                $('#nameDataset').val(
+                                                    '');
+                                                $('#URIDataset')
+                                                    .val('');
+                                            });
 								}
 							}).prop('disabled', !$.support.fileInput).parent()
 					.addClass($.support.fileInput ? undefined : 'disabled');

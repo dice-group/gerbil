@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Container file to upload files with blueimp/jQuery plugin
- * 
+ *
  * @author didier
  *
  */
@@ -35,6 +35,8 @@ public class FileMeta {
     private String error;
     private String fileType;
     private byte[] bytes;
+
+    private String description;
 
     public String getName() {
         return name;
@@ -108,4 +110,12 @@ public class FileMeta {
         this.bytes = bytes;
     }
 
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
