@@ -24,6 +24,7 @@ import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.EvaluatorDecorator;
 import org.aksw.gerbil.matching.MatchingsSearcher;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 
 import com.carrotsearch.hppc.BitSet;
@@ -95,9 +96,9 @@ public class SearcherBasedNotMatchingMarkingFilter<T extends Marking> extends Ab
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
-        evaluator.evaluate(filterListOfMarkings(annotatorResults, goldStandard), goldStandard, results);
+    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
+                         EvaluationResultContainer results) {
+        evaluator.evaluate(instances,filterListOfMarkings(annotatorResults, goldStandard), goldStandard, results);
     }
 
 }

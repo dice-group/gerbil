@@ -37,6 +37,13 @@ public class EvaluationCounts {
         this.falseNegatives += counts.falseNegatives;
     }
 
+    public EvaluationCounts add(EvaluationCounts[] counts) {
+        for(EvaluationCounts count : counts){
+            this.add(count);
+        }
+        return this;
+    }
+
     public int getTruePositives() {
         return truePositives;
     }

@@ -23,6 +23,7 @@ import org.aksw.gerbil.evaluate.*;
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.matching.impl.QAMatchingsCounter;
+import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.utils.AnswersLogger;
 import org.aksw.gerbil.utils.AnswersLoggerContainer;
@@ -30,9 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(FMeasureCalculator.class);
-
     public static final String MACRO_F1_SCORE_NAME = "Macro F1 score";
     public static final String MACRO_PRECISION_NAME = "Macro Precision";
     public static final String MACRO_RECALL_NAME = "Macro Recall";
@@ -42,9 +41,7 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     public static final String CONTINGENCY_MATRIX_NAME = "Contingency Matrix";
     public static final String MACRO_F1_2_SCORE_NAME = "Macro F1 QALD";
 	private static final String PRINT_ANSWERS_TO_LOG_KEY = "org.aksw.gerbil.qa.matching.printAnswers";
-
     protected MatchingsCounter<T> matchingsCounter;
-
     private boolean printAnswers = false;
     private AnswersLogger<T> alog = null;
     
@@ -52,30 +49,25 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         super();
         this.matchingsCounter = matchingsCounter;
     	this.printAnswers = Boolean.valueOf(GerbilConfiguration.getInstance().getString(PRINT_ANSWERS_TO_LOG_KEY));   	
-    	if(this.printAnswers){
-    		if(matchingsCounter instanceof QAMatchingsCounter) {
-    			alog = new AnswersLogger<T>(matchingsCounter.getClass().getSimpleName());
-    			AnswersLoggerContainer.addAnswersLogger(this.hashCode(), alog);
-    		}else{
-    			this.printAnswers=false;
-    		}
+    	if(this.printAnswers && matchingsCounter instanceof QAMatchingsCounter) {
+    		alog = new AnswersLogger<T>(matchingsCounter.getClass().getSimpleName());
+    		AnswersLoggerContainer.addAnswersLogger(this.hashCode(), alog);
+        }else{
+    		this.printAnswers=false;
     	}
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
-            EvaluationResultContainer results) {
+    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
+                         EvaluationResultContainer results) {
         EvaluationCounts counts[] = generateMatchingCounts(annotatorResults, goldStandard);
+        ExtendedContingencyMetrics[] extendedMetrics = new ExtendedContingencyMetrics[counts.length];
         results.addResults(calculateMicroFMeasure(counts));
-        results.addResults(calculateMacroFMeasure(counts));
-        results.addResults(getContingencyMatrix(counts));
-    
+        results.addResults(calculateMacroFMeasure(counts, instances, extendedMetrics));
+        results.addResult(getAggregatedContingencyMetricsReport(extendedMetrics));
+
         if(printAnswers){
-        	try{
-        		alog.close();
-        	}catch(Exception e){
-        		LOGGER.warn("Could not close answer logger");
-        	}
+        	this.closeAnswersLogger();
         }
     }
 
@@ -101,34 +93,23 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
     }
 
     protected EvaluationResult[] calculateMicroFMeasure(EvaluationCounts counts[]) {
-        return calculateMicroFMeasure(counts, MICRO_PRECISION_NAME, MICRO_RECALL_NAME, MICRO_F1_SCORE_NAME);
-    }
-
-    protected EvaluationResult[] calculateMicroFMeasure(EvaluationCounts counts[], String precisionName,
-            String recallName, String f1ScoreName) {
-        EvaluationCounts sums = new EvaluationCounts();
-        for (int i = 0; i < counts.length; ++i) {
-            sums.add(counts[i]);
-        }
+        EvaluationCounts sums = new EvaluationCounts().add(counts);
         double measures[] = calculateMeasures(sums);
         if(printAnswers){
-        	try{
-        		alog.printMicro(sums, measures);
-        	}catch(Exception e){
-        		LOGGER.warn("Will not print answer log for micro ");
-        	}
+            try{
+                alog.printMicro(sums, measures);
+            }catch(Exception e){
+                LOGGER.warn("Will not print answer log for micro ");
+            }
         }
-        return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, measures[0]),
-                new DoubleEvaluationResult(recallName, measures[1]),
-                new DoubleEvaluationResult(f1ScoreName, measures[2]) };
+        return new EvaluationResult[] {
+                new DoubleEvaluationResult(MICRO_PRECISION_NAME, measures[0]),
+                new DoubleEvaluationResult(MICRO_RECALL_NAME, measures[1]),
+                new DoubleEvaluationResult(MICRO_F1_SCORE_NAME, measures[2])
+        };
     }
 
-    protected EvaluationResult[] calculateMacroFMeasure(EvaluationCounts counts[]) {
-        return calculateMacroFMeasure(counts, MACRO_PRECISION_NAME, MACRO_RECALL_NAME, MACRO_F1_SCORE_NAME);
-    }
-
-    protected EvaluationResult[] calculateMacroFMeasure(EvaluationCounts counts[], String precisionName,
-            String recallName, String f1ScoreName) {
+    protected EvaluationResult[] calculateMacroFMeasure(EvaluationCounts counts[], List<Document> instances, ExtendedContingencyMetrics[] extendedMetrics) {
         double avgs[] = new double[3];
         double measures[];
         for (int i = 0; i < counts.length; ++i) {
@@ -136,11 +117,11 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
             avgs[0] += measures[0];
             avgs[1] += measures[1];
             avgs[2] += measures[2];
+            extendedMetrics[i] = new ExtendedContingencyMetrics(instances.get(i).getDocumentURI(), counts[i], measures[0], measures[1],measures[2]);
         }
         avgs[0] /= counts.length;
         avgs[1] /= counts.length;
         avgs[2] /= counts.length;
-
         double F1_scoreDef = calculateF1QALD(counts);
         
         if(printAnswers){
@@ -150,8 +131,12 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         		LOGGER.warn("Will not print answer log for micro ");
         	}
         }
-        return new EvaluationResult[] { new DoubleEvaluationResult(precisionName, avgs[0]),
-                new DoubleEvaluationResult(recallName, avgs[1]), new DoubleEvaluationResult(f1ScoreName, avgs[2]), new DoubleEvaluationResult(MACRO_F1_2_SCORE_NAME, F1_scoreDef) };
+        return new EvaluationResult[] {
+            new DoubleEvaluationResult(MACRO_PRECISION_NAME, avgs[0]),
+            new DoubleEvaluationResult(MACRO_RECALL_NAME, avgs[1]),
+            new DoubleEvaluationResult(MACRO_F1_SCORE_NAME, avgs[2]),
+            new DoubleEvaluationResult(MACRO_F1_2_SCORE_NAME, F1_scoreDef)
+        };
     }
     
     private double calculateF1QALD(EvaluationCounts counts[]) {
@@ -167,7 +152,6 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
          avgs[1] /= counts.length;
          avgs[2] /= counts.length;
          return (2 * avgs[0] * avgs[1]) / (avgs[0] + avgs[1]);
-         
     }
 
     private double[] calculateMeasuresQALD(EvaluationCounts counts) {
@@ -225,7 +209,15 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         return new double[] { precision, recall, F1_score };
     }
 
-    private EvaluationResult[] getContingencyMatrix(EvaluationCounts counts[]){
-        return new EvaluationResult[] { new ObjectEvaluationResult(CONTINGENCY_MATRIX_NAME, counts)};
+    private AggregatedContingencyMetricsReport getAggregatedContingencyMetricsReport(ExtendedContingencyMetrics[] extendedMetrics) {
+        return new AggregatedContingencyMetricsReport(CONTINGENCY_MATRIX_NAME,extendedMetrics);
+    }
+
+    private void closeAnswersLogger() {
+        try {
+            alog.close();
+        } catch (Exception e) {
+            LOGGER.warn("Could not close answer logger", e);
+        }
     }
 }
