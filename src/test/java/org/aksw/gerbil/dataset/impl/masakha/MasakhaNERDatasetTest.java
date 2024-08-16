@@ -25,7 +25,11 @@ public class MasakhaNERDatasetTest extends AbstractGenericCoNLLDatasetTest {
 
     @Override
     public InitializableDataset createDataset(File file) {
-        return new MasakhaNERDataset(file.getAbsolutePath(), isAmharic);
+        if(isAmharic) {
+            return new AmharicMasakhaNERDataset(file.getAbsolutePath());
+        } else {
+            return new MasakhaNERDataset(file.getAbsolutePath());
+        }
     }
 
     @Parameterized.Parameters

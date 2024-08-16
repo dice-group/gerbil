@@ -18,11 +18,8 @@ public class MasakhaNERDataset extends GenericCoNLLDataset {
     private static final CoNLLTypeRetriever TYPE_TAGS = new CoNLLTypeRetriever("LOC", null, null, null, "DATE", "PER",
             null, null, null, "ORG");
 
-    public MasakhaNERDataset(String file, boolean isAmharic) {
+    public MasakhaNERDataset(String file) {
         super(file, ANNOTATION_COLUMN, URI_COLUMN, TYPE_TAGS);
         setColumnSeparator(" ");
-        if (isAmharic) {
-            setWhitespace(" ፡ ");
-        }
     }
 }
