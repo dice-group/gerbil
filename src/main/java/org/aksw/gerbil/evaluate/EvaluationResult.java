@@ -16,9 +16,23 @@
  */
 package org.aksw.gerbil.evaluate;
 
-public interface EvaluationResult {
+/**
+ * An evaluation result is a simple name-value pair. The name is expected to be
+ * a String while the value is parameterized.
+ * 
+ * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
+ *
+ * @param <T>
+ */
+public interface EvaluationResult<T> {
 
+    /**
+     * The result's name.
+     */
     public String getName();
-    
-    public Object getValue();
+
+    /**
+     * The result's value.
+     */
+    public T getValue();
 }

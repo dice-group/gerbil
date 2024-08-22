@@ -142,7 +142,7 @@ public class GSInKBClassifyingFMeasureCalculatorTest {
                 results);
         double expectedValue, resultValue;
         boolean containedGSInKB = false;
-        for (EvaluationResult result : results.getResults()) {
+        for (EvaluationResult<?> result : results.getResults()) {
             switch (result.getName()) {
             case FMeasureCalculator.MACRO_PRECISION_NAME:
             case FMeasureCalculator.MICRO_PRECISION_NAME: {

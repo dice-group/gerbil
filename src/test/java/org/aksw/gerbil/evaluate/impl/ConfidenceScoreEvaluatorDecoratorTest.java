@@ -36,7 +36,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 @SuppressWarnings("deprecation")
-public class ConfidenceScoreEvaluatorDecoratorTest implements Evaluator<NamedEntity>, Comparator<EvaluationResult> {
+public class ConfidenceScoreEvaluatorDecoratorTest
+        implements Evaluator<NamedEntity>, Comparator<EvaluationResult<Double>> {
 
     public static final String CORRECT_MARKING = "correct";
     public static final String WRONG_MARKING = "wrong";
@@ -92,7 +93,7 @@ public class ConfidenceScoreEvaluatorDecoratorTest implements Evaluator<NamedEnt
         decorator.evaluate(annotatorResults, new ArrayList<List<NamedEntity>>(), results);
         boolean evalationResultFound = false;
         boolean scoreThresholdFound = false;
-        for (EvaluationResult result : results.getResults()) {
+        for (EvaluationResult<?> result : results.getResults()) {
             if (EVALUTION_RESULT_NAME.equals(result.getName())) {
                 evalationResultFound = true;
                 Assert.assertEquals(expectedScore, result.getValue());
@@ -131,7 +132,7 @@ public class ConfidenceScoreEvaluatorDecoratorTest implements Evaluator<NamedEnt
     }
 
     @Override
-    public int compare(EvaluationResult result1, EvaluationResult result2) {
+    public int compare(EvaluationResult<Double> result1, EvaluationResult<Double> result2) {
         return Double.compare(((DoubleEvaluationResult) result1).getValueAsDouble(),
                 ((DoubleEvaluationResult) result2).getValueAsDouble());
     }

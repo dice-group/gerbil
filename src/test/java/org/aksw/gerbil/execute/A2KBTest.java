@@ -30,7 +30,6 @@ import org.aksw.gerbil.dataset.impl.nif.NIFFileDatasetConfig;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
-import org.aksw.gerbil.evaluate.impl.ConfidenceBasedFMeasureCalculator;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.semantic.kb.SimpleWhiteListBasedUriKBClassifier;
@@ -57,7 +56,7 @@ public class A2KBTest extends AbstractExperimentTaskTest {
     @BeforeClass
     public static void setMatchingsCounterDebugFlag() {
         MatchingsCounterImpl.setPrintDebugMsg(true);
-        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
+//        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
         ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
 
     }

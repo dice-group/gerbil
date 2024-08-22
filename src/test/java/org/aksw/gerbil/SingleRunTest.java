@@ -54,25 +54,26 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-    private static final String ANNOTATOR_NAME = "DBpedia Spotlight";
+    private static final String ANNOTATOR_NAME = "FALCON 2";
     private static final boolean ANNOTATOR_IS_NIF_WS = false;
     private static final String ANNOTATOR_NIF_WS_URL = "";
 
-    private static final String DATASET_NAME = "DBpediaSpotlight";
-    private static final boolean DATASET_IS_LOCAL_FILE = false;
+    private static final String PART = "est"; // "rain";
+    private static final String DATASET_NAME = "QALD 10 T" + PART +" (store)";//"IndEL General Domain";
+    private static final boolean DATASET_IS_LOCAL_FILE = true;
     // File name if the dataset is a local file (note that it has to be located in
     // gerbil_data/upload)
-    private static final String DATASET_FILE = "example.ttl";
+    private static final String DATASET_FILE = "qald10-t" + PART + "-c2kb-nif.ttl";
 
-    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.A2KB;
+    private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.C2KB;
     private static final Matching MATCHING = Matching.STRONG_ANNOTATION_MATCH;
 
-    private static final boolean USE_SAME_AS_RETRIEVAL = false;
+    private static final boolean USE_SAME_AS_RETRIEVAL = true;
     private static final boolean USE_ENTITY_CHECKING = false;
 
     private static final boolean SHORTEN_DATASET = false;
     private static final int SHORTENED_SET_START_ID = 0;
-    private static final int SHORTENED_SET_END_ID = 3;
+    private static final int SHORTENED_SET_END_ID = 10;
 
     private static final SameAsRetriever SAME_AS_RETRIEVER = USE_SAME_AS_RETRIEVAL
             ? SameAsRetrieverSingleton4Tests.getInstance()
@@ -82,6 +83,8 @@ public class SingleRunTest implements TaskObserver {
             : null;
 
     public static void main(String[] args) throws Exception {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        System.out.println(loader.getResource("log4j.properties"));
         SingleRunTest test = new SingleRunTest();
         test.run();
     }
@@ -146,6 +149,7 @@ public class SingleRunTest implements TaskObserver {
         Experimenter experimenter = new Experimenter(overseer, new SimpleLoggingDAO4Debugging(), SAME_AS_RETRIEVER,
                 new EvaluatorFactory(), taskConfigs, "SingleRunTest");
         experimenter.setAnnotatorOutputWriter(RootConfig.getAnnotatorOutputWriter());
+        experimenter.setDetailedResults(true);
         experimenter.run();
 
         mutex.acquire();

@@ -35,16 +35,15 @@ import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencerFactory;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedSpanImpl;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.RDFS;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.vocabulary.RDFS;
 
 @RunWith(Parameterized.class)
 public class HierarchicalFMeasureCalculatorTest {
@@ -90,30 +89,29 @@ public class HierarchicalFMeasureCalculatorTest {
         // gold standard = G, J, K
         // annotator = H, K, L
         // tp = 1, fp = 2, fn = 2
-        testConfigs.add(new Object[] {
-                new String[][][] { new String[][] {
-                        new String[] { RESOURCES[6].getURI(), RESOURCES[9].getURI(), RESOURCES[10].getURI() },
-                        new String[] { RESOURCES[7].getURI(), RESOURCES[10].getURI(), RESOURCES[11].getURI() } } },
-                new double[] { 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0 } });
+        testConfigs
+                .add(new Object[] {
+                        new String[][][] { new String[][] {
+                                new String[] { RESOURCES[6].getURI(), RESOURCES[9].getURI(), RESOURCES[10].getURI() },
+                                new String[] { RESOURCES[7].getURI(), RESOURCES[10].getURI(),
+                                        RESOURCES[11].getURI() } } },
+                        new double[] { 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0 } });
         // gold standard = D
         // annotator = C
         // tp = 1, fp = 1, fn = 6
-        testConfigs.add(new Object[] {
-                new String[][][] { new String[][] { new String[] { RESOURCES[3].getURI() },
-                        new String[] { RESOURCES[2].getURI() } } },
+        testConfigs.add(new Object[] { new String[][][] {
+                new String[][] { new String[] { RESOURCES[3].getURI() }, new String[] { RESOURCES[2].getURI() } } },
                 new double[] { 1.0 / 2.0, 1.0 / 7.0, 2.0 / 9.0, 1.0 / 2.0, 1.0 / 7.0, 2.0 / 9.0 } });
         // Both of the cases above
-        testConfigs
-                .add(new Object[] {
-                        new String[][][] {
-                                new String[][] {
-                                        new String[] { RESOURCES[6].getURI(), RESOURCES[9].getURI(),
-                                                RESOURCES[10].getURI() },
-                                        new String[] { RESOURCES[7].getURI(), RESOURCES[10].getURI(),
-                                                RESOURCES[11].getURI() } },
-                                new String[][] { new String[] { RESOURCES[3].getURI() },
-                                        new String[] { RESOURCES[2].getURI() } } },
-                        new double[] { 5.0 / 12.0, 5.0 / 21.0, 10.0 / 33.0, 5.0 / 12.0, 5.0 / 21.0, 5.0 / 18.0 } });
+        testConfigs.add(new Object[] {
+                new String[][][] {
+                        new String[][] {
+                                new String[] { RESOURCES[6].getURI(), RESOURCES[9].getURI(), RESOURCES[10].getURI() },
+                                new String[] { RESOURCES[7].getURI(), RESOURCES[10].getURI(),
+                                        RESOURCES[11].getURI() } },
+                        new String[][] { new String[] { RESOURCES[3].getURI() },
+                                new String[] { RESOURCES[2].getURI() } } },
+                new double[] { 5.0 / 12.0, 5.0 / 21.0, 10.0 / 33.0, 5.0 / 12.0, 5.0 / 21.0, 5.0 / 18.0 } });
         return testConfigs;
     }
 
@@ -135,8 +133,9 @@ public class HierarchicalFMeasureCalculatorTest {
     public void test() {
         @SuppressWarnings("unchecked")
         HierarchicalFMeasureCalculator<TypedSpan> calculator = new HierarchicalFMeasureCalculator<TypedSpan>(
-                new HierarchicalMatchingsCounter<TypedSpan>((MatchingsSearcher<TypedSpan>) MatchingsSearcherFactory
-                        .createSpanMatchingsSearcher(Matching.WEAK_ANNOTATION_MATCH),
+                new HierarchicalMatchingsCounter<TypedSpan>(
+                        (MatchingsSearcher<TypedSpan>) MatchingsSearcherFactory
+                                .createSpanMatchingsSearcher(Matching.WEAK_ANNOTATION_MATCH),
                         new SimpleWhiteListBasedUriKBClassifier(HierarchicalMatchingsCounterTest.KNOWN_KB_URIS),
                         inferencer));
 
@@ -154,39 +153,33 @@ public class HierarchicalFMeasureCalculatorTest {
         EvaluationResultContainer results = new EvaluationResultContainer();
         calculator.evaluate(annotatorResult, goldStandard, results);
 
-        List<EvaluationResult> singleResults = results.getResults();
+        List<EvaluationResult<?>> singleResults = results.getResults();
         Assert.assertEquals(expectedResults.length, singleResults.size());
         double calculatedResult[] = new double[6];
-        for (EvaluationResult result : singleResults) {
+        for (EvaluationResult<?> result : singleResults) {
             switch (result.getName()) {
             case FMeasureCalculator.MACRO_F1_SCORE_NAME: {
-                calculatedResult[5] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
+                calculatedResult[5] = ((DoubleEvaluationResult) result).getValueAsDouble();
                 break;
             }
             case FMeasureCalculator.MACRO_PRECISION_NAME: {
-                calculatedResult[3] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
+                calculatedResult[3] = ((DoubleEvaluationResult) result).getValueAsDouble();
                 break;
             }
             case FMeasureCalculator.MACRO_RECALL_NAME: {
-                calculatedResult[4] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
+                calculatedResult[4] = ((DoubleEvaluationResult) result).getValueAsDouble();
                 break;
             }
             case FMeasureCalculator.MICRO_F1_SCORE_NAME: {
-                calculatedResult[2] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
+                calculatedResult[2] = ((DoubleEvaluationResult) result).getValueAsDouble();
                 break;
             }
             case FMeasureCalculator.MICRO_PRECISION_NAME: {
-                calculatedResult[0] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
+                calculatedResult[0] = ((DoubleEvaluationResult) result).getValueAsDouble();
                 break;
             }
             case FMeasureCalculator.MICRO_RECALL_NAME: {
-                calculatedResult[1] = ((DoubleEvaluationResult) result)
-                        .getValueAsDouble();
+                calculatedResult[1] = ((DoubleEvaluationResult) result).getValueAsDouble();
                 break;
             }
             default: {

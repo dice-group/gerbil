@@ -16,23 +16,17 @@
  */
 package org.aksw.gerbil.evaluate;
 
-public class IntEvaluationResult implements EvaluationResult {
+public class IntEvaluationResult extends AbstractEvaluationResult<Integer> implements EvaluationResult<Integer> {
 
-    private String name;
     private int value;
 
     public IntEvaluationResult(String name, int value) {
-        this.name = name;
+        super(name);
         this.value = value;
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Object getValue() {
+    public Integer getValue() {
         return value;
     }
 

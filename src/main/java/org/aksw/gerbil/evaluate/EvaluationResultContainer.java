@@ -19,46 +19,46 @@ package org.aksw.gerbil.evaluate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EvaluationResultContainer implements EvaluationResult {
+public class EvaluationResultContainer implements EvaluationResult<List<EvaluationResult<?>>> {
 
-	private List<EvaluationResult> results;
+    private List<EvaluationResult<?>> results;
 
-	public EvaluationResultContainer() {
-		results = new ArrayList<EvaluationResult>();
-	}
+    public EvaluationResultContainer() {
+        results = new ArrayList<EvaluationResult<?>>();
+    }
 
-	/**
-	 * Copy constructor. Makes a shallow copy of the evaluation result list of
-	 * the given container.
-	 * 
-	 * @param container
-	 */
-	public EvaluationResultContainer(EvaluationResultContainer container) {
-		results = new ArrayList<EvaluationResult>(container.results);
-	}
+    /**
+     * Copy constructor. Makes a shallow copy of the evaluation result list of the
+     * given container.
+     * 
+     * @param container
+     */
+    public EvaluationResultContainer(EvaluationResultContainer container) {
+        results = new ArrayList<EvaluationResult<?>>(container.results);
+    }
 
-	@Override
-	public String getName() {
-		return null;
-	}
+    @Override
+    public String getName() {
+        return null;
+    }
 
-	@Override
-	public Object getValue() {
-		return results;
-	}
+    @Override
+    public List<EvaluationResult<?>> getValue() {
+        return results;
+    }
 
-	public void addResult(EvaluationResult result) {
-		results.add(result);
-	}
+    public void addResult(EvaluationResult<?> result) {
+        results.add(result);
+    }
 
-	public void addResults(EvaluationResult... results) {
-		for (int i = 0; i < results.length; i++) {
-			this.results.add(results[i]);
-		}
-	}
+    public void addResults(EvaluationResult<?>... results) {
+        for (int i = 0; i < results.length; i++) {
+            this.results.add(results[i]);
+        }
+    }
 
-	public List<EvaluationResult> getResults() {
-		return results;
-	}
+    public List<EvaluationResult<?>> getResults() {
+        return results;
+    }
 
 }

@@ -48,7 +48,7 @@ public class EntityRecognitionTest extends AbstractExperimentTaskTest {
     @BeforeClass
     public static void setMatchingsCounterDebugFlag() {
         MatchingsCounterImpl.setPrintDebugMsg(true);
-        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
+//        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
         ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
 
     }

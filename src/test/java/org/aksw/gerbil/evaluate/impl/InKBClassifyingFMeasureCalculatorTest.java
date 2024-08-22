@@ -155,7 +155,7 @@ public class InKBClassifyingFMeasureCalculatorTest {
         double expectedValue, resultValue;
         boolean containedInKB = false;
         boolean containedEE = false;
-        for (EvaluationResult result : results.getResults()) {
+        for (EvaluationResult<?> result : results.getResults()) {
             switch (result.getName()) {
             case FMeasureCalculator.MACRO_PRECISION_NAME:
             case FMeasureCalculator.MICRO_PRECISION_NAME: {

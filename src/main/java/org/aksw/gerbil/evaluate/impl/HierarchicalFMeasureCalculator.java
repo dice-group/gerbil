@@ -84,6 +84,7 @@ public class HierarchicalFMeasureCalculator<T extends TypedMarking> implements E
         return measures;
     }
 
+    @SuppressWarnings("rawtypes")
     private EvaluationResult[] calculateMicroFMeasure(List<List<double[]>> measuresList) {
         double precision = 0, recall = 0;
         int count = 0;
@@ -101,6 +102,7 @@ public class HierarchicalFMeasureCalculator<T extends TypedMarking> implements E
                 new DoubleEvaluationResult(FMeasureCalculator.MICRO_F1_SCORE_NAME, calculateF1(precision, recall)) };
     }
 
+    @SuppressWarnings("rawtypes")
     private EvaluationResult[] calculateMacroFMeasure(List<List<double[]>> measuresList) {
         double precision = 0, recall = 0, f1Score = 0, tmpPrecSum = 0, tmpRecSum = 0;
         for (List<double[]> m : measuresList) {

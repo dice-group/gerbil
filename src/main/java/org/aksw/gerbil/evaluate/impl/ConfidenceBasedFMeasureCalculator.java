@@ -21,24 +21,19 @@ import java.util.List;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
 import org.aksw.gerbil.matching.MatchingsCounter;
 import org.aksw.gerbil.matching.scored.ScoredEvaluationCounts;
 import org.aksw.gerbil.matching.scored.ScoredEvaluationCountsArray;
 import org.aksw.gerbil.matching.scored.ScoredMatchingsCounter;
 import org.aksw.gerbil.matching.scored.ScoredMatchingsCounterImpl;
 import org.aksw.gerbil.transfer.nif.Marking;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ConfidenceBasedFMeasureCalculator<T extends Marking> implements Evaluator<T> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfidenceBasedFMeasureCalculator.class);
 
     protected static final int PRECISION = 0;
     protected static final int RECALL = 1;
     protected static final int F1_SCORE = 2;
-
-    private static boolean printDebugMsg = true;
 
     protected ScoredMatchingsCounter<T> matchingsCounter;
 
@@ -50,7 +45,7 @@ public class ConfidenceBasedFMeasureCalculator<T extends Marking> implements Eva
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
             EvaluationResultContainer results) {
-        ScoredEvaluationCountsArray counts = generateMatchingCounts(annotatorResults, goldStandard);
+        ScoredEvaluationCountsArray counts = generateMatchingCounts(annotatorResults, goldStandard, results);
         if ((counts.truePositiveSums.length > 0) && (counts.falseNegativeSums.length > 0)
                 && (counts.falsePositiveSums.length > 0)) {
             double threshold = calculateMicroFMeasure(counts, results);
@@ -59,13 +54,14 @@ public class ConfidenceBasedFMeasureCalculator<T extends Marking> implements Eva
     }
 
     protected ScoredEvaluationCountsArray generateMatchingCounts(List<List<T>> annotatorResults,
-            List<List<T>> goldStandard) {
+            List<List<T>> goldStandard,
+            EvaluationResultContainer results) {
         ScoredEvaluationCounts counts[][] = new ScoredEvaluationCounts[annotatorResults.size()][];
         for (int i = 0; i < counts.length; ++i) {
-            if (printDebugMsg && LOGGER.isDebugEnabled()) {
-                LOGGER.debug("${pom_version} " + i + "|||||||||");
-            }
             counts[i] = matchingsCounter.countMatchings(annotatorResults.get(i), goldStandard.get(i));
+        }
+        if(results != null) {
+            results.addResult(new ObjectEvaluationResult<ScoredEvaluationCounts[][]>("perInstanceScoredEvaluationCounts", counts));
         }
         return ScoredEvaluationCountsArray.create(counts);
     }
@@ -184,7 +180,4 @@ public class ConfidenceBasedFMeasureCalculator<T extends Marking> implements Eva
         return new double[] { precision, recall, F1_score };
     }
 
-    public static synchronized void setPrintDebugMsg(boolean flag) {
-        printDebugMsg = flag;
-    }
 }

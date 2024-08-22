@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
  * This interface defines the methods a class has to implement for making the

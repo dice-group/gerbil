@@ -23,37 +23,40 @@ import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.transfer.nif.Marking;
 
 public class ClassSubTaskEvaluator<T extends Marking> extends SubTaskEvaluator<T> {
-	
-	private Class<? extends Marking> cleanClass = Marking.class;
 
-    public ClassSubTaskEvaluator(ExperimentTaskConfiguration configuration, List<Evaluator<T>> evaluators, Class<? extends Marking> cleanClass) {
+    private Class<? extends Marking> cleanClass = Marking.class;
+
+    public ClassSubTaskEvaluator(ExperimentTaskConfiguration configuration, List<Evaluator<T>> evaluators,
+            Class<? extends Marking> cleanClass) {
         super(configuration, evaluators);
-        this.cleanClass=cleanClass;
+        this.cleanClass = cleanClass;
     }
 
-    public ClassSubTaskEvaluator(ExperimentTaskConfiguration configuration, Evaluator<T> evaluator,  Class<? extends Marking> cleanClass) {
+    public ClassSubTaskEvaluator(ExperimentTaskConfiguration configuration, Evaluator<T> evaluator,
+            Class<? extends Marking> cleanClass) {
         super(configuration, evaluator);
-        this.cleanClass=cleanClass;
+        this.cleanClass = cleanClass;
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
+            EvaluationResultContainer results) {
         super.evaluate(cleanList(annotatorResults), cleanList(goldStandard), results);
     }
-    
-    private List<List<T>> cleanList(List<List<T>> results){
-    	List<List<T>> cleanedResults = new ArrayList<List<T>>();
-    	for(List<T> result : results) {
-    		List<T> cleanedResult = new ArrayList<T>();
-    		for(T marking : result) {
-    			
-    			if(cleanClass.isInstance(marking)) {
-    				cleanedResult.add(marking);
-    			}
-    		}
-    		cleanedResults.add(cleanedResult);
-    	}
-    	return cleanedResults;
+
+    private List<List<T>> cleanList(List<List<T>> results) {
+        List<List<T>> cleanedResults = new ArrayList<List<T>>();
+        for (List<T> result : results) {
+            List<T> cleanedResult = new ArrayList<T>();
+            for (T marking : result) {
+
+                if (cleanClass.isInstance(marking)) {
+                    cleanedResult.add(marking);
+                }
+            }
+            cleanedResults.add(cleanedResult);
+        }
+        return cleanedResults;
     }
 
 }

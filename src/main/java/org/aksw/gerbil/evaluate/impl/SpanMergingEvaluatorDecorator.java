@@ -44,15 +44,16 @@ import com.carrotsearch.hppc.IntIntOpenHashMap;
  * 
  * @param <T>
  */
-public class SpanMergingEvaluatorDecorator<T extends Span> extends AbstractEvaluatorDecorator<T> implements
-        Comparator<Span> {
+public class SpanMergingEvaluatorDecorator<T extends Span> extends AbstractEvaluatorDecorator<T>
+        implements Comparator<Span> {
 
     public SpanMergingEvaluatorDecorator(Evaluator<T> evaluator) {
         super(evaluator);
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
+            EvaluationResultContainer results) {
         evaluator.evaluate(mergeListOfLists(annotatorResults), mergeListOfLists(goldStandard), results);
     }
 
@@ -75,8 +76,9 @@ public class SpanMergingEvaluatorDecorator<T extends Span> extends AbstractEvalu
             for (int j = spanArray.length - 1; (j > i) && (!isEnclosed); --j) {
                 // if spanArray[i] is enclosed by spanArray[j]
                 if ((spanArray[i].getStartPosition() >= spanArray[j].getStartPosition())
-                        && ((spanArray[i].getStartPosition() + spanArray[i].getLength()) <= (spanArray[j]
-                                .getStartPosition() + spanArray[j].getLength()))) {
+                        && ((spanArray[i].getStartPosition()
+                                + spanArray[i].getLength()) <= (spanArray[j].getStartPosition()
+                                        + spanArray[j].getLength()))) {
                     enclosedByMap.put(i, j);
                     isEnclosed = true;
                 }

@@ -52,14 +52,15 @@ public class InKBClassBasedFMeasureCalculator<T extends Meaning> extends Confide
     InKBClassBasedFMeasureCalculator(
 //             MatchingsSearcher<ClassifiedMarking<T>>
     // searcher,
-    // UriKBClassifier classifier 
-           ) { super(null);
-    // MeaningClassifier<T> meaningClassifier = new MeaningClassifier<T>();
-    // meaningClassifier.addClassifier(classifier, MarkingClasses.IN_KB);
-    // this.classifier = classifier;
-    // this.matchingsCounter = (MatchingsCounter<T>) new
-    // ClassConsideringMatchingsCounter<T>(searcher, meaningClassifier);
-     }
+    // UriKBClassifier classifier
+    ) {
+        super(null);
+        // MeaningClassifier<T> meaningClassifier = new MeaningClassifier<T>();
+        // meaningClassifier.addClassifier(classifier, MarkingClasses.IN_KB);
+        // this.classifier = classifier;
+        // this.matchingsCounter = (MatchingsCounter<T>) new
+        // ClassConsideringMatchingsCounter<T>(searcher, meaningClassifier);
+    }
 
     @Override
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,

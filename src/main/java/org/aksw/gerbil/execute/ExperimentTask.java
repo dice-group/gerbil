@@ -75,498 +75,514 @@ import org.slf4j.LoggerFactory;
  */
 public class ExperimentTask implements Task {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentTask.class);
 
-	private ExperimentDAO experimentDAO;
-	private ExperimentTaskConfiguration configuration;
-	private int experimentTaskId;
-	private EvaluatorFactory evFactory;
-	private ExperimentTaskState taskState = null;
-	private AnnotatorOutputWriter annotatorOutputWriter = null;
-	private SameAsRetriever globalRetriever = null;
+    private ExperimentDAO experimentDAO;
+    private ExperimentTaskConfiguration configuration;
+    private int experimentTaskId;
+    private EvaluatorFactory evFactory;
+    private ExperimentTaskState taskState = null;
+    private AnnotatorOutputWriter annotatorOutputWriter = null;
+    private SameAsRetriever globalRetriever = null;
+    // just temporary
+    private boolean detailedResults = false;
 
-	public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever,
-			org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration) {
-		this.experimentDAO = experimentDAO;
-		this.configuration = configuration;
-		this.experimentTaskId = experimentTaskId;
-		this.evFactory = evFactory;
-		this.globalRetriever = globalRetriever;
-	}
+    public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever,
+            org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration) {
+        this.experimentDAO = experimentDAO;
+        this.configuration = configuration;
+        this.experimentTaskId = experimentTaskId;
+        this.evFactory = evFactory;
+        this.globalRetriever = globalRetriever;
+    }
 
-	@Override
-	public void run() {
-		LOGGER.info("Task started " + configuration.toString());
-		Annotator annotator = null;
-		Dataset dataset = null;
-		try {
-			// Create dataset
-			dataset = configuration.datasetConfig.getDataset(configuration.type);
-			if (dataset == null) {
-				throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
-						+ configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
-			}
-			// Check the dataset
-			if (dataset.size() == 0) {
-			    throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
+    @Override
+    public void run() {
+        LOGGER.info("Task started " + configuration.toString());
+        Annotator annotator = null;
+        Dataset dataset = null;
+        try {
+            // Create dataset
+            dataset = configuration.datasetConfig.getDataset(configuration.type);
+            if (dataset == null) {
+                throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
+                        + configuration.type.name() + "\".", ErrorTypes.DATASET_DOES_NOT_SUPPORT_EXPERIMENT);
+            }
+            // Check the dataset
+            if (dataset.size() == 0) {
+                throw new GerbilException("dataset=\"" + configuration.datasetConfig.getName() + "\" experimentType=\""
                         + configuration.type.name() + "\".", ErrorTypes.DATASET_EMPTY_ERROR);
-			}
+            }
 
-			// Create annotator
-			annotator = (Annotator) configuration.annotatorConfig.getAnnotator(configuration.type);
-			if (annotator == null) {
-				throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
-						+ "\" experimentType=\"" + configuration.type.name() + "\".",
-						ErrorTypes.ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT);
-			}
-			Annotator decoratedAnnotator = annotator;
-			// Add decroatoring evaluators
-			TimeMeasuringAnnotatorDecorator timeMeasurer = TimeMeasuringAnnotatorDecorator
-					.createDecorator(configuration.type, decoratedAnnotator);
-			decoratedAnnotator = timeMeasurer;
-			ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator
-					.createDecorator(configuration.type, decoratedAnnotator, dataset.size());
-			decoratedAnnotator = errorCounter;
-			decoratedAnnotator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type,
-					decoratedAnnotator);
+            // Create annotator
+            annotator = (Annotator) configuration.annotatorConfig.getAnnotator(configuration.type);
+            if (annotator == null) {
+                throw new GerbilException("annotator=\"" + configuration.annotatorConfig.getName()
+                        + "\" experimentType=\"" + configuration.type.name() + "\".",
+                        ErrorTypes.ANNOTATOR_DOES_NOT_SUPPORT_EXPERIMENT);
+            }
+            Annotator decoratedAnnotator = annotator;
+            // Add decroatoring evaluators
+            TimeMeasuringAnnotatorDecorator timeMeasurer = TimeMeasuringAnnotatorDecorator
+                    .createDecorator(configuration.type, decoratedAnnotator);
+            decoratedAnnotator = timeMeasurer;
+            ErrorCountingAnnotatorDecorator errorCounter = ErrorCountingAnnotatorDecorator
+                    .createDecorator(configuration.type, decoratedAnnotator, dataset.size());
+            decoratedAnnotator = errorCounter;
+            decoratedAnnotator = SingleInstanceSecuringAnnotatorDecorator.createDecorator(configuration.type,
+                    decoratedAnnotator);
 
-			List<Evaluator<?>> evaluators = new ArrayList<Evaluator<?>>();
-			evFactory.addEvaluators(evaluators, configuration, dataset);
-			evaluators.add(timeMeasurer);
-			evaluators.add(errorCounter);
+            List<Evaluator<?>> evaluators = new ArrayList<Evaluator<?>>();
+            evFactory.addEvaluators(evaluators, configuration, dataset);
+            evaluators.add(timeMeasurer);
+            evaluators.add(errorCounter);
 
-			// Prepare dataset for the experiment
-			// prepareDataset(dataset);
+            // Prepare dataset for the experiment
+            // prepareDataset(dataset);
 
-			taskState = new ExperimentTaskState(dataset.size());
-			// perform experiment
-			EvaluationResult result = runExperiment(dataset, decoratedAnnotator, evaluators, taskState);
+            taskState = new ExperimentTaskState(dataset.size());
+            // perform experiment
+            EvaluationResult<?> result = runExperiment(dataset, decoratedAnnotator, evaluators, taskState);
 
-			// create result object
-			// FIXME Fix this workaround
-			ExperimentTaskStatus expResult = new ExperimentTaskStatus(configuration, ExperimentDAO.TASK_FINISHED, 0);
-			transformResults(result, expResult);
+            // create result object
+            // FIXME Fix this workaround
+            ExperimentTaskStatus expResult = new ExperimentTaskStatus(configuration, ExperimentDAO.TASK_FINISHED, 0);
+            transformResults(result, expResult);
+            if (detailedResults) {
+                printDetailedResults(expResult, dataset, result);
+            }
 
-			// store result
+            // store result
             LOGGER.info("Setting experiment results: " + expResult.toString());
-			experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
-			LOGGER.info("Task Finished " + configuration.toString());
-		} catch (GerbilException e) {
-			LOGGER.error("Got an error while running the task. Storing the error code in the db...", e);
-			// store error
-			experimentDAO.setExperimentState(experimentTaskId, e.getErrorType().getErrorCode());
-		} catch (Throwable e) {
-			LOGGER.error("Error while trying to execute experiment.", e);
+            experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
+            LOGGER.info("Task Finished " + configuration.toString());
+        } catch (GerbilException e) {
+            LOGGER.error("Got an error while running the task. Storing the error code in the db...", e);
+            // store error
+            experimentDAO.setExperimentState(experimentTaskId, e.getErrorType().getErrorCode());
+        } catch (Throwable e) {
+            LOGGER.error("Error while trying to execute experiment.", e);
             // store error
             experimentDAO.setExperimentState(experimentTaskId, ErrorTypes.UNEXPECTED_EXCEPTION.getErrorCode());
-		} finally {
-			IOUtils.closeQuietly(annotator);
-			IOUtils.closeQuietly(dataset);
-		}
-	}
+        } finally {
+            IOUtils.closeQuietly(annotator);
+            IOUtils.closeQuietly(dataset);
+        }
+    }
 
-	/**
-	 * Prepares the given dataset for the experiment, i.e., performs a sameAs
-	 * retrieval if it is needed for the experiment type.
-	 * 
-	 * @param dataset
-	 * @deprecated This should be done by the {@link DatasetConfiguration} class
-	 *             that has loaded the dataset
-	 */
-	@Deprecated
-	protected void prepareDataset(Dataset dataset) {
-		switch (configuration.type) {
-		case A2KB:// falls through
-		case C2KB:
-		case D2KB:
-		case Rc2KB:
-		case Sa2KB:
-		case Sc2KB:
-		case OKE_Task1: // falls through
-		case OKE_Task2:
-		case ETyping: {
-			SameAsRetriever retriever = DatasetBasedSameAsRetriever.create(dataset);
-			if (retriever != null) {
-				if (globalRetriever != null) {
-					retriever = new MultipleSameAsRetriever(retriever, globalRetriever);
-				}
-			} else {
-				retriever = globalRetriever;
-			}
-			if (retriever != null) {
-				for (Document document : dataset.getInstances()) {
-					SameAsRetrieverUtils.addSameURIsToMarkings(retriever, document.getMarkings());
-				}
-			}
-			return;
-		}
-		case ERec:// falls through
-		default:
-			// nothing to do
-			return;
-		}
-	}
+    /**
+     * Prepares the given dataset for the experiment, i.e., performs a sameAs
+     * retrieval if it is needed for the experiment type.
+     * 
+     * @param dataset
+     * @deprecated This should be done by the {@link DatasetConfiguration} class
+     *             that has loaded the dataset
+     */
+    @Deprecated
+    protected void prepareDataset(Dataset dataset) {
+        switch (configuration.type) {
+        case A2KB:// falls through
+        case C2KB:
+        case D2KB:
+        case Rc2KB:
+        case Sa2KB:
+        case Sc2KB:
+        case OKE_Task1: // falls through
+        case OKE_Task2:
+        case ETyping: {
+            SameAsRetriever retriever = DatasetBasedSameAsRetriever.create(dataset);
+            if (retriever != null) {
+                if (globalRetriever != null) {
+                    retriever = new MultipleSameAsRetriever(retriever, globalRetriever);
+                }
+            } else {
+                retriever = globalRetriever;
+            }
+            if (retriever != null) {
+                for (Document document : dataset.getInstances()) {
+                    SameAsRetrieverUtils.addSameURIsToMarkings(retriever, document.getMarkings());
+                }
+            }
+            return;
+        }
+        case ERec:// falls through
+        default:
+            // nothing to do
+            return;
+        }
+    }
 
-	/**
-	 * Prepares the given annotator results for the evaluation, i.e., performs a
-	 * sameAs retrieval if it is needed for the experiment type.
-	 * 
-	 * @param results
-	 * @param annotatorSameAsRetriever
-	 */
-	@SuppressWarnings("deprecation")
-	protected void prepareAnnotatorResults(List<? extends List<? extends Meaning>> results,
-			SameAsRetriever annotatorSameAsRetriever) {
-		switch (configuration.type) {
-		case A2KB:// falls through
-		case C2KB:
-		case D2KB:
-		case Rc2KB:
-		case Sa2KB:
-		case Sc2KB:
-		case OKE_Task1: // falls through
-		case OKE_Task2:
-		case ETyping: {
-			if (annotatorSameAsRetriever != null) {
-				for (List<? extends Meaning> result : results) {
-					SameAsRetrieverUtils.addSameURIsToMeanings(annotatorSameAsRetriever, result);
-				}
-			}
-			return;
-		}
-		// relations need to be handled extra
-		case OKE2018Task4:
-			if (annotatorSameAsRetriever != null) {
-				for (List<? extends Meaning> result : results) {
-					SameAsRetrieverUtils.addSameURIsToMeanings(annotatorSameAsRetriever, result);
-				}
-			}
-		case RE:
-			return;
-		case ERec:// falls through
-		default:
-			// nothing to do
-			return;
-		}
-	}
+    /**
+     * Prepares the given annotator results for the evaluation, i.e., performs a
+     * sameAs retrieval if it is needed for the experiment type.
+     * 
+     * @param results
+     * @param annotatorSameAsRetriever
+     */
+    @SuppressWarnings("deprecation")
+    protected void prepareAnnotatorResults(List<? extends List<? extends Meaning>> results,
+            SameAsRetriever annotatorSameAsRetriever) {
+        switch (configuration.type) {
+        case A2KB:// falls through
+        case C2KB:
+        case D2KB:
+        case Rc2KB:
+        case Sa2KB:
+        case Sc2KB:
+        case OKE_Task1: // falls through
+        case OKE_Task2:
+        case ETyping: {
+            if (annotatorSameAsRetriever != null) {
+                for (List<? extends Meaning> result : results) {
+                    SameAsRetrieverUtils.addSameURIsToMeanings(annotatorSameAsRetriever, result);
+                }
+            }
+            return;
+        }
+        // relations need to be handled extra
+        case OKE2018Task4:
+            if (annotatorSameAsRetriever != null) {
+                for (List<? extends Meaning> result : results) {
+                    SameAsRetrieverUtils.addSameURIsToMeanings(annotatorSameAsRetriever, result);
+                }
+            }
+        case RE:
+            return;
+        case ERec:// falls through
+        default:
+            // nothing to do
+            return;
+        }
+    }
 
-	protected void prepareRelations(List<? extends List<? extends Marking>> results,
-			SameAsRetriever annotatorSameAsRetriever) {
-		if (annotatorSameAsRetriever != null) {
+    protected void prepareRelations(List<? extends List<? extends Marking>> results,
+            SameAsRetriever annotatorSameAsRetriever) {
+        if (annotatorSameAsRetriever != null) {
 
-			for (List<? extends Marking> result : results) {
-				SameAsRetrieverUtils.addSameURIsToMarkings(annotatorSameAsRetriever, result);
-			}
-		}
-	}
+            for (List<? extends Marking> result : results) {
+                SameAsRetrieverUtils.addSameURIsToMarkings(annotatorSameAsRetriever, result);
+            }
+        }
+    }
 
-	protected void transformResults(EvaluationResult result, ExperimentTaskStatus expResult) {
-		TaskResult taskRes=null;
-		String resName=result.getName();
-		if (result instanceof SubTaskResult) {
-			ExperimentTaskStatus subTask = new ExperimentTaskStatus(((SubTaskResult) result).getConfiguration(),ExperimentDAO.TASK_FINISHED, 0);
-			List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
-			for (EvaluationResult tempResult : tempResults) {
-				transformResults(tempResult, subTask);
-			}
-			expResult.addSubTask(subTask);
-		} else if (result instanceof EvaluationResultContainer) {
-			List<EvaluationResult> tempResults = ((EvaluationResultContainer) result).getResults();
-			for (EvaluationResult tempResult : tempResults) {
-				transformResults(tempResult, expResult);
-			}
-		} else if (result instanceof DoubleEvaluationResult) {
-			taskRes = new TaskResult(((DoubleEvaluationResult) result).getValueAsDouble(), ExperimentDAO.DOUBLE_RESULT_TYPE);
-			
-		} else if (result instanceof IntEvaluationResult) {
-			taskRes = new TaskResult(((IntEvaluationResult) result).getValueAsInt(), ExperimentDAO.INT_RESULT_TYPE);
-		}
-		if(taskRes!=null && resName!=null) {
-			expResult.getResultsMap().put(resName, taskRes);
-		}
-	}
+    protected void transformResults(EvaluationResult<?> result, ExperimentTaskStatus expResult) {
+        TaskResult taskRes = null;
+        String resName = result.getName();
+        if (result instanceof SubTaskResult) {
+            ExperimentTaskStatus subTask = new ExperimentTaskStatus(((SubTaskResult) result).getConfiguration(),
+                    ExperimentDAO.TASK_FINISHED, 0);
+            List<EvaluationResult<?>> tempResults = ((EvaluationResultContainer) result).getResults();
+            for (EvaluationResult<?> tempResult : tempResults) {
+                transformResults(tempResult, subTask);
+            }
+            expResult.addSubTask(subTask);
+        } else if (result instanceof EvaluationResultContainer) {
+            List<EvaluationResult<?>> tempResults = ((EvaluationResultContainer) result).getResults();
+            for (EvaluationResult<?> tempResult : tempResults) {
+                transformResults(tempResult, expResult);
+            }
+        } else if (result instanceof DoubleEvaluationResult) {
+            taskRes = new TaskResult(((DoubleEvaluationResult) result).getValueAsDouble(),
+                    ExperimentDAO.DOUBLE_RESULT_TYPE);
 
-	@SuppressWarnings({ "deprecation" })
-	protected EvaluationResult runExperiment(Dataset dataset, Annotator annotator,
-			List<Evaluator<? extends Marking>> evaluators, ExperimentTaskState state) throws GerbilException {
-		EvaluationResult evalResult = null;
-		switch (configuration.type) {
-		case D2KB: {
-			try {
-				List<List<MeaningSpan>> results = new ArrayList<List<MeaningSpan>>(dataset.size());
-				List<List<MeaningSpan>> goldStandard = new ArrayList<List<MeaningSpan>>(dataset.size());
-				D2KBAnnotator linker = ((D2KBAnnotator) annotator);
+        } else if (result instanceof IntEvaluationResult) {
+            taskRes = new TaskResult(((IntEvaluationResult) result).getValueAsInt(), ExperimentDAO.INT_RESULT_TYPE);
+        }
+        if (taskRes != null && resName != null) {
+            expResult.getResultsMap().put(resName, taskRes);
+        }
+    }
 
-				for (Document document : dataset.getInstances()) {
-					// reduce the document to a text and a list of Spans
-					results.add(linker.performD2KBTask(DocumentInformationReducer.reduceToTextAndSpans(document)));
-					goldStandard.add(document.getMarkings(MeaningSpan.class));
-					taskState.increaseExperimentStepCount();
-				}
-				if (annotatorOutputWriter != null) {
-					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-				}
-				prepareAnnotatorResults(results, globalRetriever);
-				evalResult = evaluate(evaluators, results, goldStandard);
-			} catch (GerbilException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-			}
-			break;
-		}
-		case Sa2KB:
-		case A2KB: {
-			try {
-				List<List<MeaningSpan>> results = new ArrayList<List<MeaningSpan>>(dataset.size());
-				List<List<MeaningSpan>> goldStandard = new ArrayList<List<MeaningSpan>>(dataset.size());
-				A2KBAnnotator extractor = ((A2KBAnnotator) annotator);
-				for (Document document : dataset.getInstances()) {
-					// reduce the document to a single text
-					results.add(extractor.performA2KBTask(DocumentInformationReducer.reduceToPlainText(document)));
-					goldStandard.add(document.getMarkings(MeaningSpan.class));
-					taskState.increaseExperimentStepCount();
-				}
-				if (annotatorOutputWriter != null) {
-					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-				}
-				prepareAnnotatorResults(results, globalRetriever);
-				evalResult = evaluate(evaluators, results, goldStandard);
-			} catch (GerbilException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-			}
-			break;
-		}
-		case C2KB: {
-			try {
-				List<List<Meaning>> results = new ArrayList<List<Meaning>>(dataset.size());
-				List<List<Meaning>> goldStandard = new ArrayList<List<Meaning>>(dataset.size());
-				C2KBAnnotator c2KBAnnotator = ((C2KBAnnotator) annotator);
+    @SuppressWarnings({ "deprecation" })
+    protected EvaluationResult<?> runExperiment(Dataset dataset, Annotator annotator,
+            List<Evaluator<? extends Marking>> evaluators, ExperimentTaskState state) throws GerbilException {
+        EvaluationResult<?> evalResult = null;
+        switch (configuration.type) {
+        case D2KB: {
+            try {
+                List<List<MeaningSpan>> results = new ArrayList<List<MeaningSpan>>(dataset.size());
+                List<List<MeaningSpan>> goldStandard = new ArrayList<List<MeaningSpan>>(dataset.size());
+                D2KBAnnotator linker = ((D2KBAnnotator) annotator);
 
-				for (Document document : dataset.getInstances()) {
-					// reduce the document to a text and a list of Spans
-					results.add(c2KBAnnotator.performC2KB(DocumentInformationReducer.reduceToPlainText(document)));
-					goldStandard.add(document.getMarkings(Meaning.class));
-					taskState.increaseExperimentStepCount();
-				}
-				if (annotatorOutputWriter != null) {
-					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-				}
-				prepareAnnotatorResults(results, globalRetriever);
-				evalResult = evaluate(evaluators, results, goldStandard);
-			} catch (GerbilException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-			}
-			break;
-		}
-		case Sc2KB: // Falls through
-		case Rc2KB: {
-			throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
-		}
-		case ERec: {
-			try {
-				List<List<Span>> results = new ArrayList<List<Span>>(dataset.size());
-				List<List<Span>> goldStandard = new ArrayList<List<Span>>(dataset.size());
-				EntityRecognizer recognizer = ((EntityRecognizer) annotator);
-				for (Document document : dataset.getInstances()) {
-					// reduce the document to a single text
-					results.add(recognizer.performRecognition(DocumentInformationReducer.reduceToPlainText(document)));
-					goldStandard.add(document.getMarkings(Span.class));
-					taskState.increaseExperimentStepCount();
-				}
-				if (annotatorOutputWriter != null) {
-					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-				}
-				evalResult = evaluate(evaluators, results, goldStandard);
-			} catch (GerbilException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-			}
-			break;
-		}
-		case ETyping: {
-			try {
-				List<List<TypedSpan>> results = new ArrayList<List<TypedSpan>>(dataset.size());
-				List<List<TypedSpan>> goldStandard = new ArrayList<List<TypedSpan>>(dataset.size());
-				EntityTyper typer = ((EntityTyper) annotator);
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a text and a list of Spans
+                    results.add(linker.performD2KBTask(DocumentInformationReducer.reduceToTextAndSpans(document)));
+                    goldStandard.add(document.getMarkings(MeaningSpan.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                prepareAnnotatorResults(results, globalRetriever);
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case Sa2KB:
+        case A2KB: {
+            try {
+                List<List<MeaningSpan>> results = new ArrayList<List<MeaningSpan>>(dataset.size());
+                List<List<MeaningSpan>> goldStandard = new ArrayList<List<MeaningSpan>>(dataset.size());
+                A2KBAnnotator extractor = ((A2KBAnnotator) annotator);
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a single text
+                    results.add(extractor.performA2KBTask(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings(MeaningSpan.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                prepareAnnotatorResults(results, globalRetriever);
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case C2KB: {
+            try {
+                List<List<Meaning>> results = new ArrayList<List<Meaning>>(dataset.size());
+                List<List<Meaning>> goldStandard = new ArrayList<List<Meaning>>(dataset.size());
+                C2KBAnnotator c2KBAnnotator = ((C2KBAnnotator) annotator);
 
-				for (Document document : dataset.getInstances()) {
-					// reduce the document to a text and a list of Spans
-					results.add(typer.performTyping(DocumentInformationReducer.reduceToTextAndSpans(document)));
-					goldStandard.add(document.getMarkings(TypedSpan.class));
-					taskState.increaseExperimentStepCount();
-				}
-				if (annotatorOutputWriter != null) {
-					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-				}
-				evalResult = evaluate(evaluators, results, goldStandard);
-			} catch (GerbilException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-			}
-			break;
-		}
-		case RT2KB: {
-			try {
-				List<List<TypedSpan>> results = new ArrayList<List<TypedSpan>>(dataset.size());
-				List<List<TypedSpan>> goldStandard = new ArrayList<List<TypedSpan>>(dataset.size());
-				RT2KBAnnotator extractor = (RT2KBAnnotator) annotator;
-				for (Document document : dataset.getInstances()) {
-					// reduce the document to a single text
-					results.add(extractor.performRT2KBTask(DocumentInformationReducer.reduceToPlainText(document)));
-					goldStandard.add(document.getMarkings(TypedSpan.class));
-					taskState.increaseExperimentStepCount();
-				}
-				if (annotatorOutputWriter != null) {
-					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-				}
-				evalResult = evaluate(evaluators, results, goldStandard);
-			} catch (GerbilException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-			}
-			break;
-		}
-		case OKE_Task1: {
-			try {
-				List<List<TypedNamedEntity>> results = new ArrayList<List<TypedNamedEntity>>(dataset.size());
-				List<List<TypedNamedEntity>> goldStandard = new ArrayList<List<TypedNamedEntity>>(dataset.size());
-				OKETask1Annotator okeTask1Annotator = ((OKETask1Annotator) annotator);
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a text and a list of Spans
+                    results.add(c2KBAnnotator.performC2KB(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings(Meaning.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                prepareAnnotatorResults(results, globalRetriever);
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case Sc2KB: // Falls through
+        case Rc2KB: {
+            throw new GerbilException(ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
+        case ERec: {
+            try {
+                List<List<Span>> results = new ArrayList<List<Span>>(dataset.size());
+                List<List<Span>> goldStandard = new ArrayList<List<Span>>(dataset.size());
+                EntityRecognizer recognizer = ((EntityRecognizer) annotator);
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a single text
+                    results.add(recognizer.performRecognition(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings(Span.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case ETyping: {
+            try {
+                List<List<TypedSpan>> results = new ArrayList<List<TypedSpan>>(dataset.size());
+                List<List<TypedSpan>> goldStandard = new ArrayList<List<TypedSpan>>(dataset.size());
+                EntityTyper typer = ((EntityTyper) annotator);
 
-				for (Document document : dataset.getInstances()) {
-					// reduce the document to a text and a list of Spans
-					results.add(
-							okeTask1Annotator.performTask1(DocumentInformationReducer.reduceToTextAndSpans(document)));
-					goldStandard.add(document.getMarkings(TypedNamedEntity.class));
-					taskState.increaseExperimentStepCount();
-				}
-				if (annotatorOutputWriter != null) {
-					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-				}
-				prepareAnnotatorResults(results, globalRetriever);
-				evalResult = evaluate(evaluators, results, goldStandard);
-			} catch (GerbilException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-			}
-			break;
-		}
-		case OKE_Task2: {
-			try {
-				List<List<TypedNamedEntity>> results = new ArrayList<List<TypedNamedEntity>>(dataset.size());
-				List<List<TypedNamedEntity>> goldStandard = new ArrayList<List<TypedNamedEntity>>(dataset.size());
-				OKETask2Annotator okeTask2Annotator = ((OKETask2Annotator) annotator);
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a text and a list of Spans
+                    results.add(typer.performTyping(DocumentInformationReducer.reduceToTextAndSpans(document)));
+                    goldStandard.add(document.getMarkings(TypedSpan.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case RT2KB: {
+            try {
+                List<List<TypedSpan>> results = new ArrayList<List<TypedSpan>>(dataset.size());
+                List<List<TypedSpan>> goldStandard = new ArrayList<List<TypedSpan>>(dataset.size());
+                RT2KBAnnotator extractor = (RT2KBAnnotator) annotator;
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a single text
+                    results.add(extractor.performRT2KBTask(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings(TypedSpan.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case OKE_Task1: {
+            try {
+                List<List<TypedNamedEntity>> results = new ArrayList<List<TypedNamedEntity>>(dataset.size());
+                List<List<TypedNamedEntity>> goldStandard = new ArrayList<List<TypedNamedEntity>>(dataset.size());
+                OKETask1Annotator okeTask1Annotator = ((OKETask1Annotator) annotator);
 
-				for (Document document : dataset.getInstances()) {
-					// reduce the document to a text and a list of Spans
-					results.add(okeTask2Annotator
-							.performTask2(DocumentInformationReducer.reduceToTextAndEntities(document)));
-					goldStandard.add(document.getMarkings(TypedNamedEntity.class));
-					taskState.increaseExperimentStepCount();
-				}
-				if (annotatorOutputWriter != null) {
-					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-				}
-				prepareAnnotatorResults(results, globalRetriever);
-				evalResult = evaluate(evaluators, results, goldStandard);
-			} catch (GerbilException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-			}
-			break;
-		}
-		case RE: {
-			try {
-				List<List<Relation>> results = new ArrayList<List<Relation>>(dataset.size());
-				List<List<Relation>> goldStandard = new ArrayList<List<Relation>>(dataset.size());
-				REAnnotator recognizer = ((REAnnotator) annotator);
-				for (Document document : dataset.getInstances()) {
-					// reduce the document to a single text
-					results.add(
-							recognizer.performRETask(DocumentInformationReducer.reduceToTextAndTypedEntities(document)));
-					goldStandard.add(document.getMarkings(Relation.class));
-					taskState.increaseExperimentStepCount();
-				}
-				if (annotatorOutputWriter != null) {
-					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-				}
-				prepareRelations(results, globalRetriever);
-				prepareRelations(goldStandard, globalRetriever);
-				evalResult = evaluate(evaluators, results, goldStandard);
-			} catch (GerbilException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-			}
-			break;
-		}
-		case OKE2018Task4: {
-			try {
-				List<List<Marking>> results = new ArrayList<List<Marking>>(dataset.size());
-				List<List<Marking>> goldStandard = new ArrayList<List<Marking>>(dataset.size());
-				OKE2018Task4Annotator recognizer = ((OKE2018Task4Annotator) annotator);
-				for (Document document : dataset.getInstances()) {
-					// reduce the document to a single text
-					results.add(recognizer.performOKE2018Task4(DocumentInformationReducer.reduceToPlainText(document)));
-					goldStandard.add(document.getMarkings(Marking.class));
-					taskState.increaseExperimentStepCount();
-				}
-				if (annotatorOutputWriter != null) {
-					annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
-				}
-				prepareRelations(results, globalRetriever);
-				prepareRelations(goldStandard, globalRetriever);
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a text and a list of Spans
+                    results.add(
+                            okeTask1Annotator.performTask1(DocumentInformationReducer.reduceToTextAndSpans(document)));
+                    goldStandard.add(document.getMarkings(TypedNamedEntity.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                prepareAnnotatorResults(results, globalRetriever);
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case OKE_Task2: {
+            try {
+                List<List<TypedNamedEntity>> results = new ArrayList<List<TypedNamedEntity>>(dataset.size());
+                List<List<TypedNamedEntity>> goldStandard = new ArrayList<List<TypedNamedEntity>>(dataset.size());
+                OKETask2Annotator okeTask2Annotator = ((OKETask2Annotator) annotator);
 
-				evalResult = evaluate(evaluators, results, goldStandard);
-			} catch (GerbilException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
-			}
-			break;
-		}
-		default:
-			throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
-					ErrorTypes.UNEXPECTED_EXCEPTION);
-		}
-		return evalResult;
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a text and a list of Spans
+                    results.add(okeTask2Annotator
+                            .performTask2(DocumentInformationReducer.reduceToTextAndEntities(document)));
+                    goldStandard.add(document.getMarkings(TypedNamedEntity.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                prepareAnnotatorResults(results, globalRetriever);
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case RE: {
+            try {
+                List<List<Relation>> results = new ArrayList<List<Relation>>(dataset.size());
+                List<List<Relation>> goldStandard = new ArrayList<List<Relation>>(dataset.size());
+                REAnnotator recognizer = ((REAnnotator) annotator);
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a single text
+                    results.add(recognizer
+                            .performRETask(DocumentInformationReducer.reduceToTextAndTypedEntities(document)));
+                    goldStandard.add(document.getMarkings(Relation.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                prepareRelations(results, globalRetriever);
+                prepareRelations(goldStandard, globalRetriever);
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        case OKE2018Task4: {
+            try {
+                List<List<Marking>> results = new ArrayList<List<Marking>>(dataset.size());
+                List<List<Marking>> goldStandard = new ArrayList<List<Marking>>(dataset.size());
+                OKE2018Task4Annotator recognizer = ((OKE2018Task4Annotator) annotator);
+                for (Document document : dataset.getInstances()) {
+                    // reduce the document to a single text
+                    results.add(recognizer.performOKE2018Task4(DocumentInformationReducer.reduceToPlainText(document)));
+                    goldStandard.add(document.getMarkings(Marking.class));
+                    taskState.increaseExperimentStepCount();
+                }
+                if (annotatorOutputWriter != null) {
+                    annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
+                }
+                prepareRelations(results, globalRetriever);
+                prepareRelations(goldStandard, globalRetriever);
 
-	}
+                evalResult = evaluate(evaluators, results, goldStandard);
+            } catch (GerbilException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new GerbilException(e, ErrorTypes.UNEXPECTED_EXCEPTION);
+            }
+            break;
+        }
+        default:
+            throw new GerbilException("This experiment type isn't implemented yet. Sorry for this.",
+                    ErrorTypes.UNEXPECTED_EXCEPTION);
+        }
+        return evalResult;
 
-	@SuppressWarnings("unchecked")
-	protected <T extends Marking> EvaluationResult evaluate(List<Evaluator<? extends Marking>> evaluators,
-			List<List<T>> annotatorResults, List<List<T>> goldStandard) {
-		EvaluationResultContainer evalResults = new EvaluationResultContainer();
-		for (Evaluator<? extends Marking> e : evaluators) {
-			((Evaluator<T>) e).evaluate(annotatorResults, goldStandard, evalResults);
-		}
-		return evalResults;
-	}
+    }
 
-	@Override
-	public String getId() {
-		return configuration.toString();
-	}
+    @SuppressWarnings("unchecked")
+    protected <T extends Marking> EvaluationResult<?> evaluate(List<Evaluator<? extends Marking>> evaluators,
+            List<List<T>> annotatorResults, List<List<T>> goldStandard) {
+        EvaluationResultContainer evalResults = new EvaluationResultContainer();
+        for (Evaluator<? extends Marking> e : evaluators) {
+            ((Evaluator<T>) e).evaluate(annotatorResults, goldStandard, evalResults);
+        }
+        return evalResults;
+    }
 
-	@Override
-	public String getProgress() {
-		if (taskState != null) {
-			return (taskState.getExperimentTaskProcess() * 100.0) + "% of dataset";
-		} else {
-			return null;
-		}
-	}
+    @Override
+    public String getId() {
+        return configuration.toString();
+    }
 
-	public void setAnnotatorOutputWriter(AnnotatorOutputWriter annotatorOutputWriter) {
-		this.annotatorOutputWriter = annotatorOutputWriter;
-	}
+    @Override
+    public String getProgress() {
+        if (taskState != null) {
+            return (taskState.getExperimentTaskProcess() * 100.0) + "% of dataset";
+        } else {
+            return null;
+        }
+    }
+
+    public void setAnnotatorOutputWriter(AnnotatorOutputWriter annotatorOutputWriter) {
+        this.annotatorOutputWriter = annotatorOutputWriter;
+    }
+
+    protected void printDetailedResults(ExperimentTaskStatus expResult, Dataset dataset, EvaluationResult<?> result) {
+        TempDetailedResultPrinter printer = new TempDetailedResultPrinter();
+        printer.printDetailedResults(expResult, dataset, result);
+    }
+
+    public void setDetailedResults(boolean detailedResults) {
+        this.detailedResults = detailedResults;
+    }
 }

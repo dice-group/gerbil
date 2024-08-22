@@ -40,10 +40,10 @@ public class ConfidenceScoreEvaluatorDecorator<T extends Marking> extends Abstra
     public static final String CONFIDENCE_SCORE_THRESHOLD_RESULT_NAME = "confidence threshold";
 
     private String resultName;
-    private Comparator<EvaluationResult> resultComparator;
+    private Comparator<EvaluationResult<Double>> resultComparator;
 
     public ConfidenceScoreEvaluatorDecorator(Evaluator<T> evaluator, String resultName,
-            Comparator<EvaluationResult> resultComparator) {
+            Comparator<EvaluationResult<Double>> resultComparator) {
         super(evaluator);
         this.resultName = resultName;
         this.resultComparator = resultComparator;
@@ -131,11 +131,11 @@ public class ConfidenceScoreEvaluatorDecorator<T extends Marking> extends Abstra
         } else if (bestResult == null) {
             return currentResult;
         }
-        EvaluationResult currentImpResult = findImportantResult(currentResult);
+        EvaluationResult<Double> currentImpResult = findImportantResult(currentResult);
         if (currentImpResult == null) {
             return bestResult;
         }
-        EvaluationResult bestImpResult = findImportantResult(bestResult);
+        EvaluationResult<Double> bestImpResult = findImportantResult(bestResult);
         if (bestImpResult == null) {
             return currentResult;
         }
@@ -146,18 +146,18 @@ public class ConfidenceScoreEvaluatorDecorator<T extends Marking> extends Abstra
         }
     }
 
-    protected EvaluationResult findImportantResult(EvaluationResultContainer container) {
-        for (EvaluationResult result : container.getResults()) {
-            if (resultName.equals(result.getName())) {
-                return result;
+    protected EvaluationResult<Double> findImportantResult(EvaluationResultContainer container) {
+        for (EvaluationResult<?> result : container.getResults()) {
+            if (resultName.equals(result.getName()) && DoubleEvaluationResult.class.isInstance(result)) {
+                return (DoubleEvaluationResult) result;
             }
         }
         return null;
     }
 
     private void copyResults(EvaluationResultContainer bestResult, EvaluationResultContainer results) {
-        Set<EvaluationResult> knownResults = new HashSet<EvaluationResult>(results.getResults());
-        for (EvaluationResult result : bestResult.getResults()) {
+        Set<EvaluationResult<?>> knownResults = new HashSet<EvaluationResult<?>>(results.getResults());
+        for (EvaluationResult<?> result : bestResult.getResults()) {
             if (!knownResults.contains(result)) {
                 results.addResult(result);
             }

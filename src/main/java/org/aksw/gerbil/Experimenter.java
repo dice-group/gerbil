@@ -43,6 +43,8 @@ public class Experimenter implements Runnable {
     private EvaluatorFactory evFactory;
     private AnnotatorOutputWriter annotatorOutputWriter = null;
     private SameAsRetriever globalRetriever = null;
+    // just temporary
+    private boolean detailedResults = false;
 
     /**
      * Constructor
@@ -60,8 +62,8 @@ public class Experimenter implements Runnable {
         this.evFactory = new EvaluatorFactory();
     }
 
-    public Experimenter(Overseer overseer, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever, EvaluatorFactory evFactory,
-             ExperimentTaskConfiguration configs[], String experimentId) {
+    public Experimenter(Overseer overseer, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever,
+            EvaluatorFactory evFactory, ExperimentTaskConfiguration configs[], String experimentId) {
         this.configs = configs;
         this.experimentId = experimentId;
         this.experimentDAO = experimentDAO;
@@ -71,12 +73,12 @@ public class Experimenter implements Runnable {
     }
 
     @Override
-    public void run() throws FaultyConfigurationException{
+    public void run() throws FaultyConfigurationException {
         Arrays.sort(configs, new ExpTaskConfigComparator());
         List<ExperimentTaskConfiguration> faultyConfigs = new ArrayList<ExperimentTaskConfiguration>();
         int taskId;
         for (int i = 0; i < configs.length; ++i) {
-            try{
+            try {
                 if (couldHaveCachedResult(configs[i])) {
                     taskId = experimentDAO.connectCachedResultOrCreateTask(configs[i].annotatorConfig.getName(),
                             configs[i].datasetConfig.getName(), configs[i].type.name(), configs[i].matching.name(),
@@ -92,15 +94,16 @@ public class Experimenter implements Runnable {
                     ExperimentTask task = new ExperimentTask(taskId, experimentDAO, globalRetriever, evFactory,
                             configs[i]);
                     task.setAnnotatorOutputWriter(annotatorOutputWriter);
-                        overseer.startTask(task);
+                    task.setDetailedResults(detailedResults);
+                    overseer.startTask(task);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 faultyConfigs.add(configs[i]);
             }
         }
-        if(faultyConfigs.isEmpty()){
+        if (faultyConfigs.isEmpty()) {
             LOGGER.info("Experimenter finished the creation of tasks for experiment \"" + experimentId + "\"");
-        }else{
+        } else {
             LOGGER.error("Got few Exception while trying to start some needed tasks.");
             throw new FaultyConfigurationException(faultyConfigs);
         }
@@ -116,5 +119,9 @@ public class Experimenter implements Runnable {
 
     public void setAnnotatorOutputWriter(AnnotatorOutputWriter annotatorOutputWriter) {
         this.annotatorOutputWriter = annotatorOutputWriter;
+    }
+
+    public void setDetailedResults(boolean detailedResults) {
+        this.detailedResults = detailedResults;
     }
 }

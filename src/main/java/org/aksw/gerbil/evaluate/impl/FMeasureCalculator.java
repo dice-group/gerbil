@@ -65,10 +65,12 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
         return counts;
     }
 
+    @SuppressWarnings("rawtypes")
     protected EvaluationResult[] calculateMicroFMeasure(EvaluationCounts counts[]) {
         return calculateMicroFMeasure(counts, MICRO_PRECISION_NAME, MICRO_RECALL_NAME, MICRO_F1_SCORE_NAME);
     }
 
+    @SuppressWarnings("rawtypes")
     protected EvaluationResult[] calculateMicroFMeasure(EvaluationCounts counts[], String precisionName,
             String recallName, String f1ScoreName) {
         EvaluationCounts sums = new EvaluationCounts();
@@ -81,10 +83,12 @@ public class FMeasureCalculator<T extends Marking> implements Evaluator<T> {
                 new DoubleEvaluationResult(f1ScoreName, measures[2]) };
     }
 
+    @SuppressWarnings("rawtypes")
     protected EvaluationResult[] calculateMacroFMeasure(EvaluationCounts counts[]) {
         return calculateMacroFMeasure(counts, MACRO_PRECISION_NAME, MACRO_RECALL_NAME, MACRO_F1_SCORE_NAME);
     }
 
+    @SuppressWarnings("rawtypes")
     protected EvaluationResult[] calculateMacroFMeasure(EvaluationCounts counts[], String precisionName,
             String recallName, String f1ScoreName) {
         double avgs[] = new double[3];

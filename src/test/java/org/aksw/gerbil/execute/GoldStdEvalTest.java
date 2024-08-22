@@ -66,7 +66,7 @@ public class GoldStdEvalTest extends AbstractExperimentTaskTest {
     @BeforeClass
     public static void setMatchingsCounterDebugFlag() {
         MatchingsCounterImpl.setPrintDebugMsg(false);
-        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(false);
+//        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(false);
         ErrorCountingAnnotatorDecorator.setPrintDebugMsg(false);
     }
 

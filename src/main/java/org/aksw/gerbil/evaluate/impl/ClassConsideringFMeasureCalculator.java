@@ -60,7 +60,7 @@ public class ClassConsideringFMeasureCalculator<T extends ClassifiedMeaning>
     public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
             EvaluationResultContainer results) {
         // the super class performs the matching counter calls
-        ScoredEvaluationCountsArray counts = generateMatchingCounts(annotatorResults, goldStandard);
+        ScoredEvaluationCountsArray counts = generateMatchingCounts(annotatorResults, goldStandard, results);
         if ((counts.truePositiveSums.length > 0) && (counts.falseNegativeSums.length > 0)
                 && (counts.falsePositiveSums.length > 0)) {
             double threshold = calculateMicroFMeasure(counts, results);
@@ -69,7 +69,7 @@ public class ClassConsideringFMeasureCalculator<T extends ClassifiedMeaning>
             String classLabel;
             for (int i = 0; i < markingClasses.length; ++i) {
                 counts = generateMatchingCounts(markingFilters[i].filterListOfLists(annotatorResults),
-                        markingFilters[i].filterListOfLists(goldStandard));
+                        markingFilters[i].filterListOfLists(goldStandard), null);
                 if ((counts.truePositiveSums[0] + counts.falseNegativeSums[0] + counts.falsePositiveSums[0]) > 0) {
                     classLabel = markingClasses[i].getLabel();
                     calculateMicroFMeasure(counts, classLabel + MICRO_PRECISION_NAME_APPENDIX,

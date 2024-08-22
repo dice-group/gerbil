@@ -38,7 +38,8 @@ public class SubTaskAverageCalculator<T extends Marking> implements Evaluator<T>
     }
 
     @Override
-    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
+    public void evaluate(List<List<T>> annotatorResults, List<List<T>> goldStandard,
+            EvaluationResultContainer results) {
         EvaluationResultContainer subTaskResults = new EvaluationResultContainer();
         for (SubTaskEvaluator<T> evaluator : evaluators) {
             evaluator.evaluate(annotatorResults, goldStandard, subTaskResults);
@@ -48,7 +49,7 @@ public class SubTaskAverageCalculator<T extends Marking> implements Evaluator<T>
     }
 
     protected void addSubTaskResults(EvaluationResultContainer subTaskResults, EvaluationResultContainer results) {
-        for (EvaluationResult result : subTaskResults.getResults()) {
+        for (EvaluationResult<?> result : subTaskResults.getResults()) {
             results.addResult(result);
         }
     }
@@ -70,17 +71,17 @@ public class SubTaskAverageCalculator<T extends Marking> implements Evaluator<T>
         }
     }
 
-    private Map<String, DoubleArrayList> createNameValueMapping(List<EvaluationResult> results) {
+    private Map<String, DoubleArrayList> createNameValueMapping(List<EvaluationResult<?>> results) {
         Map<String, DoubleArrayList> mapping = new HashMap<String, DoubleArrayList>();
-        for (EvaluationResult result : results) {
+        for (EvaluationResult<?> result : results) {
             addToMapping(mapping, result);
         }
         return mapping;
     }
 
-    private void addToMapping(Map<String, DoubleArrayList> mapping, EvaluationResult result) {
+    private void addToMapping(Map<String, DoubleArrayList> mapping, EvaluationResult<?> result) {
         if (result instanceof EvaluationResultContainer) {
-            for (EvaluationResult r : ((EvaluationResultContainer) result).getResults()) {
+            for (EvaluationResult<?> r : ((EvaluationResultContainer) result).getResults()) {
                 addToMapping(mapping, r);
             }
         } else if (result instanceof DoubleEvaluationResult) {
