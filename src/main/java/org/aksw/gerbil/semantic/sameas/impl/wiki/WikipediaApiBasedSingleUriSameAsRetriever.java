@@ -41,7 +41,7 @@ public class WikipediaApiBasedSingleUriSameAsRetriever extends AbstractHttpReque
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WikipediaApiBasedSingleUriSameAsRetriever.class);
 
-    private static final String URL_PROTOCOL_PART = "http://";
+    private static final String URL_PROTOCOL_PART = "https://";
     private static final String URL_QUERY_PART = "/w/api.php?format=xml&action=query&redirects=true&titles=";
     private static final String CHARSET_NAME = "UTF-8";
     private static final Escaper TITLE_ESCAPER = UrlEscapers.urlFormParameterEscaper();

@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class WikipediaHelper {
 
-    private static final String WIKIPEPIA_URI_PROTOCOL_PART = "http://";
+    private static final String WIKIPEPIA_URI_PROTOCOL_PART = "https://";
     private static final String WIKIPEPIA_URI_WIKI_PART = "/wiki/";
 
     /**
