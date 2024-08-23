@@ -86,7 +86,7 @@ public class MarkingBuilder {
     }
 
     /**
-     * @param meanings the type to be added
+     * @param type the type to be added
      */
     public void addType(String type) {
         if (types == null) {
