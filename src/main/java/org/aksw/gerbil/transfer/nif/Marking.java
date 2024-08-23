@@ -27,10 +27,14 @@ public interface Marking extends Cloneable {
 
     @Override
     public String toString();
-    
+
     public Object clone() throws CloneNotSupportedException;
 
     public void setProvenanceInfo(ProvenanceInfo provencance);
-    
+
     public ProvenanceInfo getProvenanceInfo();
+
+    public static MarkingBuilder builder() {
+        return new MarkingBuilder();
+    }
 }
