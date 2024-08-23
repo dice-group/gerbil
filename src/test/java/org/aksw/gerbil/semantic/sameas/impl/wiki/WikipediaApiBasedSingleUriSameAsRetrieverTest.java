@@ -36,11 +36,11 @@ public class WikipediaApiBasedSingleUriSameAsRetrieverTest {
         List<Object[]> testConfigs = new ArrayList<Object[]>();
         testConfigs.add(new Object[] { null, null });
         testConfigs.add(new Object[] { "http://dbpedia.org/resource/China", null });
-        testConfigs.add(new Object[] { "http://en.wikipedia.org/wiki/China", null });
-        testConfigs.add(new Object[] { "http://en.wikipedia.org/wiki/People's_Republic_of_China",
-                "http://en.wikipedia.org/wiki/China" });
+        testConfigs.add(new Object[] { "https://en.wikipedia.org/wiki/China", null });
+        testConfigs.add(new Object[] { "https://en.wikipedia.org/wiki/People's_Republic_of_China",
+                "https://en.wikipedia.org/wiki/China" });
         testConfigs.add(
-                new Object[] { "http://en.wikipedia.org/wiki/\"B\"_Movie", "http://en.wikipedia.org/wiki/B_movie" });
+                new Object[] { "https://en.wikipedia.org/wiki/\"B\"_Movie", "https://en.wikipedia.org/wiki/B_movie" });
         return testConfigs;
     }
 

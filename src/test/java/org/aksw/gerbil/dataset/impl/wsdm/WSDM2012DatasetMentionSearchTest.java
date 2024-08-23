@@ -39,12 +39,12 @@ public class WSDM2012DatasetMentionSearchTest {
         testConfigs.add(new Object[] { 
         		new String[] { "375737278276321000	27	Africa", "375737278276321000	4	United_States"},
                 "The US Military’s Pivot to Africa http://t.co/wJn6YRE5hR",
-                new String[] {"http://en.wikipedia.org/wiki/United_States", "http://en.wikipedia.org/wiki/Africa" }});
+                new String[] {"https://en.wikipedia.org/wiki/United_States", "https://en.wikipedia.org/wiki/Africa" }});
        
         testConfigs.add(new Object[] { 
         		new String[] { "375733981582729000	38	Brooklyn"},
                 "RT @BestProNews: A 19-year-old man in Brooklyn died today after he lost control of his remote control helicopter and sliced off the top of …",
-                new String[] {"http://en.wikipedia.org/wiki/Brooklyn"}});
+                new String[] {"https://en.wikipedia.org/wiki/Brooklyn"}});
 
         
         return testConfigs;
