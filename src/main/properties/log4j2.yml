@@ -101,7 +101,7 @@ Configuration:
           - ref: STDOUT
           - ref: File
     Root:
-      level: warn
+      level: info
       AppenderRef:
         - ref: STDOUT
         - ref: File

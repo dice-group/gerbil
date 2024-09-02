@@ -25,6 +25,8 @@ import java.util.List;
 
 import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
+import org.aksw.gerbil.evaluate.AggregatedContingencyMetricsReport;
+import org.aksw.gerbil.evaluate.ExtendedContingencyMetrics;
 import org.aksw.gerbil.semantic.vocabs.CUBE;
 import org.aksw.gerbil.semantic.vocabs.GERBIL;
 import org.aksw.gerbil.web.ExperimentTaskStateHelper;
@@ -47,7 +49,7 @@ public class DataIDGenerator {
     private static final String DATASET_DATAID = "dataId/corpora/";
     private static final String ANNOTATOR_DATAID = "dataId/annotators/";
     private static final String DATAID_EXTENSION = "";
-	private static final String LANGUAGE_DATAID = "dataId/languages/";
+    private static final String LANGUAGE_DATAID = "dataId/languages/";
 
     private String gerbilURL;
 
@@ -159,15 +161,8 @@ public class DataIDGenerator {
         }
         experimentTask.addProperty(RDF.type, CUBE.Observation);
 
-        // add annotator and dataset
-        experimentTask.addProperty(GERBIL.annotator,
-                gerbilURL + ANNOTATOR_DATAID + DataIDUtils.treatsNames(result.dataset) + DATAID_EXTENSION);
-        experimentTask.addProperty(GERBIL.dataset,
-                gerbilURL + DATASET_DATAID + DataIDUtils.treatsNames(result.annotator) + DATAID_EXTENSION);
-        experimentTask.addProperty(GERBIL.language,
-                gerbilURL + LANGUAGE_DATAID + DataIDUtils.treatsNames(result.language) + DATAID_EXTENSION);
+        addExperimentTaskDetails(experimentTask, result);
 
-        
         // set the status of this task
         model.add(experimentTask, GERBIL.statusCode, model.createTypedLiteral(result.state));
 
@@ -207,6 +202,9 @@ public class DataIDGenerator {
                     }
                 }
             }
+            if (result.getContingencyMetricsReport() != null) {
+                addContinguencyMatrix(result.getContingencyMetricsReport(), result, model, experimentTask);
+            }
             if (result.hasSubTasks()) {
                 for (ExperimentTaskResult subResult : result.getSubTasks()) {
                     createExperimentTask(model, subResult, experimentTask, experimentTasks);
@@ -217,6 +215,42 @@ public class DataIDGenerator {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(result.timestamp);
         model.add(experimentTask, GERBIL.timestamp, model.createTypedLiteral(cal));
+    }
+
+    protected void addExperimentTaskDetails(Resource observation, ExperimentTaskResult result) {
+        // add annotator and dataset
+        observation.addProperty(GERBIL.annotator,
+                gerbilURL + ANNOTATOR_DATAID + DataIDUtils.treatsNames(result.dataset) + DATAID_EXTENSION);
+        observation.addProperty(GERBIL.dataset,
+                gerbilURL + DATASET_DATAID + DataIDUtils.treatsNames(result.annotator) + DATAID_EXTENSION);
+        observation.addProperty(GERBIL.language,
+                gerbilURL + LANGUAGE_DATAID + DataIDUtils.treatsNames(result.language) + DATAID_EXTENSION);
+    }
+
+    protected void addContinguencyMatrix(AggregatedContingencyMetricsReport contingencyMetricsReport,
+            ExperimentTaskResult result, Model model, Resource experimentTask) {
+        int internalId = 0;
+        for (ExtendedContingencyMetrics metrics : contingencyMetricsReport.getValue()) {
+            addContinguencyMatrixPoint(metrics, internalId, result, model, experimentTask);
+            ++internalId;
+        }
+    }
+
+    protected void addContinguencyMatrixPoint(ExtendedContingencyMetrics metrics, int internalId,
+            ExperimentTaskResult result, Model model, Resource experimentTask) {
+        // create Resource
+        Resource observation = model.createResource(generateExperimentTaskUri(result.idInDb) + "_" + internalId);
+        observation.addProperty(RDF.type, CUBE.Observation);
+        addExperimentTaskDetails(observation, result);
+        // connect it with the ID of the document / element of the dataset
+        observation.addProperty(GERBIL.datasetElement, model.createResource(metrics.getId()));
+
+        observation.addLiteral(GERBIL.precision, metrics.getPrecision());
+        observation.addLiteral(GERBIL.recall, metrics.getRecall());
+        observation.addLiteral(GERBIL.f1, metrics.getF1Score());
+        observation.addLiteral(GERBIL.truePositiveCount, metrics.getCount().truePositives);
+        observation.addLiteral(GERBIL.falsePositiveCount, metrics.getCount().falsePositives);
+        observation.addLiteral(GERBIL.falseNegativeCount, metrics.getCount().falseNegatives);
     }
 
     public String generateExperimentTaskUri(int taskId) {

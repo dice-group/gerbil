@@ -52,16 +52,17 @@ public class SingleRunTest implements TaskObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleRunTest.class);
 
-
-    private static final String ANNOTATOR_NAME = "NIFWS_Tremblay(http://qald7rest.azurewebsites.net/api/question)";
-    private static final String DATASET_NAME = "QALD7 Train Multilingual";
+    //private static final String ANNOTATOR_NAME = "NIFWS_Tremblay(http://qald7rest.azurewebsites.net/api/question)";
+    //private static final String ANNOTATOR_NAME = "AF_Test(../datasets/qald10/qald_9_plus_train_wikidata.json)(undefined)(QALD10 Train Multilingual)";
+    private static final String ANNOTATOR_NAME = "AF_Test(../../../../Downloads/e2eResultsfreebase.json)(undefined)(QALD10 Train Multilingual)";
+    private static final String DATASET_NAME = "QALD10 Train Multilingual";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.QA;
-    private static final String QUESTION_LANGUAGE = "fr";
+    private static final String QUESTION_LANGUAGE = "en";
 
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
 
-    private static final boolean USE_SAME_AS_RETRIEVAL = false;
-    private static final boolean USE_ENTITY_CHECKING = false;
+    private static final boolean USE_SAME_AS_RETRIEVAL = true;
+    private static final boolean USE_ENTITY_CHECKING = true;
 
     private static final SameAsRetriever SAME_AS_RETRIEVER = USE_SAME_AS_RETRIEVAL
             ? SameAsRetrieverSingleton4Tests.getInstance() : null;
@@ -87,9 +88,9 @@ public class SingleRunTest implements TaskObserver {
             adapterManager.setAnnotators(AnnotatorsConfig.annotators());
             adapterManager.setDatasets(DatasetsConfig.datasets(ENTITY_CHECKER_MANAGER, SAME_AS_RETRIEVER));
 
-            AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE, "fr");
+            AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE, QUESTION_LANGUAGE);
             Assert.assertNotNull(annotatorConfig);
-            DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE, "fr");
+            DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE, QUESTION_LANGUAGE);
             Assert.assertNotNull(datasetConfig);
             // DatasetConfiguration datasetConfig = new
             // DatasetConfigurationImpl("Test", false,

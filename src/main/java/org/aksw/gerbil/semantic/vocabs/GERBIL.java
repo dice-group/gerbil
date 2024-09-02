@@ -74,9 +74,13 @@ public class GERBIL {
 
     public static final Property annotator = property("annotator");
     public static final Property dataset = property("dataset");
+    public static final Property datasetElement = property("datasetElement");
     public static final Property language = property("language");
     public static final Property experimentType = property("experimentType");
     public static final Property errorCount = property("errorCount");
+    public static final Property f1 = property("f1");
+    public static final Property falseNegativeCount = property("falseNegativeCount");
+    public static final Property falsePositiveCount = property("falsePositiveCount");
     public static final Property macroF1 = property("macroF1");
     public static final Property macroPrecision = property("macroPrecision");
     public static final Property macroRecall = property("macroRecall");
@@ -84,9 +88,13 @@ public class GERBIL {
     public static final Property microF1 = property("microF1");
     public static final Property microPrecision = property("microPrecision");
     public static final Property microRecall = property("microRecall");
+    public static final Property precision = property("precision");
+    public static final Property recall = property("recall");
     public static final Property statusCode = property("statusCode");
     public static final Property subExperimentOf = property("subExperimentOf");
     public static final Property timestamp = property("timestamp");
+    public static final Property trueNegativeCount = property("trueNegativeCount");
+    public static final Property truePositiveCount = property("truePositiveCount");
     public static final Property topic = property("topic");
 
     public static Resource getMatchingResource(Matching matching) {
