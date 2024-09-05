@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,9 +24,6 @@ import org.aksw.qa.commons.datastructure.IQuestion;
 import org.aksw.qa.commons.load.json.EJAnswers;
 import org.aksw.qa.commons.load.json.QaldQuestionEntry;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
@@ -34,6 +32,8 @@ import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementVisitorBase;
 import org.apache.jena.sparql.syntax.ElementWalker;
 import org.apache.jena.vocabulary.RDF;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class QAUtils {
 
@@ -45,12 +45,15 @@ public class QAUtils {
 
     protected static final UrlValidator URL_VALIDATOR = new UrlValidator();
 
+    protected static final Predicate<String> IRI_PATTERN = Pattern.compile("[^\\s]+:[^\\s]+").asPredicate();
+
     @Deprecated
     public static Document translateQuestion(IQuestion question, String questionUri) {
-    	return translateQuestion(question, questionUri, DEFAULT_QUESTION_LANGUAGE);
+        return translateQuestion(question, questionUri, DEFAULT_QUESTION_LANGUAGE);
     }
+
     public static Document translateQuestion(IQuestion question, String questionUri, String questionLanguage) {
-    	Document document = new DocumentImpl(question.getLanguageToQuestion().get(questionLanguage), questionUri);
+        Document document = new DocumentImpl(question.getLanguageToQuestion().get(questionLanguage), questionUri);
         String sparqlQueryString = question.getSparqlQuery();
         // add the needed markings to the document
         // properties, answerItemType, relations, entities
@@ -61,7 +64,7 @@ public class QAUtils {
             }
         } else if (question.getPseudoSparqlQuery() != null) {
             try {
-        	//TODO FIXME crawl markings from pseudo somehow
+                // TODO FIXME crawl markings from pseudo somehow
 //                deriveMarkingsFromSparqlQuery(document, question.getPseudoSparqlQuery());
             } catch (Exception e) {
             }
@@ -84,7 +87,7 @@ public class QAUtils {
         Set<String> goldenAnswers = question.getGoldenAnswers();
 
         Marking answers = transformToAnnotations(goldenAnswers);
-        if(answers == null){
+        if (answers == null) {
             answers = new AnswerSet<String>(goldenAnswers);
         }
         document.addMarking(answers);
@@ -188,9 +191,9 @@ public class QAUtils {
         try {
             sparqlQuery = QueryFactory.create(sparqlQueryString);
         } catch (Exception e) {
-            //If we do not handle it like an erorr, we should just use warn instead of error
-            LOGGER.warn("Couldn't parse the given SPARQL Query \"" + sparqlQueryString
-                    + "\".");
+            // If we do not handle it like an erorr, we should just use warn instead of
+            // error
+            LOGGER.warn("Couldn't parse the given SPARQL Query \"" + sparqlQueryString + "\".");
             throw e;
         }
         final Set<String> projectionVariables = new HashSet<String>(sparqlQuery.getResultVars());
@@ -240,7 +243,8 @@ public class QAUtils {
                     }
                     // Add the triple
                     if (object.isLiteral()) {
-                        document.addMarking(new Relation(sAnnotation, pAnnotation, object.getLiteralValue().toString()));
+                        document.addMarking(
+                                new Relation(sAnnotation, pAnnotation, object.getLiteralValue().toString()));
                     } else {
                         document.addMarking(new Relation(sAnnotation, pAnnotation, oAnnotation));
                     }
@@ -251,21 +255,25 @@ public class QAUtils {
     }
 
     /**
-     * Transforms the given answers into a set of {@link Annotation} instances
-     * if possible.
+     * Transforms the given answers into a set of {@link Annotation} instances if
+     * possible.
      * 
-     * @param goldenAnswers
-     *            answers that should be transformed into annotations
-     * @return answer set as {@link Annotation} instances or null, if there was
-     *         at least one answer that couldn't be transformed
+     * @param goldenAnswers answers that should be transformed into annotations
+     * @return answer set as {@link Annotation} instances or null, if there was at
+     *         least one answer that couldn't be transformed
      */
     public static AnswerSet<Annotation> transformToAnnotations(Set<String> answers) {
         for (String goldenAnswer : answers) {
-        	try{
-        		URI.create(goldenAnswer);
-        	}catch(Exception e) {
-        		return null;
-        	}
+            // if a golden answer is obviously not an IRI
+            if (!IRI_PATTERN.test(goldenAnswer)) {
+                LOGGER.debug("{} is not an IRI, Returning null.", goldenAnswer);
+                return null;
+            }
+            try {
+                URI.create(goldenAnswer);
+            } catch (Exception e) {
+                return null;
+            }
 //            if (!URL_VALIDATOR.isValid(goldenAnswer)) {
 //                return null;
 //            }

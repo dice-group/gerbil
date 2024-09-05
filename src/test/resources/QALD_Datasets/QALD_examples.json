@@ -1,0 +1,104 @@
+{
+    "questions": [
+        {
+            "id": "84",
+            "question": [
+                {
+                    "language": "en",
+                    "string": "Which American presidents were in office during the Vietnam War?"
+                }
+            ],
+            "query": {
+                "sparql": "PREFIX dbo: <http://dbpedia.org/ontology/> PREFIX res: <http://dbpedia.org/resource/> PREFIX dct: <http://purl.org/dc/terms/> PREFIX dbc: <http://dbpedia.org/resource/Category:> SELECT ?uri WHERE { ?uri dct:subject dbc:Presidents_of_the_United_States . res:Vietnam_War dbo:commander ?uri }"
+            },
+            "answers": [
+                {
+                    "head": {
+                        "link": [],
+                        "vars": [
+                            "uri"
+                        ]
+                    },
+                    "results": {
+                        "distinct": false,
+                        "ordered": true,
+                        "bindings": [
+                            {
+                                "uri": {
+                                    "type": "uri",
+                                    "value": "http://dbpedia.org/resource/John_F._Kennedy"
+                                }
+                            },
+                            {
+                                "uri": {
+                                    "type": "uri",
+                                    "value": "http://dbpedia.org/resource/Richard_Nixon"
+                                }
+                            },
+                            {
+                                "uri": {
+                                    "type": "uri",
+                                    "value": "http://dbpedia.org/resource/Lyndon_B._Johnson"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id": "73",
+            "question": [
+                {
+                    "language": "en",
+                    "string": "How many gold medals did Michael Phelps win at the 2008 Olympics?"
+                }
+            ],
+            "query": {
+                "sparql": "PREFIX dbo: <http://dbpedia.org/ontology/> PREFIX dbr: <http://dbpedia.org/resource/> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT (Count(?sub) as ?c) WHERE { ?sub dbo:goldMedalist dbr:Michael_Phelps . filter (contains (str(?sub), \"2008\") && contains (str(?sub), \"Olympics\")) }"
+            },
+            "answers": [
+                {
+                    "head": {
+                        "link": [],
+                        "vars": [
+                            "c"
+                        ]
+                    },
+                    "results": {
+                        "distinct": false,
+                        "ordered": true,
+                        "bindings": [
+                            {
+                                "c": {
+                                    "type": "typed-literal",
+                                    "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+                                    "value": "8"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id": "79",
+            "question": [
+                {
+                    "language": "en",
+                    "string": "Are there any castles in the United States?"
+                }
+            ],
+            "query": {
+                "sparql": "PREFIX dct: <http://purl.org/dc/terms/> PREFIX dbc: <http://dbpedia.org/resource/Category:> ASK WHERE { ?uri dct:subject dbc:Castles_in_the_United_States }"
+            },
+            "answers": [
+                {
+                    "head": {
+                        "link": []
+                    },
+                    "boolean": true
+                }
+            ]
+        }
+]}

@@ -558,12 +558,16 @@ public class ExperimentTask implements Task {
                         Annotation answerAnnotation;
                         if (answer instanceof Annotation) {
                             answerAnnotation = (Annotation) answer;
-                            globalRetriever.addSameURIs(answerAnnotation.getUris());
+                            if(globalRetriever != null) {
+                                globalRetriever.addSameURIs(answerAnnotation.getUris());
+                            }
                             addAnswers.add(answerAnnotation);
                         } else if (answer != null) {
                             if (urlValidator.isValid(answer.toString())) {
                                 answerAnnotation = new Annotation(answer.toString());
-                                globalRetriever.addSameURIs(answerAnnotation.getUris());
+                                if(globalRetriever != null) {
+                                    globalRetriever.addSameURIs(answerAnnotation.getUris());
+                                }
                                 addAnswers.add(answerAnnotation);
                             } else {
                                 addAnswers.add(answer.toString());

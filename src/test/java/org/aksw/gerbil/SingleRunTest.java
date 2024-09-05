@@ -23,7 +23,6 @@ import org.aksw.gerbil.annotator.AnnotatorConfiguration;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
-import org.aksw.gerbil.dataset.check.impl.FileBasedCachingEntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
@@ -54,10 +53,13 @@ public class SingleRunTest implements TaskObserver {
 
     //private static final String ANNOTATOR_NAME = "NIFWS_Tremblay(http://qald7rest.azurewebsites.net/api/question)";
     //private static final String ANNOTATOR_NAME = "AF_Test(../datasets/qald10/qald_9_plus_train_wikidata.json)(undefined)(QALD10 Train Multilingual)";
-    private static final String ANNOTATOR_NAME = "AF_Test(../../../../Downloads/e2eResultsfreebase.json)(undefined)(QALD10 Train Multilingual)";
-    private static final String DATASET_NAME = "QALD10 Train Multilingual";
+    //private static final String ANNOTATOR_NAME = "AF_Test(../../../../Downloads/e2eResultsfreebase.json)(undefined)(QALD10 Train Multilingual)";
+    private static final String ANNOTATOR_NAME = "AF_MST5(mst5_en_qald9plus_dbpedia_updated.json)(undefined)(AFDS_qald_9_golden_have_answer.json)";
+    private static final String DATASET_NAME = ANNOTATOR_NAME;//"QALD10 Train Multilingual";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.QA;
     private static final String QUESTION_LANGUAGE = "en";
+    
+    //{"type":"QA","matching":"STRONG_ENTITY_MATCH","annotator":[],"dataset":["NIFDS_QALD9Plus(qald_9_golden_have_answer.json)"],"answerFiles":["AF_MST5(MST5_cleaned_QALD9Plus_DBpedia.json)(undefined)(AFDS_qald_9_golden_have_answer.json)"],"questionLanguage":"en"}
 
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
 
@@ -117,9 +119,11 @@ public class SingleRunTest implements TaskObserver {
             if (overseer != null) {
                 overseer.shutdown();
             }
-            if ((ENTITY_CHECKER_MANAGER != null)
-                    && (ENTITY_CHECKER_MANAGER instanceof FileBasedCachingEntityCheckerManager)) {
-                ((FileBasedCachingEntityCheckerManager) ENTITY_CHECKER_MANAGER).storeCache();
+            if (SAME_AS_RETRIEVER != null) {
+                SameAsRetrieverSingleton4Tests.storeCache();
+            }
+            if (ENTITY_CHECKER_MANAGER != null) {
+                EntityCheckerManagerSingleton4Tests.storeCache();
             }
         }
     }
