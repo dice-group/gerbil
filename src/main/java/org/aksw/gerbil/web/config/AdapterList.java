@@ -85,6 +85,15 @@ public class AdapterList<T extends AdapterConfiguration> {
         return names;
     }
 
+    public Map<String, String> getAdapterDetailsForExperiment(ExperimentType type) {
+        List<T> configs = getAdaptersForExperiment(type);
+        Map<String,String> names = new HashMap<String,String>(configs.size());
+        for (T config : configs) {
+            names.put(config.getName(), config.getGroup());
+        }
+        return names;
+    }
+
     public List<T> getAdaptersForName(String name) {
         if (nameToAdapterMapping.containsKey(name)) {
             return nameToAdapterMapping.get(name);

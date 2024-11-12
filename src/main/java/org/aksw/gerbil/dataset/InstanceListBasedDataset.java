@@ -34,13 +34,13 @@ public class InstanceListBasedDataset extends AbstractDatasetConfiguration imple
     }
 
     public InstanceListBasedDataset(String name, List<Document> instances, ExperimentType applicableForExperiment) {
-        super(name, false, applicableForExperiment, null, null);
+        super(name,"UnGrouped", false, applicableForExperiment, null, null);
         this.instances = instances;
     }
 
     public InstanceListBasedDataset(String name, List<Document> instances, ExperimentType applicableForExperiment,
             EntityCheckerManager entityCheckerManager, SameAsRetriever globalRetriever) {
-        super(name, false, applicableForExperiment, entityCheckerManager, globalRetriever);
+        super(name,"UnGrouped", false, applicableForExperiment, entityCheckerManager, globalRetriever);
         this.instances = instances;
     }
 

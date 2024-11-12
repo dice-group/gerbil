@@ -17,12 +17,7 @@
 package org.aksw.gerbil.web.config;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.dataset.Dataset;
@@ -50,6 +45,8 @@ public class DatasetsConfig {
     public static final String ANNOTATOR_CONSTRUCTOR_ARGS_SUFFIX = "constructorArgs";
     public static final String ANNOTATOR_EXPERIMENT_TYPE_SUFFIX = "experimentType";
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
+
+    public static final String ANNOTATOR_GROUP_SUFFIX = "group";
 
     public static final String ANNOTATOR_CHECK_CLASS_SUFFIX = "check.class";
     public static final String ANNOTATOR_CHECK_ARGS_SUFFIX = "check.args";
@@ -115,6 +112,12 @@ public class DatasetsConfig {
             return null;
         }
         String name = config.getString(key);
+
+        key = buildKey(keyBuilder, datasetKey, ANNOTATOR_GROUP_SUFFIX);
+        if (!config.containsKey(key)) {
+            LOGGER.error("Couldn't get a group for the \"" + datasetKey + "\" dataset.");
+        }
+        String group = config.getString(key,"UnGrouped");
 
         key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CLASS_SUFFIX);
         if (!config.containsKey(key)) {
@@ -188,7 +191,7 @@ public class DatasetsConfig {
 
         // return new DatasetConfigurationImpl(name, cacheable, constructor,
         // constructorArgs, type, entityCheckerManager);
-        return new SingletonDatasetConfigImpl(name, cacheable, constructor, constructorArgs, type, entityCheckerManager,
+        return new SingletonDatasetConfigImpl(name, group, cacheable, constructor, constructorArgs, type, entityCheckerManager,
                 globalRetriever);
     }
 

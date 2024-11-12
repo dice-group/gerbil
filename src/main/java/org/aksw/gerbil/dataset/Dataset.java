@@ -31,6 +31,6 @@ public interface Dataset extends Closeable {
     public void setName(String name);
 
     public List<Document> getInstances();
-    
+
     public void setClosePermitionGranter(ClosePermitionGranter granter);
 }

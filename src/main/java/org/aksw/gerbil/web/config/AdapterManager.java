@@ -17,6 +17,7 @@
 package org.aksw.gerbil.web.config;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
@@ -65,6 +66,9 @@ public class AdapterManager {
 
     public Set<String> getDatasetNamesForExperiment(ExperimentType type) {
         return datasets.getAdapterNamesForExperiment(type);
+    }
+    public Map<String,String> getDatasetDetailsForExperiment(ExperimentType type) {
+        return datasets.getAdapterDetailsForExperiment(type);
     }
 
     public AnnotatorConfiguration getAnnotatorConfig(String name, ExperimentType type) {

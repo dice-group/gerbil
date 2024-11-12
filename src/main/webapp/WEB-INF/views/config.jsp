@@ -45,6 +45,60 @@
 	cursor: pointer;
 }
 
+.custom-multiselect-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-btn {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    text-align: left;
+}
+
+.dropdown-list {
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    display: none;
+    z-index: 10;
+}
+
+.dropdown-list.active {
+    display: block;
+}
+
+.dropdown-list .optgroup {
+    font-weight: bold;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.dropdown-list .optgroup-options {
+    display: none;
+    padding-left: 20px;
+}
+
+.dropdown-list .optgroup:hover .optgroup-options {
+    display: block;
+}
+
+.dropdown-list label {
+    display: block;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.dropdown-list input[type="checkbox"] {
+    margin-right: 5px;
+}
+
 /* Fixes for IE < 8 */
 @media screen\9 {
 	.fileinput-button input {
@@ -166,9 +220,8 @@
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="datasets">Dataset</label>
 				<div class="col-md-4">
-					<select id="dataset" multiple="multiple" style="display: none;">
-					</select>
-					<hr />
+                    <div id="multiselect-container" class="custom-multiselect-dropdown"></div>
+                    <hr />
 					<div>
 						<span> Or upload another dataset:</span>
 						<div>
@@ -340,20 +393,11 @@
 			});
 		}
 		function loadDatasets() {
-			$('#dataset').html('');
 			$.getJSON('${datasets}', {
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
-				var formattedData = [];
-				for (var i = 0; i < data.length; i++) {
-					var dat = {};
-					dat.label = data[i];
-					dat.value = data[i];
-					formattedData.push(dat);
-				}
-				$('#dataset').multiselect('dataprovider', formattedData);
-				$('#dataset').multiselect('rebuild');
+                createCustomMultiselect(data);
 			});
 		}
 		function checkExperimentConfiguration() {
@@ -367,11 +411,12 @@
 				annotator.push($(this).text());
 			});
 			//fetch list of selected and manually added datasets
-			var datasetMultiselect = $('#dataset option:selected');
 			var dataset = [];
-			$(datasetMultiselect).each(function(index, datasetMultiselect) {
-				dataset.push([ $(this).val() ]);
-			});
+            const container = document.getElementById('multiselect-container');
+            container.querySelectorAll('.dropdown-list input[type="checkbox"]:checked').forEach((checkbox) => {
+                dataset.push(checkbox.value);
+            });
+
 			$("#datasetList li span.li_content").each(function() {
 				dataset.push($(this).text());
 			});
@@ -435,6 +480,45 @@
 			//check showing run button if something is changed in dropdown menu
 			checkExperimentConfiguration();
 		}
+        function createCustomMultiselect(data) {
+            const container = document.getElementById('multiselect-container');
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            const button = document.createElement('div');
+            button.className = 'dropdown-btn';
+            button.textContent = 'Select Options';
+            container.appendChild(button);
+            const dropdownList = document.createElement('div');
+            dropdownList.className = 'dropdown-list';
+            Object.keys(data).forEach(category => {
+                const optgroupDiv = document.createElement('div');
+                optgroupDiv.className = 'optgroup';
+                optgroupDiv.textContent = category;
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'optgroup-options';
+                data[category].forEach(item => {
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = item;
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(item));
+                    optionsContainer.appendChild(label);
+                });
+                optgroupDiv.appendChild(optionsContainer);
+                dropdownList.appendChild(optgroupDiv);
+            });
+            container.appendChild(dropdownList);
+            button.addEventListener('click', () => {
+                dropdownList.classList.toggle('active');
+            });
+            document.addEventListener('click', (event) => {
+                if (!container.contains(event.target)) {
+                    dropdownList.classList.remove('active');
+                }
+            });
+        }
 
 		$(document)
 				.ready(
@@ -443,7 +527,6 @@
 							$('#type').multiselect();
 							$('#matching').multiselect();
 							$('#annotator').multiselect();
-							$('#dataset').multiselect();
 
 							// listeners for dropdowns
 							$('#type').change(loadMatching);
@@ -460,7 +543,7 @@
 							$('#annotator').change(function() {
 								checkExperimentConfiguration();
 							});
-							$('#dataset').change(function() {
+							$('#multiselect-container').change(function() {
 								checkExperimentConfiguration();
 							});
 							$('#disclaimerCheckbox').change(function() {
@@ -512,17 +595,11 @@
 																							.text());
 																});
 												//fetch list of selected and manually added datasets
-												var datasetMultiselect = $('#dataset option:selected');
 												var dataset = [];
-												$(datasetMultiselect)
-														.each(
-																function(index,
-																		datasetMultiselect) {
-																	dataset
-																			.push($(
-																					this)
-																					.val());
-																});
+                                                const container = document.getElementById('multiselect-container');
+                                                container.querySelectorAll('.dropdown-list input[type="checkbox"]:checked').forEach((checkbox) => {
+                                                    dataset.push(checkbox.value);
+                                                });
 												$(
 														"#datasetList li span.li_content")
 														.each(

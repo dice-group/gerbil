@@ -76,7 +76,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int errorsPerHundred;
 
         public ErrorCausingAnnotatorConfig(int errorsPerHundred) {
-            super("Error causing topic system", false, ExperimentType.ERec);
+            super("Error causing topic system","Un Grouped", false, ExperimentType.ERec);
             this.errorsPerHundred = errorsPerHundred;
         }
 
@@ -118,7 +118,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int size;
 
         public SimpleTestDatasetConfig(int size) {
-            super("test dataset", false, ExperimentType.ERec, null, null);
+            super("test dataset","Un Grouped", false, ExperimentType.ERec, null, null);
             this.size = size;
         }
 

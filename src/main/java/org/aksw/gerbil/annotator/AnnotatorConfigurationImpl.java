@@ -27,7 +27,7 @@ import org.aksw.gerbil.exceptions.GerbilException;
 /**
  * Contains all information needed to load an annotator for a specific
  * experiment type.
- * 
+ *
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  *
  */
@@ -39,7 +39,7 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
     public AnnotatorConfigurationImpl(String annotatorName, boolean couldBeCached,
             Constructor<? extends Annotator> constructor, Object constructorArgs[],
             ExperimentType applicableForExperiment) {
-        super(annotatorName, couldBeCached, applicableForExperiment);
+        super(annotatorName,"Ungrouped", couldBeCached, applicableForExperiment);
         this.constructor = constructor;
         this.constructorArgs = constructorArgs;
     }

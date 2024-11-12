@@ -19,22 +19,22 @@ package org.aksw.gerbil.datatypes;
 /**
  * Interface of an adpater configuration of the GERBIL system. It represents the
  * adapter and is able to create an adapter instance.
- * 
+ *
  * @author Michael Röder
- * 
+ *
  */
 public interface AdapterConfiguration extends Comparable<AdapterConfiguration>{
 
     /**
      * Getter of the adapters name.
-     * 
+     *
      * @return The name of the adapter.
      */
     public String getName();
 
     /**
      * Setter of the adapters name.
-     * 
+     *
      * @param name
      *            The name of the adapter.
      */
@@ -43,7 +43,7 @@ public interface AdapterConfiguration extends Comparable<AdapterConfiguration>{
     /**
      * Returns true if the system is allowed to cache the results of experiments
      * in which this adapter has been involved.
-     * 
+     *
      * @return true if the results could be cached inside the database.
      *         Otherwise false is returned.
      */
@@ -53,7 +53,7 @@ public interface AdapterConfiguration extends Comparable<AdapterConfiguration>{
      * Setter for the caching flag which should be set to true if the system is
      * allowed to cache the results of experiments in which this adapter has
      * been involved.
-     * 
+     *
      * @param couldBeCached
      */
     public void setCouldBeCached(boolean couldBeCached);
@@ -61,13 +61,15 @@ public interface AdapterConfiguration extends Comparable<AdapterConfiguration>{
     /**
      * Returns true if this adapter can be used for an experiment of the given
      * type.
-     * 
+     *
      * @param type
      *            the experiment type that should be checked
      * @return true if this adapter can be used for an experiment of the given
      *         type.
      */
     public boolean isApplicableForExperiment(ExperimentType type);
-    
+
     public ExperimentType getExperimentType();
+
+    public String getGroup();
 }

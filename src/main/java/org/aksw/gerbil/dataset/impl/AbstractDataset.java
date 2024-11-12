@@ -24,6 +24,9 @@ import org.aksw.gerbil.utils.ClosePermitionGranter;
 public abstract class AbstractDataset implements Dataset {
 
     protected String name;
+
+    protected String group;
+
     protected ClosePermitionGranter granter;
 
     public AbstractDataset() {

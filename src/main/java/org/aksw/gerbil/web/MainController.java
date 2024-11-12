@@ -18,11 +18,7 @@ package org.aksw.gerbil.web;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -306,18 +302,19 @@ public class MainController {
     }
 
     @RequestMapping("/datasets")
-    public @ResponseBody List<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
+    public @ResponseBody Map<String, List<String>> datasets(@RequestParam(value = "experimentType") String experimentType) {
         ExperimentType type = null;
+        Map<String, List<String>> response = new HashMap<>();
         try {
             type = ExperimentType.valueOf(experimentType);
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", experimentType);
             return null;
         }
-        Set<String> datasets = adapterManager.getDatasetNamesForExperiment(type);
-        List<String> list = Lists.newArrayList(datasets);
-        Collections.sort(list);
-        return list;
+            for(Map.Entry<String, String> entry :adapterManager.getDatasetDetailsForExperiment(type).entrySet()){
+                response.computeIfAbsent(entry.getValue(), k -> new ArrayList<>()).add(entry.getKey());
+            }
+        return response;
     }
 
     /**

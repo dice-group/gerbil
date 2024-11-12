@@ -23,11 +23,13 @@ public abstract class AbstractAdapterConfiguration implements AdapterConfigurati
     private static final ExperimentTypeComparator EXP_TYPE_COMPARATOR = new ExperimentTypeComparator();
 
     protected String name;
+    protected String group;
     protected boolean couldBeCached;
     protected ExperimentType applicableForExperiment;
 
-    public AbstractAdapterConfiguration(String name, boolean couldBeCached, ExperimentType applicableForExperiment) {
+    public AbstractAdapterConfiguration(String name,String group, boolean couldBeCached, ExperimentType applicableForExperiment) {
         this.name = name;
+        this.group = group;
         this.couldBeCached = couldBeCached;
         this.applicableForExperiment = applicableForExperiment;
     }
@@ -35,6 +37,10 @@ public abstract class AbstractAdapterConfiguration implements AdapterConfigurati
     @Override
     public String getName() {
         return name;
+    }
+
+    public String getGroup() {
+        return group;
     }
 
     @Override
