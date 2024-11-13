@@ -71,5 +71,18 @@ public interface AdapterConfiguration extends Comparable<AdapterConfiguration>{
 
     public ExperimentType getExperimentType();
 
+    /**
+     * Getter of the adapter's group.
+     *
+     * @return The group of the adapter.
+     */
     public String getGroup();
+
+    /**
+     * Getter of the adapter's group.
+     *
+     * @param group
+     *            The name of the adapter.
+     */
+    public void setGroup(String group);
 }

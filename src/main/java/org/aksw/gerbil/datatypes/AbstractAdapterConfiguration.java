@@ -29,9 +29,9 @@ public abstract class AbstractAdapterConfiguration implements AdapterConfigurati
 
     public AbstractAdapterConfiguration(String name,String group, boolean couldBeCached, ExperimentType applicableForExperiment) {
         this.name = name;
-        this.group = group;
         this.couldBeCached = couldBeCached;
         this.applicableForExperiment = applicableForExperiment;
+        this.setGroup(group);
     }
 
     @Override
@@ -48,6 +48,10 @@ public abstract class AbstractAdapterConfiguration implements AdapterConfigurati
         this.name = name;
     }
 
+    @Override
+    public void setGroup(String group) {
+        this.group = group;
+    }
     @Override
     public boolean couldBeCached() {
         return couldBeCached;
