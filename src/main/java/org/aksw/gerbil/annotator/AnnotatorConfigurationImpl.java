@@ -39,7 +39,7 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
     public AnnotatorConfigurationImpl(String annotatorName, boolean couldBeCached,
             Constructor<? extends Annotator> constructor, Object constructorArgs[],
             ExperimentType applicableForExperiment) {
-        super(annotatorName,"Ungrouped", couldBeCached, applicableForExperiment);
+        super(annotatorName,"Others", couldBeCached, applicableForExperiment);
         this.constructor = constructor;
         this.constructorArgs = constructorArgs;
     }

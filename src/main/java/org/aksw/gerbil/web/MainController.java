@@ -304,16 +304,17 @@ public class MainController {
     @RequestMapping("/datasets")
     public @ResponseBody Map<String, List<String>> datasets(@RequestParam(value = "experimentType") String experimentType) {
         ExperimentType type = null;
-        Map<String, List<String>> response = new HashMap<>();
+        Map<String, List<String>> response = new TreeMap<>(Comparator.comparing((String key) -> key.equals("Others")).thenComparing(Comparator.naturalOrder()));
         try {
             type = ExperimentType.valueOf(experimentType);
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", experimentType);
             return null;
         }
-            for(Map.Entry<String, String> entry :adapterManager.getDatasetDetailsForExperiment(type).entrySet()){
-                response.computeIfAbsent(entry.getValue(), k -> new ArrayList<>()).add(entry.getKey());
-            }
+        for(Map.Entry<String, String> entry :adapterManager.getDatasetDetailsForExperiment(type).entrySet()){
+            response.computeIfAbsent(entry.getValue(), k -> new ArrayList<>()).add(entry.getKey());
+        }
+        response.values().forEach(Collections::sort);
         return response;
     }
 

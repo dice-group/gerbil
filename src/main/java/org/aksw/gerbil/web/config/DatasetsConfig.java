@@ -117,7 +117,7 @@ public class DatasetsConfig {
         if (!config.containsKey(key)) {
             LOGGER.error("Couldn't get a group for the \"" + datasetKey + "\" dataset.");
         }
-        String group = config.getString(key,"UnGrouped");
+        String group = config.getString(key,"Others");
 
         key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CLASS_SUFFIX);
         if (!config.containsKey(key)) {
