@@ -39,6 +39,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
+import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -118,7 +119,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int size;
 
         public SimpleTestDatasetConfig(int size) {
-            super("test dataset","Un Grouped", false, ExperimentType.ERec, null, null);
+            super("test dataset", DatasetsConfig.DEFAULT_DATASET_GROUP, false, ExperimentType.ERec, null, null);
             this.size = size;
         }
 
