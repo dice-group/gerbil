@@ -23,6 +23,7 @@ import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
+import org.aksw.gerbil.web.config.DatasetsConfig;
 
 /**
  * Contains all information needed to load an annotator for a specific
@@ -39,7 +40,7 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
     public AnnotatorConfigurationImpl(String annotatorName, boolean couldBeCached,
             Constructor<? extends Annotator> constructor, Object constructorArgs[],
             ExperimentType applicableForExperiment) {
-        super(annotatorName,"Others", couldBeCached, applicableForExperiment);
+        super(annotatorName, DatasetsConfig.DEFAULT_DATASET_GROUP, couldBeCached, applicableForExperiment);
         this.constructor = constructor;
         this.constructorArgs = constructorArgs;
     }

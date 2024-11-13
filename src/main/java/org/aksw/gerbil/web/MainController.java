@@ -39,6 +39,7 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.utils.IDCreator;
 import org.aksw.gerbil.web.config.AdapterManager;
+import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.aksw.gerbil.web.response.execution.ExperimentExecutionResponse;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
@@ -304,7 +305,8 @@ public class MainController {
     @RequestMapping("/datasets")
     public @ResponseBody Map<String, List<String>> datasets(@RequestParam(value = "experimentType") String experimentType) {
         ExperimentType type = null;
-        Map<String, List<String>> response = new TreeMap<>(Comparator.comparing((String key) -> key.equals("Others")).thenComparing(Comparator.naturalOrder()));
+        Map<String, List<String>> response = new TreeMap<>(Comparator.comparing((String key) ->
+            key.equals(DatasetsConfig.DEFAULT_DATASET_GROUP)).thenComparing(Comparator.naturalOrder()));
         try {
             type = ExperimentType.valueOf(experimentType);
         } catch (IllegalArgumentException e) {

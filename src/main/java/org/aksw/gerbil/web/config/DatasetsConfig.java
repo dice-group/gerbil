@@ -51,6 +51,8 @@ public class DatasetsConfig {
     public static final String ANNOTATOR_CHECK_CLASS_SUFFIX = "check.class";
     public static final String ANNOTATOR_CHECK_ARGS_SUFFIX = "check.args";
 
+    public static final String DEFAULT_DATASET_GROUP = "Others";
+
     @Bean
     public static AdapterList<DatasetConfiguration> datasets(EntityCheckerManager entityCheckerManager,
             SameAsRetriever globalRetriever) {
@@ -114,10 +116,7 @@ public class DatasetsConfig {
         String name = config.getString(key);
 
         key = buildKey(keyBuilder, datasetKey, ANNOTATOR_GROUP_SUFFIX);
-        if (!config.containsKey(key)) {
-            LOGGER.error("Couldn't get a group for the \"" + datasetKey + "\" dataset.");
-        }
-        String group = config.getString(key,"Others");
+        String group = config.getString(key,DEFAULT_DATASET_GROUP);
 
         key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CLASS_SUFFIX);
         if (!config.containsKey(key)) {
