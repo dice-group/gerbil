@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
@@ -39,7 +40,6 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.utils.IDCreator;
 import org.aksw.gerbil.web.config.AdapterManager;
-import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.aksw.gerbil.web.config.RootConfig;
 import org.aksw.gerbil.web.response.execution.ExperimentExecutionResponse;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
@@ -305,18 +305,26 @@ public class MainController {
     @RequestMapping("/datasets")
     public @ResponseBody Map<String, List<String>> datasets(@RequestParam(value = "experimentType") String experimentType) {
         ExperimentType type = null;
-        Map<String, List<String>> response = new TreeMap<>(Comparator.comparing((String key) ->
-            key.equals(DatasetsConfig.DEFAULT_DATASET_GROUP)).thenComparing(Comparator.naturalOrder()));
+        Map<String, List<String>> response = new TreeMap<>();
+        ObjectMapper mapper = new ObjectMapper();
         try {
             type = ExperimentType.valueOf(experimentType);
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", experimentType);
             return null;
         }
-        for(Map.Entry<String, String> entry :adapterManager.getDatasetDetailsForExperiment(type).entrySet()){
-            response.computeIfAbsent(entry.getValue(), k -> new ArrayList<>()).add(entry.getKey());
+        List<String> adapterDetailsJsonList = adapterManager.getDatasetDetailsForExperiment(type);
+        for (String adapterJson : adapterDetailsJsonList) {
+            try {
+                Map<String, String> adapterDetails = mapper.readValue(adapterJson, new TypeReference<Map<String, String>>() {});
+                String name = adapterDetails.get("name");
+                String group = adapterDetails.get("group");
+                response.computeIfAbsent(group, k -> new ArrayList<>()).add(name);
+                Collections.sort(response.get(group));
+            } catch (IOException e) {
+                LOGGER.error("Failed to parse adapter details JSON: {}", adapterJson, e);
+            }
         }
-        response.values().forEach(Collections::sort);
         return response;
     }
 

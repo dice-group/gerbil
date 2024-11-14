@@ -24,6 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.aksw.gerbil.dataset.AdapterConfigSerializer;
+import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.AdapterConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
@@ -85,13 +90,23 @@ public class AdapterList<T extends AdapterConfiguration> {
         return names;
     }
 
-    public Map<String, String> getAdapterDetailsForExperiment(ExperimentType type) {
+    public List<String> getAdapterDetailsForExperiment(ExperimentType type) {
         List<T> configs = getAdaptersForExperiment(type);
-        Map<String,String> names = new HashMap<String,String>(configs.size());
+        List<String> serializedConfigs = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(AbstractAdapterConfiguration.class, new AdapterConfigSerializer(AbstractAdapterConfiguration.class));
+        mapper.registerModule(module);
         for (T config : configs) {
-            names.put(config.getName(), config.getGroup());
+            String json = null;
+            try {
+                json = mapper.writeValueAsString(config);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            serializedConfigs.add(json);
         }
-        return names;
+        return serializedConfigs;
     }
 
     public List<T> getAdaptersForName(String name) {

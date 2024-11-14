@@ -67,7 +67,7 @@ public class AdapterManager {
     public Set<String> getDatasetNamesForExperiment(ExperimentType type) {
         return datasets.getAdapterNamesForExperiment(type);
     }
-    public Map<String,String> getDatasetDetailsForExperiment(ExperimentType type) {
+    public List<String> getDatasetDetailsForExperiment(ExperimentType type) {
         return datasets.getAdapterDetailsForExperiment(type);
     }
 
