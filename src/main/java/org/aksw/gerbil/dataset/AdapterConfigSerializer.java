@@ -2,11 +2,13 @@ package org.aksw.gerbil.dataset;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 
 import java.io.IOException;
 
+@JsonSerialize(using = AdapterConfigSerializer.class)
 public class AdapterConfigSerializer extends StdSerializer<AbstractAdapterConfiguration> {
 
 

@@ -47,6 +47,8 @@ import it.unipi.di.acube.batframework.utils.AnnotationException;
 
 public class ErrorCountingAnnotatorDecoratorTest {
 
+    private static String UNGROUPED = "Un Grouped";
+
     @Test
     public void testErrorCount() {
         SimpleLoggingResultStoringDAO4Debugging db = new SimpleLoggingResultStoringDAO4Debugging();
@@ -77,7 +79,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int errorsPerHundred;
 
         public ErrorCausingAnnotatorConfig(int errorsPerHundred) {
-            super("Error causing topic system","Un Grouped", false, ExperimentType.ERec);
+            super("Error causing topic system",UNGROUPED, false, ExperimentType.ERec);
             this.errorsPerHundred = errorsPerHundred;
         }
 

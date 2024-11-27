@@ -94,17 +94,13 @@ public class AdapterList<T extends AdapterConfiguration> {
         List<T> configs = getAdaptersForExperiment(type);
         List<String> serializedConfigs = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(AbstractAdapterConfiguration.class, new AdapterConfigSerializer(AbstractAdapterConfiguration.class));
-        mapper.registerModule(module);
         for (T config : configs) {
-            String json = null;
             try {
-                json = mapper.writeValueAsString(config);
+                String json = mapper.writeValueAsString(config);
+                serializedConfigs.add(json);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
-            serializedConfigs.add(json);
         }
         return serializedConfigs;
     }

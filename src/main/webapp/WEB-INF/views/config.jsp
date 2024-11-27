@@ -510,7 +510,7 @@
                 checkbox.type = 'checkbox';
                 checkbox.value = item;
                 label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(item));
+                label.appendChild(document.createTextNode(item.name));
                 optionsContainer.appendChild(label);
             });
             optgroupDiv.appendChild(optionsContainer);

@@ -30,6 +30,7 @@ import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataid.DataIDGenerator;
+import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -303,27 +304,24 @@ public class MainController {
     }
 
     @RequestMapping("/datasets")
-    public @ResponseBody Map<String, List<String>> datasets(@RequestParam(value = "experimentType") String experimentType) {
+    public @ResponseBody Map<String, List<DatasetConfiguration>> datasets(@RequestParam(value = "experimentType") String experimentType) {
         ExperimentType type = null;
-        Map<String, List<String>> response = new TreeMap<>();
-        ObjectMapper mapper = new ObjectMapper();
+        Map<String, List<DatasetConfiguration>> response = new TreeMap<>();
         try {
             type = ExperimentType.valueOf(experimentType);
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", experimentType);
             return null;
         }
-        List<String> adapterDetailsJsonList = adapterManager.getDatasetDetailsForExperiment(type);
-        for (String adapterJson : adapterDetailsJsonList) {
-            try {
-                Map<String, String> adapterDetails = mapper.readValue(adapterJson, new TypeReference<Map<String, String>>() {});
-                String name = adapterDetails.get("name");
-                String group = adapterDetails.get("group");
-                response.computeIfAbsent(group, k -> new ArrayList<>()).add(name);
-                Collections.sort(response.get(group));
-            } catch (IOException e) {
-                LOGGER.error("Failed to parse adapter details JSON: {}", adapterJson, e);
+        try {
+            List<DatasetConfiguration> datasetConfigurations = adapterManager.getDatasetDetailsForExperiment(type);
+            for (DatasetConfiguration config : datasetConfigurations) {
+                response.computeIfAbsent(config.getGroup(), k -> new ArrayList<>()).add(config);
             }
+            response.values().forEach(newList -> newList.sort(Comparator.naturalOrder()));
+        } catch (Exception e) {
+            LOGGER.error("Error fetching datasets for ExperimentType: {}", experimentType, e);
+            return null;
         }
         return response;
     }
