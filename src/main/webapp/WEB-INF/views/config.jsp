@@ -487,46 +487,84 @@
         checkExperimentConfiguration();
     }
 
-    function createCustomMultiselect(data) {
-        const container = document.getElementById('multiselect-container');
-        while (container.firstChild) {
-            container.removeChild(container.firstChild);
-        }
-        const button = document.createElement('div');
-        button.className = 'dropdown-btn';
-        button.textContent = 'Select Options';
-        container.appendChild(button);
-        const dropdownList = document.createElement('div');
-        dropdownList.className = 'dropdown-list';
-        Object.keys(data).forEach(category => {
-            const optgroupDiv = document.createElement('div');
-            optgroupDiv.className = 'optgroup';
-            optgroupDiv.textContent = category;
-            const optionsContainer = document.createElement('div');
-            optionsContainer.className = 'optgroup-options';
-            data[category].forEach(item => {
-                const label = document.createElement('label');
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.value = item;
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(item.name));
-                optionsContainer.appendChild(label);
-            });
-            optgroupDiv.appendChild(optionsContainer);
-            dropdownList.appendChild(optgroupDiv);
-        });
-        container.appendChild(dropdownList);
-        button.addEventListener('click', () => {
-            dropdownList.classList.toggle('active');
-        });
-        document.addEventListener('click', (event) => {
-            if (!container.contains(event.target)) {
-                dropdownList.classList.remove('active');
-            }
-        });
+   function createCustomMultiselect(data) {
+    const container = document.getElementById('multiselect-container');
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
     }
 
+    const button = document.createElement('div');
+    button.className = 'dropdown-btn';
+    button.textContent = 'Select Options'; // Default text
+    container.appendChild(button);
+
+    const dropdownList = document.createElement('div');
+    dropdownList.className = 'dropdown-list';
+
+    const groupedData = {};
+    data.forEach(item => {
+        const group = item.group || 'Default';
+        if (!groupedData[group]) {
+            groupedData[group] = [];
+        }
+        groupedData[group].push(item);
+    });
+
+    // Sort the groups alphabetically
+    const sortedGroups = Object.keys(groupedData).sort();
+
+    sortedGroups.forEach(group => {
+        const optgroupDiv = document.createElement('div');
+        optgroupDiv.className = 'optgroup';
+        optgroupDiv.textContent = group;
+        const optionsContainer = document.createElement('div');
+        optionsContainer.className = 'optgroup-options';
+
+        groupedData[group].forEach(item => {
+            const label = document.createElement('label');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = item.name;
+
+            checkbox.checked = item.selected || false;
+
+            checkbox.addEventListener('change', () => {
+                item.selected = checkbox.checked;
+                updateButtonText(button, data);
+            });
+
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(item.name));
+            optionsContainer.appendChild(label);
+        });
+
+        optgroupDiv.appendChild(optionsContainer);
+        dropdownList.appendChild(optgroupDiv);
+    });
+
+    container.appendChild(dropdownList);
+
+    button.addEventListener('click', () => {
+        dropdownList.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!container.contains(event.target)) {
+            dropdownList.classList.remove('active');
+        }
+    });
+}
+
+// Helper function to update the button text based on selected options
+function updateButtonText(button, data) {
+    const selectedItems = data.filter(item => item.selected);
+    if (selectedItems.length > 0) {
+        const selectedNames = selectedItems.map(item => item.name).join(', ');
+        button.textContent = selectedNames;
+    } else {
+        button.textContent = 'Select Options';
+    }
+}
     $(document)
         .ready(
             function () {

@@ -23,12 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.aksw.gerbil.dataset.AdapterConfigSerializer;
-import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.AdapterConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 
@@ -88,21 +82,6 @@ public class AdapterList<T extends AdapterConfiguration> {
             names.add(config.getName());
         }
         return names;
-    }
-
-    public List<String> getAdapterDetailsForExperiment(ExperimentType type) {
-        List<T> configs = getAdaptersForExperiment(type);
-        List<String> serializedConfigs = new ArrayList<>();
-        ObjectMapper mapper = new ObjectMapper();
-        for (T config : configs) {
-            try {
-                String json = mapper.writeValueAsString(config);
-                serializedConfigs.add(json);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return serializedConfigs;
     }
 
     public List<T> getAdaptersForName(String name) {

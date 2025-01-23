@@ -39,15 +39,14 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
-import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.junit.Assert;
 import org.junit.Test;
 
 import it.unipi.di.acube.batframework.utils.AnnotationException;
 
-public class ErrorCountingAnnotatorDecoratorTest {
+import static org.aksw.gerbil.web.config.DatasetsConfig.DEFAULT_DATASET_GROUP;
 
-    private static String UNGROUPED = "Un Grouped";
+public class ErrorCountingAnnotatorDecoratorTest {
 
     @Test
     public void testErrorCount() {
@@ -79,7 +78,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int errorsPerHundred;
 
         public ErrorCausingAnnotatorConfig(int errorsPerHundred) {
-            super("Error causing topic system",UNGROUPED, false, ExperimentType.ERec);
+            super("Error causing topic system",DEFAULT_DATASET_GROUP, false, ExperimentType.ERec);
             this.errorsPerHundred = errorsPerHundred;
         }
 
@@ -121,7 +120,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int size;
 
         public SimpleTestDatasetConfig(int size) {
-            super("test dataset", DatasetsConfig.DEFAULT_DATASET_GROUP, false, ExperimentType.ERec, null, null);
+            super("test dataset", DEFAULT_DATASET_GROUP, false, ExperimentType.ERec, null, null);
             this.size = size;
         }
 

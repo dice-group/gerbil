@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
@@ -52,7 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -304,24 +302,20 @@ public class MainController {
     }
 
     @RequestMapping("/datasets")
-    public @ResponseBody Map<String, List<DatasetConfiguration>> datasets(@RequestParam(value = "experimentType") String experimentType) {
+    public @ResponseBody List<DatasetConfiguration> datasets(@RequestParam(value = "experimentType") String experimentType) {
         ExperimentType type = null;
-        Map<String, List<DatasetConfiguration>> response = new TreeMap<>();
+        List<DatasetConfiguration> response = new ArrayList<>();
         try {
             type = ExperimentType.valueOf(experimentType);
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", experimentType);
-            return null;
+            return response;
         }
         try {
-            List<DatasetConfiguration> datasetConfigurations = adapterManager.getDatasetDetailsForExperiment(type);
-            for (DatasetConfiguration config : datasetConfigurations) {
-                response.computeIfAbsent(config.getGroup(), k -> new ArrayList<>()).add(config);
-            }
-            response.values().forEach(newList -> newList.sort(Comparator.naturalOrder()));
+            response = adapterManager.getDatasetDetailsForExperiment(type);
         } catch (Exception e) {
             LOGGER.error("Error fetching datasets for ExperimentType: {}", experimentType, e);
-            return null;
+            return response;
         }
         return response;
     }
