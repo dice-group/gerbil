@@ -51,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -302,22 +303,22 @@ public class MainController {
     }
 
     @RequestMapping("/datasets")
-    public @ResponseBody List<DatasetConfiguration> datasets(@RequestParam(value = "experimentType") String experimentType) {
+    public @ResponseBody ResponseEntity<List<DatasetConfiguration>> datasets(@RequestParam(value = "experimentType") String experimentType) {
         ExperimentType type = null;
         List<DatasetConfiguration> response = new ArrayList<>();
         try {
             type = ExperimentType.valueOf(experimentType);
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", experimentType);
-            return response;
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         try {
             response = adapterManager.getDatasetDetailsForExperiment(type);
         } catch (Exception e) {
             LOGGER.error("Error fetching datasets for ExperimentType: {}", experimentType, e);
-            return response;
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        return response;
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
