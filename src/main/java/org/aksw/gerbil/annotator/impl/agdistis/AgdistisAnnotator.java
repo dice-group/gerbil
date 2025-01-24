@@ -57,9 +57,11 @@ public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements D2K
 
     private static final String AGDISTIS_HOST_PROPERTY_NAME = "org.aksw.gerbil.annotators.AgdistisAnnotatorConfig.Host";
     private static final String AGDISTIS_PORT_PROPERTY_NAME = "org.aksw.gerbil.annotators.AgdistisAnnotatorConfig.Port";
+    private static final String AGDISTIS_PATH_PROPERTY_NAME = "org.aksw.gerbil.annotators.AgdistisAnnotatorConfig.Path";
 
     protected String host;
     protected int port;
+    protected String path = "/AGDISTIS";
     protected JSONParser jsonParser = new JSONParser();
 
     public AgdistisAnnotator() throws GerbilException {
@@ -74,6 +76,7 @@ public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements D2K
             throw new GerbilException("Couldn't load needed property \"" + AGDISTIS_PORT_PROPERTY_NAME + "\".",
                     ErrorTypes.ANNOTATOR_LOADING_ERROR);
         }
+        String path = GerbilConfiguration.getInstance().getString(AGDISTIS_PATH_PROPERTY_NAME);
         int port;
         try {
             port = Integer.parseInt(portString);
@@ -84,6 +87,9 @@ public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements D2K
         }
         this.host = host;
         this.port = port;
+        if (path != null) {
+            this.path = path;
+        }
     }
 
     public AgdistisAnnotator(String host, String portString) throws GerbilException {
@@ -97,6 +103,11 @@ public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements D2K
                     ErrorTypes.ANNOTATOR_LOADING_ERROR);
         }
         this.port = port;
+    }
+    
+    public AgdistisAnnotator(String host, String port, String path) throws GerbilException {
+        this(host, port);
+        this.path = path;
     }
 
     @Override
@@ -148,7 +159,7 @@ public class AgdistisAnnotator extends AbstractHttpBasedAnnotator implements D2K
     }
 
     public List<MeaningSpan> getAnnotations(String textWithMentions) throws GerbilException {
-        String agdistisUrl = "http://" + host + ":" + port + "/AGDISTIS";
+        String agdistisUrl = "http://" + host + ":" + port + path;
         String parameters = null;
         try {
             parameters = "type=agdistis&text=" + URLEncoder.encode(textWithMentions, "UTF-8");
