@@ -21,6 +21,7 @@ import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.apache.jena.riot.Lang;
 
 public class NIFFileDatasetConfig extends AbstractDatasetConfiguration {
@@ -29,7 +30,7 @@ public class NIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
     public NIFFileDatasetConfig(String name, String file, boolean couldBeCached, ExperimentType applicableForExperiment,
             EntityCheckerManager entityCheckerManager, SameAsRetriever globalRetriever) {
-        super(name, couldBeCached, applicableForExperiment, entityCheckerManager, globalRetriever);
+        super(name, DatasetsConfig.DEFAULT_DATASET_GROUP, couldBeCached, applicableForExperiment, entityCheckerManager, globalRetriever);
         this.file = file;
     }
 

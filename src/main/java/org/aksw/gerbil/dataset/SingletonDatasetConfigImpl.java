@@ -34,11 +34,11 @@ public class SingletonDatasetConfigImpl extends DatasetConfigurationImpl impleme
     protected int instanceUsages = 0;
     protected Semaphore instanceMutex = new Semaphore(1);
 
-    public SingletonDatasetConfigImpl(String annotatorName, boolean couldBeCached,
+    public SingletonDatasetConfigImpl(String annotatorName, String annotatorGroup, boolean couldBeCached,
             Constructor<? extends Dataset> constructor, Object constructorArgs[],
             ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
             SameAsRetriever globalRetriever) {
-        super(annotatorName, couldBeCached, constructor, constructorArgs, applicableForExperiment, entityCheckerManager,
+        super(annotatorName, annotatorGroup, couldBeCached, constructor, constructorArgs, applicableForExperiment, entityCheckerManager,
                 globalRetriever);
     }
 

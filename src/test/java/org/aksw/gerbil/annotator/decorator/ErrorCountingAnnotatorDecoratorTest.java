@@ -44,6 +44,8 @@ import org.junit.Test;
 
 import it.unipi.di.acube.batframework.utils.AnnotationException;
 
+import static org.aksw.gerbil.web.config.DatasetsConfig.DEFAULT_DATASET_GROUP;
+
 public class ErrorCountingAnnotatorDecoratorTest {
 
     @Test
@@ -76,7 +78,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int errorsPerHundred;
 
         public ErrorCausingAnnotatorConfig(int errorsPerHundred) {
-            super("Error causing topic system", false, ExperimentType.ERec);
+            super("Error causing topic system",DEFAULT_DATASET_GROUP, false, ExperimentType.ERec);
             this.errorsPerHundred = errorsPerHundred;
         }
 
@@ -118,7 +120,7 @@ public class ErrorCountingAnnotatorDecoratorTest {
         private int size;
 
         public SimpleTestDatasetConfig(int size) {
-            super("test dataset", false, ExperimentType.ERec, null, null);
+            super("test dataset", DEFAULT_DATASET_GROUP, false, ExperimentType.ERec, null, null);
             this.size = size;
         }
 

@@ -25,12 +25,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.dataset.AdapterConfigSerializer;
 import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.dataset.check.impl.EntityCheckerManagerImpl;
 import org.aksw.gerbil.dataset.check.impl.FileBasedCachingEntityCheckerManager;
 import org.aksw.gerbil.dataset.check.impl.HttpBasedEntityChecker;
 import org.aksw.gerbil.dataset.check.impl.InMemoryCachingEntityCheckerManager;
 import org.aksw.gerbil.dataset.check.index.IndexBasedEntityChecker;
+import org.aksw.gerbil.datatypes.AbstractAdapterConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -61,6 +63,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConversionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
@@ -80,11 +83,11 @@ import org.apache.jena.rdf.model.ModelFactory;
  * <code>org.aksw.gerbil.web.config</code> searching for other
  * {@link Configuration}s</li>
  * </ul>
- * 
+ *
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * @author Lars Wesemann
  * @author Didier Cherix
- * 
+ *
  */
 @org.springframework.context.annotation.Configuration
 @ComponentScan(basePackages = "org.aksw.gerbil.web.config")
@@ -145,6 +148,11 @@ public class RootConfig {
         @SuppressWarnings("unused")
         Reporter reporter = new LogReporter(overseer);
         return overseer;
+    }
+
+   @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+        return builder -> builder.serializers(new AdapterConfigSerializer(AbstractAdapterConfiguration.class));
     }
 
     public static @Bean SubClassInferencer createSubClassInferencer() {

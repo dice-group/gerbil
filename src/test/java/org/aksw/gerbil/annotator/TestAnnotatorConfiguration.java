@@ -24,6 +24,7 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.transfer.nif.Document;
+import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.junit.Ignore;
 
 @Ignore
@@ -37,7 +38,7 @@ public class TestAnnotatorConfiguration extends AbstractAdapterConfiguration imp
 
     public TestAnnotatorConfiguration(String annotatorName, boolean couldBeCached, List<Document> instances,
             ExperimentType applicableForExperiment) {
-        super(annotatorName, couldBeCached, applicableForExperiment);
+        super(annotatorName, DatasetsConfig.DEFAULT_DATASET_GROUP, couldBeCached, applicableForExperiment);
         annotator = new InstanceListBasedAnnotator(annotatorName, instances);
     }
 
