@@ -63,7 +63,7 @@ public abstract class AbstractNeamtAnnotator extends AbstractHttpBasedAnnotator 
     protected Document request(Document document) throws GerbilException {
         String text = document.getText();
         String documentUri = document.getDocumentURI();
-        LOGGER.info("Started request for {}", documentUri);
+        LOGGER.debug("Started request for {}", documentUri);
         HttpPost request = null;
         try {
             request = createPostRequest(serviceUrl);
@@ -102,7 +102,7 @@ public abstract class AbstractNeamtAnnotator extends AbstractHttpBasedAnnotator 
             }
             IOUtils.closeQuietly(response);
         }
-        LOGGER.info("Finished request for {}", resultDoc.getDocumentURI());
+        LOGGER.debug("Finished request for {}", resultDoc.getDocumentURI());
         return resultDoc;
     }
 

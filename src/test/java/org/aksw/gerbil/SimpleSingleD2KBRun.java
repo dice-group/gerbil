@@ -20,7 +20,6 @@ import java.io.Closeable;
 import java.util.concurrent.Semaphore;
 
 import org.aksw.gerbil.annotator.AnnotatorConfiguration;
-import org.aksw.gerbil.annotator.decorator.ErrorCountingAnnotatorDecorator;
 import org.aksw.gerbil.database.SimpleLoggingDAO4Debugging;
 import org.aksw.gerbil.dataset.Dataset;
 import org.aksw.gerbil.dataset.DatasetConfiguration;
@@ -34,6 +33,7 @@ import org.aksw.gerbil.evaluate.impl.ClassConsideringFMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.ClassifyingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.GSInKBClassifyingEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.filter.SearcherBasedNotMatchingMarkingFilter;
+import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.MatchingsSearcher;
 import org.aksw.gerbil.matching.MatchingsSearcherFactory;
@@ -61,7 +61,6 @@ import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.aksw.simba.topicmodeling.concurrent.tasks.TaskObserver;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -76,23 +75,53 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
     private static final String DATASET_NAME = "N3-RSS-500";
     private static final ExperimentType EXPERIMENT_TYPE = ExperimentType.D2KB;
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;
+    private static final AnnotatorOutputWriter ANNOTATOR_OUTPUT_WRITER = RootConfig.getAnnotatorOutputWriter(); //new AnnotatorOutputWriter("gerbil_data/output", "json");
 
-    @BeforeClass
-    public static void setMatchingsCounterDebugFlag() {
-        MatchingsCounterImpl.setPrintDebugMsg(true);
+//    @BeforeClass
+//    public static void setMatchingsCounterDebugFlag() {
+//        MatchingsCounterImpl.setPrintDebugMsg(true);
 //        ConfidenceBasedFMeasureCalculator.setPrintDebugMsg(true);
-        ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
-    }
+//        ErrorCountingAnnotatorDecorator.setPrintDebugMsg(true);
+//    }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("waiting 10 secs...");
-        Thread.sleep(10000);
-        setMatchingsCounterDebugFlag();
-        SimpleSingleD2KBRun test = new SimpleSingleD2KBRun();
-        test.run();
+//        System.out.println("waiting 10 secs...");
+//        Thread.sleep(10000);
+//        setMatchingsCounterDebugFlag();
+        String[] inputPrefixes = new String[] { "Flair__NEAMT_", "Spacy__NEAMT_", "WikiNEuRal__NEAMT_" };
+        String[] datasetNamePart = new String[] { "rain", "est", };
+        String[] annotatorNames = new String[] {"AGDISTIS/MAG", "mGENRE (NEAMT)"};
+
+        for (int i = 0; i < inputPrefixes.length; ++i) {
+            for (int j = 0; j < datasetNamePart.length; ++j) {
+                StringBuilder builder = new StringBuilder();
+                builder.append(AdapterManager.UPLOADED_DATASET_PREFIX);
+                builder.append(inputPrefixes[i]);
+                builder.append("QALD 10 T");
+                builder.append(datasetNamePart[j]);
+                builder.append(" (store)(");
+                builder.append(inputPrefixes[i]);
+                builder.append("-QALD_10_T");
+                builder.append(datasetNamePart[j]);
+                builder.append("__store___uploaded_-s-ERec.ttl)");
+                String datasetName = builder.toString();
+                for (int j2 = 0; j2 < annotatorNames.length; ++j2) {
+                    SimpleSingleD2KBRun test = new SimpleSingleD2KBRun(annotatorNames[j2], datasetName);
+                    test.run();
+                }
+            }
+        }
     }
 
     private Semaphore mutex = new Semaphore(0);
+    private String annotatorName;
+    private String datasetName;
+
+    public SimpleSingleD2KBRun(String annotatorName, String datasetName) {
+        super();
+        this.annotatorName = annotatorName;
+        this.datasetName = datasetName;
+    }
 
     @Test
     public void runTest() throws Exception {
@@ -106,9 +135,9 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
         adapterManager
                 .setDatasets(DatasetsConfig.datasets(EntityCheckerManagerSingleton4Tests.getInstance(), retriever));
 
-        AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(ANNOTATOR_NAME, EXPERIMENT_TYPE);
+        AnnotatorConfiguration annotatorConfig = adapterManager.getAnnotatorConfig(annotatorName, EXPERIMENT_TYPE);
         Assert.assertNotNull(annotatorConfig);
-        DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(DATASET_NAME, EXPERIMENT_TYPE);
+        DatasetConfiguration datasetConfig = adapterManager.getDatasetConfig(datasetName, EXPERIMENT_TYPE);
         Assert.assertNotNull(datasetConfig);
 
         DefeatableOverseer overseer = RootConfig.createOverseer();
@@ -119,6 +148,7 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
 
         Experimenter experimenter = new Experimenter(overseer, new SimpleLoggingDAO4Debugging(), retriever, this,
                 taskConfigs, "SingleRunTest");
+        experimenter.setAnnotatorOutputWriter(ANNOTATOR_OUTPUT_WRITER);
         experimenter.run();
 
         mutex.acquire();
@@ -175,7 +205,8 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
                                                             new ClassifiedMeaningMatchingsSearcher<ClassifiedSpanMeaning>())),
                                             MarkingClasses.IN_KB, MarkingClasses.EE, MarkingClasses.GS_IN_KB),
                                     new StrongSpanMatchingsSearcher<ClassifiedSpanMeaning>()),
-                            new UriBasedMeaningClassifier<ClassifiedSpanMeaning>(globalClassifier, MarkingClasses.IN_KB),
+                            new UriBasedMeaningClassifier<ClassifiedSpanMeaning>(globalClassifier,
+                                    MarkingClasses.IN_KB),
                             new EmergingEntityMeaningClassifier<ClassifiedSpanMeaning>()),
                     true);
         }

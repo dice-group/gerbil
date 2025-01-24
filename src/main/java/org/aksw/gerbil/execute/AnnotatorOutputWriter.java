@@ -18,11 +18,13 @@ package org.aksw.gerbil.execute;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
+import org.aksw.gerbil.io.json.SimpleJsonDatasetWriter;
 import org.aksw.gerbil.io.nif.NIFWriter;
 import org.aksw.gerbil.io.nif.impl.TurtleNIFWriter;
 import org.aksw.gerbil.matching.Matching;
@@ -41,12 +43,18 @@ public class AnnotatorOutputWriter {
 
     private File outputDirectory;
     private String storableAnnotatorNamePart = DEFAULT_STORABLE_ANNOTATOR_NAME_PART;
+    private String format;
 
     public AnnotatorOutputWriter(String outputDirectory) {
+        this(outputDirectory, "ttl");
+    }
+
+    public AnnotatorOutputWriter(String outputDirectory, String format) {
         this.outputDirectory = new File(outputDirectory);
         if (!this.outputDirectory.exists()) {
             this.outputDirectory.mkdirs();
         }
+        this.format = format;
     }
 
     public <T extends Marking> void storeAnnotatorOutput(ExperimentTaskConfiguration configuration,
@@ -59,8 +67,7 @@ public class AnnotatorOutputWriter {
                 List<Document> resultDocuments = generateResultDocuments(results, documents);
                 fout = new FileOutputStream(file);
                 gout = new GZIPOutputStream(fout);
-                NIFWriter writer = new TurtleNIFWriter();
-                writer.writeNIF(resultDocuments, gout);
+                write(resultDocuments, gout);
             } catch (Exception e) {
                 LOGGER.error("Couldn't write annotator result to file.", e);
             } finally {
@@ -70,9 +77,33 @@ public class AnnotatorOutputWriter {
         }
     }
 
+    protected void write(List<Document> resultDocuments, GZIPOutputStream gout) {
+        switch (format) {
+        case "ttl": {
+            NIFWriter writer = new TurtleNIFWriter();
+            writer.writeNIF(resultDocuments, gout);
+            return;
+        }
+        case "json": {
+            SimpleJsonDatasetWriter writer = new SimpleJsonDatasetWriter();
+            try {
+                writer.writeDocuments(resultDocuments, gout);
+            } catch (IOException e) {
+                LOGGER.error("Error while writing annotations.", e);
+            }
+            return;
+        }
+        default: {
+            LOGGER.error("Unknown format {}. Won't write any annotation results.", format);
+        }
+        }
+    }
+
     private boolean outputShouldBeStored(ExperimentTaskConfiguration configuration) {
-        return (configuration.datasetConfig.couldBeCached() || configuration.datasetConfig.getName().contains(storableAnnotatorNamePart)) && (configuration.annotatorConfig.couldBeCached()
-                || configuration.annotatorConfig.getName().contains(storableAnnotatorNamePart));
+        return (configuration.datasetConfig.couldBeCached()
+                || configuration.datasetConfig.getName().contains(storableAnnotatorNamePart))
+                && (configuration.annotatorConfig.couldBeCached()
+                        || configuration.annotatorConfig.getName().contains(storableAnnotatorNamePart));
     }
 
     private File generateOutputFile(ExperimentTaskConfiguration configuration) {
@@ -88,7 +119,9 @@ public class AnnotatorOutputWriter {
             fileBuilder.append("-s-");
         }
         appendCleanedString(fileBuilder, configuration.type.name());
-        fileBuilder.append(".ttl.gz");
+        fileBuilder.append('.');
+        fileBuilder.append(format);
+        fileBuilder.append(".gz");
         return new File(fileBuilder.toString());
     }
 

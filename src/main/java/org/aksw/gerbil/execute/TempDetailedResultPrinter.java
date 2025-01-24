@@ -40,6 +40,7 @@ public class TempDetailedResultPrinter {
         List<Document> documents = dataset.getInstances();
         String file = expResult.getType().getName() + "_" + expResult.getMatching() + "_" + expResult.getAnnotator()
                 + "_" + expResult.getDataset() + ".csv";
+        file = file.replace('/', '_');
         ScoredEvaluationCounts chosen;
         try (CSVWriter writer = new CSVWriter(new FileWriter(new File(file)))) {
             String line[] = new String[] { "uri", "confidence", "tp", "fp", "fn" };
