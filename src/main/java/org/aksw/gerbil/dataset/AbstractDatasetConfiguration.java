@@ -35,19 +35,21 @@ public abstract class AbstractDatasetConfiguration extends AbstractAdapterConfig
     protected String questionLang;
     protected String questionLabel;
     
-    public AbstractDatasetConfiguration(String datasetName,boolean couldBeCached,
+    public AbstractDatasetConfiguration(
+            String datasetName, String datasetGroup, boolean couldBeCached,
             ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
-            SameAsRetriever globalRetriever) {
-        super(datasetName, couldBeCached, applicableForExperiment);
+            SameAsRetriever globalRetriever
+    ) {
+        super(datasetName, datasetGroup, couldBeCached, applicableForExperiment);
         this.questionLabel=datasetName;
         this.entityCheckerManager = entityCheckerManager;
         this.globalRetriever = globalRetriever;
     }
 
-    public AbstractDatasetConfiguration(String datasetName, String questionLabel, boolean couldBeCached,
+    public AbstractDatasetConfiguration(String datasetName, String datasetGroup, String questionLabel, boolean couldBeCached,
                                         ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
                                         SameAsRetriever globalRetriever) {
-        super(datasetName, couldBeCached, applicableForExperiment);
+        super(datasetName,datasetGroup, couldBeCached, applicableForExperiment);
         this.questionLabel=questionLabel;
         this.entityCheckerManager = entityCheckerManager;
         this.globalRetriever = globalRetriever;

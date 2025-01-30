@@ -29,6 +29,7 @@ import org.aksw.gerbil.dataset.check.EntityCheckerManager;
 import org.aksw.gerbil.dataset.impl.nif.FileBasedNIFDataset;
 import org.aksw.gerbil.datatypes.ExperimentType;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
+import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.apache.jena.riot.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
 
     public DatahubNIFConfig(String datasetName, String datasetUrl, boolean couldBeCached, EntityCheckerManager entityCheckerManager,
             SameAsRetriever globalRetriever) {
-        super(datasetName, couldBeCached, ExperimentType.A2KB, entityCheckerManager, globalRetriever);
+        super(datasetName, DatasetsConfig.DEFAULT_DATASET_GROUP, couldBeCached, ExperimentType.A2KB, entityCheckerManager, globalRetriever);
         this.datasetUrl = datasetUrl;
         rt = new RestTemplate();
     }

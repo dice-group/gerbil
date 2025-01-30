@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.web.config;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -71,6 +72,10 @@ public class AdapterManager {
 
     public Set<String> getDatasetNamesForExperiment(ExperimentType type) {
         return datasets.getAdapterNamesForExperiment(type);
+    }
+
+    public List<DatasetConfiguration> getDatasetDetailsForExperiment(ExperimentType type) {
+        return new ArrayList<>(datasets.getAdaptersForExperiment(type));
     }
 
     public AnnotatorConfiguration getAnnotatorConfig(String name, ExperimentType type, String questionLanguage) {
@@ -161,7 +166,7 @@ public class AdapterManager {
                 name = name.substring(AF_PREFIX.length(), brackets[0]) + UPLOADED_AF_SUFFIX;
                 try {
                     return new InstanceListBasedConfigurationImpl(name, false,
-                            new DatasetConfigurationImpl(datasetName, false,
+                            new DatasetConfigurationImpl(datasetName, DatasetsConfig.DEFAULT_DATASET_GROUP, false,
                                     FileBasedQALDDataset.class.getConstructor(String.class, String.class, String.class, String.class),
                                     new Object[] { datasetName, datasetName.replace(AFDS_PREFIX, ""), uploadedFilesPath + fileName, questionLanguage},
                                     ExperimentType.QA, null, null),
