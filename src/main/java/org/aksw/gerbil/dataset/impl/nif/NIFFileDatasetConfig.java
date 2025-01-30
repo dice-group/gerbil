@@ -27,9 +27,9 @@ public class NIFFileDatasetConfig extends AbstractDatasetConfiguration {
 
     private String file;
 
-    public NIFFileDatasetConfig(String name, String file, boolean couldBeCached, ExperimentType applicableForExperiment,
+    public NIFFileDatasetConfig(String name, String datasetGroup, String file, boolean couldBeCached, ExperimentType applicableForExperiment,
             EntityCheckerManager entityCheckerManager, SameAsRetriever globalRetriever) {
-        super(name, couldBeCached, applicableForExperiment, entityCheckerManager, globalRetriever);
+        super(name, datasetGroup, couldBeCached, applicableForExperiment, entityCheckerManager, globalRetriever);
         this.file = file;
     }
 
