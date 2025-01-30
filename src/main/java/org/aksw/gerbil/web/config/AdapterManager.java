@@ -16,6 +16,7 @@
  */
 package org.aksw.gerbil.web.config;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -65,6 +66,10 @@ public class AdapterManager {
 
     public Set<String> getDatasetNamesForExperiment(ExperimentType type) {
         return datasets.getAdapterNamesForExperiment(type);
+    }
+
+    public List<DatasetConfiguration> getDatasetDetailsForExperiment(ExperimentType type) {
+        return new ArrayList<>(datasets.getAdaptersForExperiment(type));
     }
 
     public AnnotatorConfiguration getAnnotatorConfig(String name, ExperimentType type) {

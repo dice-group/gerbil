@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.aksw.gerbil.datatypes.AdapterConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentType;
 

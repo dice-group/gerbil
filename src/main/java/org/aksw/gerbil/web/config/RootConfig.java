@@ -80,11 +80,11 @@ import org.apache.jena.rdf.model.ModelFactory;
  * <code>org.aksw.gerbil.web.config</code> searching for other
  * {@link Configuration}s</li>
  * </ul>
- * 
+ *
  * @author Michael R&ouml;der (roeder@informatik.uni-leipzig.de)
  * @author Lars Wesemann
  * @author Didier Cherix
- * 
+ *
  */
 @org.springframework.context.annotation.Configuration
 @ComponentScan(basePackages = "org.aksw.gerbil.web.config")

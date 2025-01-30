@@ -53,6 +53,7 @@
     </repositories>
 
     <dependencies>
+
         <!-- NIF transfer lib -->
         <dependency>
             <groupId>org.aksw</groupId>
@@ -264,6 +265,7 @@
 
 
         <!-- SPRING -->
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>

@@ -18,11 +18,7 @@ package org.aksw.gerbil.web;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +29,7 @@ import org.aksw.gerbil.Experimenter;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.dataid.DataIDGenerator;
+import org.aksw.gerbil.dataset.DatasetConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskStatus;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -306,18 +303,22 @@ public class MainController {
     }
 
     @RequestMapping("/datasets")
-    public @ResponseBody List<String> datasets(@RequestParam(value = "experimentType") String experimentType) {
+    public @ResponseBody ResponseEntity<List<DatasetConfiguration>> datasets(@RequestParam(value = "experimentType") String experimentType) {
         ExperimentType type = null;
+        List<DatasetConfiguration> response = new ArrayList<>();
         try {
             type = ExperimentType.valueOf(experimentType);
         } catch (IllegalArgumentException e) {
             LOGGER.warn("Got a request containing a wrong ExperimentType (\"{}\"). Ignoring it.", experimentType);
-            return null;
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        Set<String> datasets = adapterManager.getDatasetNamesForExperiment(type);
-        List<String> list = Lists.newArrayList(datasets);
-        Collections.sort(list);
-        return list;
+        try {
+            response = adapterManager.getDatasetDetailsForExperiment(type);
+        } catch (Exception e) {
+            LOGGER.error("Error fetching datasets for ExperimentType: {}", experimentType, e);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
