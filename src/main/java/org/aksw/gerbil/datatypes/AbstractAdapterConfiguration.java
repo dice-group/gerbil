@@ -22,14 +22,30 @@ public abstract class AbstractAdapterConfiguration implements AdapterConfigurati
 
     private static final ExperimentTypeComparator EXP_TYPE_COMPARATOR = new ExperimentTypeComparator();
 
+    protected String group;
     protected String name;
     protected boolean couldBeCached;
     protected ExperimentType applicableForExperiment;
 
-    public AbstractAdapterConfiguration(String name, boolean couldBeCached, ExperimentType applicableForExperiment) {
+    public AbstractAdapterConfiguration(
+            String name,
+            String group,
+            boolean couldBeCached,
+            ExperimentType applicableForExperiment
+    ) {
         this.name = name;
         this.couldBeCached = couldBeCached;
         this.applicableForExperiment = applicableForExperiment;
+        this.setGroup(group);
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    @Override
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     @Override
