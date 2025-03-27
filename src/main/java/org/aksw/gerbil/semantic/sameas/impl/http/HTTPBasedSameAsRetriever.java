@@ -45,7 +45,9 @@ public class HTTPBasedSameAsRetriever extends AbstractHttpRequestEmitter impleme
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HTTPBasedSameAsRetriever.class);
 
-    private static final String REQUEST_ACCEPT_HEADER_VALUE = RDFLanguages.RDFXML.getContentType().getContentType();
+    private static final String REQUEST_ACCEPT_HEADER_VALUE =
+            "application/rdf+xml, text/turtle, application/ld+json, application/n-triples, application/n-quads;q=0.9";
+
 
     @Override
     public Set<String> retrieveSameURIs(String uri) {
