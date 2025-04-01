@@ -41,6 +41,60 @@
 	overflow: hidden;
 }
 
+.custom-multiselect-dropdown {
+	position: relative;
+	width: 100%;
+}
+
+.dropdown-btn {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	background-color: #f9f9f9;
+	cursor: pointer;
+	text-align: left;
+}
+
+.dropdown-list {
+	position: absolute;
+	width: 100%;
+	max-height: 200px;
+	overflow-y: auto;
+	border: 1px solid #ccc;
+	background-color: #fff;
+	display: none;
+	z-index: 10;
+}
+
+.dropdown-list.active {
+	display: block;
+}
+
+.dropdown-list .optgroup {
+	font-weight: bold;
+	padding: 8px;
+	cursor: pointer;
+}
+
+.dropdown-list .optgroup-options {
+	display: none;
+	padding-left: 20px;
+}
+
+.dropdown-list .optgroup:hover .optgroup-options {
+	display: block;
+}
+
+.dropdown-list label {
+	display: block;
+	padding: 5px;
+	cursor: pointer;
+}
+
+.dropdown-list input[type="checkbox"] {
+	margin-right: 5px;
+}
+
 .fileinput-button input {
 	position: absolute;
 	top: 0;
@@ -134,9 +188,9 @@
 			<div class="form-group">
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
-						<label class="control-label" for="datasets">Dataset</label>					
-					<a title="You can 
-1) select multiple of the datasets from the drop-down menu or 
+						<label class="control-label" for="datasets">Dataset</label>
+					<a title="You can
+1) select multiple of the datasets from the drop-down menu or
 2) upload a QALD-formatted JSON or XML containing your custom benchmark data.
 
 (Beta) Further on you can change the language which should be tested (default: en)">
@@ -144,8 +198,9 @@
 					</a>
 				</div>
 				<div class="col-md-4">
-					<select id="dataset" multiple="multiple" style="display: none;">
-					</select>
+					<div id="multiselect-container" class="custom-multiselect-dropdown"></div>
+
+
 					<hr />
 					<div>
 						<span> Or upload another dataset:</span>
@@ -405,8 +460,7 @@ F.e. if you want to use French, type in: fr">
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
-				addDataToSelect('#dataset', data);
-				addDataToSelect('#answerFileDataset', data);
+				createCustomMultiselect(data)
 			});
 		}
 		// This function can be used to adapt the GUI for the chosen experiment type
@@ -424,11 +478,162 @@ F.e. if you want to use French, type in: fr">
 				$("#uploadAnswers").hide();
 			}
 		}
+		function createCustomMultiselect(data) {
+			const container = document.getElementById('multiselect-container');
+			while (container.firstChild) {
+				container.removeChild(container.firstChild);
+			}
+
+			const button = document.createElement('div');
+			button.className = 'dropdown-btn';
+			button.textContent = 'Select Options'; // Default text
+			container.appendChild(button);
+
+			const dropdownList = document.createElement('div');
+			dropdownList.className = 'dropdown-list';
+
+			const groupedData = {}; // Group datasets by their group property
+			data.forEach(item => {
+				const group = item.group || item.expType || 'Default'; // Use expType or group for grouping
+				if (!groupedData[group]) {
+					groupedData[group] = [];
+				}
+				groupedData[group].push(item);
+			});
+
+			const sortedGroups = Object.keys(groupedData).sort()
+
+			sortedGroups.forEach(group => {
+				const optgroupDiv = document.createElement('div');
+				optgroupDiv.className = 'optgroup';
+				optgroupDiv.textContent = group;
+				const optionsContainer = document.createElement('div');
+				optionsContainer.className = 'optgroup-options';
+
+				groupedData[group].forEach(item => {
+					const label = document.createElement('label');
+					const checkbox = document.createElement('input');
+					checkbox.type = 'checkbox';
+					checkbox.value = item.name;
+
+					// Set initial checked state from item if necessary
+					checkbox.checked = item.selected || false;
+
+					// Event listener for checkbox click
+					checkbox.addEventListener('change', () => {
+						item.selected = checkbox.checked;
+						updateButtonText(button, data);
+					});
+
+					label.appendChild(checkbox);
+					label.appendChild(document.createTextNode(item.name));
+					optionsContainer.appendChild(label);
+				});
+
+				optgroupDiv.appendChild(optionsContainer);
+				dropdownList.appendChild(optgroupDiv);
+			});
+
+			container.appendChild(dropdownList);
+
+			button.addEventListener('click', () => {
+				dropdownList.classList.toggle('active');
+			});
+
+			document.addEventListener('click', (event) => {
+				if (!container.contains(event.target)) {
+					dropdownList.classList.remove('active');
+				}
+			});
+		}
+
+		function createCustomMultiselectOLD(data) {
+			const container = document.getElementById('multiselect-container');
+			while (container.firstChild) {
+				container.removeChild(container.firstChild);
+			}
+
+			const button = document.createElement('div');
+			button.className = 'dropdown-btn';
+			button.textContent = 'Select Options';
+			container.appendChild(button);
+
+			const dropdownList = document.createElement('div');
+			dropdownList.className = 'dropdown-list';
+
+			const groupedData = {};
+			data.forEach(item => {
+				const group = item.group || 'Default';
+				if (!groupedData[group]) {
+					groupedData[group] = [];
+				}
+				groupedData[group].push(item);
+			});
+
+			console.log("aaakahs JS")
+			console.log(groupedData)
+
+			Object.keys(groupedData).forEach(group => {
+				const optgroupDiv = document.createElement('div');
+				optgroupDiv.className = 'optgroup';
+				optgroupDiv.textContent = group;
+				const optionsContainer = document.createElement('div');
+				optionsContainer.className = 'optgroup-options';
+
+				groupedData[group].forEach(item => {
+					const label = document.createElement('label');
+					const checkbox = document.createElement('input');
+					checkbox.type = 'checkbox';
+					checkbox.value = item.name;
+
+					checkbox.checked = item.selected || false;
+
+					checkbox.addEventListener('change', () => {
+						item.selected = checkbox.checked;
+						updateButtonText(button, data);
+					});
+
+					label.appendChild(checkbox);
+					label.appendChild(document.createTextNode(item.name));
+					optionsContainer.appendChild(label);
+				});
+
+				optgroupDiv.appendChild(optionsContainer);
+				dropdownList.appendChild(optgroupDiv);
+			});
+
+			container.appendChild(dropdownList);
+
+			button.addEventListener('click', () => {
+				dropdownList.classList.toggle('active');
+			});
+
+			document.addEventListener('click', (event) => {
+				if (!container.contains(event.target)) {
+					dropdownList.classList.remove('active');
+				}
+			});
+		}
+
+		function updateButtonText(button, data) {
+			const selectedItems = data.filter(item => item.selected);
+			if (selectedItems.length > 0) {
+				const selectedNames = selectedItems.map(item => item.name).join(', ');
+				button.textContent = selectedNames;
+			} else {
+				button.textContent = 'Select Options';
+			}
+		}
+
 		function checkExperimentConfiguration() {
+			var dataset = [];
+			const container = document.getElementById('multiselect-container');
+			container.querySelectorAll('.dropdown-list input[type="checkbox"]:checked').forEach((checkbox) => {
+				dataset.push(checkbox.value);
+			});
 			var numberOfSystems = $('#annotator option:selected').length
 					+ $("#annotatorList li span.li_content").length;
-			var numberOfDataset = $('#dataset option:selected').length
-					+ $("#datasetList li span.li_content").length;
+			var numberOfDataset = dataset.length;
 			var numberOfAnswerFiles = $("#answerFileList li span.li_content").length;
 
 			//check whether there is at least one dataset and at least one annotator or at least one answerFile
@@ -521,6 +726,10 @@ F.e. if you want to use French, type in: fr">
 			//fetch list of selected and manually added datasets
 			var datasetMultiselect = $('#dataset option:selected');
 			var dataset = [];
+			const container = document.getElementById('multiselect-container');
+			container.querySelectorAll('.dropdown-list input[type="checkbox"]:checked').forEach((checkbox) => {
+				dataset.push(checkbox.value);
+			});
 			addToList(dataset, datasetMultiselect);
 			addToList(dataset, $("#datasetList li span.li_content"), "NIFDS_");
 			var qLang = $("#qLang").val();
@@ -584,7 +793,7 @@ F.e. if you want to use French, type in: fr">
 			$('#annotator').change(function() {
 				checkExperimentConfiguration();
 			});
-			$('#dataset').change(function() {
+			$('#multiselect-container').change(function() {
 				checkExperimentConfiguration();
 			});
 			$('#disclaimerCheckbox').change(function() {
