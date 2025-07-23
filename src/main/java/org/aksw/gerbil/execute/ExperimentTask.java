@@ -62,6 +62,7 @@ import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.AnswersLogger;
 import org.aksw.gerbil.utils.AnswersLoggerContainer;
+import org.aksw.gerbil.web.ExplanationService;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -86,14 +87,16 @@ public class ExperimentTask implements Task {
     private ExperimentTaskState taskState = null;
     private AnnotatorOutputWriter annotatorOutputWriter = null;
     private SameAsRetriever globalRetriever = null;
+    private ExplanationService explanationService = null;
 
     public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever,
-            org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration) {
+            org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration, ExplanationService explanationService) {
         this.experimentDAO = experimentDAO;
         this.configuration = configuration;
         this.experimentTaskId = experimentTaskId;
         this.evFactory = evFactory;
         this.globalRetriever = globalRetriever;
+        this.explanationService = explanationService;
     }
 
     @Override
@@ -166,7 +169,9 @@ public class ExperimentTask implements Task {
             ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[6],
                     ExperimentDAO.TASK_FINISHED, 0);
             transformResults(result, expResult);
-
+            if(expResult.aggregatedContingencyMetricsReport.getValue().stream().count()>0){
+                explanationService.executeFilterF1Data(experimentTaskId+"", dataset.getName(), expResult.aggregatedContingencyMetricsReport.getValue(), experimentDAO);
+            }
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
             LOGGER.info("Task Finished " + configuration.toString());

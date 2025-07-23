@@ -25,6 +25,7 @@ import org.aksw.gerbil.execute.AnnotatorOutputWriter;
 import org.aksw.gerbil.execute.ExperimentTask;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.utils.ExpTaskConfigComparator;
+import org.aksw.gerbil.web.ExplanationService;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ public class Experimenter implements Runnable {
     private EvaluatorFactory evFactory;
     private AnnotatorOutputWriter annotatorOutputWriter = null;
     private SameAsRetriever globalRetriever = null;
+    private ExplanationService explanationService = null;
 
     /**
      * Constructor
@@ -58,13 +60,14 @@ public class Experimenter implements Runnable {
     }
 
     public Experimenter(Overseer overseer, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever, EvaluatorFactory evFactory,
-             ExperimentTaskConfiguration configs[], String experimentId) {
+             ExperimentTaskConfiguration configs[], String experimentId, ExplanationService explanationService) {
         this.configs = configs;
         this.experimentId = experimentId;
         this.experimentDAO = experimentDAO;
         this.overseer = overseer;
         this.evFactory = evFactory;
         this.globalRetriever = globalRetriever;
+        this.explanationService = explanationService;
     }
 
     @Override
@@ -86,7 +89,7 @@ public class Experimenter implements Runnable {
                 if (taskId != ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED) {
                     // Create an executer which performs the task
                     ExperimentTask task = new ExperimentTask(taskId, experimentDAO, globalRetriever, evFactory,
-                            configs[i]);
+                            configs[i], explanationService);
                     task.setAnnotatorOutputWriter(annotatorOutputWriter);
                     overseer.startTask(task);
                 }

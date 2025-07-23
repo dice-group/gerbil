@@ -67,6 +67,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * This is the root {@link Configuration} class that is processed by the Spring
@@ -88,6 +89,7 @@ import org.springframework.core.io.Resource;
  */
 @SuppressWarnings("deprecation")
 @org.springframework.context.annotation.Configuration
+@EnableScheduling
 @ComponentScan(basePackages = "org.aksw.gerbil.web.config")
 @PropertySource("gerbil.properties")
 public class RootConfig {
