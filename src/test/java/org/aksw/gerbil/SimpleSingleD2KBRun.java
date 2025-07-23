@@ -53,6 +53,7 @@ import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.aksw.gerbil.test.EntityCheckerManagerSingleton4Tests;
 import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
 import org.aksw.gerbil.transfer.nif.MeaningSpan;
+import org.aksw.gerbil.web.ExplanationService;
 import org.aksw.gerbil.web.config.AdapterManager;
 import org.aksw.gerbil.web.config.AnnotatorsConfig;
 import org.aksw.gerbil.web.config.DatasetsConfig;
@@ -117,7 +118,7 @@ public class SimpleSingleD2KBRun extends EvaluatorFactory implements TaskObserve
                 new ExperimentTaskConfiguration(annotatorConfig, datasetConfig, EXPERIMENT_TYPE, MATCHING) };
 
         Experimenter experimenter = new Experimenter(overseer, new SimpleLoggingDAO4Debugging(), retriever, this,
-                taskConfigs, "SingleRunTest");
+                taskConfigs, "SingleRunTest", new ExplanationService());
         experimenter.run();
 
         mutex.acquire();
