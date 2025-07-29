@@ -44,6 +44,7 @@ import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.aksw.gerbil.transfer.nif.data.DocumentImpl;
 import org.aksw.gerbil.transfer.nif.data.NamedEntity;
+import org.aksw.gerbil.web.ExplanationService;
 import org.aksw.simba.topicmodeling.concurrent.overseers.Overseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.simple.SimpleOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
@@ -182,7 +183,7 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         Reporter reporter = new LogReporter(overseer);
         Experimenter experimenter = new Experimenter(overseer, experimentDAO,
                 SameAsRetrieverSingleton4Tests.getInstance(), new EvaluatorFactory(URI_KB_CLASSIFIER), configs,
-                EXPERIMENT_ID);
+                EXPERIMENT_ID, new ExplanationService());
         experimenter.run();
 
         // Try to wait for the tasks to finish
@@ -226,7 +227,7 @@ public class HttpBasedAnnotatorTest implements TaskObserver {
         Reporter reporter = new LogReporter(overseer);
         Experimenter experimenter = new Experimenter(overseer, experimentDAO,
                 SameAsRetrieverSingleton4Tests.getInstance(), new EvaluatorFactory(URI_KB_CLASSIFIER), configs,
-                EXPERIMENT_ID);
+                EXPERIMENT_ID, new ExplanationService());
         experimenter.run();
 
         // Try to wait for the tasks to finish

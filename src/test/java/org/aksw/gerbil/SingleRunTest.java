@@ -32,6 +32,7 @@ import org.aksw.gerbil.semantic.sameas.SameAsRetrieverDecorator;
 import org.aksw.gerbil.semantic.sameas.impl.MultipleSameAsRetriever;
 import org.aksw.gerbil.test.EntityCheckerManagerSingleton4Tests;
 import org.aksw.gerbil.test.SameAsRetrieverSingleton4Tests;
+import org.aksw.gerbil.web.ExplanationService;
 import org.aksw.gerbil.web.config.AdapterManager;
 import org.aksw.gerbil.web.config.AnnotatorsConfig;
 import org.aksw.gerbil.web.config.DatasetsConfig;
@@ -110,7 +111,7 @@ public class SingleRunTest implements TaskObserver {
                     new ExperimentTaskConfiguration(annotatorConfig, datasetConfig, QUESTION_LANGUAGE, EXPERIMENT_TYPE, MATCHING) };
 
             Experimenter experimenter = new Experimenter(overseer, new SimpleLoggingDAO4Debugging(), SAME_AS_RETRIEVER,
-                    new EvaluatorFactory(), taskConfigs, "SingleRunTest");
+                    new EvaluatorFactory(), taskConfigs, "SingleRunTest", new ExplanationService());
             experimenter.run();
 
             mutex.acquire();

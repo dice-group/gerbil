@@ -100,6 +100,9 @@ public class MainController {
     @Autowired
     private AdapterManager adapterManager;
 
+    @Autowired
+    private ExplanationService explanationService;
+
     // DataID URL is generated automatically in the experiment method?
     private DataIDGenerator dataIdGenerator;
 
@@ -197,7 +200,7 @@ public class MainController {
         }
 
         String experimentId = IDCreator.getInstance().createID();
-        Experimenter exp = new Experimenter(overseer, dao, globalRetriever, evFactory, configs, experimentId);
+        Experimenter exp = new Experimenter(overseer, dao, globalRetriever, evFactory, configs, experimentId, explanationService);
         exp.setAnnotatorOutputWriter(annotatorOutputWriter);
         exp.run();
 
@@ -230,6 +233,38 @@ public class MainController {
                 ResultNameToIdMapping.getInstance().getNamesOfResultIds(additionalResultIds));
         model.addObject("additionalResults", additionalResults);
         return model;
+    }
+
+    @RequestMapping("/explanation-url-dataset")
+    public @ResponseBody String getExplanationUrlByDataset(
+            @RequestParam("dataset") String experimentId) {
+        String taskID = dao.getTaskId(experimentId)+"";
+
+        Map<String, Object> result = dao.getDatasetDetails(taskID);
+
+        if (result == null || !result.containsKey("explanationUrl")) {
+            return "Explanation URL not found for: " + experimentId;
+        }
+
+        return result.get("explanationUrl").toString();
+    }
+
+    @RequestMapping("/explanation-details")
+    public @ResponseBody Map<String, Object> getExplanationDetailsByDataset(@RequestParam("dataset") String experimentId) {
+        String taskID = dao.getTaskId(experimentId)+"";
+        Map<String, Object> result = dao.getDatasetDetails(taskID);
+
+        if (result == null || result.isEmpty()) {
+            Map<String, Object> errorMap = new HashMap<String, Object>();
+            errorMap.put("error", "No explanation data found for: " + experimentId);
+            return errorMap;
+        }
+
+        HashMap<String, Object> explanationMap = new HashMap();
+        explanationMap.put("llm_result", result.get("llm_result"));
+        explanationMap.put("prunecel_result", result.get("prunecl_result"));
+
+        return explanationMap;
     }
 
     @RequestMapping("/exptypes")

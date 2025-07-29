@@ -22,10 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.sql.DataSource;
 
@@ -40,6 +37,7 @@ import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -163,7 +161,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     @Override
     public int createTask(String annotatorName, String datasetName, String language, String experimentType,
-            String matching, String experimentId) {
+                          String matching, String experimentId) {
         MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, language, experimentType,
                 matching);
         params.addValue("state", ExperimentDAO.TASK_STARTED_BUT_NOT_FINISHED_YET);
@@ -189,7 +187,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
 
     private MapSqlParameterSource createTaskParameters(String annotatorName, String datasetName, String language,
-            String experimentType, String matching) {
+                                                       String experimentType, String matching) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("annotatorName", annotatorName);
         parameters.addValue("datasetName", datasetName);
@@ -268,7 +266,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     @Override
     protected int getCachedExperimentTaskId(String annotatorName, String datasetName, String language,
-            String experimentType, String matching) {
+                                            String experimentType, String matching) {
         MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, language, experimentType,
                 matching);
         java.util.Date today = new java.util.Date();
@@ -314,13 +312,13 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         params.addValue("experimentType", experimentType);
         params.addValue("matching", matching);
         return this.template.query(GET_LATEST_EXPERIMENT_TASKS, params,
-                new StringArrayRowMapper(new int[] { 1, 2, 3 }));
+                new StringArrayRowMapper(new int[]{1, 2, 3}));
     }
 
     @Deprecated
     @Override
     protected ExperimentTaskResult getLatestExperimentTaskResult(String experimentType, String matching,
-            String annotatorName, String datasetName, String language) {
+                                                                 String annotatorName, String datasetName, String language) {
         MapSqlParameterSource params = createTaskParameters(annotatorName, datasetName, language, experimentType,
                 matching);
         params.addValue("unfinishedState", TASK_STARTED_BUT_NOT_FINISHED_YET);
@@ -364,7 +362,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     @Override
     public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching,
-            String annotatorNames[], String datasetNames[], String languages[]) {
+                                                                    String annotatorNames[], String datasetNames[], String languages[]) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("experimentType", experimentType);
         parameters.addValue("matching", matching);
@@ -462,7 +460,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     @Override
     public ExperimentTaskResult getBestResult(String experimentType, String annotator, String dataset,
-            String language) {
+                                              String language) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("experimentType", experimentType);
         parameters.addValue("annotator", annotator);
@@ -478,7 +476,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     @Override
     public ExperimentTaskResult getBestResult(String experimentType, String annotator, String dataset, String language,
-            Timestamp challengeDate) {
+                                              Timestamp challengeDate) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("experimentType", experimentType);
         parameters.addValue("annotator", annotator);
@@ -507,6 +505,73 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     public Integer countExperiments() {
         List<Integer> result = this.template.query(GET_EXP_COUNT, new IntegerRowMapper());
         return result.get(0);
+    }
+
+    @Override
+    public void saveApiResponse(String experimentId, int time, String positive, String negative, String explanationUrl) {
+        try {
+
+            String checkSql = "SELECT COUNT(*) FROM ExplanationRequests WHERE \"experimentId\" = :experimentId";
+            MapSqlParameterSource checkParams = new MapSqlParameterSource();
+            checkParams.addValue("experimentId", experimentId);
+
+            Integer count = this.template.queryForObject(checkSql, checkParams, Integer.class);
+
+            if (count != null && count > 0) {
+                return;
+            }
+
+
+            String sql = "INSERT INTO ExplanationRequests (\"experimentId\", time_taken, positive, negative, \"explanationUrl\", status) " +
+                    "VALUES (:experimentId, :timeTaken, :positive, :negative, :explanationUrl, 'PROCESSING')";
+
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("experimentId", experimentId);
+            params.addValue("timeTaken", time);
+            params.addValue("positive", positive);
+            params.addValue("negative", negative);
+            params.addValue("explanationUrl", explanationUrl);
+            this.template.update(sql, params);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while saving API response", e);
+        }
+    }
+
+    @Override
+    public void updateResult(String experimentId, String explanationUrl, String pruneclResult, String llmResult) {
+        try {
+            String sql = "UPDATE ExplanationRequests " +
+                    "SET \"llm_result\" = :llmResult, \"prunecl_result\" = :pruneclResult, status = 'COMPLETED' " +
+                    "WHERE \"explanationUrl\" = :explanationUrl AND \"experimentId\" = :experimentId";
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("llmResult", llmResult);
+            params.addValue("pruneclResult", pruneclResult);
+            params.addValue("explanationUrl", explanationUrl);
+            params.addValue("experimentId", experimentId);
+            int rowsUpdated = this.template.update(sql, params);
+            if (rowsUpdated > 0) {
+                LOGGER.info("Successfully updated results for URL: {}", explanationUrl);
+            } else {
+                LOGGER.warn("No record found for URL: {}", explanationUrl);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Map<String, Object> getDatasetDetails(String experimentId) {
+        String sql = "SELECT * FROM ExplanationRequests WHERE \"experimentId\" = :experimentId";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("experimentId", experimentId);
+
+        try {
+            return this.template.queryForMap(sql, params);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.warn("No dataset found for: {}", experimentId);
+            return null;
+        }
     }
 
     public void insertContingencyMetricsReport(int taskId,
@@ -544,4 +609,23 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
             }
         }
     }
+
+    @Override
+    public int getTaskId(String experimentId) {
+        String sql = "SELECT taskId FROM Experiments WHERE id = :experimentId LIMIT 1";
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("experimentId", experimentId);
+
+        try {
+            return this.template.queryForObject(sql, params, Integer.class);
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.warn("No taskId found for experimentId: {}", experimentId);
+            return -1;
+        } catch (Exception e) {
+            LOGGER.error("Error fetching taskId for experimentId: {}", experimentId, e);
+            throw new RuntimeException("Error fetching taskId", e);
+        }
+    }
+
 }
