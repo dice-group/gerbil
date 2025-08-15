@@ -1,0 +1,113 @@
+package org.aksw.gerbil.tools;
+
+import org.aksw.gerbil.annotator.TestAnnotatorConfiguration;
+import org.aksw.gerbil.database.SimpleLoggingResultStoringDAO4Debugging;
+import org.aksw.gerbil.dataset.InstanceListBasedDataset;
+import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
+import org.aksw.gerbil.datatypes.ExperimentType;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.execute.AbstractExperimentTaskTest;
+import org.aksw.gerbil.matching.Matching;
+import org.junit.Ignore;
+
+
+import org.aksw.gerbil.dataset.impl.erd.ERDDataset2;
+import org.aksw.gerbil.io.nif.NIFParser;
+import org.aksw.gerbil.io.nif.NIFWriter;
+import org.aksw.gerbil.io.nif.impl.TurtleNIFParser;
+import org.aksw.gerbil.io.nif.impl.TurtleNIFWriter;
+import org.aksw.gerbil.transfer.nif.Document;
+
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+
+@Ignore
+public class Erd2NifTransformation extends AbstractExperimentTaskTest {
+
+    private static final String ERD_QUERY_PATH =
+        "gerbil_data/datasets/erd2014/Trec_beta.query.txt";
+    private static final String ERD_ANNOT_PATH =
+        "gerbil_data/datasets/erd2014/Trec_beta.annotation.txt";
+
+    private static final String OUTPUT_DIR =
+        "gerbil_data/datasets/erd2014";
+    private static final String OUTPUT_FILE =
+        OUTPUT_DIR + "/erd2014.ttl";
+
+
+    public static void main(String[] args) throws Exception {
+        new Erd2NifTransformation().run();
+    }
+
+    public void run() throws Exception {
+        // 1) Load ERD and let it do its built-in Freebase→DBpedia lookup.
+        System.out.println("Loading ERD…");
+        ERDDataset2 dataset = new ERDDataset2(ERD_QUERY_PATH, ERD_ANNOT_PATH);
+        dataset.init(); // performs the lookup and fills instances
+        System.out.println(dataset.getInstances());
+        System.out.println("Loaded instances: " + dataset.getInstances().size());
+
+        // 2) Write NIF/Turtle to disk.
+        System.out.println("Writing NIF (Turtle) …");
+        NIFWriter writer = new TurtleNIFWriter();
+        String nifString = writer.writeNIF(dataset.getInstances());
+        ensureParentDir();
+
+        try (FileOutputStream fos = new FileOutputStream(OUTPUT_FILE)) {
+            fos.write(nifString.getBytes(StandardCharsets.UTF_8));
+        }
+        System.out.println("Wrote: " + new File(OUTPUT_FILE).getAbsolutePath());
+
+        // 3) Parse back + validate with an A2KB experiment (expect perfect match).
+        System.out.println("Parsing NIF back and validating…");
+        NIFParser parser = new TurtleNIFParser();
+        List<Document> nifDocuments = parser.parseNIF(nifString);
+
+        validateAgainstOriginal(dataset, nifDocuments);
+
+        System.out.println("✅ Validation passed. You can now commit the NIF file.");
+
+    }
+    private void validateAgainstOriginal(ERDDataset2 original, List<Document> nifDocuments){
+        // Annotator returns exactly what the NIF says (so "system output" = NIF docs).
+        TestAnnotatorConfiguration annotatorCfg =
+            new TestAnnotatorConfiguration(nifDocuments, ExperimentType.A2KB);
+
+        // Gold standard is the original ERD instances (without re-running preprocessing).
+        InstanceListBasedDataset goldDataset =
+            new InstanceListBasedDataset(original.getInstances(), ExperimentType.A2KB);
+
+        ExperimentTaskConfiguration config = new ExperimentTaskConfiguration(
+            annotatorCfg,
+            goldDataset,
+            ExperimentType.A2KB,
+            Matching.STRONG_ANNOTATION_MATCH
+        );
+
+        int experimentTaskId = 1;
+        double[] expected = new double[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0 }; // P/R/F1/…+time
+
+        SimpleLoggingResultStoringDAO4Debugging dao = new SimpleLoggingResultStoringDAO4Debugging();
+
+        // runTest is provided by AbstractExperimentTaskTest
+        runTest(
+            experimentTaskId,
+            dao,
+            new EvaluatorFactory(),
+            config,
+            new F1MeasureTestingObserver(this, experimentTaskId, dao, expected)
+        );
+    }
+
+    private void ensureParentDir() {
+        File f = new File(Erd2NifTransformation.OUTPUT_DIR);
+        if (!f.exists() && !f.mkdirs()) {
+            throw new RuntimeException("Could not create output directory: " + Erd2NifTransformation.OUTPUT_DIR);
+        }
+
+    }
+}
