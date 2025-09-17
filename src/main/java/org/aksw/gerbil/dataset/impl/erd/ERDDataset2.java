@@ -23,13 +23,19 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 
+/**
+ * @deprecated Replaced by the NIF-based dataset definition in datasets.properties.
+ * The original ERD implementation was slow.
+ * Use the NIF-based dataset instead.
+ */
+@Deprecated
 public class ERDDataset2 extends AbstractDataset implements
 		InitializableDataset {
 
 	private List<Document> documents;
 	private String annotateFile;
 	private String textFile;
-	
+
     private String queryTemp = "PREFIX owl:<http://www.w3.org/2002/07/owl#> PREFIX freebase:<http://rdf.freebase.com/ns/>  SELECT ?s WHERE {?s owl:sameAs freebase:%%v%%}";
 	private static final String DBPEDIA_SERVICE = "http://dbpedia.org/sparql";
 
@@ -85,7 +91,7 @@ public class ERDDataset2 extends AbstractDataset implements
 		try (BufferedReader breader = new BufferedReader(new InputStreamReader(
 				new FileInputStream(annFile), Charset.forName("UTF-8")))) {
 			String line;
-			
+
 			while ((line = breader.readLine()) != null) {
 				if(line.isEmpty()){
 					continue;
@@ -96,14 +102,14 @@ public class ERDDataset2 extends AbstractDataset implements
 				if(searchID == annoID){
 					int start = text[1].indexOf(annotation[3]);
 					int length = annotation[3].length();
-					
+
 					//FIXME time consuming!
                     String freebaseID = annotation[2].substring(1, annotation[2].length()).replace("/",".");
                     Query query = QueryFactory.create(queryTemp.replace("%%v%%", freebaseID));
                     QueryExecution qexec = QueryExecutionFactory.createServiceRequest(DBPEDIA_SERVICE, query);
                     String uri =  qexec.execSelect().next().getResource("s").getURI();
-                    
-					
+
+
 					markings.add(new NamedEntity(start, length, uri));
 				}
 				else if(annoID > searchID){
@@ -122,5 +128,5 @@ public class ERDDataset2 extends AbstractDataset implements
 	private int getTrecID(String trec){
 		return Integer.valueOf(trec.replace("TREC-", ""));
 	}
-	
+
 }
