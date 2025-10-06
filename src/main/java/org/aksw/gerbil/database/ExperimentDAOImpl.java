@@ -97,6 +97,11 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String INSERT_ADDITIONAL_BLOB_RESULTS = "INSERT INTO ExperimentTasks_AdditionalBlobResults (taskId, resultId,  resultValue) VALUES (:taskId, :resultId, :resultValue)";
     private final static String GET_ADDITIONAL_BLOB_RESULTS = "SELECT resultId, resultValue FROM ExperimentTasks_AdditionalBlobResults WHERE taskId=:taskId";
 
+
+    private static final String INSERT_EXPLANATION_URL =
+            "INSERT INTO ExperimentTasks_Explanations (task_id, url) VALUES (:taskId, :url)";
+    private static final String UPDATE_EXPLANATION = "UPDATE ExperimentTasks_Explanations SET prune_result = :prune, llm_result = :llm WHERE task_id = :taskId AND url = :url";
+
     private final NamedParameterJdbcTemplate template;
 
     public ExperimentDAOImpl(DataSource dataSource) {
@@ -226,6 +231,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                             result.additionalResults.values[i]);
                 }
             }
+        }
+        if (result.getExplanationURL() != null) {
+            insertExplanationURL(result.getExplanationURL(), result.getExperimentId());
         }
         if (result.hasSubTasks()) {
             for (ExperimentTaskResult subTask : result.getSubTasks()) {
@@ -403,6 +411,35 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         addSubTaskRelation(experimentTaskId, subTask.idInDb);
     }
 
+    protected void insertExplanationURL(String url, String experimentId) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("url", url);
+        parameters.addValue("taskId", experimentId);
+        this.template.update(INSERT_EXPLANATION_URL, parameters);
+    }
+
+    @Override
+    public void setUpdateExplanation(int taskId, String url, String llmExplanation, String pruneExplanation) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("taskId", taskId);
+        params.addValue("url", url);
+        params.addValue("prune", pruneExplanation);
+        params.addValue("llm", llmExplanation);
+        this.template.update(UPDATE_EXPLANATION, params);
+    }
+
+    @Override
+    public List<PendingExplanationTask> getPendingExplanations() {
+        String sql =
+                "SELECT task_id, url " +
+                        "FROM ExperimentTasks_Explanations " +
+                        "WHERE (prune_result IS NULL OR llm_result IS NULL) AND url IS NOT NULL";
+
+        return template.query(sql, (rs, rowNum) ->
+                new PendingExplanationTask(rs.getInt("task_id"), rs.getString("url"))
+        );
+    }
+
     protected void addSubTaskRelation(int taskId, int subTaskId) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("taskId", taskId);
@@ -505,58 +542,6 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     public Integer countExperiments() {
         List<Integer> result = this.template.query(GET_EXP_COUNT, new IntegerRowMapper());
         return result.get(0);
-    }
-
-    @Override
-    public void saveApiResponse(String experimentId, int time, String positive, String negative, String explanationUrl) {
-        try {
-
-            String checkSql = "SELECT COUNT(*) FROM ExplanationRequests WHERE \"experimentId\" = :experimentId";
-            MapSqlParameterSource checkParams = new MapSqlParameterSource();
-            checkParams.addValue("experimentId", experimentId);
-
-            Integer count = this.template.queryForObject(checkSql, checkParams, Integer.class);
-
-            if (count != null && count > 0) {
-                return;
-            }
-
-
-            String sql = "INSERT INTO ExplanationRequests (\"experimentId\", time_taken, positive, negative, \"explanationUrl\", status) " +
-                    "VALUES (:experimentId, :timeTaken, :positive, :negative, :explanationUrl, 'PROCESSING')";
-
-            MapSqlParameterSource params = new MapSqlParameterSource();
-            params.addValue("experimentId", experimentId);
-            params.addValue("timeTaken", time);
-            params.addValue("positive", positive);
-            params.addValue("negative", negative);
-            params.addValue("explanationUrl", explanationUrl);
-            this.template.update(sql, params);
-        } catch (Exception e) {
-            throw new RuntimeException("Error while saving API response", e);
-        }
-    }
-
-    @Override
-    public void updateResult(String experimentId, String explanationUrl, String pruneclResult, String llmResult) {
-        try {
-            String sql = "UPDATE ExplanationRequests " +
-                    "SET \"llm_result\" = :llmResult, \"prunecl_result\" = :pruneclResult, status = 'COMPLETED' " +
-                    "WHERE \"explanationUrl\" = :explanationUrl AND \"experimentId\" = :experimentId";
-            MapSqlParameterSource params = new MapSqlParameterSource();
-            params.addValue("llmResult", llmResult);
-            params.addValue("pruneclResult", pruneclResult);
-            params.addValue("explanationUrl", explanationUrl);
-            params.addValue("experimentId", experimentId);
-            int rowsUpdated = this.template.update(sql, params);
-            if (rowsUpdated > 0) {
-                LOGGER.info("Successfully updated results for URL: {}", explanationUrl);
-            } else {
-                LOGGER.warn("No record found for URL: {}", explanationUrl);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

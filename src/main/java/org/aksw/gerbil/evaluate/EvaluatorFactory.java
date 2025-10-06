@@ -74,6 +74,7 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
+import org.aksw.gerbil.web.ExplanationService;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.vocabulary.OWL;
@@ -306,9 +307,10 @@ public class EvaluatorFactory {
         case QA: {
             // Note: QA does not know emerging entities. Hence, we don't use the URI
             // classifier-based matching
-            return new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerSet>(
+            return new MultiEvaluator(new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerSet>(
                     new FMeasureCalculator<AnswerSet>(new QAMatchingsCounter(index, URL_VALIDATOR, converterManager)),
-                    AnswerSet.class);
+                    AnswerSet.class),
+              ExplanationService.getInstance());
         }
         case RE2KB: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, Relation>(

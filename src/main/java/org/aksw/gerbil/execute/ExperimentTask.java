@@ -169,8 +169,16 @@ public class ExperimentTask implements Task {
             ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[6],
                     ExperimentDAO.TASK_FINISHED, 0);
             transformResults(result, expResult);
+            String explanationURL = "";
             if(expResult.aggregatedContingencyMetricsReport.getValue().stream().count()>0){
-                explanationService.executeFilterF1Data(experimentTaskId+"", dataset.getName(), expResult.aggregatedContingencyMetricsReport.getValue(), experimentDAO);
+                try {
+                    explanationURL =  explanationService.executeFilterF1Data(experimentTaskId+"", dataset.getName(), expResult.aggregatedContingencyMetricsReport.getValue(), experimentDAO);
+                    expResult.setExplanationURL(explanationURL);
+                    expResult.setExperimentId(experimentTaskId+"");
+                } catch (Exception e) {
+                    LOGGER.error("Failed to execute explanation request for taskId={} dataset='{}'. Reason: {}",
+                            experimentTaskId, dataset.getName(), e.getMessage(), e);
+                }
             }
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);

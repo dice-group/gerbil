@@ -51,6 +51,8 @@ public class ExperimentTaskResult {
     public String gerbilVersion;
     public IntDoubleOpenHashMap additionalResults = null;
     public List<ExperimentTaskResult> subTasks;
+    private String explanationURL  = null;
+    private String experimentId  = null;
 
     /**
      * Contains the error message if {@link #state} !=
@@ -371,5 +373,21 @@ public class ExperimentTaskResult {
 
     public boolean hasContingencyMetricsReport() {
         return aggregatedContingencyMetricsReport !=null && aggregatedContingencyMetricsReport.getValue()!=null && !(aggregatedContingencyMetricsReport.getValue().isEmpty());
+    }
+
+    public String getExplanationURL() {
+        return explanationURL;
+    }
+
+    public void setExplanationURL(String explanationURL) {
+        this.explanationURL = explanationURL;
+    }
+
+    public String getExperimentId() {
+        return experimentId;
+    }
+
+    public void setExperimentId(String experimentId) {
+        this.experimentId = experimentId;
     }
 }

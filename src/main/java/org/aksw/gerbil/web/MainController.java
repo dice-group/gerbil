@@ -100,8 +100,7 @@ public class MainController {
     @Autowired
     private AdapterManager adapterManager;
 
-    @Autowired
-    private ExplanationService explanationService;
+    private ExplanationService explanationService = ExplanationService.getInstance();
 
     // DataID URL is generated automatically in the experiment method?
     private DataIDGenerator dataIdGenerator;
