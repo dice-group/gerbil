@@ -100,7 +100,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     private static final String INSERT_EXPLANATION_URL =
             "INSERT INTO ExperimentTasks_Explanations (task_id, url) VALUES (:taskId, :url)";
-    private static final String UPDATE_EXPLANATION = "UPDATE ExperimentTasks_Explanations SET prune_result = :prune, llm_result = :llm WHERE task_id = :taskId AND url = :url";
+    private static final String UPDATE_EXPLANATION = "UPDATE ExperimentTasks_Explanations SET explanation_concept = :prune, verbalized_explanation = :llm WHERE task_id = :taskId AND url = :url";
 
     private final NamedParameterJdbcTemplate template;
 
@@ -419,7 +419,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
 
     @Override
-    public void setUpdateExplanation(int taskId, String url, String llmExplanation, String pruneExplanation) {
+    public void setUpdateExplanation(String taskId, String url, String llmExplanation, String pruneExplanation) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("taskId", taskId);
         params.addValue("url", url);
@@ -433,10 +433,10 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         String sql =
                 "SELECT task_id, url " +
                         "FROM ExperimentTasks_Explanations " +
-                        "WHERE (prune_result IS NULL OR llm_result IS NULL) AND url IS NOT NULL";
+                        "WHERE (explanation_concept IS NULL OR verbalized_explanation IS NULL) AND url IS NOT NULL";
 
         return template.query(sql, (rs, rowNum) ->
-                new PendingExplanationTask(rs.getInt("task_id"), rs.getString("url"))
+                new PendingExplanationTask(rs.getString("task_id"), rs.getString("url"))
         );
     }
 
@@ -545,16 +545,18 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
 
     @Override
-    public Map<String, Object> getDatasetDetails(String experimentId) {
-        String sql = "SELECT * FROM ExplanationRequests WHERE \"experimentId\" = :experimentId";
+    public Map<String, Object> getDatasetDetails(String taskId) {
+        String sql = "SELECT task_id, url, explanation_concept, verbalized_explanation " +
+                "FROM ExperimentTasks_Explanations " +
+                "WHERE task_id = :taskId";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("experimentId", experimentId);
+        params.addValue("taskId", taskId);
 
         try {
-            return this.template.queryForMap(sql, params);
+            return template.queryForMap(sql, params);
         } catch (EmptyResultDataAccessException e) {
-            LOGGER.warn("No dataset found for: {}", experimentId);
+            LOGGER.warn("No dataset found for task_id: {}", taskId);
             return null;
         }
     }
@@ -596,20 +598,14 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     }
 
     @Override
-    public int getTaskId(String experimentId) {
-        String sql = "SELECT taskId FROM Experiments WHERE id = :experimentId LIMIT 1";
-
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("experimentId", experimentId);
-
+    public String getTaskId(String experimentId) {
+        String sql = "SELECT task_id FROM ExperimentTasks_Explanations WHERE task_id = :taskId";
+        MapSqlParameterSource params = new MapSqlParameterSource("taskId", experimentId);
         try {
-            return this.template.queryForObject(sql, params, Integer.class);
+            return template.queryForObject(sql, params, String.class);
         } catch (EmptyResultDataAccessException e) {
-            LOGGER.warn("No taskId found for experimentId: {}", experimentId);
-            return -1;
-        } catch (Exception e) {
-            LOGGER.error("Error fetching taskId for experimentId: {}", experimentId, e);
-            throw new RuntimeException("Error fetching taskId", e);
+            LOGGER.warn("No task found for task_id: {}", experimentId);
+            return null;
         }
     }
 

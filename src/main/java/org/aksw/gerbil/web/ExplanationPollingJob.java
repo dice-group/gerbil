@@ -31,13 +31,13 @@ public class ExplanationPollingJob {
     @Qualifier("experimentDAO")
     private ExperimentDAO experimentDAO;
 
-    @Scheduled(fixedDelay = 300000) //every 5 minutes
+    @Scheduled(fixedDelay = 30000) //every 30 sec
     public void pollExplanationResults() {
         List<PendingExplanationTask> jobs = experimentDAO.getPendingExplanations();
 
         for (PendingExplanationTask job : jobs) {
             String url = job.url;
-            int taskId = job.taskId;
+            String taskId = job.taskId;
 
             if (url == null || !url.startsWith("http")) {
                 log.warn("Invalid explanation URL for task {}: {}", taskId, url);

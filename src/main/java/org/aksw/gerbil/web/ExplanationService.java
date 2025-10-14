@@ -2,28 +2,27 @@ package org.aksw.gerbil.web;
 
 import com.google.gson.JsonObject;
 import org.aksw.gerbil.database.ExperimentDAO;
-import org.aksw.gerbil.database.PendingExplanationTask;
-import org.aksw.gerbil.evaluate.*;
+import org.aksw.gerbil.evaluate.EvaluationResultContainer;
+import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.evaluate.ExtendedContingencyMetrics;
+import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ExplanationService<T extends Marking> implements Evaluator<T> {
@@ -34,8 +33,6 @@ public class ExplanationService<T extends Marking> implements Evaluator<T> {
 
     public static final String EXP_HOST =  "http://131.234.28.27:9999/PruneCEL/Parameter";
     public static final String EXP_URL_KEY = "ExplanationURL";
-
-    private  ExperimentDAO experimentDAO;
 
     private EvaluationResultContainer results = null;
 
@@ -59,9 +56,7 @@ public class ExplanationService<T extends Marking> implements Evaluator<T> {
 
     public String executeFilterF1Data(String experimentId,
                                     String datasetName,
-                                    List<ExtendedContingencyMetrics> metricsReport,
-                                    ExperimentDAO experimentDAO) {
-        this.experimentDAO = experimentDAO;
+                                    List<ExtendedContingencyMetrics> metricsReport) {
 
         List<Integer> positive = new ArrayList<>();
         List<Integer> negative = new ArrayList<>();
@@ -93,7 +88,7 @@ public class ExplanationService<T extends Marking> implements Evaluator<T> {
 
         parameters.addProperty("positive", String.join(",", positive.stream().map(String::valueOf).toList()));
         parameters.addProperty("negative", String.join(",", negative.stream().map(String::valueOf).toList()));
-        parameters.addProperty("time", 60000);
+        parameters.addProperty("time", 600000);
 
         HttpPost request = new HttpPost(EXP_HOST);
         request.addHeader("Content-Type", "application/json");

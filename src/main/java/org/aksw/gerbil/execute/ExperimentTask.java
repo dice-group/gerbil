@@ -83,6 +83,7 @@ public class ExperimentTask implements Task {
     private ExperimentDAO experimentDAO;
     private ExperimentTaskConfiguration configuration;
     private int experimentTaskId;
+    private String experimentId;
     private EvaluatorFactory evFactory;
     private ExperimentTaskState taskState = null;
     private AnnotatorOutputWriter annotatorOutputWriter = null;
@@ -90,13 +91,15 @@ public class ExperimentTask implements Task {
     private ExplanationService explanationService = null;
 
     public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever,
-            org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration, ExplanationService explanationService) {
+                          org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration,
+                          ExplanationService explanationService, String experimentId) {
         this.experimentDAO = experimentDAO;
         this.configuration = configuration;
         this.experimentTaskId = experimentTaskId;
         this.evFactory = evFactory;
         this.globalRetriever = globalRetriever;
         this.explanationService = explanationService;
+        this.experimentId = experimentId;
     }
 
     @Override
@@ -172,9 +175,9 @@ public class ExperimentTask implements Task {
             String explanationURL = "";
             if(expResult.aggregatedContingencyMetricsReport.getValue().stream().count()>0){
                 try {
-                    explanationURL =  explanationService.executeFilterF1Data(experimentTaskId+"", dataset.getName(), expResult.aggregatedContingencyMetricsReport.getValue(), experimentDAO);
+                    explanationURL =  explanationService.executeFilterF1Data(experimentTaskId+"", dataset.getName(), expResult.aggregatedContingencyMetricsReport.getValue());
                     expResult.setExplanationURL(explanationURL);
-                    expResult.setExperimentId(experimentTaskId+"");
+                    expResult.setExperimentId(experimentId);
                 } catch (Exception e) {
                     LOGGER.error("Failed to execute explanation request for taskId={} dataset='{}'. Reason: {}",
                             experimentTaskId, dataset.getName(), e.getMessage(), e);

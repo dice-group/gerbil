@@ -89,7 +89,7 @@ public class Experimenter implements Runnable {
                 if (taskId != ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED) {
                     // Create an executer which performs the task
                     ExperimentTask task = new ExperimentTask(taskId, experimentDAO, globalRetriever, evFactory,
-                            configs[i], explanationService);
+                            configs[i], explanationService, experimentId);
                     task.setAnnotatorOutputWriter(annotatorOutputWriter);
                     overseer.startTask(task);
                 }

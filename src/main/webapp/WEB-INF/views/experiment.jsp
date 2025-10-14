@@ -199,12 +199,12 @@
 </c:if>
 
 <c:if test="${not empty llm_result}">
-	<p><strong>LLM Result:</strong></p>
+	<p><strong>Verbalized Explanation:</strong></p>
 	<pre class="llm-result-box">${llm_result}</pre>
 </c:if>
 
 <c:if test="${not empty prunecl_result}">
-	<p><strong>PruneCEL Result:</strong></p>
+	<p><strong>Explanation Concept:</strong></p>
 	<pre class="llm-result-box">${prunecl_result}</pre>
 </c:if>
 
@@ -213,10 +213,10 @@
 	<a id="explanationUrlLink" href="#" target="_blank">Loading...</a>
 </p>
 
-<p><strong>LLM Result:</strong></p>
+<p><strong>Verbalized Explanation:</strong></p>
 <pre id="llmResultBox" class="llm-result-box">Explanation yet to be loaded...</pre>
 
-<p><strong>PruneCEL Result:</strong></p>
+<p><strong>Explanation Concept:</strong></p>
 <pre id="pruneResultBox" class="llm-result-box">Explanation yet to be loaded...</pre>
 
 
@@ -272,9 +272,9 @@
 
 		explanationPoller = setInterval(() => {
 			$.ajax({
-				url: "/gerbil/explanation-url-dataset",
+				url: "/gerbil/explanation-url",
 				method: "GET",
-				data: { dataset: globalExperimentId },
+				data: { experimentId: globalExperimentId },
 				success: function (url) {
 					if (url && !url.includes("not found")) {
 						clearInterval(explanationPoller);
@@ -295,14 +295,14 @@
 	function pollExplanationResult() {
 		resultPoller = setInterval(() => {
 			$.ajax({
-				url: "/gerbil/explanation-details",
+				url: "/gerbil/llm-explanation",
 				method: "GET",
-				data: { dataset: globalExperimentId },
+				data: { experimentId: globalExperimentId },
 				success: function (data) {
-					if (data.llm_result || data.prunecl_result) {
+					if (data.verbalized_explanation || data.explanation_concept) {
 						clearInterval(resultPoller);
-						$("#llmResultBox").text(data.llm_result || "Not available");
-						$("#pruneResultBox").text(data.prunecel_result || "Not available");
+						$("#llmResultBox").text(data.verbalized_explanation || "Not available");
+						$("#pruneResultBox").text(data.explanation_concept || "Not available");
 					}
 				}
 			});

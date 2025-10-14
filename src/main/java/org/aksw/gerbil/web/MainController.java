@@ -234,23 +234,22 @@ public class MainController {
         return model;
     }
 
-    @RequestMapping("/explanation-url-dataset")
+    @RequestMapping("/explanation-url")
     public @ResponseBody String getExplanationUrlByDataset(
-            @RequestParam("dataset") String experimentId) {
-        String taskID = dao.getTaskId(experimentId)+"";
+            @RequestParam("experimentId") String experimentId) {
+        String taskID = dao.getTaskId(experimentId);
 
         Map<String, Object> result = dao.getDatasetDetails(taskID);
 
-        if (result == null || !result.containsKey("explanationUrl")) {
+        if (result == null || !result.containsKey("url")) {
             return "Explanation URL not found for: " + experimentId;
         }
-
-        return result.get("explanationUrl").toString();
+        return result.get("url").toString();
     }
 
-    @RequestMapping("/explanation-details")
-    public @ResponseBody Map<String, Object> getExplanationDetailsByDataset(@RequestParam("dataset") String experimentId) {
-        String taskID = dao.getTaskId(experimentId)+"";
+    @RequestMapping("/llm-explanation")
+    public @ResponseBody Map<String, Object> getExplanationDetailsByDataset(@RequestParam("experimentId") String experimentId) {
+        String taskID = dao.getTaskId(experimentId);
         Map<String, Object> result = dao.getDatasetDetails(taskID);
 
         if (result == null || result.isEmpty()) {
@@ -260,9 +259,8 @@ public class MainController {
         }
 
         HashMap<String, Object> explanationMap = new HashMap();
-        explanationMap.put("llm_result", result.get("llm_result"));
-        explanationMap.put("prunecel_result", result.get("prunecl_result"));
-
+        explanationMap.put("verbalized_explanation", result.get("verbalized_explanation"));
+        explanationMap.put("explanation_concept", result.get("explanation_concept"));
         return explanationMap;
     }
 
