@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -157,6 +158,30 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     @Override
     public Integer countExperiments() {
         return 0;
+    }
+
+    @Override
+    public Map<String, Object> getDatasetDetails(String experimentId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getTaskId(String experimentId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<PendingExplanationTask> getPendingExplanations() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setUpdateExplanation(String taskId, String url, String llmExplanation, String pruneExplanation) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

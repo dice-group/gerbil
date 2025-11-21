@@ -200,7 +200,7 @@ public class MainController {
         }
 
         String experimentId = IDCreator.getInstance().createID();
-        Experimenter exp = new Experimenter(overseer, dao, globalRetriever, evFactory, configs, experimentId, explanationService);
+        Experimenter exp = new Experimenter(overseer, dao, globalRetriever, evFactory, configs, experimentId);
         exp.setAnnotatorOutputWriter(annotatorOutputWriter);
         exp.run();
 
@@ -259,7 +259,7 @@ public class MainController {
             return errorMap;
         }
 
-        HashMap<String, Object> explanationMap = new HashMap();
+        HashMap<String, Object> explanationMap = new HashMap<>();
         explanationMap.put("verbalized_explanation", result.get("verbalized_explanation"));
         explanationMap.put("explanation_concept", result.get("explanation_concept"));
         return explanationMap;

@@ -44,7 +44,13 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentTaskState;
-import org.aksw.gerbil.evaluate.*;
+import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
+import org.aksw.gerbil.evaluate.EvaluationResult;
+import org.aksw.gerbil.evaluate.EvaluationResultContainer;
+import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.evaluate.IntEvaluationResult;
+import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
@@ -62,7 +68,6 @@ import org.aksw.gerbil.transfer.nif.data.Annotation;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.AnswersLogger;
 import org.aksw.gerbil.utils.AnswersLoggerContainer;
-import org.aksw.gerbil.web.ExplanationService;
 import org.aksw.simba.topicmodeling.concurrent.tasks.Task;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -83,23 +88,18 @@ public class ExperimentTask implements Task {
     private ExperimentDAO experimentDAO;
     private ExperimentTaskConfiguration configuration;
     private int experimentTaskId;
-    private String experimentId;
     private EvaluatorFactory evFactory;
     private ExperimentTaskState taskState = null;
     private AnnotatorOutputWriter annotatorOutputWriter = null;
     private SameAsRetriever globalRetriever = null;
-    private ExplanationService explanationService = null;
 
     public ExperimentTask(int experimentTaskId, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever,
-                          org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration,
-                          ExplanationService explanationService, String experimentId) {
+            org.aksw.gerbil.evaluate.EvaluatorFactory evFactory, ExperimentTaskConfiguration configuration) {
         this.experimentDAO = experimentDAO;
         this.configuration = configuration;
         this.experimentTaskId = experimentTaskId;
         this.evFactory = evFactory;
         this.globalRetriever = globalRetriever;
-        this.explanationService = explanationService;
-        this.experimentId = experimentId;
     }
 
     @Override
@@ -172,17 +172,17 @@ public class ExperimentTask implements Task {
             ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[6],
                     ExperimentDAO.TASK_FINISHED, 0);
             transformResults(result, expResult);
-            String explanationURL = "";
-            if(expResult.aggregatedContingencyMetricsReport.getValue().stream().count()>0){
-                try {
-                    explanationURL =  explanationService.executeFilterF1Data(experimentTaskId+"", dataset.getName(), expResult.aggregatedContingencyMetricsReport.getValue());
-                    expResult.setExplanationURL(explanationURL);
-                    expResult.setExperimentId(experimentId);
-                } catch (Exception e) {
-                    LOGGER.error("Failed to execute explanation request for taskId={} dataset='{}'. Reason: {}",
-                            experimentTaskId, dataset.getName(), e.getMessage(), e);
-                }
-            }
+//            String explanationURL = "";
+//            if(expResult.aggregatedContingencyMetricsReport.getValue().stream().count()>0){
+//                try {
+//                    explanationURL =  explanationService.requestExplanation(experimentTaskId+"", dataset.getName(), expResult.aggregatedContingencyMetricsReport.getValue());
+//                    expResult.setExplanationURL(explanationURL);
+//                    expResult.setExperimentId(experimentId);
+//                } catch (Exception e) {
+//                    LOGGER.error("Failed to execute explanation request for taskId={} dataset='{}'. Reason: {}",
+//                            experimentTaskId, dataset.getName(), e.getMessage(), e);
+//                }
+//            }
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
             LOGGER.info("Task Finished " + configuration.toString());
@@ -343,12 +343,6 @@ public class ExperimentTask implements Task {
             } else {
                 expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
             }
-        }else if (result instanceof AggregatedContingencyMetricsReport){
-            if(result.getName()==FMeasureCalculator.CONTINGENCY_MATRIX_NAME){
-                expResult.setContingencyMetricsReport((AggregatedContingencyMetricsReport) result);
-            }else{
-                LOGGER.error("Got an unknown Object type result \"" + result.getName() + "\". Discarding it.");
-            }
         }
     }
 
@@ -373,7 +367,7 @@ public class ExperimentTask implements Task {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
                 prepareAnnotatorResults(results, globalRetriever);
-                evalResult = evaluate(dataset.getInstances(),evaluators, results, goldStandard);
+                evalResult = evaluate(dataset.getInstances(), evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
             } catch (Exception e) {
@@ -574,14 +568,14 @@ public class ExperimentTask implements Task {
                         Annotation answerAnnotation;
                         if (answer instanceof Annotation) {
                             answerAnnotation = (Annotation) answer;
-                            if(globalRetriever != null) {
+                            if (globalRetriever != null) {
                                 globalRetriever.addSameURIs(answerAnnotation.getUris());
                             }
                             addAnswers.add(answerAnnotation);
                         } else if (answer != null) {
                             if (urlValidator.isValid(answer.toString())) {
                                 answerAnnotation = new Annotation(answer.toString());
-                                if(globalRetriever != null) {
+                                if (globalRetriever != null) {
                                     globalRetriever.addSameURIs(answerAnnotation.getUris());
                                 }
                                 addAnswers.add(answerAnnotation);
@@ -631,8 +625,8 @@ public class ExperimentTask implements Task {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends Marking> EvaluationResult evaluate(List<Document> instances,List<Evaluator<? extends Marking>> evaluators,
-            List<List<T>> annotatorResults, List<List<T>> goldStandard) {
+    protected <T extends Marking> EvaluationResult evaluate(List<Document> instances,
+            List<Evaluator<? extends Marking>> evaluators, List<List<T>> annotatorResults, List<List<T>> goldStandard) {
         EvaluationResultContainer evalResults = new EvaluationResultContainer();
         for (Evaluator<? extends Marking> e : evaluators) {
             ((Evaluator<T>) e).evaluate(instances, annotatorResults, goldStandard, evalResults);

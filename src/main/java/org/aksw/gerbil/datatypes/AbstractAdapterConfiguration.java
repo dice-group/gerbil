@@ -22,10 +22,20 @@ public abstract class AbstractAdapterConfiguration implements AdapterConfigurati
 
     private static final ExperimentTypeComparator EXP_TYPE_COMPARATOR = new ExperimentTypeComparator();
 
+    public static final String DEFAULT_GROUP = "";
+
     protected String group;
     protected String name;
     protected boolean couldBeCached;
     protected ExperimentType applicableForExperiment;
+
+    public AbstractAdapterConfiguration(
+            String name,
+            boolean couldBeCached,
+            ExperimentType applicableForExperiment
+    ) {
+        this(name,DEFAULT_GROUP,couldBeCached,applicableForExperiment);
+    }
 
     public AbstractAdapterConfiguration(
             String name,

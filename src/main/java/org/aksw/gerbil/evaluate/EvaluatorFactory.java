@@ -131,11 +131,10 @@ public class EvaluatorFactory {
     public EvaluatorFactory(UriKBClassifier globalClassifier, SubClassInferencer inferencer, ExplanationService explanationService) {
         if (globalClassifier != null) {
             this.globalClassifier = globalClassifier;
-        } else if (explanationService != null) {
-            this.explanationService = explanationService;
         } else {
             this.globalClassifier = new SimpleWhiteListBasedUriKBClassifier(DEFAULT_WELL_KNOWN_KBS);
         }
+        this.explanationService = explanationService;
         if (inferencer != null) {
             this.inferencer = inferencer;
         } else {
@@ -314,11 +313,14 @@ public class EvaluatorFactory {
         case QA: {
             // Note: QA does not know emerging entities. Hence, we don't use the URI
             // classifier-based matching
-            return new MultiEvaluator(new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerSet>(
+            Evaluator<Marking> qaEvaluator = new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerSet>(
                     new FMeasureCalculator<AnswerSet>(new QAMatchingsCounter(index, URL_VALIDATOR, converterManager)),
-                    AnswerSet.class),
-                    explanationService
-            );
+                    AnswerSet.class);
+            if(explanationService != null) {
+                qaEvaluator = new MultiEvaluator(qaEvaluator,
+                        explanationService.createExplanationRequestStep(dataset.getName()));
+            }
+            return qaEvaluator;
         }
         case RE2KB: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, Relation>(

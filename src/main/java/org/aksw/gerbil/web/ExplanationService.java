@@ -1,11 +1,19 @@
 package org.aksw.gerbil.web;
 
-import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.aksw.gerbil.config.GerbilConfiguration;
+import org.aksw.gerbil.evaluate.AggregatedContingencyMetricsReport;
+import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.ExtendedContingencyMetrics;
 import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
+import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.gerbil.transfer.nif.Marking;
 import org.apache.commons.io.IOUtils;
@@ -18,38 +26,21 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.JsonObject;
 
-
-public class ExplanationService<T extends Marking> implements Evaluator<T> {
+public class ExplanationService {
 
     private static final Logger log = LoggerFactory.getLogger(ExplanationService.class);
     private final CloseableHttpClient client = HttpClients.createDefault();
-    private static final ExplanationService<?> INSTANCE = new ExplanationService<>();
     private static final String GET_EXPLANATION_URL = "org.aksw.gerbil.explanation.service.url";
     private final String explanationUrl = GerbilConfiguration.getInstance().getString(GET_EXPLANATION_URL);
-    private EvaluationResultContainer results = null;
 
-    // public access point
-    @SuppressWarnings("unchecked")
-    public static <T extends Marking> ExplanationService<T> getInstance() {
-        return (ExplanationService<T>) INSTANCE;
+    public <T extends Marking> ExplanationRequestStep<T> createExplanationRequestStep(String datasetName) {
+        return new ExplanationRequestStep<T>(this, datasetName);
     }
 
-    @Override
-    public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
-        //TODO we cannot call API to get explantion url here, because we do not have "dataset" param here
-        this.results = results;
-    }
-
-
-    public String executeFilterF1Data(String experimentId,
-                                    String datasetName,
-                                    List<ExtendedContingencyMetrics> metricsReport) {
+    public String requestExplanation(String datasetName, List<ExtendedContingencyMetrics> metricsReport,
+            EvaluationResultContainer results) {
 
         List<Integer> positive = new ArrayList<>();
         List<Integer> negative = new ArrayList<>();
@@ -63,15 +54,18 @@ public class ExplanationService<T extends Marking> implements Evaluator<T> {
 
         String explanationURL = null;
         try {
-            explanationURL = sendF1ScoreData(datasetName, positive, negative, experimentId);
-            results.addResult(new ObjectEvaluationResult("ExplanationURL", explanationURL));
+            explanationURL = sendF1ScoreData(datasetName, positive, negative);
+            if (explanationURL != null) {
+                results.addResult(new ObjectEvaluationResult("ExplanationURL", explanationURL));
+            }
         } catch (Exception e) {
-             log.warn("Error sending F1 data: {}", e.getMessage());
+            log.warn("Error sending F1 data: {}", e.getMessage());
         }
         return explanationURL;
     }
 
-    private String sendF1ScoreData(String dataset, List<Integer> positive, List<Integer> negative, String experimentId) throws IOException {
+    protected String sendF1ScoreData(String dataset, List<Integer> positive, List<Integer> negative)
+            throws IOException {
         JsonObject parameters = new JsonObject();
         try {
             parameters.addProperty("dataset", dataset.split("\\.json")[0]);
@@ -88,20 +82,56 @@ public class ExplanationService<T extends Marking> implements Evaluator<T> {
         request.addHeader("Accept", "application/json");
         request.setEntity(new StringEntity(parameters.toString(), StandardCharsets.UTF_8));
 
-        RequestConfig config = RequestConfig.custom()
-                .setRedirectsEnabled(false)
-                .build();
+        RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).build();
         request.setConfig(config);
 
         try (CloseableHttpResponse response = client.execute(request);
-             InputStream is = response.getEntity().getContent()) {
+                InputStream is = response.getEntity().getContent()) {
 
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == 200 || statusCode == 303 || statusCode == 400) {
+            if ((statusCode >= 200 && statusCode < 300) || statusCode == 303) {
                 return IOUtils.toString(is, StandardCharsets.UTF_8).trim();
             } else {
+                log.error("Received an unexpected response status {}. It will be ignored.", statusCode);
                 return null;
             }
         }
     }
+
+    public static class ExplanationRequestStep<T extends Marking> implements Evaluator<T> {
+
+        protected ExplanationService service;
+        protected String datasetName;
+
+        public ExplanationRequestStep(ExplanationService service, String datasetName) {
+            super();
+            this.service = service;
+            this.datasetName = datasetName;
+        }
+
+        @Override
+        public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard,
+                EvaluationResultContainer results) {
+            // Get the metricsReport from previous results
+            AggregatedContingencyMetricsReport report = findMatrixResult(results);
+            if (report == null) {
+                return;
+            }
+            // call the service
+            service.requestExplanation(datasetName, report.getValue(), results);
+        }
+
+        protected AggregatedContingencyMetricsReport findMatrixResult(EvaluationResultContainer results) {
+            for (EvaluationResult result : results.getResults()) {
+                if ((result instanceof AggregatedContingencyMetricsReport)
+                        && (result.getName() == FMeasureCalculator.CONTINGENCY_MATRIX_NAME)) {
+                    return (AggregatedContingencyMetricsReport) result;
+                }
+            }
+            log.warn(
+                    "Couldn't find an instance of AggregatedContingencyMetricsReport. I won't request an explanation.");
+            return null;
+        }
+    }
+
 }

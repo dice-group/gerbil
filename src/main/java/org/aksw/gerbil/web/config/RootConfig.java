@@ -278,7 +278,7 @@ public class RootConfig {
     }
 
     @Bean
-    public EvaluatorFactory evaluatorFactory(
+    public static EvaluatorFactory createEvaluatorFactory(
             SubClassInferencer inferencer,
             TripleIndex index,
             ExplanationService explanationService
