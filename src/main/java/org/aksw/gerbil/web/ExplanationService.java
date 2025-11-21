@@ -1,7 +1,7 @@
 package org.aksw.gerbil.web;
 
 import com.google.gson.JsonObject;
-import org.aksw.gerbil.database.ExperimentDAO;
+import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.ExtendedContingencyMetrics;
@@ -30,14 +30,9 @@ public class ExplanationService<T extends Marking> implements Evaluator<T> {
     private static final Logger log = LoggerFactory.getLogger(ExplanationService.class);
     private final CloseableHttpClient client = HttpClients.createDefault();
     private static final ExplanationService<?> INSTANCE = new ExplanationService<>();
-
-    public static final String EXP_HOST =  "http://131.234.28.27:9999/PruneCEL/Parameter";
-    public static final String EXP_URL_KEY = "ExplanationURL";
-
+    private static final String GET_EXPLANATION_URL = "org.aksw.gerbil.explanation.service.url";
+    private final String explanationUrl = GerbilConfiguration.getInstance().getString(GET_EXPLANATION_URL);
     private EvaluationResultContainer results = null;
-
-    // private constructor to prevent manual instantiation
-    private ExplanationService() {}
 
     // public access point
     @SuppressWarnings("unchecked")
@@ -45,11 +40,9 @@ public class ExplanationService<T extends Marking> implements Evaluator<T> {
         return (ExplanationService<T>) INSTANCE;
     }
 
-
     @Override
     public void evaluate(List<Document> instances, List<List<T>> annotatorResults, List<List<T>> goldStandard, EvaluationResultContainer results) {
         //TODO we cannot call API to get explantion url here, because we do not have "dataset" param here
-
         this.results = results;
     }
 
@@ -71,7 +64,7 @@ public class ExplanationService<T extends Marking> implements Evaluator<T> {
         String explanationURL = null;
         try {
             explanationURL = sendF1ScoreData(datasetName, positive, negative, experimentId);
-            results.addResult(new ObjectEvaluationResult(ExplanationService.EXP_URL_KEY, explanationURL));
+            results.addResult(new ObjectEvaluationResult("ExplanationURL", explanationURL));
         } catch (Exception e) {
              log.warn("Error sending F1 data: {}", e.getMessage());
         }
@@ -90,7 +83,7 @@ public class ExplanationService<T extends Marking> implements Evaluator<T> {
         parameters.addProperty("negative", String.join(",", negative.stream().map(String::valueOf).toList()));
         parameters.addProperty("time", 600000);
 
-        HttpPost request = new HttpPost(EXP_HOST);
+        HttpPost request = new HttpPost(explanationUrl);
         request.addHeader("Content-Type", "application/json");
         request.addHeader("Accept", "application/json");
         request.setEntity(new StringEntity(parameters.toString(), StandardCharsets.UTF_8));

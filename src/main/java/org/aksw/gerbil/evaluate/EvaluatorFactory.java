@@ -100,11 +100,12 @@ public class EvaluatorFactory {
 
     protected UriKBClassifier globalClassifier = null;
     protected SubClassInferencer inferencer = null;
+    protected ExplanationService explanationService = null;
     protected TripleIndex index = null;
     protected Literal2ResourceManager converterManager = new Literal2ResourceManager();
 
     public EvaluatorFactory() {
-        this(null, null);
+        this(null, null, null);
     }
 
     private static String[] loadDefaultKBs() {
@@ -116,16 +117,22 @@ public class EvaluatorFactory {
     }
 
     public EvaluatorFactory(UriKBClassifier globalClassifier) {
-        this(globalClassifier, null);
+        this(globalClassifier, null, null);
     }
 
     public EvaluatorFactory(SubClassInferencer inferencer) {
-        this(null, inferencer);
+        this(null, inferencer, null);
     }
 
-    public EvaluatorFactory(UriKBClassifier globalClassifier, SubClassInferencer inferencer) {
+    public EvaluatorFactory(SubClassInferencer inferencer, ExplanationService explanationService) {
+        this(null, inferencer, explanationService);
+    }
+
+    public EvaluatorFactory(UriKBClassifier globalClassifier, SubClassInferencer inferencer, ExplanationService explanationService) {
         if (globalClassifier != null) {
             this.globalClassifier = globalClassifier;
+        } else if (explanationService != null) {
+            this.explanationService = explanationService;
         } else {
             this.globalClassifier = new SimpleWhiteListBasedUriKBClassifier(DEFAULT_WELL_KNOWN_KBS);
         }
@@ -310,7 +317,8 @@ public class EvaluatorFactory {
             return new MultiEvaluator(new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerSet>(
                     new FMeasureCalculator<AnswerSet>(new QAMatchingsCounter(index, URL_VALIDATOR, converterManager)),
                     AnswerSet.class),
-              ExplanationService.getInstance());
+                    explanationService
+            );
         }
         case RE2KB: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, Relation>(

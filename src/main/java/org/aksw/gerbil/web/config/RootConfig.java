@@ -51,6 +51,7 @@ import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.aksw.gerbil.utils.ConsoleLogger;
+import org.aksw.gerbil.web.ExplanationService;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.DefeatableOverseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.ExecutorBasedOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
@@ -270,8 +271,19 @@ public class RootConfig {
         return null;
     }
 
-    public static @Bean EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer, TripleIndex index) {
-        return new EvaluatorFactory(inferencer);
+
+    @Bean
+    public static ExplanationService createExplanationService() {
+        return new ExplanationService();
+    }
+
+    @Bean
+    public EvaluatorFactory evaluatorFactory(
+            SubClassInferencer inferencer,
+            TripleIndex index,
+            ExplanationService explanationService
+    ) {
+        return new EvaluatorFactory(inferencer, explanationService);
     }
 
     public static AnnotatorOutputWriter getAnnotatorOutputWriter() {
