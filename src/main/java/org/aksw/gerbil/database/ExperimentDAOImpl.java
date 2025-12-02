@@ -233,7 +233,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
             }
         }
         if (result.getExplanationURL() != null) {
-            insertExplanationURL(result.getExplanationURL(), result.getExperimentId());
+            insertExplanationURL(result.getExplanationURL(), String.valueOf(experimentTaskId));
         }
         if (result.hasSubTasks()) {
             for (ExperimentTaskResult subTask : result.getSubTasks()) {
@@ -411,10 +411,10 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         addSubTaskRelation(experimentTaskId, subTask.idInDb);
     }
 
-    protected void insertExplanationURL(String url, String experimentId) {
+    protected void insertExplanationURL(String url, String experimentTaskId) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("url", url);
-        parameters.addValue("taskId", experimentId);
+        parameters.addValue("taskId", experimentTaskId);
         this.template.update(INSERT_EXPLANATION_URL, parameters);
     }
 

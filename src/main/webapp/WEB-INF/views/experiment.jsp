@@ -260,6 +260,16 @@
 					+ "</a>";
 		}
 		$("#experimentUri").html(content);
+
+		let taskIds = [];
+		document.querySelectorAll(".task-row").forEach(row => {
+			taskIds.push(row.dataset.taskId);
+		});
+
+
+		if (taskIds.length > 0) {
+			pollExplanationUrl(taskIds[0]);
+		}
 	});
 </script>
 <script>
@@ -268,7 +278,7 @@
 	let explanationPoller = null;
 	let resultPoller = null;
 
-	function pollExplanationUrl() {
+	function pollExplanationUrlOld() {
 
 		explanationPoller = setInterval(() => {
 			$.ajax({
@@ -292,6 +302,28 @@
 	}
 
 
+	function pollExplanationUrl(taskId) {
+
+		let explanationPoller = setInterval(() => {
+			$.ajax({
+				url: "/gerbil/explanation-url",
+				method: "GET",
+				data: { taskId: taskId },
+				success: function (url) {
+					if (url && !url.includes("not found")) {
+						clearInterval(explanationPoller);
+						$("#explanationUrlLink")
+								.attr("href", url)
+								.text(url);
+						pollExplanationResult(taskId);
+					}
+				}
+			});
+		}, 5000);
+	}
+
+
+
 	function pollExplanationResult() {
 		resultPoller = setInterval(() => {
 			$.ajax({
@@ -308,11 +340,6 @@
 			});
 		}, 5000);
 	}
-
-
-	$(document).ready(function () {
-		pollExplanationUrl();
-	});
 </script>
 
 </body>
