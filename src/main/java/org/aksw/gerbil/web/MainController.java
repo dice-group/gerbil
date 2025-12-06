@@ -100,9 +100,6 @@ public class MainController {
     @Autowired
     private AdapterManager adapterManager;
 
-    @Autowired
-    ExplanationService explanationService;
-
     // DataID URL is generated automatically in the experiment method?
     private DataIDGenerator dataIdGenerator;
 
@@ -233,36 +230,6 @@ public class MainController {
                 ResultNameToIdMapping.getInstance().getNamesOfResultIds(additionalResultIds));
         model.addObject("additionalResults", additionalResults);
         return model;
-    }
-
-    @RequestMapping("/explanation-url")
-    public @ResponseBody String getExplanationUrlByDataset(
-            @RequestParam("experimentId") String experimentId) {
-        String taskID = dao.getTaskId(experimentId);
-
-        Map<String, Object> result = dao.getDatasetDetails(taskID);
-
-        if (result == null || !result.containsKey("url")) {
-            return "Explanation URL not found for: " + experimentId;
-        }
-        return result.get("url").toString();
-    }
-
-    @RequestMapping("/llm-explanation")
-    public @ResponseBody Map<String, Object> getExplanationDetailsByDataset(@RequestParam("experimentId") String experimentId) {
-        String taskID = dao.getTaskId(experimentId);
-        Map<String, Object> result = dao.getDatasetDetails(taskID);
-
-        if (result == null || result.isEmpty()) {
-            Map<String, Object> errorMap = new HashMap<String, Object>();
-            errorMap.put("error", "No explanation data found for: " + experimentId);
-            return errorMap;
-        }
-
-        HashMap<String, Object> explanationMap = new HashMap<>();
-        explanationMap.put("verbalized_explanation", result.get("verbalized_explanation"));
-        explanationMap.put("explanation_concept", result.get("explanation_concept"));
-        return explanationMap;
     }
 
     @RequestMapping("/exptypes")

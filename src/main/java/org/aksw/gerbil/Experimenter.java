@@ -57,8 +57,8 @@ public class Experimenter implements Runnable {
         this.evFactory = new EvaluatorFactory();
     }
 
-    public Experimenter(Overseer overseer, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever,
-            EvaluatorFactory evFactory, ExperimentTaskConfiguration configs[], String experimentId) {
+    public Experimenter(Overseer overseer, ExperimentDAO experimentDAO, SameAsRetriever globalRetriever, EvaluatorFactory evFactory,
+             ExperimentTaskConfiguration configs[], String experimentId) {
         this.configs = configs;
         this.experimentId = experimentId;
         this.experimentDAO = experimentDAO;
@@ -75,12 +75,12 @@ public class Experimenter implements Runnable {
             for (int i = 0; i < configs.length; ++i) {
                 if (couldHaveCachedResult(configs[i])) {
                     taskId = experimentDAO.connectCachedResultOrCreateTask(configs[i].annotatorConfig.getName(),
-                            configs[i].datasetConfig.getName(), configs[i].questionLanguage, configs[i].type.name(),
-                            configs[i].matching.name(), experimentId);
+                            configs[i].datasetConfig.getName(), configs[i].questionLanguage, configs[i].type.name(), configs[i].matching.name(),
+                            experimentId);
                 } else {
                     taskId = experimentDAO.createTask(configs[i].annotatorConfig.getName(),
-                            configs[i].datasetConfig.getName(), configs[i].questionLanguage, configs[i].type.name(),
-                            configs[i].matching.name(), experimentId);
+                            configs[i].datasetConfig.getName(), configs[i].questionLanguage, configs[i].type.name(), configs[i].matching.name(),
+                            experimentId);
                 }
                 // If there is no experiment task result in the database
                 if (taskId != ExperimentDAO.CACHED_EXPERIMENT_TASK_CAN_BE_USED) {
