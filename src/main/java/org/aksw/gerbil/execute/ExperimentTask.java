@@ -44,12 +44,14 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentTaskState;
+import org.aksw.gerbil.evaluate.AggregatedContingencyMetricsReport;
 import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
 import org.aksw.gerbil.evaluate.Evaluator;
 import org.aksw.gerbil.evaluate.EvaluatorFactory;
 import org.aksw.gerbil.evaluate.IntEvaluationResult;
+import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
 import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
@@ -343,6 +345,23 @@ public class ExperimentTask implements Task {
             } else {
                 expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
             }
+        } else if (result instanceof AggregatedContingencyMetricsReport) {
+            expResult.setContingencyMetricsReport((AggregatedContingencyMetricsReport) result);
+        } else if (result instanceof ObjectEvaluationResult) {
+            LOGGER.info("Handling result {}", result.getName());
+            if (result.getValue() != null) {
+                if (String.class.isInstance(result.getValue())) {
+                    expResult.addAdditionalClobResult(ResultNameToIdMapping.getInstance().getResultId(result.getName()),
+                            (String) result.getValue());
+                } else {
+                    LOGGER.warn("No rule for handling an object result {} with type {}. It will be ignored.",
+                            result.getName());
+                }
+            } else {
+                LOGGER.warn("Got a result named {} with a null value. It will be ignored.", result.getName());
+            }
+        } else {
+            LOGGER.warn("No rule for handling result {}. It will be ignored.", result.getName());
         }
     }
 

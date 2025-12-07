@@ -23,10 +23,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.aksw.gerbil.database.ExperimentDAO;
+import org.aksw.gerbil.database.ResultNameToIdMapping;
 import org.aksw.gerbil.evaluate.AggregatedContingencyMetricsReport;
 import org.aksw.gerbil.matching.Matching;
+import org.aksw.gerbil.web.ExplanationService;
 
 import com.carrotsearch.hppc.IntDoubleOpenHashMap;
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
 
 public class ExperimentTaskResult {
 
@@ -50,9 +53,9 @@ public class ExperimentTaskResult {
     public int idInDb;
     public String gerbilVersion;
     public IntDoubleOpenHashMap additionalResults = null;
+    public IntObjectOpenHashMap<String> additionalClobResults = null;
     public List<ExperimentTaskResult> subTasks;
-    private String explanationURL  = null;
-    private String experimentId  = null;
+    private String experimentId = null;
 
     /**
      * Contains the error message if {@link #state} !=
@@ -60,18 +63,19 @@ public class ExperimentTaskResult {
      */
     public String stateMsg = null;
 
-    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
-            double results[], int state, int errorCount, long timestamp) {
+    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type,
+            Matching matching, double results[], int state, int errorCount, long timestamp) {
         this(annotator, dataset, language, type, matching, results, state, errorCount, timestamp, -1, null);
     }
 
-    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
-            double results[], int state, int errorCount, long timestamp, int idInDb) {
+    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type,
+            Matching matching, double results[], int state, int errorCount, long timestamp, int idInDb) {
         this(annotator, dataset, language, type, matching, results, state, errorCount, timestamp, idInDb, null);
     }
 
-    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
-            double results[], int state, int errorCount, long timestamp, int idInDb, String gerbilVersion) {
+    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type,
+            Matching matching, double results[], int state, int errorCount, long timestamp, int idInDb,
+            String gerbilVersion) {
         this.annotator = annotator;
         this.dataset = dataset;
         this.language = language;
@@ -85,16 +89,17 @@ public class ExperimentTaskResult {
         this.gerbilVersion = gerbilVersion;
     }
 
-    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type, Matching matching,
-            double results[], int state, int errorCount) {
-        this(annotator, dataset, language, type, matching, results, state, errorCount, (new java.util.Date()).getTime(), -1,
-                null);
+    public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type,
+            Matching matching, double results[], int state, int errorCount) {
+        this(annotator, dataset, language, type, matching, results, state, errorCount, (new java.util.Date()).getTime(),
+                -1, null);
     }
 
     public ExperimentTaskResult(ExperimentTaskConfiguration configuration, double results[], int state,
             int errorCount) {
-        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(), configuration.getQuestionLanguage(), configuration.type,
-                configuration.matching, results, state, errorCount, (new java.util.Date()).getTime());
+        this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(),
+                configuration.getQuestionLanguage(), configuration.type, configuration.matching, results, state,
+                errorCount, (new java.util.Date()).getTime());
     }
 
     public double[] getResults() {
@@ -174,6 +179,7 @@ public class ExperimentTaskResult {
     public void setDataset(String dataset) {
         this.dataset = dataset;
     }
+
     public String getLanguage() {
         return language;
     }
@@ -182,7 +188,6 @@ public class ExperimentTaskResult {
         this.language = language;
     }
 
-    
     public ExperimentType getType() {
         return type;
     }
@@ -336,6 +341,33 @@ public class ExperimentTaskResult {
         this.additionalResults = additionalResults;
     }
 
+    public boolean hasAdditionalClobResults() {
+        return (additionalClobResults != null) && (additionalClobResults.size() > 0);
+    }
+
+    public boolean hasAdditionalClobResult(int id) {
+        return (additionalClobResults != null) && (additionalClobResults.containsKey(id));
+    }
+
+    public void addAdditionalClobResult(int resultId, String value) {
+        if (additionalClobResults == null) {
+            additionalClobResults = new IntObjectOpenHashMap<String>();
+        }
+        additionalClobResults.put(resultId, value);
+    }
+
+    public IntObjectOpenHashMap<String> getAdditionalClobResults() {
+        return additionalClobResults;
+    }
+
+    public String getAdditionalClobResult(int resultId) {
+        if (additionalClobResults != null) {
+            return additionalClobResults.get(resultId);
+        } else {
+            return null;
+        }
+    }
+
     public boolean hasSubTasks() {
         return (subTasks != null) && (subTasks.size() > 0);
     }
@@ -372,15 +404,18 @@ public class ExperimentTaskResult {
     }
 
     public boolean hasContingencyMetricsReport() {
-        return aggregatedContingencyMetricsReport !=null && aggregatedContingencyMetricsReport.getValue()!=null && !(aggregatedContingencyMetricsReport.getValue().isEmpty());
+        return aggregatedContingencyMetricsReport != null && aggregatedContingencyMetricsReport.getValue() != null
+                && !(aggregatedContingencyMetricsReport.getValue().isEmpty());
     }
 
     public String getExplanationURL() {
-        return explanationURL;
+        return getAdditionalClobResult(
+                ResultNameToIdMapping.getInstance().getResultId(ExplanationService.EXPLANATION_URL_NAME));
     }
 
-    public void setExplanationURL(String explanationURL) {
-        this.explanationURL = explanationURL;
+    public String getExplanation() {
+        return getAdditionalClobResult(
+                ResultNameToIdMapping.getInstance().getResultId(ExplanationService.HUMAN_READABLE_EXPLANATION_NAME));
     }
 
     public String getExperimentId() {

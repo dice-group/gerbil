@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.evaluate.AggregatedContingencyMetricsReport;
 import org.aksw.gerbil.evaluate.EvaluationResult;
 import org.aksw.gerbil.evaluate.EvaluationResultContainer;
@@ -28,12 +27,23 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonObject;
 
-public class ExplanationService {
+public class ExplanationService implements AutoCloseable {
 
-    private static final Logger log = LoggerFactory.getLogger(ExplanationService.class);
-    private final CloseableHttpClient client = HttpClients.createDefault();
-    private static final String GET_EXPLANATION_URL = "org.aksw.gerbil.explanation.service.url";
-    private final String explanationUrl = GerbilConfiguration.getInstance().getString(GET_EXPLANATION_URL);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExplanationService.class);
+
+    public static final String EXPLANATION_URL_NAME = "explanation url";
+    public static final String HUMAN_READABLE_EXPLANATION_NAME = "explanation";
+    public static final String MACHINE_READABLE_EXPLANATION_NAME = "machine-readable explanation";
+
+    protected static final String GET_EXPLANATION_URL = "org.aksw.gerbil.explanation.service.url";
+
+    protected CloseableHttpClient client = HttpClients.createDefault();
+    protected String explanationUrl;
+
+    public ExplanationService(String explanationUrl) {
+        super();
+        this.explanationUrl = explanationUrl;
+    }
 
     public <T extends Marking> ExplanationRequestStep<T> createExplanationRequestStep(String datasetName) {
         return new ExplanationRequestStep<T>(this, datasetName);
@@ -56,10 +66,13 @@ public class ExplanationService {
         try {
             explanationURL = sendF1ScoreData(datasetName, positive, negative);
             if (explanationURL != null) {
-                results.addResult(new ObjectEvaluationResult("ExplanationURL", explanationURL));
+                results.addResult(new ObjectEvaluationResult(EXPLANATION_URL_NAME, explanationURL));
+                LOGGER.info("Received explanationURL \"{}\" for results on dataset \"{}\"", explanationURL, datasetName);
+            } else {
+                LOGGER.info("Received no explanationURL for results on dataset \"{}\"", datasetName);
             }
         } catch (Exception e) {
-            log.warn("Error sending F1 data: {}", e.getMessage());
+            LOGGER.warn("Error sending F1 data: {}", e.getMessage());
         }
         return explanationURL;
     }
@@ -92,7 +105,7 @@ public class ExplanationService {
             if ((statusCode >= 200 && statusCode < 300) || statusCode == 303) {
                 return IOUtils.toString(is, StandardCharsets.UTF_8).trim();
             } else {
-                log.error("Received an unexpected response status {}. It will be ignored.", statusCode);
+                LOGGER.error("Received an unexpected response status {}. It will be ignored.", statusCode);
                 return null;
             }
         }
@@ -128,9 +141,19 @@ public class ExplanationService {
                     return (AggregatedContingencyMetricsReport) result;
                 }
             }
-            log.warn(
+            LOGGER.warn(
                     "Couldn't find an instance of AggregatedContingencyMetricsReport. I won't request an explanation.");
             return null;
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        try {
+            if (client != null) {
+                client.close();
+            }
+        } catch (Exception e) {
         }
     }
 

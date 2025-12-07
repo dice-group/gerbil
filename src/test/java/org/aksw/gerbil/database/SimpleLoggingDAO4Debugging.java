@@ -19,8 +19,8 @@ package org.aksw.gerbil.database;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
@@ -160,26 +160,14 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
         return 0;
     }
 
-    @Override
-    public Map<String, Object> getDatasetDetails(String experimentId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getTaskId(String experimentId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+    @SuppressWarnings("unchecked")
     @Override
     public List<PendingExplanationTask> getPendingExplanations() {
-        // TODO Auto-generated method stub
-        return null;
+        return Collections.EMPTY_LIST;
     }
 
     @Override
-    public void setUpdateExplanation(String taskId, String url, String llmExplanation, String pruneExplanation) {
+    public void setExplanation(int experimentTaskId, String explanationName, String explanationValue) {
         // TODO Auto-generated method stub
         
     }

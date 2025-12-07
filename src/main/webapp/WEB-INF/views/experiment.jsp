@@ -62,10 +62,14 @@
 <h1>GERBIL Experiment</h1>
 <c:if test="${not empty tasks}">
 	<c:set var="hasSubTasks" value="false" />
+    <c:set var="hasExplanation" value="false" />
 	<c:forEach var="task" items="${tasks}">
 		<c:if test="${task.numberOfSubTasks > 0}">
 			<c:set var="hasSubTasks" value="true" />
 		</c:if>
+        <c:if test="${task.explanationURL != null}">
+            <c:set var="hasExplanation" value="true" />
+        </c:if>
 	</c:forEach>
 	Experiment URI: <span id="experimentUri"></span>
 	<br>
@@ -88,7 +92,7 @@
 			<th>Annotator</th>
 			<th>Dataset</th>
 			<th>Language</th>
-			<c:if test="${hasSubTasks}">
+			<c:if test="${hasSubTasks || hasExplanation}">
 				<th></th>
 			</c:if>
 			<th>Micro F1</th>
@@ -114,7 +118,7 @@
 					<td>${task.annotator}</td>
 					<td>${task.dataset}</td>
 					<td>${task.language}</td>
-					<c:if test="${hasSubTasks}">
+					<c:if test="${hasSubTasks || hasExplanation}">
 						<td></td>
 					</c:if>
 					<td><fmt:formatNumber type="number" maxFractionDigits="4"
@@ -142,6 +146,15 @@
 					<td>${task.timestampstring}</td>
 					<td>${task.gerbilVersion}</td>
 				</tr>
+                <c:if test="${task.explanationURL != null}">
+                    <tr>
+                        <td>${task.annotator}</td>
+                        <td>${task.dataset}</td>
+                        <td>${task.language}</td>
+                        <td colspan=2>Explanation</td>
+                        <td colspan="${additionalResultsCount + 8}"><pre>${task.explanation}</pre></td>
+                    </tr>
+                </c:if>
 				<c:forEach var="subTask" items="${task.subTasks}">
 					<tr>
 						<td>${task.annotator}</td>
@@ -190,37 +203,6 @@
 	</table>
 </c:if>
 
-
-
-<c:if test="${not empty explanationURL}">
-	<p><strong>Explanation URL:</strong>
-		<a href="${explanationURL}" target="_blank">${explanationURL}</a>
-	</p>
-</c:if>
-
-<c:if test="${not empty llm_result}">
-	<p><strong>Verbalized Explanation:</strong></p>
-	<pre class="llm-result-box">${llm_result}</pre>
-</c:if>
-
-<c:if test="${not empty prunecl_result}">
-	<p><strong>Explanation Concept:</strong></p>
-	<pre class="llm-result-box">${prunecl_result}</pre>
-</c:if>
-
-<!-- Dynamic placeholders (will be updated via AJAX polling) -->
-<p><strong>Explanation URL:</strong>
-	<a id="explanationUrlLink" href="#" target="_blank">Loading...</a>
-</p>
-
-<p><strong>Verbalized Explanation:</strong></p>
-<pre id="llmResultBox" class="llm-result-box">Explanation yet to be loaded...</pre>
-
-<p><strong>Explanation Concept:</strong></p>
-<pre id="pruneResultBox" class="llm-result-box">Explanation yet to be loaded...</pre>
-
-
-
 <script type="text/javascript">
 	var globalExperimentId = null;
 
@@ -265,81 +247,6 @@
 		document.querySelectorAll(".task-row").forEach(row => {
 			taskIds.push(row.dataset.taskId);
 		});
-
-
-		if (taskIds.length > 0) {
-			pollExplanationUrl(taskIds[0]);
-		}
 	});
 </script>
-<script>
-
-	const datasetName = "${tasks[0].dataset}";
-	let explanationPoller = null;
-	let resultPoller = null;
-
-	function pollExplanationUrlOld() {
-
-		explanationPoller = setInterval(() => {
-			$.ajax({
-				url: "/gerbil/explanation-url",
-				method: "GET",
-				data: { experimentId: globalExperimentId },
-				success: function (url) {
-					if (url && !url.includes("not found")) {
-						clearInterval(explanationPoller);
-						$("#explanationUrlLink")
-								.attr("href", url)
-								.text(url);
-						pollExplanationResult(); // start second poll for results
-					}
-				},
-				error: function (xhr, status, error) {
-					console.error("Failed to fetch explanation URL:", error);
-				}
-			});
-		}, 5000);
-	}
-
-
-	function pollExplanationUrl(taskId) {
-
-		let explanationPoller = setInterval(() => {
-			$.ajax({
-				url: "/gerbil/explanation-url",
-				method: "GET",
-				data: { taskId: taskId },
-				success: function (url) {
-					if (url && !url.includes("not found")) {
-						clearInterval(explanationPoller);
-						$("#explanationUrlLink")
-								.attr("href", url)
-								.text(url);
-						pollExplanationResult(taskId);
-					}
-				}
-			});
-		}, 5000);
-	}
-
-
-
-	function pollExplanationResult() {
-		resultPoller = setInterval(() => {
-			$.ajax({
-				url: "/gerbil/llm-explanation",
-				method: "GET",
-				data: { experimentId: globalExperimentId },
-				success: function (data) {
-					if (data.verbalized_explanation || data.explanation_concept) {
-						clearInterval(resultPoller);
-						$("#llmResultBox").text(data.verbalized_explanation || "Not available");
-						$("#pruneResultBox").text(data.explanation_concept || "Not available");
-					}
-				}
-			});
-		}, 5000);
-	}
-</script>
-
 </body>

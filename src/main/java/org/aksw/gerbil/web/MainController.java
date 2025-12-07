@@ -229,6 +229,21 @@ public class MainController {
         model.addObject("additionalResultNames",
                 ResultNameToIdMapping.getInstance().getNamesOfResultIds(additionalResultIds));
         model.addObject("additionalResults", additionalResults);
+
+        additionalResultIds = ResultNameToIdMapping.getInstance().listAdditionalStringResultIds(results);
+        String additionalStringResults[][] = new String[results.size()][additionalResultIds.length];
+        LOGGER.warn("additional string result IDs: " + Arrays.toString(additionalResultIds));
+        for (int i = 0; i < additionalStringResults.length; ++i) {
+            result = results.get(i);
+            for (int j = 0; j < additionalResultIds.length; ++j) {
+                if (result.hasAdditionalClobResult(additionalResultIds[j])) {
+                    additionalStringResults[i][j] = result.getAdditionalClobResult(additionalResultIds[j]);
+                }
+            }
+        }
+        model.addObject("additionalStringResultNames",
+                ResultNameToIdMapping.getInstance().getNamesOfResultIds(additionalResultIds));
+        model.addObject("additionalStringResults", additionalStringResults);
         return model;
     }
 
