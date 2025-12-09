@@ -51,8 +51,9 @@
 
 <script src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
 <script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-<script
-		src="/gerbil/webjars/tablesorter/2.15.5/js/jquery.tablesorter.js"></script>
+<script src="/gerbil/webjars/tablesorter/2.15.5/js/jquery.tablesorter.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 
 <script type="application/ld+json">
 	${dataid}
@@ -146,15 +147,20 @@
 					<td>${task.timestampstring}</td>
 					<td>${task.gerbilVersion}</td>
 				</tr>
-                <c:if test="${task.explanationURL != null}">
-                    <tr>
-                        <td>${task.annotator}</td>
-                        <td>${task.dataset}</td>
-                        <td>${task.language}</td>
-                        <td colspan=2>Explanation</td>
-                        <td colspan="${additionalResultsCount + 8}"><pre>${task.explanation}</pre></td>
-                    </tr>
-                </c:if>
+				<c:if test="${task.explanationURL != null}">
+					<tr>
+						<td>${task.annotator}</td>
+						<td>${task.dataset}</td>
+						<td>${task.language}</td>
+						<td colspan="2">Explanation</td>
+						<td colspan="${additionalResultsCount + 8}">
+            <pre class="llm-markdown">
+                <c:out value="${task.explanation}" />
+            </pre>
+						</td>
+					</tr>
+				</c:if>
+
 				<c:forEach var="subTask" items="${task.subTasks}">
 					<tr>
 						<td>${task.annotator}</td>
@@ -214,6 +220,7 @@
 		// print the URI of the experiment
 		var origin = window.location.origin;
 		var experimentId = window.location.search;
+
 		// Extract experimentId from URL
 		const urlParams = new URLSearchParams(window.location.search);
 		globalExperimentId = urlParams.get('id');
@@ -225,8 +232,9 @@
 				+ "/gerbil/experiment"
 				+ experimentId
 				+ "</a>";
+
 		// If this is the AKSW instance of GERBIL
-		if(origin == "http://gerbil.aksw.org") {
+		if (origin == "http://gerbil.aksw.org") {
 			content += " and <a href=\"http://w3id.org/gerbil/experiment"
 					+ experimentId
 					+ "\">http://w3id.org/gerbil/experiment"
@@ -234,7 +242,7 @@
 					+ "</a>";
 		}
 		// If this is the AKSW instance of GERBIL QA
-		if(origin == "http://gerbil-qa.aksw.org") {
+		if (origin == "http://gerbil-qa.aksw.org") {
 			content += " and <a href=\"http://w3id.org/gerbil/qa/experiment"
 					+ experimentId
 					+ "\">http://w3id.org/gerbil/qa/experiment"
@@ -247,6 +255,24 @@
 		document.querySelectorAll(".task-row").forEach(row => {
 			taskIds.push(row.dataset.taskId);
 		});
+
+		// === NEW: render markdown explanations ===
+		document.querySelectorAll(".llm-markdown").forEach(function(pre) {
+			// get the raw markdown text
+			var markdown = pre.textContent.trim();   // trim to avoid extra indent/newlines
+
+			// convert to HTML using marked.js
+			var html = marked.parse(markdown);
+
+			// create a replacement div with your existing styling
+			var div = document.createElement("div");
+			div.className = "llm-result-box";
+			div.innerHTML = html;
+
+			// replace <pre> with the rendered HTML
+			pre.parentNode.replaceChild(div, pre);
+		});
 	});
 </script>
+
 </body>
