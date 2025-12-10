@@ -523,6 +523,36 @@ F.e. if you want to use French, type in: fr">
 					checkbox.addEventListener('change', () => {
 						item.selected = checkbox.checked;
 						updateButtonText(button, data);
+
+						const displayName = item.label ? item.label : (item.name ? item.name : "Unnamed Dataset");
+						const $answerFileDataset = $('#answerFileDataset');
+
+// Check if dataset is selected or deselected
+						if (item.selected) {
+							// Add only if it doesn't already exist
+							const exists = $answerFileDataset.find('option').filter(function () {
+								return $(this).val() === displayName;
+							}).length > 0;
+
+							if (!exists) {
+								console.log("[DEBUG] Adding selected dataset to #answerFileDataset:", displayName);
+
+								const option = $('<option></option>').val(displayName).text(displayName);
+								$answerFileDataset.append(option);
+							}
+						} else {
+							// Deselect case: remove the option
+							console.log("[DEBUG] Removing deselected dataset from #answerFileDataset:", displayName);
+
+							$answerFileDataset.find('option').filter(function () {
+								return $(this).val() === displayName;
+							}).remove();
+						}
+
+// Rebuild and refresh the multiselect
+						$answerFileDataset.multiselect('rebuild');
+						$answerFileDataset.multiselect('refresh');
+
 					});
 
 					label.appendChild(checkbox);
@@ -584,17 +614,32 @@ F.e. if you want to use French, type in: fr">
 					const label = document.createElement('label');
 					const checkbox = document.createElement('input');
 					checkbox.type = 'checkbox';
-					checkbox.value = item.name;
+
+					// FIX 1: Also for checkbox.value
+					const displayName = item.label ? item.label : (item.name ? item.name : "Unnamed Dataset");
+					checkbox.value = displayName;
 
 					checkbox.checked = item.selected || false;
 
 					checkbox.addEventListener('change', () => {
 						item.selected = checkbox.checked;
 						updateButtonText(button, data);
+
+						const $answerFileDataset = $('#answerFileDataset');
+
+						if ($answerFileDataset.find(`option[value="${displayName}"]`).length === 0) {
+							console.log("[DEBUG] Adding selected dataset to #answerFileDataset:", displayName);
+							$answerFileDataset.append(`<option value="${displayName}">${displayName}</option>`);
+							$answerFileDataset.multiselect('rebuild');
+						}
+
+						$answerFileDataset.val(displayName);
+						$answerFileDataset.multiselect('refresh');
 					});
 
+					// FIX 2: Use displayName inside label text too
 					label.appendChild(checkbox);
-					label.appendChild(document.createTextNode(item.name));
+					label.appendChild(document.createTextNode(displayName));
 					optionsContainer.appendChild(label);
 				});
 
@@ -715,6 +760,8 @@ F.e. if you want to use French, type in: fr">
 				}
 			});
 		}
+		var globalExperimentId = null;
+
 
 		function performSubmit() {
 			//fetch list of selected and manually added annotators
@@ -774,6 +821,9 @@ F.e. if you want to use French, type in: fr">
 			$('#matching').multiselect();
 			$('#annotator').multiselect();
 			$('#dataset').multiselect();
+			$('#answerFileDataset').multiselect();
+
+
 
 			// listeners for dropdowns 
 			$('#type').change(loadMatching);
