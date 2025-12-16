@@ -52,6 +52,10 @@ public class ExplanationService implements AutoCloseable {
     public String requestExplanation(String datasetName, List<ExtendedContingencyMetrics> metricsReport,
             EvaluationResultContainer results) {
 
+        // FIXME Get rid of this ugly workaround and replace it by mapping the datasets
+        // to explanation dataset names in the meta data
+        String requestDatasetName = mapDatasetName(datasetName);
+
         List<Integer> positive = new ArrayList<>();
         List<Integer> negative = new ArrayList<>();
         for (int i = 0; i < metricsReport.size(); i++) {
@@ -64,17 +68,32 @@ public class ExplanationService implements AutoCloseable {
 
         String explanationURL = null;
         try {
-            explanationURL = sendF1ScoreData(datasetName, positive, negative);
+            explanationURL = sendF1ScoreData(requestDatasetName, positive, negative);
             if (explanationURL != null) {
                 results.addResult(new ObjectEvaluationResult(EXPLANATION_URL_NAME, explanationURL));
-                LOGGER.info("Received explanationURL \"{}\" for results on dataset \"{}\"", explanationURL, datasetName);
+                LOGGER.info("Received explanationURL \"{}\" for results on dataset \"{}\"", explanationURL,
+                        requestDatasetName);
             } else {
-                LOGGER.info("Received no explanationURL for results on dataset \"{}\"", datasetName);
+                LOGGER.info("Received no explanationURL for results on dataset \"{}\" (requested \"{}\")", datasetName,
+                        requestDatasetName);
             }
         } catch (Exception e) {
             LOGGER.warn("Error sending F1 data: {}", e.getMessage());
         }
         return explanationURL;
+    }
+
+    // FIXME Get rid of this ugly workaround and replace it by mapping the datasets
+    // to explanation dataset names in the meta data
+    private String mapDatasetName(String datasetName) {
+        switch (datasetName) {
+        case "QALD9 Plus Wikidata":
+            return "QALD9_plus_wikidata";
+        case "QALD9 Plus DBpedia":
+            return "QALD9_plus_dbpedia";
+        default:
+            return datasetName;
+        }
     }
 
     protected String sendF1ScoreData(String dataset, List<Integer> positive, List<Integer> negative)
