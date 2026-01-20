@@ -226,6 +226,8 @@ public interface ExperimentDAO extends Closeable {
 	 *            the names of annotators for which the data should be collected
 	 * @param datasetNames
 	 *            the names of datasets for which the data should be collected
+     * @param languages
+     *            the languages for which the data should be collected
 	 * @return a list of the latest results available in the database.
 	 */
 	public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching,
