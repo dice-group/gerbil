@@ -19,6 +19,7 @@ package org.aksw.gerbil.database;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -157,6 +158,18 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     @Override
     public Integer countExperiments() {
         return 0;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PendingExplanationTask> getPendingExplanations() {
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public void setExplanation(int experimentTaskId, String explanationName, String explanationValue) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

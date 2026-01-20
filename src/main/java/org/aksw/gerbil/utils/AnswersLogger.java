@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.aksw.gerbil.matching.EvaluationCounts;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
@@ -59,7 +58,13 @@ public class AnswersLogger<T extends Marking> {
 	}
 	
 	public void close(){
-		pw.close();
+	    if(pw != null) {
+	        try {
+	            pw.close();
+            } catch (Exception e) {
+                // Nothing to do
+            }
+	    }
 	}
 	
 	public void printLine(int index, List<T> annotator, List<T> golden, EvaluationCounts counts, double[] measure) throws IndexOutOfBoundsException{

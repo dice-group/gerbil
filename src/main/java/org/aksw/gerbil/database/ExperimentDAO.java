@@ -226,8 +226,8 @@ public interface ExperimentDAO extends Closeable {
 	 *            the names of annotators for which the data should be collected
 	 * @param datasetNames
 	 *            the names of datasets for which the data should be collected
-	 * @param language
-	 *            the languages for which the data should be collected
+     * @param languages
+     *            the languages for which the data should be collected
 	 * @return a list of the latest results available in the database.
 	 */
 	public List<ExperimentTaskResult> getLatestResultsOfExperiments(String experimentType, String matching,
@@ -271,4 +271,24 @@ public interface ExperimentDAO extends Closeable {
      * @return the number of experiment tasks in the database
      */
     Integer countExperiments();
+
+	/**
+	 * Retrieves all experiment tasks from the database that have an explanation URL
+	 * but have not yet been updated with actual explanation results.
+	 *
+	 * @return a list of {@link PendingExplanationTask} instances containing the task ID and explanation URL
+	 *         for each pending explanation task.
+	 */
+	List<PendingExplanationTask> getPendingExplanations();
+
+	/**
+	 * Updates the explanation results for a given experiment task by storing both the
+	 * LLM-generated explanation and the pruneCEL explanation in the database.
+	 *
+	 * @param experimentTaskId the ID of the experiment task to update
+	 * @param explanationName type of explanation that has been generated 
+	 * @param explanationValue the human-readable explanation
+	 */
+	void setExplanation(int experimentTaskId, String explanationName, String explanationValue);
+
 }

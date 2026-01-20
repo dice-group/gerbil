@@ -44,7 +44,15 @@ import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskConfiguration;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentTaskState;
-import org.aksw.gerbil.evaluate.*;
+import org.aksw.gerbil.evaluate.AggregatedContingencyMetricsReport;
+import org.aksw.gerbil.evaluate.DoubleEvaluationResult;
+import org.aksw.gerbil.evaluate.EvaluationResult;
+import org.aksw.gerbil.evaluate.EvaluationResultContainer;
+import org.aksw.gerbil.evaluate.Evaluator;
+import org.aksw.gerbil.evaluate.EvaluatorFactory;
+import org.aksw.gerbil.evaluate.IntEvaluationResult;
+import org.aksw.gerbil.evaluate.ObjectEvaluationResult;
+import org.aksw.gerbil.evaluate.SubTaskResult;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.exceptions.GerbilException;
 import org.aksw.gerbil.qa.datatypes.AnswerSet;
@@ -166,7 +174,17 @@ public class ExperimentTask implements Task {
             ExperimentTaskResult expResult = new ExperimentTaskResult(configuration, new double[6],
                     ExperimentDAO.TASK_FINISHED, 0);
             transformResults(result, expResult);
-
+//            String explanationURL = "";
+//            if(expResult.aggregatedContingencyMetricsReport.getValue().stream().count()>0){
+//                try {
+//                    explanationURL =  explanationService.requestExplanation(experimentTaskId+"", dataset.getName(), expResult.aggregatedContingencyMetricsReport.getValue());
+//                    expResult.setExplanationURL(explanationURL);
+//                    expResult.setExperimentId(experimentId);
+//                } catch (Exception e) {
+//                    LOGGER.error("Failed to execute explanation request for taskId={} dataset='{}'. Reason: {}",
+//                            experimentTaskId, dataset.getName(), e.getMessage(), e);
+//                }
+//            }
             // store result
             experimentDAO.setExperimentTaskResult(experimentTaskId, expResult);
             LOGGER.info("Task Finished " + configuration.toString());
@@ -327,12 +345,23 @@ public class ExperimentTask implements Task {
             } else {
                 expResult.addAdditionalResult(id, ((IntEvaluationResult) result).getValueAsInt());
             }
-        }else if (result instanceof AggregatedContingencyMetricsReport){
-            if(result.getName()==FMeasureCalculator.CONTINGENCY_MATRIX_NAME){
-                expResult.setContingencyMetricsReport((AggregatedContingencyMetricsReport) result);
-            }else{
-                LOGGER.error("Got an unknown Object type result \"" + result.getName() + "\". Discarding it.");
+        } else if (result instanceof AggregatedContingencyMetricsReport) {
+            expResult.setContingencyMetricsReport((AggregatedContingencyMetricsReport) result);
+        } else if (result instanceof ObjectEvaluationResult) {
+            LOGGER.info("Handling result {}", result.getName());
+            if (result.getValue() != null) {
+                if (String.class.isInstance(result.getValue())) {
+                    expResult.addAdditionalClobResult(ResultNameToIdMapping.getInstance().getResultId(result.getName()),
+                            (String) result.getValue());
+                } else {
+                    LOGGER.warn("No rule for handling an object result {} with type {}. It will be ignored.",
+                            result.getName());
+                }
+            } else {
+                LOGGER.warn("Got a result named {} with a null value. It will be ignored.", result.getName());
             }
+        } else {
+            LOGGER.warn("No rule for handling result {}. It will be ignored.", result.getName());
         }
     }
 
@@ -357,7 +386,7 @@ public class ExperimentTask implements Task {
                     annotatorOutputWriter.storeAnnotatorOutput(configuration, results, dataset.getInstances());
                 }
                 prepareAnnotatorResults(results, globalRetriever);
-                evalResult = evaluate(dataset.getInstances(),evaluators, results, goldStandard);
+                evalResult = evaluate(dataset.getInstances(), evaluators, results, goldStandard);
             } catch (GerbilException e) {
                 throw e;
             } catch (Exception e) {
@@ -558,14 +587,14 @@ public class ExperimentTask implements Task {
                         Annotation answerAnnotation;
                         if (answer instanceof Annotation) {
                             answerAnnotation = (Annotation) answer;
-                            if(globalRetriever != null) {
+                            if (globalRetriever != null) {
                                 globalRetriever.addSameURIs(answerAnnotation.getUris());
                             }
                             addAnswers.add(answerAnnotation);
                         } else if (answer != null) {
                             if (urlValidator.isValid(answer.toString())) {
                                 answerAnnotation = new Annotation(answer.toString());
-                                if(globalRetriever != null) {
+                                if (globalRetriever != null) {
                                     globalRetriever.addSameURIs(answerAnnotation.getUris());
                                 }
                                 addAnswers.add(answerAnnotation);
@@ -615,8 +644,8 @@ public class ExperimentTask implements Task {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends Marking> EvaluationResult evaluate(List<Document> instances,List<Evaluator<? extends Marking>> evaluators,
-            List<List<T>> annotatorResults, List<List<T>> goldStandard) {
+    protected <T extends Marking> EvaluationResult evaluate(List<Document> instances,
+            List<Evaluator<? extends Marking>> evaluators, List<List<T>> annotatorResults, List<List<T>> goldStandard) {
         EvaluationResultContainer evalResults = new EvaluationResultContainer();
         for (Evaluator<? extends Marking> e : evaluators) {
             ((Evaluator<T>) e).evaluate(instances, annotatorResults, goldStandard, evalResults);
