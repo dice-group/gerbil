@@ -91,7 +91,7 @@ public class ExperimentTaskResult {
 
     public ExperimentTaskResult(String annotator, String dataset, String language, ExperimentType type,
             Matching matching, double results[], int state, int errorCount) {
-        this(annotator, dataset, language, type, matching, results, state, errorCount, (new java.util.Date()).getTime(),
+        this(annotator, dataset, language, type, matching, results, state, errorCount, (new Date()).getTime(),
                 -1, null);
     }
 
@@ -99,7 +99,7 @@ public class ExperimentTaskResult {
             int errorCount) {
         this(configuration.annotatorConfig.getName(), configuration.datasetConfig.getName(),
                 configuration.getQuestionLanguage(), configuration.type, configuration.matching, results, state,
-                errorCount, (new java.util.Date()).getTime());
+                errorCount, (new Date()).getTime());
     }
 
     public double[] getResults() {

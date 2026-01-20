@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%
 	request.setAttribute("additionalResultsCount",
 			((String[]) request.getAttribute("additionalResultNames")).length);
@@ -72,17 +73,8 @@
             <c:set var="hasExplanation" value="true" />
         </c:if>
 	</c:forEach>
-	Experiment URI: <span id="experimentUri"></span>
-	<br>
-	Type: <c:out value="${tasks[0].type.label}" />
-	<br>
-	<br>
-	<c:if test="${not empty explanationURL}">
-		<p><strong>Explanation URL:</strong>
-			<a href="${explanationURL}" target="_blank">${explanationURL}</a>
-		</p>
-	</c:if>
-
+	Experiment URI: <span id="experimentUri"></span><br>
+	Type: <c:out value="${tasks[0].type.label}" /><br>
 	Matching: <c:out value="${tasks[0].matching.label}" />
 	<table id="resultTable"
 		   class="table  table-hover table-condensed tableScroll">
@@ -153,7 +145,7 @@
 						<td>${task.dataset}</td>
 						<td>${task.language}</td>
 						<td colspan="2">Explanation</td>
-						<td colspan="${additionalResultsCount + 8}">
+						<td colspan="${fn:escapeXml(additionalResultsCount + 8)}">
             <pre class="llm-markdown">
                 <c:out value="${task.explanation}" />
             </pre>
