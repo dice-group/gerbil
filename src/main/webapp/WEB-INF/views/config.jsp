@@ -41,58 +41,8 @@
 	overflow: hidden;
 }
 
-.custom-multiselect-dropdown {
-	position: relative;
-	width: 100%;
-}
-
-.dropdown-btn {
-	width: 100%;
-	padding: 10px;
-	border: 1px solid #ccc;
-	background-color: #f9f9f9;
-	cursor: pointer;
-	text-align: left;
-}
-
-.dropdown-list {
-	position: absolute;
-	width: 100%;
-	max-height: 200px;
-	overflow-y: auto;
-	border: 1px solid #ccc;
-	background-color: #fff;
-	display: none;
-	z-index: 10;
-}
-
-.dropdown-list.active {
-	display: block;
-}
-
-.dropdown-list .optgroup {
-	font-weight: bold;
-	padding: 8px;
-	cursor: pointer;
-}
-
-.dropdown-list .optgroup-options {
-	display: none;
-	padding-left: 20px;
-}
-
 .dropdown-list .optgroup:hover .optgroup-options {
 	display: block;
-}
-
-.dropdown-list label {
-	display: block;
-	padding: 5px;
-	cursor: pointer;
-}
-
-.dropdown-list input[type="checkbox"] {
-	margin-right: 5px;
 }
 
 .fileinput-button input {
@@ -198,38 +148,44 @@
 					</a>
 				</div>
 				<div class="col-md-4">
-					<div id="multiselect-container" class="custom-multiselect-dropdown"></div>
+					<!-- 1st level: dataset group (single select in UI, but multiple in HTML) -->
+					<select id="datasetGroup" class="form-control" multiple="multiple">
+					</select>
 
+					<br/>
+
+					<!-- 2nd level: datasets inside selected group (multi select) -->
+					<select id="dataset" multiple="multiple" style="display:none;">
+					</select>
 
 					<hr />
 					<div>
 						<span> Or upload another dataset:</span>
 						<dv>
-							<label for="nameDataset">Name:</label> <input
-								class="form-control" type="text" id="nameDataset" name="name"
-								placeholder="Type something" /> <br> <span
-								class="btn btn-success fileinput-button"> <i
-								class="glyphicon glyphicon-plus"></i> <span>Select
-									file...</span> <!-- The file input field used as target for the file upload widget -->
-								<input id="fileupload" type="file" name="files[]" onchange="addDatasetFile(this)">
-							</span> <br> <br>
-							<!-- The global progress bar -->
+							<label for="nameDataset">Name:</label>
+							<input class="form-control" type="text" id="nameDataset" name="name"
+								   placeholder="Type something" /> <br>
+							<span class="btn btn-success fileinput-button">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span>Select file...</span>
+                <input id="fileupload" type="file" name="files[]" onchange="addDatasetFile(this)">
+            </span>
+							<br><br>
 							<div id="progress" class="progress">
 								<div class="progress-bar progress-bar-success"></div>
 							</div>
 							<div>
-								<!-- list to be filled by button press and javascript function addDataset -->
 								<ul class="unstyled" id="datasetList"
 									style="margin-top: 15px; list-style-type: none;">
 								</ul>
 							</div>
 							<div id="warningEmptyDataset" class="alert alert-warning"
-								role="alert">
+								 role="alert">
 								<button type="button" class="close" data-dismiss="alert"></button>
 								<strong>Warning!</strong> Enter a name.
 							</div>
-						</div>
-					</div>	
+						</dv>
+					</div>
 				</div>
 			</div>
 			<div class="row">
@@ -375,6 +331,7 @@ F.e. if you want to use French, type in: fr">
 		</fieldset>
 	</form>
 	<script type="text/javascript">
+		var datasetsCache = [];   // full list from /datasets endpoint
 		// PLEASE DECLARE FUNCTION _OUTSIDE_ OF THE $(document).ready(function() {...}) !!!
 
 		// Adds the given data to the given (multi) select element. It is assumed that data is an array of Strings that are used as label and value of the single options.
@@ -456,13 +413,76 @@ F.e. if you want to use French, type in: fr">
 		}
 		function loadDatasets() {
 			$('#dataset').html('');
+			$('#datasetGroup').html('');
+
 			$.getJSON('${datasets}', {
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
-				createCustomMultiselect(data)
+				datasetsCache = data;
+				var groups = [];
+				$.each(datasetsCache, function(_, item) {
+					var g = item.group || item.expType || 'Default';
+					if (groups.indexOf(g) === -1) {
+						groups.push(g);
+					}
+				});
+				groups.sort();
+				$.each(groups, function(_, g) {
+					$('#datasetGroup').append(
+							$('<option/>', { value: g, text: g })
+					);
+				});
+				$('#datasetGroup').multiselect('rebuild');
+				$('#datasetGroup').multiselect('deselectAll', false);
+				$('#datasetGroup').multiselect('updateButtonText');
+				$('#dataset').html('');
+				$('#dataset').multiselect('rebuild');
+				$('#dataset').multiselect('deselectAll', false);
+				$('#dataset').multiselect('updateButtonText');
+
+				syncAnswerFileDataset();
+				checkExperimentConfiguration();
 			});
 		}
+
+		function populateDatasetsForGroup(group) {
+			var formattedData = [];
+
+			$.each(datasetsCache, function(_, item) {
+				var g = item.group || item.expType || 'Default';
+				if (!group || g === group) {
+					formattedData.push({
+						label: item.label || item.name,
+						name:  item.name,
+						description: item.description
+					});
+				}
+			});
+			addDataToSelectWithTooltips('#dataset', formattedData);
+			$('#dataset').multiselect('deselectAll', false);
+			$('#dataset').multiselect('updateButtonText');
+
+			syncAnswerFileDataset();
+			checkExperimentConfiguration();
+		}
+
+		function syncAnswerFileDataset() {
+			var $answer = $('#answerFileDataset');
+			$answer.html('');
+			$('#dataset option:selected').each(function () {
+				var val  = $(this).val();
+				var text = $(this).text();
+
+				$answer.append(
+						$('<option/>', { value: val, text: text })
+				);
+			});
+
+			$answer.multiselect('rebuild');
+		}
+
+
 		// This function can be used to adapt the GUI for the chosen experiment type
 		function adaptGuiForExperimentType() {
 			console.log($('#type').val());
@@ -478,211 +498,15 @@ F.e. if you want to use French, type in: fr">
 				$("#uploadAnswers").hide();
 			}
 		}
-		function createCustomMultiselect(data) {
-			const container = document.getElementById('multiselect-container');
-			while (container.firstChild) {
-				container.removeChild(container.firstChild);
-			}
-
-			const button = document.createElement('div');
-			button.className = 'dropdown-btn';
-			button.textContent = 'Select Options'; // Default text
-			container.appendChild(button);
-
-			const dropdownList = document.createElement('div');
-			dropdownList.className = 'dropdown-list';
-
-			const groupedData = {}; // Group datasets by their group property
-			data.forEach(item => {
-				const group = item.group || item.expType || 'Default'; // Use expType or group for grouping
-				if (!groupedData[group]) {
-					groupedData[group] = [];
-				}
-				groupedData[group].push(item);
-			});
-
-			const sortedGroups = Object.keys(groupedData).sort()
-
-			sortedGroups.forEach(group => {
-				const optgroupDiv = document.createElement('div');
-				optgroupDiv.className = 'optgroup';
-				optgroupDiv.textContent = group;
-				const optionsContainer = document.createElement('div');
-				optionsContainer.className = 'optgroup-options';
-
-				groupedData[group].forEach(item => {
-					const label = document.createElement('label');
-					const checkbox = document.createElement('input');
-					checkbox.type = 'checkbox';
-					checkbox.value = item.name;
-
-					// Set initial checked state from item if necessary
-					checkbox.checked = item.selected || false;
-
-					// Event listener for checkbox click
-					checkbox.addEventListener('change', () => {
-						item.selected = checkbox.checked;
-						updateButtonText(button, data);
-
-						const displayName = item.label ? item.label : (item.name ? item.name : "Unnamed Dataset");
-						const $answerFileDataset = $('#answerFileDataset');
-
-// Check if dataset is selected or deselected
-						if (item.selected) {
-							// Add only if it doesn't already exist
-							const exists = $answerFileDataset.find('option').filter(function () {
-								return $(this).val() === displayName;
-							}).length > 0;
-
-							if (!exists) {
-								console.log("[DEBUG] Adding selected dataset to #answerFileDataset:", displayName);
-
-								const option = $('<option></option>').val(displayName).text(displayName);
-								$answerFileDataset.append(option);
-							}
-						} else {
-							// Deselect case: remove the option
-							console.log("[DEBUG] Removing deselected dataset from #answerFileDataset:", displayName);
-
-							$answerFileDataset.find('option').filter(function () {
-								return $(this).val() === displayName;
-							}).remove();
-						}
-
-// Rebuild and refresh the multiselect
-						$answerFileDataset.multiselect('rebuild');
-						$answerFileDataset.multiselect('refresh');
-
-					});
-
-					label.appendChild(checkbox);
-					label.appendChild(document.createTextNode(item.name));
-					optionsContainer.appendChild(label);
-				});
-
-				optgroupDiv.appendChild(optionsContainer);
-				dropdownList.appendChild(optgroupDiv);
-			});
-
-			container.appendChild(dropdownList);
-
-			button.addEventListener('click', () => {
-				dropdownList.classList.toggle('active');
-			});
-
-			document.addEventListener('click', (event) => {
-				if (!container.contains(event.target)) {
-					dropdownList.classList.remove('active');
-				}
-			});
-		}
-
-		function createCustomMultiselectOLD(data) {
-			const container = document.getElementById('multiselect-container');
-			while (container.firstChild) {
-				container.removeChild(container.firstChild);
-			}
-
-			const button = document.createElement('div');
-			button.className = 'dropdown-btn';
-			button.textContent = 'Select Options';
-			container.appendChild(button);
-
-			const dropdownList = document.createElement('div');
-			dropdownList.className = 'dropdown-list';
-
-			const groupedData = {};
-			data.forEach(item => {
-				const group = item.group || 'Default';
-				if (!groupedData[group]) {
-					groupedData[group] = [];
-				}
-				groupedData[group].push(item);
-			});
-
-			console.log("aaakahs JS")
-			console.log(groupedData)
-
-			Object.keys(groupedData).forEach(group => {
-				const optgroupDiv = document.createElement('div');
-				optgroupDiv.className = 'optgroup';
-				optgroupDiv.textContent = group;
-				const optionsContainer = document.createElement('div');
-				optionsContainer.className = 'optgroup-options';
-
-				groupedData[group].forEach(item => {
-					const label = document.createElement('label');
-					const checkbox = document.createElement('input');
-					checkbox.type = 'checkbox';
-
-					// FIX 1: Also for checkbox.value
-					const displayName = item.label ? item.label : (item.name ? item.name : "Unnamed Dataset");
-					checkbox.value = displayName;
-
-					checkbox.checked = item.selected || false;
-
-					checkbox.addEventListener('change', () => {
-						item.selected = checkbox.checked;
-						updateButtonText(button, data);
-
-						const $answerFileDataset = $('#answerFileDataset');
-
-						if ($answerFileDataset.find(`option[value="${displayName}"]`).length === 0) {
-							console.log("[DEBUG] Adding selected dataset to #answerFileDataset:", displayName);
-							$answerFileDataset.append(`<option value="${displayName}">${displayName}</option>`);
-							$answerFileDataset.multiselect('rebuild');
-						}
-
-						$answerFileDataset.val(displayName);
-						$answerFileDataset.multiselect('refresh');
-					});
-
-					// FIX 2: Use displayName inside label text too
-					label.appendChild(checkbox);
-					label.appendChild(document.createTextNode(displayName));
-					optionsContainer.appendChild(label);
-				});
-
-				optgroupDiv.appendChild(optionsContainer);
-				dropdownList.appendChild(optgroupDiv);
-			});
-
-			container.appendChild(dropdownList);
-
-			button.addEventListener('click', () => {
-				dropdownList.classList.toggle('active');
-			});
-
-			document.addEventListener('click', (event) => {
-				if (!container.contains(event.target)) {
-					dropdownList.classList.remove('active');
-				}
-			});
-		}
-
-		function updateButtonText(button, data) {
-			const selectedItems = data.filter(item => item.selected);
-			if (selectedItems.length > 0) {
-				const selectedNames = selectedItems.map(item => item.name).join(', ');
-				button.textContent = selectedNames;
-			} else {
-				button.textContent = 'Select Options';
-			}
-		}
-
 		function checkExperimentConfiguration() {
-			var dataset = [];
-			const container = document.getElementById('multiselect-container');
-			container.querySelectorAll('.dropdown-list input[type="checkbox"]:checked').forEach((checkbox) => {
-				dataset.push(checkbox.value);
-			});
 			var numberOfSystems = $('#annotator option:selected').length
 					+ $("#annotatorList li span.li_content").length;
-			var numberOfDataset = dataset.length;
+
+			var numberOfDataset = $('#dataset option:selected').length
+					+ $("#datasetList li span.li_content").length;
+
 			var numberOfAnswerFiles = $("#answerFileList li span.li_content").length;
 
-			//check whether there is at least one dataset and at least one annotator or at least one answerFile
-			//and the disclaimer checkbox should be clicked
 			if (((numberOfSystems > 0 && numberOfDataset > 0) || (numberOfAnswerFiles > 0))
 					&& $('#disclaimerCheckbox:checked').length == 1) {
 				$('#submit').attr("disabled", false);
@@ -690,6 +514,7 @@ F.e. if you want to use French, type in: fr">
 				$('#submit').attr("disabled", true);
 			}
 		}
+
 		function addItemToList(listElement, item) {
 			$(listElement)
 					.append(
@@ -764,28 +589,26 @@ F.e. if you want to use French, type in: fr">
 
 
 		function performSubmit() {
-			//fetch list of selected and manually added annotators
+			// annotators
 			var annotatorMultiselect = $('#annotator option:selected');
 			var annotator = [];
 			addToList(annotator, annotatorMultiselect);
-			addToList(annotator, $("#annotatorList li span.li_content"),
-					"NIFWS_");
-			//fetch list of selected and manually added datasets
-			var datasetMultiselect = $('#dataset option:selected');
+			addToList(annotator, $("#annotatorList li span.li_content"), "NIFWS_");
+
+			// datasets
 			var dataset = [];
-			const container = document.getElementById('multiselect-container');
-			container.querySelectorAll('.dropdown-list input[type="checkbox"]:checked').forEach((checkbox) => {
-				dataset.push(checkbox.value);
-			});
-			addToList(dataset, datasetMultiselect);
+			addToList(dataset, $('#dataset option:selected'));
 			addToList(dataset, $("#datasetList li span.li_content"), "NIFDS_");
+
 			var qLang = $("#qLang").val();
+
 			var answerFiles = [];
-			addToList(answerFiles, $("#answerFileList li span.li_content"),
-					"AF_");
+			addToList(answerFiles, $("#answerFileList li span.li_content"), "AF_");
+
 			var type = $('#type').val() ? $('#type').val() : "A2KB";
 			var matching = $('#matching').val() ? $('#matching').val()
 					: "Mw - weak annotation match";
+
 			var data = {};
 			data.type = type;
 			data.matching = matching;
@@ -793,69 +616,89 @@ F.e. if you want to use French, type in: fr">
 			data.dataset = dataset;
 			data.answerFiles = answerFiles;
 			data.questionLanguage = qLang;
-			$
-					.ajax('${execute}', {
-						data : {
-							'experimentData' : JSON.stringify(data)
-						}
-					})
-					.done(
-							function(data) {
-								$('#submit').remove();
-								var origin = window.location.origin;
-								var link = "<a href=\"/gerbil/experiment?id="
-										+ data + "\">" + origin
-										+ "/gerbil/experiment?id=" + data
-										+ "</a>";
-								var span = "<span>Find your experimental data here: </span>";
-								$('#submitField').append(span);
-								$('#submitField').append(link);
-							}).fail(function() {
-						alert("The server reported an Error.");
-					});
+
+			$.ajax('${execute}', {
+				data: { 'experimentData': JSON.stringify(data) }
+			})
+					.done(function(data) {
+						$('#submit').remove();
+						var origin = window.location.origin;
+						var link = "<a href=\"/gerbil/experiment?id="
+								+ data + "\">" + origin
+								+ "/gerbil/experiment?id=" + data
+								+ "</a>";
+						var span = "<span>Find your experimental data here: </span>";
+						$('#submitField').append(span);
+						$('#submitField').append(link);
+					}).fail(function() {
+				alert("The server reported an Error.");
+			});
 		}
 
+
 		$(document).ready(function() {
-			// load dropdowns when document loaded 
 			$('#type').multiselect();
 			$('#matching').multiselect();
 			$('#annotator').multiselect();
-			$('#dataset').multiselect();
+
+			$('#datasetGroup').multiselect({
+				multiple: true,
+				nonSelectedText: 'Select dataset group',
+				buttonWidth: '100%',
+				maxHeight: 250,
+				onChange: function(option, checked) {
+					var selected = $('#datasetGroup option:selected');
+
+					if (selected.length > 1) {
+						var lastValue = $(option).val();
+						$('#datasetGroup').val(lastValue);
+						$('#datasetGroup').multiselect('refresh');
+					}
+					var group = $('#datasetGroup').val();
+					if ($.isArray(group)) {
+						group = group[0];
+					}
+
+					populateDatasetsForGroup(group);
+				}
+			});
+
+
+
+			$('#dataset').multiselect({
+				multiple: true,
+				nonSelectedText: 'Select dataset(s)',
+				buttonWidth: '100%',
+				maxHeight: 250,
+				includeSelectAllOption: true,
+				onChange: function(option, checked) {
+					syncAnswerFileDataset();
+					checkExperimentConfiguration();
+				}
+			});
 			$('#answerFileDataset').multiselect();
-
-
-
-			// listeners for dropdowns 
 			$('#type').change(loadMatching);
 			$('#type').change(loadAnnotator);
 			$('#type').change(loadDatasets);
 			$('#type').change(adaptGuiForExperimentType);
-
 			loadExperimentTypes();
 
 			addDataToSelect('#answerFileType', [ 'QALD JSON', 'QALD XML' ]);
 
-			//supervise configuration of experiment and let it only run
-			//if everything is ok 
-			//initially it is turned off 
 			$('#submit').attr("disabled", true);
-			//check showing run button if something is changed in dropdown menu
+
 			$('#annotator').change(function() {
-				checkExperimentConfiguration();
-			});
-			$('#multiselect-container').change(function() {
 				checkExperimentConfiguration();
 			});
 			$('#disclaimerCheckbox').change(function() {
 				checkExperimentConfiguration();
 			});
 
-			//if add button is clicked check whether there is a name and a uri 
 			$('#warningEmptyAnnotator').hide();
 			$('#infoAnnotatorTest').hide();
 			$('#dangerAnnotatorTestError').hide();
 			$('#addAnnotator').click(defineNIFAnnotator);
-			//if system file add button is clicked check whether there is a name and a dataset
+
 			$('#warningEmptyAnswerFileName').hide();
 			$('#answerFileUpload').click(function() {
 				var name = $('#nameAnswerFile').val();
@@ -867,7 +710,7 @@ F.e. if you want to use French, type in: fr">
 					$('#warningEmptyAnswerFileName').hide();
 				}
 			});
-			//if dataset file add button is clicked check whether there is a name 
+
 			$('#warningEmptyDataset').hide();
 			$('#fileupload').click(function() {
 				var name = $('#nameDataset').val();
@@ -879,11 +722,8 @@ F.e. if you want to use French, type in: fr">
 					$('#warningEmptyDataset').hide();
 				}
 			});
-
-			//submit button clicked will collect and sent experiment data to backend
 			$('#submit').click(performSubmit);
 		});
-
 		// define dataset file upload
 		$(function() {
 			'use strict';
