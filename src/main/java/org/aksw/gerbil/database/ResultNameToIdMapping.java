@@ -25,6 +25,7 @@ import org.aksw.gerbil.datatypes.marking.MarkingClasses;
 import org.aksw.gerbil.evaluate.impl.ConfidenceScoreEvaluatorDecorator;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
 import org.aksw.gerbil.evaluate.impl.InKBClassBasedFMeasureCalculator;
+import org.aksw.gerbil.web.ExplanationService;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
@@ -85,7 +86,12 @@ public class ResultNameToIdMapping {
 
             nameToIdMap.put(FMeasureCalculator.MACRO_F1_2_SCORE_NAME, 28);
 
-            
+            nameToIdMap.put(FMeasureCalculator.CONTINGENCY_MATRIX_NAME, 29);
+
+            nameToIdMap.put(ExplanationService.EXPLANATION_URL_NAME, 30);
+            nameToIdMap.put(ExplanationService.HUMAN_READABLE_EXPLANATION_NAME, 31);
+            nameToIdMap.put(ExplanationService.MACHINE_READABLE_EXPLANATION_NAME, 32);
+
             instance = new ResultNameToIdMapping(nameToIdMap, IntObjectOpenHashMap.from(nameToIdMap.values().toArray(),
                     nameToIdMap.keys().toArray(String.class)));
         }
@@ -105,6 +111,14 @@ public class ResultNameToIdMapping {
         return nameToIdMap.getOrDefault(name, UKNOWN_RESULT_TYPE);
     }
 
+    public int getResultIdOrThrow(String name) throws IllegalArgumentException {
+        int resultId = getResultId(name);
+        if (resultId < 0) {
+            throw new IllegalArgumentException("Unknown result name \"" + name + "\".");
+        }
+        return resultId;
+    }
+
     public String getResultName(int id) {
         return idToNameMap.getOrDefault(id, null);
     }
@@ -114,6 +128,18 @@ public class ResultNameToIdMapping {
         for (ExperimentTaskResult result : results) {
             if (result.hasAdditionalResults()) {
                 ids.addAll(result.getAdditionalResults().keys());
+            }
+        }
+        int idArray[] = ids.toArray();
+        Arrays.sort(idArray);
+        return idArray;
+    }
+
+    public int[] listAdditionalStringResultIds(List<ExperimentTaskResult> results) {
+        IntOpenHashSet ids = new IntOpenHashSet();
+        for (ExperimentTaskResult result : results) {
+            if (result.hasAdditionalClobResults()) {
+                ids.addAll(result.getAdditionalClobResults().keys());
             }
         }
         int idArray[] = ids.toArray();

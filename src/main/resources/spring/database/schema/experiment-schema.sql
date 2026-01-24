@@ -56,3 +56,10 @@ CREATE TABLE IF NOT EXISTS ExperimentTasks_AdditionalBlobResults (
     resultValue BLOB,
     PRIMARY KEY (taskId, resultId)
 );
+
+CREATE TABLE IF NOT EXISTS ExperimentTasks_AdditionalClobResults (
+    taskId int NOT NULL,
+    resultId int NOT NULL,
+    resultValue CLOB,
+    PRIMARY KEY (taskId, resultId)
+);

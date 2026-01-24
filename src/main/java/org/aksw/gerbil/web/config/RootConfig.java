@@ -51,6 +51,7 @@ import org.aksw.gerbil.semantic.subclass.ClassHierarchyLoader;
 import org.aksw.gerbil.semantic.subclass.SimpleSubClassInferencer;
 import org.aksw.gerbil.semantic.subclass.SubClassInferencer;
 import org.aksw.gerbil.utils.ConsoleLogger;
+import org.aksw.gerbil.web.ExplanationService;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.DefeatableOverseer;
 import org.aksw.simba.topicmodeling.concurrent.overseers.pool.ExecutorBasedOverseer;
 import org.aksw.simba.topicmodeling.concurrent.reporter.LogReporter;
@@ -67,6 +68,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * This is the root {@link Configuration} class that is processed by the Spring
@@ -88,6 +90,7 @@ import org.springframework.core.io.Resource;
  */
 @SuppressWarnings("deprecation")
 @org.springframework.context.annotation.Configuration
+@EnableScheduling
 @ComponentScan(basePackages = "org.aksw.gerbil.web.config")
 @PropertySource("gerbil.properties")
 public class RootConfig {
@@ -121,6 +124,8 @@ public class RootConfig {
     private static final String AVAILABLE_EXPERIMENT_TYPES_KEY = "org.aksw.gerbil.web.MainController.availableExperimentTypes";
 
     private static final String LABEL_INDEX_PATH_KEY = "org.aksw.agdistis.util.TripleIndex.path";
+
+    private static final String EXPLANATION_SERVICE_URL_KEY = "org.aksw.gerbil.explanation.service.url";
 
     static @Bean public PropertySourcesPlaceholderConfigurer myPropertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
@@ -268,8 +273,26 @@ public class RootConfig {
         return null;
     }
 
-    public static @Bean EvaluatorFactory createEvaluatorFactory(SubClassInferencer inferencer, TripleIndex index) {
-        return new EvaluatorFactory(inferencer);
+
+    @Bean
+    public static ExplanationService createExplanationService() {
+        String url = GerbilConfiguration.getInstance().getString(EXPLANATION_SERVICE_URL_KEY, null);
+        ExplanationService service = null;
+        if(url == null) {
+            LOGGER.info("Did not find a URL for an explanation service. This instance won't request any explanations.");
+        } else {
+            service = new ExplanationService(url);
+        }
+        return service;
+    }
+
+    @Bean
+    public static EvaluatorFactory createEvaluatorFactory(
+            SubClassInferencer inferencer,
+            TripleIndex index,
+            ExplanationService explanationService
+    ) {
+        return new EvaluatorFactory(inferencer, explanationService);
     }
 
     public static AnnotatorOutputWriter getAnnotatorOutputWriter() {

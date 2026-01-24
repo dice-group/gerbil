@@ -29,14 +29,13 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import com.google.gson.Gson;
 import org.aksw.gerbil.config.GerbilConfiguration;
 import org.aksw.gerbil.datatypes.ErrorTypes;
-import org.aksw.gerbil.datatypes.ExperimentTaskBlobResultType;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.evaluate.AggregatedContingencyMetricsReport;
 import org.aksw.gerbil.evaluate.ExtendedContingencyMetrics;
 import org.aksw.gerbil.evaluate.impl.FMeasureCalculator;
+import org.aksw.gerbil.web.ExplanationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -46,6 +45,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+
+import com.google.gson.Gson;
 
 /**
  * SQL database based implementation of the {@link AbstractExperimentDAO} class.
@@ -96,8 +97,17 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     private final static String GET_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks";
 
-    private final static String INSERT_ADDITIONAL_BLOB_RESULTS = "INSERT INTO ExperimentTasks_AdditionalBlobResults (taskId, resultId,  resultValue) VALUES (:taskId, :resultId, :resultValue)";
+    private final static String INSERT_ADDITIONAL_BLOB_RESULTS = "INSERT INTO ExperimentTasks_AdditionalBlobResults (taskId, resultId, resultValue) VALUES (:taskId, :resultId, :resultValue)";
     private final static String GET_ADDITIONAL_BLOB_RESULTS = "SELECT resultId, resultValue FROM ExperimentTasks_AdditionalBlobResults WHERE taskId=:taskId";
+
+    private final static String INSERT_ADDITIONAL_CLOB_RESULTS = "INSERT INTO ExperimentTasks_AdditionalClobResults (taskId, resultId, resultValue) VALUES (:taskId, :resultId, :resultValue)";
+    private final static String GET_ADDITIONAL_CLOB_RESULTS = "SELECT resultId, resultValue FROM ExperimentTasks_AdditionalClobResults WHERE taskId=:taskId";
+
+    /**
+     * Pending explanations are identified by looking for experiments tasks that
+     * have an explanation URL set, but do not have a human readable explanation.
+     */
+    private final static String GET_PENDING_EXPLANATION_URLS = "SELECT taskId, resultValue FROM ExperimentTasks_AdditionalClobResults WHERE resultId=:urlId AND taskId NOT IN (SELECT taskId FROM ExperimentTasks_AdditionalClobResults WHERE resultId=:explId)";
 
     private final NamedParameterJdbcTemplate template;
 
@@ -122,6 +132,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
             addVersion(e);
             addAdditionalResults(e);
             addAdditionalBlobResults(e);
+            addAdditionalClobResults(e);
             addSubTasks(e);
         }
         return result;
@@ -226,6 +237,14 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                 if ((result.additionalResults.allocated[i]) && (result.additionalResults.keys[i] >= 6)) {
                     addAdditionaResult(experimentTaskId, result.additionalResults.keys[i],
                             result.additionalResults.values[i]);
+                }
+            }
+        }
+        if (result.hasAdditionalClobResults()) {
+            for (int i = 0; i < result.additionalClobResults.allocated.length; ++i) {
+                if ((result.additionalClobResults.allocated[i]) && (result.additionalClobResults.keys[i] >= 6)) {
+                    insertAdditionalClobResult(experimentTaskId, result.additionalClobResults.keys[i],
+                            (String) ((Object[]) result.additionalClobResults.values)[i]);
                 }
             }
         }
@@ -396,6 +415,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         for (IntDoublePair a : addResults) {
             result.addAdditionalResult(a.first, a.second);
         }
+        // TODO handle BLOB results
     }
 
     protected void insertSubTask(ExperimentTaskResult subTask, int experimentTaskId) {
@@ -403,6 +423,30 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                 subTask.matching.name(), null);
         setExperimentTaskResult(subTask.idInDb, subTask);
         addSubTaskRelation(experimentTaskId, subTask.idInDb);
+    }
+
+    protected void insertAdditionalClobResult(int experimentTaskId, int resultId, String resultValue) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", experimentTaskId);
+        parameters.addValue("resultId", resultId);
+        parameters.addValue("resultValue", resultValue);
+        this.template.update(INSERT_ADDITIONAL_CLOB_RESULTS, parameters);
+    }
+
+    @Override
+    public void setExplanation(int taskId, String explanationName, String explanationValue) {
+        insertAdditionalClobResult(taskId, ResultNameToIdMapping.getInstance().getResultIdOrThrow(explanationName), explanationValue);
+    }
+
+    @Override
+    public List<PendingExplanationTask> getPendingExplanations() {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("urlId",
+                ResultNameToIdMapping.getInstance().getResultIdOrThrow(ExplanationService.EXPLANATION_URL_NAME));
+        parameters.addValue("explId",
+                ResultNameToIdMapping.getInstance().getResultIdOrThrow(ExplanationService.HUMAN_READABLE_EXPLANATION_NAME));
+        return template.query(GET_PENDING_EXPLANATION_URLS, parameters,
+                (rs, rowNum) -> new PendingExplanationTask(rs.getInt("taskId"), rs.getString("resultValue")));
     }
 
     protected void addSubTaskRelation(int taskId, int subTaskId) {
@@ -445,6 +489,7 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         addVersion(result);
         addAdditionalResults(result);
         addAdditionalBlobResults(result);
+        addAdditionalClobResults(result);
         addSubTasks(result);
         return result;
     }
@@ -509,12 +554,13 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
         return result.get(0);
     }
 
+    // FIXME Transform this into an insert for BLOB results!!!
     public void insertContingencyMetricsReport(int taskId,
             AggregatedContingencyMetricsReport aggregatedContingencyMetricsReport) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("taskId", taskId);
         parameters.addValue("resultId",
-                ExperimentTaskBlobResultType.getResultId(aggregatedContingencyMetricsReport.getName()));
+                ResultNameToIdMapping.getInstance().getResultIdOrThrow(aggregatedContingencyMetricsReport.getName()));
         parameters.addValue("resultValue",
                 gson.toJson(aggregatedContingencyMetricsReport.getValue()).getBytes(StandardCharsets.UTF_8));
         this.template.update(INSERT_ADDITIONAL_BLOB_RESULTS, parameters);
@@ -530,9 +576,12 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
                         return new IntByteArrayPair(rs.getInt("resultId"), rs.getBytes("resultValue"));
                     }
                 });
+        // FIXME fix this workaround!
+        int matrixResultId = ResultNameToIdMapping.getInstance()
+                .getResultIdOrThrow(FMeasureCalculator.CONTINGENCY_MATRIX_NAME);
         for (IntByteArrayPair pair : blobs) {
             try {
-                if ((pair.first == 1) && (pair.second != null) && (pair.second.length > 0)) {
+                if ((pair.first == matrixResultId) && (pair.second != null) && (pair.second.length > 0)) {
                     result.setContingencyMetricsReport(
                             new AggregatedContingencyMetricsReport(FMeasureCalculator.CONTINGENCY_MATRIX_NAME,
                                     gson.fromJson(new String(pair.second, StandardCharsets.UTF_8),
@@ -544,4 +593,20 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
             }
         }
     }
+
+    protected void addAdditionalClobResults(ExperimentTaskResult result) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("taskId", result.idInDb);
+        List<IntStringPair> clobs = this.template.query(GET_ADDITIONAL_CLOB_RESULTS, parameters,
+                new RowMapper<IntStringPair>() {
+                    @Override
+                    public IntStringPair mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        return new IntStringPair(rs.getInt("resultId"), rs.getString("resultValue"));
+                    }
+                });
+        for (IntStringPair pair : clobs) {
+            result.addAdditionalClobResult(pair.first, pair.second);
+        }
+    }
+
 }

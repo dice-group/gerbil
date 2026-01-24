@@ -36,6 +36,7 @@ import org.aksw.gerbil.matching.Matching;
 import org.aksw.gerbil.matching.impl.MatchingsCounterImpl;
 import org.aksw.gerbil.semantic.sameas.SameAsRetriever;
 import org.aksw.gerbil.semantic.sameas.impl.ErrorFixingSameAsRetriever;
+import org.aksw.gerbil.web.ExplanationService;
 import org.aksw.gerbil.web.config.AdapterList;
 import org.aksw.gerbil.web.config.DatasetsConfig;
 import org.aksw.gerbil.web.config.RootConfig;
@@ -58,7 +59,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class GoldStdEvalTest extends AbstractExperimentTaskTest {
 
     private static final EvaluatorFactory EVALUATOR_FACTORY = RootConfig.createEvaluatorFactory(
-            RootConfig.createSubClassInferencer(), RootConfig.createTripleIndex());
+            RootConfig.createSubClassInferencer(), RootConfig.createTripleIndex(), (ExplanationService) null);
     private static final SameAsRetriever SAME_AS_RETRIEVER = new ErrorFixingSameAsRetriever();
     private static final EntityCheckerManager ENTITY_CHECKER_MANAGER = new EntityCheckerManagerImpl();
     private static final Matching MATCHING = Matching.STRONG_ENTITY_MATCH;

@@ -74,6 +74,7 @@ import org.aksw.gerbil.transfer.nif.Span;
 import org.aksw.gerbil.transfer.nif.TypedSpan;
 import org.aksw.gerbil.transfer.nif.data.TypedNamedEntity;
 import org.aksw.gerbil.utils.filter.TypeBasedMarkingFilter;
+import org.aksw.gerbil.web.ExplanationService;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.vocabulary.OWL;
@@ -99,11 +100,12 @@ public class EvaluatorFactory {
 
     protected UriKBClassifier globalClassifier = null;
     protected SubClassInferencer inferencer = null;
+    protected ExplanationService explanationService = null;
     protected TripleIndex index = null;
     protected Literal2ResourceManager converterManager = new Literal2ResourceManager();
 
     public EvaluatorFactory() {
-        this(null, null);
+        this(null, null, null);
     }
 
     private static String[] loadDefaultKBs() {
@@ -115,19 +117,24 @@ public class EvaluatorFactory {
     }
 
     public EvaluatorFactory(UriKBClassifier globalClassifier) {
-        this(globalClassifier, null);
+        this(globalClassifier, null, null);
     }
 
     public EvaluatorFactory(SubClassInferencer inferencer) {
-        this(null, inferencer);
+        this(null, inferencer, null);
     }
 
-    public EvaluatorFactory(UriKBClassifier globalClassifier, SubClassInferencer inferencer) {
+    public EvaluatorFactory(SubClassInferencer inferencer, ExplanationService explanationService) {
+        this(null, inferencer, explanationService);
+    }
+
+    public EvaluatorFactory(UriKBClassifier globalClassifier, SubClassInferencer inferencer, ExplanationService explanationService) {
         if (globalClassifier != null) {
             this.globalClassifier = globalClassifier;
         } else {
             this.globalClassifier = new SimpleWhiteListBasedUriKBClassifier(DEFAULT_WELL_KNOWN_KBS);
         }
+        this.explanationService = explanationService;
         if (inferencer != null) {
             this.inferencer = inferencer;
         } else {
@@ -306,9 +313,14 @@ public class EvaluatorFactory {
         case QA: {
             // Note: QA does not know emerging entities. Hence, we don't use the URI
             // classifier-based matching
-            return new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerSet>(
+            Evaluator<Marking> qaEvaluator = new SimpleTypeTransformingEvaluatorDecorator<Marking, AnswerSet>(
                     new FMeasureCalculator<AnswerSet>(new QAMatchingsCounter(index, URL_VALIDATOR, converterManager)),
                     AnswerSet.class);
+            if(explanationService != null) {
+                qaEvaluator = new MultiEvaluator(qaEvaluator,
+                        explanationService.createExplanationRequestStep(dataset.getName()));
+            }
+            return qaEvaluator;
         }
         case RE2KB: {
             return new SimpleTypeTransformingEvaluatorDecorator<Marking, Relation>(

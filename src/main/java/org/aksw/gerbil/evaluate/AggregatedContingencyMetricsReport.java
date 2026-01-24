@@ -23,7 +23,9 @@ import java.util.List;
 /**
  * Represents an aggregate report of evaluation results containing multiple extended contingency metrics.
  */
-public class AggregatedContingencyMetricsReport implements EvaluationResult{
+public class AggregatedContingencyMetricsReport implements EvaluationResult {
+
+    public static final String RESULT_NAME = "aggregated contingency metrics report";
 
     /** The name of the evaluation result. */
     private String name;
