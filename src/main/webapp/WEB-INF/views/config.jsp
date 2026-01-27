@@ -3,7 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <head>
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
+	href="/gerbil/webjars/bootstrap/3.3.2/css/bootstrap.min.css">
 <link rel="stylesheet"
 	href="/gerbil/webjars/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" />
 <link rel="icon" type="image/png"
@@ -127,8 +127,8 @@
 	<c:url var="execute" value="/execute" />
 	<c:url var="testNifWs" value="/testNifWs" />
 
-	<script src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
-	<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="/gerbil/webjars/jquery/2.1.3/jquery.min.js"></script>
+	<script src="/gerbil/webjars/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 	<script
 		src="/gerbil/webjars/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.js"></script>
 	<c:url var="jquerywidget"
@@ -478,17 +478,12 @@ F.e. if you want to use French, type in: fr">
 				$("#uploadAnswers").hide();
 			}
 		}
-		function updateDatasetSelection() {
-			// TODO update this function to receive the updated option and act accordingly
-			// see https://davidstutz.github.io/bootstrap-multiselect/#configuration-options-onChange
-			item.selected = checkbox.checked;
-			updateButtonText(button, data);
-			
-			const displayName = item.label ? item.label : (item.name ? item.name : "Unnamed Dataset");
+		function updateDatasetSelection(option, checked) {			
+			const displayName = $(option).val() ? $(option).val() : "Unnamed Dataset";
 			const $answerFileDataset = $('#answerFileDataset');
 
 			// Check if dataset is selected or deselected
-			if (item.selected) {
+			if (checked) {
 				// Add only if it doesn't already exist
 				const exists = $answerFileDataset.find('option').filter(function () {
 					return $(this).val() === displayName;
@@ -549,12 +544,15 @@ F.e. if you want to use French, type in: fr">
 			});
 			container.appendChild(select);
 
-			// TODO include a call to updateDatasetSelection according to
-			// https://davidstutz.github.io/bootstrap-multiselect/#configuration-options-onChange
+			// Create the multiselect
 			$('#dataset-select').multiselect({
 				enableCollapsibleOptGroups: true,
 				buttonContainer: '<div id="dataset-multiselect-group-collapsed-container" class="btn-group" />',
-				maxHeight: 200
+				maxHeight: 300,
+				onChange: function(option, checked) {
+					updateDatasetSelection(option, checked);
+	                //alert('Changed option ' + $(option).val() + ' to ' + checked);
+	            }
 			});
         	// Collapse all groups using the button introduced above
 	        $('#dataset-multiselect-group-collapsed-container .caret-container').click();
