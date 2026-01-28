@@ -375,6 +375,7 @@ F.e. if you want to use French, type in: fr">
 		</fieldset>
 	</form>
 	<script type="text/javascript">
+
 		// PLEASE DECLARE FUNCTION _OUTSIDE_ OF THE $(document).ready(function() {...}) !!!
 
 		// Adds the given data to the given (multi) select element. It is assumed that data is an array of Strings that are used as label and value of the single options.
@@ -569,20 +570,17 @@ F.e. if you want to use French, type in: fr">
 		}
 
 		function checkExperimentConfiguration() {
-			var dataset = [];
-			const container = document.getElementById('multiselect-container');
-			container.querySelectorAll('.dropdown-list input[type="checkbox"]:checked').forEach((checkbox) => {
-				dataset.push(checkbox.value);
-			});
+			// Get the number of selected and uploaded datasets
+			var numberOfDataset = $('#dataset-select option:selected').length + $("#datasetList li span.li_content").length;
+			// Get the number of selected systems, configured web services and uploaded answer files
 			var numberOfSystems = $('#annotator option:selected').length
-					+ $("#annotatorList li span.li_content").length;
-			var numberOfDataset = dataset.length;
-			var numberOfAnswerFiles = $("#answerFileList li span.li_content").length;
+					+ $("#annotatorList li span.li_content").length
+					+ $("#answerFileList li span.li_content").length;
 
 			//check whether there is at least one dataset and at least one annotator or at least one answerFile
 			//and the disclaimer checkbox should be clicked
-			if (((numberOfSystems > 0 && numberOfDataset > 0) || (numberOfAnswerFiles > 0))
-					&& $('#disclaimerCheckbox:checked').length == 1) {
+			//if (((numberOfSystems > 0 && numberOfDataset > 0) || (numberOfAnswerFiles > 0))
+			if (numberOfSystems > 0 && numberOfDataset > 0 && $('#disclaimerCheckbox:checked').length == 1) {
 				$('#submit').attr("disabled", false);
 			} else {
 				$('#submit').attr("disabled", true);
@@ -669,12 +667,8 @@ F.e. if you want to use French, type in: fr">
 			addToList(annotator, $("#annotatorList li span.li_content"),
 					"NIFWS_");
 			//fetch list of selected and manually added datasets
-			var datasetMultiselect = $('#dataset option:selected');
+			var datasetMultiselect = $('#dataset-select option:selected');
 			var dataset = [];
-			const container = document.getElementById('multiselect-container');
-			container.querySelectorAll('.dropdown-list input[type="checkbox"]:checked').forEach((checkbox) => {
-				dataset.push(checkbox.value);
-			});
 			addToList(dataset, datasetMultiselect);
 			addToList(dataset, $("#datasetList li span.li_content"), "NIFDS_");
 			var qLang = $("#qLang").val();
