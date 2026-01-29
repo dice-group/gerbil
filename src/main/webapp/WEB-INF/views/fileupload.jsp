@@ -7,13 +7,13 @@
 <link rel="icon" type="image/png" href="/gerbil/webResources/gerbilicon_transparent.png">
 
 <head>
-<c:url var="bootstrapmincss" value="/webjars/bootstrap/3.2.0/css/bootstrap.min.css"/>
+<c:url var="bootstrapmincss" value="/webjars/bootstrap/3.3.2/css/bootstrap.min.css"/>
 <link rel="stylesheet"
 	href="${bootstrapmincss}">
 	
-<c:url var="jquery" value="/webjars/jquery/2.1.1/jquery.min.js"/>	
+<c:url var="jquery" value="/webjars/jquery/2.1.3/jquery.min.js"/>	
 <script	src="${jquery}"></script>
-<c:url var="bootstrapjs" value="/webjars/bootstrap/3.2.0/js/bootstrap.min.js"/>
+<c:url var="bootstrapjs" value="/webjars/bootstrap/3.3.2/js/bootstrap.min.js"/>
 <script src="${bootstrapjs}"></script>
 <c:url var="jquerywidget" value="/webResources/js/vendor/jquery.ui.widget.js"/>
 <script	src="${jquerywidget}"></script>
