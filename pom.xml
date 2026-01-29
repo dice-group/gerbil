@@ -48,11 +48,11 @@
 			<name>University Leipzig, AKSW Maven2 Repository</name>
 			<url>https://maven.aksw.org/archiva/repository/snapshots</url>
 		</repository>
-		<repository>
+		<!--<repository>
 			<id>Apache Repo</id>
 			<name>Apache Repository</name>
 			<url>https://repository.apache.org/content/repositories/releases/</url>
-		</repository>
+		</repository>-->
 		<repository>
 			<id>alfresco</id>
 			<name>Alfresco Repository</name>
