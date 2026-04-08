@@ -39,13 +39,14 @@ public class DatahubNIFConfig extends AbstractDatasetConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(DatahubNIFConfig.class);
     private static final String DATAHUB_DATASET_FILE_PROPERTY_NAME = "org.aksw.gerbil.datasets.DatahubNIFConfig.datasetFiles";
+    private static final String DATAHUB_GROUP_STRING = "Datahub";
 
     private String datasetUrl;
     private RestTemplate rt;
 
     public DatahubNIFConfig(String datasetName, String datasetUrl, boolean couldBeCached, EntityCheckerManager entityCheckerManager,
             SameAsRetriever globalRetriever) {
-        super(datasetName, DatasetsConfig.DEFAULT_DATASET_GROUP, couldBeCached, ExperimentType.A2KB, entityCheckerManager, globalRetriever);
+        super(datasetName, DATAHUB_GROUP_STRING, couldBeCached, ExperimentType.A2KB, entityCheckerManager, globalRetriever);
         this.datasetUrl = datasetUrl;
         rt = new RestTemplate();
     }

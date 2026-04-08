@@ -26,6 +26,11 @@ package org.aksw.gerbil.datatypes;
 public interface AdapterConfiguration extends Comparable<AdapterConfiguration>{
 
     /**
+     * Default value of the group attribute.
+     */
+    public static final String DEFAULT_GROUP = "";
+
+    /**
      * Getter of the adapters name.
      * 
      * @return The name of the adapter.

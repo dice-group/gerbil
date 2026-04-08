@@ -165,6 +165,7 @@ public class AdapterManager {
                 // remove "AF_" from the name
                 name = name.substring(AF_PREFIX.length(), brackets[0]) + UPLOADED_AF_SUFFIX;
                 try {
+                    System.out.println("System: name=\"" + name + "\" datasetName=\"" + datasetName + "\" fileName=\"" + fileName + "\".");
                     return new InstanceListBasedConfigurationImpl(name, false,
                             new DatasetConfigurationImpl(datasetName, DatasetsConfig.DEFAULT_DATASET_GROUP, false,
                                     FileBasedQALDDataset.class.getConstructor(String.class, String.class, String.class, String.class),
@@ -212,6 +213,7 @@ public class AdapterManager {
                 // remove dataset prefix from the name
                 String questionLabel = name.substring(UPLOADED_DATASET_PREFIX.length(), brackets[0]);
                 name = questionLabel + UPLOADED_DATASET_SUFFIX;
+                System.out.println("Dataset: name=\"" + name + "\" questionLabel=\"" + questionLabel + "\".");
 return new QALDFileDatasetConfig(name, questionLabel, uri, false, type, entityCheckerManager, globalRetriever);
             }
             if (name.startsWith(AF_PREFIX)) {
@@ -225,12 +227,12 @@ return new QALDFileDatasetConfig(name, questionLabel, uri, false, type, entityCh
                     return null;
                 }
                 String datasetName = name.substring(brackets[0] + 1, brackets[1]);
+                System.out.println("Dataset: name=\"" + name + "\" datasetName=\"" + datasetName + "\".");
                 return getDatasetConfig(datasetName, type, questionLanguage);
             }
             if(name.startsWith(AFDS_PREFIX)){
                 String formatted= name.replace(AFDS_PREFIX, "");
                 return getDatasetConfig("NIFDS_"+formatted+"("+formatted+")", type, questionLanguage);
-
             }
         }
         LOGGER.error("Got an unknown annotator name\"" + name + "\". Returning null.");
