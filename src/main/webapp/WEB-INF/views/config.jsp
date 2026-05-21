@@ -403,11 +403,7 @@ legend {
             							<label class="field-spacer" for="answerFileDataset">Dataset:</label>
             							<select id="answerFileDataset">
             							</select>
-            							<label class="field-spacer" for="answerFileType">Format:</label>
-            							<select id="answerFileType" class="form-control">
-            								<option value="QALD JSON">QALD JSON</option>
-            								<option value="QALD XML">QALD XML</option>
-            							</select> <br> <span
+            							<input type="hidden" id="answerFileType" value="QALD JSON" /> <br> <span
             								class="btn btn-success fileinput-button"> <span
             								aria-hidden="true">+</span> <span>Select
             									file...</span> <!-- The file input field used as target for the file upload widget -->
