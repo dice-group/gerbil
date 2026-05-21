@@ -28,6 +28,9 @@
 		<jena.version>3.1.0</jena.version>
 		<cargo.version>1.9.11</cargo.version>
 		<jsonld-java-jena.version>0.4.1</jsonld-java-jena.version>
+		<bootstrap.version>4.6.2</bootstrap.version>
+		<jquery.version>3.7.1</jquery.version>
+		<bootstrap.multiselect.version>1.1.2</bootstrap.multiselect.version>
 		<war.warName>gerbil</war.warName>
 		<maven.tomcat.path>/gerbil</maven.tomcat.path>
 	</properties>
@@ -218,17 +221,17 @@
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>bootstrap</artifactId>
-			<version>3.3.2</version>
+			<version>${bootstrap.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>jquery</artifactId>
-			<version>2.1.3</version>
+			<version>${jquery.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.webjars</groupId>
+			<groupId>org.webjars.bowergithub.davidstutz</groupId>
 			<artifactId>bootstrap-multiselect</artifactId>
-			<version>0.9.15</version>
+			<version>${bootstrap.multiselect.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>

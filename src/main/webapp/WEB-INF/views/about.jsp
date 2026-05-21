@@ -3,9 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <head>
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap/3.3.2/css/bootstrap.min.css">
-<link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" />
+	href="/gerbil/webjars/bootstrap/4.6.2/css/bootstrap.min.css">
 <link rel="icon" type="image/png" href="/gerbil/webResources/gerbilicon_transparent.png">
 </head>
 <body class="container">

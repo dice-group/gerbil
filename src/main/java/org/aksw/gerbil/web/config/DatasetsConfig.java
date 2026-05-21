@@ -50,7 +50,7 @@ public class DatasetsConfig {
     public static final String ANNOTATOR_EXPERIMENT_TYPE_SUFFIX = "experimentType";
     public static final String ANNOTATOR_NAME_SUFFIX = "name";
     public static final String ANNOTATOR_GROUP_SUFFIX = "group";
-    public static final String DEFAULT_DATASET_GROUP = "Others";
+    public static final String DEFAULT_DATASET_GROUP = "Ungrouped";
 
     @Bean
     public static AdapterList<DatasetConfiguration> datasets(EntityCheckerManager entityCheckerManager,
@@ -112,10 +112,16 @@ public class DatasetsConfig {
             LOGGER.error("Couldn't get a name for the \"" + datasetKey + "\" dataset.");
             return null;
         }
-        String name = config.getString(key);
+        String name = config.getString(key).trim();
 
         key = buildKey(keyBuilder, datasetKey, ANNOTATOR_GROUP_SUFFIX);
-        String group = config.getString(key,DEFAULT_DATASET_GROUP);
+        String group = config.getString(key, DEFAULT_DATASET_GROUP);
+        if (group != null) {
+            group = group.trim();
+        }
+        if ((group == null) || group.isEmpty()) {
+            group = DEFAULT_DATASET_GROUP;
+        }
 
         key = buildKey(keyBuilder, datasetKey, ANNOTATOR_CLASS_SUFFIX);
         if (!config.containsKey(key)) {
