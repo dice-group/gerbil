@@ -311,17 +311,6 @@ public class MainController {
         }
         try {
             response = adapterManager.getDatasetDetailsForExperiment(type);
-            Collections.sort(response, new Comparator<DatasetConfiguration>() {
-                @Override
-                public int compare(DatasetConfiguration left, DatasetConfiguration right) {
-                    int groupComparison = normalizeDatasetField(left.getGroup())
-                            .compareTo(normalizeDatasetField(right.getGroup()));
-                    if (groupComparison != 0) {
-                        return groupComparison;
-                    }
-                    return normalizeDatasetField(left.getName()).compareTo(normalizeDatasetField(right.getName()));
-                }
-            });
         } catch (Exception e) {
             LOGGER.error("Error fetching datasets for ExperimentType: {}", experimentType, e);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -376,10 +365,6 @@ public class MainController {
         String matchingName = matching.substring(matching.indexOf('-') + 1).trim().toUpperCase().replace(' ', '_');
         Matching m = Matching.valueOf(matchingName);
         return m;
-    }
-
-    private static String normalizeDatasetField(String value) {
-        return value == null ? "" : value.trim();
     }
 
     @RequestMapping("/count")

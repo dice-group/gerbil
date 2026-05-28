@@ -9,23 +9,7 @@
 <link rel="icon" type="image/png"
 	href="/gerbil/webResources/gerbilicon_transparent.png">
 <style type="text/css">
-body.container {
-	max-width: 1120px;
-	padding-left: 15px;
-	padding-right: 15px;
-	padding-bottom: 32px;
-}
-
-h1 {
-	margin-bottom: 1.25rem;
-}
-
-legend {
-	font-size: 1.25rem;
-	margin-bottom: 1rem;
-}
-
-/* making the buttons wide enough and right-aligned */
+/* making the buttons wide enough while keeping the dropdown text left-aligned */
 .btn-group>.btn {
 	float: none;
 	width: 100%;
@@ -33,10 +17,6 @@ legend {
 }
 
 .btn-group {
-	width: 100%;
-}
-
-.multiselect-container {
 	width: 100%;
 }
 
@@ -48,60 +28,13 @@ legend {
 	display: block;
 }
 
-.multiselect-container.dropdown-menu {
-	width: 100%;
-	max-height: 320px;
-	overflow-y: auto;
-}
-
-.multiselect.dropdown-toggle {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.form-horizontal .form-group {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-start;
-	margin-right: -15px;
-	margin-left: -15px;
-	margin-bottom: 1.25rem;
-}
-
-.form-horizontal .form-group > [class*="col-"],
-.form-horizontal .form-group > label[class*="col-"],
-.form-horizontal .form-group > .checkbox {
-	flex: 0 0 100%;
-	max-width: 100%;
-	width: 100%;
-	padding-right: 15px;
-	padding-left: 15px;
-}
-
 .form-horizontal .control-label {
-	padding-top: 0.375rem;
+	padding-top: 7px;
 	margin-bottom: 0;
-	font-weight: 600;
 }
 
 .form-horizontal .checkbox {
-	padding-top: 0.375rem;
-}
-
-.form-section-copy {
-	display: block;
-	margin-bottom: 0.75rem;
-	font-weight: 600;
-}
-
-.field-spacer {
-	margin-top: 0.75rem;
-}
-
-.status-alert {
-	display: none;
-	margin-top: 0.75rem;
+	padding-top: 7px;
 }
 
 .text-right {
@@ -150,44 +83,6 @@ legend {
 	font-size: 1rem;
 	font-weight: 700;
 	line-height: 1;
-}
-
-#progress,
-#answerFileProgress {
-	height: 0.5rem;
-}
-
-@media (min-width: 768px) {
-	.form-horizontal .col-md-2 {
-		flex: 0 0 16.666667%;
-		max-width: 16.666667%;
-	}
-
-	.form-horizontal .col-md-4,
-	.form-horizontal label.col-md-4 {
-		flex: 0 0 33.333333%;
-		max-width: 33.333333%;
-	}
-
-	.form-horizontal .col-md-8 {
-		flex: 0 0 66.666667%;
-		max-width: 66.666667%;
-	}
-
-	.form-horizontal .offset-md-2 {
-		margin-left: 16.666667%;
-	}
-}
-
-@media (max-width: 767.98px) {
-	.text-right,
-	.form-horizontal .control-label {
-		text-align: left !important;
-	}
-
-	.text-right a {
-		margin-left: 0.35rem;
-	}
 }
 
 .fileinput-button input {
@@ -244,7 +139,7 @@ legend {
 			<!-- Form Name -->
 			<legend>New Experiment</legend>
 			<!-- experiment type dropdown filled by loadexptype() function -->
-			<div class="form-group">
+			<div class="form-group row">
 				<div class="col-md-2"></div>
 				<div class="col-md-2 text-right">
 					<label class="control-label" for="type">Experiment
@@ -266,7 +161,7 @@ legend {
 				</div>
 			</div>
 			<!--Matching dropdown filled by loadMatching() function -->
-			<div class="form-group" id="matchingsDiv">
+			<div class="form-group row" id="matchingsDiv">
 				<label class="col-md-4 control-label" for="annotator">Matching</label>
 				<div class="col-md-4">
 					<select id="matching" style="display: none;">
@@ -280,7 +175,7 @@ legend {
 				</div>
 			</div>
 			<!--Dataset dropdown filled by loadDatasets() function -->
-			<div class="form-group">
+			<div class="form-group row">
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
 						<label class="control-label" for="datasets">Dataset</label>
@@ -319,7 +214,7 @@ legend {
 									style="margin-top: 15px; list-style-type: none;">
 								</ul>
 							</div>
-							<div id="warningEmptyDataset" class="alert alert-warning status-alert"
+							<div id="warningEmptyDataset" class="alert alert-warning"
 								role="alert">
 								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 									<span aria-hidden="true">&times;</span>
@@ -331,112 +226,110 @@ legend {
 				</div>
 			</div>
 			<div class="row">
-            				<div class="col-md-8 offset-md-2">
-            					<hr />
-            				</div>
-            			</div>
-            			<!--System dropdown filled by loadAnnotator() function -->
-            			<div class="form-group">
-            				<div class="col-md-2"></div>
-            					<div class="col-md-2 text-right">
-            						<label class="control-label" for="annotator">System</label>
-            					<a title="You can
+				<div class="col-md-8 offset-md-2">
+					<hr />
+				</div>
+			</div>
+			<!--System dropdown filled by loadAnnotator() function -->
+			<div class="form-group row">
+				<div class="col-md-2"></div>
+				<div class="col-md-2 text-right">
+					<label class="control-label" for="annotator">System</label>
+					<a title="You can
             1) select any of the system from the drop-down menu or
             2) add a system via its URI (needs to understand the query parameter and return valid QALD JSON or XML) or
             3) upload a QALD-formatted XML or JSON file which has the answers to one of the datasets. NOTE: First, type in the name of your system if you use option 2 or 3 and then type in the URI.">
-            						<span class="help-icon" aria-hidden="true">?</span>
-            					</a>
-            				</div>
-            				<div class="col-md-4">
-            					<select id="annotator" multiple="multiple" style="display: none;">
-            					</select>
-            					<hr />
-            					<div>
-            						<span> Or add another webservice via URI:</span>
-            						<div>
-            							<label for="nameAnnotator">Name:</label> <input
-            								class="form-control" type="text" id="nameAnnotator" name="name"
-            								placeholder="Type something" /> <label for="URIAnnotator">URI:</label>
-            							<input class="form-control" type="text" id="URIAnnotator"
-            								name="URI" placeholder="Type something" />
-            						</div>
-            						<div>
-            							<!-- list to be filled by button press and javascript function addAnnotator -->
-            							<ul id="annotatorList"
-            								style="margin-top: 15px; list-style-type: none;">
-            							</ul>
-            						</div>
-            						<div id="warningEmptyAnnotator" class="alert alert-warning status-alert"
-            							role="alert">
-            							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            								<span aria-hidden="true">&times;</span>
-            							</button>
-            							<strong>Warning!</strong> Enter a name and an URI.
-            						</div>
-            						<div id="infoAnnotatorTest" class="alert alert-info status-alert" role="alert">
-            							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            								<span aria-hidden="true">&times;</span>
-            							</button>
-            							<strong>Please wait</strong> while the communication with your
-            							annotator is tested...
-            						</div>
-            						<div id="dangerAnnotatorTestError" class="alert alert-danger status-alert"
-            							role="alert">
-            							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            								<span aria-hidden="true">&times;</span>
-            							</button>
-            							<strong>Warning!</strong> There was an error while testing the
-            							annotator.<br> <span id="annotatorTestErrorMsg"></span>
-            						</div>
-            						<input type="button" id="addAnnotator"
-            							class="btn btn-primary float-right" value="Add system"
-            							style="margin-top: 15px" /><br> <br>
-            					</div>
-            					<hr id="uploadAnswersSeparator" />
-            					<div id="uploadAnswers">
-            						<span class="form-section-copy">Or upload a file with answers:</span>
-            						<div>
-            							<label for="nameAnswerFile">Name:</label> <input
-            								class="form-control" type="text" id="nameAnswerFile" name="name"
-            								placeholder="Type something" />
-
-            							<label class="field-spacer" for="answerFileDataset">Dataset:</label>
-            							<select id="answerFileDataset">
-            							</select>
-            							<input type="hidden" id="answerFileType" value="QALD JSON" /> <br> <span
-            								class="btn btn-success fileinput-button"> <span
-            								aria-hidden="true">+</span> <span>Select
-            									file...</span> <!-- The file input field used as target for the file upload widget -->
-            								<input id="answerFileUpload" type="file" name="files[]">
-            							</span> <br> <br>
-            							<!-- The global progress bar -->
-            							<div id="answerFileProgress" class="progress">
-            								<div class="progress-bar bg-success"></div>
-            							</div>
-            							<div>
-            								<!-- list to be filled by button press and javascript function addDataset -->
-            								<ul class="unstyled" id="answerFileList"
-            									style="margin-top: 15px; list-style-type: none;">
-            								</ul>
-            							</div>
-            							<div id="warningEmptyAnswerFileName" class="alert alert-warning status-alert"
-            								role="alert">
-            								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            									<span aria-hidden="true">&times;</span>
-            								</button>
-            								<strong>Warning!</strong> Enter a name.
-            							</div>
-            						</div>
-            					</div>
-            				</div>
-            			</div>
+						<span class="help-icon" aria-hidden="true">?</span>
+					</a>
+				</div>
+				<div class="col-md-4">
+					<select id="annotator" multiple="multiple" style="display: none;">
+					</select>
+					<hr />
+					<div>
+						<span> Or add another webservice via URI:</span>
+						<div>
+							<label for="nameAnnotator">Name:</label> <input
+								class="form-control" type="text" id="nameAnnotator" name="name"
+								placeholder="Type something" /> <label for="URIAnnotator">URI:</label>
+							<input class="form-control" type="text" id="URIAnnotator"
+								name="URI" placeholder="Type something" />
+						</div>
+						<div>
+							<!-- list to be filled by button press and javascript function addAnnotator -->
+							<ul id="annotatorList"
+								style="margin-top: 15px; list-style-type: none;">
+							</ul>
+						</div>
+						<div id="warningEmptyAnnotator" class="alert alert-warning"
+							role="alert">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<strong>Warning!</strong> Enter a name and an URI.
+						</div>
+						<div id="infoAnnotatorTest" class="alert alert-info" role="alert">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<strong>Please wait</strong> while the communication with your
+							annotator is tested...
+						</div>
+						<div id="dangerAnnotatorTestError" class="alert alert-danger"
+							role="alert">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<strong>Warning!</strong> There was an error while testing the
+							annotator.<br> <span id="annotatorTestErrorMsg"></span>
+						</div>
+						<input type="button" id="addAnnotator"
+							class="btn btn-primary float-right" value="Add system"
+							style="margin-top: 15px" /><br> <br>
+					</div>
+					<hr id="uploadAnswersSeparator" />
+					<div id="uploadAnswers">
+						<span> Or upload a file with answers:</span>
+						<div>
+							<label for="nameAnswerFile">Name:</label> <input
+								class="form-control" type="text" id="nameAnswerFile" name="name"
+								placeholder="Type something" />
+							<br>
+							<select id="answerFileDataset" class="form-control">
+							</select> <br> <span
+								class="btn btn-success fileinput-button"> <span
+								aria-hidden="true">+</span> <span>Select
+									file...</span> <!-- The file input field used as target for the file upload widget -->
+								<input id="answerFileUpload" type="file" name="files[]">
+							</span> <br> <br>
+							<!-- The global progress bar -->
+							<div id="answerFileProgress" class="progress">
+								<div class="progress-bar bg-success"></div>
+							</div>
+							<div>
+								<!-- list to be filled by button press and javascript function addDataset -->
+								<ul class="unstyled" id="answerFileList"
+									style="margin-top: 15px; list-style-type: none;">
+								</ul>
+							</div>
+							<div id="warningEmptyAnswerFileName" class="alert alert-warning"
+								role="alert">
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<strong>Warning!</strong> Enter a name.
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 			<div class="row">
 				<div class="col-md-8 offset-md-2">
 					<hr />
 				</div>
 			</div>
 
-			<div class="form-group">
+			<div class="form-group row">
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
 						<label class="control-label" >Language</label>					
@@ -462,9 +355,9 @@ F.e. if you want to use French, type in: fr">
 					<hr />
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group row">
 				<label class="col-md-4 control-label" for="datasets">Disclaimer</label>
-				<div class="checkbox">
+				<div class="col-md-4 checkbox">
 					<label> <input id="disclaimerCheckbox" type="checkbox">
 						I have read and understand the <a
 						href="https://github.com/AKSW/gerbil/wiki/Disclaimer">disclaimer</a>.
@@ -472,7 +365,7 @@ F.e. if you want to use French, type in: fr">
 				</div>
 			</div>
 			<!-- Button -->
-			<div class="form-group">
+			<div class="form-group row">
 				<label class="col-md-4 control-label" for="submit"></label>
 				<div id="submitField" class="col-md-4">
 					<input type="button" id="submit" name="singlebutton"
@@ -571,7 +464,7 @@ F.e. if you want to use French, type in: fr">
 		}
 
 		function getDatasetGroupName(dataset) {
-			return normalizeDisplayValue(dataset.group, 'Ungrouped');
+			return normalizeDisplayValue(dataset.group, 'Others');
 		}
 
 		function getDatasetName(dataset) {
@@ -890,41 +783,15 @@ F.e. if you want to use French, type in: fr">
 			// load dropdowns when document loaded 
 			initializeMultiselect('#type');
 			initializeMultiselect('#matching');
-			initializeMultiselect('#annotator', {
-				includeSelectAllOption : true,
-				enableFiltering : true,
-				enableCaseInsensitiveFiltering : true,
-				numberDisplayed : 2,
-				nonSelectedText : 'Select systems',
-				nSelectedText : 'systems selected',
-				allSelectedText : 'All systems selected'
-			});
+			initializeMultiselect('#annotator');
 			initializeMultiselect('#dataset', {
-				includeSelectAllOption : true,
-				enableFiltering : true,
-				enableCaseInsensitiveFiltering : true,
-				enableClickableOptGroups : true,
 				enableCollapsibleOptGroups : true,
-				numberDisplayed : 2,
-				nonSelectedText : 'Select datasets',
-				nSelectedText : 'datasets selected',
-				allSelectedText : 'All datasets selected',
 				onChange : function() {
-					syncAnswerFileDatasetOptions();
-					checkExperimentConfiguration();
-				},
-				onSelectAll : function() {
-					syncAnswerFileDatasetOptions();
-					checkExperimentConfiguration();
-				},
-				onDeselectAll : function() {
 					syncAnswerFileDatasetOptions();
 					checkExperimentConfiguration();
 				}
 			});
-			initializeMultiselect('#answerFileDataset', {
-				nonSelectedText : 'Choose dataset'
-			});
+			initializeMultiselect('#answerFileDataset');
 
 
 
@@ -942,9 +809,6 @@ F.e. if you want to use French, type in: fr">
 			$('#submit').attr("disabled", true);
 			//check showing run button if something is changed in dropdown menu
 			$('#annotator').change(function() {
-				checkExperimentConfiguration();
-			});
-			$('#dataset').change(function() {
 				checkExperimentConfiguration();
 			});
 			$('#disclaimerCheckbox').change(function() {
@@ -1031,7 +895,7 @@ F.e. if you want to use French, type in: fr">
 						done : function(e, data) {
 							var name = $('#nameAnswerFile').val();
 							var dataset = ($('#answerFileDataset').val() || '').replace("(", "%28").replace(")", "%29");
-						    var type = $('#answerFileType').val();
+						    var type = 'QALD JSON';
 							$.each(data.result.files, function(index, file) {
 							    file.name = file.name.replace("(", "%28").replace(")", "%29");
 								addItemToList($('#answerFileList'), name + "("

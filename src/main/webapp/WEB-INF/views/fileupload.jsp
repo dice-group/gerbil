@@ -11,7 +11,7 @@
 <link rel="stylesheet"
 	href="${bootstrapmincss}">
 	
-<c:url var="jquery" value="/webjars/jquery/3.7.1/jquery.min.js"/>	
+<c:url var="jquery" value="/webjars/jquery/3.7.1/jquery.min.js"/>
 <script	src="${jquery}"></script>
 <c:url var="bootstrapjs" value="/webjars/bootstrap/4.6.2/js/bootstrap.bundle.min.js"/>
 <script src="${bootstrapjs}"></script>
@@ -111,4 +111,4 @@ $(function () {
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
 });
 </script>
-</body> 
+</body>
