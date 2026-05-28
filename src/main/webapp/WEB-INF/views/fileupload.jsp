@@ -7,13 +7,13 @@
 <link rel="icon" type="image/png" href="/gerbil/webResources/gerbilicon_transparent.png">
 
 <head>
-<c:url var="bootstrapmincss" value="/webjars/bootstrap/3.3.2/css/bootstrap.min.css"/>
+<c:url var="bootstrapmincss" value="/webjars/bootstrap/4.6.2/css/bootstrap.min.css"/>
 <link rel="stylesheet"
 	href="${bootstrapmincss}">
 	
-<c:url var="jquery" value="/webjars/jquery/2.1.3/jquery.min.js"/>	
+<c:url var="jquery" value="/webjars/jquery/3.7.1/jquery.min.js"/>
 <script	src="${jquery}"></script>
-<c:url var="bootstrapjs" value="/webjars/bootstrap/3.3.2/js/bootstrap.min.js"/>
+<c:url var="bootstrapjs" value="/webjars/bootstrap/4.6.2/js/bootstrap.bundle.min.js"/>
 <script src="${bootstrapjs}"></script>
 <c:url var="jquerywidget" value="/webResources/js/vendor/jquery.ui.widget.js"/>
 <script	src="${jquerywidget}"></script>
@@ -71,7 +71,7 @@
    <br>
     <!-- The fileinput-button span is used to style the file input field as button -->
     <span class="btn btn-success fileinput-button">
-        <i class="glyphicon glyphicon-plus"></i>
+        <span aria-hidden="true">+</span>
         <span>Select file...</span>
         <!-- The file input field used as target for the file upload widget -->
         <input id="fileupload" type="file" name="files[]" multiple>
@@ -80,7 +80,7 @@
     <br>
     <!-- The global progress bar -->
     <div id="progress" class="progress">
-        <div class="progress-bar progress-bar-success"></div>
+        <div class="progress-bar bg-success"></div>
     </div>
     <!-- The container for the uploaded files -->
     <div id="files" class="files"></div>
@@ -111,4 +111,4 @@ $(function () {
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
 });
 </script>
-</body> 
+</body>

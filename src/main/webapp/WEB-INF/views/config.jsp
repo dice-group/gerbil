@@ -3,25 +3,38 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <head>
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap/3.3.2/css/bootstrap.min.css">
+	href="/gerbil/webjars/bootstrap/4.6.2/css/bootstrap.min.css">
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" />
+	href="/gerbil/webjars/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" />
 <link rel="icon" type="image/png"
 	href="/gerbil/webResources/gerbilicon_transparent.png">
 <style type="text/css">
-/* making the buttons wide enough and right-aligned */
+/* making the buttons wide enough while keeping the dropdown text left-aligned */
 .btn-group>.btn {
 	float: none;
 	width: 100%;
-	text-align: right;
+	text-align: left;
 }
 
 .btn-group {
 	width: 100%;
 }
 
-#type {
-	text-align: right;
+.multiselect-native-select {
+	width: 100%;
+}
+
+.multiselect-native-select .btn-group {
+	display: block;
+}
+
+.form-horizontal .control-label {
+	padding-top: 7px;
+	margin-bottom: 0;
+}
+
+.form-horizontal .checkbox {
+	padding-top: 7px;
 }
 
 .text-right {
@@ -41,58 +54,35 @@
 	overflow: hidden;
 }
 
-.custom-multiselect-dropdown {
-	position: relative;
-	width: 100%;
+.help-icon {
+	display: inline-block;
+	width: 1.1rem;
+	height: 1.1rem;
+	margin-left: 0.25rem;
+	border: 1px solid #6c757d;
+	border-radius: 50%;
+	color: #6c757d;
+	font-size: 0.75rem;
+	font-weight: 700;
+	line-height: 1rem;
+	text-align: center;
+	vertical-align: middle;
 }
 
-.dropdown-btn {
-	width: 100%;
-	padding: 10px;
-	border: 1px solid #ccc;
-	background-color: #f9f9f9;
+.multiselect-selected-text {
+	display: inline-block;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+.list-remove {
 	cursor: pointer;
-	text-align: left;
-}
-
-.dropdown-list {
-	position: absolute;
-	width: 100%;
-	max-height: 200px;
-	overflow-y: auto;
-	border: 1px solid #ccc;
-	background-color: #fff;
-	display: none;
-	z-index: 10;
-}
-
-.dropdown-list.active {
-	display: block;
-}
-
-.dropdown-list .optgroup {
-	font-weight: bold;
-	padding: 8px;
-	cursor: pointer;
-}
-
-.dropdown-list .optgroup-options {
-	display: none;
-	padding-left: 20px;
-}
-
-.dropdown-list .optgroup:hover .optgroup-options {
-	display: block;
-}
-
-.dropdown-list label {
-	display: block;
-	padding: 5px;
-	cursor: pointer;
-}
-
-.dropdown-list input[type="checkbox"] {
-	margin-right: 5px;
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 1;
 }
 
 .fileinput-button input {
@@ -127,10 +117,10 @@
 	<c:url var="execute" value="/execute" />
 	<c:url var="testNifWs" value="/testNifWs" />
 
-	<script src="/gerbil/webjars/jquery/2.1.3/jquery.min.js"></script>
-	<script src="/gerbil/webjars/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	<script src="/gerbil/webjars/jquery/3.7.1/jquery.min.js"></script>
+	<script src="/gerbil/webjars/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
 	<script
-		src="/gerbil/webjars/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.js"></script>
+		src="/gerbil/webjars/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>
 	<c:url var="jquerywidget"
 		value="/webResources/js/vendor/jquery.ui.widget.js" />
 	<script src="${jquerywidget}"></script>
@@ -149,13 +139,13 @@
 			<!-- Form Name -->
 			<legend>New Experiment</legend>
 			<!-- experiment type dropdown filled by loadexptype() function -->
-			<div class="form-group">
+			<div class="form-group row">
 				<div class="col-md-2"></div>
 				<div class="col-md-2 text-right">
 					<label class="control-label" for="type">Experiment
 						Type</label>
 					<a title="The QA experiment type will benchmark how good your system is at answering questions.">
-							<span class="glyphicon glyphicon-question-sign"></span>
+							<span class="help-icon" aria-hidden="true">?</span>
 					</a>	
 				</div>		
 				
@@ -166,12 +156,12 @@
 				
 			</div>
 			<div class="row" id="matchingsSeparator">
-				<div class="col-md-8 col-md-offset-2">
+				<div class="col-md-8 offset-md-2">
 					<hr />
 				</div>
 			</div>
 			<!--Matching dropdown filled by loadMatching() function -->
-			<div class="form-group" id="matchingsDiv">
+			<div class="form-group row" id="matchingsDiv">
 				<label class="col-md-4 control-label" for="annotator">Matching</label>
 				<div class="col-md-4">
 					<select id="matching" style="display: none;">
@@ -180,12 +170,12 @@
 			</div>
 
 			<div class="row">
-				<div class="col-md-8 col-md-offset-2">
+				<div class="col-md-8 offset-md-2">
 					<hr />
 				</div>
 			</div>
 			<!--Dataset dropdown filled by loadDatasets() function -->
-			<div class="form-group">
+			<div class="form-group row">
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
 						<label class="control-label" for="datasets">Dataset</label>
@@ -194,28 +184,29 @@
 2) upload a QALD-formatted JSON or XML containing your custom benchmark data.
 
 (Beta) Further on you can change the language which should be tested (default: en)">
-						<span class="glyphicon glyphicon-question-sign"></span>
+						<span class="help-icon" aria-hidden="true">?</span>
 					</a>
 				</div>
 				<div class="col-md-4">
-					<div id="dataset-multiselect-container" class="custom-multiselect-dropdown"></div>
+					<select id="dataset" multiple="multiple" style="display: none;">
+					</select>
 
 
 					<hr />
 					<div>
 						<span> Or upload another dataset:</span>
-						<dv>
+						<div>
 							<label for="nameDataset">Name:</label> <input
 								class="form-control" type="text" id="nameDataset" name="name"
 								placeholder="Type something" /> <br> <span
-								class="btn btn-success fileinput-button"> <i
-								class="glyphicon glyphicon-plus"></i> <span>Select
+								class="btn btn-success fileinput-button"> <span
+								aria-hidden="true">+</span> <span>Select
 									file...</span> <!-- The file input field used as target for the file upload widget -->
 								<input id="fileupload" type="file" name="files[]" onchange="addDatasetFile(this)">
 							</span> <br> <br>
 							<!-- The global progress bar -->
 							<div id="progress" class="progress">
-								<div class="progress-bar progress-bar-success"></div>
+								<div class="progress-bar bg-success"></div>
 							</div>
 							<div>
 								<!-- list to be filled by button press and javascript function addDataset -->
@@ -225,7 +216,9 @@
 							</div>
 							<div id="warningEmptyDataset" class="alert alert-warning"
 								role="alert">
-								<button type="button" class="close" data-dismiss="alert"></button>
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
 								<strong>Warning!</strong> Enter a name.
 							</div>
 						</div>
@@ -233,110 +226,117 @@
 				</div>
 			</div>
 			<div class="row">
-            				<div class="col-md-8 col-md-offset-2">
-            					<hr />
-            				</div>
-            			</div>
-            			<!--System dropdown filled by loadAnnotator() function -->
-            			<div class="form-group">
-            				<div class="col-md-2"></div>
-            					<div class="col-md-2 text-right">
-            						<label class="control-label" for="annotator">System</label>
-            					<a title="You can
+				<div class="col-md-8 offset-md-2">
+					<hr />
+				</div>
+			</div>
+			<!--System dropdown filled by loadAnnotator() function -->
+			<div class="form-group row">
+				<div class="col-md-2"></div>
+				<div class="col-md-2 text-right">
+					<label class="control-label" for="annotator">System</label>
+					<a title="You can
             1) select any of the system from the drop-down menu or
             2) add a system via its URI (needs to understand the query parameter and return valid QALD JSON or XML) or
             3) upload a QALD-formatted XML or JSON file which has the answers to one of the datasets. NOTE: First, type in the name of your system if you use option 2 or 3 and then type in the URI.">
-            						<span class="glyphicon glyphicon-question-sign"></span>
-            					</a>
-            				</div>
-            				<div class="col-md-4">
-            					<select id="annotator" multiple="multiple" style="display: none;">
-            					</select>
-            					<hr />
-            					<div>
-            						<span> Or add another webservice via URI:</span>
-            						<div>
-            							<label for="nameAnnotator">Name:</label> <input
-            								class="form-control" type="text" id="nameAnnotator" name="name"
-            								placeholder="Type something" /> <label for="URIAnnotator">URI:</label>
-            							<input class="form-control" type="text" id="URIAnnotator"
-            								name="URI" placeholder="Type something" />
-            						</div>
-            						<div>
-            							<!-- list to be filled by button press and javascript function addAnnotator -->
-            							<ul id="annotatorList"
-            								style="margin-top: 15px; list-style-type: none;">
-            							</ul>
-            						</div>
-            						<div id="warningEmptyAnnotator" class="alert alert-warning"
-            							role="alert">
-            							<button type="button" class="close" data-dismiss="alert"></button>
-            							<strong>Warning!</strong> Enter a name and an URI.
-            						</div>
-            						<div id="infoAnnotatorTest" class="alert alert-info" role="alert">
-            							<button type="button" class="close" data-dismiss="alert"></button>
-            							<strong>Please wait</strong> while the communication with your
-            							annotator is tested...
-            						</div>
-            						<div id="dangerAnnotatorTestError" class="alert alert-danger"
-            							role="alert">
-            							<button type="button" class="close" data-dismiss="alert"></button>
-            							<strong>Warning!</strong> There was an error while testing the
-            							annotator.<br> <span id="annotatorTestErrorMsg"></span>
-            						</div>
-            						<input type="button" id="addAnnotator"
-            							class="btn btn-primary pull-right" value="Add system"
-            							style="margin-top: 15px" /><br> <br>
-            					</div>
-            					<hr id="uploadAnswersSeparator" />
-            					<div id="uploadAnswers">
-            						<span> Or upload a file with answers:</span>
-            						<div>
-            							<label for="nameAnswerFile">Name:</label> <input
-            								class="form-control" type="text" id="nameAnswerFile" name="name"
-            								placeholder="Type something" />
-
-            							 <br> <select id="answerFileDataset"
-            								class="form-control">
-            							</select> <br> <br> <span
-            								class="btn btn-success fileinput-button"> <i
-            								class="glyphicon glyphicon-plus"></i> <span>Select
-            									file...</span> <!-- The file input field used as target for the file upload widget -->
-            								<input id="answerFileUpload" type="file" name="files[]">
-            							</span> <br> <br>
-            							<!-- The global progress bar -->
-            							<div id="answerFileProgress" class="progress">
-            								<div class="progress-bar progress-bar-success"></div>
-            							</div>
-            							<div>
-            								<!-- list to be filled by button press and javascript function addDataset -->
-            								<ul class="unstyled" id="answerFileList"
-            									style="margin-top: 15px; list-style-type: none;">
-            								</ul>
-            							</div>
-            							<div id="warningEmptyAnswerFileName" class="alert alert-warning"
-            								role="alert">
-            								<button type="button" class="close" data-dismiss="alert"></button>
-            								<strong>Warning!</strong> Enter a name.
-            							</div>
-            						</div>
-            					</div>
-            				</div>
-            			</div>
+						<span class="help-icon" aria-hidden="true">?</span>
+					</a>
+				</div>
+				<div class="col-md-4">
+					<select id="annotator" multiple="multiple" style="display: none;">
+					</select>
+					<hr />
+					<div>
+						<span> Or add another webservice via URI:</span>
+						<div>
+							<label for="nameAnnotator">Name:</label> <input
+								class="form-control" type="text" id="nameAnnotator" name="name"
+								placeholder="Type something" /> <label for="URIAnnotator">URI:</label>
+							<input class="form-control" type="text" id="URIAnnotator"
+								name="URI" placeholder="Type something" />
+						</div>
+						<div>
+							<!-- list to be filled by button press and javascript function addAnnotator -->
+							<ul id="annotatorList"
+								style="margin-top: 15px; list-style-type: none;">
+							</ul>
+						</div>
+						<div id="warningEmptyAnnotator" class="alert alert-warning"
+							role="alert">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<strong>Warning!</strong> Enter a name and an URI.
+						</div>
+						<div id="infoAnnotatorTest" class="alert alert-info" role="alert">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<strong>Please wait</strong> while the communication with your
+							annotator is tested...
+						</div>
+						<div id="dangerAnnotatorTestError" class="alert alert-danger"
+							role="alert">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<strong>Warning!</strong> There was an error while testing the
+							annotator.<br> <span id="annotatorTestErrorMsg"></span>
+						</div>
+						<input type="button" id="addAnnotator"
+							class="btn btn-primary float-right" value="Add system"
+							style="margin-top: 15px" /><br> <br>
+					</div>
+					<hr id="uploadAnswersSeparator" />
+					<div id="uploadAnswers">
+						<span> Or upload a file with answers:</span>
+						<div>
+							<label for="nameAnswerFile">Name:</label> <input
+								class="form-control" type="text" id="nameAnswerFile" name="name"
+								placeholder="Type something" />
+							<br>
+							<select id="answerFileDataset" class="form-control">
+							</select> <br> <span
+								class="btn btn-success fileinput-button"> <span
+								aria-hidden="true">+</span> <span>Select
+									file...</span> <!-- The file input field used as target for the file upload widget -->
+								<input id="answerFileUpload" type="file" name="files[]">
+							</span> <br> <br>
+							<!-- The global progress bar -->
+							<div id="answerFileProgress" class="progress">
+								<div class="progress-bar bg-success"></div>
+							</div>
+							<div>
+								<!-- list to be filled by button press and javascript function addDataset -->
+								<ul class="unstyled" id="answerFileList"
+									style="margin-top: 15px; list-style-type: none;">
+								</ul>
+							</div>
+							<div id="warningEmptyAnswerFileName" class="alert alert-warning"
+								role="alert">
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<strong>Warning!</strong> Enter a name.
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 			<div class="row">
-				<div class="col-md-8 col-md-offset-2">
+				<div class="col-md-8 offset-md-2">
 					<hr />
 				</div>
 			</div>
 
-			<div class="form-group">
+			<div class="form-group row">
 				<div class="col-md-2"></div>
 					<div class="col-md-2 text-right">
 						<label class="control-label" >Language</label>					
 					<a title="(Beta) You can change the language which should be tested (default: en)
 					
 F.e. if you want to use French, type in: fr">
-						<span class="glyphicon glyphicon-question-sign"></span>
+						<span class="help-icon" aria-hidden="true">?</span>
 					</a>
 				</div>
 				<div class="col-md-4">
@@ -351,13 +351,13 @@ F.e. if you want to use French, type in: fr">
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-8 col-md-offset-2">
+				<div class="col-md-8 offset-md-2">
 					<hr />
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group row">
 				<label class="col-md-4 control-label" for="datasets">Disclaimer</label>
-				<div class="checkbox">
+				<div class="col-md-4 checkbox">
 					<label> <input id="disclaimerCheckbox" type="checkbox">
 						I have read and understand the <a
 						href="https://github.com/AKSW/gerbil/wiki/Disclaimer">disclaimer</a>.
@@ -365,7 +365,7 @@ F.e. if you want to use French, type in: fr">
 				</div>
 			</div>
 			<!-- Button -->
-			<div class="form-group">
+			<div class="form-group row">
 				<label class="col-md-4 control-label" for="submit"></label>
 				<div id="submitField" class="col-md-4">
 					<input type="button" id="submit" name="singlebutton"
@@ -376,53 +376,210 @@ F.e. if you want to use French, type in: fr">
 	</form>
 	<script type="text/javascript">
 
-		// PLEASE DECLARE FUNCTION _OUTSIDE_ OF THE $(document).ready(function() {...}) !!!
+		function getBaseMultiselectOptions() {
+			return {
+				buttonClass : 'btn btn-outline-secondary',
+				buttonWidth : '100%',
+				maxHeight : 300
+			};
+		}
+
+		function initializeMultiselect(elementId, options) {
+			if ($(elementId).length === 0) {
+				return;
+			}
+			$(elementId).multiselect($.extend({}, getBaseMultiselectOptions(), options));
+		}
+
+		function normalizeDisplayValue(value, fallbackValue) {
+			var normalizedValue = $.trim(value || '');
+			if (normalizedValue.length > 0) {
+				return normalizedValue;
+			}
+			return fallbackValue;
+		}
+
+		function getSelectOptionLabel(optionElement) {
+			var currentOption = $(optionElement);
+			return normalizeDisplayValue(currentOption.attr('label'),
+					normalizeDisplayValue(currentOption.text(), currentOption.val()));
+		}
+
+		function populateMissingOptionTexts(elementId) {
+			$(elementId).find('option').each(function() {
+				$(this).text(getSelectOptionLabel(this));
+			});
+		}
 
 		// Adds the given data to the given (multi) select element. It is assumed that data is an array of Strings that are used as label and value of the single options.
 		function addDataToSelect(elementId, data) {
+			if ($(elementId).length === 0) {
+				return;
+			}
 			var formattedData = [];
 			for (var i = 0; i < data.length; i++) {
-				var dat = {};
-				dat.label = data[i];
-				dat.value = data[i];
-				formattedData.push(dat);
+				formattedData.push({
+					label : data[i],
+					value : data[i]
+				});
 			}
 			$(elementId).multiselect('dataprovider', formattedData);
 			$(elementId).multiselect('rebuild');
 		}
 
-		function addDatasetFile(val){
-		    var label = $("#nameDataset").val();
-		    var name = val.files[0].name;
-		    console.log(val)
-		    $("#answerFileDataset").append("<option value=\"AFDS_" + name + "\">" + label + "</option>");
-		    $("#answerFileDataset").multiselect('rebuild');
-
+		function addDatasetFile(val) {
+			if (!val.files || val.files.length === 0) {
+				return;
+			}
+			var label = normalizeDisplayValue($("#nameDataset").val(), "Unnamed Dataset");
+			var name = val.files[0].name;
+			$("#answerFileDataset").append("<option value=\"AFDS_" + name + "\">" + label + "</option>");
+			$("#answerFileDataset").multiselect('rebuild');
+			$("#answerFileDataset").multiselect('refresh');
 		}
 
 		// Adds the given data (with tooltips) to the given (multi) select element. It is assumed that data is an array of objects each having a label, a name and a description.
 		function addDataToSelectWithTooltips(elementId, data) {
+			if ($(elementId).length === 0) {
+				return;
+			}
 			var formattedData = [];
 			for (var i = 0; i < data.length; i++) {
-				var dat = {};
-				dat.label = data[i].label;
-				dat.value = data[i].name;
-				formattedData.push(dat);
+				formattedData.push({
+					label : data[i].label,
+					value : data[i].name
+				});
 			}
 			$(elementId).multiselect('dataprovider', formattedData);
 			$(elementId).multiselect('rebuild');
-			// Add tooltips
-			$($(elementId).next().find('li')).each(
-					function(index) {
-						for (var i = 0; i < data.length; i++) {
-							if (data[i].name == $(this).find('input').val()) {
-								$(this).attr('data-toggle', 'tooltip').attr(
-										'data-placement', 'top').attr('title',
-										data[i].description);
-							}
-						}
-					});
+			$($(elementId).next().find('li')).each(function() {
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].name == $(this).find('input').val()) {
+						$(this).attr('data-toggle', 'tooltip').attr('data-placement', 'top').attr('title',
+								data[i].description);
+					}
+				}
+			});
 			$('[data-toggle="tooltip"]').tooltip();
+		}
+
+		function getDatasetGroupName(dataset) {
+			return normalizeDisplayValue(dataset.group, 'Others');
+		}
+
+		function getDatasetName(dataset) {
+			return normalizeDisplayValue(dataset.name, 'Unnamed Dataset');
+		}
+
+		function addDatasetsToSelect(data) {
+			var groupedDatasets = {};
+			for (var i = 0; i < data.length; i++) {
+				var groupName = getDatasetGroupName(data[i]);
+				if (!groupedDatasets[groupName]) {
+					groupedDatasets[groupName] = [];
+				}
+				groupedDatasets[groupName].push({
+					label : getDatasetName(data[i]),
+					value : getDatasetName(data[i])
+				});
+			}
+
+			var sortedGroups = Object.keys(groupedDatasets).sort();
+			var formattedData = [];
+			for (var groupIndex = 0; groupIndex < sortedGroups.length; groupIndex++) {
+				var currentGroup = sortedGroups[groupIndex];
+				groupedDatasets[currentGroup].sort(function(left, right) {
+					return left.label.localeCompare(right.label);
+				});
+				formattedData.push({
+					label : currentGroup,
+					children : groupedDatasets[currentGroup]
+				});
+			}
+
+			$('#dataset').multiselect('dataprovider', formattedData);
+			populateMissingOptionTexts('#dataset');
+			$('#dataset').multiselect('rebuild');
+			$('#dataset').multiselect('refresh');
+			syncAnswerFileDatasetOptions();
+			checkExperimentConfiguration();
+		}
+
+		// Keep the answer-file dataset selector aligned with the selected top-level datasets
+		// while preserving uploaded dataset entries and a valid single selected value.
+		function syncAnswerFileDatasetOptions() {
+			var answerFileDataset = $('#answerFileDataset');
+			var selectedValue = answerFileDataset.val();
+			var nextSelectedValue = null;
+			var selectedDatasets = [];
+			var formattedData = [];
+			var uploadedOptions = [];
+
+			answerFileDataset.find('option').each(function() {
+				if ($(this).val().indexOf('AFDS_') === 0) {
+					uploadedOptions.push({
+						value : $(this).val(),
+						text : getSelectOptionLabel(this)
+					});
+				}
+			});
+
+			answerFileDataset.empty();
+
+			$('#dataset option:selected').each(function() {
+				selectedDatasets.push({
+					value : $(this).val(),
+					text : getSelectOptionLabel(this)
+				});
+			});
+
+			for (var selectedDatasetIndex = 0; selectedDatasetIndex < selectedDatasets.length; selectedDatasetIndex++) {
+				formattedData.push({
+					label : selectedDatasets[selectedDatasetIndex].text,
+					value : selectedDatasets[selectedDatasetIndex].value
+				});
+			}
+
+			for (var i = 0; i < uploadedOptions.length; i++) {
+				formattedData.push({
+					label : uploadedOptions[i].text,
+					value : uploadedOptions[i].value
+				});
+			}
+
+			if (selectedValue && $.grep(formattedData, function(option) {
+				return option.value === selectedValue;
+			}).length > 0) {
+				nextSelectedValue = selectedValue;
+			} else if (selectedDatasets.length > 0) {
+				nextSelectedValue = selectedDatasets[0].value;
+			} else if (uploadedOptions.length > 0) {
+				nextSelectedValue = uploadedOptions[0].value;
+			}
+
+			for (var optionIndex = 0; optionIndex < formattedData.length; optionIndex++) {
+				formattedData[optionIndex].selected = (nextSelectedValue !== null)
+						&& (formattedData[optionIndex].value === nextSelectedValue);
+			}
+
+			answerFileDataset.multiselect('dataprovider', formattedData);
+			populateMissingOptionTexts('#answerFileDataset');
+			if (nextSelectedValue !== null) {
+				answerFileDataset.multiselect('select', nextSelectedValue, true);
+			}
+			answerFileDataset.multiselect('refresh');
+		}
+
+		function removeUploadedDatasetOption(datasetEntry) {
+			var startPos = datasetEntry.lastIndexOf('(');
+			var endPos = datasetEntry.lastIndexOf(')');
+			if ((startPos < 0) || (endPos <= startPos)) {
+				return;
+			}
+			var uploadedFileName = datasetEntry.substring(startPos + 1, endPos);
+			$('#answerFileDataset').find('option').filter(function() {
+				return $(this).val() === ('AFDS_' + uploadedFileName);
+			}).remove();
 		}
 		//declaration of functions for loading experiment types, annotators, matchings and datasets
 		function loadExperimentTypes() {
@@ -461,12 +618,11 @@ F.e. if you want to use French, type in: fr">
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
-				createDatasetMultiselect(data)
+				addDatasetsToSelect(data);
 			});
 		}
 		// This function can be used to adapt the GUI for the chosen experiment type
 		function adaptGuiForExperimentType() {
-			console.log($('#type').val());
 			if ($('#type').val() == "QA") {
 				$("#uploadAnswersSeparator").show();
 				$("#uploadAnswers").show();
@@ -479,99 +635,10 @@ F.e. if you want to use French, type in: fr">
 				$("#uploadAnswers").hide();
 			}
 		}
-		function updateDatasetSelection(option, checked) {			
-			const displayName = $(option).val() ? $(option).val() : "Unnamed Dataset";
-			const $answerFileDataset = $('#answerFileDataset');
-
-			// Check if dataset is selected or deselected
-			if (checked) {
-				// Add only if it doesn't already exist
-				const exists = $answerFileDataset.find('option').filter(function () {
-					return $(this).val() === displayName;
-				}).length > 0;
-
-				if (!exists) {
-					console.log("[DEBUG] Adding selected dataset to #answerFileDataset:", displayName);
-
-					const option = $('<option></option>').val(displayName).text(displayName);
-					$answerFileDataset.append(option);
-				}
-			} else {
-				// Deselect case: remove the option
-				console.log("[DEBUG] Removing deselected dataset from #answerFileDataset:", displayName);
-
-				$answerFileDataset.find('option').filter(function () {
-					return $(this).val() === displayName;
-				}).remove();
-			}
-
-			// Rebuild and refresh the multiselect
-			$answerFileDataset.multiselect('rebuild');
-			$answerFileDataset.multiselect('refresh');
-		}
-		function createDatasetMultiselect(data) {
-			const container = document.getElementById('dataset-multiselect-container');
-			// Remove old data
-			while (container.firstChild) {
-				container.removeChild(container.firstChild);
-			}
-			
-			const groupedData = {}; // Group datasets by their group property
-			data.forEach(item => {
-				const group = item.group || item.expType || 'Default'; // Use expType or group for grouping
-				if (!groupedData[group]) {
-					groupedData[group] = [];
-				}
-				groupedData[group].push(item);
-			});
-			const sortedGroups = Object.keys(groupedData).sort()
-			
-			// Add new select
-			const select = document.createElement('select');
-			select.id= 'dataset-select';
-			select.multiple= 'multiple';
-
-			sortedGroups.forEach(group => {
-				const optgroup = document.createElement('optgroup');
-				optgroup.label = group;
-
-				groupedData[group].forEach(item => {
-					const option = document.createElement('option');
-					option.value = item.name;
-					option.appendChild(document.createTextNode(item.name));
-					optgroup.appendChild(option);
-				});
-				select.appendChild(optgroup);
-			});
-			container.appendChild(select);
-
-			// Create the multiselect
-			$('#dataset-select').multiselect({
-				enableCollapsibleOptGroups: true,
-				buttonContainer: '<div id="dataset-multiselect-group-collapsed-container" class="btn-group" />',
-				maxHeight: 300,
-				onChange: function(option, checked) {
-					updateDatasetSelection(option, checked);
-	                //alert('Changed option ' + $(option).val() + ' to ' + checked);
-	            }
-			});
-        	// Collapse all groups using the button introduced above
-	        $('#dataset-multiselect-group-collapsed-container .caret-container').click();
-		}
-
-		function updateButtonText(button, data) {
-			const selectedItems = data.filter(item => item.selected);
-			if (selectedItems.length > 0) {
-				const selectedNames = selectedItems.map(item => item.name).join(', ');
-				button.textContent = selectedNames;
-			} else {
-				button.textContent = 'Select Options';
-			}
-		}
 
 		function checkExperimentConfiguration() {
 			// Get the number of selected and uploaded datasets
-			var numberOfDataset = $('#dataset-select option:selected').length + $("#datasetList li span.li_content").length;
+			var numberOfDataset = $('#dataset option:selected').length + $("#datasetList li span.li_content").length;
 			// Get the number of selected systems, configured web services and uploaded answer files
 			var numberOfSystems = $('#annotator option:selected').length
 					+ $("#annotatorList li span.li_content").length
@@ -589,12 +656,17 @@ F.e. if you want to use French, type in: fr">
 		function addItemToList(listElement, item) {
 			$(listElement)
 					.append(
-							"<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
+							"<li><span class=\"list-remove\" aria-hidden=\"true\">&times;</span>&nbsp;<span class=\"li_content\">"
 									+ item + "</span></li>");
-			var listItems = $(listElement, ' > li > span');
+			var listItems = $(listElement).find('> li > span.list-remove');
 			for (var i = 0; i < listItems.length; i++) {
 				listItems[i].onclick = function() {
+					var listEntryText = $(this).siblings('.li_content').text();
+					if ($(listElement).attr('id') === 'datasetList') {
+						removeUploadedDatasetOption(listEntryText);
+					}
 					this.parentNode.parentNode.removeChild(this.parentNode);
+					syncAnswerFileDatasetOptions();
 					checkExperimentConfiguration();
 				};
 			}
@@ -640,19 +712,19 @@ F.e. if you want to use French, type in: fr">
 			//check showing run button if something is changed in dropdown menu
 			checkExperimentConfiguration();
 		}
-		// Adds the values of the elements from the given array to the given list
-		function addToList(list, array) {
-			$(array).each(function() {
-				list.push($(this).val());
-			});
-		}
-		// Adds the text of the elements from the given array to the given list adding the given prefix 
 		function addToList(list, array, prefix) {
 			$(array).each(function() {
-				if ((typeof prefix != 'undefined') && (prefix != "")) {
-					list.push(prefix + $(this).text());
+				var currentElement = $(this);
+				var currentValue = '';
+				if (currentElement.is('option')) {
+					currentValue = normalizeDisplayValue(currentElement.val(), getSelectOptionLabel(currentElement));
 				} else {
-					list.push($(this).text());
+					currentValue = normalizeDisplayValue(currentElement.text(), currentElement.val());
+				}
+				if ((typeof prefix != 'undefined') && (prefix != "")) {
+					list.push(prefix + currentValue);
+				} else {
+					list.push(currentValue);
 				}
 			});
 		}
@@ -667,7 +739,7 @@ F.e. if you want to use French, type in: fr">
 			addToList(annotator, $("#annotatorList li span.li_content"),
 					"NIFWS_");
 			//fetch list of selected and manually added datasets
-			var datasetMultiselect = $('#dataset-select option:selected');
+			var datasetMultiselect = $('#dataset option:selected');
 			var dataset = [];
 			addToList(dataset, datasetMultiselect);
 			addToList(dataset, $("#datasetList li span.li_content"), "NIFDS_");
@@ -709,11 +781,17 @@ F.e. if you want to use French, type in: fr">
 
 		$(document).ready(function() {
 			// load dropdowns when document loaded 
-			$('#type').multiselect();
-			$('#matching').multiselect();
-			$('#annotator').multiselect();
-			$('#dataset').multiselect();
-			$('#answerFileDataset').multiselect();
+			initializeMultiselect('#type');
+			initializeMultiselect('#matching');
+			initializeMultiselect('#annotator');
+			initializeMultiselect('#dataset', {
+				enableCollapsibleOptGroups : true,
+				onChange : function() {
+					syncAnswerFileDatasetOptions();
+					checkExperimentConfiguration();
+				}
+			});
+			initializeMultiselect('#answerFileDataset');
 
 
 
@@ -725,17 +803,12 @@ F.e. if you want to use French, type in: fr">
 
 			loadExperimentTypes();
 
-			addDataToSelect('#answerFileType', [ 'QALD JSON', 'QALD XML' ]);
-
 			//supervise configuration of experiment and let it only run
 			//if everything is ok 
 			//initially it is turned off 
 			$('#submit').attr("disabled", true);
 			//check showing run button if something is changed in dropdown menu
 			$('#annotator').change(function() {
-				checkExperimentConfiguration();
-			});
-			$('#multiselect-container').change(function() {
 				checkExperimentConfiguration();
 			});
 			$('#disclaimerCheckbox').change(function() {
@@ -794,6 +867,8 @@ F.e. if you want to use French, type in: fr">
 								$('#nameDataset').val('');
 								$('#URIDataset').val('');
 							});
+							syncAnswerFileDatasetOptions();
+							checkExperimentConfiguration();
 						},
 						progressall : function(e, data) {
 							var progress = parseInt(data.loaded / data.total
@@ -819,9 +894,8 @@ F.e. if you want to use French, type in: fr">
 						dataType : 'json',
 						done : function(e, data) {
 							var name = $('#nameAnswerFile').val();
-							var dataset = $('#answerFileDataset').val().replace("(", "%28").replace(")", "%29");
-							console.log(dataset);console.log(dataset);
-						    var type = $('#answerFileType').val();
+							var dataset = ($('#answerFileDataset').val() || '').replace("(", "%28").replace(")", "%29");
+						    var type = 'QALD JSON';
 							$.each(data.result.files, function(index, file) {
 							    file.name = file.name.replace("(", "%28").replace(")", "%29");
 								addItemToList($('#answerFileList'), name + "("
