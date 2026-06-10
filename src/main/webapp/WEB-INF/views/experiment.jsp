@@ -5,9 +5,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <head>
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
+          href="/gerbil/webjars/bootstrap/4.6.2/css/bootstrap.min.css">
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
+          href="/gerbil/webjars/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" />
 <link rel="icon" type="image/png"
 	href="/gerbil/webResources/gerbilicon_transparent.png">
 <style type="text/css">
@@ -42,15 +42,15 @@
 	<!-- mappings to URLs in back-end controller -->
 	<c:url var="experiment" value="/experiment" />
 
-	<script src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
-	<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="/gerbil/webjars/jquery/3.7.1/jquery.min.js"></script>
+<script src="/gerbil/webjars/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
 	<script
 		src="/gerbil/webjars/tablesorter/2.15.5/js/jquery.tablesorter.js"></script>
-		
+
 	<script type="application/ld+json">
 	${dataid}
 	</script>
-	
+
 	<%@include file="navbar.jsp"%>
 	<h1>GERBIL Experiment</h1>
 	<c:if test="${not empty tasks}">
@@ -68,7 +68,7 @@
 				</span>
 			</c:when>
 			<c:when test="${!isRunning}">
-    			Your Experiments are completed			
+    			Your Experiments are completed
     		</c:when>
 			<c:otherwise>
 			</c:otherwise>

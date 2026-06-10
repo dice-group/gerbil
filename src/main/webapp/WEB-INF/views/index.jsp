@@ -6,9 +6,9 @@
 
 <head>
 <link rel='stylesheet'
-	href='/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css'>
-<script src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
-<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+          href='/gerbil/webjars/bootstrap/4.6.2/css/bootstrap.min.css'>
+<script src="/gerbil/webjars/jquery/3.7.1/jquery.min.js"></script>
+<script src="/gerbil/webjars/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
 <link rel="icon" type="image/png"
 	href="/gerbil/webResources/gerbilicon_transparent.png">
 <style>

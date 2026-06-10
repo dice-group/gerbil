@@ -5,12 +5,12 @@
 <html>
 <head>
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
+          href="/gerbil/webjars/bootstrap/4.6.2/css/bootstrap.min.css">
 <title>Overview</title>
 <script type="text/javascript"
-	src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
+    src="/gerbil/webjars/jquery/3.7.1/jquery.min.js"></script>
 <script type="text/javascript"
-	src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    src="/gerbil/webjars/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
 <script type="text/javascript"
 	src="/gerbil/webResources/js/gerbil.color.js"></script>
@@ -91,7 +91,7 @@ table {
 				<div class="control-group">
 					<label class="col-md-4 control-label"></label>
 					<div class="col-md-8">
-						<button id="show" type="button" class="btn btn-default">Show
+						<button id="show" type="button" class="btn btn-light border">Show
 							table!</button>
 					</div>
 				</div>
