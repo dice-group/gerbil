@@ -3,9 +3,10 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <head>
     <link rel="stylesheet"
-          href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
+          href="/gerbil/webjars/bootstrap/4.6.2/css/bootstrap.min.css">
+    <%-- bootstrap-multiselect 1.1.2 serves its packaged assets from dist/ in the upgraded WebJar. --%>
     <link rel="stylesheet"
-          href="/gerbil/webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css"/>
+          href="/gerbil/webjars/bootstrap-multiselect/dist/css/bootstrap-multiselect.css"/>
     <link rel="icon" type="image/png"
           href="/gerbil/webResources/gerbilicon_transparent.png">
     <style type="text/css">
@@ -28,6 +29,14 @@
             text-align: right;
         }
 
+        /* These selects stay hidden because bootstrap-multiselect renders the visible replacement controls. */
+        #type,
+        #matching,
+        #annotator,
+        #dataset {
+            display: none;
+        }
+
         .fileinput-button {
             position: relative;
             overflow: hidden;
@@ -45,58 +54,52 @@
             cursor: pointer;
         }
 
-        .custom-multiselect-dropdown {
+        /* These dataset-specific rules exist only to support the grouped flyout; the rest of the form now uses native Bootstrap 4 layout/classes. */
+        #dataset + .btn-group .multiselect-container {
+            max-height: 20rem;
+            overflow: auto;
+        }
+
+        /* bootstrap-multiselect has optgroups but no second-level menu, so the flyout is attached to group headers. */
+        #dataset + .btn-group .multiselect-option {
+            display: none;
+        }
+
+        #dataset + .btn-group .multiselect-group {
+            cursor: pointer;
+            padding-right: 1.5rem;
             position: relative;
-            width: 100%;
+            white-space: nowrap;
         }
 
-        .dropdown-btn {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            cursor: pointer;
-            text-align: left;
-        }
-
-        .dropdown-list {
+        #dataset + .btn-group .multiselect-group::after {
+            content: "\203A";
             position: absolute;
-            width: 100%;
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            display: none;
-            z-index: 10;
+            right: .75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            line-height: 1;
         }
 
-        .dropdown-list.active {
-            display: block;
+        .gerbil-dataset-flyout {
+            position: fixed;
+            max-height: 20rem;
+            overflow: auto;
+            z-index: 1051;
         }
 
-        .dropdown-list .optgroup {
-            font-weight: bold;
-            padding: 8px;
-            cursor: pointer;
+        #annotatorList,
+        #datasetList {
+            margin-top: 15px;
+            list-style-type: none;
         }
 
-        .dropdown-list .optgroup-options {
-            display: none;
-            padding-left: 20px;
+        #addAnnotator {
+            margin-top: 15px;
         }
 
-        .dropdown-list .optgroup:hover .optgroup-options {
-            display: block;
-        }
-
-        .dropdown-list label {
-            display: block;
-            padding: 5px;
-            cursor: pointer;
-        }
-
-        .dropdown-list input[type="checkbox"] {
-            margin-right: 5px;
+        .gerbil-execution-warning {
+            padding-top: 10px;
         }
 
         /* Fixes for IE < 8 */
@@ -119,10 +122,11 @@
 <c:url var="execute" value="/execute"/>
 <c:url var="testNifWs" value="/testNifWs"/>
 
-<script src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
-<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="/gerbil/webjars/jquery/3.7.1/jquery.min.js"></script>
+<%-- Bootstrap 4 uses the bundle here so Popper-backed dropdowns/tooltips keep working after the library upgrade. --%>
+<script src="/gerbil/webjars/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
 <script
-    src="/gerbil/webjars/bootstrap-multiselect/0.9.8/js/bootstrap-multiselect.js"></script>
+    src="/gerbil/webjars/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>
 <c:url var="jquerywidget"
        value="/webResources/js/vendor/jquery.ui.widget.js"/>
 <script src="${jquerywidget}"></script>
@@ -140,38 +144,39 @@
     <fieldset>
         <!-- Form Name -->
         <legend>New Experiment</legend>
+        <!-- Bootstrap 4 no longer ships the Bootstrap 3 horizontal-form helpers, so this form uses explicit grid rows/labels instead of reintroducing a broad compatibility block. -->
         <!-- experiment type dropdown filled by loadexptype() function -->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="type">Experiment
+        <div class="form-group row">
+            <label class="col-md-4 col-form-label text-md-right" for="type">Experiment
                 Type</label>
             <div class="col-md-4">
-                <select id="type" style="display: none;">
+                <select id="type">
                 </select>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-8 offset-md-2">
                 <hr/>
             </div>
         </div>
         <!--Matching dropdown filled by loadMatching() function -->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="annotator">Matching</label>
+        <div class="form-group row">
+            <label class="col-md-4 col-form-label text-md-right" for="matching">Matching</label>
             <div class="col-md-4">
-                <select id="matching" style="display: none;">
+                <select id="matching">
                 </select>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-8 offset-md-2">
                 <hr/>
             </div>
         </div>
         <!--Annotator dropdown filled by loadAnnotator() function -->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="annotator">Annotator</label>
+        <div class="form-group row">
+            <label class="col-md-4 col-form-label text-md-right" for="annotator">Annotator</label>
             <div class="col-md-4">
-                <select id="annotator" multiple="multiple" style="display: none;">
+                <select id="annotator" multiple="multiple">
                 </select>
                 <hr/>
                 <div>
@@ -185,8 +190,7 @@
                     </div>
                     <div>
                         <!-- list to be filled by button press and javascript function addAnnotator -->
-                        <ul id="annotatorList"
-                            style="margin-top: 15px; list-style-type: none;">
+                        <ul id="annotatorList">
                         </ul>
                     </div>
                     <div id="warningEmptyAnnotator" class="alert alert-warning"
@@ -206,21 +210,22 @@
                         annotator.<br> <span id="annotatorTestErrorMsg"></span>
                     </div>
                     <input type="button" id="addAnnotator"
-                           class="btn btn-primary pull-right" value="Add another annotator"
-                           style="margin-top: 15px"/>
+                           class="btn btn-primary float-right" value="Add another annotator"/>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-8 offset-md-2">
                 <hr/>
             </div>
         </div>
         <!--Dataset dropdown filled by loadDatasets() function -->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="datasets">Dataset</label>
+        <div class="form-group row">
+            <label class="col-md-4 col-form-label text-md-right" for="dataset">Dataset</label>
             <div class="col-md-4">
-                <div id="multiselect-container" class="custom-multiselect-dropdown"></div>
+                <!-- Keep the native select as the source of truth; the grouped flyout is layered on top in JavaScript. -->
+                <select id="dataset" multiple="multiple">
+                </select>
                 <hr/>
                 <div>
                     <span> Or upload another dataset:</span>
@@ -228,20 +233,18 @@
                         <label for="nameDataset">Name:</label> <input
                         class="form-control" type="text" id="nameDataset" name="name"
                         placeholder="Type something"/> <br> <span
-                        class="btn btn-success fileinput-button"> <i
-                        class="glyphicon glyphicon-plus"></i> <span>Select
+                        class="btn btn-success fileinput-button"> <span aria-hidden="true">+</span> <span>Select
 									file...</span>
                         <!-- The file input field used as target for the file upload widget -->
 								<input id="fileupload" type="file" name="files[]">
 							</span> <br> <br>
                         <!-- The global progress bar -->
                         <div id="progress" class="progress">
-                            <div class="progress-bar progress-bar-success"></div>
+                            <div class="progress-bar bg-success"></div>
                         </div>
                         <div>
                             <!-- list to be filled by button press and javascript function addDataset -->
-                            <ul class="unstyled" id="datasetList"
-                                style="margin-top: 15px; list-style-type: none;">
+                            <ul class="list-unstyled" id="datasetList">
                             </ul>
                         </div>
                         <div id="warningEmptyDataset" class="alert alert-warning"
@@ -254,22 +257,25 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-8 offset-md-2">
                 <hr/>
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="datasets">Disclaimer</label>
-            <div class="checkbox">
-                <label> <input id="disclaimerCheckbox" type="checkbox">
+        <div class="form-group row">
+            <label class="col-md-4 col-form-label text-md-right" for="disclaimerCheckbox">Disclaimer</label>
+            <div class="col-md-4">
+                <div class="form-check">
+                    <input id="disclaimerCheckbox" class="form-check-input" type="checkbox">
+                    <label class="form-check-label" for="disclaimerCheckbox">
                     I have read and understand the <a
                         href="https://github.com/AKSW/gerbil/wiki/Disclaimer">disclaimer</a>.
-                </label>
+                    </label>
+                </div>
             </div>
         </div>
         <!-- Button -->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="submit"></label>
+        <div class="form-group row">
+            <label class="col-md-4 col-form-label" for="submit"></label>
             <div id="submitField" class="col-md-4">
                 <input type="button" id="submit" name="singlebutton"
                        class="btn btn-primary" value="Run Experiment"/>
@@ -393,15 +399,23 @@
             $('#annotator').multiselect('dataprovider', formattedData);
             <c:url value="/file/upload" var="upload"/>
             $('#annotator').multiselect('rebuild');
+            // Rebuild changes the multiselect DOM without a user change event, so refresh the submit state explicitly.
+            checkExperimentConfiguration();
         });
     }
 
     function loadDatasets() {
+        $('#dataset').html('');
+        hideDatasetSubmenus();
         $.getJSON('${datasets}', {
             experimentType: $('#type').val(),
             ajax: 'false'
         }, function (data) {
-            createCustomMultiselect(data);
+            rebuildDatasetOptions(data);
+            $('#dataset').multiselect('rebuild');
+            initializeDatasetSubmenus();
+            // Loading a new dataset list can invalidate previous selections, so re-run the form validity check here.
+            checkExperimentConfiguration();
         });
     }
 
@@ -416,10 +430,10 @@
             annotator.push($(this).text());
         });
         //fetch list of selected and manually added datasets
+        // Dataset selections now come from the upgraded multiselect's underlying select instead of a custom checkbox DOM.
         var dataset = [];
-        const container = document.getElementById('multiselect-container');
-        container.querySelectorAll('.dropdown-list input[type="checkbox"]:checked').forEach((checkbox) => {
-            dataset.push(checkbox.value);
+        $('#dataset option:selected').each(function () {
+            dataset.push($(this).val());
         });
 
         $("#datasetList li span.li_content").each(function () {
@@ -461,7 +475,7 @@
                         if (data.testOk === true) {
                             $('#annotatorList')
                                 .append(
-                                    "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
+                                    "<li><span aria-hidden=\"true\">&times;</span>&nbsp<span class=\"li_content\">"
                                     + name
                                     + "("
                                     + uri
@@ -487,91 +501,189 @@
         checkExperimentConfiguration();
     }
 
-   function createCustomMultiselect(data) {
-    const container = document.getElementById('multiselect-container');
-    while (container.firstChild) {
-        container.removeChild(container.firstChild);
+    function getDatasetFlyout() {
+        var flyout = $('#gerbilDatasetFlyout');
+        if (flyout.length > 0) {
+            return flyout;
+        }
+
+        // Reuse one flyout element and keep its static look in CSS; only its runtime position is calculated in JavaScript.
+        flyout = $('<div id="gerbilDatasetFlyout" class="dropdown-menu gerbil-dataset-flyout"></div>');
+        flyout.on('mousedown.gerbilDatasetSubmenu click.gerbilDatasetSubmenu', function (event) {
+            event.stopPropagation();
+        });
+        $('body').append(flyout);
+        return flyout;
     }
 
-    const button = document.createElement('div');
-    button.className = 'dropdown-btn';
-    button.textContent = 'Select Options'; // Default text
-    container.appendChild(button);
+    function hideDatasetSubmenus() {
+        $('#gerbilDatasetFlyout').removeClass('show').hide().empty();
+    }
 
-    const dropdownList = document.createElement('div');
-    dropdownList.className = 'dropdown-list';
-
-    const groupedData = {};
-    data.forEach(item => {
-        const group = item.group || 'Default';
-        if (!groupedData[group]) {
-            groupedData[group] = [];
+    function rebuildDatasetOptions(data) {
+        var groupedData = {};
+        var groupName;
+        for (var i = 0; i < data.length; i++) {
+            groupName = data[i].group || 'Default';
+            if (!groupedData[groupName]) {
+                groupedData[groupName] = [];
+            }
+            groupedData[groupName].push(data[i]);
         }
-        groupedData[group].push(item);
-    });
 
-    // Sort the groups alphabetically
-    const sortedGroups = Object.keys(groupedData).sort();
-
-    sortedGroups.forEach(group => {
-        const optgroupDiv = document.createElement('div');
-        optgroupDiv.className = 'optgroup';
-        optgroupDiv.textContent = group;
-        const optionsContainer = document.createElement('div');
-        optionsContainer.className = 'optgroup-options';
-
-        groupedData[group].forEach(item => {
-            const label = document.createElement('label');
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.value = item.name;
-
-            checkbox.checked = item.selected || false;
-
-            checkbox.addEventListener('change', () => {
-                item.selected = checkbox.checked;
-                updateButtonText(button, data);
+        // Keep datasets in a native select/optgroup structure so bootstrap-multiselect owns the rendered menu while the underlying select remains the source of truth.
+        var datasetSelect = $('#dataset');
+        var sortedGroups = Object.keys(groupedData).sort();
+        for (var groupIndex = 0; groupIndex < sortedGroups.length; groupIndex++) {
+            var optgroup = $('<optgroup></optgroup>').attr('label', sortedGroups[groupIndex]);
+            groupedData[sortedGroups[groupIndex]].sort(function (left, right) {
+                return left.name.localeCompare(right.name);
             });
 
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(item.name));
-            optionsContainer.appendChild(label);
+            for (var itemIndex = 0; itemIndex < groupedData[sortedGroups[groupIndex]].length; itemIndex++) {
+                var item = groupedData[sortedGroups[groupIndex]][itemIndex];
+                optgroup.append($('<option></option>')
+                    .val(item.name)
+                    .attr('title', item.name)
+                    .text(item.name));
+            }
+            datasetSelect.append(optgroup);
+        }
+    }
+
+    function showDatasetSubmenu(groupItem) {
+        var groupIndex = parseInt(groupItem.attr('data-gerbil-group-index'), 10);
+        var groupOptions = $('#dataset').children('optgroup').eq(groupIndex).children('option');
+        if (isNaN(groupIndex) || groupOptions.length === 0) {
+            hideDatasetSubmenus();
+            return;
+        }
+
+        hideDatasetSubmenus();
+
+        var flyout = getDatasetFlyout();
+        flyout.empty();
+
+        groupOptions.each(function (optionIndex) {
+            var option = $(this);
+            var optionId = 'gerbil-dataset-flyout-' + groupIndex + '-' + optionIndex;
+            var optionItem = $('<label class="dropdown-item mb-0"></label>');
+            var checkbox = $('<input type="checkbox" class="mr-2 gerbil-dataset-flyout-checkbox"/>');
+
+            checkbox.attr('id', optionId)
+                .prop('checked', option.is(':selected'))
+                .on('change', function (event) {
+                    event.stopPropagation();
+                    option.prop('selected', $(this).prop('checked'));
+                    $('#dataset').multiselect('refresh');
+                    optionItem.toggleClass('active', option.is(':selected'));
+                    $('#dataset').trigger('change');
+                });
+            optionItem.attr('for', optionId)
+                .toggleClass('active', option.is(':selected'))
+                .append(checkbox)
+                .append(document.createTextNode(option.text()));
+            flyout.append(optionItem);
         });
 
-        optgroupDiv.appendChild(optionsContainer);
-        dropdownList.appendChild(optgroupDiv);
-    });
+        flyout.css({
+            display: 'block',
+            visibility: 'hidden'
+        }).addClass('show');
 
-    container.appendChild(dropdownList);
+        var groupRect = groupItem[0].getBoundingClientRect();
+        var viewportWidth = $(window).width();
+        var viewportHeight = $(window).height();
+        var flyoutHeight = flyout.outerHeight();
+        var flyoutWidth = flyout.outerWidth();
+        var flyoutLeft = groupRect.right + 2;
+        var flyoutTop = Math.max(8, Math.min(groupRect.top, viewportHeight - flyoutHeight - 8));
 
-    button.addEventListener('click', () => {
-        dropdownList.classList.toggle('active');
-    });
-
-    document.addEventListener('click', (event) => {
-        if (!container.contains(event.target)) {
-            dropdownList.classList.remove('active');
+        if (flyoutLeft + flyoutWidth > viewportWidth - 8) {
+            flyoutLeft = Math.max(8, groupRect.left - flyoutWidth - 2);
         }
-    });
-}
 
-// Helper function to update the button text based on selected options
-function updateButtonText(button, data) {
-    const selectedItems = data.filter(item => item.selected);
-    if (selectedItems.length > 0) {
-        const selectedNames = selectedItems.map(item => item.name).join(', ');
-        button.textContent = selectedNames;
-    } else {
-        button.textContent = 'Select Options';
+        // Position the submenu from the active group's viewport box because the flyout is rendered separately with fixed positioning.
+        flyout.css({
+            left: flyoutLeft + 'px',
+            top: flyoutTop + 'px',
+            visibility: 'visible'
+        });
     }
-}
+
+    function initializeDatasetSubmenus() {
+        var multiselect = $('#dataset').data('multiselect');
+        if (!multiselect) {
+            return;
+        }
+
+        // bootstrap-multiselect renders optgroups as flat headers, so the flyout rebuilds the grouped options beside them.
+        var popupContainer = multiselect.$popupContainer;
+        popupContainer.children('.multiselect-option').hide();
+        popupContainer.children('.multiselect-group').attr('tabindex', '0')
+            .each(function (index) {
+                $(this).attr('data-gerbil-group-index', index);
+            });
+
+        popupContainer.off('.gerbilDatasetSubmenu');
+        popupContainer.on('mouseenter.gerbilDatasetSubmenu click.gerbilDatasetSubmenu focusin.gerbilDatasetSubmenu',
+            '.multiselect-group', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                showDatasetSubmenu($(this));
+            });
+        popupContainer.on('scroll.gerbilDatasetSubmenu', function () {
+            hideDatasetSubmenus();
+        });
+        $(window).off('.gerbilDatasetSubmenu').on('resize.gerbilDatasetSubmenu scroll.gerbilDatasetSubmenu', function () {
+            hideDatasetSubmenus();
+        });
+    }
+
+    function datasetButtonText(options) {
+        var selected = [];
+        if (options.length === 0) {
+            return 'Select Options';
+        }
+        options.each(function () {
+            selected.push($(this).text());
+        });
+        return selected.join(', ');
+    }
+
     $(document)
         .ready(
             function () {
+                // Keep the upgraded Bootstrap 4 multiselects close to the previous right-aligned presentation without reviving the removed Bootstrap 3 form CSS.
+                var bootstrap3MultiselectOptions = {
+                    buttonClass: 'btn btn-light border',
+                    buttonTextAlignment: 'right',
+                    buttonWidth: '100%'
+                };
+
                 // load dropdowns when document loaded
-                $('#type').multiselect();
-                $('#matching').multiselect();
-                $('#annotator').multiselect();
+                $('#type').multiselect($.extend({}, bootstrap3MultiselectOptions));
+                $('#matching').multiselect($.extend({}, bootstrap3MultiselectOptions));
+                $('#annotator').multiselect($.extend({}, bootstrap3MultiselectOptions));
+                // The dataset control still uses the plugin for rendering, but the grouped flyout behavior is added separately below.
+                $('#dataset').multiselect({
+                    buttonClass: 'btn btn-light border',
+                    buttonTextAlignment: 'left',
+                    buttonWidth: '100%',
+                    nonSelectedText: 'Select Options',
+                    buttonText: function (options) {
+                        return datasetButtonText(options);
+                    },
+                    buttonTitle: function (options) {
+                        return datasetButtonText(options);
+                    },
+                    onDropdownShown: function () {
+                        initializeDatasetSubmenus();
+                    },
+                    onDropdownHidden: function () {
+                        hideDatasetSubmenus();
+                    }
+                });
 
                 // listeners for dropdowns
                 $('#type').change(loadMatching);
@@ -588,7 +700,7 @@ function updateButtonText(button, data) {
                 $('#annotator').change(function () {
                     checkExperimentConfiguration();
                 });
-                $('#multiselect-container').change(function () {
+                $('#dataset').change(function () {
                     checkExperimentConfiguration();
                 });
                 $('#disclaimerCheckbox').change(function () {
@@ -640,10 +752,10 @@ function updateButtonText(button, data) {
                                                     .text());
                                     });
                             //fetch list of selected and manually added datasets
+                            // Read from the native select so submission stays aligned with the bootstrap-multiselect state after rebuild/refresh calls.
                             var dataset = [];
-                            const container = document.getElementById('multiselect-container');
-                            container.querySelectorAll('.dropdown-list input[type="checkbox"]:checked').forEach((checkbox) => {
-                                dataset.push(checkbox.value);
+                            $('#dataset option:selected').each(function () {
+                                dataset.push($(this).val());
                             });
                             $(
                                 "#datasetList li span.li_content")
@@ -715,7 +827,7 @@ function updateButtonText(button, data) {
                                             var span = "<span>Find your experimental data here: </span>";
                                             $('#submitField').append(span);
                                             $('#submitField').append(link);
-                                            errorSpan = "<br><div class=\"warning\" style=\"padding-top: 10px;\">Warning: " + res.errorMessage + "</div>";
+                                            errorSpan = "<br><div class=\"warning gerbil-execution-warning\">Warning: " + res.errorMessage + "</div>";
                                         } else {
                                             errorSpan = "<br><div class=\"error\">Error: " + res.errorMessage + "</div>";
                                         }
@@ -743,7 +855,7 @@ function updateButtonText(button, data) {
                                 function (index, file) {
                                     $('#datasetList')
                                         .append(
-                                            "<li><span class=\"glyphicon glyphicon-remove\"></span>&nbsp<span class=\"li_content\">"
+                                            "<li><span aria-hidden=\"true\">&times;</span>&nbsp<span class=\"li_content\">"
                                             + name
                                             + "("
                                             + file.name
@@ -779,7 +891,7 @@ function updateButtonText(button, data) {
                                 function (index, file) {
                                     $('#datasetList')
                                         .append(
-                                            "<li><span class=\"glyphicon glyphicon-ban-circle\"></span>&nbsp<span class=\"li_content\">"
+                                            "<li><span aria-hidden=\"true\">!</span>&nbsp<span class=\"li_content\">"
                                             + name
                                             + "("
                                             + file.name

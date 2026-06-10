@@ -3,9 +3,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <head>
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
+          href="/gerbil/webjars/bootstrap/4.6.2/css/bootstrap.min.css">
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
+          href="/gerbil/webjars/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" />
 <link rel="icon" type="image/png" href="/gerbil/webResources/gerbilicon_transparent.png">
 </head>
 <body class="container">
@@ -38,7 +38,7 @@
 		<li>J&ouml;rg Waitelonis (HPI Potsdam, Germany)
 		<li>Lars Wesemann (R&amp;D, Unister GmbH, Germany)
 	</ul>
-	
+
 	<p>
 	How to cite:<br>
 	<i>GERBIL -- General Entity Annotation Benchmark Framework</i> by Ricardo Usbeck, Michael R&ouml;der, Axel-Cyrille Ngonga Ngomo, Ciro Baron, Andreas Both, Martin Br&uuml;mmer, Diego Ceccarelli, Marco Cornolti, Didier Cherix, Bernd Eickmann, Paolo Ferragina, Christiane Lemke, Andrea Moro, Roberto Navigli, Francesco Piccinno, Giuseppe Rizzo, Harald Sack, Ren&eacute; Speck, Rapha&euml;l Troncy, J&ouml;rg Waitelonis and Lars Wesemann in 24th WWW conference.
