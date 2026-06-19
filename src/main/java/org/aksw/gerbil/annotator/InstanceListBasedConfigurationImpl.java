@@ -39,7 +39,7 @@ public class InstanceListBasedConfigurationImpl extends AbstractAdapterConfigura
 
     public InstanceListBasedConfigurationImpl(String annotatorName, boolean couldBeCached,
             DatasetConfiguration datasetConfig, ExperimentType applicableForExperiment, String questionLang) {
-        super(annotatorName, DatasetsConfig.DEFAULT_DATASET_GROUP, couldBeCached, applicableForExperiment);
+        super(annotatorName, DEFAULT_GROUP, couldBeCached, applicableForExperiment);
         this.datasetConfig = datasetConfig;
         this.questionLang = questionLang;
     }

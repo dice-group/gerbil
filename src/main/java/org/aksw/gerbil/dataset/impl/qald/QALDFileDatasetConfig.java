@@ -26,19 +26,20 @@ import org.openrdf.query.algebra.Str;
 
 public class QALDFileDatasetConfig extends AbstractDatasetConfiguration {
 
- 
-	private String file;
+    private String file;
 
-    public QALDFileDatasetConfig(String name, String datasetGroup, String file, boolean couldBeCached, ExperimentType applicableForExperiment,
-            EntityCheckerManager entityCheckerManager, SameAsRetriever globalRetriever) {
-        super(name, datasetGroup, couldBeCached, applicableForExperiment, entityCheckerManager, globalRetriever);
-        this.file = file;
+    public QALDFileDatasetConfig(String name, String questionLabel, String file, boolean couldBeCached,
+            ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
+            SameAsRetriever globalRetriever) {
+        this(name, DEFAULT_GROUP, questionLabel, file, couldBeCached, applicableForExperiment, entityCheckerManager,
+                globalRetriever);
     }
 
-
-    public QALDFileDatasetConfig(String name, String datasetGroup, String questionLabel, String file, boolean couldBeCached, ExperimentType applicableForExperiment,
-                                 EntityCheckerManager entityCheckerManager, SameAsRetriever globalRetriever) {
-        super(name, datasetGroup,questionLabel, couldBeCached, applicableForExperiment, entityCheckerManager, globalRetriever);
+    public QALDFileDatasetConfig(String name, String datasetGroup, String questionLabel, String file,
+            boolean couldBeCached, ExperimentType applicableForExperiment, EntityCheckerManager entityCheckerManager,
+            SameAsRetriever globalRetriever) {
+        super(name, datasetGroup, questionLabel, couldBeCached, applicableForExperiment, entityCheckerManager,
+                globalRetriever);
         this.file = file;
     }
 

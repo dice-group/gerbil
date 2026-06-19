@@ -91,6 +91,8 @@ public class ExplanationService implements AutoCloseable {
             return "QALD9_plus_wikidata";
         case "QALD9 Plus DBpedia":
             return "QALD9_plus_dbpedia";
+        case "QALD10 Test Multilingual":
+            return "QALD10";
         default:
             return datasetName;
         }

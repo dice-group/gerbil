@@ -41,7 +41,7 @@ public class AnnotatorConfigurationImpl extends AbstractAdapterConfiguration imp
     public AnnotatorConfigurationImpl(String annotatorName, boolean couldBeCached,
             Constructor<? extends Annotator> constructor, Object constructorArgs[],
             ExperimentType applicableForExperiment) {
-        super(annotatorName, DatasetsConfig.DEFAULT_DATASET_GROUP, couldBeCached, applicableForExperiment);
+        super(annotatorName, DEFAULT_GROUP, couldBeCached, applicableForExperiment);
         this.constructor = constructor;
         this.constructorArgs = constructorArgs;
     }

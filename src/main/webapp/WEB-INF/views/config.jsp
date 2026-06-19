@@ -3,9 +3,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <head>
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap/3.2.0/css/bootstrap.min.css">
+	href="/gerbil/webjars/bootstrap/3.3.2/css/bootstrap.min.css">
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap-multiselect/0.9.8/css/bootstrap-multiselect.css" />
+	href="/gerbil/webjars/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" />
 <link rel="icon" type="image/png"
 	href="/gerbil/webResources/gerbilicon_transparent.png">
 <style type="text/css">
@@ -77,10 +77,10 @@
 	<c:url var="execute" value="/execute" />
 	<c:url var="testNifWs" value="/testNifWs" />
 
-	<script src="/gerbil/webjars/jquery/2.1.1/jquery.min.js"></script>
-	<script src="/gerbil/webjars/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script src="/gerbil/webjars/jquery/2.1.3/jquery.min.js"></script>
+	<script src="/gerbil/webjars/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 	<script
-		src="/gerbil/webjars/bootstrap-multiselect/0.9.8/js/bootstrap-multiselect.js"></script>
+		src="/gerbil/webjars/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.js"></script>
 	<c:url var="jquerywidget"
 		value="/webResources/js/vendor/jquery.ui.widget.js" />
 	<script src="${jquerywidget}"></script>
@@ -382,7 +382,7 @@ F.e. if you want to use French, type in: fr">
 		}
 		//declaration of functions for loading experiment types, annotators, matchings and datasets
 		function loadExperimentTypes() {
-			$.getJSON('${exptypes}', {
+			$.getJSON('/gerbil/exptypes', {
 				ajax : 'false'
 			}, function(data) {
 				addDataToSelectWithTooltips('#type', data.ExperimentType);
@@ -395,7 +395,7 @@ F.e. if you want to use French, type in: fr">
 		function loadMatching() {
 			$('#matching').html('');
 			$('#annotator').html('');
-			$.getJSON('${matchings}', {
+			$.getJSON('/gerbil/matchings', {
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
@@ -404,7 +404,7 @@ F.e. if you want to use French, type in: fr">
 		}
 		function loadAnnotator() {
 			$('#annotator').html('');
-			$.getJSON('${annotators}', {
+			$.getJSON('/gerbil/annotators', {
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
@@ -543,7 +543,7 @@ F.e. if you want to use French, type in: fr">
 				// If this is not a question answering web ervice 
 				if ($('#type').val() != "QA") {
 					$('#infoAnnotatorTest').show();
-					$.getJSON('${testNifWs}', {
+					$.getJSON('/gerbil/testNifWs', {
 						experimentType : $('#type').val(),
 						url : uri
 					},
@@ -728,7 +728,7 @@ F.e. if you want to use French, type in: fr">
 		$(function() {
 			'use strict';
 			// Change this to the location of your server-side upload handler:
-			var url = '${upload}';
+			var url = '/gerbil/file/upload';
 			$('#fileupload').fileupload(
 					{
 						url : url,
@@ -760,7 +760,7 @@ F.e. if you want to use French, type in: fr">
 		$(function() {
 			'use strict';
 			// Change this to the location of your server-side upload handler:
-			var url = '${upload}';
+			var url = '/gerbil/file/upload';
 			$('#answerFileUpload').fileupload(
 					{
 						url : url,
