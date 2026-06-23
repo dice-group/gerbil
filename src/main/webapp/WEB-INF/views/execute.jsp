@@ -13,10 +13,10 @@
 	<h1>Executing Experiment with Configuration:</h1>
 	<div class="input-group">
 		<span class="badge badge-primary">Type:</span><span
-			class="badge badge-success">${command.type}</span>
+			class="badge badge-success"><c:out value="${command.type}" /></span>
 	</div>
 	<div class="input-group">
 		<span class="badge badge-primary">Annotator:</span><span
-			class="badge badge-success">${command.annotator}</span>
+			class="badge badge-success"><c:out value="${command.annotator}" /></span>
 	</div>
 </body>
