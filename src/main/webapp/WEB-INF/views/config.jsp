@@ -78,6 +78,38 @@
 	white-space: nowrap;
 }
 
+#dataset + .btn-group .multiselect-container {
+	max-height: 20rem;
+	overflow: auto;
+}
+
+#dataset + .btn-group .multiselect-option {
+	display: none;
+}
+
+#dataset + .btn-group .multiselect-group {
+	cursor: pointer;
+	padding-right: 1.5rem;
+	position: relative;
+	white-space: nowrap;
+}
+
+#dataset + .btn-group .multiselect-group::after {
+	content: "\203A";
+	position: absolute;
+	right: .75rem;
+	top: 50%;
+	transform: translateY(-50%);
+	line-height: 1;
+}
+
+.gerbil-dataset-flyout {
+	position: fixed;
+	max-height: 20rem;
+	overflow: auto;
+	z-index: 1051;
+}
+
 .list-remove {
 	cursor: pointer;
 	font-size: 1rem;
@@ -471,7 +503,27 @@ F.e. if you want to use French, type in: fr">
 			return normalizeDisplayValue(dataset.name, 'Unnamed Dataset');
 		}
 
-		function addDatasetsToSelect(data) {
+		// Reuse a single detached flyout container for the currently hovered dataset group.
+		function getDatasetFlyout() {
+			var flyout = $('#gerbilDatasetFlyout');
+			if (flyout.length > 0) {
+				return flyout;
+			}
+
+			flyout = $('<div id="gerbilDatasetFlyout" class="dropdown-menu gerbil-dataset-flyout"></div>');
+			flyout.on('mousedown.gerbilDatasetSubmenu click.gerbilDatasetSubmenu', function(event) {
+				event.stopPropagation();
+			});
+			$('body').append(flyout);
+			return flyout;
+		}
+
+		function hideDatasetSubmenus() {
+			$('#gerbilDatasetFlyout').removeClass('show').hide().empty();
+		}
+
+		// Rebuild the native select as optgroups so bootstrap-multiselect can render group headers.
+		function rebuildDatasetOptions(data) {
 			var groupedDatasets = {};
 			for (var i = 0; i < data.length; i++) {
 				var groupName = getDatasetGroupName(data[i]);
@@ -485,24 +537,116 @@ F.e. if you want to use French, type in: fr">
 			}
 
 			var sortedGroups = Object.keys(groupedDatasets).sort();
-			var formattedData = [];
 			for (var groupIndex = 0; groupIndex < sortedGroups.length; groupIndex++) {
 				var currentGroup = sortedGroups[groupIndex];
 				groupedDatasets[currentGroup].sort(function(left, right) {
 					return left.label.localeCompare(right.label);
 				});
-				formattedData.push({
-					label : currentGroup,
-					children : groupedDatasets[currentGroup]
-				});
+				var optgroup = $('<optgroup></optgroup>').attr('label', currentGroup);
+				for (var optionIndex = 0; optionIndex < groupedDatasets[currentGroup].length; optionIndex++) {
+					optgroup.append($('<option></option>').val(groupedDatasets[currentGroup][optionIndex].value)
+							.attr('title', groupedDatasets[currentGroup][optionIndex].label)
+							.text(groupedDatasets[currentGroup][optionIndex].label));
+				}
+				$('#dataset').append(optgroup);
+			}
+		}
+
+		// Render the active group's datasets in the side flyout and keep the hidden select in sync.
+		function showDatasetSubmenu(groupItem) {
+			var groupIndex = parseInt(groupItem.attr('data-gerbil-group-index'), 10);
+			var groupOptions = $('#dataset').children('optgroup').eq(groupIndex).children('option');
+			if (isNaN(groupIndex) || groupOptions.length === 0) {
+				hideDatasetSubmenus();
+				return;
 			}
 
-			$('#dataset').multiselect('dataprovider', formattedData);
-			populateMissingOptionTexts('#dataset');
-			$('#dataset').multiselect('rebuild');
-			$('#dataset').multiselect('refresh');
-			syncAnswerFileDatasetOptions();
-			checkExperimentConfiguration();
+			hideDatasetSubmenus();
+
+			var flyout = getDatasetFlyout();
+			flyout.empty();
+
+			groupOptions.each(function(optionIndex) {
+				var option = $(this);
+				var optionId = 'gerbil-dataset-flyout-' + groupIndex + '-' + optionIndex;
+				var optionItem = $('<label class="dropdown-item mb-0"></label>');
+				var checkbox = $('<input type="checkbox" class="mr-2 gerbil-dataset-flyout-checkbox"/>');
+
+				checkbox.attr('id', optionId).prop('checked', option.is(':selected')).on('change', function(event) {
+					event.stopPropagation();
+					option.prop('selected', $(this).prop('checked'));
+					$('#dataset').multiselect('refresh');
+					optionItem.toggleClass('active', option.is(':selected'));
+					syncAnswerFileDatasetOptions();
+					checkExperimentConfiguration();
+				});
+				optionItem.attr('for', optionId).toggleClass('active', option.is(':selected')).append(checkbox).append(
+						document.createTextNode(option.text()));
+				flyout.append(optionItem);
+			});
+
+			flyout.css({
+				display : 'block',
+				visibility : 'hidden'
+			}).addClass('show');
+
+			var groupRect = groupItem[0].getBoundingClientRect();
+			var viewportWidth = $(window).width();
+			var viewportHeight = $(window).height();
+			var flyoutHeight = flyout.outerHeight();
+			var flyoutWidth = flyout.outerWidth();
+			var flyoutLeft = groupRect.right + 2;
+			var flyoutTop = Math.max(8, Math.min(groupRect.top, viewportHeight - flyoutHeight - 8));
+
+			if (flyoutLeft + flyoutWidth > viewportWidth - 8) {
+				flyoutLeft = Math.max(8, groupRect.left - flyoutWidth - 2);
+			}
+
+			flyout.css({
+				left : flyoutLeft + 'px',
+				top : flyoutTop + 'px',
+				visibility : 'visible'
+			});
+		}
+
+		// bootstrap-multiselect flattens optgroups, so we bind its group rows back to our flyout.
+		function initializeDatasetSubmenus() {
+			var multiselect = $('#dataset').data('multiselect');
+			if (!multiselect) {
+				return;
+			}
+
+			var popupContainer = multiselect.$popupContainer;
+			popupContainer.children('.multiselect-option').hide();
+			popupContainer.children('.multiselect-group').attr('tabindex', '0').each(function(index) {
+				$(this).attr('data-gerbil-group-index', index);
+			});
+
+			popupContainer.off('.gerbilDatasetSubmenu');
+			popupContainer.on('mouseenter.gerbilDatasetSubmenu click.gerbilDatasetSubmenu focusin.gerbilDatasetSubmenu',
+					'.multiselect-group', function(event) {
+						event.preventDefault();
+						event.stopPropagation();
+						showDatasetSubmenu($(this));
+					});
+			popupContainer.on('scroll.gerbilDatasetSubmenu', function() {
+				hideDatasetSubmenus();
+			});
+			$(window).off('.gerbilDatasetSubmenu').on('resize.gerbilDatasetSubmenu scroll.gerbilDatasetSubmenu',
+					function() {
+						hideDatasetSubmenus();
+					});
+		}
+
+		function datasetButtonText(options) {
+			var selected = [];
+			if (options.length === 0) {
+				return 'Select Options';
+			}
+			options.each(function() {
+				selected.push($(this).text());
+			});
+			return selected.join(', ');
 		}
 
 		// Keep the answer-file dataset selector aligned with the selected top-level datasets
@@ -614,11 +758,16 @@ F.e. if you want to use French, type in: fr">
 		}
 		function loadDatasets() {
 			$('#dataset').html('');
+			hideDatasetSubmenus();
 			$.getJSON('/gerbil/datasets', {
 				experimentType : $('#type').val(),
 				ajax : 'false'
 			}, function(data) {
-				addDatasetsToSelect(data);
+				rebuildDatasetOptions(data);
+				$('#dataset').multiselect('rebuild');
+				initializeDatasetSubmenus();
+				syncAnswerFileDatasetOptions();
+				checkExperimentConfiguration();
 			});
 		}
 		// This function can be used to adapt the GUI for the chosen experiment type
@@ -785,7 +934,19 @@ F.e. if you want to use French, type in: fr">
 			initializeMultiselect('#matching');
 			initializeMultiselect('#annotator');
 			initializeMultiselect('#dataset', {
-				enableCollapsibleOptGroups : true,
+				nonSelectedText : 'Select Options',
+				buttonText : function(options) {
+					return datasetButtonText(options);
+				},
+				buttonTitle : function(options) {
+					return datasetButtonText(options);
+				},
+				onDropdownShown : function() {
+					initializeDatasetSubmenus();
+				},
+				onDropdownHidden : function() {
+					hideDatasetSubmenus();
+				},
 				onChange : function() {
 					syncAnswerFileDatasetOptions();
 					checkExperimentConfiguration();
