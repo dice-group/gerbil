@@ -5,12 +5,12 @@
 
 <head>
 <link rel="stylesheet"
-	href="/gerbil/webjars/bootstrap/3.3.2/css/bootstrap.min.css">
+	href="/gerbil/webjars/bootstrap/4.6.2/css/bootstrap.min.css">
 <title>Overview</title>
 <script type="text/javascript"
-	src="/gerbil/webjars/jquery/2.1.3/jquery.min.js"></script>
+	src="/gerbil/webjars/jquery/3.7.1/jquery.min.js"></script>
 <script type="text/javascript"
-	src="/gerbil/webjars/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	src="/gerbil/webjars/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
 <script type="text/javascript"
 	src="/gerbil/webResources/js/gerbil.color.js"></script>
@@ -91,7 +91,7 @@ table {
 				<div class="control-group">
 					<label class="col-md-4 control-label"></label>
 					<div class="col-md-8">
-						<button id="show" type="button" class="btn btn-default">Show
+						<button id="show" type="button" class="btn btn-secondary">Show
 							table!</button>
 					</div>
 				</div>
@@ -203,7 +203,6 @@ table {
 								ajax : 'false'
 							},
 							function(data) {
-								console.log(data);
 								var htmlExperimentTypes = "";
 								for (var i = 0; i < data.ExperimentType.length; i++) {
 									htmlExperimentTypes += "<label class=\"btn btn-primary\" >";
@@ -260,8 +259,6 @@ table {
 					var tableData2 = data.leaderboard.datasets[i];
 					createLeaderBoard(tableData2, "leaderboard");
 				}
-			}).fail(function() {
-				console.log("error loading data for table");
 			});
 		};
 
@@ -359,7 +356,6 @@ table {
 				}
 			});
 			//[[{axis:"Email",value:0.71},{axis:"aa",value:0}],[{axis:"Email",value:0.71},{axis:"aa",value:0.1},]];
-			console.log("start drawing into " + chartElementId);
 			drawChart(chartData, LegendOptions, chartElementId);
 			// add the svg namespace
 			//$('#' + chartElementId + ' svg').attr("xmlns:svg",
