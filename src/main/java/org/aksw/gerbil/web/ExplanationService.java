@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.aksw.gerbil.evaluate.AggregatedContingencyMetricsReport;
 import org.aksw.gerbil.evaluate.EvaluationResult;
@@ -107,8 +108,8 @@ public class ExplanationService implements AutoCloseable {
             parameters.addProperty("dataset", dataset);
         }
 
-        parameters.addProperty("positive", String.join(",", positive.stream().map(String::valueOf).toList()));
-        parameters.addProperty("negative", String.join(",", negative.stream().map(String::valueOf).toList()));
+        parameters.addProperty("positive", String.join(",", positive.stream().map(String::valueOf).collect(Collectors.toList())));
+        parameters.addProperty("negative", String.join(",", negative.stream().map(String::valueOf).collect(Collectors.toList())));
         parameters.addProperty("time", 600000);
 
         HttpPost request = new HttpPost(explanationUrl);

@@ -3,6 +3,7 @@ package org.aksw.gerbil.web;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.aksw.gerbil.database.ExperimentDAO;
 import org.aksw.gerbil.database.PendingExplanationTask;
@@ -55,10 +56,13 @@ public class ExplanationPollingJob {
                         @SuppressWarnings("unchecked")
                         Map<String, String> map = (Map<String, String>) JSONValue.parse(responseBody);
 
-                        String pruneCELResult = map.getOrDefault("pruneCELResult", "");
-                        pruneCELResult = pruneCELResult.trim();
-                        String llmResult = map.getOrDefault("llmResult", "");
-                        llmResult = llmResult.trim();
+                        if (map == null) {
+                            log.warn("Received empty or invalid explanation payload for task {}", taskId);
+                            continue;
+                        }
+
+                        String pruneCELResult = Objects.toString(map.get("pruneCELResult"), "").trim();
+                        String llmResult = Objects.toString(map.get("llmResult"), "").trim();
 
                         experimentDAO.setExplanation(taskId, ExplanationService.MACHINE_READABLE_EXPLANATION_NAME,
                                 pruneCELResult);
