@@ -67,7 +67,7 @@
 		<c:if test="${task.numberOfSubTasks > 0}">
 			<c:set var="hasSubTasks" value="true" />
 		</c:if>
-        <c:if test="${task.explanationURL != null}">
+        <c:if test="${not empty task.explanation}">
             <c:set var="hasExplanation" value="true" />
         </c:if>
 	</c:forEach>
@@ -137,7 +137,7 @@
 					<td>${task.timestampstring}</td>
 					<td>${task.gerbilVersion}</td>
 				</tr>
-				<c:if test="${task.explanationURL != null}">
+                <c:if test="${not empty task.explanation}">
 					<tr>
 						<td>${task.annotator}</td>
 						<td>${task.dataset}</td>
