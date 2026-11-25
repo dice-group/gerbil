@@ -82,7 +82,8 @@ public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4De
     }
 
     @Override
-    public Integer countExperiments() {
+    public Integer countExperimentTasks() {
+        // The state map models stored task rows, not experiment-to-task associations.
         return states.size();
     }
 
