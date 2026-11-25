@@ -95,7 +95,10 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private static final String GET_ALL_LANGUAGES = "SELECT DISTINCT language FROM ExperimentTasks";
     private static final String GET_ALL_ANNOTATORS = "SELECT DISTINCT annotatorName FROM ExperimentTasks";
 
-    private final static String GET_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks";
+    // Keep these as independent raw-row counts: neither distinct IDs nor task state
+    // filters represent the statistics exposed by /count.
+    private final static String GET_EXPERIMENT_COUNT = "SELECT count(*) FROM Experiments";
+    private final static String GET_EXPERIMENT_TASK_COUNT = "SELECT count(*) FROM ExperimentTasks";
 
     private final static String INSERT_ADDITIONAL_BLOB_RESULTS = "INSERT INTO ExperimentTasks_AdditionalBlobResults (taskId, resultId, resultValue) VALUES (:taskId, :resultId, :resultValue)";
     private final static String GET_ADDITIONAL_BLOB_RESULTS = "SELECT resultId, resultValue FROM ExperimentTasks_AdditionalBlobResults WHERE taskId=:taskId";
@@ -550,7 +553,13 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
 
     @Override
     public Integer countExperiments() {
-        List<Integer> result = this.template.query(GET_EXP_COUNT, new IntegerRowMapper());
+        List<Integer> result = this.template.query(GET_EXPERIMENT_COUNT, new IntegerRowMapper());
+        return result.get(0);
+    }
+
+    @Override
+    public Integer countExperimentTasks() {
+        List<Integer> result = this.template.query(GET_EXPERIMENT_TASK_COUNT, new IntegerRowMapper());
         return result.get(0);
     }
 

@@ -155,8 +155,14 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
 		return null;
 	}
 
+    // This logging-only DAO has no persistent tables, so both row counts are zero.
     @Override
     public Integer countExperiments() {
+        return 0;
+    }
+
+    @Override
+    public Integer countExperimentTasks() {
         return 0;
     }
 
