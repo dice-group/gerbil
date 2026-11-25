@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
 import org.aksw.gerbil.datatypes.ErrorTypes;
 import org.aksw.gerbil.datatypes.ExperimentTaskResult;
 import org.aksw.gerbil.datatypes.ExperimentType;
@@ -33,6 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
@@ -54,10 +57,60 @@ public class ExperimentDAOImplJUnitTest {
     @Qualifier("experimentDAO")
     private ExperimentDAO dao;
 
+    @Autowired
+    @Qualifier("databaseDataSource")
+    private DataSource dataSource;
+
     @Test
     public void testTaskCreation() {
         int taskId = this.dao.createTask("annotator1", "dataset1", "en", "type1", "matching1", "id-23456");
         Assert.assertTrue(taskId > 0);
+    }
+
+    @Test
+    public void testExperimentAndTaskCounts() {
+        final String fixturePrefix = "issue-473-count-test";
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        deleteCountTestFixtures(jdbcTemplate, fixturePrefix);
+
+        int initialExperimentCount = dao.countExperiments();
+        int initialTaskCount = dao.countExperimentTasks();
+        try {
+            // Three top-level tasks share one experiment ID and cover all task states.
+            // The finished result adds an unlinked subtask, producing +3 experiment
+            // rows but +4 task rows and proving that the counts are independent.
+            int finishedTaskId = dao.createTask(fixturePrefix + "-finished", "dataset", "en",
+                    ExperimentType.QA.name(), Matching.STRONG_ENTITY_MATCH.name(), fixturePrefix);
+            ExperimentTaskResult finishedResult = new ExperimentTaskResult(fixturePrefix + "-finished", "dataset",
+                    "en", ExperimentType.QA, Matching.STRONG_ENTITY_MATCH, new double[6],
+                    ExperimentDAO.TASK_FINISHED, 0);
+            finishedResult.addSubTask(new ExperimentTaskResult(fixturePrefix + "-subtask", "dataset", "en",
+                    ExperimentType.QA, Matching.STRONG_ENTITY_MATCH, new double[6], ExperimentDAO.TASK_FINISHED, 0));
+            dao.setExperimentTaskResult(finishedTaskId, finishedResult);
+
+            dao.createTask(fixturePrefix + "-unfinished", "dataset", "en", ExperimentType.QA.name(),
+                    Matching.STRONG_ENTITY_MATCH.name(), fixturePrefix);
+            int errorTaskId = dao.createTask(fixturePrefix + "-error", "dataset", "en", ExperimentType.QA.name(),
+                    Matching.STRONG_ENTITY_MATCH.name(), fixturePrefix);
+            dao.setExperimentState(errorTaskId, ErrorTypes.UNEXPECTED_EXCEPTION.getErrorCode());
+
+            Assert.assertEquals(initialExperimentCount + 3, dao.countExperiments().intValue());
+            Assert.assertEquals(initialTaskCount + 4, dao.countExperimentTasks().intValue());
+        } finally {
+            deleteCountTestFixtures(jdbcTemplate, fixturePrefix);
+        }
+    }
+
+    private void deleteCountTestFixtures(JdbcTemplate jdbcTemplate, String fixturePrefix) {
+        // This test class shares its database across methods, so remove only the
+        // uniquely named fixture and its dependent rows before and after the test.
+        String taskIds = "SELECT id FROM ExperimentTasks WHERE annotatorName LIKE ?";
+        String fixturePattern = fixturePrefix + "%";
+        jdbcTemplate.update("DELETE FROM ExperimentTasks_SubTasks WHERE taskId IN (" + taskIds
+                + ") OR subTaskId IN (" + taskIds + ")", fixturePattern, fixturePattern);
+        jdbcTemplate.update("DELETE FROM ExperimentTasks_Version WHERE id IN (" + taskIds + ")", fixturePattern);
+        jdbcTemplate.update("DELETE FROM Experiments WHERE id = ?", fixturePrefix);
+        jdbcTemplate.update("DELETE FROM ExperimentTasks WHERE annotatorName LIKE ?", fixturePattern);
     }
 
     @Test

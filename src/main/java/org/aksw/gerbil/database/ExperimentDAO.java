@@ -266,11 +266,20 @@ public interface ExperimentDAO extends Closeable {
 	Set<String> getAnnotators();
 
     /**
-     * Counts the number of experiment tasks in the database.
+     * Counts rows in the {@code Experiments} table. Repeated experiment IDs are
+     * counted because each stored experiment-task association is a separate row.
      * 
-     * @return the number of experiment tasks in the database
+     * @return the number of rows in the {@code Experiments} table
      */
     Integer countExperiments();
+
+    /**
+     * Counts rows in the {@code ExperimentTasks} table, regardless of execution
+     * state. Stored subtasks are included because they are task rows as well.
+     *
+     * @return the number of rows in the {@code ExperimentTasks} table
+     */
+    Integer countExperimentTasks();
 
 	/**
 	 * Retrieves all experiment tasks from the database that have an explanation URL

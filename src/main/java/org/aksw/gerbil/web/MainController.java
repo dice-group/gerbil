@@ -367,8 +367,15 @@ public class MainController {
         return m;
     }
 
+    /**
+     * Extends the established count endpoint with both DAO statistics. Keeping the
+     * values as Integers in a ModelMap lets Spring serialize them as JSON numbers.
+     */
     @RequestMapping("/count")
-    public @ResponseBody String count() {
-        return Integer.toString(dao.countExperiments());
+    public @ResponseBody ModelMap count() {
+        ModelMap counts = new ModelMap();
+        counts.addAttribute("experiments", dao.countExperiments());
+        counts.addAttribute("experiment_tasks", dao.countExperimentTasks());
+        return counts;
     }
 }

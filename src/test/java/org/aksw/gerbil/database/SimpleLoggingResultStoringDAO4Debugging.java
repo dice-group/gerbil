@@ -81,8 +81,10 @@ public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4De
         return resultsOfExperiment;
     }
 
+    // Preserve the existing in-memory debug task statistic under the task-specific
+    // DAO method now that countExperiments represents rows from Experiments.
     @Override
-    public Integer countExperiments() {
+    public Integer countExperimentTasks() {
         return states.size();
     }
 
