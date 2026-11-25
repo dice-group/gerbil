@@ -29,6 +29,10 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleLoggingDAO4Debugging.class);
 
     private int nextTaskId = 0;
+    // Mirror the rows that the SQL DAO would store so tests using this lightweight
+    // DAO still implement the two count contracts faithfully.
+    private int experimentCount = 0;
+    private int experimentTaskCount = 0;
 
     @Override
     public List<ExperimentTaskStatus> getResultsOfExperiment(String experimentId) {
@@ -40,6 +44,10 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
             String experimentId) {
         int taskId = nextTaskId;
         ++nextTaskId;
+        ++experimentTaskCount;
+        if (experimentId != null) {
+            ++experimentCount;
+        }
         LOGGER.info("creating task " + taskId + "annotatorName=\"" + annotatorName + "\", datasetName=\"" + datasetName
                 + "\", experimentType=\"" + experimentType.toString() + "\", String matching=\"" + matching
                 + "\", experimentId)");
@@ -53,6 +61,7 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
 
     protected void setExperimentTaskResult(int experimentTaskId, ExperimentTaskStatus result, boolean isSubTask) {
         if (isSubTask) {
+            ++experimentTaskCount;
             LOGGER.info("Setting result of " + result.type.name() + " sub task of " + experimentTaskId + " to "
                     + result.toString());
         } else {
@@ -73,6 +82,8 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
 
     @Override
     protected void connectExistingTaskWithExperiment(int experimentTaskId, String experimentId) {
+        // Reusing a cached task still inserts a new row into the Experiments table.
+        ++experimentCount;
         LOGGER.info("Task " + experimentTaskId + " belongs to experiment " + experimentId);
     }
 
@@ -133,7 +144,12 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
 
     @Override
     public Integer countExperiments() {
-        return 0;
+        return experimentCount;
+    }
+
+    @Override
+    public Integer countExperimentTasks() {
+        return experimentTaskCount;
     }
 
 }
