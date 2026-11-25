@@ -264,9 +264,18 @@ public interface ExperimentDAO extends Closeable {
 	public String getTaskId(int id);
 
     /**
-     * Counts the number of experiment tasks in the database.
-     * 
-     * @return the number of experiment tasks in the database
+     * Counts all rows in the {@code Experiments} table. Rows that share an
+     * experiment ID but reference different tasks are counted separately.
+     *
+     * @return the number of rows in the {@code Experiments} table
      */
     Integer countExperiments();
+
+    /**
+     * Counts all rows in the {@code ExperimentTasks} table, regardless of task
+     * state or whether a row represents a stored subtask.
+     *
+     * @return the number of rows in the {@code ExperimentTasks} table
+     */
+    Integer countExperimentTasks();
 }

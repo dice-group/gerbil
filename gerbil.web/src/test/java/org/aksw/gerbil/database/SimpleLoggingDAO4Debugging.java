@@ -208,6 +208,13 @@ public class SimpleLoggingDAO4Debugging extends AbstractExperimentDAO {
 
     @Override
     public Integer countExperiments() {
+        // This logging-only DAO does not persist experiment-to-task associations.
+        return 0;
+    }
+
+    @Override
+    public Integer countExperimentTasks() {
+        // This logging-only DAO does not persist task rows.
         return 0;
     }
 

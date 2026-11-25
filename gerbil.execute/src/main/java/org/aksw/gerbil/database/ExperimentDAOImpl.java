@@ -103,7 +103,9 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     private final static String INSERT_CHALLENGE_DESCRIPTIONS = "INSERT INTO ChallengeDescriptions(startDate, endDate, name) VALUES (:startDate, :endDate, :name)";
     private static final String GET_CHALLENGE_DESCRIPTION = "SELECT startDate, endDate, name FROM ChallengeDescriptions WHERE startDate=:startDate and endDate=:endDate and name=:name";
     
-    private final static String GET_EXP_COUNT = "SELECT count(*) FROM ExperimentTasks";
+    // Count the two tables independently without deduplicating or filtering task states.
+    private final static String GET_EXP_COUNT = "SELECT COUNT(*) FROM Experiments";
+    private final static String GET_EXP_TASK_COUNT = "SELECT COUNT(*) FROM ExperimentTasks";
 
     private final NamedParameterJdbcTemplate template;
     /**
@@ -548,6 +550,12 @@ public class ExperimentDAOImpl extends AbstractExperimentDAO {
     @Override
     public Integer countExperiments() {
         List<Integer> result = this.template.query(GET_EXP_COUNT, new IntegerRowMapper());
+        return result.get(0);
+    }
+
+    @Override
+    public Integer countExperimentTasks() {
+        List<Integer> result = this.template.query(GET_EXP_TASK_COUNT, new IntegerRowMapper());
         return result.get(0);
     }
 }

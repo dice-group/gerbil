@@ -412,8 +412,12 @@ public class MainController {
         return m;
     }
 
+    // Keep the established route while exposing both internal row counts as JSON.
     @RequestMapping("/count")
     public @ResponseBody String count() {
-        return Integer.toString(dao.countExperiments());
+        JSONObject counts = new JSONObject();
+        counts.put("experiments", dao.countExperiments());
+        counts.put("experiment_tasks", dao.countExperimentTasks());
+        return counts.toJSONString();
     }
 }
