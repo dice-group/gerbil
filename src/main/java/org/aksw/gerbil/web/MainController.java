@@ -370,8 +370,13 @@ public class MainController {
         return m;
     }
 
-    @RequestMapping("/count")
-    public @ResponseBody String count() {
-        return Integer.toString(dao.countExperiments());
+    @RequestMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody ModelMap count() {
+        // Preserve the established /count route while the DAO supplies both
+        // independent storage totals; a separate /statistics route is unnecessary.
+        ModelMap count = new ModelMap();
+        count.addAttribute("experiments", dao.countExperiments());
+        count.addAttribute("experiment_tasks", dao.countExperimentTasks());
+        return count;
     }
 }

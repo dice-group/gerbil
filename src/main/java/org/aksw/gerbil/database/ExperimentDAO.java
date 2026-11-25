@@ -214,9 +214,19 @@ public interface ExperimentDAO extends Closeable {
     Integer countPrecedingRunningTasks(int lastTaskId);
 
     /**
-     * Counts the number of experiment tasks in the database.
-     * 
-     * @return the number of experiment tasks in the database
+     * Returns the raw number of rows in the {@code Experiments} table. Each
+     * experiment-task association is counted, including associations that share an
+     * experiment ID.
+     *
+     * @return the number of stored experiment-task associations
      */
     Integer countExperiments();
+
+    /**
+     * Returns the raw number of rows in the {@code ExperimentTasks} table. Tasks in
+     * every execution state and stored subtasks are included.
+     *
+     * @return the number of stored experiment-task rows
+     */
+    Integer countExperimentTasks();
 }

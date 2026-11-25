@@ -260,4 +260,35 @@ public class ExperimentDAOImplJUnitTest {
         precedingCount = this.dao.countPrecedingRunningTasks(lastTaskId);
         Assert.assertEquals(2, precedingCount);
     }
+
+    @Test
+    public void testCountExperimentsAndExperimentTasks() {
+        int initialExperimentCount = this.dao.countExperiments();
+        int initialExperimentTaskCount = this.dao.countExperimentTasks();
+
+        String experimentId = "id-count-test";
+        int firstTaskId = this.dao.createTask("annotator1", "dataset1", "type1", "matching1", experimentId);
+        int secondTaskId = this.dao.createTask("annotator2", "dataset2", "type2", "matching2", experimentId);
+        int thirdTaskId = this.dao.createTask("annotator3", "dataset3", "type3", "matching3", null);
+
+        ExperimentTaskStatus firstTaskResult = new ExperimentTaskStatus("annotator1", "dataset1", ExperimentType.A2KB,
+                Matching.STRONG_ANNOTATION_MATCH, ExperimentDAO.TASK_FINISHED);
+        firstTaskResult.addSubTask(new ExperimentTaskStatus("annotator1", "dataset1", ExperimentType.A2KB,
+                Matching.STRONG_ANNOTATION_MATCH, ExperimentDAO.TASK_FINISHED));
+        this.dao.setExperimentTaskResult(firstTaskId, firstTaskResult);
+        this.dao.setExperimentState(secondTaskId, ErrorTypes.UNEXPECTED_EXCEPTION.getErrorCode());
+
+        try {
+            // The shared ID proves experiment rows are not deduplicated. The task with
+            // no experiment ID proves the table totals are independent, while the
+            // finished parent and subtask, errored task, and unfinished task cover all
+            // task rows that the unfiltered count must include.
+            Assert.assertEquals(initialExperimentCount + 2, this.dao.countExperiments().intValue());
+            Assert.assertEquals(initialExperimentTaskCount + 4, this.dao.countExperimentTasks().intValue());
+        } finally {
+            // The in-memory database is discarded with this test class; finish the only
+            // running fixture now so it cannot affect another test before that cleanup.
+            this.dao.setExperimentState(thirdTaskId, ExperimentDAO.TASK_FINISHED);
+        }
+    }
 }

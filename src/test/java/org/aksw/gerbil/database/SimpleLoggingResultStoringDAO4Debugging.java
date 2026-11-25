@@ -26,6 +26,11 @@ import org.aksw.gerbil.datatypes.TaskResult;
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 
+/**
+ * Stores task results and states in memory for execution tests. Count methods are
+ * inherited because the state map contains updates, not all rows that a SQL DAO
+ * would store.
+ */
 public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4Debugging {
 
     private IntObjectOpenHashMap<ExperimentTaskStatus> results = new IntObjectOpenHashMap<ExperimentTaskStatus>();
@@ -101,8 +106,4 @@ public class SimpleLoggingResultStoringDAO4Debugging extends SimpleLoggingDAO4De
     	}
     }
 
-    @Override
-    public Integer countExperiments() {
-        return states.size();
-    }
 }
